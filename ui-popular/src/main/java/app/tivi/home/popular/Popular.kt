@@ -51,10 +51,10 @@ import androidx.paging.LoadState
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.PlaceholderPosterCard
 import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.paging.LazyPagingItems
 import app.tivi.common.compose.rememberMutableState
-import app.tivi.common.compose.spacerItem
 import app.tivi.data.resultentities.PopularEntryWithShow
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
@@ -101,7 +101,7 @@ fun Popular(
                     }
                 }
 
-                spacerItem(16.dp)
+                itemSpacer(16.dp)
             }
 
             PopularAppBar(

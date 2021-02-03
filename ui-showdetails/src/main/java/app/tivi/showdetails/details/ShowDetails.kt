@@ -49,8 +49,8 @@ import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientContentAlpha
@@ -110,8 +110,8 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.foregroundColor
+import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.rememberMutableState
-import app.tivi.common.compose.spacerItem
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -287,7 +287,7 @@ private fun ShowDetailsScrollingContent(
             )
         }
 
-        spacerItem(16.dp)
+        itemSpacer(16.dp)
 
         item {
             Header(stringResource(R.string.details_about))
@@ -311,7 +311,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
-            spacerItem(8.dp)
+            itemSpacer(8.dp)
 
             item {
                 Header(stringResource(id = R.string.details_next_episode_to_watch))
@@ -326,7 +326,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (relatedShows.isNotEmpty()) {
-            spacerItem(8.dp)
+            itemSpacer(8.dp)
 
             item {
                 Header(stringResource(R.string.details_related))
@@ -343,7 +343,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (watchStats != null) {
-            spacerItem(8.dp)
+            itemSpacer(8.dp)
 
             item {
                 Header(stringResource(R.string.details_view_stats))
@@ -354,24 +354,25 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (seasons.isNotEmpty()) {
-            spacerItem(8.dp)
+            itemSpacer(8.dp)
 
             item {
                 Header(stringResource(R.string.show_details_seasons))
             }
 
-            seasons.forEach {
-                seasonWithEpisodesRow(
+            items(seasons) {
+                SeasonWithEpisodesRow(
                     season = it.season,
                     episodes = it.episodes,
                     expanded = it.season.id in expandedSeasonIds,
                     actioner = actioner,
+                    modifier = Modifier.fillParentMaxWidth(),
                 )
             }
         }
 
         // Spacer to push up content from under the FloatingActionButton
-        spacerItem(56.dp + 16.dp + 16.dp)
+        itemSpacer(56.dp + 16.dp + 16.dp)
     }
 }
 
@@ -834,16 +835,18 @@ private fun WatchStats(
 }
 
 @OptIn(ExperimentalAnimationApi::class)
-private fun LazyListScope.seasonWithEpisodesRow(
+@Composable
+private fun SeasonWithEpisodesRow(
     season: Season,
     episodes: List<EpisodeWithWatches>,
     expanded: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
-) = item {
+    modifier: Modifier = Modifier
+) {
     val elevation by animateDpAsState(if (expanded) 2.dp else 0.dp)
     Surface(
         elevation = elevation,
-        modifier = Modifier.fillParentMaxWidth()
+        modifier = modifier
     ) {
         Column(Modifier.fillMaxWidth()) {
             SeasonRow(
