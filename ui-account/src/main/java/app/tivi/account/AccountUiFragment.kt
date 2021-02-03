@@ -22,6 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -34,6 +35,8 @@ import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.settings.TiviPreferences
+import app.tivi.trakt.LoginTrakt
+import app.tivi.trakt.TraktAuthManager
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
@@ -44,8 +47,24 @@ import javax.inject.Inject
 class AccountUiFragment : DialogFragment() {
     private val viewModel: AccountUiViewModel by viewModels()
 
+    @Inject internal lateinit var traktAuthManager: TraktAuthManager
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
     @Inject lateinit var preferences: TiviPreferences
+
+    // Need to lateinit this, since we use a @Inject class to generate the intent
+    private lateinit var loginLauncher: ActivityResultLauncher<Unit>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        loginLauncher = registerForActivityResult(
+            traktAuthManager.buildActivityResult()
+        ) { result: LoginTrakt.Result? ->
+            if (result != null) {
+                traktAuthManager.onAuthResponse(result)
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,7 +100,8 @@ class AccountUiFragment : DialogFragment() {
                     findNavController().navigateToNavDestination(R.id.navigation_settings)
                 }
             }
-            else -> viewModel.submitAction(action)
+            is Login -> loginLauncher.launch(Unit)
+            is Logout -> viewModel.logout()
         }
     }
 }

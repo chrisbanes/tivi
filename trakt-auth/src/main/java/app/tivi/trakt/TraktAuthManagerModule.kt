@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.home
+package app.tivi.trakt
 
-import app.tivi.AppNavigator
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.components.SingletonComponent
 
-@InstallIn(ActivityComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
-abstract class ActivityNavigatorModule {
+internal abstract class TraktAuthManagerModule {
     @Binds
-    @ActivityScoped
-    abstract fun provideAppNavigator(activityNavigator: ActivityAppNavigator): AppNavigator
+    abstract fun provideTraktAuthManager(manager: ActivityTraktAuthManager): TraktAuthManager
 }

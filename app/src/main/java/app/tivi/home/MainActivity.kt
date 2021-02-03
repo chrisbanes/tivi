@@ -16,7 +16,6 @@
 
 package app.tivi.home
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.getValue
@@ -27,7 +26,6 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import app.tivi.AppNavigator
 import app.tivi.R
 import app.tivi.TiviActivity
 import app.tivi.common.compose.shouldUseDarkColors
@@ -36,7 +34,6 @@ import app.tivi.databinding.ActivityMainBinding
 import app.tivi.extensions.MultipleBackStackNavigation
 import app.tivi.extensions.hideSoftInput
 import app.tivi.settings.TiviPreferences
-import app.tivi.trakt.TraktConstants
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import javax.inject.Inject
@@ -49,8 +46,6 @@ class MainActivity : TiviActivity() {
 
     var currentNavController: LiveData<NavController>? = null
         private set
-
-    @Inject lateinit var navigator: AppNavigator
 
     @Inject lateinit var preferences: TiviPreferences
 
@@ -107,14 +102,6 @@ class MainActivity : TiviActivity() {
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-            }
-        }
-    }
-
-    override fun handleIntent(intent: Intent) {
-        when (intent.action) {
-            TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
-                navigator.onAuthResponse(intent)
             }
         }
     }
