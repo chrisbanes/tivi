@@ -25,7 +25,7 @@ import androidx.compose.runtime.remember
 
 class Ref(var value: Int)
 
-const val EnableDebugCompositionLogs = false
+const val EnableDebugCompositionLogs = true
 
 /**
  * An effect which longs the number compositions at the invoked point of the slot table.

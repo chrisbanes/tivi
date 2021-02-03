@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_VARIABLE")
+
 package app.tivi.showdetails.details
 
 import androidx.compose.animation.AnimatedVisibility
@@ -79,6 +81,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -169,12 +172,11 @@ fun ShowDetails(
     }
 
     val trigger = backdropHeight - AmbientWindowInsets.current.statusBars.top
+
     OverlaidStatusBarAppBar(
-        showAppBar = when (listState.firstVisibleItemIndex) {
-            // We only show the app bar when the first item is shown, and it's offset off screen
-            // more than the trigger value
-            0 -> listState.firstVisibleItemScrollOffset >= trigger
-            else -> true
+        showAppBar = {
+            listState.firstVisibleItemIndex > 0 ||
+                listState.firstVisibleItemScrollOffset >= trigger
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -209,9 +211,13 @@ fun ShowDetails(
                 .fillMaxWidth()
         )
 
+        val expanded by remember {
+            derivedStateOf { listState.firstVisibleItemIndex > 0 }
+        }
+
         ToggleShowFollowFloatingActionButton(
             isFollowed = viewState.isFollowed,
-            expanded = listState.firstVisibleItemIndex >= 1,
+            expanded = { expanded },
             onClick = { actioner(FollowShowToggleAction) },
             modifier = Modifier
                 .align(Alignment.End)
@@ -260,10 +266,9 @@ private fun ShowDetailsScrollingContent(
                     .offset {
                         IntOffset(
                             x = 0,
-                            y = when (listState.firstVisibleItemIndex) {
-                                0 -> listState.firstVisibleItemScrollOffset / 2
-                                else -> 0
-                            }
+                            y = if (listState.firstVisibleItemIndex == 0) {
+                                listState.firstVisibleItemScrollOffset / 2
+                            } else 0
                         )
                     }
             )
@@ -384,7 +389,7 @@ private fun PosterInfoRow(
 ) {
     Row(modifier) {
         if (posterImage != null) {
-            Spacer(modifier = Modifier.preferredWidth(16.dp))
+            Spacer(Modifier.preferredWidth(16.dp))
 
             CoilImage(
                 data = posterImage,
@@ -429,14 +434,14 @@ private fun BackdropImage(
 
 @Composable
 private fun OverlaidStatusBarAppBar(
-    showAppBar: Boolean,
+    showAppBar: () -> Boolean,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     LogCompositions("OverlaidStatusBarAppBar")
 
     Column(modifier) {
-        val transition = updateOverlaidStatusBarAppBarTransition(showAppBar)
+        val transition = updateOverlaidStatusBarAppBarTransition(showAppBar())
 
         Surface(
             elevation = transition.elevation,
@@ -450,7 +455,7 @@ private fun OverlaidStatusBarAppBar(
             content = emptyContent()
         )
 
-        if (showAppBar) {
+        if (showAppBar()) {
             Surface(
                 elevation = transition.elevation,
                 modifier = Modifier.fillMaxWidth(),
@@ -1124,8 +1129,8 @@ private fun ShowDetailsAppBar(
 private fun ToggleShowFollowFloatingActionButton(
     isFollowed: Boolean,
     onClick: () -> Unit,
+    expanded: () -> Boolean,
     modifier: Modifier = Modifier,
-    expanded: Boolean = true,
 ) {
     LogCompositions("ToggleShowFollowFloatingActionButton")
 
@@ -1155,7 +1160,7 @@ private fun ToggleShowFollowFloatingActionButton(
             isFollowed -> MaterialTheme.colors.surface
             else -> MaterialTheme.colors.primary
         },
-        expanded = expanded,
+        expanded = expanded(),
         modifier = modifier
     )
 }
