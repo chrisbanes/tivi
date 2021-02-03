@@ -78,8 +78,10 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Providers
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticAmbientOf
@@ -433,57 +435,81 @@ private fun OverlaidStatusBarAppBar(
     LogCompositions("OverlaidStatusBarAppBar")
 
     Column(modifier) {
-        val transition = updateTransition(showAppBar)
-
-        val elevation by transition.animateDp { value ->
-            if (value) 2.dp else 0.dp
-        }
-
-        val barAlpha by transition.animateFloat(
-            transitionSpec = {
-                when {
-                    false isTransitioningTo true -> snap()
-                    else -> tween(durationMillis = 300)
-                }
-            },
-            targetValueByState = { value -> if (value) 1f else 0f }
-        )
-
-        val barOffset by transition.animateFloat(
-            transitionSpec = {
-                when {
-                    false isTransitioningTo true -> spring()
-                    // This is a bit of a hack. We don't actually want an offset transition
-                    // on exit, so we just run a snap AFTER the alpha animation
-                    // has finished (with some buffer)
-                    else -> snap(delayMillis = 320)
-                }
-            },
-            targetValueByState = { value ->
-                if (value) 0f else AmbientWindowInsets.current.statusBars.top.toFloat()
-            }
-        )
+        val transition = updateOverlaidStatusBarAppBarTransition(showAppBar)
 
         Surface(
-            elevation = elevation,
+            elevation = transition.elevation,
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsHeight()
                 .graphicsLayer {
-                    this.alpha = barAlpha
-                    translationY = barOffset
+                    alpha = transition.alpha
+                    translationY = transition.offset
                 },
             content = emptyContent()
         )
 
         if (showAppBar) {
             Surface(
-                elevation = elevation,
+                elevation = transition.elevation,
                 modifier = Modifier.fillMaxWidth(),
                 content = content,
             )
         }
     }
+}
+
+@Composable
+private fun updateOverlaidStatusBarAppBarTransition(
+    showAppBar: Boolean
+): OverlaidStatusBarAppBarTransition {
+    LogCompositions("updateOverlaidStatusBarAppBarTransition")
+
+    val transition = updateTransition(showAppBar)
+
+    val elevation by transition.animateDp { show -> if (show) 2.dp else 0.dp }
+
+    val alpha by transition.animateFloat(
+        transitionSpec = {
+            when {
+                false isTransitioningTo true -> snap()
+                else -> tween(durationMillis = 300)
+            }
+        }
+    ) { show ->
+        if (show) 1f else 0f
+    }
+
+    val offset by transition.animateFloat(
+        transitionSpec = {
+            when {
+                false isTransitioningTo true -> spring()
+                // This is a bit of a hack. We don't actually want an offset transition
+                // on exit, so we just run a snap AFTER the alpha animation
+                // has finished (with some buffer)
+                else -> snap(delayMillis = 320)
+            }
+        }
+    ) { show ->
+        if (show) 0f else AmbientWindowInsets.current.statusBars.top.toFloat()
+    }
+
+    val props = remember { OverlaidStatusBarAppBarTransition() }
+
+    props.apply {
+        this.alpha = alpha
+        this.elevation = elevation
+        this.offset = offset
+    }
+
+    return props
+}
+
+@Stable
+class OverlaidStatusBarAppBarTransition {
+    var elevation: Dp by mutableStateOf(0.dp)
+    var alpha: Float by mutableStateOf(0f)
+    var offset: Float by mutableStateOf(0f)
 }
 
 @Composable
