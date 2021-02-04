@@ -15,8 +15,6 @@
  *
  */
 
-import app.tivi.buildsrc.Libs
-
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
@@ -85,7 +83,7 @@ dependencies {
 
     testImplementation Libs.AndroidX.archCoreTesting
     testImplementation Libs.AndroidX.Test.core
-    testImplementation Libs.AndroidX.Test.Ext.junit
+    testImplementation Libs.AndroidX.Test.junit
     testImplementation Libs.AndroidX.Room.testing
     testImplementation Libs.truth
     testImplementation Libs.Coroutines.test
