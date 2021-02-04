@@ -15,8 +15,6 @@
  *
  */
 
-import app.tivi.buildsrc.Libs
-
 import java.nio.file.Files
 
 plugins {
@@ -107,7 +105,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
+        kotlinCompilerExtensionVersion Versions.compose
     }
 
     testOptions {
@@ -215,7 +213,7 @@ dependencies {
     testImplementation Libs.robolectric
     testImplementation Libs.AndroidX.Test.core
     testImplementation Libs.AndroidX.Test.rules
-    testImplementation Libs.AndroidX.Test.espressoCore
+    testImplementation Libs.AndroidX.Test.espresso
 }
 
 android.applicationVariants.all { variant ->

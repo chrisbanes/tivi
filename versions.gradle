@@ -1,0 +1,192 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+def libs = [:]
+ext.Libs = libs
+
+def versions = [
+    ktlint: "0.40.0",
+]
+ext.Versions = versions
+
+libs.androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha05"
+
+libs.timber = "com.jakewharton.timber:timber:4.7.1"
+
+libs.tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.2.0"
+libs.traktJava = "com.uwetrottmann.trakt5:trakt-java:6.8.0"
+
+/**
+ * Using Jitpack until AndroidX migration is out.
+ * See https://github.com/openid/AppAuth-Android/pull/508
+ *
+ * https://jitpack.io/#openid/AppAuth-Android
+ */
+libs.appauth = "com.github.openid:AppAuth-Android:7aa9bf3edd"
+
+libs.junit = "junit:junit:4.13.1"
+libs.robolectric = "org.robolectric:robolectric:4.5"
+libs.mockK = "io.mockk:mockk:1.10.5"
+
+libs.leakCanary = "com.squareup.leakcanary:leakcanary-android:2.6"
+
+libs.store = "com.dropbox.mobile.store:store4:4.0.0"
+
+libs.truth = "com.google.truth:truth:1.1"
+
+libs.threeTenBp = "org.threeten:threetenbp:1.5.0"
+libs.threeTenBpNoTzdb = "org.threeten:threetenbp:1.5.0:no-tzdb"
+libs.threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.3.0"
+
+versions.accompanist = "0.5.0"
+libs.Accompanist = [
+    coil: "dev.chrisbanes.accompanist:accompanist-coil:$versions.accompanist",
+    insets: "dev.chrisbanes.accompanist:accompanist-insets:$versions.accompanist",
+]
+
+libs.Google = [
+    crashlytics: "com.google.firebase:firebase-crashlytics-ktx:17.3.0",
+    analytics: "com.google.firebase:firebase-analytics-ktx:18.0.1",
+    crashlyticsGradle: "com.google.firebase:firebase-crashlytics-gradle:2.4.1",
+    gmsGoogleServices: "com.google.gms:google-services:4.3.4",
+]
+
+versions.kotlin = "1.4.21-2"
+libs.Kotlin = [
+    stdlib: "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$versions.kotlin",
+    gradlePlugin: "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin",
+    extensions: "org.jetbrains.kotlin:kotlin-android-extensions:$versions.kotlin",
+]
+
+versions.coroutines = "1.4.2"
+libs.Coroutines = [
+    core: "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines",
+    android: "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines",
+    test: "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines",
+]
+
+libs.AndroidX = [
+    browser: "androidx.browser:browser:1.3.0",
+    collection: "androidx.collection:collection-ktx:1.1.0",
+    palette: "androidx.palette:palette:1.0.0",
+    emoji: "androidx.emoji:emoji:1.1.0",
+    archCoreTesting: "androidx.arch.core:core-testing:2.1.0",
+    coreKtx: "androidx.core:core-ktx:1.5.0-beta01",
+]
+
+libs.AndroidX.Navigation = [
+    fragment: "androidx.navigation:navigation-fragment-ktx:2.3.2"
+]
+
+versions.fragment = "1.3.0-rc02"
+libs.AndroidX.Fragment = [
+    fragment: "androidx.fragment:fragment:$versions.fragment",
+    fragmentKtx: "androidx.fragment:fragment-ktx:$versions.fragment",
+]
+
+versions.androidx_test = "1.3.0"
+libs.AndroidX.Test = [
+    core: "androidx.test:core:$versions.androidx_test",
+    rules: "androidx.test:rules:$versions.androidx_test",
+    junit: "androidx.test.ext:junit-ktx:1.1.2",
+    espresso: "androidx.test.espresso:espresso-core:3.3.0",
+]
+
+versions.paging = "3.0.0-alpha13"
+libs.AndroidX.Paging = [
+    common: "androidx.paging:paging-common-ktx:$versions.paging",
+    runtime: "androidx.paging:paging-runtime-ktx:$versions.paging",
+    compose: "androidx.paging:paging-compose:1.0.0-alpha04",
+]
+
+versions.lifecycle = "2.3.0-rc01"
+libs.AndroidX.Lifecycle = [
+    runtime: "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle",
+    livedata: "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle",
+    viewmodel: "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle",
+]
+
+versions.room = "2.3.0-beta01"
+libs.AndroidX.Room = [
+    common: "androidx.room:room-common:$versions.room",
+    runtime: "androidx.room:room-runtime:$versions.room",
+    compiler: "androidx.room:room-compiler:$versions.room",
+    ktx: "androidx.room:room-ktx:$versions.room",
+    testing: "androidx.room:room-testing:$versions.room",
+]
+
+libs.AndroidX.Work = [
+    runtimeKtx: "androidx.work:work-runtime-ktx:2.4.0"
+]
+
+versions.compose = "1.0.0-alpha11"
+versions.composesnapshot = ""
+libs.AndroidX.Compose = [
+    compiler: "androidx.compose.compiler:compiler:$versions.compose",
+    runtime: "androidx.compose.runtime:runtime:$versions.compose",
+    livedata: "androidx.compose.runtime:runtime-livedata:$versions.compose",
+    foundation: "androidx.compose.foundation:foundation:$versions.compose",
+    layout: "androidx.compose.foundation:foundation-layout:$versions.compose",
+    ui: "androidx.compose.ui:ui:$versions.compose",
+    material: "androidx.compose.material:material:$versions.compose",
+    animation: "androidx.compose.animation:animation:$versions.compose",
+    tooling: "androidx.compose.ui:ui-tooling:$versions.compose",
+    test: "androidx.compose.ui:ui-test-junit4:$versions.compose",
+]
+
+versions.androidxhilt = "1.0.0-alpha03"
+libs.AndroidX.Hilt = [
+    work: "androidx.hilt:hilt-work:$versions.androidxhilt",
+    compiler: "androidx.hilt:hilt-compiler:$versions.androidxhilt",
+]
+
+versions.dagger = "2.31.2"
+libs.Dagger = [
+    dagger: "com.google.dagger:dagger:$versions.dagger",
+    compiler: "com.google.dagger:dagger-compiler:$versions.dagger",
+]
+
+versions.hilt = "2.31.2-alpha"
+libs.Hilt = [
+    library: "com.google.dagger:hilt-android:$versions.hilt",
+    compiler: "com.google.dagger:hilt-android-compiler:$versions.hilt",
+    testing: "com.google.dagger:hilt-android-testing:$versions.hilt",
+    gradlePlugin: "com.google.dagger:hilt-android-gradle-plugin:$versions.hilt",
+]
+
+versions.retrofit = "2.9.0"
+libs.Retrofit = [
+    retrofit: "com.squareup.retrofit2:retrofit:$versions.retrofit",
+    gsonConverter: "com.squareup.retrofit2:converter-gson:$versions.retrofit",
+]
+
+versions.okhttp = "4.9.0"
+libs.OkHttp = [
+    okhttp: "com.squareup.okhttp3:okhttp:$versions.okhttp",
+    loggingInterceptor: "com.squareup.okhttp3:logging-interceptor:$versions.okhttp",
+]
+
+versions.coil = "1.1.1"
+libs.Coil = [
+    coil: "io.coil-kt:coil:$versions.coil"
+]
+
+versions.roomigrant = "master-SNAPSHOT"
+libs.Roomigrant = [
+    library: "com.github.chrisbanes.Roomigrant:RoomigrantLib:$versions.roomigrant",
+    compiler: "com.github.chrisbanes.Roomigrant:RoomigrantCompiler:$versions.roomigrant",
+]
