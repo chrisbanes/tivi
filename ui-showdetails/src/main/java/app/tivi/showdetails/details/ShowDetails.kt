@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_VARIABLE")
-
 package app.tivi.showdetails.details
 
 import androidx.compose.animation.AnimatedVisibility
