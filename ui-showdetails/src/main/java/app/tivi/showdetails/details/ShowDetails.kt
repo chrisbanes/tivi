@@ -363,11 +363,11 @@ private fun ShowDetailsScrollingContent(
                 Header(stringResource(R.string.show_details_seasons))
             }
 
-            items(seasons) {
+            items(seasons) { season ->
                 SeasonWithEpisodesRow(
-                    season = it.season,
-                    episodes = it.episodes,
-                    expanded = it.season.id in expandedSeasonIds,
+                    season = season.season,
+                    episodes = season.episodes,
+                    expanded = season.season.id in expandedSeasonIds,
                     actioner = actioner,
                     modifier = Modifier.fillParentMaxWidth(),
                 )
