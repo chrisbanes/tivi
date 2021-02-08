@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.paging.LazyPagingItems
 
-fun LazyListScope.spacerItem(height: Dp) {
+fun LazyListScope.itemSpacer(height: Dp) {
     item {
         Spacer(Modifier.preferredHeight(height).fillParentMaxWidth())
     }
@@ -56,7 +56,7 @@ fun <T : Any> LazyListScope.itemsInGrid(
     }
 
     for (row in 0 until rows) {
-        if (row == 0) spacerItem(contentPadding.top)
+        if (row == 0) itemSpacer(contentPadding.top)
 
         item {
             Row(
@@ -78,9 +78,9 @@ fun <T : Any> LazyListScope.itemsInGrid(
         }
 
         if (row < rows - 1) {
-            spacerItem(verticalItemPadding)
+            itemSpacer(verticalItemPadding)
         } else {
-            spacerItem(contentPadding.bottom)
+            itemSpacer(contentPadding.bottom)
         }
     }
 }
@@ -103,7 +103,7 @@ fun <T> LazyListScope.itemsInGrid(
     }
 
     for (row in 0 until rows) {
-        if (row == 0) spacerItem(contentPadding.top)
+        if (row == 0) itemSpacer(contentPadding.top)
 
         item {
             Row(
@@ -125,9 +125,9 @@ fun <T> LazyListScope.itemsInGrid(
         }
 
         if (row < rows - 1) {
-            spacerItem(verticalItemPadding)
+            itemSpacer(verticalItemPadding)
         } else {
-            spacerItem(contentPadding.bottom)
+            itemSpacer(contentPadding.bottom)
         }
     }
 }

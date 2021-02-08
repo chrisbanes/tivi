@@ -57,8 +57,8 @@ import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.UserProfileButton
+import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.rememberMutableState
-import app.tivi.common.compose.spacerItem
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -83,7 +83,7 @@ fun Discover(
                     Spacer(Modifier.preferredHeight(height))
                 }
 
-                spacerItem(16.dp)
+                itemSpacer(16.dp)
 
                 state.nextEpisodeWithShowToWatched?.let { nextEpisodeToWatch ->
                     item {
@@ -106,7 +106,7 @@ fun Discover(
                         )
                     }
 
-                    spacerItem(16.dp)
+                    itemSpacer(16.dp)
                 }
 
                 item {
@@ -139,7 +139,7 @@ fun Discover(
                     )
                 }
 
-                spacerItem(16.dp)
+                itemSpacer(16.dp)
             }
 
             DiscoverAppBar(

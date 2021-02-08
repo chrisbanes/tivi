@@ -61,8 +61,8 @@ import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
 import app.tivi.common.compose.UserProfileButton
+import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.rememberMutableState
-import app.tivi.common.compose.spacerItem
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
@@ -116,7 +116,7 @@ fun Watched(
                     }
                 }
 
-                spacerItem(16.dp)
+                itemSpacer(16.dp)
             }
 
             WatchedAppBar(

@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION") // Compose transition v1 APIs
-
 package app.tivi.showdetails.details
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.DpPropKey
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.FloatPropKey
-import androidx.compose.animation.core.animateAsState
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.transition
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -52,8 +49,8 @@ import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientContentAlpha
@@ -79,12 +76,14 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Providers
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.onCommit
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
@@ -112,8 +111,8 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.foregroundColor
+import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.rememberMutableState
-import app.tivi.common.compose.spacerItem
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -137,7 +136,6 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsHeight
-import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 val AmbientShowDetailsTextCreator = staticAmbientOf<ShowDetailsTextCreator>()
@@ -172,12 +170,11 @@ fun ShowDetails(
     }
 
     val trigger = backdropHeight - AmbientWindowInsets.current.statusBars.top
+
     OverlaidStatusBarAppBar(
-        showAppBar = when (listState.firstVisibleItemIndex) {
-            // We only show the app bar when the first item is shown, and it's offset off screen
-            // more than the trigger value
-            0 -> listState.firstVisibleItemScrollOffset >= trigger
-            else -> true
+        showAppBar = {
+            listState.firstVisibleItemIndex > 0 ||
+                listState.firstVisibleItemScrollOffset >= trigger
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -193,7 +190,6 @@ fun ShowDetails(
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val snackbarScope = rememberCoroutineScope()
 
     Column(
         Modifier
@@ -213,9 +209,13 @@ fun ShowDetails(
                 .fillMaxWidth()
         )
 
+        val expanded by remember {
+            derivedStateOf { listState.firstVisibleItemIndex > 0 }
+        }
+
         ToggleShowFollowFloatingActionButton(
             isFollowed = viewState.isFollowed,
-            expanded = listState.firstVisibleItemIndex >= 1,
+            expanded = { expanded },
             onClick = { actioner(FollowShowToggleAction) },
             modifier = Modifier
                 .align(Alignment.End)
@@ -224,11 +224,9 @@ fun ShowDetails(
         )
     }
 
-    onCommit(viewState.refreshError) {
+    LaunchedEffect(viewState.refreshError) {
         viewState.refreshError?.let { error ->
-            snackbarScope.launch {
-                snackbarHostState.showSnackbar(error.message)
-            }
+            snackbarHostState.showSnackbar(error.message)
         }
     }
 }
@@ -266,10 +264,9 @@ private fun ShowDetailsScrollingContent(
                     .offset {
                         IntOffset(
                             x = 0,
-                            y = when (listState.firstVisibleItemIndex) {
-                                0 -> listState.firstVisibleItemScrollOffset / 2
-                                else -> 0
-                            }
+                            y = if (listState.firstVisibleItemIndex == 0) {
+                                listState.firstVisibleItemScrollOffset / 2
+                            } else 0
                         )
                     }
             )
@@ -293,7 +290,7 @@ private fun ShowDetailsScrollingContent(
             )
         }
 
-        spacerItem(16.dp)
+        itemSpacer(16.dp)
 
         item {
             Header(stringResource(R.string.details_about))
@@ -317,7 +314,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
-            spacerItem(8.dp)
+            itemSpacer(8.dp)
 
             item {
                 Header(stringResource(id = R.string.details_next_episode_to_watch))
@@ -332,7 +329,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (relatedShows.isNotEmpty()) {
-            spacerItem(8.dp)
+            itemSpacer(8.dp)
 
             item {
                 Header(stringResource(R.string.details_related))
@@ -349,7 +346,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (watchStats != null) {
-            spacerItem(8.dp)
+            itemSpacer(8.dp)
 
             item {
                 Header(stringResource(R.string.details_view_stats))
@@ -360,24 +357,25 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (seasons.isNotEmpty()) {
-            spacerItem(8.dp)
+            itemSpacer(8.dp)
 
             item {
                 Header(stringResource(R.string.show_details_seasons))
             }
 
-            seasons.forEach {
+            items(seasons) { season ->
                 SeasonWithEpisodesRow(
-                    season = it.season,
-                    episodes = it.episodes,
-                    expanded = it.season.id in expandedSeasonIds,
+                    season = season.season,
+                    episodes = season.episodes,
+                    expanded = season.season.id in expandedSeasonIds,
                     actioner = actioner,
+                    modifier = Modifier.fillParentMaxWidth(),
                 )
             }
         }
 
         // Spacer to push up content from under the FloatingActionButton
-        spacerItem(56.dp + 16.dp + 16.dp)
+        itemSpacer(56.dp + 16.dp + 16.dp)
     }
 }
 
@@ -389,7 +387,7 @@ private fun PosterInfoRow(
 ) {
     Row(modifier) {
         if (posterImage != null) {
-            Spacer(modifier = Modifier.preferredWidth(16.dp))
+            Spacer(Modifier.preferredWidth(16.dp))
 
             CoilImage(
                 data = posterImage,
@@ -434,36 +432,30 @@ private fun BackdropImage(
 
 @Composable
 private fun OverlaidStatusBarAppBar(
-    showAppBar: Boolean,
+    showAppBar: () -> Boolean,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     LogCompositions("OverlaidStatusBarAppBar")
 
     Column(modifier) {
-        val props = transition(
-            definition = statusBarTransitionDef,
-            initState = false,
-            toState = showAppBar
-        )
-
-        val elevation by animateAsState(if (showAppBar) 2.dp else 0.dp)
+        val transition = updateOverlaidStatusBarAppBarTransition(showAppBar())
 
         Surface(
-            elevation = elevation,
+            elevation = transition.elevation,
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsHeight()
                 .graphicsLayer {
-                    alpha = props[AlphaKey]
-                }
-                .offset(y = props[OffsetYKey]),
+                    alpha = transition.alpha
+                    translationY = transition.offset
+                },
             content = emptyContent()
         )
 
-        if (showAppBar) {
+        if (showAppBar()) {
             Surface(
-                elevation = elevation,
+                elevation = transition.elevation,
                 modifier = Modifier.fillMaxWidth(),
                 content = content,
             )
@@ -471,30 +463,57 @@ private fun OverlaidStatusBarAppBar(
     }
 }
 
-private val OffsetYKey = DpPropKey()
-private val AlphaKey = FloatPropKey()
+@Composable
+private fun updateOverlaidStatusBarAppBarTransition(
+    showAppBar: Boolean
+): OverlaidStatusBarAppBarTransition {
+    LogCompositions("updateOverlaidStatusBarAppBarTransition")
 
-private val statusBarTransitionDef = transitionDefinition<Boolean> {
-    state(false) {
-        this[OffsetYKey] = 24.dp
-        this[AlphaKey] = 0f
-    }
-    state(true) {
-        this[OffsetYKey] = 0.dp
-        this[AlphaKey] = 1f
+    val transition = updateTransition(showAppBar)
+
+    val elevation by transition.animateDp { show -> if (show) 2.dp else 0.dp }
+
+    val alpha by transition.animateFloat(
+        transitionSpec = {
+            when {
+                false isTransitioningTo true -> snap()
+                else -> tween(durationMillis = 300)
+            }
+        }
+    ) { show ->
+        if (show) 1f else 0f
     }
 
-    transition(toState = true) {
-        OffsetYKey using spring()
-        AlphaKey using snap()
+    val offset by transition.animateFloat(
+        transitionSpec = {
+            when {
+                false isTransitioningTo true -> spring()
+                // This is a bit of a hack. We don't actually want an offset transition
+                // on exit, so we just run a snap AFTER the alpha animation
+                // has finished (with some buffer)
+                else -> snap(delayMillis = 320)
+            }
+        }
+    ) { show ->
+        if (show) 0f else AmbientWindowInsets.current.statusBars.top.toFloat()
     }
 
-    transition(toState = false) {
-        AlphaKey using tween(durationMillis = 300)
-        // This is a bit of a hack. We don't actually want an offset transition on exit,
-        // so we just run a snap AFTER the alpha animation has finished (with some buffer)
-        OffsetYKey using snap(delayMillis = 320)
+    val props = remember { OverlaidStatusBarAppBarTransition() }
+
+    props.apply {
+        this.alpha = alpha
+        this.elevation = elevation
+        this.offset = offset
     }
+
+    return props
+}
+
+@Stable
+class OverlaidStatusBarAppBarTransition {
+    var elevation: Dp by mutableStateOf(0.dp)
+    var alpha: Float by mutableStateOf(0f)
+    var offset: Float by mutableStateOf(0f)
 }
 
 @Composable
@@ -818,66 +837,64 @@ private fun WatchStats(
     }
 }
 
-@Suppress("FunctionName")
 @OptIn(ExperimentalAnimationApi::class)
-private fun LazyListScope.SeasonWithEpisodesRow(
+@Composable
+private fun SeasonWithEpisodesRow(
     season: Season,
     episodes: List<EpisodeWithWatches>,
     expanded: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    item {
-        val elevation by animateAsState(if (expanded) 2.dp else 0.dp)
-        Surface(
-            elevation = elevation,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(Modifier.fillMaxWidth()) {
-                SeasonRow(
-                    season = season,
-                    episodesAired = episodes.numberAired,
-                    episodesWatched = episodes.numberWatched,
-                    episodesToWatch = episodes.numberAiredToWatch,
-                    episodesToAir = episodes.numberToAir,
-                    nextToAirDate = episodes.nextToAir?.firstAired,
-                    actioner = actioner,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(enabled = !season.ignored) {
-                            actioner(ChangeSeasonExpandedAction(season.id, !expanded))
-                        }
-                )
-
-                // Ideally each EpisodeWithWatchesRow would be in a different item {}, but there
-                // are currently 2 issues for that:
-                // #1: AnimatedVisibility currently crashes in Lazy*: b/170287733
-                // #2: Can't use a Surface across different items: b/170472398
-                // So instead we bundle the items in an inner Column, within a single item.
-                episodes.forEach { episodeEntry ->
-                    AnimatedVisibility(visible = expanded) {
-                        EpisodeWithWatchesRow(
-                            episode = episodeEntry.episode,
-                            isWatched = episodeEntry.isWatched,
-                            hasPending = episodeEntry.hasPending,
-                            onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    actioner(OpenEpisodeDetails(episodeEntry.episode.id))
-                                }
-                        )
+    val elevation by animateDpAsState(if (expanded) 2.dp else 0.dp)
+    Surface(
+        elevation = elevation,
+        modifier = modifier
+    ) {
+        Column(Modifier.fillMaxWidth()) {
+            SeasonRow(
+                season = season,
+                episodesAired = episodes.numberAired,
+                episodesWatched = episodes.numberWatched,
+                episodesToWatch = episodes.numberAiredToWatch,
+                episodesToAir = episodes.numberToAir,
+                nextToAirDate = episodes.nextToAir?.firstAired,
+                actioner = actioner,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(enabled = !season.ignored) {
+                        actioner(ChangeSeasonExpandedAction(season.id, !expanded))
                     }
-                }
+            )
 
+            // Ideally each EpisodeWithWatchesRow would be in a different item {}, but there
+            // are currently 2 issues for that:
+            // #1: AnimatedVisibility currently crashes in Lazy*: b/170287733
+            // #2: Can't use a Surface across different items: b/170472398
+            // So instead we bundle the items in an inner Column, within a single item.
+            episodes.forEach { episodeEntry ->
                 AnimatedVisibility(visible = expanded) {
-                    Divider()
+                    EpisodeWithWatchesRow(
+                        episode = episodeEntry.episode,
+                        isWatched = episodeEntry.isWatched,
+                        hasPending = episodeEntry.hasPending,
+                        onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                actioner(OpenEpisodeDetails(episodeEntry.episode.id))
+                            }
+                    )
                 }
+            }
+
+            AnimatedVisibility(visible = expanded) {
+                Divider()
             }
         }
     }
 }
 
-@Suppress("UNUSED_PARAMETER")
 @Composable
 private fun SeasonRow(
     season: Season,
@@ -1110,8 +1127,8 @@ private fun ShowDetailsAppBar(
 private fun ToggleShowFollowFloatingActionButton(
     isFollowed: Boolean,
     onClick: () -> Unit,
+    expanded: () -> Boolean,
     modifier: Modifier = Modifier,
-    expanded: Boolean = true,
 ) {
     LogCompositions("ToggleShowFollowFloatingActionButton")
 
@@ -1141,7 +1158,7 @@ private fun ToggleShowFollowFloatingActionButton(
             isFollowed -> MaterialTheme.colors.surface
             else -> MaterialTheme.colors.primary
         },
-        expanded = expanded,
+        expanded = expanded(),
         modifier = modifier
     )
 }
