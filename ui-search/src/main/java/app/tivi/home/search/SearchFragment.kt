@@ -54,7 +54,7 @@ internal class SearchFragment : Fragment() {
 
         // We use ViewWindowInsetObserver rather than ProvideWindowInsets
         // See: https://github.com/chrisbanes/accompanist/issues/155
-        val windowInsets = ViewWindowInsetObserver(this).start()
+        val windowInsets = ViewWindowInsetObserver(this).start(consumeWindowInsets = false)
 
         setContent {
             CompositionLocalProvider(LocalWindowInsets provides windowInsets) {

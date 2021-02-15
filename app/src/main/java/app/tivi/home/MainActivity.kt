@@ -87,7 +87,7 @@ class MainActivity : TiviActivity() {
         }
 
         binding.homeBottomNavigation.setContent {
-            ProvideWindowInsets {
+            ProvideWindowInsets(consumeWindowInsets = false) {
                 TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     HomeBottomNavigation(
                         selectedNavigation = currentSelectedItem,

@@ -43,7 +43,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,13 +84,11 @@ fun Search(
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
             ) {
-                var searchQuery by rememberSaveable(TextFieldValue.Saver) {
-                    mutableStateOf(TextFieldValue(state.query))
-                }
+                var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
                 SearchTextField(
                     value = searchQuery,
-                    onValueChange = {
-                        searchQuery = it
+                    onValueChange = { value ->
+                        searchQuery = value
                         actioner(SearchAction.Search(it.text))
                     },
                     hint = stringResource(R.string.search_hint),
