@@ -17,13 +17,15 @@
 package app.tivi.home.discover
 
 import android.content.Context
-import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
-val AmbientDiscoverTextCreator = staticAmbientOf<DiscoverTextCreator>()
+val LocalDiscoverTextCreator = staticCompositionLocalOf<DiscoverTextCreator> {
+    error("DiscoverTextCreator not provided")
+}
 
 class DiscoverTextCreator @Inject constructor(
     @ActivityContext private val context: Context

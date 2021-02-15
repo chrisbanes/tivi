@@ -18,13 +18,13 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.material.AmbientContentAlpha
-import androidx.compose.material.AmbientContentColor
+import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 /**
- * Returns the [AmbientContentColor] with the current [AmbientContentAlpha].
+ * Returns the [LocalContentColor] with the current [LocalContentAlpha].
  */
 @Composable
-inline fun foregroundColor(): Color = AmbientContentColor.current.copy(AmbientContentAlpha.current)
+inline fun foregroundColor(): Color = LocalContentColor.current.copy(LocalContentAlpha.current)

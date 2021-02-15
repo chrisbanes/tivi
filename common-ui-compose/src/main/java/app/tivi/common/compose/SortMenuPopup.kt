@@ -39,14 +39,12 @@ fun SortMenuPopup(
     content: @Composable () -> Unit,
 ) {
     var sortPopupOpen by remember { mutableStateOf(false) }
+    IconButton(
+        onClick = { sortPopupOpen = true },
+        content = content,
+        modifier = modifier,
+    )
     DropdownMenu(
-        toggle = {
-            IconButton(
-                onClick = { sortPopupOpen = true },
-                content = content
-            )
-        },
-        toggleModifier = modifier,
         expanded = sortPopupOpen,
         onDismissRequest = { sortPopupOpen = false },
     ) {

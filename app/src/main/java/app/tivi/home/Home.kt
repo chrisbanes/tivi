@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.preferredHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -33,10 +33,10 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.R
-import app.tivi.common.compose.IconResource
 import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 
 internal enum class HomeNavigation {
@@ -62,13 +62,13 @@ internal fun HomeBottomNavigation(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .preferredHeight(56.dp),
+                    .height(56.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 BottomNavigationItem(
                     icon = {
-                        IconResource(
-                            resourceId = R.drawable.ic_weekend_black_24dp,
+                        Icon(
+                            painter = painterResource(R.drawable.ic_weekend_black_24dp),
                             contentDescription = stringResource(R.string.cd_discover_title)
                         )
                     },
@@ -91,8 +91,8 @@ internal fun HomeBottomNavigation(
 
                 BottomNavigationItem(
                     icon = {
-                        IconResource(
-                            resourceId = R.drawable.ic_visibility,
+                        Icon(
+                            painter = painterResource(R.drawable.ic_visibility),
                             contentDescription = stringResource(R.string.cd_watched_shows_title)
                         )
                     },

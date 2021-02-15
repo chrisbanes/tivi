@@ -50,7 +50,7 @@ fun ExpandingText(
                 enabled = expandable && canTextExpand,
                 onClick = { expanded = !expanded }
             )
-            .animateContentSize(animSpec = spring())
+            .animateContentSize(animationSpec = spring())
             .then(modifier),
         onTextLayout = {
             if (!expanded) {

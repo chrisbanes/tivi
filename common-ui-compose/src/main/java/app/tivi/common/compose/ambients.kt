@@ -16,12 +16,14 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import app.tivi.home.HomeTextCreator
 import app.tivi.util.TiviDateFormatter
 
-val AmbientTiviDateFormatter = staticAmbientOf<TiviDateFormatter>()
+val LocalTiviDateFormatter = staticCompositionLocalOf<TiviDateFormatter> {
+    error("TiviDateFormatter not provided")
+}
 
-val AmbientHomeTextCreator = staticAmbientOf<HomeTextCreator> {
+val LocalHomeTextCreator = staticCompositionLocalOf<HomeTextCreator> {
     error("HomeTextCreator not provided")
 }

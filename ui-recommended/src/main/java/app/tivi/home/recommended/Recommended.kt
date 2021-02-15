@@ -23,28 +23,28 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -69,8 +69,8 @@ fun Recommended(
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
-                    val height = with(AmbientDensity.current) { appBarHeight.toDp() }
-                    Spacer(Modifier.preferredHeight(height))
+                    val height = with(LocalDensity.current) { appBarHeight.toDp() }
+                    Spacer(Modifier.height(height))
                 }
 
                 itemsInGrid(
@@ -132,7 +132,7 @@ private fun RecommendedAppBar(
         Row(
             modifier = Modifier
                 .statusBarsPadding()
-                .preferredHeight(56.dp)
+                .height(56.dp)
                 .padding(start = 16.dp, end = 4.dp)
         ) {
             Text(
@@ -143,14 +143,14 @@ private fun RecommendedAppBar(
 
             Spacer(Modifier.weight(1f))
 
-            Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 IconButton(
                     onClick = onRefreshActionClick,
                     enabled = !refreshing,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
                     if (refreshing) {
-                        AutoSizedCircularProgressIndicator(Modifier.preferredSize(20.dp))
+                        AutoSizedCircularProgressIndicator(Modifier.size(20.dp))
                     } else {
                         Icon(
                             imageVector = Icons.Default.Refresh,

@@ -27,14 +27,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredSizeIn
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AmbientContentAlpha
-import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.Button
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DismissDirection
@@ -42,6 +40,8 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.SnackbarHost
@@ -57,8 +57,8 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -70,22 +70,22 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ConfigurationAmbient
-import androidx.compose.ui.res.loadVectorResource
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
-import app.tivi.common.compose.IconResource
+import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.boundsInParent
-import app.tivi.common.compose.onLoadRun
 import app.tivi.common.compose.onPositionInParentChanged
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.data.entities.Episode
@@ -143,7 +143,7 @@ fun EpisodeDetails(
                         val watches = viewState.watches
 
                         if (viewState.canAddEpisodeWatch) {
-                            Spacer(modifier = Modifier.preferredHeight(8.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
 
                             if (watches.isEmpty()) {
                                 MarkWatchedButton(
@@ -158,7 +158,7 @@ fun EpisodeDetails(
                             }
                         }
 
-                        Spacer(modifier = Modifier.preferredHeight(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
                         if (watches.isNotEmpty()) {
                             var openDialog by rememberMutableState { false }
@@ -200,7 +200,7 @@ fun EpisodeDetails(
                             }
                         }
 
-                        Spacer(Modifier.preferredHeight(8.dp))
+                        Spacer(Modifier.height(8.dp))
                         Spacer(Modifier.navigationBarsHeight())
                     }
                 }
@@ -255,18 +255,18 @@ private fun Backdrop(
                     .align(Alignment.BottomStart)
                     .background(
                         color = Color.Black.copy(alpha = 0.65f),
-                        shape = RoundedCornerShape(topRight = 8.dp)
+                        shape = RoundedCornerShape(topEnd = 8.dp)
                     )
                     .padding(all = 16.dp)
             ) {
                 val epNumber = episode.number
                 val seasonNumber = season.number
 
-                Providers(AmbientContentColor provides Color.White) {
+                CompositionLocalProvider(LocalContentColor provides Color.White) {
                     if (seasonNumber != null && epNumber != null) {
-                        Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+                        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                             @Suppress("DEPRECATION")
-                            val locale = ConfigurationAmbient.current.locale
+                            val locale = LocalConfiguration.current.locale
                             Text(
                                 text = stringResource(
                                     R.string.season_episode_number,
@@ -276,7 +276,7 @@ private fun Backdrop(
                                 style = MaterialTheme.typography.overline
                             )
                         }
-                        Spacer(modifier = Modifier.preferredHeight(4.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                     }
 
                     Text(
@@ -302,41 +302,53 @@ private fun InfoPanes(episode: Episode) {
         }
 
         episode.firstAired?.let { firstAired ->
-            val formatter = AmbientTiviDateFormatter.current
-            val deferredIcon = loadVectorResource(id = R.drawable.ic_calendar_today)
-            deferredIcon.onLoadRun { asset ->
-                val formattedDate = formatter.formatShortRelativeTime(firstAired)
-                InfoPane(
-                    icon = asset,
-                    label = formattedDate,
-                    contentDescription = stringResource(
-                        R.string.cd_episode_first_aired,
-                        formattedDate
-                    ),
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            val formatter = LocalTiviDateFormatter.current
+            val formattedDate = formatter.formatShortRelativeTime(firstAired)
+            InfoPane(
+                painter = painterResource(R.drawable.ic_calendar_today),
+                label = formattedDate,
+                contentDescription = stringResource(
+                    R.string.cd_episode_first_aired,
+                    formattedDate
+                ),
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
 
 @Composable
 private fun InfoPane(
-    modifier: Modifier = Modifier,
     icon: ImageVector,
     contentDescription: String?,
-    label: String
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    InfoPane(
+        painter = rememberVectorPainter(image = icon),
+        contentDescription = contentDescription,
+        label = label,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun InfoPane(
+    painter: Painter,
+    contentDescription: String?,
+    label: String,
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.padding(all = 16.dp)) {
-        Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Icon(
-                imageVector = icon,
+                painter = painter,
                 contentDescription = contentDescription,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
 
-        Spacer(modifier = Modifier.preferredHeight(4.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -359,13 +371,13 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
 
         Spacer(Modifier.weight(1f))
 
-        Providers(AmbientContentAlpha provides ContentAlpha.disabled) {
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
             IconButton(
                 modifier = Modifier.padding(end = 4.dp),
                 onClick = { onSweepWatchesClick() }
             ) {
-                IconResource(
-                    resourceId = R.drawable.ic_delete_sweep,
+                Icon(
+                    painter = painterResource(R.drawable.ic_delete_sweep),
                     contentDescription = stringResource(R.string.cd_delete),
                 )
             }
@@ -379,9 +391,9 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
+                .sizeIn(minWidth = 40.dp, minHeight = 40.dp)
         ) {
-            val formatter = AmbientTiviDateFormatter.current
+            val formatter = LocalTiviDateFormatter.current
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
@@ -390,24 +402,24 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 
             Spacer(Modifier.weight(1f))
 
-            Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
-                    IconResource(
-                        resourceId = R.drawable.ic_publish,
+                    Icon(
+                        painter = painterResource(R.drawable.ic_publish),
                         contentDescription = stringResource(R.string.cd_episode_syncing),
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .align(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically),
                     )
                 }
 
                 if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
-                    IconResource(
-                        resourceId = R.drawable.ic_visibility_off,
+                    Icon(
+                        painter = painterResource(R.drawable.ic_visibility_off),
                         contentDescription = stringResource(R.string.cd_episode_deleted),
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .align(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically),
                     )
                 }
             }
@@ -451,7 +463,7 @@ private fun EpisodeWatchSwipeBackground(
                 )
         )
 
-        Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = stringResource(R.string.cd_delete),
@@ -491,7 +503,7 @@ fun MarkWatchedButton(
     ) {
         Text(
             text = stringResource(R.string.episode_mark_watched),
-            style = MaterialTheme.typography.button.copy(color = AmbientContentColor.current)
+            style = MaterialTheme.typography.button.copy(color = LocalContentColor.current)
         )
     }
 }
@@ -570,28 +582,30 @@ private fun EpisodeDetailsAppBar(
 
 @Preview
 @Composable
-fun previewEpisodeDetails() = EpisodeDetails(
-    viewState = EpisodeDetailsViewState(
-        episodeId = 0,
-        episode = Episode(
-            seasonId = 100,
-            title = "A show too far",
-            summary = "A long description of a episode",
-            traktRating = 0.5f,
-            traktRatingVotes = 84,
-            firstAired = OffsetDateTime.now()
-        ),
-        season = Season(
-            id = 100,
-            showId = 0
-        ),
-        watches = listOf(
-            EpisodeWatchEntry(
-                id = 10,
-                episodeId = 100,
-                watchedAt = OffsetDateTime.now()
+fun PreviewEpisodeDetails() {
+    EpisodeDetails(
+        viewState = EpisodeDetailsViewState(
+            episodeId = 0,
+            episode = Episode(
+                seasonId = 100,
+                title = "A show too far",
+                summary = "A long description of a episode",
+                traktRating = 0.5f,
+                traktRatingVotes = 84,
+                firstAired = OffsetDateTime.now()
+            ),
+            season = Season(
+                id = 100,
+                showId = 0
+            ),
+            watches = listOf(
+                EpisodeWatchEntry(
+                    id = 10,
+                    episodeId = 100,
+                    watchedAt = OffsetDateTime.now()
+                )
             )
-        )
-    ),
-    actioner = {}
-)
+        ),
+        actioner = {}
+    )
+}

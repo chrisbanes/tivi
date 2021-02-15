@@ -63,7 +63,7 @@ allprojects {
         jcenter()
 
         // Jetpack Compose SNAPSHOTs
-        if (Versions.composesnapshot.endsWith("SNAPSHOT")) {
+        if (Versions.compose.endsWith("SNAPSHOT")) {
             maven { url "https://androidx.dev/snapshots/builds/${Versions.composesnapshot}/artifacts/repository/" }
         }
 
@@ -92,16 +92,6 @@ subprojects {
                 // kotlin-stdlib module instead
                 details.useTarget Libs.Kotlin.stdlib
             }
-
-            if ((group.startsWith('androidx.ui') || group.startsWith('androidx.compose'))
-                    && Versions.compose.endsWith('SNAPSHOT')) {
-                // If we're using a SNAPSHOT version of Compose, we need to  force all
-                // the SNAPSHOT version. We may be using other dependencies which rely
-                // on stable version of Compose (such as a MDC Theme Adapter), which will
-                // pin the version back.
-                // This may not always work if there's binary changes in the snapshot.
-                details.useVersion Versions.compose
-            }
         }
     }
 
@@ -126,8 +116,6 @@ subprojects {
             freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
             freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.FlowPreview"
             freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
-
-            freeCompilerArgs += "-Xallow-jvm-ir-dependencies"
 
             // Set JVM target to 1.8
             jvmTarget = "1.8"

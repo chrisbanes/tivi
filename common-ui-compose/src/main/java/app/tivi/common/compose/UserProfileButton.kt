@@ -16,12 +16,14 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.data.entities.TraktUser
@@ -44,20 +46,22 @@ fun UserProfileButton(
                     data = user.avatarUrl!!,
                     contentDescription = stringResource(R.string.cd_profile_pic, user.name),
                     modifier = Modifier
-                        .preferredSize(32.dp)
+                        .size(32.dp)
                         .clip(CircleShape)
                 )
             }
             loggedIn -> {
-                IconResource(
-                    resourceId = R.drawable.ic_person,
+                Icon(
+                    painter = painterResource(R.drawable.ic_person),
                     contentDescription = stringResource(R.string.cd_user_profile)
                 )
             }
-            else -> IconResource(
-                resourceId = R.drawable.ic_person_outline,
-                contentDescription = stringResource(R.string.cd_user_profile)
-            )
+            else -> {
+                Icon(
+                    painter = painterResource(R.drawable.ic_person_outline),
+                    contentDescription = stringResource(R.string.cd_user_profile)
+                )
+            }
         }
     }
 }

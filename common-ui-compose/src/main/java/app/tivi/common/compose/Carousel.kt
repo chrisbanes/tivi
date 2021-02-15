@@ -40,10 +40,12 @@ fun <T> Carousel(
 
     LazyRow(
         modifier = modifier,
-        contentPadding = contentPadding.copy(
-            start = (contentPadding.start - halfSpacing).coerceAtLeast(0.dp),
-            end = (contentPadding.end - halfSpacing).coerceAtLeast(0.dp)
-        ),
+        contentPadding = contentPadding,
+        // FIXME
+//        .copy(
+//            start = (contentPadding.start - halfSpacing).coerceAtLeast(0.dp),
+//            end = (contentPadding.end - halfSpacing).coerceAtLeast(0.dp)
+//        ),
         verticalAlignment = verticalAlignment
     ) {
         items(items) {

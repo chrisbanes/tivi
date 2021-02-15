@@ -21,7 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -39,7 +39,7 @@ import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
@@ -107,9 +107,9 @@ class ShowDetailsFragment : Fragment() {
         val windowInsets = ViewWindowInsetObserver(this).start()
 
         setContent {
-            Providers(
-                AmbientShowDetailsTextCreator provides textCreator,
-                AmbientWindowInsets provides windowInsets,
+            CompositionLocalProvider(
+                LocalShowDetailsTextCreator provides textCreator,
+                LocalWindowInsets provides windowInsets,
             ) {
                 TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     val viewState by viewModel.liveData.observeAsState()

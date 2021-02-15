@@ -16,31 +16,30 @@
 
 package app.tivi.home.followed
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,14 +48,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
-import app.tivi.common.compose.AmbientHomeTextCreator
-import app.tivi.common.compose.IconResource
+import app.tivi.common.compose.LocalHomeTextCreator
 import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
@@ -84,8 +83,8 @@ fun Followed(
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
-                    val height = with(AmbientDensity.current) { appBarHeight.toDp() }
-                    Spacer(Modifier.preferredHeight(height))
+                    val height = with(LocalDensity.current) { appBarHeight.toDp() }
+                    Spacer(Modifier.height(height))
                 }
 
                 item {
@@ -109,7 +108,7 @@ fun Followed(
                             onClick = { actioner(FollowedAction.OpenShowDetails(entry.show.id)) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .preferredHeight(88.dp)
+                                .height(88.dp)
                         )
                     } else {
                         // TODO placeholder?
@@ -133,7 +132,6 @@ fun Followed(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun FilterSortPanel(
     filterHint: String,
@@ -162,15 +160,14 @@ private fun FilterSortPanel(
             onSortSelected = onSortSelected,
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
-            IconResource(
-                resourceId = R.drawable.ic_sort_black_24dp,
+            Icon(
+                painter = painterResource(R.drawable.ic_sort_black_24dp),
                 contentDescription = stringResource(R.string.cd_sort_list),
             )
         }
     }
 }
 
-@OptIn(ExperimentalLayout::class)
 @Composable
 private fun FollowedShowItem(
     show: TiviShow,
@@ -180,13 +177,13 @@ private fun FollowedShowItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val textCreator = AmbientHomeTextCreator.current
+    val textCreator = LocalHomeTextCreator.current
     Row(
         modifier
             .clickable(onClick = onClick)
             .padding(vertical = 8.dp)
     ) {
-        Spacer(Modifier.preferredWidth(16.dp))
+        Spacer(Modifier.width(16.dp))
 
         if (poster != null) {
             Surface(
@@ -205,7 +202,7 @@ private fun FollowedShowItem(
             }
         }
 
-        Spacer(Modifier.preferredWidth(16.dp))
+        Spacer(Modifier.width(16.dp))
 
         Column(
             Modifier
@@ -233,9 +230,9 @@ private fun FollowedShowItem(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(Modifier.preferredHeight(2.dp))
+                Spacer(Modifier.height(2.dp))
 
-                Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                     Text(
                         text = textCreator.followedShowEpisodeWatchStatus(
                             episodeCount = totalEpisodeCount,
@@ -245,7 +242,7 @@ private fun FollowedShowItem(
                     )
                 }
 
-                Spacer(Modifier.preferredHeight(8.dp))
+                Spacer(Modifier.height(8.dp))
             }
 
             Divider()
@@ -273,7 +270,7 @@ private fun FollowedAppBar(
         Row(
             modifier = Modifier
                 .statusBarsPadding()
-                .preferredHeight(56.dp)
+                .height(56.dp)
                 .padding(start = 16.dp, end = 4.dp)
         ) {
             Text(
@@ -284,7 +281,7 @@ private fun FollowedAppBar(
 
             Spacer(Modifier.weight(1f))
 
-            Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 RefreshButton(
                     onClick = onRefreshActionClick,
                     refreshing = refreshing,
