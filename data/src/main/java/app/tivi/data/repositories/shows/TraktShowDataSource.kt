@@ -49,7 +49,7 @@ class TraktShowDataSource @Inject constructor(
                 1
             )
                 .execute()
-                .toResult { it[0].show?.ids?.trakt }
+                .toResult { it.getOrNull(0)?.show?.ids?.trakt }
             if (response is Success) {
                 traktId = response.get()
             } else if (response is ErrorResult) {
