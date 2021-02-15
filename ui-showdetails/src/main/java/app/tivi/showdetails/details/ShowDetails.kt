@@ -105,6 +105,7 @@ import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.SimpleFlowRow
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.itemSpacer
@@ -777,12 +778,11 @@ private fun NextEpisodeToWatch(
 }
 
 @Composable
-private fun InfoPanels(
-    show: TiviShow,
-    modifier: Modifier = Modifier,
-) {
-    @Suppress("DEPRECATION") // TODO: migrate from FlowRow
-    Column(modifier) {
+private fun InfoPanels(show: TiviShow) {
+    SimpleFlowRow(
+        mainAxisSpacing = 8.dp,
+        crossAxisSpacing = 8.dp,
+    ) {
         if (show.traktRating != null) {
             TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
         }

@@ -18,6 +18,7 @@ package app.tivi.account
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,6 +51,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.SimpleFlowRow
 import app.tivi.common.compose.foregroundColor
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
@@ -80,8 +82,11 @@ fun AccountUi(
                     .wrapContentSize(Alignment.CenterEnd)
                     .align(Alignment.End)
             ) {
-                // TODO: Migrate away from FlowRow
-                Row {
+                SimpleFlowRow(
+                    mainAxisArrangement = Arrangement.End,
+                    mainAxisSpacing = 8.dp,
+                    crossAxisSpacing = 4.dp,
+                ) {
                     if (viewState.authState == TraktAuthState.LOGGED_OUT) {
                         OutlinedButton(onClick = { actioner(Login) }) {
                             Text(text = stringResource(R.string.login))
