@@ -20,6 +20,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
@@ -38,8 +40,8 @@ fun SearchTextField(
     onValueChange: (TextFieldValue) -> Unit,
     hint: String,
     modifier: Modifier = Modifier,
-//    imeAction: ImeAction = ImeAction.Default,
-//    onImeActionPerformed: (ImeAction) -> Unit = { _, _ -> },
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions(),
 ) {
     OutlinedTextField(
         value = value,
@@ -61,10 +63,8 @@ fun SearchTextField(
             }
         },
         placeholder = { Text(text = hint) },
-//        keyboardOptions = KeyboardOptions(
-//            imeAction = imeAction
-//        ),
-//        onImeActionPerformed = onImeActionPerformed,
-        modifier = modifier
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        modifier = modifier,
     )
 }

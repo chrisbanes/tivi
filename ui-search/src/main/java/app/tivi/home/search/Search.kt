@@ -33,6 +33,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
@@ -49,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -89,13 +92,9 @@ fun Search(
                     value = searchQuery,
                     onValueChange = { value ->
                         searchQuery = value
-                        actioner(SearchAction.Search(it.text))
+                        actioner(SearchAction.Search(value.text))
                     },
                     hint = stringResource(R.string.search_hint),
-//                    imeAction = ImeAction.Search,
-//                    onImeActionPerformed = { _, keyboardController ->
-//                        keyboardController?.hideSoftwareKeyboard()
-//                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
