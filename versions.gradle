@@ -83,7 +83,8 @@ libs.AndroidX = [
 ]
 
 libs.AndroidX.Navigation = [
-    fragment: "androidx.navigation:navigation-fragment-ktx:2.3.4"
+    fragment: "androidx.navigation:navigation-fragment-ktx:2.3.4",
+    compose: "androidx.navigation:navigation-compose:1.0.0-alpha09",
 ]
 
 libs.AndroidX.Activity = [
@@ -144,6 +145,7 @@ libs.AndroidX.Compose = [
     animation: "androidx.compose.animation:animation:$versions.compose",
     tooling: "androidx.compose.ui:ui-tooling:$versions.compose",
     test: "androidx.compose.ui:ui-test-junit4:$versions.compose",
+    viewbinding: "androidx.compose.ui:ui-viewbinding:$versions.compose"
 ]
 
 versions.androidxhilt = "1.0.0-beta01"

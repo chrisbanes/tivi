@@ -17,6 +17,8 @@
 package app.tivi.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,18 +32,71 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.rememberNavController
 import app.tivi.R
+import app.tivi.home.discover.DiscoverFragmentWrapper
+import app.tivi.home.followed.FollowedFragmentWrapper
+import app.tivi.home.search.SearchFragmentWrapper
+import app.tivi.home.watched.WatchedFragmentWrapper
 import com.google.accompanist.insets.navigationBarsPadding
 
-internal enum class HomeNavigation {
-    Discover,
-    Following,
-    Watched,
-    Search,
+internal enum class HomeNavigation(val route: String) {
+    Discover("discover"),
+    Following("following"),
+    Watched("watched"),
+    Search("search"),
+}
+
+@Composable
+internal fun Home() {
+    var currentSelectedItem by remember { mutableStateOf(HomeNavigation.Discover) }
+
+    Column {
+        val navController = rememberNavController()
+
+        Box(Modifier.fillMaxWidth().weight(1f)) {
+            NavHost(
+                navController = navController,
+                startDestination = HomeNavigation.Discover.route
+            ) {
+                composable(HomeNavigation.Discover.route) {
+                    DiscoverFragmentWrapper()
+                }
+                composable(HomeNavigation.Following.route) {
+                    FollowedFragmentWrapper()
+                }
+                composable(HomeNavigation.Watched.route) {
+                    WatchedFragmentWrapper()
+                }
+                composable(HomeNavigation.Search.route) {
+                    SearchFragmentWrapper()
+                }
+            }
+        }
+
+        HomeBottomNavigation(
+            selectedNavigation = currentSelectedItem,
+            onNavigationSelected = { selected ->
+                currentSelectedItem = selected
+                navController.navigate(selected.route) {
+                    launchSingleTop = true
+                    // TODO: popUpTo()
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }
 
 @Composable
