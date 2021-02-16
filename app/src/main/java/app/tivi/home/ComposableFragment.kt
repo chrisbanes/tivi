@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.node.Ref
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
@@ -30,22 +29,28 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 
+/**
+ * Allows easy hosting of [Fragment] in Compose.
+ *
+ * @param fragmentKey A unique key for the current fragment.
+ * @param enterTransition The transition animation to use when adding the fragment.
+ * @param exitTransition The transition animation to use when removing the fragment.
+ * @param createFragment Block used for creating the fragment.
+ */
 @Composable
 fun ComposableFragment(
-    fragmentKey: String,
+    fragmentKey: Any,
     modifier: Modifier = Modifier,
     enterTransition: Int = FragmentTransaction.TRANSIT_FRAGMENT_FADE,
     exitTransition: Int = FragmentTransaction.TRANSIT_FRAGMENT_FADE,
     createFragment: () -> Fragment,
 ) {
-    val root = remember { Ref<View>() }
+    val containerId = remember { View.generateViewId() }
     AndroidView<View>(
         factory = ::FragmentContainerView,
-        modifier = modifier
-    ) { view ->
-        view.id = View.generateViewId()
-        root.value = view
-    }
+        modifier = modifier,
+        update = { it.id = containerId }
+    )
 
     // Get the Activity's FragmentManager
     val fragmentManager = (LocalContext.current as FragmentActivity).supportFragmentManager
@@ -56,7 +61,7 @@ fun ComposableFragment(
         // And add it to our container
         fragmentManager.commit {
             setTransition(enterTransition)
-            add(root.value!!.id, fragment)
+            add(containerId, fragment)
         }
 
         onDispose {
