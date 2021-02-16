@@ -109,7 +109,6 @@ import app.tivi.common.compose.SimpleFlowRow
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.itemSpacer
-import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -148,7 +147,7 @@ fun ShowDetails(
     LogCompositions("ShowDetails")
 
     val listState = rememberLazyListState()
-    var backdropHeight by rememberMutableState { 0 }
+    var backdropHeight by remember { mutableStateOf(0) }
 
     Surface(Modifier.fillMaxSize()) {
         ShowDetailsScrollingContent(
@@ -950,7 +949,7 @@ private fun SeasonRow(
             }
         }
 
-        var showMenu by rememberMutableState { false }
+        var showMenu by remember { mutableStateOf(false) }
 
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             IconButton(onClick = { showMenu = true }) {

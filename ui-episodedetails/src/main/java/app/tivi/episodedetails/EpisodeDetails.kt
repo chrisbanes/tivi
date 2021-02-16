@@ -61,6 +61,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -87,7 +88,6 @@ import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.onPositionInParentChanged
-import app.tivi.common.compose.rememberMutableState
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -161,7 +161,7 @@ fun EpisodeDetails(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         if (watches.isNotEmpty()) {
-                            var openDialog by rememberMutableState { false }
+                            var openDialog by remember { mutableStateOf(false) }
 
                             EpisodeWatchesHeader(
                                 onSweepWatchesClick = { openDialog = true }
@@ -432,7 +432,7 @@ private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
     wouldCompleteOnRelease: Boolean = false
 ) {
-    var iconCenter by rememberMutableState { Offset(0f, 0f) }
+    var iconCenter by remember { mutableStateOf(Offset(0f, 0f)) }
     val maxRadius = hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
 
     val secondary = MaterialTheme.colors.error.copy(alpha = 0.5f)

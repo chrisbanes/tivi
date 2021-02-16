@@ -17,22 +17,17 @@
 package app.tivi.common.compose
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.LayoutModifier
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.MeasureResult
-import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
-import kotlin.math.roundToInt
 
 inline val LayoutCoordinates.positionInParent: Offset
     get() = parentCoordinates?.localPositionOf(this, Offset.Zero) ?: Offset.Zero
@@ -43,7 +38,7 @@ inline val LayoutCoordinates.boundsInParent: Rect
 fun Modifier.onPositionInParentChanged(
     onChange: (LayoutCoordinates) -> Unit
 ) = composed {
-    var lastPosition by rememberMutableState<Offset?> { null }
+    var lastPosition by remember { mutableStateOf(Offset.Zero) }
     Modifier.onGloballyPositioned { coordinates ->
         if (coordinates.positionInParent != lastPosition) {
             lastPosition = coordinates.positionInParent
@@ -55,28 +50,11 @@ fun Modifier.onPositionInParentChanged(
 fun Modifier.onPositionInRootChanged(
     onChange: (LayoutCoordinates) -> Unit
 ) = composed {
-    var lastPosition by rememberMutableState<Offset?> { null }
+    var lastPosition by remember { mutableStateOf(Offset.Zero) }
     Modifier.onGloballyPositioned { coordinates ->
         if (coordinates.positionInRoot() != lastPosition) {
             lastPosition = coordinates.positionInRoot()
             onChange(coordinates)
-        }
-    }
-}
-
-fun Modifier.offset(getOffset: (IntSize) -> Offset) = then(OffsetModifier(getOffset))
-
-private data class OffsetModifier(
-    private val getOffset: (IntSize) -> Offset
-) : LayoutModifier {
-    override fun MeasureScope.measure(
-        measurable: Measurable,
-        constraints: Constraints
-    ): MeasureResult {
-        val placeable = measurable.measure(constraints)
-        return layout(placeable.width, placeable.height) {
-            val offset = getOffset(IntSize(placeable.width, placeable.height))
-            placeable.place(offset.x.roundToInt(), offset.y.roundToInt())
         }
     }
 }

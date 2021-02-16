@@ -43,6 +43,8 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,7 +60,6 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.itemSpacer
-import app.tivi.common.compose.rememberMutableState
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -75,7 +76,7 @@ fun Discover(
 ) {
     Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
-            var appBarHeight by rememberMutableState { 0 }
+            var appBarHeight by remember { mutableStateOf(0) }
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {

@@ -40,6 +40,8 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +56,6 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.paging.LazyPagingItems
-import app.tivi.common.compose.rememberMutableState
 import app.tivi.data.resultentities.PopularEntryWithShow
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
@@ -65,7 +66,7 @@ fun Popular(
 ) {
     Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
-            var appBarHeight by rememberMutableState { 0 }
+            var appBarHeight by remember { mutableStateOf(0) }
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {

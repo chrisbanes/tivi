@@ -61,7 +61,6 @@ import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
 import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.itemSpacer
-import app.tivi.common.compose.rememberMutableState
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
@@ -79,7 +78,7 @@ fun Followed(
 ) {
     Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
-            var appBarHeight by rememberMutableState { 0 }
+            var appBarHeight by remember { mutableStateOf(0) }
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
