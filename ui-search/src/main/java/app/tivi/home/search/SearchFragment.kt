@@ -21,17 +21,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import app.tivi.common.compose.FragmentAwareAndroidView
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
@@ -42,21 +39,8 @@ import com.google.accompanist.insets.ViewWindowInsetObserver
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-@Composable
-fun SearchFragmentWrapper(
-    modifier: Modifier = Modifier
-) {
-    FragmentAwareAndroidView(
-        factory = { context ->
-            LayoutInflater.from(context).inflate(R.layout.fragment_search, null, false)
-        },
-        fragmentContainerId = R.id.fragment_search,
-        modifier = modifier,
-    )
-}
-
 @AndroidEntryPoint
-internal class SearchFragment : Fragment() {
+class SearchFragment : Fragment() {
     @Inject lateinit var preferences: TiviPreferences
 
     private val viewModel: SearchViewModel by viewModels()

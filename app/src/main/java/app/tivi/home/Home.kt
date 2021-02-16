@@ -43,12 +43,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
+import androidx.navigation.compose.popUpTo
 import androidx.navigation.compose.rememberNavController
 import app.tivi.R
-import app.tivi.home.discover.DiscoverFragmentWrapper
-import app.tivi.home.followed.FollowedFragmentWrapper
-import app.tivi.home.search.SearchFragmentWrapper
-import app.tivi.home.watched.WatchedFragmentWrapper
+import app.tivi.home.discover.DiscoverFragment
+import app.tivi.home.followed.FollowedFragment
+import app.tivi.home.search.SearchFragment
+import app.tivi.home.watched.WatchedFragment
 import com.google.accompanist.insets.navigationBarsPadding
 
 internal enum class HomeNavigation(val route: String) {
@@ -60,9 +61,8 @@ internal enum class HomeNavigation(val route: String) {
 
 @Composable
 internal fun Home() {
-    var currentSelectedItem by remember { mutableStateOf(HomeNavigation.Discover) }
-
     Column {
+        var currentSelectedItem by remember { mutableStateOf(HomeNavigation.Discover) }
         val navController = rememberNavController()
 
         Box(Modifier.fillMaxWidth().weight(1f)) {
@@ -71,16 +71,28 @@ internal fun Home() {
                 startDestination = HomeNavigation.Discover.route
             ) {
                 composable(HomeNavigation.Discover.route) {
-                    DiscoverFragmentWrapper()
+                    ComposableFragment(
+                        fragmentKey = HomeNavigation.Discover.route,
+                        createFragment = ::DiscoverFragment
+                    )
                 }
                 composable(HomeNavigation.Following.route) {
-                    FollowedFragmentWrapper()
+                    ComposableFragment(
+                        fragmentKey = HomeNavigation.Following.route,
+                        createFragment = ::FollowedFragment
+                    )
                 }
                 composable(HomeNavigation.Watched.route) {
-                    WatchedFragmentWrapper()
+                    ComposableFragment(
+                        fragmentKey = HomeNavigation.Watched.route,
+                        createFragment = ::WatchedFragment
+                    )
                 }
                 composable(HomeNavigation.Search.route) {
-                    SearchFragmentWrapper()
+                    ComposableFragment(
+                        fragmentKey = HomeNavigation.Search.route,
+                        createFragment = ::SearchFragment
+                    )
                 }
             }
         }
@@ -91,7 +103,9 @@ internal fun Home() {
                 currentSelectedItem = selected
                 navController.navigate(selected.route) {
                     launchSingleTop = true
-                    // TODO: popUpTo()
+                    popUpTo(HomeNavigation.Discover.route) {
+                        inclusive = false
+                    }
                 }
             },
             modifier = Modifier.fillMaxWidth()

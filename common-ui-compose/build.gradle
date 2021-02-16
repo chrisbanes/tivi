@@ -49,7 +49,6 @@ dependencies {
     api project(':common-ui-view')
 
     implementation Libs.AndroidX.coreKtx
-    implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Lifecycle.livedata
 
     implementation Libs.AndroidX.Compose.runtime
@@ -60,7 +59,6 @@ dependencies {
     implementation Libs.AndroidX.Compose.animation
     implementation Libs.AndroidX.Compose.tooling
     implementation Libs.AndroidX.Compose.livedata
-    implementation Libs.AndroidX.Compose.viewbinding
 
     implementation Libs.AndroidX.Paging.runtime
 
