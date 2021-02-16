@@ -23,6 +23,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -37,8 +39,8 @@ fun ExpandingText(
     collapsedMaxLines: Int = 4,
     expandedMaxLines: Int = Int.MAX_VALUE,
 ) {
-    var canTextExpand by rememberMutableStateFor(text) { true }
-    var expanded by rememberMutableState { false }
+    var canTextExpand by remember(text) { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(false) }
 
     Text(
         text = text,
@@ -50,7 +52,7 @@ fun ExpandingText(
                 enabled = expandable && canTextExpand,
                 onClick = { expanded = !expanded }
             )
-            .animateContentSize(animSpec = spring())
+            .animateContentSize(animationSpec = spring())
             .then(modifier),
         onTextLayout = {
             if (!expanded) {

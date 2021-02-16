@@ -21,7 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -29,14 +29,14 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import app.tivi.common.compose.AmbientTiviDateFormatter
+import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.extensions.DefaultNavOptions
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import javax.inject.Inject
 
@@ -57,13 +57,13 @@ class DiscoverFragment : Fragment() {
 
         // We use ViewWindowInsetObserver rather than ProvideWindowInsets
         // See: https://github.com/chrisbanes/accompanist/issues/155
-        val windowInsets = ViewWindowInsetObserver(this).start()
+        val windowInsets = ViewWindowInsetObserver(this).start(consumeWindowInsets = false)
 
         setContent {
-            Providers(
-                AmbientTiviDateFormatter provides tiviDateFormatter,
-                AmbientDiscoverTextCreator provides textCreator,
-                AmbientWindowInsets provides windowInsets,
+            CompositionLocalProvider(
+                LocalTiviDateFormatter provides tiviDateFormatter,
+                LocalDiscoverTextCreator provides textCreator,
+                LocalWindowInsets provides windowInsets,
             ) {
                 TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     val viewState by viewModel.liveData.observeAsState()

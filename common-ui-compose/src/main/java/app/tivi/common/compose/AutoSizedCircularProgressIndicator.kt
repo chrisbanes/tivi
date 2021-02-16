@@ -25,7 +25,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
@@ -37,7 +37,7 @@ fun AutoSizedCircularProgressIndicator(
     color: Color = MaterialTheme.colors.primary
 ) {
     BoxWithConstraints(modifier) {
-        val diameter = with(AmbientDensity.current) {
+        val diameter = with(LocalDensity.current) {
             // We need to minus the padding added within CircularProgressIndicator
             min(constraints.maxWidth.toDp(), constraints.maxHeight.toDp()) - InternalPadding
         }

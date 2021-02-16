@@ -28,27 +28,29 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,7 +60,6 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.itemSpacer
-import app.tivi.common.compose.rememberMutableState
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -75,12 +76,12 @@ fun Discover(
 ) {
     Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
-            var appBarHeight by rememberMutableState { 0 }
+            var appBarHeight by remember { mutableStateOf(0) }
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
-                    val height = with(AmbientDensity.current) { appBarHeight.toDp() }
-                    Spacer(Modifier.preferredHeight(height))
+                    val height = with(LocalDensity.current) { appBarHeight.toDp() }
+                    Spacer(Modifier.height(height))
                 }
 
                 itemSpacer(16.dp)
@@ -170,22 +171,22 @@ private fun NextEpisodeToWatch(
                 PosterCard(
                     show = show,
                     poster = poster,
-                    modifier = Modifier.preferredWidth(64.dp).aspectRatio(2 / 3f)
+                    modifier = Modifier.width(64.dp).aspectRatio(2 / 3f)
                 )
 
-                Spacer(Modifier.preferredWidth(16.dp))
+                Spacer(Modifier.width(16.dp))
             }
 
             Column(Modifier.align(Alignment.CenterVertically)) {
-                val textCreator = AmbientDiscoverTextCreator.current
-                Providers(AmbientContentAlpha provides ContentAlpha.disabled) {
+                val textCreator = LocalDiscoverTextCreator.current
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                     Text(
                         text = textCreator.seasonEpisodeTitleText(season, episode),
                         style = MaterialTheme.typography.caption
                     )
                 }
 
-                Spacer(Modifier.preferredHeight(4.dp))
+                Spacer(Modifier.height(4.dp))
 
                 Text(
                     text = episode.title
@@ -208,7 +209,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
 ) {
     Column(modifier) {
         if (refreshing || items.isNotEmpty()) {
-            Spacer(Modifier.preferredHeight(16.dp))
+            Spacer(Modifier.height(16.dp))
 
             Header(
                 title = title,
@@ -230,7 +231,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
             EntryShowCarousel(
                 items = items,
                 onItemClick = onItemClick,
-                modifier = Modifier.preferredHeight(192.dp).fillMaxWidth()
+                modifier = Modifier.height(192.dp).fillMaxWidth()
             )
         }
         // TODO empty state
@@ -270,7 +271,7 @@ private fun Header(
     content: @Composable RowScope.() -> Unit = {}
 ) {
     Row(modifier) {
-        Spacer(Modifier.preferredWidth(16.dp))
+        Spacer(Modifier.width(16.dp))
 
         Text(
             text = title,
@@ -285,13 +286,13 @@ private fun Header(
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(
                 color = MaterialTheme.colors.secondary,
-                modifier = Modifier.padding(8.dp).preferredSize(16.dp)
+                modifier = Modifier.padding(8.dp).size(16.dp)
             )
         }
 
         content()
 
-        Spacer(Modifier.preferredWidth(16.dp))
+        Spacer(Modifier.width(16.dp))
     }
 }
 
@@ -315,7 +316,7 @@ private fun DiscoverAppBar(
         Row(
             modifier = Modifier
                 .statusBarsPadding()
-                .preferredHeight(56.dp)
+                .height(56.dp)
                 .padding(start = 16.dp, end = 4.dp)
         ) {
             Text(
@@ -326,7 +327,7 @@ private fun DiscoverAppBar(
 
             Spacer(Modifier.weight(1f))
 
-            Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 RefreshButton(
                     onClick = onRefreshActionClick,
                     refreshing = refreshing,

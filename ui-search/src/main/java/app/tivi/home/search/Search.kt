@@ -28,27 +28,27 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.savedinstancestate.savedInstanceState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -72,7 +72,7 @@ fun Search(
             SearchList(
                 results = state.searchResults,
                 contentPadding = PaddingValues(
-                    top = with(AmbientDensity.current) { searchBarHeight.value.toDp() }
+                    top = with(LocalDensity.current) { searchBarHeight.value.toDp() }
                 ),
                 onShowClicked = { actioner(SearchAction.OpenShowDetails(it.id)) }
             )
@@ -84,20 +84,14 @@ fun Search(
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
             ) {
-                val searchQuery = savedInstanceState(saver = TextFieldValue.Saver) {
-                    TextFieldValue(state.query)
-                }
+                var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
                 SearchTextField(
-                    value = searchQuery.value,
-                    onValueChange = {
-                        searchQuery.value = it
-                        actioner(SearchAction.Search(it.text))
+                    value = searchQuery,
+                    onValueChange = { value ->
+                        searchQuery = value
+                        actioner(SearchAction.Search(value.text))
                     },
                     hint = stringResource(R.string.search_hint),
-                    imeAction = ImeAction.Search,
-                    onImeActionPerformed = { _, keyboardController ->
-                        keyboardController?.hideSoftwareKeyboard()
-                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
@@ -138,11 +132,11 @@ private fun SearchRow(
             show = show,
             poster = posterImage,
             modifier = Modifier
-                .preferredHeight(80.dp)
+                .height(80.dp)
                 .aspectRatio(2 / 3f)
         )
 
-        Spacer(Modifier.preferredWidth(16.dp))
+        Spacer(Modifier.width(16.dp))
 
         Column(Modifier.weight(1f).align(Alignment.CenterVertically)) {
             Text(
@@ -151,7 +145,7 @@ private fun SearchRow(
             )
 
             if (show.summary?.isNotEmpty() == true) {
-                Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                     Text(
                         text = show.summary!!,
                         style = MaterialTheme.typography.caption,

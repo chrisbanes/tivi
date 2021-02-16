@@ -16,6 +16,7 @@
 
 package app.tivi.common.compose
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.IconButton
@@ -38,35 +39,36 @@ fun SortMenuPopup(
     currentSortOption: SortOption? = null,
     content: @Composable () -> Unit,
 ) {
-    var sortPopupOpen by remember { mutableStateOf(false) }
-    DropdownMenu(
-        toggle = {
-            IconButton(
-                onClick = { sortPopupOpen = true },
-                content = content
-            )
-        },
-        toggleModifier = modifier,
-        expanded = sortPopupOpen,
-        onDismissRequest = { sortPopupOpen = false },
-    ) {
-        sortOptions.forEach { sort ->
-            DropdownMenuItem(
-                onClick = {
-                    onSortSelected(sort)
-                    // Dismiss the popup
-                    sortPopupOpen = false
+    Box(modifier) {
+        var sortPopupOpen by remember { mutableStateOf(false) }
+
+        IconButton(
+            onClick = { sortPopupOpen = true },
+            content = content
+        )
+
+        DropdownMenu(
+            expanded = sortPopupOpen,
+            onDismissRequest = { sortPopupOpen = false },
+        ) {
+            for (sort in sortOptions) {
+                DropdownMenuItem(
+                    onClick = {
+                        onSortSelected(sort)
+                        // Dismiss the popup
+                        sortPopupOpen = false
+                    }
+                ) {
+                    Text(
+                        text = when (sort) {
+                            SortOption.SUPER_SORT -> stringResource(R.string.popup_sort_super)
+                            SortOption.ALPHABETICAL -> stringResource(R.string.popup_sort_alpha)
+                            SortOption.LAST_WATCHED -> stringResource(R.string.popup_sort_last_watched)
+                            SortOption.DATE_ADDED -> stringResource(R.string.popup_sort_date_followed)
+                        },
+                        fontWeight = if (sort == currentSortOption) FontWeight.Bold else null
+                    )
                 }
-            ) {
-                Text(
-                    text = when (sort) {
-                        SortOption.SUPER_SORT -> stringResource(R.string.popup_sort_super)
-                        SortOption.ALPHABETICAL -> stringResource(R.string.popup_sort_alpha)
-                        SortOption.LAST_WATCHED -> stringResource(R.string.popup_sort_last_watched)
-                        SortOption.DATE_ADDED -> stringResource(R.string.popup_sort_date_followed)
-                    },
-                    fontWeight = if (sort == currentSortOption) FontWeight.Bold else null
-                )
             }
         }
     }

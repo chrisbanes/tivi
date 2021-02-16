@@ -8,6 +8,7 @@ captures
 
 # IntelliJ .idea folder
 .idea/workspace.xml
+.idea/misc.xml
 .idea/libraries
 .idea/caches
 .idea/navEditor.xml

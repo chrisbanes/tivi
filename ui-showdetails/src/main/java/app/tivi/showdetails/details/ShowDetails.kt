@@ -25,35 +25,32 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayout
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.SizeMode
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredHeightIn
-import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.foundation.layout.preferredSizeIn
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
@@ -62,6 +59,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
@@ -76,16 +74,15 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Providers
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -95,6 +92,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -105,14 +103,12 @@ import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
-import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.SimpleFlowRow
 import app.tivi.common.compose.SwipeDismissSnackbar
-import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.itemSpacer
-import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -133,12 +129,14 @@ import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import dev.chrisbanes.accompanist.coil.CoilImage
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsHeight
 import org.threeten.bp.OffsetDateTime
 
-val AmbientShowDetailsTextCreator = staticAmbientOf<ShowDetailsTextCreator>()
+val LocalShowDetailsTextCreator = staticCompositionLocalOf<ShowDetailsTextCreator> {
+    error("ShowDetailsTextCreator not provided")
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -149,7 +147,7 @@ fun ShowDetails(
     LogCompositions("ShowDetails")
 
     val listState = rememberLazyListState()
-    var backdropHeight by rememberMutableState { 0 }
+    var backdropHeight by remember { mutableStateOf(0) }
 
     Surface(Modifier.fillMaxSize()) {
         ShowDetailsScrollingContent(
@@ -169,7 +167,7 @@ fun ShowDetails(
         )
     }
 
-    val trigger = backdropHeight - AmbientWindowInsets.current.statusBars.top
+    val trigger = backdropHeight - LocalWindowInsets.current.statusBars.top
 
     OverlaidStatusBarAppBar(
         showAppBar = {
@@ -340,7 +338,7 @@ private fun ShowDetailsScrollingContent(
                     actioner = actioner,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .preferredHeight(112.dp)
+                        .height(112.dp)
                 )
             }
         }
@@ -387,7 +385,7 @@ private fun PosterInfoRow(
 ) {
     Row(modifier) {
         if (posterImage != null) {
-            Spacer(Modifier.preferredWidth(16.dp))
+            Spacer(Modifier.width(16.dp))
 
             CoilImage(
                 data = posterImage,
@@ -401,13 +399,13 @@ private fun PosterInfoRow(
             )
         }
 
-        Spacer(modifier = Modifier.preferredWidth(16.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         Box(Modifier.weight(1f, fill = false)) {
             InfoPanels(show)
         }
 
-        Spacer(modifier = Modifier.preferredWidth(16.dp))
+        Spacer(modifier = Modifier.width(16.dp))
     }
 }
 
@@ -450,7 +448,7 @@ private fun OverlaidStatusBarAppBar(
                     alpha = transition.alpha
                     translationY = transition.offset
                 },
-            content = emptyContent()
+            content = {}
         )
 
         if (showAppBar()) {
@@ -495,7 +493,7 @@ private fun updateOverlaidStatusBarAppBarTransition(
             }
         }
     ) { show ->
-        if (show) 0f else AmbientWindowInsets.current.statusBars.top.toFloat()
+        if (show) 0f else LocalWindowInsets.current.statusBars.top.toFloat()
     }
 
     val props = remember { OverlaidStatusBarAppBarTransition() }
@@ -528,7 +526,7 @@ private fun NetworkInfoPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
         if (networkLogoPath != null) {
             val tmdbImage = remember(networkLogoPath) {
@@ -547,7 +545,7 @@ private fun NetworkInfoPanel(
                     isSystemInDarkTheme() -> ColorFilter.tint(foregroundColor())
                     else -> null
                 },
-                modifier = Modifier.preferredSizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
+                modifier = Modifier.sizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
             )
         } else {
             Text(
@@ -569,7 +567,7 @@ private fun RuntimeInfoPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
         Text(
             text = stringResource(R.string.minutes_format, runtime),
@@ -589,9 +587,9 @@ private fun ShowStatusPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
-        val textCreator = AmbientShowDetailsTextCreator.current
+        val textCreator = LocalShowDetailsTextCreator.current
         Text(
             text = textCreator.showStatusText(showStatus).toString(),
             style = MaterialTheme.typography.body2
@@ -610,11 +608,11 @@ private fun AirsInfoPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
-        val textCreator = AmbientShowDetailsTextCreator.current
+        val textCreator = LocalShowDetailsTextCreator.current
         Text(
-            text = textCreator.airsText(show)?.toString() ?: "No air date",
+            text = textCreator.airsText(show).toString(),
             style = MaterialTheme.typography.body2
         )
     }
@@ -631,7 +629,7 @@ private fun CertificateInfoPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
         Text(
             text = certification,
@@ -659,17 +657,18 @@ private fun TraktRatingInfoPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
         Row {
-            VectorImage(
-                vector = Icons.Default.Star,
+            Image(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
                 contentScale = ContentScale.Fit,
-                tintColor = MaterialTheme.colors.secondaryVariant,
-                modifier = Modifier.preferredSize(32.dp)
+                colorFilter = ColorFilter.tint(MaterialTheme.colors.secondaryVariant),
+                modifier = Modifier.size(32.dp),
             )
 
-            Spacer(Modifier.preferredWidth(4.dp))
+            Spacer(Modifier.width(4.dp))
 
             Column {
                 Text(
@@ -713,7 +712,7 @@ private fun Genres(genres: List<Genre>) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        val textCreator = AmbientShowDetailsTextCreator.current
+        val textCreator = LocalShowDetailsTextCreator.current
         Text(
             textCreator.genreString(genres).toString(),
             style = MaterialTheme.typography.body2
@@ -756,19 +755,19 @@ private fun NextEpisodeToWatch(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .preferredHeightIn(min = 48.dp)
+            .heightIn(min = 48.dp)
             .wrapContentHeight()
             .clickable(onClick = onClick)
             .padding(16.dp, 8.dp)
     ) {
-        val textCreator = AmbientShowDetailsTextCreator.current
+        val textCreator = LocalShowDetailsTextCreator.current
 
         Text(
             textCreator.seasonEpisodeTitleText(season, episode),
             style = MaterialTheme.typography.caption
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
         Text(
             episode.title ?: stringResource(R.string.episode_title_fallback, episode.number!!),
@@ -777,14 +776,11 @@ private fun NextEpisodeToWatch(
     }
 }
 
-@OptIn(ExperimentalLayout::class)
 @Composable
 private fun InfoPanels(show: TiviShow) {
-    @Suppress("DEPRECATION") // TODO: migrate from FlowRow
-    FlowRow(
-        mainAxisSize = SizeMode.Expand,
+    SimpleFlowRow(
         mainAxisSpacing = 8.dp,
-        crossAxisSpacing = 8.dp
+        crossAxisSpacing = 8.dp,
     ) {
         if (show.traktRating != null) {
             TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
@@ -825,9 +821,9 @@ private fun WatchStats(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Spacer(modifier = Modifier.preferredHeight(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        val textCreator = AmbientShowDetailsTextCreator.current
+        val textCreator = LocalShowDetailsTextCreator.current
 
         // TODO: Do something better with CharSequences containing markup/spans
         Text(
@@ -908,7 +904,7 @@ private fun SeasonRow(
 ) {
     Row(
         modifier = modifier
-            .preferredHeightIn(min = 48.dp)
+            .heightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
     ) {
@@ -917,20 +913,20 @@ private fun SeasonRow(
                 .weight(1f)
                 .align(Alignment.CenterVertically)
         ) {
-            val textCreator = AmbientShowDetailsTextCreator.current
+            val textCreator = LocalShowDetailsTextCreator.current
 
             val contentAlpha = when {
                 season.ignored -> ContentAlpha.disabled
                 else -> ContentAlpha.high
             }
-            Providers(AmbientContentAlpha provides contentAlpha) {
+            CompositionLocalProvider(LocalContentAlpha provides contentAlpha) {
                 Text(
                     text = season.title
                         ?: stringResource(R.string.season_title_fallback, season.number!!),
                     style = MaterialTheme.typography.body1
                 )
 
-                Spacer(Modifier.preferredHeight(4.dp))
+                Spacer(Modifier.height(4.dp))
 
                 Text(
                     text = textCreator.seasonSummaryText(
@@ -944,7 +940,7 @@ private fun SeasonRow(
             }
 
             if (!season.ignored && episodesAired > 0) {
-                Spacer(Modifier.preferredHeight(4.dp))
+                Spacer(Modifier.height(4.dp))
 
                 LinearProgressIndicator(
                     episodesWatched / episodesAired.toFloat(),
@@ -953,19 +949,18 @@ private fun SeasonRow(
             }
         }
 
-        var showMenu by rememberMutableState { false }
+        var showMenu by remember { mutableStateOf(false) }
+
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+            IconButton(onClick = { showMenu = true }) {
+                Icon(
+                    Icons.Default.MoreVert,
+                    stringResource(R.string.cd_open_overflow)
+                )
+            }
+        }
 
         DropdownMenu(
-            toggle = {
-                Providers(AmbientContentAlpha provides ContentAlpha.medium) {
-                    IconButton(onClick = { showMenu = true }) {
-                        Icon(
-                            Icons.Default.MoreVert,
-                            stringResource(R.string.cd_open_overflow)
-                        )
-                    }
-                }
-            },
             expanded = showMenu,
             onDismissRequest = { showMenu = false }
         ) {
@@ -1029,19 +1024,19 @@ private fun EpisodeWithWatchesRow(
 ) {
     Row(
         modifier = modifier
-            .preferredHeightIn(min = 48.dp)
+            .heightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            val textCreator = AmbientShowDetailsTextCreator.current
+            val textCreator = LocalShowDetailsTextCreator.current
 
             Text(
                 text = textCreator.episodeNumberText(episode).toString(),
                 style = MaterialTheme.typography.caption
             )
 
-            Spacer(Modifier.preferredHeight(2.dp))
+            Spacer(Modifier.height(2.dp))
 
             Text(
                 text = episode.title
@@ -1050,24 +1045,26 @@ private fun EpisodeWithWatchesRow(
             )
         }
 
-        Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             var needSpacer = false
             if (hasPending) {
-                IconResource(
-                    resourceId = R.drawable.ic_cloud_upload,
+                Icon(
+                    painter = painterResource(R.drawable.ic_cloud_upload),
                     contentDescription = stringResource(R.string.cd_episode_syncing),
                     modifier = Modifier.align(Alignment.CenterVertically),
                 )
                 needSpacer = true
             }
             if (isWatched) {
-                if (needSpacer) Spacer(Modifier.preferredWidth(4.dp))
+                if (needSpacer) Spacer(Modifier.width(4.dp))
 
-                IconResource(
-                    resourceId = when {
-                        onlyPendingDeletes -> R.drawable.ic_visibility_off
-                        else -> R.drawable.ic_visibility
-                    },
+                Icon(
+                    painter = painterResource(
+                        when {
+                            onlyPendingDeletes -> R.drawable.ic_visibility_off
+                            else -> R.drawable.ic_visibility
+                        }
+                    ),
                     contentDescription = when {
                         onlyPendingDeletes -> stringResource(R.string.cd_episode_deleted)
                         else -> stringResource(R.string.cd_episode_watched)
