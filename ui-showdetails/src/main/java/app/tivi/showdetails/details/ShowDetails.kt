@@ -509,9 +509,9 @@ private fun updateOverlaidStatusBarAppBarTransition(
 
 @Stable
 class OverlaidStatusBarAppBarTransition {
-    var elevation: Dp by mutableStateOf(0.dp)
-    var alpha: Float by mutableStateOf(0f)
-    var offset: Float by mutableStateOf(0f)
+    var elevation: Dp = 0.dp
+    var alpha: Float = 0f
+    var offset: Float = 0f
 }
 
 @Composable
