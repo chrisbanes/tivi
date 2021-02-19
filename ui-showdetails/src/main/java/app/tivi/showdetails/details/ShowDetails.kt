@@ -77,6 +77,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -469,9 +470,9 @@ private fun updateOverlaidStatusBarAppBarTransition(
 
     val transition = updateTransition(showAppBar)
 
-    val elevation by transition.animateDp { show -> if (show) 2.dp else 0.dp }
+    val elevation = transition.animateDp { show -> if (show) 2.dp else 0.dp }
 
-    val alpha by transition.animateFloat(
+    val alpha = transition.animateFloat(
         transitionSpec = {
             when {
                 false isTransitioningTo true -> snap()
@@ -482,7 +483,7 @@ private fun updateOverlaidStatusBarAppBarTransition(
         if (show) 1f else 0f
     }
 
-    val offset by transition.animateFloat(
+    val offset = transition.animateFloat(
         transitionSpec = {
             when {
                 false isTransitioningTo true -> spring()
@@ -496,22 +497,20 @@ private fun updateOverlaidStatusBarAppBarTransition(
         if (show) 0f else LocalWindowInsets.current.statusBars.top.toFloat()
     }
 
-    val props = remember { OverlaidStatusBarAppBarTransition() }
-
-    props.apply {
-        this.alpha = alpha
-        this.elevation = elevation
-        this.offset = offset
+    return remember(transition) {
+        OverlaidStatusBarAppBarTransition(elevation, alpha, offset)
     }
-
-    return props
 }
 
 @Stable
-class OverlaidStatusBarAppBarTransition {
-    var elevation: Dp by mutableStateOf(0.dp)
-    var alpha: Float by mutableStateOf(0f)
-    var offset: Float by mutableStateOf(0f)
+class OverlaidStatusBarAppBarTransition(
+    elevation: State<Dp>,
+    alpha: State<Float>,
+    offset: State<Float>,
+) {
+    val elevation: Dp by elevation
+    val alpha: Float by alpha
+    val offset: Float by offset
 }
 
 @Composable
