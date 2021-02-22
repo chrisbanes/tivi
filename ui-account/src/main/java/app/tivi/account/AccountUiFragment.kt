@@ -29,6 +29,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.shouldUseDarkColors
@@ -70,22 +71,29 @@ class AccountUiFragment : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = ComposeView(requireContext()).apply {
-        layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+    ): View {
+        // Workaround for https://issuetracker.google.com/180691023
+        dialog?.window?.decorView?.let { decorView ->
+            ViewTreeLifecycleOwner.set(decorView, viewLifecycleOwner)
+        }
 
-        // We use ViewWindowInsetObserver rather than ProvideWindowInsets
-        // See: https://github.com/chrisbanes/accompanist/issues/155
-        val windowInsets = ViewWindowInsetObserver(this).start(consumeWindowInsets = false)
+        return ComposeView(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
 
-        setContent {
-            CompositionLocalProvider(
-                LocalTiviDateFormatter provides tiviDateFormatter,
-                LocalWindowInsets provides windowInsets,
-            ) {
-                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
-                    val viewState by viewModel.liveData.observeAsState()
-                    if (viewState != null) {
-                        AccountUi(viewState!!, ::onAccountUiAction)
+            // We use ViewWindowInsetObserver rather than ProvideWindowInsets
+            // See: https://github.com/chrisbanes/accompanist/issues/155
+            val windowInsets = ViewWindowInsetObserver(this).start(consumeWindowInsets = false)
+
+            setContent {
+                CompositionLocalProvider(
+                    LocalTiviDateFormatter provides tiviDateFormatter,
+                    LocalWindowInsets provides windowInsets,
+                ) {
+                    TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
+                        val viewState by viewModel.liveData.observeAsState()
+                        if (viewState != null) {
+                            AccountUi(viewState!!, ::onAccountUiAction)
+                        }
                     }
                 }
             }
