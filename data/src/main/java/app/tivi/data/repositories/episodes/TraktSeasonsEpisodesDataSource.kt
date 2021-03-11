@@ -123,7 +123,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         val items = SyncItems()
         items.episodes = watches.map {
             SyncEpisode()
-                .id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))!!
+                .id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))
                 .watchedAt(it.watchedAt.withOffsetSameInstant(ZoneOffset.UTC))
         }
         return syncService.get().addItemsToWatchedHistory(items)
