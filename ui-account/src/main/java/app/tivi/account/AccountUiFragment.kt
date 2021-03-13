@@ -39,9 +39,9 @@ import app.tivi.settings.TiviPreferences
 import app.tivi.trakt.LoginTrakt
 import app.tivi.trakt.TraktAuthManager
 import app.tivi.util.TiviDateFormatter
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.ViewWindowInsetObserver
 import dagger.hilt.android.AndroidEntryPoint
-import dev.chrisbanes.accompanist.insets.LocalWindowInsets
-import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import javax.inject.Inject
 
 @AndroidEntryPoint

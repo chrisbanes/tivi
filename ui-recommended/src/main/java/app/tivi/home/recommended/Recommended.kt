@@ -57,7 +57,7 @@ import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.paging.LazyPagingItems
 import app.tivi.data.resultentities.RecommendedEntryWithShow
-import dev.chrisbanes.accompanist.insets.statusBarsPadding
+import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
 fun Recommended(

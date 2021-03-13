@@ -54,8 +54,8 @@ libs.threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.3.0"
 
 versions.accompanist = "0.6.2"
 libs.Accompanist = [
-    coil: "dev.chrisbanes.accompanist:accompanist-coil:$versions.accompanist",
-    insets: "dev.chrisbanes.accompanist:accompanist-insets:$versions.accompanist",
+    coil: "com.google.accompanist:accompanist-coil:$versions.accompanist",
+    insets: "com.google.accompanist:accompanist-insets:$versions.accompanist",
 ]
 
 libs.Google = [

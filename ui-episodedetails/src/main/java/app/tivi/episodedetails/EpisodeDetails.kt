@@ -93,10 +93,10 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
-import dev.chrisbanes.accompanist.coil.CoilImage
-import dev.chrisbanes.accompanist.insets.navigationBarsHeight
-import dev.chrisbanes.accompanist.insets.navigationBarsPadding
-import dev.chrisbanes.accompanist.insets.statusBarsPadding
+import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.statusBarsPadding
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot

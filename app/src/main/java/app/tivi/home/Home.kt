@@ -35,7 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.R
-import dev.chrisbanes.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.navigationBarsPadding
 
 internal enum class HomeNavigation {
     Discover,

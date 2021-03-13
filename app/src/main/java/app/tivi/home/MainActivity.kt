@@ -34,8 +34,8 @@ import app.tivi.databinding.ActivityMainBinding
 import app.tivi.extensions.MultipleBackStackNavigation
 import app.tivi.extensions.hideSoftInput
 import app.tivi.settings.TiviPreferences
+import com.google.accompanist.insets.ProvideWindowInsets
 import dagger.hilt.android.AndroidEntryPoint
-import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import javax.inject.Inject
 
 @AndroidEntryPoint

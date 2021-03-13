@@ -55,7 +55,7 @@ import app.tivi.common.compose.SimpleFlowRow
 import app.tivi.common.compose.foregroundColor
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import dev.chrisbanes.accompanist.coil.CoilImage
+import com.google.accompanist.coil.CoilImage
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 

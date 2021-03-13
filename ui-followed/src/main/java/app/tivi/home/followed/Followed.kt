@@ -67,8 +67,8 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
-import dev.chrisbanes.accompanist.coil.CoilImage
-import dev.chrisbanes.accompanist.insets.statusBarsPadding
+import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
 fun Followed(
