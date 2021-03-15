@@ -129,10 +129,10 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import dev.chrisbanes.accompanist.coil.CoilImage
-import dev.chrisbanes.accompanist.insets.LocalWindowInsets
-import dev.chrisbanes.accompanist.insets.navigationBarsPadding
-import dev.chrisbanes.accompanist.insets.statusBarsHeight
+import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.statusBarsHeight
 import org.threeten.bp.OffsetDateTime
 
 val LocalShowDetailsTextCreator = staticCompositionLocalOf<ShowDetailsTextCreator> {

@@ -34,9 +34,9 @@ import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.extensions.DefaultNavOptions
 import app.tivi.settings.TiviPreferences
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.ViewWindowInsetObserver
 import dagger.hilt.android.AndroidEntryPoint
-import dev.chrisbanes.accompanist.insets.LocalWindowInsets
-import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import javax.inject.Inject
 
 @AndroidEntryPoint

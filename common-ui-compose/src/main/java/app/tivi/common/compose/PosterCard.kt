@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
-import dev.chrisbanes.accompanist.coil.CoilImage
+import com.google.accompanist.coil.CoilImage
 
 @Composable
 fun PosterCard(

@@ -67,7 +67,7 @@ import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
-import dev.chrisbanes.accompanist.insets.statusBarsPadding
+import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
 fun Discover(

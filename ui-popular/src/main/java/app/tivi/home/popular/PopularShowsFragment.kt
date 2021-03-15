@@ -36,9 +36,9 @@ import app.tivi.extensions.DefaultNavOptions
 import app.tivi.home.HomeTextCreator
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.ViewWindowInsetObserver
 import dagger.hilt.android.AndroidEntryPoint
-import dev.chrisbanes.accompanist.insets.LocalWindowInsets
-import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import javax.inject.Inject
 
 @AndroidEntryPoint
