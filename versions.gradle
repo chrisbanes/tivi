@@ -30,13 +30,7 @@ libs.timber = "com.jakewharton.timber:timber:4.7.1"
 libs.tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.2.0"
 libs.traktJava = "com.uwetrottmann.trakt5:trakt-java:6.9.0"
 
-/**
- * Using Jitpack until AndroidX migration is out.
- * See https://github.com/openid/AppAuth-Android/pull/508
- *
- * https://jitpack.io/#openid/AppAuth-Android
- */
-libs.appauth = "com.github.openid:AppAuth-Android:7aa9bf3edd"
+libs.appauth = "net.openid:appauth:0.8.1"
 
 libs.junit = "junit:junit:4.13.2"
 libs.robolectric = "org.robolectric:robolectric:4.5.1"
