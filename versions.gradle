@@ -23,11 +23,11 @@ def versions = [
 ]
 ext.Versions = versions
 
-libs.androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha10"
+libs.androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha11"
 
 libs.timber = "com.jakewharton.timber:timber:4.7.1"
 
-libs.tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.2.0"
+libs.tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.3.1"
 libs.traktJava = "com.uwetrottmann.trakt5:trakt-java:6.9.0"
 
 libs.appauth = "net.openid:appauth:0.8.1"
@@ -53,10 +53,10 @@ libs.Accompanist = [
 ]
 
 libs.Google = [
-    crashlytics: "com.google.firebase:firebase-crashlytics-ktx:17.3.1",
+    crashlytics: "com.google.firebase:firebase-crashlytics-ktx:17.4.0",
     analytics: "com.google.firebase:firebase-analytics-ktx:18.0.2",
     crashlyticsGradle: "com.google.firebase:firebase-crashlytics-gradle:2.5.1",
-    gmsGoogleServices: "com.google.gms:google-services:4.3.4",
+    gmsGoogleServices: "com.google.gms:google-services:4.3.5",
 ]
 
 versions.kotlin = "1.4.31"
