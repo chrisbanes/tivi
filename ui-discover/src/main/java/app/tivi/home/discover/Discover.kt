@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.UserProfileButton
@@ -178,7 +179,7 @@ private fun NextEpisodeToWatch(
             }
 
             Column(Modifier.align(Alignment.CenterVertically)) {
-                val textCreator = LocalDiscoverTextCreator.current
+                val textCreator = LocalTiviTextCreator.current
                 CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                     Text(
                         text = textCreator.seasonEpisodeTitleText(season, episode),

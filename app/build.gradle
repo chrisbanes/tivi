@@ -204,6 +204,7 @@ dependencies {
     implementation Libs.Coroutines.android
 
     implementation Libs.Hilt.library
+    implementation Libs.AndroidX.Hilt.compose
     kapt Libs.Hilt.compiler
 
     implementation Libs.AndroidX.Hilt.work

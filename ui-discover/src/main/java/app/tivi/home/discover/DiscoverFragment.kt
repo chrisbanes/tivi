@@ -30,11 +30,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LocalTiviDateFormatter
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.extensions.DefaultNavOptions
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
+import app.tivi.util.TiviTextCreator
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.ViewWindowInsetObserver
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +45,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DiscoverFragment : Fragment() {
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
-    @Inject internal lateinit var textCreator: DiscoverTextCreator
+    @Inject internal lateinit var textCreator: TiviTextCreator
     @Inject lateinit var preferences: TiviPreferences
 
     private val viewModel: DiscoverViewModel by viewModels()
@@ -62,7 +64,7 @@ class DiscoverFragment : Fragment() {
         setContent {
             CompositionLocalProvider(
                 LocalTiviDateFormatter provides tiviDateFormatter,
-                LocalDiscoverTextCreator provides textCreator,
+                LocalTiviTextCreator provides textCreator,
                 LocalWindowInsets provides windowInsets,
             ) {
                 TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {

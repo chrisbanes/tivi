@@ -63,7 +63,6 @@ class EpisodeDetailsFragment : Fragment() {
     }
 
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
-    @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
 
     override fun onCreateView(
         inflater: LayoutInflater,

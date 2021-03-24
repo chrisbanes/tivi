@@ -46,6 +46,7 @@ dependencies {
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Navigation.fragment
+    implementation Libs.AndroidX.emoji
 
     implementation Libs.Hilt.library
 }

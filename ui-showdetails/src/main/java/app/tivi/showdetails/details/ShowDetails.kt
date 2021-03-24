@@ -83,7 +83,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -104,6 +103,7 @@ import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SimpleFlowRow
@@ -134,10 +134,6 @@ import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsHeight
 import org.threeten.bp.OffsetDateTime
-
-val LocalShowDetailsTextCreator = staticCompositionLocalOf<ShowDetailsTextCreator> {
-    error("ShowDetailsTextCreator not provided")
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -588,7 +584,7 @@ private fun ShowStatusPanel(
 
         Spacer(Modifier.height(4.dp))
 
-        val textCreator = LocalShowDetailsTextCreator.current
+        val textCreator = LocalTiviTextCreator.current
         Text(
             text = textCreator.showStatusText(showStatus).toString(),
             style = MaterialTheme.typography.body2
@@ -609,7 +605,7 @@ private fun AirsInfoPanel(
 
         Spacer(Modifier.height(4.dp))
 
-        val textCreator = LocalShowDetailsTextCreator.current
+        val textCreator = LocalTiviTextCreator.current
         Text(
             text = textCreator.airsText(show).toString(),
             style = MaterialTheme.typography.body2
@@ -711,7 +707,7 @@ private fun Genres(genres: List<Genre>) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        val textCreator = LocalShowDetailsTextCreator.current
+        val textCreator = LocalTiviTextCreator.current
         Text(
             textCreator.genreString(genres).toString(),
             style = MaterialTheme.typography.body2
@@ -759,7 +755,7 @@ private fun NextEpisodeToWatch(
             .clickable(onClick = onClick)
             .padding(16.dp, 8.dp)
     ) {
-        val textCreator = LocalShowDetailsTextCreator.current
+        val textCreator = LocalTiviTextCreator.current
 
         Text(
             textCreator.seasonEpisodeTitleText(season, episode),
@@ -822,7 +818,7 @@ private fun WatchStats(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        val textCreator = LocalShowDetailsTextCreator.current
+        val textCreator = LocalTiviTextCreator.current
 
         // TODO: Do something better with CharSequences containing markup/spans
         Text(
@@ -912,7 +908,7 @@ private fun SeasonRow(
                 .weight(1f)
                 .align(Alignment.CenterVertically)
         ) {
-            val textCreator = LocalShowDetailsTextCreator.current
+            val textCreator = LocalTiviTextCreator.current
 
             val contentAlpha = when {
                 season.ignored -> ContentAlpha.disabled
@@ -1028,7 +1024,7 @@ private fun EpisodeWithWatchesRow(
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            val textCreator = LocalShowDetailsTextCreator.current
+            val textCreator = LocalTiviTextCreator.current
 
             Text(
                 text = textCreator.episodeNumberText(episode).toString(),

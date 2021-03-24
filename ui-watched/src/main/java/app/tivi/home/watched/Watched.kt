@@ -54,8 +54,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
-import app.tivi.common.compose.LocalHomeTextCreator
 import app.tivi.common.compose.LocalTiviDateFormatter
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
@@ -175,7 +175,7 @@ private fun WatchedShowItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val textCreator = LocalHomeTextCreator.current
+    val textCreator = LocalTiviTextCreator.current
     Row(
         modifier
             .clickable(onClick = onClick)

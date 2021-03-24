@@ -152,6 +152,7 @@ versions.androidxhilt = "1.0.0-beta01"
 libs.AndroidX.Hilt = [
     work: "androidx.hilt:hilt-work:$versions.androidxhilt",
     compiler: "androidx.hilt:hilt-compiler:$versions.androidxhilt",
+    compose: "androidx.hilt:hilt-navigation-compose:1.0.0-alpha01",
 ]
 
 versions.dagger = "2.33"
