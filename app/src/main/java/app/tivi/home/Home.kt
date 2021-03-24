@@ -40,24 +40,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.popUpTo
 import androidx.navigation.compose.rememberNavController
+import app.tivi.HomeNavigation
 import app.tivi.R
-import app.tivi.home.discover.DiscoverFragment
+import app.tivi.home.discover.Discover
+import app.tivi.home.discover.DiscoverViewModel
 import app.tivi.home.followed.FollowedFragment
 import app.tivi.home.search.SearchFragment
 import app.tivi.home.watched.WatchedFragment
+import app.tivi.showdetails.details.ShowDetails
+import app.tivi.showdetails.details.ShowDetailsFragmentViewModel
 import com.google.accompanist.insets.navigationBarsPadding
-
-internal enum class HomeNavigation(val route: String) {
-    Discover("discover"),
-    Following("following"),
-    Watched("watched"),
-    Search("search"),
-}
 
 @Composable
 internal fun Home() {
@@ -65,16 +63,18 @@ internal fun Home() {
         var currentSelectedItem by remember { mutableStateOf(HomeNavigation.Discover) }
         val navController = rememberNavController()
 
-        Box(Modifier.fillMaxWidth().weight(1f)) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
             NavHost(
                 navController = navController,
                 startDestination = HomeNavigation.Discover.route
             ) {
                 composable(HomeNavigation.Discover.route) {
-                    ComposableFragment(
-                        fragmentKey = HomeNavigation.Discover.route,
-                        createFragment = ::DiscoverFragment
-                    )
+                    val viewModel: DiscoverViewModel = hiltNavGraphViewModel(it)
+                    Discover(viewModel, navController)
                 }
                 composable(HomeNavigation.Following.route) {
                     ComposableFragment(
@@ -93,6 +93,10 @@ internal fun Home() {
                         fragmentKey = HomeNavigation.Search.route,
                         createFragment = ::SearchFragment
                     )
+                }
+                composable(HomeNavigation.ShowDetails.route) {
+                    val viewModel: ShowDetailsFragmentViewModel = hiltNavGraphViewModel(it)
+                    ShowDetails(viewModel, navController)
                 }
             }
         }

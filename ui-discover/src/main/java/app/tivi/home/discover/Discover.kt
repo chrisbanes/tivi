@@ -43,6 +43,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,6 +55,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
+import app.tivi.HomeNavigation
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.LocalTiviTextCreator
@@ -69,6 +73,33 @@ import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.insets.statusBarsPadding
+
+@Composable
+fun Discover(
+    viewModel: DiscoverViewModel,
+    navController: NavController,
+) {
+    val viewState by viewModel.liveData.observeAsState()
+    viewState?.let { state ->
+        Discover(state = state) { action ->
+            when (action) {
+                LoginAction,
+                OpenUserDetails -> navController.navigate(HomeNavigation.Account.route)
+                is OpenShowDetails -> {
+                    var route = "show/${action.showId}"
+//                    if (action.episodeId != null) {
+//                        route += "?episode=${action.episodeId}"
+//                    }
+                    navController.navigate(route)
+                }
+                OpenTrendingShows -> navController.navigate(HomeNavigation.Trending.route)
+                OpenPopularShows -> navController.navigate(HomeNavigation.Popular.route)
+                OpenRecommendedShows -> navController.navigate(HomeNavigation.RecommendedShows.route)
+                else -> viewModel.submitAction(action)
+            }
+        }
+    }
+}
 
 @Composable
 fun Discover(
@@ -97,14 +128,16 @@ fun Discover(
                             poster = nextEpisodeToWatch.poster,
                             season = nextEpisodeToWatch.season,
                             episode = nextEpisodeToWatch.episode,
-                            modifier = Modifier.fillMaxWidth().clickable {
-                                actioner(
-                                    OpenShowDetails(
-                                        showId = nextEpisodeToWatch.show.id,
-                                        episodeId = nextEpisodeToWatch.episode.id
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    actioner(
+                                        OpenShowDetails(
+                                            showId = nextEpisodeToWatch.show.id,
+                                            episodeId = nextEpisodeToWatch.episode.id
+                                        )
                                     )
-                                )
-                            }
+                                }
                         )
                     }
 
@@ -172,7 +205,9 @@ private fun NextEpisodeToWatch(
                 PosterCard(
                     show = show,
                     poster = poster,
-                    modifier = Modifier.width(64.dp).aspectRatio(2 / 3f)
+                    modifier = Modifier
+                        .width(64.dp)
+                        .aspectRatio(2 / 3f)
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -232,7 +267,9 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
             EntryShowCarousel(
                 items = items,
                 onItemClick = onItemClick,
-                modifier = Modifier.height(192.dp).fillMaxWidth()
+                modifier = Modifier
+                    .height(192.dp)
+                    .fillMaxWidth()
             )
         }
         // TODO empty state
@@ -287,7 +324,9 @@ private fun Header(
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(
                 color = MaterialTheme.colors.secondary,
-                modifier = Modifier.padding(8.dp).size(16.dp)
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(16.dp)
             )
         }
 

@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
@@ -44,9 +45,7 @@ import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -54,9 +53,11 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
-    @Assisted initialState: ShowDetailsViewState,
+@HiltViewModel
+class ShowDetailsFragmentViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
     observeShowImages: ObserveShowImages,
@@ -74,7 +75,12 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val getEpisode: GetEpisodeDetails,
     private val logger: Logger,
     private val snackbarManager: SnackbarManager
-) : ReduxViewModel<ShowDetailsViewState>(initialState) {
+) : ReduxViewModel<ShowDetailsViewState>(
+    ShowDetailsViewState(
+        // The string "showId" is the name of the argument in the route
+        showId = savedStateHandle.get<String>("showId")!!.toLong()
+    )
+) {
     private val loadingState = ObservableLoadingCounter()
 
     private val pendingActions = MutableSharedFlow<ShowDetailsAction>()
@@ -266,25 +272,5 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS
             )
         ).watchStatus()
-    }
-
-    /**
-     * Factory to allow assisted injection of [ShowDetailsFragmentViewModel] with an initial state.
-     */
-    @AssistedFactory
-    internal interface Factory {
-        fun create(initialState: ShowDetailsViewState): ShowDetailsFragmentViewModel
-    }
-}
-
-internal fun ShowDetailsFragmentViewModel.Factory.create(
-    showId: Long,
-    pendingEpisodeId: Long? = null
-): ShowDetailsFragmentViewModel {
-    val initialState = ShowDetailsViewState(showId = showId)
-    return create(initialState).apply {
-        if (pendingEpisodeId != null) {
-            submitAction(OpenEpisodeDetails(pendingEpisodeId))
-        }
     }
 }

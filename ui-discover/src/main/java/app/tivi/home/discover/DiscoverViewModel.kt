@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class DiscoverViewModel @Inject constructor(
+class DiscoverViewModel @Inject constructor(
     private val updatePopularShows: UpdatePopularShows,
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,

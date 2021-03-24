@@ -80,6 +80,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -99,6 +100,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
@@ -133,7 +136,34 @@ import com.google.accompanist.coil.CoilImage
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsHeight
+import kotlinx.coroutines.flow.collect
 import org.threeten.bp.OffsetDateTime
+
+@Composable
+fun ShowDetails(
+    viewModel: ShowDetailsFragmentViewModel,
+    navController: NavController,
+) {
+    val viewState by viewModel.liveData.observeAsState()
+    viewState?.let { state ->
+        ShowDetails(viewState = state) { action ->
+            when (action) {
+                NavigateUp -> navController.popBackStack()
+                else -> viewModel.submitAction(action)
+            }
+        }
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.uiEffects.collect { effect ->
+            when (effect) {
+                is OpenShowUiEffect -> navController.navigate("show/${effect.showId}")
+                is OpenEpisodeUiEffect -> Unit // TODO
+                else -> Unit // TODO: any remaining ui effects need to be passed down to the UI
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

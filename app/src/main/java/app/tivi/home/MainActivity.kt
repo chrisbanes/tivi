@@ -18,12 +18,17 @@ package app.tivi.home
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import app.tivi.TiviActivity
+import app.tivi.common.compose.LocalTiviDateFormatter
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.settings.TiviPreferences
+import app.tivi.util.TiviDateFormatter
+import app.tivi.util.TiviTextCreator
 import com.google.accompanist.insets.ProvideWindowInsets
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -32,6 +37,8 @@ import javax.inject.Inject
 class MainActivity : TiviActivity() {
     private lateinit var viewModel: MainActivityViewModel
 
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+    @Inject internal lateinit var textCreator: TiviTextCreator
     @Inject internal lateinit var preferences: TiviPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,9 +49,14 @@ class MainActivity : TiviActivity() {
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         setContent {
-            ProvideWindowInsets(consumeWindowInsets = false) {
-                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
-                    Home()
+            CompositionLocalProvider(
+                LocalTiviDateFormatter provides tiviDateFormatter,
+                LocalTiviTextCreator provides textCreator,
+            ) {
+                ProvideWindowInsets(consumeWindowInsets = false) {
+                    TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
+                        Home()
+                    }
                 }
             }
         }
