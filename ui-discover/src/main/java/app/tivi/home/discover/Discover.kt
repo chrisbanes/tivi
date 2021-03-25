@@ -42,8 +42,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -88,26 +88,24 @@ internal fun Discover(
     viewModel: DiscoverViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.liveData.observeAsState()
-    viewState?.let { state ->
-        Discover(state = state) { action ->
-            when (action) {
-                DiscoverAction.LoginAction,
-                DiscoverAction.OpenUserDetails -> navController.navigate(Screen.Account.route)
-                is DiscoverAction.OpenShowDetails -> {
-                    navController.navigate("show/${action.showId}")
-                    // If we have an episodeId, we also open that
-                    if (action.episodeId != null) {
-                        navController.navigate("episode/${action.episodeId}")
-                    }
+    val viewState by viewModel.state.collectAsState()
+    Discover(state = viewState) { action ->
+        when (action) {
+            DiscoverAction.LoginAction,
+            DiscoverAction.OpenUserDetails -> navController.navigate(Screen.Account.route)
+            is DiscoverAction.OpenShowDetails -> {
+                navController.navigate("show/${action.showId}")
+                // If we have an episodeId, we also open that
+                if (action.episodeId != null) {
+                    navController.navigate("episode/${action.episodeId}")
                 }
-                DiscoverAction.OpenTrendingShows -> navController.navigate(Screen.Trending.route)
-                DiscoverAction.OpenPopularShows -> navController.navigate(Screen.Popular.route)
-                DiscoverAction.OpenRecommendedShows -> {
-                    navController.navigate(Screen.RecommendedShows.route)
-                }
-                else -> viewModel.submitAction(action)
             }
+            DiscoverAction.OpenTrendingShows -> navController.navigate(Screen.Trending.route)
+            DiscoverAction.OpenPopularShows -> navController.navigate(Screen.Popular.route)
+            DiscoverAction.OpenRecommendedShows -> {
+                navController.navigate(Screen.RecommendedShows.route)
+            }
+            else -> viewModel.submitAction(action)
         }
     }
 }

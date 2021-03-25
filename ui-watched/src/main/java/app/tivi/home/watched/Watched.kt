@@ -39,8 +39,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -90,21 +90,19 @@ internal fun Watched(
     viewModel: WatchedViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.liveData.observeAsState()
+    val viewState by viewModel.state.collectAsState()
     val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
 
-    viewState?.let { state ->
-        Watched(state = state, list = pagingItems) { action ->
-            when (action) {
-                WatchedAction.LoginAction,
-                WatchedAction.OpenUserDetails -> {
-                    navController.navigate(Screen.Search.route)
-                }
-                is WatchedAction.OpenShowDetails -> {
-                    navController.navigate("show/${action.showId}")
-                }
-                else -> viewModel.submitAction(action)
+    Watched(state = viewState, list = pagingItems) { action ->
+        when (action) {
+            WatchedAction.LoginAction,
+            WatchedAction.OpenUserDetails -> {
+                navController.navigate(Screen.Search.route)
             }
+            is WatchedAction.OpenShowDetails -> {
+                navController.navigate("show/${action.showId}")
+            }
+            else -> viewModel.submitAction(action)
         }
     }
 }

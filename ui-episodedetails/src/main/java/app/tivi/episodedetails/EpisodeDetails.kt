@@ -59,9 +59,9 @@ import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -117,13 +117,11 @@ internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.liveData.observeAsState()
-    viewState?.let { state ->
-        EpisodeDetails(viewState = state) { action ->
-            when (action) {
-                EpisodeDetailsAction.Close -> navController.popBackStack()
-                else -> viewModel.submitAction(action)
-            }
+    val viewState by viewModel.state.collectAsState()
+    EpisodeDetails(viewState = viewState) { action ->
+        when (action) {
+            EpisodeDetailsAction.Close -> navController.popBackStack()
+            else -> viewModel.submitAction(action)
         }
     }
 }

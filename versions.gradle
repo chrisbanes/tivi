@@ -108,7 +108,6 @@ libs.AndroidX.Paging = [
 versions.lifecycle = "2.3.0"
 libs.AndroidX.Lifecycle = [
     runtime: "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle",
-    livedata: "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle",
     viewmodel: "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle",
 ]
 

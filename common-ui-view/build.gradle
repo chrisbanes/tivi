@@ -37,7 +37,6 @@ dependencies {
     implementation project(':base-android')
     api project(':common-ui-resources')
 
-    api Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.Coroutines.core

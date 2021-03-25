@@ -44,8 +44,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -77,7 +77,7 @@ internal fun AccountUi(
     navController: NavController,
     viewModel: AccountUiViewModel = hiltNavGraphViewModel(),
 ) {
-    val viewState by viewModel.liveData.observeAsState()
+    val viewState by viewModel.state.collectAsState()
 
     val loginLauncher = registerForActivityResult(viewModel.buildLoginActivityResult()) { result ->
         if (result != null) {
@@ -85,17 +85,15 @@ internal fun AccountUi(
         }
     }
 
-    viewState?.let { state ->
-        AccountUi(state) { action ->
-            when (action) {
-                is AccountUiAction.Close -> navController.popBackStack()
-                is AccountUiAction.OpenSettings -> {
-                    // TODO: sort out Settings navigation (Activity)
-                    // view.findNavController().navigateToNavDestination(R.id.navigation_settings)
-                }
-                is AccountUiAction.Login -> loginLauncher.launch(Unit)
-                is AccountUiAction.Logout -> viewModel.logout()
+    AccountUi(viewState) { action ->
+        when (action) {
+            is AccountUiAction.Close -> navController.popBackStack()
+            is AccountUiAction.OpenSettings -> {
+                // TODO: sort out Settings navigation (Activity)
+                // view.findNavController().navigateToNavDestination(R.id.navigation_settings)
             }
+            is AccountUiAction.Login -> loginLauncher.launch(Unit)
+            is AccountUiAction.Logout -> viewModel.logout()
         }
     }
 }

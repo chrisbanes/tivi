@@ -78,9 +78,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -153,13 +153,11 @@ internal fun ShowDetails(
     viewModel: ShowDetailsViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.liveData.observeAsState()
-    viewState?.let { state ->
-        ShowDetails(viewState = state) { action ->
-            when (action) {
-                ShowDetailsAction.NavigateUp -> navController.popBackStack()
-                else -> viewModel.submitAction(action)
-            }
+    val viewState by viewModel.state.collectAsState()
+    ShowDetails(viewState = viewState) { action ->
+        when (action) {
+            ShowDetailsAction.NavigateUp -> navController.popBackStack()
+            else -> viewModel.submitAction(action)
         }
     }
 

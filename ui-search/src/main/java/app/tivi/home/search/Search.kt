@@ -40,8 +40,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -76,15 +76,13 @@ internal fun Search(
     viewModel: SearchViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.liveData.observeAsState()
-    viewState?.let { state ->
-        Search(state = state) { action ->
-            when (action) {
-                is SearchAction.OpenShowDetails -> {
-                    navController.navigate("show/${action.showId}")
-                }
-                else -> viewModel.submitAction(action)
+    val viewState by viewModel.state.collectAsState()
+    Search(state = viewState) { action ->
+        when (action) {
+            is SearchAction.OpenShowDetails -> {
+                navController.navigate("show/${action.showId}")
             }
+            else -> viewModel.submitAction(action)
         }
     }
 }

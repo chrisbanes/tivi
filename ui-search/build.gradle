@@ -59,7 +59,7 @@ dependencies {
 
     implementation Libs.AndroidX.Navigation.compose
 
-    implementation Libs.AndroidX.Lifecycle.livedata
+
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.AndroidX.Compose.foundation
