@@ -24,7 +24,7 @@ kapt {
 }
 
 dependencies {
-    api (Libs.traktJava) {
+    api(Libs.traktJava) {
         exclude group: 'org.threeten', module: 'threetenbp'
     }
     implementation Libs.threeTenBpNoTzdb

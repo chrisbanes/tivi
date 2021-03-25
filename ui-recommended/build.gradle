@@ -55,7 +55,6 @@ dependencies {
     implementation project(':domain')
     implementation project(':common-ui-compose')
 
-
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.AndroidX.Paging.runtime

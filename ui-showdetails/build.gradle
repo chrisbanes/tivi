@@ -64,7 +64,6 @@ dependencies {
     implementation project(':common-ui-view')
     implementation project(':common-ui-compose')
 
-
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.AndroidX.Navigation.compose
