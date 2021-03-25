@@ -48,6 +48,8 @@ import androidx.navigation.compose.popUpTo
 import androidx.navigation.compose.rememberNavController
 import app.tivi.R
 import app.tivi.Screen
+import app.tivi.episodedetails.EpisodeDetails
+import app.tivi.episodedetails.EpisodeDetailsViewModel
 import app.tivi.home.discover.Discover
 import app.tivi.home.discover.DiscoverViewModel
 import app.tivi.home.followed.Followed
@@ -114,7 +116,8 @@ internal fun Home() {
                     Popular(viewModel, navController)
                 }
                 composable(Screen.EpisodeDetails.route) {
-                    // TODO
+                    val viewModel: EpisodeDetailsViewModel = hiltNavGraphViewModel(it)
+                    EpisodeDetails(viewModel, navController)
                 }
                 // TODO: Account and Settings
             }

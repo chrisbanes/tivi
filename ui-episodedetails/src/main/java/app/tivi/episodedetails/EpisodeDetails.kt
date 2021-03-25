@@ -61,6 +61,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -81,6 +82,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.LocalTiviDateFormatter
@@ -100,6 +102,22 @@ import com.google.accompanist.insets.statusBarsPadding
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
+
+@Composable
+fun EpisodeDetails(
+    viewModel: EpisodeDetailsViewModel,
+    navController: NavController,
+) {
+    val viewState by viewModel.liveData.observeAsState()
+    viewState?.let { state ->
+        EpisodeDetails(viewState = state) { action ->
+            when (action) {
+                Close -> navController.popBackStack()
+                else -> viewModel.submitAction(action)
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

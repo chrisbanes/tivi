@@ -158,7 +158,7 @@ fun ShowDetails(
         viewModel.uiEffects.collect { effect ->
             when (effect) {
                 is OpenShowUiEffect -> navController.navigate("show/${effect.showId}")
-                is OpenEpisodeUiEffect -> Unit // TODO
+                is OpenEpisodeUiEffect -> navController.navigate("episode/${effect.episodeId}")
                 else -> Unit // TODO: any remaining ui effects need to be passed down to the UI
             }
         }
