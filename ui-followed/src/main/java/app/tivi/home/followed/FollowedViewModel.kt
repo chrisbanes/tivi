@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class FollowedViewModel @Inject constructor(
+class FollowedViewModel @Inject constructor(
     private val updateFollowedShows: UpdateFollowedShows,
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,

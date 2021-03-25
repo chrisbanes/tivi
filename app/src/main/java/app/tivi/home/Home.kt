@@ -50,7 +50,8 @@ import app.tivi.R
 import app.tivi.Screen
 import app.tivi.home.discover.Discover
 import app.tivi.home.discover.DiscoverViewModel
-import app.tivi.home.followed.FollowedFragment
+import app.tivi.home.followed.Followed
+import app.tivi.home.followed.FollowedViewModel
 import app.tivi.home.search.Search
 import app.tivi.home.search.SearchViewModel
 import app.tivi.home.watched.Watched
@@ -79,10 +80,8 @@ internal fun Home() {
                     Discover(viewModel, navController)
                 }
                 composable(Screen.Following.route) {
-                    ComposableFragment(
-                        fragmentKey = Screen.Following.route,
-                        createFragment = ::FollowedFragment
-                    )
+                    val viewModel: FollowedViewModel = hiltNavGraphViewModel(it)
+                    Followed(viewModel, navController)
                 }
                 composable(Screen.Watched.route) {
                     val viewModel: WatchedViewModel = hiltNavGraphViewModel(it)
