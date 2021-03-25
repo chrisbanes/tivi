@@ -180,8 +180,6 @@ dependencies {
     implementation Libs.AndroidX.Navigation.compose
 
     implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
 
     implementation Libs.AndroidX.Compose.foundation
     implementation Libs.AndroidX.Compose.ui

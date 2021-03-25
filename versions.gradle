@@ -83,18 +83,11 @@ libs.AndroidX = [
 ]
 
 libs.AndroidX.Navigation = [
-    fragment: "androidx.navigation:navigation-fragment-ktx:2.3.4",
     compose: "androidx.navigation:navigation-compose:1.0.0-alpha09",
 ]
 
 libs.AndroidX.Activity = [
     compose: "androidx.activity:activity-compose:1.3.0-alpha04",
-]
-
-versions.fragment = "1.3.1"
-libs.AndroidX.Fragment = [
-    fragment: "androidx.fragment:fragment:$versions.fragment",
-    fragmentKtx: "androidx.fragment:fragment-ktx:$versions.fragment",
 ]
 
 versions.androidx_test = "1.3.0"
