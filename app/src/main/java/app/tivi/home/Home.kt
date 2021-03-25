@@ -32,14 +32,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
@@ -64,7 +68,6 @@ internal fun Home(
     onOpenSettings: () -> Unit,
 ) {
     Column {
-        var currentSelectedItem by remember { mutableStateOf(Screen.Discover) }
         val navController = rememberNavController()
 
         Box(
@@ -111,10 +114,11 @@ internal fun Home(
             }
         }
 
+        val currentSelectedItem by navController.currentScreenAsState()
+
         HomeBottomNavigation(
             selectedNavigation = currentSelectedItem,
             onNavigationSelected = { selected ->
-                currentSelectedItem = selected
                 navController.navigate(selected.route) {
                     launchSingleTop = true
                     popUpTo(Screen.Discover.route) {
@@ -125,6 +129,51 @@ internal fun Home(
             modifier = Modifier.fillMaxWidth()
         )
     }
+}
+
+/**
+ * Returns true if this [NavDestination] matches the given route.
+ */
+private fun NavDestination.matchesRoute(route: String): Boolean {
+    // Copied from Compose-Navigation NavGraphBuilder.kt
+    return hasDeepLink("android-app://androidx.navigation.compose/$route".toUri())
+}
+
+/**
+ * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the return [State]
+ * as the destination changes.
+ */
+@Composable
+private fun NavController.currentScreenAsState(): State<Screen> {
+    val selectedItem = remember { mutableStateOf(Screen.Discover) }
+
+    DisposableEffect(this) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            when {
+                destination.matchesRoute(Screen.Discover.route) -> {
+                    selectedItem.value = Screen.Discover
+                }
+                destination.matchesRoute(Screen.Watched.route) -> {
+                    selectedItem.value = Screen.Watched
+                }
+                destination.matchesRoute(Screen.Following.route) -> {
+                    selectedItem.value = Screen.Following
+                }
+                destination.matchesRoute(Screen.Search.route) -> {
+                    selectedItem.value = Screen.Search
+                }
+                // We intentionally ignore any other destinations, as they're likely to be
+                // leaf destinations.
+            }
+        }
+        addOnDestinationChangedListener(listener)
+
+        onDispose {
+            removeOnDestinationChangedListener(listener)
+        }
+    }
+
+    return selectedItem
 }
 
 @Composable
