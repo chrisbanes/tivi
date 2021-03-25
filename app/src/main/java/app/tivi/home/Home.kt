@@ -65,7 +65,7 @@ import app.tivi.home.trending.TrendingShowsViewModel
 import app.tivi.home.watched.Watched
 import app.tivi.home.watched.WatchedViewModel
 import app.tivi.showdetails.details.ShowDetails
-import app.tivi.showdetails.details.ShowDetailsFragmentViewModel
+import app.tivi.showdetails.details.ShowDetailsViewModel
 import com.google.accompanist.insets.navigationBarsPadding
 
 @Composable
@@ -100,7 +100,7 @@ internal fun Home() {
                     Search(viewModel, navController)
                 }
                 composable(Screen.ShowDetails.route) {
-                    val viewModel: ShowDetailsFragmentViewModel = hiltNavGraphViewModel(it)
+                    val viewModel: ShowDetailsViewModel = hiltNavGraphViewModel(it)
                     ShowDetails(viewModel, navController)
                 }
                 composable(Screen.RecommendedShows.route) {

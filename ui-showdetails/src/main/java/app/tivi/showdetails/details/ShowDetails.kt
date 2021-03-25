@@ -141,7 +141,7 @@ import org.threeten.bp.OffsetDateTime
 
 @Composable
 fun ShowDetails(
-    viewModel: ShowDetailsFragmentViewModel,
+    viewModel: ShowDetailsViewModel,
     navController: NavController,
 ) {
     val viewState by viewModel.liveData.observeAsState()
