@@ -97,7 +97,7 @@ internal fun Watched(
         when (action) {
             WatchedAction.LoginAction,
             WatchedAction.OpenUserDetails -> {
-                navController.navigate(Screen.Search.route)
+                navController.navigate(Screen.Account.route)
             }
             is WatchedAction.OpenShowDetails -> {
                 navController.navigate("show/${action.showId}")
