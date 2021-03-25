@@ -86,11 +86,11 @@ fun Discover(
                 LoginAction,
                 OpenUserDetails -> navController.navigate(Screen.Account.route)
                 is OpenShowDetails -> {
-                    var route = "show/${action.showId}"
-//                    if (action.episodeId != null) {
-//                        route += "?episode=${action.episodeId}"
-//                    }
-                    navController.navigate(route)
+                    navController.navigate("show/${action.showId}")
+                    // If we have an episodeId, we also open that
+                    if (action.episodeId != null) {
+                        navController.navigate("episode/${action.episodeId}")
+                    }
                 }
                 OpenTrendingShows -> navController.navigate(Screen.Trending.route)
                 OpenPopularShows -> navController.navigate(Screen.Popular.route)
