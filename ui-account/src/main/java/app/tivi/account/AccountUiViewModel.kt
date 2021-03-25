@@ -21,6 +21,7 @@ import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.ClearUserDetails
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
+import app.tivi.trakt.TraktAuthManager
 import app.tivi.trakt.TraktManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
@@ -29,14 +30,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AccountUiViewModel @Inject constructor(
+internal class AccountUiViewModel @Inject constructor(
     private val traktManager: TraktManager,
+    private val traktAuthManager: TraktAuthManager,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
     private val clearUserDetails: ClearUserDetails
 ) : ReduxViewModel<AccountUiViewState>(
-    AccountUiViewState()
-) {
+        AccountUiViewState()
+    ),
+    TraktAuthManager by traktAuthManager {
     init {
         viewModelScope.launch {
             observeTraktAuthState.observe()

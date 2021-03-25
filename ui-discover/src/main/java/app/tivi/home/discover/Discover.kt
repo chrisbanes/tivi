@@ -42,6 +42,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,8 +55,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
+import app.tivi.Screen
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.UserProfileButton
@@ -70,7 +76,42 @@ import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun Discover(
+fun Discover(navController: NavController) {
+    Discover(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun Discover(
+    viewModel: DiscoverViewModel,
+    navController: NavController,
+) {
+    val viewState by viewModel.state.collectAsState()
+    Discover(state = viewState) { action ->
+        when (action) {
+            DiscoverAction.LoginAction,
+            DiscoverAction.OpenUserDetails -> navController.navigate(Screen.Account.route)
+            is DiscoverAction.OpenShowDetails -> {
+                navController.navigate("show/${action.showId}")
+                // If we have an episodeId, we also open that
+                if (action.episodeId != null) {
+                    navController.navigate("episode/${action.episodeId}")
+                }
+            }
+            DiscoverAction.OpenTrendingShows -> navController.navigate(Screen.Trending.route)
+            DiscoverAction.OpenPopularShows -> navController.navigate(Screen.Popular.route)
+            DiscoverAction.OpenRecommendedShows -> {
+                navController.navigate(Screen.RecommendedShows.route)
+            }
+            else -> viewModel.submitAction(action)
+        }
+    }
+}
+
+@Composable
+internal fun Discover(
     state: DiscoverViewState,
     actioner: (DiscoverAction) -> Unit
 ) {
@@ -96,14 +137,16 @@ fun Discover(
                             poster = nextEpisodeToWatch.poster,
                             season = nextEpisodeToWatch.season,
                             episode = nextEpisodeToWatch.episode,
-                            modifier = Modifier.fillMaxWidth().clickable {
-                                actioner(
-                                    OpenShowDetails(
-                                        showId = nextEpisodeToWatch.show.id,
-                                        episodeId = nextEpisodeToWatch.episode.id
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    actioner(
+                                        DiscoverAction.OpenShowDetails(
+                                            showId = nextEpisodeToWatch.show.id,
+                                            episodeId = nextEpisodeToWatch.episode.id
+                                        )
                                     )
-                                )
-                            }
+                                }
                         )
                     }
 
@@ -115,8 +158,8 @@ fun Discover(
                         items = state.trendingItems,
                         title = stringResource(R.string.discover_trending_title),
                         refreshing = state.trendingRefreshing,
-                        onItemClick = { actioner(OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(OpenTrendingShows) }
+                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
+                        onMoreClick = { actioner(DiscoverAction.OpenTrendingShows) }
                     )
                 }
 
@@ -125,8 +168,8 @@ fun Discover(
                         items = state.recommendedItems,
                         title = stringResource(R.string.discover_recommended_title),
                         refreshing = state.recommendedRefreshing,
-                        onItemClick = { actioner(OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(OpenRecommendedShows) }
+                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
+                        onMoreClick = { actioner(DiscoverAction.OpenRecommendedShows) }
                     )
                 }
 
@@ -135,8 +178,8 @@ fun Discover(
                         items = state.popularItems,
                         title = stringResource(R.string.discover_popular_title),
                         refreshing = state.popularRefreshing,
-                        onItemClick = { actioner(OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(OpenPopularShows) }
+                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
+                        onMoreClick = { actioner(DiscoverAction.OpenPopularShows) }
                     )
                 }
 
@@ -147,8 +190,8 @@ fun Discover(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.refreshing,
-                onRefreshActionClick = { actioner(RefreshAction) },
-                onUserActionClick = { actioner(OpenUserDetails) },
+                onRefreshActionClick = { actioner(DiscoverAction.RefreshAction) },
+                onUserActionClick = { actioner(DiscoverAction.OpenUserDetails) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onSizeChanged { appBarHeight = it.height }
@@ -171,14 +214,16 @@ private fun NextEpisodeToWatch(
                 PosterCard(
                     show = show,
                     poster = poster,
-                    modifier = Modifier.width(64.dp).aspectRatio(2 / 3f)
+                    modifier = Modifier
+                        .width(64.dp)
+                        .aspectRatio(2 / 3f)
                 )
 
                 Spacer(Modifier.width(16.dp))
             }
 
             Column(Modifier.align(Alignment.CenterVertically)) {
-                val textCreator = LocalDiscoverTextCreator.current
+                val textCreator = LocalTiviTextCreator.current
                 CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                     Text(
                         text = textCreator.seasonEpisodeTitleText(season, episode),
@@ -231,7 +276,9 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
             EntryShowCarousel(
                 items = items,
                 onItemClick = onItemClick,
-                modifier = Modifier.height(192.dp).fillMaxWidth()
+                modifier = Modifier
+                    .height(192.dp)
+                    .fillMaxWidth()
             )
         }
         // TODO empty state
@@ -286,7 +333,9 @@ private fun Header(
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(
                 color = MaterialTheme.colors.secondary,
-                modifier = Modifier.padding(8.dp).size(16.dp)
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(16.dp)
             )
         }
 

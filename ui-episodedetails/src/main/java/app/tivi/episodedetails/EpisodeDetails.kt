@@ -59,6 +59,7 @@ import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -81,6 +82,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.navigation.NavController
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.LocalTiviDateFormatter
@@ -101,9 +104,31 @@ import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
 
+@Composable
+fun EpisodeDetails(navController: NavController) {
+    EpisodeDetails(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun EpisodeDetails(
+    viewModel: EpisodeDetailsViewModel,
+    navController: NavController,
+) {
+    val viewState by viewModel.state.collectAsState()
+    EpisodeDetails(viewState = viewState) { action ->
+        when (action) {
+            EpisodeDetailsAction.Close -> navController.popBackStack()
+            else -> viewModel.submitAction(action)
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EpisodeDetails(
+internal fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
@@ -179,7 +204,7 @@ fun EpisodeDetails(
                             key(watch.id) {
                                 val dismissState = rememberDismissState {
                                     if (it != DismissValue.Default) {
-                                        actioner(RemoveEpisodeWatchAction(watch.id))
+                                        actioner(EpisodeDetailsAction.RemoveEpisodeWatchAction(watch.id))
                                     }
                                     it != DismissValue.DismissedToEnd
                                 }
@@ -214,7 +239,7 @@ fun EpisodeDetails(
             snackbar = {
                 SwipeDismissSnackbar(
                     data = it,
-                    onDismiss = { actioner(ClearError) }
+                    onDismiss = { actioner(EpisodeDetailsAction.ClearError) }
                 )
             },
             modifier = Modifier
@@ -493,13 +518,13 @@ private fun Modifier.drawGrowingCircle(
 }
 
 @Composable
-fun MarkWatchedButton(
+private fun MarkWatchedButton(
     modifier: Modifier = Modifier,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
     Button(
         modifier = modifier,
-        onClick = { actioner(AddEpisodeWatchAction) }
+        onClick = { actioner(EpisodeDetailsAction.AddEpisodeWatchAction) }
     ) {
         Text(
             text = stringResource(R.string.episode_mark_watched),
@@ -509,13 +534,13 @@ fun MarkWatchedButton(
 }
 
 @Composable
-fun AddWatchButton(
+private fun AddWatchButton(
     modifier: Modifier = Modifier,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
     OutlinedButton(
         modifier = modifier,
-        onClick = { actioner(AddEpisodeWatchAction) }
+        onClick = { actioner(EpisodeDetailsAction.AddEpisodeWatchAction) }
     ) {
         Text(text = stringResource(R.string.episode_add_watch))
     }
@@ -531,7 +556,7 @@ private fun RemoveAllWatchesDialog(
         message = stringResource(R.string.episode_remove_watches_dialog_message),
         confirmText = stringResource(R.string.episode_remove_watches_dialog_confirm),
         onConfirm = {
-            actioner(RemoveAllEpisodeWatchesAction)
+            actioner(EpisodeDetailsAction.RemoveAllEpisodeWatchesAction)
             onDialogClosed()
         },
         dismissText = stringResource(R.string.dialog_dismiss),
@@ -550,7 +575,7 @@ private fun EpisodeDetailsAppBar(
     TopAppBar(
         title = {},
         navigationIcon = {
-            IconButton(onClick = { actioner(Close) }) {
+            IconButton(onClick = { actioner(EpisodeDetailsAction.Close) }) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.cd_close),
@@ -566,7 +591,7 @@ private fun EpisodeDetailsAppBar(
                         .padding(14.dp)
                 )
             } else {
-                IconButton(onClick = { actioner(RefreshAction) }) {
+                IconButton(onClick = { actioner(EpisodeDetailsAction.RefreshAction) }) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = stringResource(R.string.cd_refresh)

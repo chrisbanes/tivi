@@ -49,6 +49,9 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import androidx.paging.LoadState
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.PlaceholderPosterCard
@@ -56,11 +59,37 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.paging.LazyPagingItems
+import app.tivi.common.compose.paging.collectAsLazyPagingItems
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun Trending(
+fun Trending(navController: NavController) {
+    Trending(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun Trending(
+    viewModel: TrendingShowsViewModel,
+    navController: NavController,
+) {
+    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems { old, new ->
+        old.entry.id == new.entry.id
+    }
+    Trending(lazyPagingItems = pagingItems) { action ->
+        when (action) {
+            is TrendingAction.OpenShowDetails -> {
+                navController.navigate("show/${action.showId}")
+            }
+        }
+    }
+}
+
+@Composable
+internal fun Trending(
     lazyPagingItems: LazyPagingItems<TrendingEntryWithShow>,
     actioner: (TrendingAction) -> Unit
 ) {

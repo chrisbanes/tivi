@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
@@ -44,9 +45,7 @@ import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -54,9 +53,11 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
-    @Assisted initialState: ShowDetailsViewState,
+@HiltViewModel
+internal class ShowDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
     observeShowImages: ObserveShowImages,
@@ -74,7 +75,12 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val getEpisode: GetEpisodeDetails,
     private val logger: Logger,
     private val snackbarManager: SnackbarManager
-) : ReduxViewModel<ShowDetailsViewState>(initialState) {
+) : ReduxViewModel<ShowDetailsViewState>(
+    ShowDetailsViewState(
+        // The string "showId" is the name of the argument in the route
+        showId = savedStateHandle.get<String>("showId")!!.toLong()
+    )
+) {
     private val loadingState = ObservableLoadingCounter()
 
     private val pendingActions = MutableSharedFlow<ShowDetailsAction>()
@@ -135,16 +141,16 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         viewModelScope.launch {
             pendingActions.collect { action ->
                 when (action) {
-                    is RefreshAction -> refresh(true)
-                    FollowShowToggleAction -> onToggleMyShowsButtonClicked()
-                    is MarkSeasonWatchedAction -> onMarkSeasonWatched(action)
-                    is MarkSeasonUnwatchedAction -> onMarkSeasonUnwatched(action)
-                    is ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
-                    is ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action.seasonId, action.expanded)
-                    is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
-                    is OpenEpisodeDetails -> openEpisodeDetails(action)
-                    is OpenShowDetails -> openShowDetails(action)
-                    is ClearError -> snackbarManager.removeCurrentError()
+                    is ShowDetailsAction.RefreshAction -> refresh(true)
+                    ShowDetailsAction.FollowShowToggleAction -> onToggleMyShowsButtonClicked()
+                    is ShowDetailsAction.MarkSeasonWatchedAction -> onMarkSeasonWatched(action)
+                    is ShowDetailsAction.MarkSeasonUnwatchedAction -> onMarkSeasonUnwatched(action)
+                    is ShowDetailsAction.ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
+                    is ShowDetailsAction.ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action.seasonId, action.expanded)
+                    is ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
+                    is ShowDetailsAction.OpenEpisodeDetails -> openEpisodeDetails(action)
+                    is ShowDetailsAction.OpenShowDetails -> openShowDetails(action)
+                    is ShowDetailsAction.ClearError -> snackbarManager.removeCurrentError()
                 }
             }
         }
@@ -201,13 +207,13 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
     }
 
-    private fun openShowDetails(action: OpenShowDetails) {
+    private fun openShowDetails(action: ShowDetailsAction.OpenShowDetails) {
         viewModelScope.launch {
             _uiEffects.emit(OpenShowUiEffect(action.showId))
         }
     }
 
-    private fun openEpisodeDetails(action: OpenEpisodeDetails) = viewModelScope.launch {
+    private fun openEpisodeDetails(action: ShowDetailsAction.OpenEpisodeDetails) = viewModelScope.launch {
         val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId)).first()
         if (episode != null) {
             // Make sure the season is expanded
@@ -219,13 +225,13 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
     }
 
-    private fun onMarkSeasonWatched(action: MarkSeasonWatchedAction) {
+    private fun onMarkSeasonWatched(action: ShowDetailsAction.MarkSeasonWatchedAction) {
         changeSeasonWatchedStatus(
             Params(action.seasonId, Action.WATCHED, action.onlyAired, action.date)
         ).watchStatus()
     }
 
-    private fun onMarkSeasonUnwatched(action: MarkSeasonUnwatchedAction) {
+    private fun onMarkSeasonUnwatched(action: ShowDetailsAction.MarkSeasonUnwatchedAction) {
         changeSeasonWatchedStatus(Params(action.seasonId, Action.UNWATCH)).watchStatus()
     }
 
@@ -244,7 +250,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
     }
 
-    private fun onChangeSeasonFollowState(action: ChangeSeasonFollowedAction) {
+    private fun onChangeSeasonFollowState(action: ShowDetailsAction.ChangeSeasonFollowedAction) {
         // Make sure we collapse the season if it is expanded
         onChangeSeasonExpandState(action.seasonId, false)
 
@@ -259,32 +265,12 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         ).watchStatus()
     }
 
-    private fun onUnfollowPreviousSeasonsFollowState(action: UnfollowPreviousSeasonsFollowedAction) {
+    private fun onUnfollowPreviousSeasonsFollowState(action: ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction) {
         changeSeasonFollowStatus(
             ChangeSeasonFollowStatus.Params(
                 action.seasonId,
                 ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS
             )
         ).watchStatus()
-    }
-
-    /**
-     * Factory to allow assisted injection of [ShowDetailsFragmentViewModel] with an initial state.
-     */
-    @AssistedFactory
-    internal interface Factory {
-        fun create(initialState: ShowDetailsViewState): ShowDetailsFragmentViewModel
-    }
-}
-
-internal fun ShowDetailsFragmentViewModel.Factory.create(
-    showId: Long,
-    pendingEpisodeId: Long? = null
-): ShowDetailsFragmentViewModel {
-    val initialState = ShowDetailsViewState(showId = showId)
-    return create(initialState).apply {
-        if (pendingEpisodeId != null) {
-            submitAction(OpenEpisodeDetails(pendingEpisodeId))
-        }
     }
 }

@@ -16,6 +16,7 @@
 
 package app.tivi.episodedetails
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
@@ -34,18 +35,18 @@ import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
+import javax.inject.Inject
 
-class EpisodeDetailsViewModel @AssistedInject constructor(
-    @Assisted initialState: EpisodeDetailsViewState,
+@HiltViewModel
+internal class EpisodeDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
     private val observeEpisodeWatches: ObserveEpisodeWatches,
@@ -54,7 +55,12 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger,
     private val snackbarManager: SnackbarManager
-) : ReduxViewModel<EpisodeDetailsViewState>(initialState) {
+) : ReduxViewModel<EpisodeDetailsViewState>(
+    EpisodeDetailsViewState(
+        // The string "episodeId" is the name of the argument in the route
+        episodeId = savedStateHandle.get<String>("episodeId")!!.toLong()
+    )
+) {
 
     private val loadingState = ObservableLoadingCounter()
 
@@ -75,11 +81,11 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             pendingActions.collect { action ->
                 when (action) {
-                    RefreshAction -> refresh(true)
-                    AddEpisodeWatchAction -> markWatched()
-                    RemoveAllEpisodeWatchesAction -> markUnwatched()
-                    is RemoveEpisodeWatchAction -> removeWatchEntry(action)
-                    ClearError -> snackbarManager.removeCurrentError()
+                    EpisodeDetailsAction.RefreshAction -> refresh(true)
+                    EpisodeDetailsAction.AddEpisodeWatchAction -> markWatched()
+                    EpisodeDetailsAction.RemoveAllEpisodeWatchesAction -> markUnwatched()
+                    is EpisodeDetailsAction.RemoveEpisodeWatchAction -> removeWatchEntry(action)
+                    EpisodeDetailsAction.ClearError -> snackbarManager.removeCurrentError()
                 }
             }
         }
@@ -131,7 +137,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         ).watchStatus()
     }
 
-    private fun removeWatchEntry(action: RemoveEpisodeWatchAction) {
+    private fun removeWatchEntry(action: EpisodeDetailsAction.RemoveEpisodeWatchAction) {
         removeEpisodeWatch(RemoveEpisodeWatch.Params(action.watchId)).watchStatus()
     }
 
@@ -156,15 +162,4 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
             }
         }
     }
-
-    @AssistedFactory
-    internal interface Factory {
-        fun create(initialState: EpisodeDetailsViewState): EpisodeDetailsViewModel
-    }
-}
-
-internal fun EpisodeDetailsViewModel.Factory.create(
-    episodeId: Long
-): EpisodeDetailsViewModel {
-    return create(EpisodeDetailsViewState(episodeId = episodeId))
 }

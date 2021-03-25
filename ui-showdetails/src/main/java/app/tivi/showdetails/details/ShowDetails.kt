@@ -78,12 +78,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -100,10 +100,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SimpleFlowRow
@@ -133,15 +137,44 @@ import com.google.accompanist.coil.CoilImage
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsHeight
+import kotlinx.coroutines.flow.collect
 import org.threeten.bp.OffsetDateTime
 
-val LocalShowDetailsTextCreator = staticCompositionLocalOf<ShowDetailsTextCreator> {
-    error("ShowDetailsTextCreator not provided")
+@Composable
+fun ShowDetails(navController: NavController) {
+    ShowDetails(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun ShowDetails(
+    viewModel: ShowDetailsViewModel,
+    navController: NavController,
+) {
+    val viewState by viewModel.state.collectAsState()
+    ShowDetails(viewState = viewState) { action ->
+        when (action) {
+            ShowDetailsAction.NavigateUp -> navController.popBackStack()
+            else -> viewModel.submitAction(action)
+        }
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.uiEffects.collect { effect ->
+            when (effect) {
+                is OpenShowUiEffect -> navController.navigate("show/${effect.showId}")
+                is OpenEpisodeUiEffect -> navController.navigate("episode/${effect.episodeId}")
+                else -> Unit // TODO: any remaining ui effects need to be passed down to the UI
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ShowDetails(
+internal fun ShowDetails(
     viewState: ShowDetailsViewState,
     actioner: (ShowDetailsAction) -> Unit
 ) = Box(modifier = Modifier.fillMaxSize()) {
@@ -200,7 +233,7 @@ fun ShowDetails(
             snackbar = {
                 SwipeDismissSnackbar(
                     data = it,
-                    onDismiss = { actioner(ClearError) }
+                    onDismiss = { actioner(ShowDetailsAction.ClearError) }
                 )
             },
             modifier = Modifier
@@ -215,7 +248,7 @@ fun ShowDetails(
         ToggleShowFollowFloatingActionButton(
             isFollowed = viewState.isFollowed,
             expanded = { expanded },
-            onClick = { actioner(FollowShowToggleAction) },
+            onClick = { actioner(ShowDetailsAction.FollowShowToggleAction) },
             modifier = Modifier
                 .align(Alignment.End)
                 .padding(16.dp)
@@ -322,7 +355,9 @@ private fun ShowDetailsScrollingContent(
                 NextEpisodeToWatch(
                     season = nextEpisodeToWatch.season!!,
                     episode = nextEpisodeToWatch.episode!!,
-                    onClick = { actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id)) }
+                    onClick = {
+                        actioner(ShowDetailsAction.OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
+                    }
                 )
             }
         }
@@ -588,7 +623,7 @@ private fun ShowStatusPanel(
 
         Spacer(Modifier.height(4.dp))
 
-        val textCreator = LocalShowDetailsTextCreator.current
+        val textCreator = LocalTiviTextCreator.current
         Text(
             text = textCreator.showStatusText(showStatus).toString(),
             style = MaterialTheme.typography.body2
@@ -609,7 +644,7 @@ private fun AirsInfoPanel(
 
         Spacer(Modifier.height(4.dp))
 
-        val textCreator = LocalShowDetailsTextCreator.current
+        val textCreator = LocalTiviTextCreator.current
         Text(
             text = textCreator.airsText(show).toString(),
             style = MaterialTheme.typography.body2
@@ -711,7 +746,7 @@ private fun Genres(genres: List<Genre>) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        val textCreator = LocalShowDetailsTextCreator.current
+        val textCreator = LocalTiviTextCreator.current
         Text(
             textCreator.genreString(genres).toString(),
             style = MaterialTheme.typography.body2
@@ -736,7 +771,7 @@ private fun RelatedShows(
         PosterCard(
             show = item.show,
             poster = item.poster,
-            onClick = { actioner(OpenShowDetails(item.show.id)) },
+            onClick = { actioner(ShowDetailsAction.OpenShowDetails(item.show.id)) },
             modifier = Modifier
                 .padding(padding)
                 .fillParentMaxHeight()
@@ -759,7 +794,7 @@ private fun NextEpisodeToWatch(
             .clickable(onClick = onClick)
             .padding(16.dp, 8.dp)
     ) {
-        val textCreator = LocalShowDetailsTextCreator.current
+        val textCreator = LocalTiviTextCreator.current
 
         Text(
             textCreator.seasonEpisodeTitleText(season, episode),
@@ -822,7 +857,7 @@ private fun WatchStats(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        val textCreator = LocalShowDetailsTextCreator.current
+        val textCreator = LocalTiviTextCreator.current
 
         // TODO: Do something better with CharSequences containing markup/spans
         Text(
@@ -858,7 +893,7 @@ private fun SeasonWithEpisodesRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(enabled = !season.ignored) {
-                        actioner(ChangeSeasonExpandedAction(season.id, !expanded))
+                        actioner(ShowDetailsAction.ChangeSeasonExpandedAction(season.id, !expanded))
                     }
             )
 
@@ -877,7 +912,7 @@ private fun SeasonWithEpisodesRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                actioner(OpenEpisodeDetails(episodeEntry.episode.id))
+                                actioner(ShowDetailsAction.OpenEpisodeDetails(episodeEntry.episode.id))
                             }
                     )
                 }
@@ -912,7 +947,7 @@ private fun SeasonRow(
                 .weight(1f)
                 .align(Alignment.CenterVertically)
         ) {
-            val textCreator = LocalShowDetailsTextCreator.current
+            val textCreator = LocalTiviTextCreator.current
 
             val contentAlpha = when {
                 season.ignored -> ContentAlpha.disabled
@@ -965,13 +1000,13 @@ private fun SeasonRow(
         ) {
             if (season.ignored) {
                 DropdownMenuItem(
-                    onClick = { actioner(ChangeSeasonFollowedAction(season.id, true)) }
+                    onClick = { actioner(ShowDetailsAction.ChangeSeasonFollowedAction(season.id, true)) }
                 ) {
                     Text(text = stringResource(id = R.string.popup_season_follow))
                 }
             } else {
                 DropdownMenuItem(
-                    onClick = { actioner(ChangeSeasonFollowedAction(season.id, false)) }
+                    onClick = { actioner(ShowDetailsAction.ChangeSeasonFollowedAction(season.id, false)) }
                 ) {
                     Text(text = stringResource(id = R.string.popup_season_ignore))
                 }
@@ -980,7 +1015,7 @@ private fun SeasonRow(
             // Season number starts from 1, rather than 0
             if (season.number ?: -100 >= 2) {
                 DropdownMenuItem(
-                    onClick = { actioner(UnfollowPreviousSeasonsFollowedAction(season.id)) }
+                    onClick = { actioner(ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction(season.id)) }
                 ) {
                     Text(text = stringResource(id = R.string.popup_season_ignore_previous))
                 }
@@ -988,7 +1023,7 @@ private fun SeasonRow(
 
             if (episodesWatched > 0) {
                 DropdownMenuItem(
-                    onClick = { actioner(MarkSeasonUnwatchedAction(season.id)) }
+                    onClick = { actioner(ShowDetailsAction.MarkSeasonUnwatchedAction(season.id)) }
                 ) {
                     Text(text = stringResource(id = R.string.popup_season_mark_all_unwatched))
                 }
@@ -997,13 +1032,13 @@ private fun SeasonRow(
             if (episodesWatched < episodesAired) {
                 if (episodesToAir == 0) {
                     DropdownMenuItem(
-                        onClick = { actioner(MarkSeasonWatchedAction(season.id)) }
+                        onClick = { actioner(ShowDetailsAction.MarkSeasonWatchedAction(season.id)) }
                     ) {
                         Text(text = stringResource(id = R.string.popup_season_mark_watched_all))
                     }
                 } else {
                     DropdownMenuItem(
-                        onClick = { actioner(MarkSeasonWatchedAction(season.id, onlyAired = true)) }
+                        onClick = { actioner(ShowDetailsAction.MarkSeasonWatchedAction(season.id, onlyAired = true)) }
                     ) {
                         Text(text = stringResource(id = R.string.popup_season_mark_watched_aired))
                     }
@@ -1028,7 +1063,7 @@ private fun EpisodeWithWatchesRow(
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            val textCreator = LocalShowDetailsTextCreator.current
+            val textCreator = LocalTiviTextCreator.current
 
             Text(
                 text = textCreator.episodeNumberText(episode).toString(),
@@ -1089,7 +1124,7 @@ private fun ShowDetailsAppBar(
     TopAppBar(
         title = { Text(text = title) },
         navigationIcon = {
-            IconButton(onClick = { actioner(NavigateUp) }) {
+            IconButton(onClick = { actioner(ShowDetailsAction.NavigateUp) }) {
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = stringResource(R.string.cd_navigate_up)
@@ -1105,7 +1140,7 @@ private fun ShowDetailsAppBar(
                         .padding(14.dp)
                 )
             } else {
-                IconButton(onClick = { actioner(RefreshAction) }) {
+                IconButton(onClick = { actioner(ShowDetailsAction.RefreshAction) }) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = stringResource(R.string.cd_refresh)

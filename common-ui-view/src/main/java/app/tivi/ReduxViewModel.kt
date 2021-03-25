@@ -16,13 +16,13 @@
 
 package app.tivi
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -32,28 +32,23 @@ import kotlinx.coroutines.sync.withLock
 import kotlin.reflect.KProperty1
 
 abstract class ReduxViewModel<S> constructor(initialState: S) : ViewModel() {
-    private val state = MutableStateFlow(initialState)
+    private val _state = MutableStateFlow(initialState)
     private val stateMutex = Mutex()
 
-    /**
-     * Returns a snapshot of the current state.
-     */
-    fun currentState(): S = state.value
-
-    val liveData: LiveData<S>
-        get() = state.asLiveData()
+    val state: StateFlow<S>
+        get() = _state.asStateFlow()
 
     protected suspend fun <T> Flow<T>.collectAndSetState(reducer: S.(T) -> S) {
         return collect { item -> setState { reducer(item) } }
     }
 
-    fun <A> selectObserve(prop1: KProperty1<S, A>): LiveData<A> {
-        return selectSubscribe(prop1).asLiveData()
+    fun <A> selectObserve(prop1: KProperty1<S, A>): Flow<A> {
+        return selectSubscribe(prop1)
     }
 
     protected fun subscribe(block: (S) -> Unit) {
         viewModelScope.launch {
-            state.collect { block(it) }
+            _state.collect { block(it) }
         }
     }
 
@@ -64,12 +59,12 @@ abstract class ReduxViewModel<S> constructor(initialState: S) : ViewModel() {
     }
 
     private fun <A> selectSubscribe(prop1: KProperty1<S, A>): Flow<A> {
-        return state.map { prop1.get(it) }.distinctUntilChanged()
+        return _state.map { prop1.get(it) }.distinctUntilChanged()
     }
 
     protected suspend fun setState(reducer: S.() -> S) {
         stateMutex.withLock {
-            state.value = reducer(state.value)
+            _state.value = reducer(_state.value)
         }
     }
 
@@ -79,7 +74,7 @@ abstract class ReduxViewModel<S> constructor(initialState: S) : ViewModel() {
 
     protected suspend fun withState(block: (S) -> Unit) {
         stateMutex.withLock {
-            block(state.value)
+            block(_state.value)
         }
     }
 

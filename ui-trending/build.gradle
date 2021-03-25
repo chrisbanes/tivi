@@ -55,18 +55,13 @@ dependencies {
     implementation project(':domain')
     implementation project(':common-ui-compose')
 
-    implementation Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.AndroidX.Paging.runtime
 
-    implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
+    implementation Libs.AndroidX.Navigation.compose
 
-    implementation Libs.AndroidX.Compose.runtime
     implementation Libs.AndroidX.Compose.foundation
-    implementation Libs.AndroidX.Compose.ui
     implementation Libs.AndroidX.Compose.layout
     implementation Libs.AndroidX.Compose.material
     implementation Libs.AndroidX.Compose.animation
@@ -75,6 +70,7 @@ dependencies {
     implementation Libs.Accompanist.coil
     implementation Libs.Accompanist.insets
 
+    implementation Libs.AndroidX.Hilt.compose
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
 }

@@ -44,7 +44,6 @@ dependencies {
 
     implementation Libs.Google.crashlytics
 
-    implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.coreKtx
 
     implementation Libs.timber

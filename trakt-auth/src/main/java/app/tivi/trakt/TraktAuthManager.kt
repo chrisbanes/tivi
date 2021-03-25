@@ -23,9 +23,9 @@ import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 
 interface TraktAuthManager {
-    fun buildActivityResult(): LoginTrakt = LoginTrakt(buildLoginIntent())
+    fun buildLoginActivityResult(): LoginTrakt = LoginTrakt(buildLoginIntent())
     fun buildLoginIntent(): Intent
-    fun onAuthResponse(result: LoginTrakt.Result)
+    fun onLoginResult(result: LoginTrakt.Result)
 }
 
 class LoginTrakt internal constructor(

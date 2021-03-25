@@ -16,24 +16,21 @@
 
 package app.tivi.home
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import app.tivi.R
 import app.tivi.TiviActivity
+import app.tivi.common.compose.LocalTiviDateFormatter
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
-import app.tivi.databinding.ActivityMainBinding
-import app.tivi.extensions.MultipleBackStackNavigation
-import app.tivi.extensions.hideSoftInput
+import app.tivi.settings.SettingsActivity
 import app.tivi.settings.TiviPreferences
+import app.tivi.util.TiviDateFormatter
+import app.tivi.util.TiviTextCreator
 import com.google.accompanist.insets.ProvideWindowInsets
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -42,16 +39,9 @@ import javax.inject.Inject
 class MainActivity : TiviActivity() {
     private lateinit var viewModel: MainActivityViewModel
 
-    private lateinit var binding: ActivityMainBinding
-
-    var currentNavController: LiveData<NavController>? = null
-        private set
-
-    @Inject lateinit var preferences: TiviPreferences
-
-    private var currentSelectedItem by mutableStateOf(HomeNavigation.Discover)
-
-    private lateinit var multiBackStackNavigation: MultipleBackStackNavigation
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+    @Inject internal lateinit var textCreator: TiviTextCreator
+    @Inject internal lateinit var preferences: TiviPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,68 +50,21 @@ class MainActivity : TiviActivity() {
 
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        multiBackStackNavigation = MultipleBackStackNavigation(
-            navGraphIds = intArrayOf(
-                R.navigation.discover_nav_graph,
-                R.navigation.following_nav_graph,
-                R.navigation.watched_nav_graph,
-                R.navigation.search_nav_graph
-            ),
-            fragmentManager = supportFragmentManager,
-            containerId = R.id.home_nav_container,
-            intent = intent,
-            getSelectedItemId = { currentSelectedItem.toNavigationId() },
-            setSelectedItemId = { currentSelectedItem = navigationIdToHomeNavigation(it) },
-        )
-
-        currentNavController = multiBackStackNavigation.selectedNavController
-        currentNavController?.observe(this) { navController ->
-            navController.addOnDestinationChangedListener { _, destination, _ ->
-                if (destination.id != R.id.navigation_search) {
-                    hideSoftInput()
-                }
-            }
-        }
-
-        binding.homeBottomNavigation.setContent {
-            ProvideWindowInsets(consumeWindowInsets = false) {
-                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
-                    HomeBottomNavigation(
-                        selectedNavigation = currentSelectedItem,
-                        onNavigationSelected = { item ->
-                            if (currentSelectedItem == item) {
-                                multiBackStackNavigation.onReselected(item.toNavigationId())
-                            } else {
-                                currentSelectedItem = item
-                                multiBackStackNavigation.onItemSelected(item.toNavigationId())
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+        setContent {
+            CompositionLocalProvider(
+                LocalTiviDateFormatter provides tiviDateFormatter,
+                LocalTiviTextCreator provides textCreator,
+            ) {
+                ProvideWindowInsets(consumeWindowInsets = false) {
+                    TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
+                        Home(onOpenSettings = ::openSettings)
+                    }
                 }
             }
         }
     }
 
-    override fun onNavigateUp(): Boolean {
-        return currentNavController?.value?.navigateUp() ?: super.onNavigateUp()
+    private fun openSettings() {
+        startActivity(Intent(this, SettingsActivity::class.java))
     }
-}
-
-private fun HomeNavigation.toNavigationId(): Int = when (this) {
-    HomeNavigation.Discover -> R.navigation.discover_nav_graph
-    HomeNavigation.Following -> R.navigation.following_nav_graph
-    HomeNavigation.Watched -> R.navigation.watched_nav_graph
-    HomeNavigation.Search -> R.navigation.search_nav_graph
-}
-
-private fun navigationIdToHomeNavigation(id: Int): HomeNavigation = when (id) {
-    R.navigation.discover_nav_graph -> HomeNavigation.Discover
-    R.navigation.following_nav_graph -> HomeNavigation.Following
-    R.navigation.watched_nav_graph -> HomeNavigation.Watched
-    R.navigation.search_nav_graph -> HomeNavigation.Search
-    else -> throw IllegalArgumentException("Navigation graph with id not found: $id")
 }

@@ -16,11 +16,12 @@
 
 package app.tivi.home.discover
 
-sealed class DiscoverAction
-object RefreshAction : DiscoverAction()
-object LoginAction : DiscoverAction()
-object OpenUserDetails : DiscoverAction()
-data class OpenShowDetails(val showId: Long, val episodeId: Long? = null) : DiscoverAction()
-object OpenTrendingShows : DiscoverAction()
-object OpenPopularShows : DiscoverAction()
-object OpenRecommendedShows : DiscoverAction()
+internal sealed class DiscoverAction {
+    object RefreshAction : DiscoverAction()
+    object LoginAction : DiscoverAction()
+    object OpenUserDetails : DiscoverAction()
+    data class OpenShowDetails(val showId: Long, val episodeId: Long? = null) : DiscoverAction()
+    object OpenTrendingShows : DiscoverAction()
+    object OpenPopularShows : DiscoverAction()
+    object OpenRecommendedShows : DiscoverAction()
+}

@@ -118,7 +118,7 @@ internal class DiscoverViewModel @Inject constructor(
         viewModelScope.launch {
             pendingActions.collect { action ->
                 when (action) {
-                    RefreshAction -> refresh(true)
+                    DiscoverAction.RefreshAction -> refresh(true)
                 }
             }
         }

@@ -16,6 +16,7 @@
 
 package app.tivi.account
 
+import androidx.activity.compose.registerForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +54,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.navigation.NavController
 import app.tivi.common.compose.SimpleFlowRow
 import app.tivi.common.compose.foregroundColor
 import app.tivi.data.entities.TraktUser
@@ -61,6 +66,42 @@ import org.threeten.bp.ZoneOffset
 
 @Composable
 fun AccountUi(
+    navController: NavController,
+    onOpenSettings: () -> Unit,
+) {
+    AccountUi(
+        navController = navController,
+        viewModel = hiltNavGraphViewModel(),
+        onOpenSettings = onOpenSettings,
+    )
+}
+
+@Composable
+internal fun AccountUi(
+    navController: NavController,
+    viewModel: AccountUiViewModel,
+    onOpenSettings: () -> Unit,
+) {
+    val viewState by viewModel.state.collectAsState()
+
+    val loginLauncher = registerForActivityResult(viewModel.buildLoginActivityResult()) { result ->
+        if (result != null) {
+            viewModel.onLoginResult(result)
+        }
+    }
+
+    AccountUi(viewState) { action ->
+        when (action) {
+            is AccountUiAction.Close -> navController.popBackStack()
+            is AccountUiAction.OpenSettings -> onOpenSettings()
+            is AccountUiAction.Login -> loginLauncher.launch(Unit)
+            is AccountUiAction.Logout -> viewModel.logout()
+        }
+    }
+}
+
+@Composable
+internal fun AccountUi(
     viewState: AccountUiViewState,
     actioner: (AccountUiAction) -> Unit
 ) {
@@ -88,16 +129,16 @@ fun AccountUi(
                     crossAxisSpacing = 4.dp,
                 ) {
                     if (viewState.authState == TraktAuthState.LOGGED_OUT) {
-                        OutlinedButton(onClick = { actioner(Login) }) {
+                        OutlinedButton(onClick = { actioner(AccountUiAction.Login) }) {
                             Text(text = stringResource(R.string.login))
                         }
                     } else {
-                        TextButton(onClick = { actioner(Login) }) {
+                        TextButton(onClick = { actioner(AccountUiAction.Login) }) {
                             Text(text = stringResource(R.string.refresh_credentials))
                         }
                     }
 
-                    OutlinedButton(onClick = { actioner(Logout) }) {
+                    OutlinedButton(onClick = { actioner(AccountUiAction.Logout) }) {
                         Text(text = stringResource(R.string.logout))
                     }
                 }
@@ -115,7 +156,7 @@ fun AccountUi(
                 label = stringResource(R.string.settings_title),
                 icon = Icons.Default.Settings,
                 contentDescription = stringResource(R.string.settings_title),
-                onClick = { actioner(OpenSettings) }
+                onClick = { actioner(AccountUiAction.OpenSettings) }
             )
 
             Spacer(

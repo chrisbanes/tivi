@@ -40,6 +40,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SearchTextField
 import app.tivi.data.entities.ShowTmdbImage
@@ -59,9 +63,33 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
 import com.google.accompanist.insets.statusBarsPadding
 
+@Composable
+fun Search(navController: NavController) {
+    Search(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun Search(
+    viewModel: SearchViewModel,
+    navController: NavController,
+) {
+    val viewState by viewModel.state.collectAsState()
+    Search(state = viewState) { action ->
+        when (action) {
+            is SearchAction.OpenShowDetails -> {
+                navController.navigate("show/${action.showId}")
+            }
+            else -> viewModel.submitAction(action)
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
-fun Search(
+internal fun Search(
     state: SearchViewState,
     actioner: (SearchAction) -> Unit
 ) {
@@ -138,7 +166,11 @@ private fun SearchRow(
 
         Spacer(Modifier.width(16.dp))
 
-        Column(Modifier.weight(1f).align(Alignment.CenterVertically)) {
+        Column(
+            Modifier
+                .weight(1f)
+                .align(Alignment.CenterVertically)
+        ) {
             Text(
                 text = show.title ?: "No title",
                 style = MaterialTheme.typography.subtitle1,

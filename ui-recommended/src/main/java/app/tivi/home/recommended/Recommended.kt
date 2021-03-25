@@ -49,6 +49,9 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import androidx.paging.LoadState
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.PlaceholderPosterCard
@@ -56,11 +59,37 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.paging.LazyPagingItems
+import app.tivi.common.compose.paging.collectAsLazyPagingItems
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun Recommended(
+fun Recommended(navController: NavController) {
+    Recommended(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun Recommended(
+    viewModel: RecommendedShowsViewModel,
+    navController: NavController,
+) {
+    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems { old, new ->
+        old.entry.id == new.entry.id
+    }
+    Recommended(lazyPagingItems = pagingItems) { action ->
+        when (action) {
+            is RecommendedAction.OpenShowDetails -> {
+                navController.navigate("show/${action.showId}")
+            }
+        }
+    }
+}
+
+@Composable
+internal fun Recommended(
     lazyPagingItems: LazyPagingItems<RecommendedEntryWithShow>,
     actioner: (RecommendedAction) -> Unit
 ) {
@@ -81,7 +110,9 @@ fun Recommended(
                     verticalItemPadding = 2.dp,
                     horizontalItemPadding = 2.dp
                 ) { entry ->
-                    val modifier = Modifier.aspectRatio(2 / 3f).fillMaxWidth()
+                    val modifier = Modifier
+                        .aspectRatio(2 / 3f)
+                        .fillMaxWidth()
                     if (entry != null) {
                         PosterCard(
                             show = entry.show,
@@ -96,7 +127,11 @@ fun Recommended(
 
                 if (lazyPagingItems.loadState.append == LoadState.Loading) {
                     item {
-                        Box(Modifier.fillMaxWidth().padding(16.dp)) {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
                             CircularProgressIndicator(Modifier.align(Alignment.Center))
                         }
                     }

@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class RecommendedShowsViewModel @Inject constructor(
+internal class RecommendedShowsViewModel @Inject constructor(
     private val pagingInteractor: ObservePagedRecommendedShows,
 ) : ViewModel() {
     val pagedList: Flow<PagingData<RecommendedEntryWithShow>>

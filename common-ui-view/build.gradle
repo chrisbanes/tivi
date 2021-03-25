@@ -37,15 +37,12 @@ dependencies {
     implementation project(':base-android')
     api project(':common-ui-resources')
 
-    api Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.Coroutines.core
 
     implementation Libs.AndroidX.coreKtx
-    implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
+    implementation Libs.AndroidX.emoji
 
     implementation Libs.Hilt.library
 }

@@ -17,6 +17,8 @@
 package app.tivi.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,24 +32,154 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.popUpTo
+import androidx.navigation.compose.rememberNavController
 import app.tivi.R
+import app.tivi.Screen
+import app.tivi.account.AccountUi
+import app.tivi.episodedetails.EpisodeDetails
+import app.tivi.home.discover.Discover
+import app.tivi.home.followed.Followed
+import app.tivi.home.popular.Popular
+import app.tivi.home.recommended.Recommended
+import app.tivi.home.search.Search
+import app.tivi.home.trending.Trending
+import app.tivi.home.watched.Watched
+import app.tivi.showdetails.details.ShowDetails
 import com.google.accompanist.insets.navigationBarsPadding
 
-internal enum class HomeNavigation {
-    Discover,
-    Following,
-    Watched,
-    Search,
+@Composable
+internal fun Home(
+    onOpenSettings: () -> Unit,
+) {
+    Column {
+        val navController = rememberNavController()
+
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Discover.route
+            ) {
+                composable(Screen.Discover.route) {
+                    Discover(navController)
+                }
+                composable(Screen.Following.route) {
+                    Followed(navController)
+                }
+                composable(Screen.Watched.route) {
+                    Watched(navController)
+                }
+                composable(Screen.Search.route) {
+                    Search(navController)
+                }
+                composable(Screen.ShowDetails.route) {
+                    ShowDetails(navController)
+                }
+                composable(Screen.RecommendedShows.route) {
+                    Recommended(navController)
+                }
+                composable(Screen.Trending.route) {
+                    Trending(navController)
+                }
+                composable(Screen.Popular.route) {
+                    Popular(navController)
+                }
+                composable(Screen.EpisodeDetails.route) {
+                    EpisodeDetails(navController)
+                }
+                composable(Screen.Account.route) {
+                    // This should really be a dialog, but we're waiting on:
+                    // https://issuetracker.google.com/179608120
+                    AccountUi(navController, onOpenSettings)
+                }
+            }
+        }
+
+        val currentSelectedItem by navController.currentScreenAsState()
+
+        HomeBottomNavigation(
+            selectedNavigation = currentSelectedItem,
+            onNavigationSelected = { selected ->
+                navController.navigate(selected.route) {
+                    launchSingleTop = true
+                    popUpTo(Screen.Discover.route) {
+                        inclusive = false
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+/**
+ * Returns true if this [NavDestination] matches the given route.
+ */
+private fun NavDestination.matchesRoute(route: String): Boolean {
+    // Copied from Compose-Navigation NavGraphBuilder.kt
+    return hasDeepLink("android-app://androidx.navigation.compose/$route".toUri())
+}
+
+/**
+ * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the return [State]
+ * as the destination changes.
+ */
+@Composable
+private fun NavController.currentScreenAsState(): State<Screen> {
+    val selectedItem = remember { mutableStateOf(Screen.Discover) }
+
+    DisposableEffect(this) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            when {
+                destination.matchesRoute(Screen.Discover.route) -> {
+                    selectedItem.value = Screen.Discover
+                }
+                destination.matchesRoute(Screen.Watched.route) -> {
+                    selectedItem.value = Screen.Watched
+                }
+                destination.matchesRoute(Screen.Following.route) -> {
+                    selectedItem.value = Screen.Following
+                }
+                destination.matchesRoute(Screen.Search.route) -> {
+                    selectedItem.value = Screen.Search
+                }
+                // We intentionally ignore any other destinations, as they're likely to be
+                // leaf destinations.
+            }
+        }
+        addOnDestinationChangedListener(listener)
+
+        onDispose {
+            removeOnDestinationChangedListener(listener)
+        }
+    }
+
+    return selectedItem
 }
 
 @Composable
 internal fun HomeBottomNavigation(
-    selectedNavigation: HomeNavigation,
-    onNavigationSelected: (HomeNavigation) -> Unit,
+    selectedNavigation: Screen,
+    onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -71,8 +203,8 @@ internal fun HomeBottomNavigation(
                     )
                 },
                 label = { Text(stringResource(R.string.discover_title)) },
-                selected = selectedNavigation == HomeNavigation.Discover,
-                onClick = { onNavigationSelected(HomeNavigation.Discover) },
+                selected = selectedNavigation == Screen.Discover,
+                onClick = { onNavigationSelected(Screen.Discover) },
             )
 
             BottomNavigationItem(
@@ -83,8 +215,8 @@ internal fun HomeBottomNavigation(
                     )
                 },
                 label = { Text(stringResource(R.string.following_shows_title)) },
-                selected = selectedNavigation == HomeNavigation.Following,
-                onClick = { onNavigationSelected(HomeNavigation.Following) },
+                selected = selectedNavigation == Screen.Following,
+                onClick = { onNavigationSelected(Screen.Following) },
             )
 
             BottomNavigationItem(
@@ -95,8 +227,8 @@ internal fun HomeBottomNavigation(
                     )
                 },
                 label = { Text(stringResource(R.string.watched_shows_title)) },
-                selected = selectedNavigation == HomeNavigation.Watched,
-                onClick = { onNavigationSelected(HomeNavigation.Watched) },
+                selected = selectedNavigation == Screen.Watched,
+                onClick = { onNavigationSelected(Screen.Watched) },
             )
 
             BottomNavigationItem(
@@ -107,8 +239,8 @@ internal fun HomeBottomNavigation(
                     )
                 },
                 label = { Text(stringResource(R.string.search_navigation_title)) },
-                selected = selectedNavigation == HomeNavigation.Search,
-                onClick = { onNavigationSelected(HomeNavigation.Search) },
+                selected = selectedNavigation == Screen.Search,
+                onClick = { onNavigationSelected(Screen.Search) },
             )
         }
     }

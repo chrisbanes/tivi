@@ -18,30 +18,31 @@ package app.tivi.showdetails.details
 
 import app.tivi.data.entities.ActionDate
 
-sealed class ShowDetailsAction
-object RefreshAction : ShowDetailsAction()
-object FollowShowToggleAction : ShowDetailsAction()
+internal sealed class ShowDetailsAction {
+    object RefreshAction : ShowDetailsAction()
+    object FollowShowToggleAction : ShowDetailsAction()
 
-data class MarkSeasonWatchedAction(
-    val seasonId: Long,
-    val onlyAired: Boolean = false,
-    val date: ActionDate = ActionDate.NOW
-) : ShowDetailsAction()
+    data class MarkSeasonWatchedAction(
+        val seasonId: Long,
+        val onlyAired: Boolean = false,
+        val date: ActionDate = ActionDate.NOW
+    ) : ShowDetailsAction()
 
-data class MarkSeasonUnwatchedAction(val seasonId: Long) : ShowDetailsAction()
-data class ChangeSeasonFollowedAction(
-    val seasonId: Long,
-    val followed: Boolean
-) : ShowDetailsAction()
+    data class MarkSeasonUnwatchedAction(val seasonId: Long) : ShowDetailsAction()
+    data class ChangeSeasonFollowedAction(
+        val seasonId: Long,
+        val followed: Boolean
+    ) : ShowDetailsAction()
 
-data class UnfollowPreviousSeasonsFollowedAction(val seasonId: Long) : ShowDetailsAction()
+    data class UnfollowPreviousSeasonsFollowedAction(val seasonId: Long) : ShowDetailsAction()
 
-data class ChangeSeasonExpandedAction(
-    val seasonId: Long,
-    val expanded: Boolean
-) : ShowDetailsAction()
+    data class ChangeSeasonExpandedAction(
+        val seasonId: Long,
+        val expanded: Boolean
+    ) : ShowDetailsAction()
 
-data class OpenShowDetails(val showId: Long) : ShowDetailsAction()
-data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsAction()
-object ClearError : ShowDetailsAction()
-object NavigateUp : ShowDetailsAction()
+    data class OpenShowDetails(val showId: Long) : ShowDetailsAction()
+    data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsAction()
+    object ClearError : ShowDetailsAction()
+    object NavigateUp : ShowDetailsAction()
+}

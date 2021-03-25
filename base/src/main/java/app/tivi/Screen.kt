@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package app.tivi.ui.text
+package app.tivi
 
-import android.content.Context
-import android.text.style.TextAppearanceSpan
-import android.util.TypedValue
-
-private val typedValue = TypedValue()
-
-fun textAppearanceSpanForAttribute(context: Context, attr: Int): TextAppearanceSpan {
-    if (context.theme.resolveAttribute(attr, typedValue, true)) {
-        return TextAppearanceSpan(context, typedValue.resourceId)
-    } else {
-        throw IllegalArgumentException("TextAppearance theme attribute can not be resolved")
-    }
+enum class Screen(val route: String) {
+    Discover("discover"),
+    Following("following"),
+    Trending("trending"),
+    Popular("popular"),
+    ShowDetails("show/{showId}"),
+    EpisodeDetails("episode/{episodeId}"),
+    RecommendedShows("recommendedshows"),
+    Watched("watched"),
+    Search("search"),
+    Account("account"),
 }

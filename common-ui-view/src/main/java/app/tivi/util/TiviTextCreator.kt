@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.details
+package app.tivi.util
 
 import android.content.Context
 import android.graphics.Color
@@ -22,13 +22,13 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.parseAsHtml
 import androidx.emoji.text.EmojiCompat
+import app.tivi.common.ui.R
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowStatus
 import app.tivi.data.entities.TiviShow
 import app.tivi.ui.GenreStringer
-import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.qualifiers.ActivityContext
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneId
@@ -37,10 +37,50 @@ import org.threeten.bp.format.TextStyle
 import java.util.Locale
 import javax.inject.Inject
 
-class ShowDetailsTextCreator @Inject constructor(
+class TiviTextCreator @Inject constructor(
     @ActivityContext private val context: Context,
-    private val tiviDateFormatter: TiviDateFormatter
+    private val tiviDateFormatter: TiviDateFormatter,
 ) {
+    fun showTitle(
+        show: TiviShow
+    ): CharSequence = StringBuilder()
+        .append(show.title)
+        .apply {
+            show.firstAired?.also { firstAired ->
+                append(" ")
+                append("(")
+                append(firstAired.year.toString())
+                append(")")
+            }
+        }.toString()
+
+    fun showHeaderCount(count: Int, filtered: Boolean = false): CharSequence = when {
+        filtered -> context.resources.getQuantityString(R.plurals.header_show_count_filtered, count, count)
+        else -> context.resources.getQuantityString(R.plurals.header_show_count, count, count)
+    }.parseAsHtml()
+
+    fun followedShowEpisodeWatchStatus(
+        episodeCount: Int,
+        watchedEpisodeCount: Int
+    ): CharSequence = when {
+        watchedEpisodeCount < episodeCount -> {
+            context.getString(
+                R.string.followed_watch_stats_to_watch,
+                episodeCount - watchedEpisodeCount
+            ).parseAsHtml()
+        }
+        watchedEpisodeCount > 0 -> {
+            context.getString(R.string.followed_watch_stats_complete)
+        }
+        else -> ""
+    }
+
+    fun seasonEpisodeTitleText(season: Season?, episode: Episode?): String {
+        return if (season != null && episode != null) {
+            context.getString(R.string.season_episode_number, season.number, episode.number)
+        } else ""
+    }
+
     fun seasonSummaryText(
         watched: Int,
         toWatch: Int,
@@ -70,10 +110,6 @@ class ShowDetailsTextCreator @Inject constructor(
             }
         }
         return text
-    }
-
-    fun seasonEpisodeTitleText(season: Season, episode: Episode): String {
-        return context.getString(R.string.season_episode_number, season.number, episode.number)
     }
 
     fun episodeNumberText(episode: Episode): CharSequence? {
@@ -111,20 +147,6 @@ class ShowDetailsTextCreator @Inject constructor(
 
     fun genreContentDescription(genres: List<Genre>?): CharSequence? {
         return genres?.joinToString(", ") { context.getString(GenreStringer.getLabel(it)) }
-    }
-
-    fun followedShowEpisodeWatchStatus(
-        watchedEpisodeCount: Int,
-        episodeCount: Int
-    ): CharSequence = when {
-        watchedEpisodeCount < episodeCount -> {
-            context.getString(
-                R.string.followed_watch_stats_to_watch,
-                episodeCount - watchedEpisodeCount
-            ).parseAsHtml()
-        }
-        watchedEpisodeCount > 0 -> context.getString(R.string.followed_watch_stats_complete)
-        else -> ""
     }
 
     fun airsText(show: TiviShow): CharSequence? {

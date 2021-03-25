@@ -40,6 +40,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,9 +54,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import app.tivi.common.compose.LocalHomeTextCreator
+import app.tivi.Screen
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
@@ -71,7 +77,36 @@ import com.google.accompanist.coil.CoilImage
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun Followed(
+fun Followed(navController: NavController) {
+    Followed(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun Followed(
+    viewModel: FollowedViewModel,
+    navController: NavController,
+) {
+    val viewState by viewModel.state.collectAsState()
+    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
+    Followed(state = viewState, list = pagingItems) { action ->
+        when (action) {
+            FollowedAction.LoginAction,
+            FollowedAction.OpenUserDetails -> {
+                navController.navigate(Screen.Account.route)
+            }
+            is FollowedAction.OpenShowDetails -> {
+                navController.navigate("show/${action.showId}")
+            }
+            else -> viewModel.submitAction(action)
+        }
+    }
+}
+
+@Composable
+internal fun Followed(
     state: FollowedViewState,
     list: LazyPagingItems<FollowedShowEntryWithShow>,
     actioner: (FollowedAction) -> Unit
@@ -176,7 +211,7 @@ private fun FollowedShowItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val textCreator = LocalHomeTextCreator.current
+    val textCreator = LocalTiviTextCreator.current
     Row(
         modifier
             .clickable(onClick = onClick)

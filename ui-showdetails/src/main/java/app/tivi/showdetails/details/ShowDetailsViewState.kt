@@ -26,7 +26,7 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
 
 @Immutable
-data class ShowDetailsViewState(
+internal data class ShowDetailsViewState(
     val showId: Long,
     val isFollowed: Boolean = false,
     val show: TiviShow = TiviShow.EMPTY_SHOW,
