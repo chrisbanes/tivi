@@ -65,17 +65,22 @@ import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
 @Composable
-fun AccountUi(navController: NavController) {
+fun AccountUi(
+    navController: NavController,
+    onOpenSettings: () -> Unit,
+) {
     AccountUi(
         navController = navController,
-        viewModel = hiltNavGraphViewModel()
+        viewModel = hiltNavGraphViewModel(),
+        onOpenSettings = onOpenSettings,
     )
 }
 
 @Composable
 internal fun AccountUi(
     navController: NavController,
-    viewModel: AccountUiViewModel = hiltNavGraphViewModel(),
+    viewModel: AccountUiViewModel,
+    onOpenSettings: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -88,10 +93,7 @@ internal fun AccountUi(
     AccountUi(viewState) { action ->
         when (action) {
             is AccountUiAction.Close -> navController.popBackStack()
-            is AccountUiAction.OpenSettings -> {
-                // TODO: sort out Settings navigation (Activity)
-                // view.findNavController().navigateToNavDestination(R.id.navigation_settings)
-            }
+            is AccountUiAction.OpenSettings -> onOpenSettings()
             is AccountUiAction.Login -> loginLauncher.launch(Unit)
             is AccountUiAction.Logout -> viewModel.logout()
         }

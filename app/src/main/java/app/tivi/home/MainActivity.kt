@@ -16,6 +16,7 @@
 
 package app.tivi.home
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
@@ -26,6 +27,7 @@ import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.settings.SettingsActivity
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
@@ -55,10 +57,14 @@ class MainActivity : TiviActivity() {
             ) {
                 ProvideWindowInsets(consumeWindowInsets = false) {
                     TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
-                        Home()
+                        Home(onOpenSettings = ::openSettings)
                     }
                 }
             }
         }
+    }
+
+    private fun openSettings() {
+        startActivity(Intent(this, SettingsActivity::class.java))
     }
 }

@@ -60,7 +60,9 @@ import app.tivi.showdetails.details.ShowDetails
 import com.google.accompanist.insets.navigationBarsPadding
 
 @Composable
-internal fun Home() {
+internal fun Home(
+    onOpenSettings: () -> Unit,
+) {
     Column {
         var currentSelectedItem by remember { mutableStateOf(Screen.Discover) }
         val navController = rememberNavController()
@@ -104,9 +106,8 @@ internal fun Home() {
                 composable(Screen.Account.route) {
                     // This should really be a dialog, but we're waiting on:
                     // https://issuetracker.google.com/179608120
-                    AccountUi(navController)
+                    AccountUi(navController, onOpenSettings)
                 }
-                // TODO: Settings
             }
         }
 
