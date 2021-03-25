@@ -16,7 +16,7 @@
 
 package app.tivi
 
-enum class HomeNavigation(val route: String) {
+enum class Screen(val route: String) {
     Discover("discover"),
     Following("following"),
     Trending("trending"),

@@ -46,12 +46,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.popUpTo
 import androidx.navigation.compose.rememberNavController
-import app.tivi.HomeNavigation
 import app.tivi.R
+import app.tivi.Screen
 import app.tivi.home.discover.Discover
 import app.tivi.home.discover.DiscoverViewModel
 import app.tivi.home.followed.FollowedFragment
-import app.tivi.home.search.SearchFragment
+import app.tivi.home.search.Search
+import app.tivi.home.search.SearchViewModel
 import app.tivi.home.watched.WatchedFragment
 import app.tivi.showdetails.details.ShowDetails
 import app.tivi.showdetails.details.ShowDetailsFragmentViewModel
@@ -60,7 +61,7 @@ import com.google.accompanist.insets.navigationBarsPadding
 @Composable
 internal fun Home() {
     Column {
-        var currentSelectedItem by remember { mutableStateOf(HomeNavigation.Discover) }
+        var currentSelectedItem by remember { mutableStateOf(Screen.Discover) }
         val navController = rememberNavController()
 
         Box(
@@ -70,31 +71,29 @@ internal fun Home() {
         ) {
             NavHost(
                 navController = navController,
-                startDestination = HomeNavigation.Discover.route
+                startDestination = Screen.Discover.route
             ) {
-                composable(HomeNavigation.Discover.route) {
+                composable(Screen.Discover.route) {
                     val viewModel: DiscoverViewModel = hiltNavGraphViewModel(it)
                     Discover(viewModel, navController)
                 }
-                composable(HomeNavigation.Following.route) {
+                composable(Screen.Following.route) {
                     ComposableFragment(
-                        fragmentKey = HomeNavigation.Following.route,
+                        fragmentKey = Screen.Following.route,
                         createFragment = ::FollowedFragment
                     )
                 }
-                composable(HomeNavigation.Watched.route) {
+                composable(Screen.Watched.route) {
                     ComposableFragment(
-                        fragmentKey = HomeNavigation.Watched.route,
+                        fragmentKey = Screen.Watched.route,
                         createFragment = ::WatchedFragment
                     )
                 }
-                composable(HomeNavigation.Search.route) {
-                    ComposableFragment(
-                        fragmentKey = HomeNavigation.Search.route,
-                        createFragment = ::SearchFragment
-                    )
+                composable(Screen.Search.route) {
+                    val viewModel: SearchViewModel = hiltNavGraphViewModel(it)
+                    Search(viewModel, navController)
                 }
-                composable(HomeNavigation.ShowDetails.route) {
+                composable(Screen.ShowDetails.route) {
                     val viewModel: ShowDetailsFragmentViewModel = hiltNavGraphViewModel(it)
                     ShowDetails(viewModel, navController)
                 }
@@ -107,7 +106,7 @@ internal fun Home() {
                 currentSelectedItem = selected
                 navController.navigate(selected.route) {
                     launchSingleTop = true
-                    popUpTo(HomeNavigation.Discover.route) {
+                    popUpTo(Screen.Discover.route) {
                         inclusive = false
                     }
                 }
@@ -119,8 +118,8 @@ internal fun Home() {
 
 @Composable
 internal fun HomeBottomNavigation(
-    selectedNavigation: HomeNavigation,
-    onNavigationSelected: (HomeNavigation) -> Unit,
+    selectedNavigation: Screen,
+    onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -144,8 +143,8 @@ internal fun HomeBottomNavigation(
                     )
                 },
                 label = { Text(stringResource(R.string.discover_title)) },
-                selected = selectedNavigation == HomeNavigation.Discover,
-                onClick = { onNavigationSelected(HomeNavigation.Discover) },
+                selected = selectedNavigation == Screen.Discover,
+                onClick = { onNavigationSelected(Screen.Discover) },
             )
 
             BottomNavigationItem(
@@ -156,8 +155,8 @@ internal fun HomeBottomNavigation(
                     )
                 },
                 label = { Text(stringResource(R.string.following_shows_title)) },
-                selected = selectedNavigation == HomeNavigation.Following,
-                onClick = { onNavigationSelected(HomeNavigation.Following) },
+                selected = selectedNavigation == Screen.Following,
+                onClick = { onNavigationSelected(Screen.Following) },
             )
 
             BottomNavigationItem(
@@ -168,8 +167,8 @@ internal fun HomeBottomNavigation(
                     )
                 },
                 label = { Text(stringResource(R.string.watched_shows_title)) },
-                selected = selectedNavigation == HomeNavigation.Watched,
-                onClick = { onNavigationSelected(HomeNavigation.Watched) },
+                selected = selectedNavigation == Screen.Watched,
+                onClick = { onNavigationSelected(Screen.Watched) },
             )
 
             BottomNavigationItem(
@@ -180,8 +179,8 @@ internal fun HomeBottomNavigation(
                     )
                 },
                 label = { Text(stringResource(R.string.search_navigation_title)) },
-                selected = selectedNavigation == HomeNavigation.Search,
-                onClick = { onNavigationSelected(HomeNavigation.Search) },
+                selected = selectedNavigation == Screen.Search,
+                onClick = { onNavigationSelected(Screen.Search) },
             )
         }
     }

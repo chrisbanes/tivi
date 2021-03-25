@@ -57,7 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import app.tivi.HomeNavigation
+import app.tivi.Screen
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.LocalTiviTextCreator
@@ -84,7 +84,7 @@ fun Discover(
         Discover(state = state) { action ->
             when (action) {
                 LoginAction,
-                OpenUserDetails -> navController.navigate(HomeNavigation.Account.route)
+                OpenUserDetails -> navController.navigate(Screen.Account.route)
                 is OpenShowDetails -> {
                     var route = "show/${action.showId}"
 //                    if (action.episodeId != null) {
@@ -92,9 +92,9 @@ fun Discover(
 //                    }
                     navController.navigate(route)
                 }
-                OpenTrendingShows -> navController.navigate(HomeNavigation.Trending.route)
-                OpenPopularShows -> navController.navigate(HomeNavigation.Popular.route)
-                OpenRecommendedShows -> navController.navigate(HomeNavigation.RecommendedShows.route)
+                OpenTrendingShows -> navController.navigate(Screen.Trending.route)
+                OpenPopularShows -> navController.navigate(Screen.Popular.route)
+                OpenRecommendedShows -> navController.navigate(Screen.RecommendedShows.route)
                 else -> viewModel.submitAction(action)
             }
         }

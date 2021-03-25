@@ -57,6 +57,8 @@ dependencies {
     implementation project(':common-ui-compose')
     implementation project(':common-imageloading')
 
+    implementation Libs.AndroidX.Navigation.compose
+
     implementation Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
 

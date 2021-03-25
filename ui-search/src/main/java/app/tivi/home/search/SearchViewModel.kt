@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class SearchViewModel @Inject constructor(
+class SearchViewModel @Inject constructor(
     private val searchShows: SearchShows
 ) : ReduxViewModel<SearchViewState>(
     SearchViewState()
