@@ -40,6 +40,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,8 +54,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import app.tivi.Screen
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.RefreshButton
@@ -76,7 +80,25 @@ import org.threeten.bp.OffsetDateTime
 fun Watched(
     viewModel: WatchedViewModel,
     navController: NavController,
-)
+) {
+    val viewState by viewModel.liveData.observeAsState()
+    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
+
+    viewState?.let { state ->
+        Watched(state = state, list = pagingItems) { action ->
+            when (action) {
+                WatchedAction.LoginAction,
+                WatchedAction.OpenUserDetails -> {
+                    navController.navigate(Screen.Search.route)
+                }
+                is WatchedAction.OpenShowDetails -> {
+                    navController.navigate("show/${action.showId}")
+                }
+                else -> viewModel.submitAction(action)
+            }
+        }
+    }
+}
 
 @Composable
 fun Watched(

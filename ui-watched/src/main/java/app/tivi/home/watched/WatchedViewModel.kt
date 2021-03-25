@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class WatchedViewModel @Inject constructor(
+class WatchedViewModel @Inject constructor(
     private val updateWatchedShows: UpdateWatchedShows,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val observePagedWatchedShows: ObservePagedWatchedShows,

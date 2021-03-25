@@ -53,7 +53,8 @@ import app.tivi.home.discover.DiscoverViewModel
 import app.tivi.home.followed.FollowedFragment
 import app.tivi.home.search.Search
 import app.tivi.home.search.SearchViewModel
-import app.tivi.home.watched.WatchedFragment
+import app.tivi.home.watched.Watched
+import app.tivi.home.watched.WatchedViewModel
 import app.tivi.showdetails.details.ShowDetails
 import app.tivi.showdetails.details.ShowDetailsFragmentViewModel
 import com.google.accompanist.insets.navigationBarsPadding
@@ -84,10 +85,8 @@ internal fun Home() {
                     )
                 }
                 composable(Screen.Watched.route) {
-                    ComposableFragment(
-                        fragmentKey = Screen.Watched.route,
-                        createFragment = ::WatchedFragment
-                    )
+                    val viewModel: WatchedViewModel = hiltNavGraphViewModel(it)
+                    Watched(viewModel, navController)
                 }
                 composable(Screen.Search.route) {
                     val viewModel: SearchViewModel = hiltNavGraphViewModel(it)
