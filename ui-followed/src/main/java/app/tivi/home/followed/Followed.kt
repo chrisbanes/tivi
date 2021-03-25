@@ -54,6 +54,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import androidx.paging.compose.LazyPagingItems
@@ -76,7 +77,15 @@ import com.google.accompanist.coil.CoilImage
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun Followed(
+fun Followed(navController: NavController) {
+    Followed(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun Followed(
     viewModel: FollowedViewModel,
     navController: NavController,
 ) {
@@ -99,7 +108,7 @@ fun Followed(
 }
 
 @Composable
-fun Followed(
+internal fun Followed(
     state: FollowedViewState,
     list: LazyPagingItems<FollowedShowEntryWithShow>,
     actioner: (FollowedAction) -> Unit

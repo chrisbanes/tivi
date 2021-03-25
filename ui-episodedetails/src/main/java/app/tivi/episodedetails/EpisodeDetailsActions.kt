@@ -16,10 +16,11 @@
 
 package app.tivi.episodedetails
 
-sealed class EpisodeDetailsAction
-object RefreshAction : EpisodeDetailsAction()
-object Close : EpisodeDetailsAction()
-object AddEpisodeWatchAction : EpisodeDetailsAction()
-data class RemoveEpisodeWatchAction(val watchId: Long) : EpisodeDetailsAction()
-object RemoveAllEpisodeWatchesAction : EpisodeDetailsAction()
-object ClearError : EpisodeDetailsAction()
+internal sealed class EpisodeDetailsAction {
+    object RefreshAction : EpisodeDetailsAction()
+    object Close : EpisodeDetailsAction()
+    object AddEpisodeWatchAction : EpisodeDetailsAction()
+    data class RemoveEpisodeWatchAction(val watchId: Long) : EpisodeDetailsAction()
+    object RemoveAllEpisodeWatchesAction : EpisodeDetailsAction()
+    object ClearError : EpisodeDetailsAction()
+}

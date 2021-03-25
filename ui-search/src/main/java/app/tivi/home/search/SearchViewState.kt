@@ -18,7 +18,7 @@ package app.tivi.home.search
 
 import app.tivi.data.resultentities.ShowDetailed
 
-data class SearchViewState(
+internal data class SearchViewState(
     val query: String = "",
     val searchResults: List<ShowDetailed> = emptyList(),
     val refreshing: Boolean = false

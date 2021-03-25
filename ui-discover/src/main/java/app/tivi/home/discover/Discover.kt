@@ -55,6 +55,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import app.tivi.Screen
@@ -75,7 +76,15 @@ import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun Discover(
+fun Discover(navController: NavController) {
+    Discover(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun Discover(
     viewModel: DiscoverViewModel,
     navController: NavController,
 ) {
@@ -83,18 +92,20 @@ fun Discover(
     viewState?.let { state ->
         Discover(state = state) { action ->
             when (action) {
-                LoginAction,
-                OpenUserDetails -> navController.navigate(Screen.Account.route)
-                is OpenShowDetails -> {
+                DiscoverAction.LoginAction,
+                DiscoverAction.OpenUserDetails -> navController.navigate(Screen.Account.route)
+                is DiscoverAction.OpenShowDetails -> {
                     navController.navigate("show/${action.showId}")
                     // If we have an episodeId, we also open that
                     if (action.episodeId != null) {
                         navController.navigate("episode/${action.episodeId}")
                     }
                 }
-                OpenTrendingShows -> navController.navigate(Screen.Trending.route)
-                OpenPopularShows -> navController.navigate(Screen.Popular.route)
-                OpenRecommendedShows -> navController.navigate(Screen.RecommendedShows.route)
+                DiscoverAction.OpenTrendingShows -> navController.navigate(Screen.Trending.route)
+                DiscoverAction.OpenPopularShows -> navController.navigate(Screen.Popular.route)
+                DiscoverAction.OpenRecommendedShows -> {
+                    navController.navigate(Screen.RecommendedShows.route)
+                }
                 else -> viewModel.submitAction(action)
             }
         }
@@ -102,7 +113,7 @@ fun Discover(
 }
 
 @Composable
-fun Discover(
+internal fun Discover(
     state: DiscoverViewState,
     actioner: (DiscoverAction) -> Unit
 ) {
@@ -132,7 +143,7 @@ fun Discover(
                                 .fillMaxWidth()
                                 .clickable {
                                     actioner(
-                                        OpenShowDetails(
+                                        DiscoverAction.OpenShowDetails(
                                             showId = nextEpisodeToWatch.show.id,
                                             episodeId = nextEpisodeToWatch.episode.id
                                         )
@@ -149,8 +160,8 @@ fun Discover(
                         items = state.trendingItems,
                         title = stringResource(R.string.discover_trending_title),
                         refreshing = state.trendingRefreshing,
-                        onItemClick = { actioner(OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(OpenTrendingShows) }
+                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
+                        onMoreClick = { actioner(DiscoverAction.OpenTrendingShows) }
                     )
                 }
 
@@ -159,8 +170,8 @@ fun Discover(
                         items = state.recommendedItems,
                         title = stringResource(R.string.discover_recommended_title),
                         refreshing = state.recommendedRefreshing,
-                        onItemClick = { actioner(OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(OpenRecommendedShows) }
+                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
+                        onMoreClick = { actioner(DiscoverAction.OpenRecommendedShows) }
                     )
                 }
 
@@ -169,8 +180,8 @@ fun Discover(
                         items = state.popularItems,
                         title = stringResource(R.string.discover_popular_title),
                         refreshing = state.popularRefreshing,
-                        onItemClick = { actioner(OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(OpenPopularShows) }
+                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
+                        onMoreClick = { actioner(DiscoverAction.OpenPopularShows) }
                     )
                 }
 
@@ -181,8 +192,8 @@ fun Discover(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.refreshing,
-                onRefreshActionClick = { actioner(RefreshAction) },
-                onUserActionClick = { actioner(OpenUserDetails) },
+                onRefreshActionClick = { actioner(DiscoverAction.RefreshAction) },
+                onUserActionClick = { actioner(DiscoverAction.OpenUserDetails) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onSizeChanged { appBarHeight = it.height }

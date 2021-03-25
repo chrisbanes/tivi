@@ -40,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
@@ -49,25 +48,15 @@ import androidx.navigation.compose.rememberNavController
 import app.tivi.R
 import app.tivi.Screen
 import app.tivi.account.AccountUi
-import app.tivi.account.AccountUiViewModel
 import app.tivi.episodedetails.EpisodeDetails
-import app.tivi.episodedetails.EpisodeDetailsViewModel
 import app.tivi.home.discover.Discover
-import app.tivi.home.discover.DiscoverViewModel
 import app.tivi.home.followed.Followed
-import app.tivi.home.followed.FollowedViewModel
 import app.tivi.home.popular.Popular
-import app.tivi.home.popular.PopularShowsViewModel
 import app.tivi.home.recommended.Recommended
-import app.tivi.home.recommended.RecommendedShowsViewModel
 import app.tivi.home.search.Search
-import app.tivi.home.search.SearchViewModel
 import app.tivi.home.trending.Trending
-import app.tivi.home.trending.TrendingShowsViewModel
 import app.tivi.home.watched.Watched
-import app.tivi.home.watched.WatchedViewModel
 import app.tivi.showdetails.details.ShowDetails
-import app.tivi.showdetails.details.ShowDetailsViewModel
 import com.google.accompanist.insets.navigationBarsPadding
 
 @Composable
@@ -86,46 +75,36 @@ internal fun Home() {
                 startDestination = Screen.Discover.route
             ) {
                 composable(Screen.Discover.route) {
-                    val viewModel: DiscoverViewModel = hiltNavGraphViewModel(it)
-                    Discover(viewModel, navController)
+                    Discover(navController)
                 }
                 composable(Screen.Following.route) {
-                    val viewModel: FollowedViewModel = hiltNavGraphViewModel(it)
-                    Followed(viewModel, navController)
+                    Followed(navController)
                 }
                 composable(Screen.Watched.route) {
-                    val viewModel: WatchedViewModel = hiltNavGraphViewModel(it)
-                    Watched(viewModel, navController)
+                    Watched(navController)
                 }
                 composable(Screen.Search.route) {
-                    val viewModel: SearchViewModel = hiltNavGraphViewModel(it)
-                    Search(viewModel, navController)
+                    Search(navController)
                 }
                 composable(Screen.ShowDetails.route) {
-                    val viewModel: ShowDetailsViewModel = hiltNavGraphViewModel(it)
-                    ShowDetails(viewModel, navController)
+                    ShowDetails(navController)
                 }
                 composable(Screen.RecommendedShows.route) {
-                    val viewModel: RecommendedShowsViewModel = hiltNavGraphViewModel(it)
-                    Recommended(viewModel, navController)
+                    Recommended(navController)
                 }
                 composable(Screen.Trending.route) {
-                    val viewModel: TrendingShowsViewModel = hiltNavGraphViewModel(it)
-                    Trending(viewModel, navController)
+                    Trending(navController)
                 }
                 composable(Screen.Popular.route) {
-                    val viewModel: PopularShowsViewModel = hiltNavGraphViewModel(it)
-                    Popular(viewModel, navController)
+                    Popular(navController)
                 }
                 composable(Screen.EpisodeDetails.route) {
-                    val viewModel: EpisodeDetailsViewModel = hiltNavGraphViewModel(it)
-                    EpisodeDetails(viewModel, navController)
+                    EpisodeDetails(navController)
                 }
                 composable(Screen.Account.route) {
                     // This should really be a dialog, but we're waiting on:
                     // https://issuetracker.google.com/179608120
-                    val viewModel: AccountUiViewModel = hiltNavGraphViewModel(it)
-                    AccountUi(viewModel, navController)
+                    AccountUi(navController)
                 }
                 // TODO: Settings
             }

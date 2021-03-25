@@ -23,7 +23,7 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.Season
 
 @Immutable
-data class EpisodeDetailsViewState(
+internal data class EpisodeDetailsViewState(
     val episodeId: Long,
     val season: Season? = null,
     val episode: Episode? = null,

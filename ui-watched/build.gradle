@@ -74,6 +74,7 @@ dependencies {
     implementation Libs.Accompanist.coil
     implementation Libs.Accompanist.insets
 
+    implementation Libs.AndroidX.Hilt.compose
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
 }

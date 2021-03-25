@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DiscoverViewModel @Inject constructor(
+internal class DiscoverViewModel @Inject constructor(
     private val updatePopularShows: UpdatePopularShows,
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
@@ -118,7 +118,7 @@ class DiscoverViewModel @Inject constructor(
         viewModelScope.launch {
             pendingActions.collect { action ->
                 when (action) {
-                    RefreshAction -> refresh(true)
+                    DiscoverAction.RefreshAction -> refresh(true)
                 }
             }
         }

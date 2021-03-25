@@ -45,7 +45,7 @@ import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 @HiltViewModel
-class EpisodeDetailsViewModel @Inject constructor(
+internal class EpisodeDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
@@ -81,11 +81,11 @@ class EpisodeDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             pendingActions.collect { action ->
                 when (action) {
-                    RefreshAction -> refresh(true)
-                    AddEpisodeWatchAction -> markWatched()
-                    RemoveAllEpisodeWatchesAction -> markUnwatched()
-                    is RemoveEpisodeWatchAction -> removeWatchEntry(action)
-                    ClearError -> snackbarManager.removeCurrentError()
+                    EpisodeDetailsAction.RefreshAction -> refresh(true)
+                    EpisodeDetailsAction.AddEpisodeWatchAction -> markWatched()
+                    EpisodeDetailsAction.RemoveAllEpisodeWatchesAction -> markUnwatched()
+                    is EpisodeDetailsAction.RemoveEpisodeWatchAction -> removeWatchEntry(action)
+                    EpisodeDetailsAction.ClearError -> snackbarManager.removeCurrentError()
                 }
             }
         }
@@ -137,7 +137,7 @@ class EpisodeDetailsViewModel @Inject constructor(
         ).watchStatus()
     }
 
-    private fun removeWatchEntry(action: RemoveEpisodeWatchAction) {
+    private fun removeWatchEntry(action: EpisodeDetailsAction.RemoveEpisodeWatchAction) {
         removeEpisodeWatch(RemoveEpisodeWatch.Params(action.watchId)).watchStatus()
     }
 

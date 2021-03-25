@@ -21,7 +21,7 @@ import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 
 @Immutable
-data class AccountUiViewState(
+internal data class AccountUiViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
 )

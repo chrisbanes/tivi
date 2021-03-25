@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import app.tivi.common.compose.SimpleFlowRow
 import app.tivi.common.compose.foregroundColor
@@ -64,9 +65,17 @@ import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
 @Composable
-fun AccountUi(
-    viewModel: AccountUiViewModel,
+fun AccountUi(navController: NavController) {
+    AccountUi(
+        navController = navController,
+        viewModel = hiltNavGraphViewModel()
+    )
+}
+
+@Composable
+internal fun AccountUi(
     navController: NavController,
+    viewModel: AccountUiViewModel = hiltNavGraphViewModel(),
 ) {
     val viewState by viewModel.liveData.observeAsState()
 
@@ -79,20 +88,20 @@ fun AccountUi(
     viewState?.let { state ->
         AccountUi(state) { action ->
             when (action) {
-                is Close -> navController.popBackStack()
-                is OpenSettings -> {
+                is AccountUiAction.Close -> navController.popBackStack()
+                is AccountUiAction.OpenSettings -> {
                     // TODO: sort out Settings navigation (Activity)
                     // view.findNavController().navigateToNavDestination(R.id.navigation_settings)
                 }
-                is Login -> loginLauncher.launch(Unit)
-                is Logout -> viewModel.logout()
+                is AccountUiAction.Login -> loginLauncher.launch(Unit)
+                is AccountUiAction.Logout -> viewModel.logout()
             }
         }
     }
 }
 
 @Composable
-fun AccountUi(
+internal fun AccountUi(
     viewState: AccountUiViewState,
     actioner: (AccountUiAction) -> Unit
 ) {
@@ -120,16 +129,16 @@ fun AccountUi(
                     crossAxisSpacing = 4.dp,
                 ) {
                     if (viewState.authState == TraktAuthState.LOGGED_OUT) {
-                        OutlinedButton(onClick = { actioner(Login) }) {
+                        OutlinedButton(onClick = { actioner(AccountUiAction.Login) }) {
                             Text(text = stringResource(R.string.login))
                         }
                     } else {
-                        TextButton(onClick = { actioner(Login) }) {
+                        TextButton(onClick = { actioner(AccountUiAction.Login) }) {
                             Text(text = stringResource(R.string.refresh_credentials))
                         }
                     }
 
-                    OutlinedButton(onClick = { actioner(Logout) }) {
+                    OutlinedButton(onClick = { actioner(AccountUiAction.Logout) }) {
                         Text(text = stringResource(R.string.logout))
                     }
                 }
@@ -147,7 +156,7 @@ fun AccountUi(
                 label = stringResource(R.string.settings_title),
                 icon = Icons.Default.Settings,
                 contentDescription = stringResource(R.string.settings_title),
-                onClick = { actioner(OpenSettings) }
+                onClick = { actioner(AccountUiAction.OpenSettings) }
             )
 
             Spacer(

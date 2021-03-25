@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AccountUiViewModel @Inject constructor(
+internal class AccountUiViewModel @Inject constructor(
     private val traktManager: TraktManager,
     private val traktAuthManager: TraktAuthManager,
     observeTraktAuthState: ObserveTraktAuthState,

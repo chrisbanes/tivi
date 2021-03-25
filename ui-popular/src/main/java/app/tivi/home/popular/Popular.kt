@@ -49,6 +49,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import androidx.paging.LoadState
@@ -63,7 +64,15 @@ import app.tivi.data.resultentities.PopularEntryWithShow
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun Popular(
+fun Popular(navController: NavController) {
+    Popular(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun Popular(
     viewModel: PopularShowsViewModel,
     navController: NavController,
 ) {
@@ -80,7 +89,7 @@ fun Popular(
 }
 
 @Composable
-fun Popular(
+internal fun Popular(
     lazyPagingItems: LazyPagingItems<PopularEntryWithShow>,
     actioner: (PopularAction) -> Unit
 ) {

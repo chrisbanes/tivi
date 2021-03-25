@@ -16,6 +16,6 @@
 
 package app.tivi.home.trending
 
-sealed class TrendingAction {
+internal sealed class TrendingAction {
     data class OpenShowDetails(val showId: Long) : TrendingAction()
 }

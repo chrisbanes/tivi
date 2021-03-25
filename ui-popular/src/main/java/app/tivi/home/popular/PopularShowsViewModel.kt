@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class PopularShowsViewModel @Inject constructor(
+internal class PopularShowsViewModel @Inject constructor(
     private val pagingInteractor: ObservePagedPopularShows,
 ) : ViewModel() {
 

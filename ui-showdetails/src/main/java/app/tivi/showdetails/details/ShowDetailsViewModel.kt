@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ShowDetailsViewModel @Inject constructor(
+internal class ShowDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
@@ -141,16 +141,16 @@ class ShowDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             pendingActions.collect { action ->
                 when (action) {
-                    is RefreshAction -> refresh(true)
-                    FollowShowToggleAction -> onToggleMyShowsButtonClicked()
-                    is MarkSeasonWatchedAction -> onMarkSeasonWatched(action)
-                    is MarkSeasonUnwatchedAction -> onMarkSeasonUnwatched(action)
-                    is ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
-                    is ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action.seasonId, action.expanded)
-                    is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
-                    is OpenEpisodeDetails -> openEpisodeDetails(action)
-                    is OpenShowDetails -> openShowDetails(action)
-                    is ClearError -> snackbarManager.removeCurrentError()
+                    is ShowDetailsAction.RefreshAction -> refresh(true)
+                    ShowDetailsAction.FollowShowToggleAction -> onToggleMyShowsButtonClicked()
+                    is ShowDetailsAction.MarkSeasonWatchedAction -> onMarkSeasonWatched(action)
+                    is ShowDetailsAction.MarkSeasonUnwatchedAction -> onMarkSeasonUnwatched(action)
+                    is ShowDetailsAction.ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
+                    is ShowDetailsAction.ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action.seasonId, action.expanded)
+                    is ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
+                    is ShowDetailsAction.OpenEpisodeDetails -> openEpisodeDetails(action)
+                    is ShowDetailsAction.OpenShowDetails -> openShowDetails(action)
+                    is ShowDetailsAction.ClearError -> snackbarManager.removeCurrentError()
                 }
             }
         }
@@ -207,13 +207,13 @@ class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun openShowDetails(action: OpenShowDetails) {
+    private fun openShowDetails(action: ShowDetailsAction.OpenShowDetails) {
         viewModelScope.launch {
             _uiEffects.emit(OpenShowUiEffect(action.showId))
         }
     }
 
-    private fun openEpisodeDetails(action: OpenEpisodeDetails) = viewModelScope.launch {
+    private fun openEpisodeDetails(action: ShowDetailsAction.OpenEpisodeDetails) = viewModelScope.launch {
         val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId)).first()
         if (episode != null) {
             // Make sure the season is expanded
@@ -225,13 +225,13 @@ class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun onMarkSeasonWatched(action: MarkSeasonWatchedAction) {
+    private fun onMarkSeasonWatched(action: ShowDetailsAction.MarkSeasonWatchedAction) {
         changeSeasonWatchedStatus(
             Params(action.seasonId, Action.WATCHED, action.onlyAired, action.date)
         ).watchStatus()
     }
 
-    private fun onMarkSeasonUnwatched(action: MarkSeasonUnwatchedAction) {
+    private fun onMarkSeasonUnwatched(action: ShowDetailsAction.MarkSeasonUnwatchedAction) {
         changeSeasonWatchedStatus(Params(action.seasonId, Action.UNWATCH)).watchStatus()
     }
 
@@ -250,7 +250,7 @@ class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun onChangeSeasonFollowState(action: ChangeSeasonFollowedAction) {
+    private fun onChangeSeasonFollowState(action: ShowDetailsAction.ChangeSeasonFollowedAction) {
         // Make sure we collapse the season if it is expanded
         onChangeSeasonExpandState(action.seasonId, false)
 
@@ -265,7 +265,7 @@ class ShowDetailsViewModel @Inject constructor(
         ).watchStatus()
     }
 
-    private fun onUnfollowPreviousSeasonsFollowState(action: UnfollowPreviousSeasonsFollowedAction) {
+    private fun onUnfollowPreviousSeasonsFollowState(action: ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction) {
         changeSeasonFollowStatus(
             ChangeSeasonFollowStatus.Params(
                 action.seasonId,

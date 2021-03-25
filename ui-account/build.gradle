@@ -76,6 +76,7 @@ dependencies {
 
     implementation Libs.Kotlin.stdlib
 
+    implementation Libs.AndroidX.Hilt.compose
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
 }

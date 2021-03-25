@@ -49,6 +49,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import androidx.paging.LoadState
@@ -63,7 +64,15 @@ import app.tivi.data.resultentities.RecommendedEntryWithShow
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun Recommended(
+fun Recommended(navController: NavController) {
+    Recommended(
+        viewModel = hiltNavGraphViewModel(),
+        navController = navController,
+    )
+}
+
+@Composable
+internal fun Recommended(
     viewModel: RecommendedShowsViewModel,
     navController: NavController,
 ) {
@@ -80,7 +89,7 @@ fun Recommended(
 }
 
 @Composable
-fun Recommended(
+internal fun Recommended(
     lazyPagingItems: LazyPagingItems<RecommendedEntryWithShow>,
     actioner: (RecommendedAction) -> Unit
 ) {
