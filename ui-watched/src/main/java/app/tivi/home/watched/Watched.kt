@@ -52,6 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import app.tivi.common.compose.LocalTiviDateFormatter
@@ -70,6 +71,12 @@ import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.coil.CoilImage
 import com.google.accompanist.insets.statusBarsPadding
 import org.threeten.bp.OffsetDateTime
+
+@Composable
+fun Watched(
+    viewModel: WatchedViewModel,
+    navController: NavController,
+)
 
 @Composable
 fun Watched(
