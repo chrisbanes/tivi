@@ -52,8 +52,14 @@ import app.tivi.home.discover.Discover
 import app.tivi.home.discover.DiscoverViewModel
 import app.tivi.home.followed.Followed
 import app.tivi.home.followed.FollowedViewModel
+import app.tivi.home.popular.Popular
+import app.tivi.home.popular.PopularShowsViewModel
+import app.tivi.home.recommended.Recommended
+import app.tivi.home.recommended.RecommendedShowsViewModel
 import app.tivi.home.search.Search
 import app.tivi.home.search.SearchViewModel
+import app.tivi.home.trending.Trending
+import app.tivi.home.trending.TrendingShowsViewModel
 import app.tivi.home.watched.Watched
 import app.tivi.home.watched.WatchedViewModel
 import app.tivi.showdetails.details.ShowDetails
@@ -96,13 +102,16 @@ internal fun Home() {
                     ShowDetails(viewModel, navController)
                 }
                 composable(Screen.RecommendedShows.route) {
-                    // TODO
+                    val viewModel: RecommendedShowsViewModel = hiltNavGraphViewModel(it)
+                    Recommended(viewModel, navController)
                 }
                 composable(Screen.Trending.route) {
-                    // TODO
+                    val viewModel: TrendingShowsViewModel = hiltNavGraphViewModel(it)
+                    Trending(viewModel, navController)
                 }
                 composable(Screen.Popular.route) {
-                    // TODO
+                    val viewModel: PopularShowsViewModel = hiltNavGraphViewModel(it)
+                    Popular(viewModel, navController)
                 }
                 composable(Screen.EpisodeDetails.route) {
                     // TODO
