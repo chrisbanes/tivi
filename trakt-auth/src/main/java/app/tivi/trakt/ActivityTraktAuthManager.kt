@@ -42,7 +42,7 @@ internal class ActivityTraktAuthManager @Inject constructor(
         return authService.getAuthorizationRequestIntent(requestProvider.get())
     }
 
-    override fun onAuthResponse(result: LoginTrakt.Result) {
+    override fun onLoginResult(result: LoginTrakt.Result) {
         val (response, error) = result
         when {
             response != null -> {

@@ -48,6 +48,8 @@ import androidx.navigation.compose.popUpTo
 import androidx.navigation.compose.rememberNavController
 import app.tivi.R
 import app.tivi.Screen
+import app.tivi.account.AccountUi
+import app.tivi.account.AccountUiViewModel
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.episodedetails.EpisodeDetailsViewModel
 import app.tivi.home.discover.Discover
@@ -119,7 +121,13 @@ internal fun Home() {
                     val viewModel: EpisodeDetailsViewModel = hiltNavGraphViewModel(it)
                     EpisodeDetails(viewModel, navController)
                 }
-                // TODO: Account and Settings
+                composable(Screen.Account.route) {
+                    // This should really be a dialog, but we're waiting on:
+                    // https://issuetracker.google.com/179608120
+                    val viewModel: AccountUiViewModel = hiltNavGraphViewModel(it)
+                    AccountUi(viewModel, navController)
+                }
+                // TODO: Settings
             }
         }
 

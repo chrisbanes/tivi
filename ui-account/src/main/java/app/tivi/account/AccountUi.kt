@@ -16,6 +16,7 @@
 
 package app.tivi.account
 
+import androidx.activity.compose.registerForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +54,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import app.tivi.common.compose.SimpleFlowRow
 import app.tivi.common.compose.foregroundColor
 import app.tivi.data.entities.TraktUser
@@ -58,6 +62,34 @@ import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.coil.CoilImage
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
+
+@Composable
+fun AccountUi(
+    viewModel: AccountUiViewModel,
+    navController: NavController,
+) {
+    val viewState by viewModel.liveData.observeAsState()
+
+    val loginLauncher = registerForActivityResult(viewModel.buildLoginActivityResult()) { result ->
+        if (result != null) {
+            viewModel.onLoginResult(result)
+        }
+    }
+
+    viewState?.let { state ->
+        AccountUi(state) { action ->
+            when (action) {
+                is Close -> navController.popBackStack()
+                is OpenSettings -> {
+                    // TODO: sort out Settings navigation (Activity)
+                    // view.findNavController().navigateToNavDestination(R.id.navigation_settings)
+                }
+                is Login -> loginLauncher.launch(Unit)
+                is Logout -> viewModel.logout()
+            }
+        }
+    }
+}
 
 @Composable
 fun AccountUi(
