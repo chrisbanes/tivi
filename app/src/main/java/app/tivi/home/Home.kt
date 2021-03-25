@@ -95,6 +95,19 @@ internal fun Home() {
                     val viewModel: ShowDetailsFragmentViewModel = hiltNavGraphViewModel(it)
                     ShowDetails(viewModel, navController)
                 }
+                composable(Screen.RecommendedShows.route) {
+                    // TODO
+                }
+                composable(Screen.Trending.route) {
+                    // TODO
+                }
+                composable(Screen.Popular.route) {
+                    // TODO
+                }
+                composable(Screen.EpisodeDetails.route) {
+                    // TODO
+                }
+                // TODO: Account and Settings
             }
         }
 

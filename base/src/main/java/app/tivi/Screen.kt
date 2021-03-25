@@ -22,6 +22,7 @@ enum class Screen(val route: String) {
     Trending("trending"),
     Popular("popular"),
     ShowDetails("show/{showId}"),
+    EpisodeDetails("episode/{episodeId}"),
     RecommendedShows("recommendedshows"),
     Watched("watched"),
     Search("search"),
