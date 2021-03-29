@@ -50,6 +50,7 @@ versions.accompanist = "0.7.0"
 libs.Accompanist = [
     coil: "com.google.accompanist:accompanist-coil:$versions.accompanist",
     insets: "com.google.accompanist:accompanist-insets:$versions.accompanist",
+    flowlayout: "com.google.accompanist:accompanist-flowlayout:$versions.accompanist",
 ]
 
 libs.Google = [

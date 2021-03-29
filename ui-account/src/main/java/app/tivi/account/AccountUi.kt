@@ -19,8 +19,6 @@ package app.tivi.account
 import androidx.activity.compose.registerForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -56,11 +54,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
-import app.tivi.common.compose.SimpleFlowRow
 import app.tivi.common.compose.foregroundColor
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.flowlayout.FlowMainAxisAlignment
+import com.google.accompanist.flowlayout.FlowRow
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
@@ -117,30 +116,27 @@ internal fun AccountUi(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Box(
+            FlowRow(
+                mainAxisAlignment = FlowMainAxisAlignment.End,
+                mainAxisSpacing = 8.dp,
+                crossAxisSpacing = 4.dp,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .wrapContentSize(Alignment.CenterEnd)
                     .align(Alignment.End)
             ) {
-                SimpleFlowRow(
-                    mainAxisArrangement = Arrangement.End,
-                    mainAxisSpacing = 8.dp,
-                    crossAxisSpacing = 4.dp,
-                ) {
-                    if (viewState.authState == TraktAuthState.LOGGED_OUT) {
-                        OutlinedButton(onClick = { actioner(AccountUiAction.Login) }) {
-                            Text(text = stringResource(R.string.login))
-                        }
-                    } else {
-                        TextButton(onClick = { actioner(AccountUiAction.Login) }) {
-                            Text(text = stringResource(R.string.refresh_credentials))
-                        }
+                if (viewState.authState == TraktAuthState.LOGGED_OUT) {
+                    OutlinedButton(onClick = { actioner(AccountUiAction.Login) }) {
+                        Text(text = stringResource(R.string.login))
                     }
+                } else {
+                    TextButton(onClick = { actioner(AccountUiAction.Login) }) {
+                        Text(text = stringResource(R.string.refresh_credentials))
+                    }
+                }
 
-                    OutlinedButton(onClick = { actioner(AccountUiAction.Logout) }) {
-                        Text(text = stringResource(R.string.logout))
-                    }
+                OutlinedButton(onClick = { actioner(AccountUiAction.Logout) }) {
+                    Text(text = stringResource(R.string.logout))
                 }
             }
 
