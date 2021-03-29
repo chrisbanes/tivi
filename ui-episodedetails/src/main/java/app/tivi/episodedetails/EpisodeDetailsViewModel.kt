@@ -58,7 +58,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
 ) : ReduxViewModel<EpisodeDetailsViewState>(
     EpisodeDetailsViewState(
         // The string "episodeId" is the name of the argument in the route
-        episodeId = savedStateHandle.get<String>("episodeId")!!.toLong()
+        episodeId = savedStateHandle.get("episodeId")!!
     )
 ) {
 
