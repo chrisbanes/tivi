@@ -44,8 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.popUpTo
 import androidx.navigation.compose.rememberNavController
@@ -91,7 +93,10 @@ internal fun Home(
                 composable(Screen.Search.route) {
                     Search(navController)
                 }
-                composable(Screen.ShowDetails.route) {
+                composable(
+                    route = Screen.ShowDetails.route,
+                    arguments = listOf(navArgument("showId") { type = NavType.LongType })
+                ) {
                     ShowDetails(navController)
                 }
                 composable(Screen.RecommendedShows.route) {
@@ -103,7 +108,10 @@ internal fun Home(
                 composable(Screen.Popular.route) {
                     Popular(navController)
                 }
-                composable(Screen.EpisodeDetails.route) {
+                composable(
+                    route = Screen.EpisodeDetails.route,
+                    arguments = listOf(navArgument("episodeId") { type = NavType.LongType })
+                ) {
                     EpisodeDetails(navController)
                 }
                 composable(Screen.Account.route) {

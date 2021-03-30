@@ -78,7 +78,7 @@ internal class ShowDetailsViewModel @Inject constructor(
 ) : ReduxViewModel<ShowDetailsViewState>(
     ShowDetailsViewState(
         // The string "showId" is the name of the argument in the route
-        showId = savedStateHandle.get<String>("showId")!!.toLong()
+        showId = savedStateHandle.get("showId")!!
     )
 ) {
     private val loadingState = ObservableLoadingCounter()
