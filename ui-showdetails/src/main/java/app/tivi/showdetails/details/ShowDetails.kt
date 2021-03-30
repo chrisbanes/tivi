@@ -110,7 +110,6 @@ import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
-import app.tivi.common.compose.SimpleFlowRow
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.itemSpacer
@@ -134,6 +133,7 @@ import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsHeight
@@ -421,8 +421,6 @@ private fun PosterInfoRow(
 ) {
     Row(modifier) {
         if (posterImage != null) {
-            Spacer(Modifier.width(16.dp))
-
             CoilImage(
                 data = posterImage,
                 fadeIn = true,
@@ -431,17 +429,17 @@ private fun PosterInfoRow(
                 modifier = Modifier
                     .weight(1f, fill = false)
                     .aspectRatio(2 / 3f)
+                    .padding(start = 16.dp)
                     .clip(MaterialTheme.shapes.medium)
             )
         }
 
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Box(Modifier.weight(1f, fill = false)) {
-            InfoPanels(show)
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
+        InfoPanels(
+            show = show,
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .padding(horizontal = 16.dp)
+        )
     }
 }
 
@@ -811,10 +809,14 @@ private fun NextEpisodeToWatch(
 }
 
 @Composable
-private fun InfoPanels(show: TiviShow) {
-    SimpleFlowRow(
+private fun InfoPanels(
+    show: TiviShow,
+    modifier: Modifier = Modifier,
+) {
+    FlowRow(
         mainAxisSpacing = 8.dp,
         crossAxisSpacing = 8.dp,
+        modifier = modifier,
     ) {
         if (show.traktRating != null) {
             TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
