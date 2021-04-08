@@ -16,7 +16,7 @@
 
 package app.tivi.account
 
-import androidx.activity.compose.registerForActivityResult
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -83,7 +83,9 @@ internal fun AccountUi(
 ) {
     val viewState by viewModel.state.collectAsState()
 
-    val loginLauncher = registerForActivityResult(viewModel.buildLoginActivityResult()) { result ->
+    val loginLauncher = rememberLauncherForActivityResult(
+        viewModel.buildLoginActivityResult()
+    ) { result ->
         if (result != null) {
             viewModel.onLoginResult(result)
         }
