@@ -23,7 +23,7 @@ def versions = [
 ]
 ext.Versions = versions
 
-libs.androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha11"
+libs.androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha14"
 
 libs.timber = "com.jakewharton.timber:timber:4.7.1"
 
