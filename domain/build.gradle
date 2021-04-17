@@ -46,10 +46,10 @@ dependencies {
     implementation project(':trakt-auth')
     implementation project(':tmdb')
 
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 
-    api Libs.AndroidX.Paging.common
-    implementation Libs.AndroidX.Paging.runtime
+    api libs.androidx.paging.common
+    implementation libs.androidx.paging.runtime
 }
 

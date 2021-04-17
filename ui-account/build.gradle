@@ -44,7 +44,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.compose
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
 }
 
@@ -56,27 +56,27 @@ dependencies {
     implementation project(':common-ui-compose')
     implementation project(':trakt-auth')
 
-    implementation Libs.AndroidX.Lifecycle.viewmodel
+    implementation libs.androidx.lifecycle.viewmodel.ktx
 
     // For registerForActivityResult
-    implementation Libs.AndroidX.Activity.compose
+    implementation libs.androidx.activity.compose
 
-    implementation Libs.AndroidX.Navigation.compose
+    implementation libs.androidx.navigation.compose
 
-    implementation Libs.AndroidX.Compose.foundation
-    implementation Libs.AndroidX.Compose.layout
-    implementation Libs.AndroidX.Compose.material
-    implementation Libs.AndroidX.Compose.animation
-    implementation Libs.AndroidX.Compose.tooling
-    implementation Libs.AndroidX.Compose.livedata
+    implementation libs.compose.foundation.foundation
+    implementation libs.compose.foundation.layout
+    implementation libs.compose.material.material
+    implementation libs.compose.animation.animation
+    implementation libs.compose.ui.tooling
 
-    implementation Libs.Accompanist.coil
-    implementation Libs.Accompanist.insets
-    implementation Libs.Accompanist.flowlayout
 
-    implementation Libs.Kotlin.stdlib
+    implementation libs.accompanist.coil
+    implementation libs.accompanist.insets
+    implementation libs.accompanist.flowlayout
 
-    implementation Libs.AndroidX.Hilt.compose
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.kotlin.stdlib
+
+    implementation libs.androidx.hilt.compose
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 }

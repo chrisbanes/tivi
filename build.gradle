@@ -25,27 +25,25 @@ buildscript {
             'targetSdk' : 30,
     ]
 
-    apply from: rootProject.file('versions.gradle')
-
     repositories {
         google()
         mavenCentral()
         jcenter()
 
-        // Used for Gradle Play Publisher snapshots
+        // Used for Accompanist snapshots
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
     dependencies {
-        classpath Libs.androidGradlePlugin
+        classpath libs.android.gradlePlugin
+        classpath libs.kotlin.gradlePlugin
 
-        classpath Libs.Kotlin.gradlePlugin
-        classpath Libs.Kotlin.extensions
+        classpath libs.kotlin.extensions
 
-        classpath Libs.Google.gmsGoogleServices
-        classpath Libs.Google.crashlyticsGradle
+        classpath libs.google.gmsGoogleServices
+        classpath libs.google.crashlyticsGradle
 
-        classpath Libs.Hilt.gradlePlugin
+        classpath libs.hilt.gradlePlugin
     }
 }
 
@@ -55,22 +53,21 @@ plugins {
 }
 
 allprojects {
-    apply from: rootProject.file('versions.gradle')
-
     repositories {
         google()
         mavenCentral()
         jcenter()
 
         // Jetpack Compose SNAPSHOTs
-        if (Versions.compose.endsWith("SNAPSHOT")) {
-            maven { url "https://androidx.dev/snapshots/builds/${Versions.composesnapshot}/artifacts/repository/" }
+        def composeSnapshot = libs.versions.composesnapshot.get()
+        if (composeSnapshot.length() > 1) {
+            maven { url "https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/" }
         }
 
         // Used for Accompanist snapshots
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 
-        // Used for Roomigrant
+        // Used for Roomigrant: https://github.com/chrisbanes/Roomigrant
         maven { url 'https://jitpack.io' }
     }
 }
@@ -81,18 +78,6 @@ subprojects {
         // This is a Compose app, so there's no need for these.
         exclude group: 'androidx.appcompat'
         exclude group: 'com.google.android.material', module: 'material'
-        exclude group: 'com.google.android.material', module: 'material'
-
-        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-            def group = details.requested.group
-            def module = details.requested.module.name
-
-            if (group == 'org.jetbrains.kotlin' && module == 'kotlin-stdlib-jre7') {
-                // kotlin-stdlib-jre7 no longer exists in 1.4, so we force the
-                // kotlin-stdlib module instead
-                details.useTarget Libs.Kotlin.stdlib
-            }
-        }
     }
 
     apply plugin: 'com.diffplug.spotless'
@@ -102,7 +87,7 @@ subprojects {
             targetExclude("$buildDir/**/*.kt")
             targetExclude('bin/**/*.kt')
 
-            ktlint(Versions.ktlint)
+            ktlint(libs.versions.ktlint.get())
             licenseHeaderFile rootProject.file('spotless/copyright.kt')
         }
     }

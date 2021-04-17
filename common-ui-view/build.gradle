@@ -37,12 +37,12 @@ dependencies {
     implementation project(':base-android')
     api project(':common-ui-resources')
 
-    implementation Libs.AndroidX.Lifecycle.viewmodel
+    implementation libs.androidx.lifecycle.viewmodel.ktx
 
-    implementation Libs.Coroutines.core
+    implementation libs.kotlin.coroutines.core
 
-    implementation Libs.AndroidX.coreKtx
-    implementation Libs.AndroidX.emoji
+    implementation libs.androidx.core
+    implementation libs.androidx.emoji
 
-    implementation Libs.Hilt.library
+    implementation libs.hilt.library
 }

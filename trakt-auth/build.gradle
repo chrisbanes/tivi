@@ -45,11 +45,11 @@ dependencies {
     implementation project(':data')
     api project(':trakt')
 
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 
-    implementation Libs.AndroidX.browser
-    implementation Libs.AndroidX.coreKtx
+    implementation libs.androidx.browser
+    implementation libs.androidx.core
 
-    api Libs.appauth
+    api libs.appauth
 }
