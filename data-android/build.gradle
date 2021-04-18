@@ -65,35 +65,35 @@ dependencies {
     implementation project(':base-android')
     api project(':data')
 
-    api Libs.AndroidX.Room.runtime
-    implementation Libs.AndroidX.Room.ktx
-    kapt Libs.AndroidX.Room.compiler
+    api libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    kapt libs.androidx.room.compiler
 
-    implementation Libs.Roomigrant.library
-    kapt Libs.Roomigrant.compiler
+    implementation libs.roomigrant.library
+    kapt libs.roomigrant.compiler
 
-    implementation Libs.AndroidX.Paging.runtime
+    implementation libs.androidx.paging.runtime
 
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 
-    testImplementation Libs.junit
-    testImplementation Libs.robolectric
-    testImplementation Libs.mockK
+    testImplementation libs.junit
+    testImplementation libs.robolectric
+    testImplementation libs.mockK
 
-    testImplementation Libs.AndroidX.archCoreTesting
-    testImplementation Libs.AndroidX.Test.core
-    testImplementation Libs.AndroidX.Test.junit
-    testImplementation Libs.AndroidX.Room.testing
-    testImplementation Libs.truth
-    testImplementation Libs.Coroutines.test
-    testImplementation Libs.Hilt.testing
+    testImplementation libs.androidx.archCoreTesting
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit
+    testImplementation libs.androidx.room.testing
+    testImplementation libs.truth
+    testImplementation libs.kotlin.coroutines.test
+    testImplementation libs.hilt.testing
 
-    kaptTest Libs.AndroidX.Room.compiler
-    kaptTest Libs.Hilt.compiler
+    kaptTest libs.androidx.room.compiler
+    kaptTest libs.hilt.compiler
 
     // Needed for Tzdb
-    testImplementation Libs.threeTenBp
+    testImplementation "org.threeten:threetenbp:${libs.versions.threetenbp.get()}"
     // Needed for Main dispatcher to work
-    testImplementation Libs.Coroutines.android
+    testImplementation libs.kotlin.coroutines.android
 }

@@ -24,16 +24,16 @@ kapt {
 }
 
 dependencies {
-    api(Libs.traktJava) {
+    api(libs.traktJava) {
         exclude group: 'org.threeten', module: 'threetenbp'
     }
-    implementation Libs.threeTenBpNoTzdb
+    api "org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb"
 
     implementation project(':base')
 
-    implementation Libs.OkHttp.okhttp
-    implementation Libs.Retrofit.retrofit
-    implementation Libs.Retrofit.gsonConverter
+    implementation libs.okhttp.okhttp
+    implementation libs.retrofit.retrofit
+    implementation libs.retrofit.gsonConverter
 
-    kapt Libs.Dagger.compiler
+    kapt libs.dagger.compiler
 }

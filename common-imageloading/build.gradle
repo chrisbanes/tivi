@@ -45,10 +45,10 @@ dependencies {
     implementation project(':common-ui-view')
     implementation project(':tmdb')
 
-    implementation Libs.AndroidX.coreKtx
+    implementation libs.androidx.core
 
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 
-    api Libs.Coil.coil
+    api libs.coil.coil
 }

@@ -22,12 +22,12 @@ dependencies {
     api project(':trakt')
     api project(':tmdb')
 
-    api Libs.AndroidX.Room.common
-    implementation Libs.AndroidX.collection
+    api libs.androidx.room.common
+    implementation libs.androidx.collection
 
-    api Libs.store
+    api libs.store
 
-    api Libs.AndroidX.Paging.common
+    api libs.androidx.paging.common
 
-    api Libs.threeTenBpNoTzdb
+    api "org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb"
 }

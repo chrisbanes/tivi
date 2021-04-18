@@ -46,10 +46,10 @@ dependencies {
     implementation project(':common-ui-resources')
     implementation project(':common-ui-view')
 
-    implementation Libs.AndroidX.browser
-    implementation Libs.AndroidX.coreKtx
-    implementation Libs.AndroidX.Lifecycle.runtime
+    implementation libs.androidx.browser
+    implementation libs.androidx.core
+    implementation libs.androidx.lifecycle.runtime
 
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 }

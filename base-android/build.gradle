@@ -42,13 +42,13 @@ dependencies {
     api project(':base')
     implementation project(':data')
 
-    implementation Libs.Google.crashlytics
+    implementation libs.google.crashlytics
 
-    implementation Libs.AndroidX.coreKtx
+    implementation libs.androidx.core
 
-    implementation Libs.timber
-    implementation Libs.threeTenAbp
+    implementation libs.timber
+    implementation libs.threeTenAbp
 
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 }

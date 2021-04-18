@@ -36,7 +36,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.compose
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
 }
 
@@ -48,22 +48,19 @@ dependencies {
     // TODO: Remove this dependency
     api project(':common-ui-view')
 
-    implementation Libs.AndroidX.coreKtx
+    implementation libs.androidx.core
 
+    implementation libs.compose.ui.ui
+    implementation libs.compose.foundation.foundation
+    implementation libs.compose.foundation.layout
+    implementation libs.compose.material.material
+    implementation libs.compose.animation.animation
+    implementation libs.compose.ui.tooling
 
-    implementation Libs.AndroidX.Compose.runtime
-    implementation Libs.AndroidX.Compose.foundation
-    implementation Libs.AndroidX.Compose.ui
-    implementation Libs.AndroidX.Compose.layout
-    implementation Libs.AndroidX.Compose.material
-    implementation Libs.AndroidX.Compose.animation
-    implementation Libs.AndroidX.Compose.tooling
-    implementation Libs.AndroidX.Compose.livedata
+    implementation libs.androidx.paging.runtime
 
-    implementation Libs.AndroidX.Paging.runtime
+    implementation libs.kotlin.stdlib
 
-    implementation Libs.Kotlin.stdlib
-
-    implementation Libs.Accompanist.coil
-    implementation Libs.Accompanist.insets
+    implementation libs.accompanist.coil
+    implementation libs.accompanist.insets
 }

@@ -44,11 +44,11 @@ dependencies {
     implementation project(':base-android')
     implementation project(':domain')
 
-    api Libs.AndroidX.Work.runtimeKtx
+    api libs.androidx.work.runtime
 
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 
-    implementation Libs.AndroidX.Hilt.work
-    kapt Libs.AndroidX.Hilt.compiler
+    implementation libs.androidx.hilt.work
+    kapt libs.androidx.hilt.compiler
 }
