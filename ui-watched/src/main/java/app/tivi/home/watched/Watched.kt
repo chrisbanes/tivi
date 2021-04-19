@@ -16,6 +16,7 @@
 
 package app.tivi.home.watched
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,7 +74,7 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.statusBarsPadding
 import org.threeten.bp.OffsetDateTime
 
@@ -227,11 +228,14 @@ private fun WatchedShowItem(
                     .fillMaxHeight()
                     .aspectRatio(2 / 3f)
             ) {
-                CoilImage(
-                    data = poster,
-                    fadeIn = true,
-                    contentDescription = stringResource(R.string.cd_show_poster_image, show.title ?: ""),
-                    modifier = Modifier.fillMaxSize()
+                Image(
+                    painter = rememberCoilPainter(poster, fadeIn = true),
+                    contentDescription = stringResource(
+                        R.string.cd_show_poster_image,
+                        show.title
+                            ?: ""
+                    ),
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
         }

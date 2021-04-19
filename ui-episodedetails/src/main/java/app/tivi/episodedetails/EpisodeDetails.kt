@@ -18,6 +18,7 @@ package app.tivi.episodedetails
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -96,7 +97,7 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
@@ -266,12 +267,11 @@ private fun Backdrop(
     Surface(modifier = modifier) {
         Box(Modifier.fillMaxSize()) {
             if (episode.tmdbBackdropPath != null) {
-                CoilImage(
-                    data = episode,
-                    fadeIn = true,
+                Image(
+                    painter = rememberCoilPainter(episode, fadeIn = true),
                     contentDescription = stringResource(R.string.cd_show_poster),
+                    modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
                 )
             }
 

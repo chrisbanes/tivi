@@ -16,6 +16,7 @@
 
 package app.tivi.common.compose
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
@@ -27,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.data.entities.TraktUser
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
 fun UserProfileButton(
@@ -42,12 +43,12 @@ fun UserProfileButton(
     ) {
         when {
             loggedIn && user?.avatarUrl != null -> {
-                CoilImage(
-                    data = user.avatarUrl!!,
+                Image(
+                    painter = rememberCoilPainter(user.avatarUrl!!),
                     contentDescription = stringResource(R.string.cd_profile_pic, user.name),
                     modifier = Modifier
                         .size(32.dp)
-                        .clip(CircleShape)
+                        .clip(CircleShape),
                 )
             }
             loggedIn -> {

@@ -57,7 +57,7 @@ import androidx.navigation.NavController
 import app.tivi.common.compose.foregroundColor
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import org.threeten.bp.OffsetDateTime
@@ -177,13 +177,12 @@ private fun UserRow(
     ) {
         val avatarUrl = user.avatarUrl
         if (avatarUrl != null) {
-            CoilImage(
-                data = avatarUrl,
+            Image(
+                painter = rememberCoilPainter(avatarUrl, fadeIn = true),
                 contentDescription = stringResource(R.string.cd_profile_pic, user.name),
-                fadeIn = true,
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(RoundedCornerShape(50))
+                    .clip(RoundedCornerShape(50)),
             )
         }
 
