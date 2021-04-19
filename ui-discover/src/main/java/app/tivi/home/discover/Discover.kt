@@ -17,6 +17,7 @@
 package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -74,6 +75,9 @@ import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun Discover(navController: NavController) {
@@ -89,23 +93,25 @@ internal fun Discover(
     navController: NavController,
 ) {
     val viewState by viewModel.state.collectAsState()
-    Discover(state = viewState) { action ->
-        when (action) {
-            DiscoverAction.LoginAction,
-            DiscoverAction.OpenUserDetails -> navController.navigate(Screen.Account.route)
-            is DiscoverAction.OpenShowDetails -> {
-                navController.navigate("show/${action.showId}")
-                // If we have an episodeId, we also open that
-                if (action.episodeId != null) {
-                    navController.navigate("episode/${action.episodeId}")
+    Surface {
+        Discover(state = viewState) { action ->
+            when (action) {
+                DiscoverAction.LoginAction,
+                DiscoverAction.OpenUserDetails -> navController.navigate(Screen.Account.route)
+                is DiscoverAction.OpenShowDetails -> {
+                    navController.navigate("show/${action.showId}")
+                    // If we have an episodeId, we also open that
+                    if (action.episodeId != null) {
+                        navController.navigate("episode/${action.episodeId}")
+                    }
                 }
+                DiscoverAction.OpenTrendingShows -> navController.navigate(Screen.Trending.route)
+                DiscoverAction.OpenPopularShows -> navController.navigate(Screen.Popular.route)
+                DiscoverAction.OpenRecommendedShows -> {
+                    navController.navigate(Screen.RecommendedShows.route)
+                }
+                else -> viewModel.submitAction(action)
             }
-            DiscoverAction.OpenTrendingShows -> navController.navigate(Screen.Trending.route)
-            DiscoverAction.OpenPopularShows -> navController.navigate(Screen.Popular.route)
-            DiscoverAction.OpenRecommendedShows -> {
-                navController.navigate(Screen.RecommendedShows.route)
-            }
-            else -> viewModel.submitAction(action)
         }
     }
 }
@@ -115,10 +121,23 @@ internal fun Discover(
     state: DiscoverViewState,
     actioner: (DiscoverAction) -> Unit
 ) {
-    Surface(Modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxSize()) {
-            var appBarHeight by remember { mutableStateOf(0) }
+    Box(Modifier.fillMaxSize()) {
+        var appBarHeight by remember { mutableStateOf(0) }
 
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(state.refreshing),
+            onRefresh = { actioner(DiscoverAction.RefreshAction) },
+            indicatorPadding = PaddingValues(
+                top = with(LocalDensity.current) { appBarHeight.toDp() }
+            ),
+            indicator = { state, trigger ->
+                SwipeRefreshIndicator(
+                    state = state,
+                    refreshTriggerDistance = trigger,
+                    scale = true
+                )
+            }
+        ) {
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
                     val height = with(LocalDensity.current) { appBarHeight.toDp() }
@@ -185,18 +204,18 @@ internal fun Discover(
 
                 itemSpacer(16.dp)
             }
-
-            DiscoverAppBar(
-                loggedIn = state.authState == TraktAuthState.LOGGED_IN,
-                user = state.user,
-                refreshing = state.refreshing,
-                onRefreshActionClick = { actioner(DiscoverAction.RefreshAction) },
-                onUserActionClick = { actioner(DiscoverAction.OpenUserDetails) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onSizeChanged { appBarHeight = it.height }
-            )
         }
+
+        DiscoverAppBar(
+            loggedIn = state.authState == TraktAuthState.LOGGED_IN,
+            user = state.user,
+            refreshing = state.refreshing,
+            onRefreshActionClick = { actioner(DiscoverAction.RefreshAction) },
+            onUserActionClick = { actioner(DiscoverAction.OpenUserDetails) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .onSizeChanged { appBarHeight = it.height }
+        )
     }
 }
 
@@ -377,11 +396,18 @@ private fun DiscoverAppBar(
             Spacer(Modifier.weight(1f))
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                RefreshButton(
-                    onClick = onRefreshActionClick,
-                    refreshing = refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                )
+                // This button refresh allows screen-readers, etc to trigger a refresh.
+                // We only show the button to trigger a refresh, not to indicate that
+                // we're currently refreshing, otherwise we have 4 indicators showing the
+                // same thing.
+                Crossfade(
+                    targetState = refreshing,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    if (!refreshing) {
+                        RefreshButton(onClick = onRefreshActionClick)
+                    }
+                }
 
                 UserProfileButton(
                     loggedIn = loggedIn,

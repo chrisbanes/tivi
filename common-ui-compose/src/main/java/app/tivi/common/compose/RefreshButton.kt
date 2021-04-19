@@ -47,3 +47,19 @@ fun RefreshButton(
         }
     }
 }
+
+@Composable
+fun RefreshButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = Icons.Default.Refresh,
+            contentDescription = stringResource(R.string.cd_refresh)
+        )
+    }
+}
