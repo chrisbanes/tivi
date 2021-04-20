@@ -107,6 +107,7 @@ import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.LocalScaffoldPadding
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
@@ -253,6 +254,7 @@ internal fun ShowDetails(
                 .align(Alignment.End)
                 .padding(16.dp)
                 .navigationBarsPadding(bottom = false)
+                .padding(LocalScaffoldPadding.current)
         )
     }
 
