@@ -40,7 +40,7 @@ class ObservePagedTrendingShows @Inject constructor(
             config = params.pagingConfig,
             remoteMediator = PaginatedEntryRemoteMediator { page ->
                 updateTrendingShows.executeSync(
-                    UpdateTrendingShows.Params(page = page)
+                    UpdateTrendingShows.Params(page = page, forceRefresh = true)
                 )
             },
             pagingSourceFactory = trendingShowsDao::entriesPagingSource

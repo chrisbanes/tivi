@@ -49,6 +49,9 @@ import androidx.paging.compose.LazyPagingItems
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun <E : Entry> EntryGrid(
@@ -61,47 +64,64 @@ fun <E : Entry> EntryGrid(
         Box {
             var appBarHeight by remember { mutableStateOf(0) }
 
-            LazyColumn(Modifier.fillMaxSize()) {
-                item {
-                    val height = with(LocalDensity.current) { appBarHeight.toDp() }
-                    Spacer(Modifier.height(height))
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(
+                    isRefreshing = lazyPagingItems.loadState.refresh == LoadState.Loading
+                ),
+                onRefresh = { lazyPagingItems.refresh() },
+                indicatorPadding = PaddingValues(
+                    top = with(LocalDensity.current) { appBarHeight.toDp() }
+                ),
+                indicator = { state, trigger ->
+                    SwipeRefreshIndicator(
+                        state = state,
+                        refreshTriggerDistance = trigger,
+                        scale = true
+                    )
                 }
-
-                itemsInGrid(
-                    lazyPagingItems = lazyPagingItems,
-                    columns = 3,
-                    contentPadding = PaddingValues(4.dp),
-                    verticalItemPadding = 2.dp,
-                    horizontalItemPadding = 2.dp
-                ) { entry ->
-                    val mod = Modifier
-                        .aspectRatio(2 / 3f)
-                        .fillMaxWidth()
-                    if (entry != null) {
-                        PosterCard(
-                            show = entry.show,
-                            poster = entry.poster,
-                            onClick = { onOpenShowDetails(entry.show.id) },
-                            modifier = mod
-                        )
-                    } else {
-                        PlaceholderPosterCard(mod)
-                    }
-                }
-
-                if (lazyPagingItems.loadState.append == LoadState.Loading) {
+            ) {
+                LazyColumn(Modifier.fillMaxSize()) {
                     item {
-                        Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(24.dp)
-                        ) {
-                            CircularProgressIndicator(Modifier.align(Alignment.Center))
+                        val height = with(LocalDensity.current) { appBarHeight.toDp() }
+                        Spacer(Modifier.height(height))
+                    }
+
+                    itemsInGrid(
+                        lazyPagingItems = lazyPagingItems,
+                        columns = 3,
+                        contentPadding = PaddingValues(4.dp),
+                        verticalItemPadding = 2.dp,
+                        horizontalItemPadding = 2.dp
+                    ) { entry ->
+                        val mod = Modifier
+                            .aspectRatio(2 / 3f)
+                            .fillMaxWidth()
+                        if (entry != null) {
+                            PosterCard(
+                                show = entry.show,
+                                poster = entry.poster,
+                                onClick = { onOpenShowDetails(entry.show.id) },
+                                modifier = mod
+                            )
+                        } else {
+                            PlaceholderPosterCard(mod)
                         }
                     }
-                }
 
-                itemSpacer(16.dp)
+                    if (lazyPagingItems.loadState.append == LoadState.Loading) {
+                        item {
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(24.dp)
+                            ) {
+                                CircularProgressIndicator(Modifier.align(Alignment.Center))
+                            }
+                        }
+                    }
+
+                    itemSpacer(16.dp)
+                }
             }
 
             EntryGridAppBar(
