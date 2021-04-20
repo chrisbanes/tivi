@@ -132,7 +132,7 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
@@ -421,16 +421,15 @@ private fun PosterInfoRow(
 ) {
     Row(modifier) {
         if (posterImage != null) {
-            CoilImage(
-                data = posterImage,
-                fadeIn = true,
+            Image(
+                painter = rememberCoilPainter(posterImage, fadeIn = true),
                 contentDescription = stringResource(R.string.cd_show_poster, show.title ?: ""),
-                alignment = Alignment.TopStart,
                 modifier = Modifier
                     .weight(1f, fill = false)
                     .aspectRatio(2 / 3f)
                     .padding(start = 16.dp)
-                    .clip(MaterialTheme.shapes.medium)
+                    .clip(MaterialTheme.shapes.medium),
+                alignment = Alignment.TopStart,
             )
         }
 
@@ -450,12 +449,11 @@ private fun BackdropImage(
 ) {
     Surface(modifier = modifier) {
         if (backdropImage != null) {
-            CoilImage(
-                data = backdropImage,
+            Image(
+                painter = rememberCoilPainter(backdropImage, fadeIn = true),
                 contentDescription = stringResource(R.string.cd_show_poster),
-                fadeIn = true,
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
             )
         }
         // TODO show a placeholder if null
@@ -565,19 +563,21 @@ private fun NetworkInfoPanel(
                 ShowTmdbImage(path = networkLogoPath, type = ImageType.LOGO, showId = 0)
             }
 
-            CoilImage(
-                data = tmdbImage,
-                requestBuilder = {
-                    transformations(TrimTransparentEdgesTransformation)
-                },
+            Image(
+                painter = rememberCoilPainter(
+                    request = tmdbImage,
+                    requestBuilder = {
+                        transformations(TrimTransparentEdgesTransformation)
+                    },
+                ),
                 contentDescription = stringResource(R.string.cd_network_logo),
-                contentScale = ContentScale.Fit,
+                modifier = Modifier.sizeIn(maxWidth = 72.dp, maxHeight = 32.dp),
                 alignment = Alignment.TopStart,
+                contentScale = ContentScale.Fit,
                 colorFilter = when {
                     isSystemInDarkTheme() -> ColorFilter.tint(foregroundColor())
                     else -> null
                 },
-                modifier = Modifier.sizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
             )
         } else {
             Text(

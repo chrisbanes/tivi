@@ -16,6 +16,7 @@
 
 package app.tivi.common.compose
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -33,7 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
 fun PosterCard(
@@ -58,15 +59,14 @@ fun PosterCard(
                 )
             }
             if (poster != null) {
-                CoilImage(
-                    data = poster,
+                Image(
+                    painter = rememberCoilPainter(poster, fadeIn = true),
                     contentDescription = stringResource(
                         R.string.cd_show_poster_image,
                         show.title ?: "show"
                     ),
-                    fadeIn = true,
+                    modifier = Modifier.matchParentSize(),
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.matchParentSize()
                 )
             }
         }
