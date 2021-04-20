@@ -53,13 +53,13 @@ import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.PlaceholderPosterCard
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
-import app.tivi.common.compose.paging.LazyPagingItems
-import app.tivi.common.compose.paging.collectAsLazyPagingItems
 import app.tivi.data.resultentities.PopularEntryWithShow
 import com.google.accompanist.insets.statusBarsPadding
 
@@ -76,9 +76,7 @@ internal fun Popular(
     viewModel: PopularShowsViewModel,
     navController: NavController,
 ) {
-    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems { old, new ->
-        old.entry.id == new.entry.id
-    }
+    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
     Popular(lazyPagingItems = pagingItems) { action ->
         when (action) {
             is PopularAction.OpenShowDetails -> {
