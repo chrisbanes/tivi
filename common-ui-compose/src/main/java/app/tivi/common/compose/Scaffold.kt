@@ -18,6 +18,8 @@ package app.tivi.common.compose
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.DrawerDefaults
 import androidx.compose.material.FabPosition
@@ -45,6 +47,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
+val LocalScaffoldPadding = staticCompositionLocalOf { PaddingValues(0.dp) }
+
 /**
  * A copy if [androidx.compose.material.Scaffold] which lays out [content] behind the top bar
  * content, and then provides the height to the [PaddingValues].
@@ -68,6 +72,7 @@ fun Scaffold(
     drawerScrimColor: Color = DrawerDefaults.scrimColor,
     backgroundColor: Color = MaterialTheme.colors.background,
     contentColor: Color = contentColorFor(backgroundColor),
+    paddingValues: PaddingValues = LocalScaffoldPadding.current,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val child = @Composable { childModifier: Modifier ->
@@ -79,7 +84,8 @@ fun Scaffold(
                 content = content,
                 snackbar = { snackbarHost(scaffoldState.snackbarHostState) },
                 fab = floatingActionButton,
-                bottomBar = bottomBar
+                bottomBar = bottomBar,
+                paddingValues = paddingValues,
             )
         }
     }
@@ -123,7 +129,8 @@ private fun ScaffoldLayout(
     content: @Composable (PaddingValues) -> Unit,
     snackbar: @Composable () -> Unit,
     fab: @Composable () -> Unit,
-    bottomBar: @Composable () -> Unit
+    bottomBar: @Composable () -> Unit,
+    paddingValues: PaddingValues,
 ) {
     SubcomposeLayout { constraints ->
         val layoutWidth = constraints.maxWidth
@@ -204,10 +211,14 @@ private fun ScaffoldLayout(
 
             val bodyContentPlaceables = subcompose(ScaffoldLayoutContent.MainContent) {
                 val innerPadding = PaddingValues(
-                    top = topBarHeight.toDp(),
-                    bottom = bottomBarHeight.toDp()
+                    start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                    top = topBarHeight.toDp() + paddingValues.calculateTopPadding(),
+                    end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                    bottom = bottomBarHeight.toDp() + paddingValues.calculateBottomPadding()
                 )
-                content(innerPadding)
+                CompositionLocalProvider(LocalScaffoldPadding provides innerPadding) {
+                    content(innerPadding)
+                }
             }.map { it.measure(looseConstraints.copy(maxHeight = layoutHeight)) }
 
             // Placing to control drawing order to match default elevation of each placeable
