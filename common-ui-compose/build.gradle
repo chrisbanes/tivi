@@ -63,4 +63,5 @@ dependencies {
 
     implementation libs.accompanist.coil
     implementation libs.accompanist.insets
+    implementation libs.accompanist.swiperefresh
 }
