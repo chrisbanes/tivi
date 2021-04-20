@@ -174,7 +174,7 @@ class WatchedViewModel @Inject constructor(
 
     private fun refreshWatched(fromUser: Boolean) {
         viewModelScope.launch {
-            updateWatchedShows(UpdateWatchedShows.Params(fromUser))
+            updateWatchedShows(UpdateWatchedShows.Params(forceRefresh = fromUser))
                 .collectInto(loadingState)
         }
     }

@@ -35,14 +35,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -60,78 +54,69 @@ fun <E : Entry> EntryGrid(
     onOpenShowDetails: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(modifier) {
-        Box {
-            var appBarHeight by remember { mutableStateOf(0) }
-
-            SwipeRefresh(
-                state = rememberSwipeRefreshState(
-                    isRefreshing = lazyPagingItems.loadState.refresh == LoadState.Loading
-                ),
-                onRefresh = { lazyPagingItems.refresh() },
-                indicatorPadding = PaddingValues(
-                    top = with(LocalDensity.current) { appBarHeight.toDp() }
-                ),
-                indicator = { state, trigger ->
-                    SwipeRefreshIndicator(
-                        state = state,
-                        refreshTriggerDistance = trigger,
-                        scale = true
-                    )
-                }
-            ) {
-                LazyColumn(Modifier.fillMaxSize()) {
-                    item {
-                        val height = with(LocalDensity.current) { appBarHeight.toDp() }
-                        Spacer(Modifier.height(height))
-                    }
-
-                    itemsInGrid(
-                        lazyPagingItems = lazyPagingItems,
-                        columns = 3,
-                        contentPadding = PaddingValues(4.dp),
-                        verticalItemPadding = 2.dp,
-                        horizontalItemPadding = 2.dp
-                    ) { entry ->
-                        val mod = Modifier
-                            .aspectRatio(2 / 3f)
-                            .fillMaxWidth()
-                        if (entry != null) {
-                            PosterCard(
-                                show = entry.show,
-                                poster = entry.poster,
-                                onClick = { onOpenShowDetails(entry.show.id) },
-                                modifier = mod
-                            )
-                        } else {
-                            PlaceholderPosterCard(mod)
-                        }
-                    }
-
-                    if (lazyPagingItems.loadState.append == LoadState.Loading) {
-                        item {
-                            Box(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(24.dp)
-                            ) {
-                                CircularProgressIndicator(Modifier.align(Alignment.Center))
-                            }
-                        }
-                    }
-
-                    itemSpacer(16.dp)
-                }
-            }
-
+    Scaffold(
+        topBar = {
             EntryGridAppBar(
                 title = title,
                 refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading,
                 onRefreshActionClick = { lazyPagingItems.refresh() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onSizeChanged { appBarHeight = it.height }
+                modifier = Modifier.fillMaxWidth()
             )
+        },
+        modifier = modifier,
+    ) { paddingValues ->
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(
+                isRefreshing = lazyPagingItems.loadState.refresh == LoadState.Loading
+            ),
+            onRefresh = { lazyPagingItems.refresh() },
+            indicatorPadding = paddingValues,
+            indicator = { state, trigger ->
+                SwipeRefreshIndicator(
+                    state = state,
+                    refreshTriggerDistance = trigger,
+                    scale = true
+                )
+            }
+        ) {
+            LazyColumn(
+                contentPadding = paddingValues,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                itemsInGrid(
+                    lazyPagingItems = lazyPagingItems,
+                    columns = 3,
+                    contentPadding = PaddingValues(4.dp),
+                    verticalItemPadding = 2.dp,
+                    horizontalItemPadding = 2.dp
+                ) { entry ->
+                    val mod = Modifier
+                        .aspectRatio(2 / 3f)
+                        .fillMaxWidth()
+                    if (entry != null) {
+                        PosterCard(
+                            show = entry.show,
+                            poster = entry.poster,
+                            onClick = { onOpenShowDetails(entry.show.id) },
+                            modifier = mod
+                        )
+                    } else {
+                        PlaceholderPosterCard(mod)
+                    }
+                }
+
+                if (lazyPagingItems.loadState.append == LoadState.Loading) {
+                    item {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp)
+                        ) {
+                            CircularProgressIndicator(Modifier.align(Alignment.Center))
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -173,8 +158,8 @@ private fun EntryGridAppBar(
                 Crossfade(
                     targetState = refreshing,
                     modifier = Modifier.align(Alignment.CenterVertically)
-                ) {
-                    if (!refreshing) {
+                ) { isRefreshing ->
+                    if (!isRefreshing) {
                         RefreshButton(onClick = onRefreshActionClick)
                     }
                 }

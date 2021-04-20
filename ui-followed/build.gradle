@@ -74,8 +74,10 @@ dependencies {
 
     implementation libs.accompanist.coil
     implementation libs.accompanist.insets
+    implementation libs.accompanist.swiperefresh
 
     implementation libs.androidx.hilt.compose
     implementation libs.hilt.library
+    implementation project(path: ':ui-discover')
     kapt libs.hilt.compiler
 }
