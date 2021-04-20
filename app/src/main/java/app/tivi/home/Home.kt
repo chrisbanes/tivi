@@ -55,6 +55,7 @@ import app.tivi.R
 import app.tivi.Screen
 import app.tivi.account.AccountUi
 import app.tivi.common.compose.Scaffold
+import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.home.discover.Discover
 import app.tivi.home.followed.Followed
@@ -189,7 +190,7 @@ internal fun HomeBottomNavigation(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = 0.93f),
+        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
         contentColor = contentColorFor(MaterialTheme.colors.surface),
         elevation = 8.dp,
         modifier = modifier

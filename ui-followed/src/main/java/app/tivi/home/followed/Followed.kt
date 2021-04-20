@@ -67,6 +67,7 @@ import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
 import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
@@ -297,8 +298,6 @@ private fun FollowedShowItem(
     }
 }
 
-private const val TranslucentAppBarAlpha = 0.93f
-
 @Composable
 private fun FollowedAppBar(
     loggedIn: Boolean,
@@ -309,7 +308,7 @@ private fun FollowedAppBar(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = TranslucentAppBarAlpha),
+        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
         contentColor = MaterialTheme.colors.onSurface,
         elevation = 4.dp,
         modifier = modifier

@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import com.google.accompanist.insets.statusBarsPadding
@@ -121,8 +122,6 @@ fun <E : Entry> EntryGrid(
     }
 }
 
-private const val TranslucentAppBarAlpha = 0.93f
-
 @Composable
 private fun EntryGridAppBar(
     title: String,
@@ -131,7 +130,7 @@ private fun EntryGridAppBar(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = TranslucentAppBarAlpha),
+        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
         contentColor = MaterialTheme.colors.onSurface,
         elevation = 4.dp,
         modifier = modifier

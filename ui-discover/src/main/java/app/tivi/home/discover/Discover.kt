@@ -62,6 +62,7 @@ import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -352,8 +353,6 @@ private fun Header(
     }
 }
 
-private const val TranslucentAppBarAlpha = 0.93f
-
 @Composable
 private fun DiscoverAppBar(
     loggedIn: Boolean,
@@ -364,7 +363,7 @@ private fun DiscoverAppBar(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = TranslucentAppBarAlpha),
+        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
         contentColor = MaterialTheme.colors.onSurface,
         elevation = 4.dp,
         modifier = modifier
