@@ -23,6 +23,7 @@ import app.tivi.data.repositories.watchedshows.WatchedShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -36,7 +37,10 @@ class UpdateWatchedShows @Inject constructor(
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
             watchedShowsStore.fetch(Unit, params.forceRefresh).forEach {
+                ensureActive()
                 showsStore.fetch(it.showId)
+
+                ensureActive()
                 try {
                     showImagesStore.fetch(it.showId)
                 } catch (t: Throwable) {

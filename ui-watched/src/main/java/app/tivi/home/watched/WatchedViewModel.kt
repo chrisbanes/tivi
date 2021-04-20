@@ -111,8 +111,6 @@ class WatchedViewModel @Inject constructor(
                 }
             }
         }
-
-        refresh(false)
     }
 
     private fun updateDataSource(state: WatchedViewState) {

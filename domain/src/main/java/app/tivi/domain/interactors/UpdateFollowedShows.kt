@@ -48,6 +48,8 @@ class UpdateFollowedShows @Inject constructor(
 
             // Finally sync the seasons/episodes and watches
             followedShowsRepository.getFollowedShows().forEach {
+                ensureActive()
+
                 showStore.fetch(it.showId)
                 try {
                     showImagesStore.fetch(it.showId)

@@ -39,7 +39,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -64,7 +63,6 @@ internal class FollowedViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             loadingState.observable
-                .distinctUntilChanged()
                 .debounce(2000)
                 .collectAndSetState { copy(isLoading = it) }
         }
@@ -116,8 +114,6 @@ internal class FollowedViewModel @Inject constructor(
                 }
             }
         }
-
-        refresh(false)
     }
 
     private fun updateDataSource(state: FollowedViewState) {
