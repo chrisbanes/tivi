@@ -18,8 +18,8 @@ package app.tivi.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.BottomNavigationItem
@@ -54,6 +54,8 @@ import androidx.navigation.compose.rememberNavController
 import app.tivi.R
 import app.tivi.Screen
 import app.tivi.account.AccountUi
+import app.tivi.common.compose.Scaffold
+import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.home.discover.Discover
 import app.tivi.home.followed.Followed
@@ -69,14 +71,26 @@ import com.google.accompanist.insets.navigationBarsPadding
 internal fun Home(
     onOpenSettings: () -> Unit,
 ) {
-    Column {
-        val navController = rememberNavController()
+    val navController = rememberNavController()
+    val currentSelectedItem by navController.currentScreenAsState()
 
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
+    Scaffold(
+        bottomBar = {
+            HomeBottomNavigation(
+                selectedNavigation = currentSelectedItem,
+                onNavigationSelected = { selected ->
+                    navController.navigate(selected.route) {
+                        launchSingleTop = true
+                        popUpTo(Screen.Discover.route) {
+                            inclusive = false
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    ) {
+        Box(Modifier.fillMaxSize()) {
             NavHost(
                 navController = navController,
                 startDestination = Screen.Discover.route
@@ -121,21 +135,6 @@ internal fun Home(
                 }
             }
         }
-
-        val currentSelectedItem by navController.currentScreenAsState()
-
-        HomeBottomNavigation(
-            selectedNavigation = currentSelectedItem,
-            onNavigationSelected = { selected ->
-                navController.navigate(selected.route) {
-                    launchSingleTop = true
-                    popUpTo(Screen.Discover.route) {
-                        inclusive = false
-                    }
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
     }
 }
 
@@ -191,7 +190,7 @@ internal fun HomeBottomNavigation(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = MaterialTheme.colors.surface,
+        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
         contentColor = contentColorFor(MaterialTheme.colors.surface),
         elevation = 8.dp,
         modifier = modifier

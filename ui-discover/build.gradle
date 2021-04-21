@@ -66,11 +66,11 @@ dependencies {
     implementation libs.compose.animation.animation
     implementation libs.compose.ui.tooling
 
-
     implementation libs.androidx.navigation.compose
 
     implementation libs.accompanist.coil
     implementation libs.accompanist.insets
+    implementation libs.accompanist.swiperefresh
 
     implementation libs.androidx.hilt.compose
     implementation libs.hilt.library

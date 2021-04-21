@@ -17,9 +17,9 @@
 package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -44,14 +44,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.FirstBaseline
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,8 +59,10 @@ import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.RefreshButton
+import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -74,6 +71,9 @@ import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun Discover(navController: NavController) {
@@ -115,16 +115,35 @@ internal fun Discover(
     state: DiscoverViewState,
     actioner: (DiscoverAction) -> Unit
 ) {
-    Surface(Modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxSize()) {
-            var appBarHeight by remember { mutableStateOf(0) }
-
-            LazyColumn(Modifier.fillMaxSize()) {
-                item {
-                    val height = with(LocalDensity.current) { appBarHeight.toDp() }
-                    Spacer(Modifier.height(height))
-                }
-
+    Scaffold(
+        topBar = {
+            DiscoverAppBar(
+                loggedIn = state.authState == TraktAuthState.LOGGED_IN,
+                user = state.user,
+                refreshing = state.refreshing,
+                onRefreshActionClick = { actioner(DiscoverAction.RefreshAction) },
+                onUserActionClick = { actioner(DiscoverAction.OpenUserDetails) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        modifier = Modifier.fillMaxSize(),
+    ) { paddingValues ->
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(state.refreshing),
+            onRefresh = { actioner(DiscoverAction.RefreshAction) },
+            indicatorPadding = paddingValues,
+            indicator = { state, trigger ->
+                SwipeRefreshIndicator(
+                    state = state,
+                    refreshTriggerDistance = trigger,
+                    scale = true
+                )
+            }
+        ) {
+            LazyColumn(
+                contentPadding = paddingValues,
+                modifier = Modifier.fillMaxSize(),
+            ) {
                 itemSpacer(16.dp)
 
                 state.nextEpisodeWithShowToWatched?.let { nextEpisodeToWatch ->
@@ -185,17 +204,6 @@ internal fun Discover(
 
                 itemSpacer(16.dp)
             }
-
-            DiscoverAppBar(
-                loggedIn = state.authState == TraktAuthState.LOGGED_IN,
-                user = state.user,
-                refreshing = state.refreshing,
-                onRefreshActionClick = { actioner(DiscoverAction.RefreshAction) },
-                onUserActionClick = { actioner(DiscoverAction.OpenUserDetails) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onSizeChanged { appBarHeight = it.height }
-            )
         }
     }
 }
@@ -345,8 +353,6 @@ private fun Header(
     }
 }
 
-private const val TranslucentAppBarAlpha = 0.93f
-
 @Composable
 private fun DiscoverAppBar(
     loggedIn: Boolean,
@@ -357,7 +363,7 @@ private fun DiscoverAppBar(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = TranslucentAppBarAlpha),
+        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
         contentColor = MaterialTheme.colors.onSurface,
         elevation = 4.dp,
         modifier = modifier
@@ -377,11 +383,18 @@ private fun DiscoverAppBar(
             Spacer(Modifier.weight(1f))
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                RefreshButton(
-                    onClick = onRefreshActionClick,
-                    refreshing = refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                )
+                // This button refresh allows screen-readers, etc to trigger a refresh.
+                // We only show the button to trigger a refresh, not to indicate that
+                // we're currently refreshing, otherwise we have 4 indicators showing the
+                // same thing.
+                Crossfade(
+                    targetState = refreshing,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    if (!refreshing) {
+                        RefreshButton(onClick = onRefreshActionClick)
+                    }
+                }
 
                 UserProfileButton(
                     loggedIn = loggedIn,

@@ -25,7 +25,6 @@ import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.RefreshOnlyRemoteMediator
 import app.tivi.domain.interactors.UpdateRecommendedShows
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -39,8 +38,10 @@ class ObservePagedRecommendedShows @Inject constructor(
     ): Flow<PagingData<RecommendedEntryWithShow>> {
         return Pager(
             config = params.pagingConfig,
-            remoteMediator = RefreshOnlyRemoteMediator(GlobalScope) {
-                updateRecommendedShows.executeSync(UpdateRecommendedShows.Params())
+            remoteMediator = RefreshOnlyRemoteMediator {
+                updateRecommendedShows.executeSync(
+                    UpdateRecommendedShows.Params(forceRefresh = true)
+                )
             },
             pagingSourceFactory = RecommendedShowsDao::entriesPagingSource
         ).flow

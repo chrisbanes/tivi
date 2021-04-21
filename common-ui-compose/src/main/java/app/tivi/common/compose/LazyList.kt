@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.paging.LazyPagingItems
+import androidx.paging.compose.LazyPagingItems
 
 fun LazyListScope.itemSpacer(height: Dp) {
     item {
