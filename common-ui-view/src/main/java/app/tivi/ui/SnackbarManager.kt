@@ -20,9 +20,12 @@ import app.tivi.api.UiError
 import app.tivi.extensions.delayFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import org.threeten.bp.Duration
@@ -32,6 +35,23 @@ class SnackbarManager @Inject constructor() {
     // We want a maximum of 3 errors queued
     private val pendingErrors = MutableSharedFlow<UiError>(extraBufferCapacity = 3)
     private val removeErrorSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
+    val flow: Flow<UiError?> = flow {
+        emit(null)
+
+        pendingErrors.collectLatest {
+            emit(it)
+
+            // Wait for either a 6 second timeout, or a remove signal (whichever comes first)
+            merge(
+                delayFlow(Duration.ofSeconds(6).toMillis(), Unit),
+                removeErrorSignal
+            ).firstOrNull()
+
+            // Remove the error
+            emit(null)
+        }
+    }
 
     fun launchInScope(
         scope: CoroutineScope,
