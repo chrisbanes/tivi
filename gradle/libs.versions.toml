@@ -1,22 +1,22 @@
 [versions]
-accompanist = "0.7.2-SNAPSHOT"
+accompanist = "0.8.1"
 androidxhilt = "1.0.0-beta01"
 androidxlifecycle = "2.3.0"
 androidxtest = "1.2.0"
-coil = "1.1.1"
-compose = "1.0.0-beta04"
+coil = "1.2.1"
+compose = "1.0.0-beta05"
 composesnapshot = "-" # a single character = no snapshot
 coroutines = "1.4.3"
-dagger = "2.33"
-hilt = "2.33-beta"
+dagger = "2.35.1"
+hilt = "2.35.1"
 kotlin = "1.4.32"
 ktlint = "0.40.0"
 okhttp = "4.9.1"
-paging = "3.0.0-beta02"
+paging = "3.0.0-rc01"
 retrofit = "2.9.0"
-room = "2.3.0-beta03"
+room = "2.3.0"
 roomigrant = "92ac4a5b71"
-threetenbp = "1.5.0"
+threetenbp = "1.5.1"
 
 [libraries]
 accompanist-coil = { module = "com.google.accompanist:accompanist-coil", version.ref = "accompanist" }
@@ -24,9 +24,9 @@ accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayo
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 
-android-gradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha14"
+android-gradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha15"
 
-androidx-activity-compose = "androidx.activity:activity-compose:1.3.0-alpha06"
+androidx-activity-compose = "androidx.activity:activity-compose:1.3.0-alpha07"
 androidx-appcompat = "androidx.appcompat:appcompat:1.3.0-rc01"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 androidx-browser = "androidx.browser:browser:1.3.0"
@@ -86,9 +86,9 @@ dagger-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.4.30"
 
-google-analytics = "com.google.firebase:firebase-analytics-ktx:18.0.2"
-google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:17.4.0"
-google-crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.5.1"
+google-analytics = "com.google.firebase:firebase-analytics-ktx:18.0.3"
+google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:17.4.1"
+google-crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.5.2"
 google-gmsGoogleServices = "com.google.gms:google-services:4.3.5"
 
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
@@ -106,7 +106,7 @@ kotlin-extensions = { module = "org.jetbrains.kotlin:kotlin-android-extensions",
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
-leakCanary = "com.squareup.leakcanary:leakcanary-android:2.6"
+leakCanary = "com.squareup.leakcanary:leakcanary-android:2.7"
 
 mockK = "io.mockk:mockk:1.10.6"
 
