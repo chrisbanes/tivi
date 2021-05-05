@@ -69,9 +69,6 @@ dependencies {
     implementation libs.androidx.room.ktx
     kapt libs.androidx.room.compiler
 
-    implementation libs.roomigrant.library
-    kapt libs.roomigrant.compiler
-
     implementation libs.androidx.paging.runtime
 
     implementation libs.hilt.library

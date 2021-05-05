@@ -14,8 +14,7 @@ ktlint = "0.40.0"
 okhttp = "4.9.1"
 paging = "3.0.0"
 retrofit = "2.9.0"
-room = "2.3.0"
-roomigrant = "92ac4a5b71"
+room = "2.4.0-alpha02"
 threetenbp = "1.5.1"
 
 [libraries]
@@ -114,9 +113,6 @@ retrofit-gsonConverter = { module = "com.squareup.retrofit2:converter-gson", ver
 retrofit-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 robolectric = "org.robolectric:robolectric:4.5.1"
-
-roomigrant-compiler = { module = "com.github.chrisbanes.Roomigrant:RoomigrantCompiler", version.ref = "roomigrant" }
-roomigrant-library = { module = "com.github.chrisbanes.Roomigrant:RoomigrantLib", version.ref = "roomigrant" }
 
 store = "com.dropbox.mobile.store:store4:4.0.0"
 
