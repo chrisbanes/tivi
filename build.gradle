@@ -64,9 +64,6 @@ allprojects {
 
         // Used for Accompanist snapshots
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-
-        // Used for Roomigrant: https://github.com/chrisbanes/Roomigrant
-        maven { url 'https://jitpack.io' }
     }
 }
 
