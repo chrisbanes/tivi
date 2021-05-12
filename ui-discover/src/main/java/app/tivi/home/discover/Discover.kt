@@ -42,18 +42,14 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.FirstBaseline
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
-import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import app.tivi.Screen
@@ -64,6 +60,7 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.UserProfileButton
+import app.tivi.common.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.data.entities.Episode
@@ -91,11 +88,7 @@ internal fun Discover(
     viewModel: DiscoverViewModel,
     navController: NavController,
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    val viewState by remember(viewModel.state, lifecycleOwner) {
-        viewModel.state.flowWithLifecycle(lifecycleOwner.lifecycle)
-    }.collectAsState(initial = null)
+    val viewState by viewModel.state.collectAsStateWithLifecycle(null)
 
     Discover(state = viewState ?: return) { action ->
         when (action) {

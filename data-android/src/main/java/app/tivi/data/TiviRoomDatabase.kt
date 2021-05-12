@@ -62,7 +62,6 @@ import app.tivi.data.views.FollowedShowsWatchStats
     ],
     version = 26,
     autoMigrations = [
-        AutoMigration(from = 23, to = 24),
         AutoMigration(from = 24, to = 25),
         AutoMigration(from = 25, to = 26),
     ],

@@ -78,7 +78,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -93,7 +92,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -102,7 +100,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
-import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
@@ -114,6 +111,7 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
+import app.tivi.common.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
@@ -156,11 +154,7 @@ internal fun ShowDetails(
     viewModel: ShowDetailsViewModel,
     navController: NavController,
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    val viewState by remember(viewModel.state, lifecycleOwner) {
-        viewModel.state.flowWithLifecycle(lifecycleOwner.lifecycle)
-    }.collectAsState(initial = null)
+    val viewState by viewModel.state.collectAsStateWithLifecycle(null)
 
     ShowDetails(viewState = viewState ?: return) { action ->
         when (action) {
