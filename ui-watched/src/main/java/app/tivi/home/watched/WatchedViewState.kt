@@ -31,4 +31,8 @@ data class WatchedViewState(
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
     val sort: SortOption = SortOption.LAST_WATCHED
-)
+) {
+    companion object {
+        val Empty = WatchedViewState()
+    }
+}

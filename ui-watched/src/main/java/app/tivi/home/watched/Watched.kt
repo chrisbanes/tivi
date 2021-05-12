@@ -40,7 +40,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,6 +65,7 @@ import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
 import app.tivi.common.compose.UserProfileButton
+import app.tivi.common.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.flowWithLocalLifecycle
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.theme.AppBarAlphas
@@ -95,7 +95,7 @@ internal fun Watched(
     viewModel: WatchedViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState by viewModel.state.collectAsStateWithLifecycle(WatchedViewState.Empty)
     val pagingItems = viewModel.pagedList.flowWithLocalLifecycle().collectAsLazyPagingItems()
 
     Watched(state = viewState, list = pagingItems) { action ->
