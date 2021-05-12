@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
+import app.tivi.common.compose.flowWithLocalLifecycle
 
 @Composable
 fun Trending(navController: NavController) {
@@ -40,7 +41,7 @@ internal fun Trending(
     navController: NavController,
 ) {
     EntryGrid(
-        lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
+        lazyPagingItems = viewModel.pagedList.flowWithLocalLifecycle().collectAsLazyPagingItems(),
         title = stringResource(R.string.discover_trending_title),
         onOpenShowDetails = { showId -> navController.navigate("show/$showId") },
         modifier = Modifier.fillMaxSize()

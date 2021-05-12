@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package app.tivi.common.compose
 
 import androidx.compose.runtime.Composable
@@ -40,3 +42,11 @@ fun <T> Flow<T>.collectAsStateWithLifecycle(
         }
     }
 }
+
+@Composable
+inline fun <T> Flow<T>.flowWithLocalLifecycle(
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED
+): Flow<T> = flowWithLifecycle(
+    lifecycle = LocalLifecycleOwner.current.lifecycle,
+    minActiveState = minActiveState
+)

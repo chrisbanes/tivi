@@ -66,6 +66,7 @@ import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
 import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.collectAsStateWithLifecycle
+import app.tivi.common.compose.flowWithLocalLifecycle
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.data.entities.ShowTmdbImage
@@ -97,7 +98,7 @@ internal fun Followed(
 
     Followed(
         state = viewState ?: return,
-        list = viewModel.pagedList.collectAsLazyPagingItems()
+        list = viewModel.pagedList.flowWithLocalLifecycle().collectAsLazyPagingItems()
     ) { action ->
         when (action) {
             FollowedAction.LoginAction,
