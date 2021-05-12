@@ -41,7 +41,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -74,7 +73,7 @@ internal class FollowedViewModel @Inject constructor(
     private val sort = MutableStateFlow(SortOption.SUPER_SORT)
 
     val state: Flow<FollowedViewState> = combine(
-        loadingState.observable.debounce(2000),
+        loadingState.observable,
         showSelection.observeSelectedShowIds(),
         showSelection.observeIsSelectionOpen(),
         observeTraktAuthState.observe()

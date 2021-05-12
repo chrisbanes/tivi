@@ -18,16 +18,18 @@ package app.tivi.util
 
 import app.tivi.data.entities.TiviShow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class ShowStateSelector {
     private val selectedShowIds = MutableStateFlow<Set<Long>>(emptySet())
     private val isSelectionOpen = MutableStateFlow(false)
 
-    fun observeSelectedShowIds() = selectedShowIds
+    fun observeSelectedShowIds(): StateFlow<Set<Long>> = selectedShowIds.asStateFlow()
 
-    fun observeIsSelectionOpen() = isSelectionOpen
+    fun observeIsSelectionOpen(): StateFlow<Boolean> = isSelectionOpen.asStateFlow()
 
-    fun getSelectedShowIds() = selectedShowIds.value
+    fun getSelectedShowIds(): Set<Long> = selectedShowIds.value
 
     fun onItemClick(show: TiviShow): Boolean {
         if (isSelectionOpen.value) {

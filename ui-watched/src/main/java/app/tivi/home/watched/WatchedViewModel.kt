@@ -39,7 +39,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -67,7 +66,7 @@ class WatchedViewModel @Inject constructor(
     private val sort = MutableStateFlow(SortOption.LAST_WATCHED)
 
     val state: Flow<WatchedViewState> = combine(
-        loadingState.observable.debounce(2000),
+        loadingState.observable,
         showSelection.observeSelectedShowIds(),
         showSelection.observeIsSelectionOpen(),
         observeTraktAuthState.observe()
