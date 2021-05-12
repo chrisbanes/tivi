@@ -64,7 +64,7 @@ class WatchedViewModel @Inject constructor(
         get() = observePagedWatchedShows.observe()
 
     private val filter = MutableStateFlow<String?>(null)
-    private val sort = MutableStateFlow(SortOption.SUPER_SORT)
+    private val sort = MutableStateFlow(SortOption.LAST_WATCHED)
 
     val state: Flow<WatchedViewState> = combine(
         loadingState.observable.debounce(2000),

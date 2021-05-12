@@ -94,10 +94,10 @@ internal fun Followed(
     viewModel: FollowedViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle(null)
+    val viewState by viewModel.state.collectAsStateWithLifecycle(FollowedViewState.Empty)
 
     Followed(
-        state = viewState ?: return,
+        state = viewState,
         list = viewModel.pagedList.flowWithLocalLifecycle().collectAsLazyPagingItems()
     ) { action ->
         when (action) {

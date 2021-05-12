@@ -118,11 +118,9 @@ internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle(null)
+    val viewState by viewModel.state.collectAsStateWithLifecycle(EpisodeDetailsViewState.Empty)
 
-    EpisodeDetails(
-        viewState = viewState ?: return
-    ) { action ->
+    EpisodeDetails(viewState = viewState) { action ->
         when (action) {
             EpisodeDetailsAction.Close -> navController.popBackStack()
             else -> viewModel.submitAction(action)
@@ -613,7 +611,6 @@ private fun EpisodeDetailsAppBar(
 fun PreviewEpisodeDetails() {
     EpisodeDetails(
         viewState = EpisodeDetailsViewState(
-            episodeId = 0,
             episode = Episode(
                 seasonId = 100,
                 title = "A show too far",

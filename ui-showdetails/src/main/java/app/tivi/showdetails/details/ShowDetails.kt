@@ -154,9 +154,9 @@ internal fun ShowDetails(
     viewModel: ShowDetailsViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle(null)
+    val viewState by viewModel.state.collectAsStateWithLifecycle(ShowDetailsViewState.Empty)
 
-    ShowDetails(viewState = viewState ?: return) { action ->
+    ShowDetails(viewState = viewState) { action ->
         when (action) {
             ShowDetailsAction.NavigateUp -> navController.popBackStack()
             else -> viewModel.submitAction(action)

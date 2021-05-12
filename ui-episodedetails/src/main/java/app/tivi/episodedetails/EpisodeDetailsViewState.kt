@@ -24,11 +24,14 @@ import app.tivi.data.entities.Season
 
 @Immutable
 internal data class EpisodeDetailsViewState(
-    val episodeId: Long,
     val season: Season? = null,
     val episode: Episode? = null,
     val watches: List<EpisodeWatchEntry> = emptyList(),
     val canAddEpisodeWatch: Boolean = false,
     val refreshing: Boolean = false,
     val error: UiError? = null
-)
+) {
+    companion object {
+        val Empty = EpisodeDetailsViewState()
+    }
+}

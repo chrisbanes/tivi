@@ -88,9 +88,9 @@ internal fun Discover(
     viewModel: DiscoverViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle(null)
+    val viewState by viewModel.state.collectAsStateWithLifecycle(DiscoverViewState.Empty)
 
-    Discover(state = viewState ?: return) { action ->
+    Discover(state = viewState) { action ->
         when (action) {
             DiscoverAction.LoginAction,
             DiscoverAction.OpenUserDetails -> navController.navigate(Screen.Account.route)

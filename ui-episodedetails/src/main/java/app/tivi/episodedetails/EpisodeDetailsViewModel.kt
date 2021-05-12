@@ -68,13 +68,11 @@ internal class EpisodeDetailsViewModel @Inject constructor(
         snackbarManager.errors,
     ) { episodeDetails, episodeWatches, refreshing, error ->
         EpisodeDetailsViewState(
-            episodeId,
             episode = episodeDetails.episode,
             season = episodeDetails.season,
             watches = episodeWatches,
-            canAddEpisodeWatch = episodeDetails.episode?.firstAired?.let {
-                it.isBefore(OffsetDateTime.now())
-            } ?: true,
+            canAddEpisodeWatch = episodeDetails.episode?.firstAired?.isBefore(OffsetDateTime.now())
+                ?: true,
             refreshing = refreshing,
             error = error,
         )

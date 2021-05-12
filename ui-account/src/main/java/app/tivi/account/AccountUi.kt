@@ -81,7 +81,7 @@ internal fun AccountUi(
     viewModel: AccountUiViewModel,
     onOpenSettings: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle(null)
+    val viewState by viewModel.state.collectAsStateWithLifecycle(AccountUiViewState.Empty)
 
     val loginLauncher = rememberLauncherForActivityResult(
         viewModel.buildLoginActivityResult()
@@ -91,7 +91,7 @@ internal fun AccountUi(
         }
     }
 
-    AccountUi(viewState ?: return) { action ->
+    AccountUi(viewState) { action ->
         when (action) {
             is AccountUiAction.Close -> navController.popBackStack()
             is AccountUiAction.OpenSettings -> onOpenSettings()

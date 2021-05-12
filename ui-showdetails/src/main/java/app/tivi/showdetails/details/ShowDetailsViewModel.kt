@@ -105,7 +105,6 @@ internal class ShowDetailsViewModel @Inject constructor(
     ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons,
         stats, error, expandedSeasonIds ->
         ShowDetailsViewState(
-            showId = showId,
             isFollowed = isFollowed,
             show = show,
             posterImage = showImages.poster,

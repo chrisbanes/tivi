@@ -27,7 +27,6 @@ import app.tivi.data.views.FollowedShowsWatchStats
 
 @Immutable
 internal data class ShowDetailsViewState(
-    val showId: Long,
     val isFollowed: Boolean = false,
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val posterImage: ShowTmdbImage? = null,
@@ -39,7 +38,11 @@ internal data class ShowDetailsViewState(
     val expandedSeasonIds: Set<Long> = emptySet(),
     val refreshing: Boolean = false,
     val refreshError: UiError? = null
-)
+) {
+    companion object {
+        val Empty = ShowDetailsViewState()
+    }
+}
 
 sealed class UiEffect
 data class OpenEpisodeUiEffect(val episodeId: Long, val seasonId: Long) : UiEffect()

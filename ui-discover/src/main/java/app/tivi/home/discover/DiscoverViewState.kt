@@ -38,4 +38,8 @@ internal data class DiscoverViewState(
 ) {
     val refreshing
         get() = trendingRefreshing || popularRefreshing || recommendedRefreshing
+
+    companion object {
+        val Empty = DiscoverViewState()
+    }
 }
