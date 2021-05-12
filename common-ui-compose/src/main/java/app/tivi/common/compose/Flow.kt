@@ -19,34 +19,20 @@
 package app.tivi.common.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 
 @Composable
-fun <T> Flow<T>.collectAsStateWithLifecycle(
-    initial: T,
-    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
-): State<T> {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    return produceState(initialValue = initial, this, lifecycleOwner) {
-        flowWithLifecycle(
-            lifecycle = lifecycleOwner.lifecycle,
-            minActiveState = minActiveState
-        ).collect {
-            value = it
-        }
-    }
-}
-
-@Composable
-inline fun <T> Flow<T>.flowWithLocalLifecycle(
+fun <T> rememberFlowWithLifecycle(
+    flow: Flow<T>,
+    lifecycle: Lifecycle = LocalLifecycleOwner.current.lifecycle,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED
-): Flow<T> = flowWithLifecycle(
-    lifecycle = LocalLifecycleOwner.current.lifecycle,
-    minActiveState = minActiveState
-)
+): Flow<T> = remember(flow, lifecycle) {
+    flow.flowWithLifecycle(
+        lifecycle = lifecycle,
+        minActiveState = minActiveState
+    )
+}

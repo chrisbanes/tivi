@@ -41,6 +41,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,9 +66,8 @@ import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
 import app.tivi.common.compose.UserProfileButton
-import app.tivi.common.compose.collectAsStateWithLifecycle
-import app.tivi.common.compose.flowWithLocalLifecycle
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
@@ -94,11 +94,12 @@ internal fun Followed(
     viewModel: FollowedViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle(FollowedViewState.Empty)
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = FollowedViewState.Empty)
 
     Followed(
         state = viewState,
-        list = viewModel.pagedList.flowWithLocalLifecycle().collectAsLazyPagingItems()
+        list = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems()
     ) { action ->
         when (action) {
             FollowedAction.LoginAction,

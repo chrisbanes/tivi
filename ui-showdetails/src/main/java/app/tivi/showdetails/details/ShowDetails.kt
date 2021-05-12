@@ -78,6 +78,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -111,9 +112,9 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
-import app.tivi.common.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -154,7 +155,8 @@ internal fun ShowDetails(
     viewModel: ShowDetailsViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle(ShowDetailsViewState.Empty)
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = ShowDetailsViewState.Empty)
 
     ShowDetails(viewState = viewState) { action ->
         when (action) {

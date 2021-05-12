@@ -42,6 +42,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,8 +54,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
-import app.tivi.common.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.foregroundColor
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.coil.rememberCoilPainter
@@ -81,7 +82,8 @@ internal fun AccountUi(
     viewModel: AccountUiViewModel,
     onOpenSettings: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle(AccountUiViewState.Empty)
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = AccountUiViewState.Empty)
 
     val loginLauncher = rememberLauncherForActivityResult(
         viewModel.buildLoginActivityResult()

@@ -60,6 +60,7 @@ import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -90,8 +91,8 @@ import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.boundsInParent
-import app.tivi.common.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.onPositionInParentChanged
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -118,7 +119,8 @@ internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle(EpisodeDetailsViewState.Empty)
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = EpisodeDetailsViewState.Empty)
 
     EpisodeDetails(viewState = viewState) { action ->
         when (action) {
