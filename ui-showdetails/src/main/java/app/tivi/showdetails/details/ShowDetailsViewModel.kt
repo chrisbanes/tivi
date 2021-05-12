@@ -17,13 +17,14 @@
 package app.tivi.showdetails.details
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
+import app.tivi.common.compose.combine
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
@@ -48,6 +49,7 @@ import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -75,69 +77,50 @@ internal class ShowDetailsViewModel @Inject constructor(
     private val getEpisode: GetEpisodeDetails,
     private val logger: Logger,
     private val snackbarManager: SnackbarManager
-) : ReduxViewModel<ShowDetailsViewState>(
-    ShowDetailsViewState(
-        // The string "showId" is the name of the argument in the route
-        showId = savedStateHandle.get("showId")!!
-    )
-) {
+) : ViewModel() {
+    private val showId: Long = savedStateHandle.get("showId")!!
+
     private val loadingState = ObservableLoadingCounter()
 
     private val pendingActions = MutableSharedFlow<ShowDetailsAction>()
 
     private val _uiEffects = MutableSharedFlow<UiEffect>(extraBufferCapacity = 100)
 
+    private val expandedSeasonIds = MutableStateFlow<Set<Long>>(emptySet())
+
     val uiEffects: Flow<UiEffect>
         get() = _uiEffects.asSharedFlow()
 
+    val state = combine(
+        observeShowFollowStatus.observe().distinctUntilChanged(),
+        observeShowDetails.observe().distinctUntilChanged(),
+        observeShowImages.observe().distinctUntilChanged(),
+        loadingState.observable,
+        observeRelatedShows.observe().distinctUntilChanged(),
+        observeNextEpisodeToWatch.observe().distinctUntilChanged(),
+        observeShowSeasons.observe().distinctUntilChanged(),
+        observeShowViewStats.observe().distinctUntilChanged(),
+        snackbarManager.errors,
+        expandedSeasonIds,
+    ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons,
+        stats, error, expandedSeasonIds ->
+        ShowDetailsViewState(
+            showId = showId,
+            isFollowed = isFollowed,
+            show = show,
+            posterImage = showImages.poster,
+            backdropImage = showImages.backdrop,
+            relatedShows = relatedShows,
+            nextEpisodeToWatch = nextEpisode,
+            seasons = seasons,
+            watchStats = stats,
+            expandedSeasonIds = expandedSeasonIds,
+            refreshing = refreshing,
+            refreshError = error,
+        )
+    }
+
     init {
-        viewModelScope.launch {
-            observeShowFollowStatus.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(isFollowed = it) }
-        }
-
-        viewModelScope.launch {
-            observeShowDetails.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(show = it) }
-        }
-
-        viewModelScope.launch {
-            observeShowImages.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(backdropImage = it.backdrop, posterImage = it.poster) }
-        }
-
-        viewModelScope.launch {
-            loadingState.observable
-                .collectAndSetState { copy(refreshing = it) }
-        }
-
-        viewModelScope.launch {
-            observeRelatedShows.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(relatedShows = it) }
-        }
-
-        viewModelScope.launch {
-            observeNextEpisodeToWatch.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(nextEpisodeToWatch = it) }
-        }
-
-        viewModelScope.launch {
-            observeShowSeasons.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(seasons = it) }
-        }
-
-        viewModelScope.launch {
-            observeShowViewStats.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(watchStats = it) }
-        }
-
         viewModelScope.launch {
             pendingActions.collect { action ->
                 when (action) {
@@ -155,32 +138,22 @@ internal class ShowDetailsViewModel @Inject constructor(
             }
         }
 
-        viewModelScope.launch {
-            snackbarManager.errors.collect { error ->
-                setState { copy(refreshError = error) }
-            }
-        }
+        observeShowFollowStatus(ObserveShowFollowStatus.Params(showId))
+        observeShowDetails(ObserveShowDetails.Params(showId))
+        observeShowImages(ObserveShowImages.Params(showId))
+        observeRelatedShows(ObserveRelatedShows.Params(showId))
+        observeShowSeasons(ObserveShowSeasonData.Params(showId))
+        observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(showId))
+        observeShowViewStats(ObserveShowViewStats.Params(showId))
 
-        selectSubscribe(ShowDetailsViewState::showId) { showId ->
-            observeShowFollowStatus(ObserveShowFollowStatus.Params(showId))
-            observeShowDetails(ObserveShowDetails.Params(showId))
-            observeShowImages(ObserveShowImages.Params(showId))
-            observeRelatedShows(ObserveRelatedShows.Params(showId))
-            observeShowSeasons(ObserveShowSeasonData.Params(showId))
-            observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(showId))
-            observeShowViewStats(ObserveShowViewStats.Params(showId))
-
-            refresh(false)
-        }
+        refresh(false)
     }
 
     private fun refresh(fromUser: Boolean) {
-        viewModelScope.withState { state ->
-            updateShowDetails(UpdateShowDetails.Params(state.showId, fromUser)).watchStatus()
-            updateShowImages(UpdateShowImages.Params(state.showId, fromUser)).watchStatus()
-            updateRelatedShows(UpdateRelatedShows.Params(state.showId, fromUser)).watchStatus()
-            updateShowSeasons(UpdateShowSeasonData.Params(state.showId, fromUser)).watchStatus()
-        }
+        updateShowDetails(UpdateShowDetails.Params(showId, fromUser)).watchStatus()
+        updateShowImages(UpdateShowImages.Params(showId, fromUser)).watchStatus()
+        updateRelatedShows(UpdateRelatedShows.Params(showId, fromUser)).watchStatus()
+        updateShowSeasons(UpdateShowSeasonData.Params(showId, fromUser)).watchStatus()
     }
 
     private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
@@ -202,8 +175,8 @@ internal class ShowDetailsViewModel @Inject constructor(
     }
 
     private fun onToggleMyShowsButtonClicked() {
-        viewModelScope.withState { state ->
-            changeShowFollowStatus(ChangeShowFollowStatus.Params(state.showId, TOGGLE)).watchStatus()
+        viewModelScope.launch {
+            changeShowFollowStatus(ChangeShowFollowStatus.Params(showId, TOGGLE)).watchStatus()
         }
     }
 
@@ -213,15 +186,15 @@ internal class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun openEpisodeDetails(action: ShowDetailsAction.OpenEpisodeDetails) = viewModelScope.launch {
-        val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId)).first()
-        if (episode != null) {
-            // Make sure the season is expanded
-            setState {
-                copy(expandedSeasonIds = expandedSeasonIds + episode.seasonId)
+    private fun openEpisodeDetails(action: ShowDetailsAction.OpenEpisodeDetails) {
+        viewModelScope.launch {
+            val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId)).first()
+            if (episode != null) {
+                // Make sure the season is expanded
+                expandedSeasonIds.value = expandedSeasonIds.value + episode.seasonId
+                // And emit an open episode ui effect
+                _uiEffects.emit(OpenEpisodeUiEffect(action.episodeId, episode.seasonId))
             }
-            // And emit an open episode ui effect
-            _uiEffects.emit(OpenEpisodeUiEffect(action.episodeId, episode.seasonId))
         }
     }
 
@@ -237,11 +210,9 @@ internal class ShowDetailsViewModel @Inject constructor(
 
     private fun onChangeSeasonExpandState(seasonId: Long, expanded: Boolean) {
         viewModelScope.launch {
-            setState {
-                when {
-                    expanded -> copy(expandedSeasonIds = expandedSeasonIds + seasonId)
-                    else -> copy(expandedSeasonIds = expandedSeasonIds - seasonId)
-                }
+            when {
+                expanded -> expandedSeasonIds.value = expandedSeasonIds.value + seasonId
+                else -> expandedSeasonIds.value = expandedSeasonIds.value - seasonId
             }
             if (expanded) {
                 // If we've expanded, focus the season

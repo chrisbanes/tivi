@@ -93,6 +93,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -101,6 +102,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
@@ -154,8 +156,13 @@ internal fun ShowDetails(
     viewModel: ShowDetailsViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsState()
-    ShowDetails(viewState = viewState) { action ->
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val viewState by remember(viewModel.state, lifecycleOwner) {
+        viewModel.state.flowWithLifecycle(lifecycleOwner.lifecycle)
+    }.collectAsState(initial = null)
+
+    ShowDetails(viewState = viewState ?: return) { action ->
         when (action) {
             ShowDetailsAction.NavigateUp -> navController.popBackStack()
             else -> viewModel.submitAction(action)
