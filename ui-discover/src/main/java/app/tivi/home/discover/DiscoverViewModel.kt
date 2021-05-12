@@ -16,8 +16,9 @@
 
 package app.tivi.home.discover
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.ReduxViewModel
+import app.tivi.common.compose.combine
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
@@ -31,6 +32,7 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectInto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -49,70 +51,45 @@ internal class DiscoverViewModel @Inject constructor(
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails
-) : ReduxViewModel<DiscoverViewState>(
-    DiscoverViewState()
-) {
+) : ViewModel() {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
     private val recommendedLoadingState = ObservableLoadingCounter()
 
     private val pendingActions = MutableSharedFlow<DiscoverAction>()
 
+    val state: Flow<DiscoverViewState> = combine(
+        trendingLoadingState.observable,
+        popularLoadingState.observable,
+        recommendedLoadingState.observable,
+        observeTrendingShows.observe().distinctUntilChanged(),
+        observePopularShows.observe().distinctUntilChanged(),
+        observeRecommendedShows.observe().distinctUntilChanged(),
+        observeNextShowEpisodeToWatch.observe().distinctUntilChanged(),
+        observeTraktAuthState.observe().distinctUntilChanged()
+            .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) },
+        observeUserDetails.observe(),
+    ) { trendingLoad, popularLoad, recommendLoad, trending, popular, recommended,
+        nextShow, authState, user ->
+        DiscoverViewState(
+            user = user,
+            authState = authState,
+            trendingItems = trending,
+            trendingRefreshing = trendingLoad,
+            popularItems = popular,
+            popularRefreshing = popularLoad,
+            recommendedItems = recommended,
+            recommendedRefreshing = recommendLoad,
+            nextEpisodeWithShowToWatched = nextShow,
+        )
+    }
+
     init {
-        viewModelScope.launch {
-            trendingLoadingState.observable
-                .collectAndSetState { copy(trendingRefreshing = it) }
-        }
-
-        viewModelScope.launch {
-            popularLoadingState.observable
-                .collectAndSetState { copy(popularRefreshing = it) }
-        }
-
-        viewModelScope.launch {
-            recommendedLoadingState.observable
-                .collectAndSetState { copy(recommendedRefreshing = it) }
-        }
-
-        viewModelScope.launch {
-            observeTrendingShows.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(trendingItems = it) }
-        }
         observeTrendingShows(ObserveTrendingShows.Params(10))
-
-        viewModelScope.launch {
-            observePopularShows.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(popularItems = it) }
-        }
         observePopularShows(ObservePopularShows.Params(10))
-
-        viewModelScope.launch {
-            observeRecommendedShows.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(recommendedItems = it) }
-        }
         observeRecommendedShows(ObserveRecommendedShows.Params(10))
-
-        viewModelScope.launch {
-            observeNextShowEpisodeToWatch.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(nextEpisodeWithShowToWatched = it) }
-        }
         observeNextShowEpisodeToWatch(Unit)
-
-        viewModelScope.launch {
-            observeTraktAuthState.observe()
-                .distinctUntilChanged()
-                .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) }
-                .collectAndSetState { copy(authState = it) }
-        }
         observeTraktAuthState(Unit)
-
-        viewModelScope.launch {
-            observeUserDetails.observe().collectAndSetState { copy(user = it) }
-        }
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launch {
