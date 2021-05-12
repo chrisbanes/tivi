@@ -24,7 +24,6 @@ internal data class FollowedViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
     val isLoading: Boolean = false,
-    val isEmpty: Boolean = false,
     val selectionOpen: Boolean = false,
     val selectedShowIds: Set<Long> = emptySet(),
     val filterActive: Boolean = false,
