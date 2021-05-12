@@ -38,7 +38,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -66,7 +65,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
         observeEpisodeDetails.observe(),
         observeEpisodeWatches.observe(),
         loadingState.observable,
-        snackbarManager.flow.onStart { emit(null) },
+        snackbarManager.errors,
     ) { episodeDetails, episodeWatches, refreshing, error ->
         EpisodeDetailsViewState(
             episodeId,
@@ -132,7 +131,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             InvokeSuccess -> loadingState.removeLoader()
             is InvokeError -> {
                 logger.i(status.throwable)
-                snackbarManager.sendError(UiError(status.throwable))
+                snackbarManager.addError(UiError(status.throwable))
                 loadingState.removeLoader()
             }
         }

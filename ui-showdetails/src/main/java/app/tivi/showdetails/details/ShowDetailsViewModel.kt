@@ -155,9 +155,9 @@ internal class ShowDetailsViewModel @Inject constructor(
             }
         }
 
-        snackbarManager.launchInScope(viewModelScope) { uiError, visible ->
-            viewModelScope.launchSetState {
-                copy(refreshError = if (visible) uiError else null)
+        viewModelScope.launch {
+            snackbarManager.errors.collect { error ->
+                setState { copy(refreshError = error) }
             }
         }
 
@@ -191,7 +191,7 @@ internal class ShowDetailsViewModel @Inject constructor(
             InvokeSuccess -> loadingState.removeLoader()
             is InvokeError -> {
                 logger.i(status.throwable)
-                snackbarManager.sendError(UiError(status.throwable))
+                snackbarManager.addError(UiError(status.throwable))
                 loadingState.removeLoader()
             }
         }
