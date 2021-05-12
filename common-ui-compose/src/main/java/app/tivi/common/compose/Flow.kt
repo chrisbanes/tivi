@@ -18,12 +18,12 @@ package app.tivi.common.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 
 @Composable
 fun <T> Flow<T>.collectAsStateWithLifecycle(
@@ -31,11 +31,12 @@ fun <T> Flow<T>.collectAsStateWithLifecycle(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
 ): State<T> {
     val lifecycleOwner = LocalLifecycleOwner.current
-
-    return remember(this, lifecycleOwner) {
-        this@collectAsStateWithLifecycle.flowWithLifecycle(
+    return produceState(initialValue = initial, this, lifecycleOwner) {
+        flowWithLifecycle(
             lifecycle = lifecycleOwner.lifecycle,
             minActiveState = minActiveState
-        )
-    }.collectAsState(initial = initial)
+        ).collect {
+            value = it
+        }
+    }
 }
