@@ -64,6 +64,7 @@ dependencies {
     implementation project(':common-ui-compose')
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.lifecycle.runtime
 
     implementation libs.androidx.navigation.compose
 

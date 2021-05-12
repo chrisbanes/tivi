@@ -36,11 +36,9 @@ import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -81,11 +79,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             refreshing = refreshing,
             error = error,
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = WhileSubscribed(5000),
-        initialValue = EpisodeDetailsViewState(episodeId)
-    )
+    }
 
     init {
         viewModelScope.launch {

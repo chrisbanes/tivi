@@ -78,12 +78,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
@@ -118,8 +120,15 @@ internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsState()
-    EpisodeDetails(viewState = viewState) { action ->
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val viewState by remember(viewModel.state, lifecycleOwner) {
+        viewModel.state.flowWithLifecycle(lifecycleOwner.lifecycle)
+    }.collectAsState(initial = null)
+
+    EpisodeDetails(
+        viewState = viewState ?: return
+    ) { action ->
         when (action) {
             EpisodeDetailsAction.Close -> navController.popBackStack()
             else -> viewModel.submitAction(action)
