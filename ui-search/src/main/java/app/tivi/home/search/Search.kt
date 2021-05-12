@@ -40,7 +40,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +57,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SearchTextField
+import app.tivi.common.compose.collectAsStateWithLifecycle
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
@@ -76,7 +76,7 @@ internal fun Search(
     viewModel: SearchViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState by viewModel.state.collectAsStateWithLifecycle(SearchViewState.Empty)
     Search(state = viewState) { action ->
         when (action) {
             is SearchAction.OpenShowDetails -> {
