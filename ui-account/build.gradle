@@ -57,6 +57,7 @@ dependencies {
     implementation project(':trakt-auth')
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.lifecycle.runtime
 
     // For registerForActivityResult
     implementation libs.androidx.activity.compose

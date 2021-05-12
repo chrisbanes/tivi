@@ -44,15 +44,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
 import app.tivi.common.compose.foregroundColor
 import app.tivi.data.entities.TraktUser
@@ -81,7 +84,10 @@ internal fun AccountUi(
     viewModel: AccountUiViewModel,
     onOpenSettings: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val viewState by remember(viewModel.state, lifecycleOwner) {
+        viewModel.state.flowWithLifecycle(lifecycleOwner.lifecycle)
+    }.collectAsState(initial = null)
 
     val loginLauncher = rememberLauncherForActivityResult(
         viewModel.buildLoginActivityResult()
@@ -91,7 +97,7 @@ internal fun AccountUi(
         }
     }
 
-    AccountUi(viewState) { action ->
+    AccountUi(viewState ?: return) { action ->
         when (action) {
             is AccountUiAction.Close -> navController.popBackStack()
             is AccountUiAction.OpenSettings -> onOpenSettings()
