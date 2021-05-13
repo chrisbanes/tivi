@@ -58,6 +58,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SearchTextField
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
@@ -76,7 +77,9 @@ internal fun Search(
     viewModel: SearchViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = SearchViewState.Empty)
+
     Search(state = viewState) { action ->
         when (action) {
             is SearchAction.OpenShowDetails -> {

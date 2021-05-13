@@ -62,6 +62,7 @@ import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -88,7 +89,9 @@ internal fun Discover(
     viewModel: DiscoverViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = DiscoverViewState.Empty)
+
     Discover(state = viewState) { action ->
         when (action) {
             DiscoverAction.LoginAction,
@@ -390,7 +393,7 @@ private fun DiscoverAppBar(
                 Crossfade(
                     targetState = refreshing,
                     modifier = Modifier.align(Alignment.CenterVertically)
-                ) {
+                ) { refreshing ->
                     if (!refreshing) {
                         RefreshButton(onClick = onRefreshActionClick)
                     }

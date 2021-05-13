@@ -23,6 +23,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
+import app.tivi.common.compose.rememberFlowWithLifecycle
 
 @Composable
 fun Popular(navController: NavController) {
@@ -38,7 +39,7 @@ internal fun Popular(
     navController: NavController,
 ) {
     EntryGrid(
-        lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
+        lazyPagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems(),
         title = stringResource(R.string.discover_popular_title),
         onOpenShowDetails = { showId -> navController.navigate("show/$showId") }
     )

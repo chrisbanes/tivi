@@ -16,8 +16,8 @@
 
 package app.tivi.home.search
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,13 +33,21 @@ import javax.inject.Inject
 @HiltViewModel
 internal class SearchViewModel @Inject constructor(
     private val searchShows: SearchShows
-) : ReduxViewModel<SearchViewState>(
-    SearchViewState()
-) {
+) : ViewModel() {
     private val searchQuery = MutableStateFlow("")
     private val loadingState = ObservableLoadingCounter()
 
     private val pendingActions = MutableSharedFlow<SearchAction>()
+
+    val state = combine(
+        searchShows.observe(),
+        loadingState.observable,
+    ) { results, refreshing ->
+        SearchViewState(
+            searchResults = results,
+            refreshing = refreshing,
+        )
+    }
 
     init {
         viewModelScope.launch {
@@ -51,14 +60,6 @@ internal class SearchViewModel @Inject constructor(
                     job.invokeOnCompletion { loadingState.removeLoader() }
                     job.join()
                 }
-        }
-
-        viewModelScope.launch {
-            loadingState.observable.collectAndSetState { copy(refreshing = it) }
-        }
-
-        viewModelScope.launch {
-            searchShows.observe().collectAndSetState { copy(searchResults = it) }
         }
 
         viewModelScope.launch {

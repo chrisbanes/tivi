@@ -92,6 +92,7 @@ import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.onPositionInParentChanged
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -118,7 +119,9 @@ internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = EpisodeDetailsViewState.Empty)
+
     EpisodeDetails(viewState = viewState) { action ->
         when (action) {
             EpisodeDetailsAction.Close -> navController.popBackStack()
@@ -610,7 +613,6 @@ private fun EpisodeDetailsAppBar(
 fun PreviewEpisodeDetails() {
     EpisodeDetails(
         viewState = EpisodeDetailsViewState(
-            episodeId = 0,
             episode = Episode(
                 seasonId = 100,
                 title = "A show too far",

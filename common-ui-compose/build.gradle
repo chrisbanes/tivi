@@ -50,6 +50,8 @@ dependencies {
 
     implementation libs.androidx.core
 
+    api libs.androidx.lifecycle.runtime
+
     implementation libs.compose.ui.ui
     implementation libs.compose.foundation.foundation
     implementation libs.compose.foundation.layout

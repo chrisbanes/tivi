@@ -16,8 +16,8 @@
 
 package app.tivi.account
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.ClearUserDetails
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
@@ -25,6 +25,7 @@ import app.tivi.trakt.TraktAuthManager
 import app.tivi.trakt.TraktManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,22 +37,19 @@ internal class AccountUiViewModel @Inject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
     private val clearUserDetails: ClearUserDetails
-) : ReduxViewModel<AccountUiViewState>(
-        AccountUiViewState()
-    ),
-    TraktAuthManager by traktAuthManager {
-    init {
-        viewModelScope.launch {
-            observeTraktAuthState.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(authState = it) }
-        }
-        observeTraktAuthState(Unit)
+) : ViewModel(), TraktAuthManager by traktAuthManager {
+    val state = combine(
+        observeTraktAuthState.observe().distinctUntilChanged(),
+        observeUserDetails.observe(),
+    ) { authState, user ->
+        AccountUiViewState(
+            user = user,
+            authState = authState
+        )
+    }
 
-        viewModelScope.launch {
-            observeUserDetails.observe()
-                .collectAndSetState { copy(user = it) }
-        }
+    init {
+        observeTraktAuthState(Unit)
         observeUserDetails(ObserveUserDetails.Params("me"))
     }
 

@@ -67,6 +67,7 @@ import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
 import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
@@ -94,8 +95,10 @@ internal fun Watched(
     viewModel: WatchedViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsState()
-    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = WatchedViewState.Empty)
+    val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList)
+        .collectAsLazyPagingItems()
 
     Watched(state = viewState, list = pagingItems) { action ->
         when (action) {

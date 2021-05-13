@@ -114,6 +114,7 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -154,7 +155,9 @@ internal fun ShowDetails(
     viewModel: ShowDetailsViewModel,
     navController: NavController,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = ShowDetailsViewState.Empty)
+
     ShowDetails(viewState = viewState) { action ->
         when (action) {
             ShowDetailsAction.NavigateUp -> navController.popBackStack()

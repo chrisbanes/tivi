@@ -17,15 +17,13 @@
 package app.tivi.episodedetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
-import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
@@ -39,7 +37,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -55,29 +53,32 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger,
     private val snackbarManager: SnackbarManager
-) : ReduxViewModel<EpisodeDetailsViewState>(
-    EpisodeDetailsViewState(
-        // The string "episodeId" is the name of the argument in the route
-        episodeId = savedStateHandle.get("episodeId")!!
-    )
-) {
+) : ViewModel() {
+
+    private val episodeId: Long = savedStateHandle.get("episodeId")!!
 
     private val loadingState = ObservableLoadingCounter()
 
     private val pendingActions = MutableSharedFlow<EpisodeDetailsAction>()
 
+    val state = combine(
+        observeEpisodeDetails.observe(),
+        observeEpisodeWatches.observe(),
+        loadingState.observable,
+        snackbarManager.errors,
+    ) { episodeDetails, episodeWatches, refreshing, error ->
+        EpisodeDetailsViewState(
+            episode = episodeDetails.episode,
+            season = episodeDetails.season,
+            watches = episodeWatches,
+            canAddEpisodeWatch = episodeDetails.episode?.firstAired?.isBefore(OffsetDateTime.now())
+                ?: true,
+            refreshing = refreshing,
+            error = error,
+        )
+    }
+
     init {
-        viewModelScope.launch {
-            observeEpisodeDetails.observe()
-                .collect { updateFromEpisodeDetails(it) }
-        }
-
-        viewModelScope.launch {
-            observeEpisodeWatches.observe()
-                .onStart { emit(emptyList()) }
-                .collect { updateFromEpisodeWatches(it) }
-        }
-
         viewModelScope.launch {
             pendingActions.collect { action ->
                 when (action) {
@@ -90,39 +91,10 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             }
         }
 
-        snackbarManager.launchInScope(viewModelScope) { uiError, visible ->
-            viewModelScope.launchSetState {
-                copy(error = if (visible) uiError else null)
-            }
-        }
+        observeEpisodeDetails(ObserveEpisodeDetails.Params(episodeId))
+        observeEpisodeWatches(ObserveEpisodeWatches.Params(episodeId))
 
-        viewModelScope.launch {
-            loadingState.observable.collectAndSetState { copy(refreshing = it) }
-        }
-
-        selectSubscribe(EpisodeDetailsViewState::episodeId) { episodeId ->
-            observeEpisodeDetails(ObserveEpisodeDetails.Params(episodeId))
-            observeEpisodeWatches(ObserveEpisodeWatches.Params(episodeId))
-
-            refresh(false)
-        }
-    }
-
-    private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) {
-        viewModelScope.launchSetState {
-            val firstAired = episodeWithSeason.episode?.firstAired
-            copy(
-                episode = episodeWithSeason.episode,
-                season = episodeWithSeason.season,
-                canAddEpisodeWatch = firstAired?.isBefore(OffsetDateTime.now()) == true
-            )
-        }
-    }
-
-    private fun updateFromEpisodeWatches(watches: List<EpisodeWatchEntry>) {
-        viewModelScope.launchSetState {
-            copy(watches = watches)
-        }
+        refresh(false)
     }
 
     internal fun submitAction(action: EpisodeDetailsAction) {
@@ -131,9 +103,9 @@ internal class EpisodeDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun refresh(fromUserInteraction: Boolean) = viewModelScope.withState { state ->
+    private fun refresh(fromUserInteraction: Boolean) {
         updateEpisodeDetails(
-            UpdateEpisodeDetails.Params(state.episodeId, fromUserInteraction)
+            UpdateEpisodeDetails.Params(episodeId, fromUserInteraction)
         ).watchStatus()
     }
 
@@ -141,12 +113,12 @@ internal class EpisodeDetailsViewModel @Inject constructor(
         removeEpisodeWatch(RemoveEpisodeWatch.Params(action.watchId)).watchStatus()
     }
 
-    private fun markWatched() = viewModelScope.withState { state ->
-        addEpisodeWatch(AddEpisodeWatch.Params(state.episodeId, OffsetDateTime.now())).watchStatus()
+    private fun markWatched() {
+        addEpisodeWatch(AddEpisodeWatch.Params(episodeId, OffsetDateTime.now())).watchStatus()
     }
 
-    private fun markUnwatched() = viewModelScope.withState { state ->
-        removeEpisodeWatches(RemoveEpisodeWatches.Params(state.episodeId)).watchStatus()
+    private fun markUnwatched() {
+        removeEpisodeWatches(RemoveEpisodeWatches.Params(episodeId)).watchStatus()
     }
 
     private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
@@ -157,7 +129,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             InvokeSuccess -> loadingState.removeLoader()
             is InvokeError -> {
                 logger.i(status.throwable)
-                snackbarManager.sendError(UiError(status.throwable))
+                snackbarManager.addError(UiError(status.throwable))
                 loadingState.removeLoader()
             }
         }

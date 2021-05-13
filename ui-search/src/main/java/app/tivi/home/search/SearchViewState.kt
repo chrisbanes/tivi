@@ -22,4 +22,8 @@ internal data class SearchViewState(
     val query: String = "",
     val searchResults: List<ShowDetailed> = emptyList(),
     val refreshing: Boolean = false
-)
+) {
+    companion object {
+        val Empty = SearchViewState()
+    }
+}
