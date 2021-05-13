@@ -58,15 +58,11 @@ dependencies {
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
 
-    implementation libs.androidx.navigation.compose
-
     implementation libs.compose.foundation.foundation
     implementation libs.compose.foundation.layout
     implementation libs.compose.material.material
     implementation libs.compose.animation.animation
     implementation libs.compose.ui.tooling
-
-    implementation libs.androidx.navigation.compose
 
     implementation libs.accompanist.coil
     implementation libs.accompanist.insets

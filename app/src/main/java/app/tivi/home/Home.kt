@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -93,46 +94,108 @@ internal fun Home(
                 navController = navController,
                 startDestination = Screen.Discover.route
             ) {
-                composable(Screen.Discover.route) {
-                    Discover(navController)
-                }
-                composable(Screen.Following.route) {
-                    Followed(navController)
-                }
-                composable(Screen.Watched.route) {
-                    Watched(navController)
-                }
-                composable(Screen.Search.route) {
-                    Search(navController)
-                }
-                composable(
-                    route = Screen.ShowDetails.route,
-                    arguments = listOf(navArgument("showId") { type = NavType.LongType })
-                ) {
-                    ShowDetails(navController)
-                }
-                composable(Screen.RecommendedShows.route) {
-                    Recommended(navController)
-                }
-                composable(Screen.Trending.route) {
-                    Trending(navController)
-                }
-                composable(Screen.Popular.route) {
-                    Popular(navController)
-                }
-                composable(
-                    route = Screen.EpisodeDetails.route,
-                    arguments = listOf(navArgument("episodeId") { type = NavType.LongType })
-                ) {
-                    EpisodeDetails(navController)
-                }
-                composable(Screen.Account.route) {
-                    // This should really be a dialog, but we're waiting on:
-                    // https://issuetracker.google.com/179608120
-                    AccountUi(navController, onOpenSettings)
-                }
+                addDiscover(navController)
+                addFollowedShows(navController)
+                addWatchedShows(navController)
+                addShowDetails(navController)
+                addEpisodeDetails(navController)
+                addRecommendedShows(navController)
+                addTrendingShows(navController)
+                addPopularShows(navController)
+                addAccount(navController, onOpenSettings)
             }
         }
+    }
+}
+
+private fun NavGraphBuilder.addDiscover(navController: NavController) {
+    composable(Screen.Discover.route) {
+        Discover(
+            openTrendingShows = {
+                navController.navigate(Screen.Trending.route)
+            },
+            openPopularShows = {
+                navController.navigate(Screen.Popular.route)
+            },
+            openRecommendedShows = {
+                navController.navigate(Screen.RecommendedShows.route)
+            },
+            openShowDetails = { showId, episodeId ->
+                navController.navigate("show/${showId}")
+                // If we have an episodeId, we also open that
+                if (episodeId != null) {
+                    navController.navigate("episode/${episodeId}")
+                }
+            },
+            openUser = {
+                navController.navigate(Screen.Account.route)
+            },
+        )
+    }
+}
+
+private fun NavGraphBuilder.addFollowedShows(navController: NavController) {
+    composable(Screen.Following.route) {
+        Followed(navController)
+    }
+}
+
+private fun NavGraphBuilder.addWatchedShows(navController: NavController) {
+    composable(Screen.Following.route) {
+        Watched(navController)
+    }
+}
+
+private fun NavGraphBuilder.addSearch(navController: NavController) {
+    composable(Screen.Search.route) {
+        Search(navController)
+    }
+}
+
+private fun NavGraphBuilder.addShowDetails(navController: NavController) {
+    composable(
+        route = Screen.ShowDetails.route,
+        arguments = listOf(navArgument("showId") { type = NavType.LongType })
+    ) {
+        ShowDetails(navController)
+    }
+}
+
+private fun NavGraphBuilder.addEpisodeDetails(navController: NavController) {
+    composable(
+        route = Screen.EpisodeDetails.route,
+        arguments = listOf(navArgument("episodeId") { type = NavType.LongType })
+    ) {
+        EpisodeDetails(navController)
+    }
+}
+
+private fun NavGraphBuilder.addRecommendedShows(navController: NavController) {
+    composable(Screen.RecommendedShows.route) {
+        Recommended(navController)
+    }
+}
+
+private fun NavGraphBuilder.addTrendingShows(navController: NavController) {
+    composable(Screen.RecommendedShows.route) {
+        Trending(navController)
+    }
+}
+
+private fun NavGraphBuilder.addPopularShows(navController: NavController) {
+    composable(Screen.RecommendedShows.route) {
+        Popular(navController)
+    }
+}
+
+private fun NavGraphBuilder.addAccount(
+    navController: NavController,
+    onOpenSettings: () -> Unit,
+) {
+    composable(Screen.Account.route) {
+        // This should really be a dialog, but we're waiting on:
+        // https://issuetracker.google.com/179608120
+        AccountUi(navController, onOpenSettings)
     }
 }
 
