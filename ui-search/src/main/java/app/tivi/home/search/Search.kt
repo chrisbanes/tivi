@@ -53,9 +53,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.rememberFlowWithLifecycle
@@ -67,7 +66,7 @@ import com.google.accompanist.insets.statusBarsPadding
 @Composable
 fun Search(navController: NavController) {
     Search(
-        viewModel = hiltNavGraphViewModel(),
+        viewModel = hiltViewModel(),
         navController = navController,
     )
 }

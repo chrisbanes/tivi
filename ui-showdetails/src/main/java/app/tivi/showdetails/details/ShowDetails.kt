@@ -100,9 +100,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
@@ -145,7 +144,7 @@ import org.threeten.bp.OffsetDateTime
 @Composable
 fun ShowDetails(navController: NavController) {
     ShowDetails(
-        viewModel = hiltNavGraphViewModel(),
+        viewModel = hiltViewModel(),
         navController = navController,
     )
 }

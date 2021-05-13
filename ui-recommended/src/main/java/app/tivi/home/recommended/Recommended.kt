@@ -20,16 +20,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 
 @Composable
 fun Recommended(navController: NavController) {
     Recommended(
-        viewModel = hiltNavGraphViewModel(),
+        viewModel = hiltViewModel(),
         navController = navController,
     )
 }

@@ -50,9 +50,8 @@ import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import app.tivi.Screen
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
@@ -79,7 +78,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @Composable
 fun Discover(navController: NavController) {
     Discover(
-        viewModel = hiltNavGraphViewModel(),
+        viewModel = hiltViewModel(),
         navController = navController,
     )
 }
