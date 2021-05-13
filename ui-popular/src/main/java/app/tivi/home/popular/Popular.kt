@@ -18,9 +18,8 @@ package app.tivi.home.popular
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
@@ -28,7 +27,7 @@ import app.tivi.common.compose.rememberFlowWithLifecycle
 @Composable
 fun Popular(navController: NavController) {
     Popular(
-        viewModel = hiltNavGraphViewModel(),
+        viewModel = hiltViewModel(),
         navController = navController,
     )
 }

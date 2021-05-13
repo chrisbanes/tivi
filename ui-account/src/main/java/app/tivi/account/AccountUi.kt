@@ -52,7 +52,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.rememberFlowWithLifecycle
@@ -71,7 +71,7 @@ fun AccountUi(
 ) {
     AccountUi(
         navController = navController,
-        viewModel = hiltNavGraphViewModel(),
+        viewModel = hiltViewModel(),
         onOpenSettings = onOpenSettings,
     )
 }

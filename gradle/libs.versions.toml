@@ -1,11 +1,11 @@
 [versions]
-accompanist = "0.9.0"
+accompanist = "0.10.0.compose-7352378-SNAPSHOT"
 androidxhilt = "1.0.0"
-androidxlifecycle = "2.4.0-alpha01"
+androidxlifecycle = "2.4.0-SNAPSHOT"
 androidxtest = "1.3.0"
 coil = "1.2.1"
-compose = "1.0.0-beta06"
-composesnapshot = "-" # a single character = no snapshot
+compose = "1.0.0-SNAPSHOT"
+composesnapshot = "7352378" # a single character = no snapshot
 coroutines = "1.4.3"
 dagger = "2.35.1"
 hilt = "2.35.1"
@@ -14,7 +14,7 @@ ktlint = "0.40.0"
 okhttp = "4.9.1"
 paging = "3.0.0"
 retrofit = "2.9.0"
-room = "2.4.0-alpha02"
+room = "2.4.0-SNAPSHOT"
 threetenbp = "1.5.1"
 
 [libraries]
@@ -25,7 +25,7 @@ accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiper
 
 android-gradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha15"
 
-androidx-activity-compose = "androidx.activity:activity-compose:1.3.0-alpha07"
+androidx-activity-compose = "androidx.activity:activity-compose:1.3.0-SNAPSHOT"
 androidx-appcompat = "androidx.appcompat:appcompat:1.3.0-rc01"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 androidx-browser = "androidx.browser:browser:1.3.0"
@@ -36,17 +36,17 @@ androidx-emoji = "androidx.emoji:emoji:1.1.0"
 androidx-fragment = "androidx.fragment:fragment-ktx:1.3.0"
 
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidxhilt" }
-androidx-hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0-alpha01"
+androidx-hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0-SNAPSHOT"
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidxhilt" }
 
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
-androidx-lifecycle-viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha04"
+androidx-lifecycle-viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-SNAPSHOT"
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxlifecycle" }
 
-androidx-navigation-compose = "androidx.navigation:navigation-compose:1.0.0-alpha10"
+androidx-navigation-compose = "androidx.navigation:navigation-compose:2.4.0-SNAPSHOT"
 
 androidx-paging-common = { module = "androidx.paging:paging-common-ktx", version.ref = "paging" }
-androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha08"
+androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-SNAPSHOT"
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
 
 androidx-palette = "androidx.palette:palette:1.0.0"
