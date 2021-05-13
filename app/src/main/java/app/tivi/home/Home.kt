@@ -121,10 +121,10 @@ private fun NavGraphBuilder.addDiscover(navController: NavController) {
                 navController.navigate(Screen.RecommendedShows.route)
             },
             openShowDetails = { showId, episodeId ->
-                navController.navigate("show/${showId}")
+                navController.navigate("show/$showId")
                 // If we have an episodeId, we also open that
                 if (episodeId != null) {
-                    navController.navigate("episode/${episodeId}")
+                    navController.navigate("episode/$episodeId")
                 }
             },
             openUser = {
