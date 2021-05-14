@@ -101,6 +101,20 @@ private tailrec fun findStartDestination(graph: NavDestination): NavDestination 
 }
 
 /**
+ * Returns true if a destination with the given [route] is in the ancestor chain of [destination].
+ */
+private fun isRouteInDestinationChain(
+    destination: NavDestination,
+    route: String,
+): Boolean {
+    var currentDestination: NavDestination = destination
+    while (currentDestination.route != route && currentDestination.parent != null) {
+        currentDestination = currentDestination.parent!!
+    }
+    return currentDestination.route == route
+}
+
+/**
  * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the
  * returned [State] which is updated as the destination changes.
  */
@@ -111,13 +125,19 @@ private fun NavController.currentScreenAsState(): State<Screen> {
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            when (destination.route) {
-                Screen.Discover.route -> selectedItem.value = Screen.Discover
-                Screen.Watched.route -> selectedItem.value = Screen.Watched
-                Screen.Following.route -> selectedItem.value = Screen.Following
-                Screen.Search.route -> selectedItem.value = Screen.Search
-                // We intentionally ignore any other destinations, as they're likely to be
-                // leaf destinations.
+            when {
+                isRouteInDestinationChain(destination, Screen.Discover.route) -> {
+                    selectedItem.value = Screen.Discover
+                }
+                isRouteInDestinationChain(destination, Screen.Watched.route) -> {
+                    selectedItem.value = Screen.Watched
+                }
+                isRouteInDestinationChain(destination, Screen.Following.route) -> {
+                    selectedItem.value = Screen.Following
+                }
+                isRouteInDestinationChain(destination, Screen.Search.route) -> {
+                    selectedItem.value = Screen.Search
+                }
             }
         }
         addOnDestinationChangedListener(listener)
