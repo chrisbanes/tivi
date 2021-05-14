@@ -84,7 +84,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.LocalTiviDateFormatter
@@ -107,24 +106,26 @@ import kotlin.math.absoluteValue
 import kotlin.math.hypot
 
 @Composable
-fun EpisodeDetails(navController: NavController) {
+fun EpisodeDetails(
+    navigateUp: () -> Unit,
+) {
     EpisodeDetails(
         viewModel = hiltViewModel(),
-        navController = navController,
+        navigateUp = navigateUp,
     )
 }
 
 @Composable
 internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
-    navController: NavController,
+    navigateUp: () -> Unit,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = EpisodeDetailsViewState.Empty)
 
     EpisodeDetails(viewState = viewState) { action ->
         when (action) {
-            EpisodeDetailsAction.Close -> navController.popBackStack()
+            EpisodeDetailsAction.Close -> navigateUp()
             else -> viewModel.submitAction(action)
         }
     }

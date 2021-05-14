@@ -195,9 +195,15 @@ private fun NavGraphBuilder.addShowDetails(navController: NavController) {
 private fun NavGraphBuilder.addEpisodeDetails(navController: NavController) {
     composable(
         route = Screen.EpisodeDetails.route,
-        arguments = listOf(navArgument("episodeId") { type = NavType.LongType })
+        arguments = listOf(
+            navArgument("episodeId") { type = NavType.LongType }
+        )
     ) {
-        EpisodeDetails(navController)
+        EpisodeDetails(
+            navigateUp = {
+                navController.popBackStack()
+            },
+        )
     }
 }
 
