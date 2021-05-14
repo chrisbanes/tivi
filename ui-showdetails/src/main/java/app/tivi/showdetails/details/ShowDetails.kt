@@ -101,7 +101,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
@@ -142,24 +141,32 @@ import kotlinx.coroutines.flow.collect
 import org.threeten.bp.OffsetDateTime
 
 @Composable
-fun ShowDetails(navController: NavController) {
+fun ShowDetails(
+    navigateUp: () -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    openEpisodeDetails: (episodeId: Long) -> Unit,
+) {
     ShowDetails(
         viewModel = hiltViewModel(),
-        navController = navController,
+        navigateUp = navigateUp,
+        openShowDetails = openShowDetails,
+        openEpisodeDetails = openEpisodeDetails,
     )
 }
 
 @Composable
 internal fun ShowDetails(
     viewModel: ShowDetailsViewModel,
-    navController: NavController,
+    navigateUp: () -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    openEpisodeDetails: (episodeId: Long) -> Unit,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = ShowDetailsViewState.Empty)
 
     ShowDetails(viewState = viewState) { action ->
         when (action) {
-            ShowDetailsAction.NavigateUp -> navController.popBackStack()
+            ShowDetailsAction.NavigateUp -> navigateUp()
             else -> viewModel.submitAction(action)
         }
     }
@@ -167,8 +174,8 @@ internal fun ShowDetails(
     LaunchedEffect(viewModel) {
         viewModel.uiEffects.collect { effect ->
             when (effect) {
-                is OpenShowUiEffect -> navController.navigate("show/${effect.showId}")
-                is OpenEpisodeUiEffect -> navController.navigate("episode/${effect.episodeId}")
+                is OpenShowUiEffect -> openShowDetails(effect.showId)
+                is OpenEpisodeUiEffect -> openEpisodeDetails(effect.episodeId)
                 else -> Unit // TODO: any remaining ui effects need to be passed down to the UI
             }
         }

@@ -170,9 +170,21 @@ private fun NavGraphBuilder.addSearch(navController: NavController) {
 private fun NavGraphBuilder.addShowDetails(navController: NavController) {
     composable(
         route = Screen.ShowDetails.route,
-        arguments = listOf(navArgument("showId") { type = NavType.LongType })
+        arguments = listOf(
+            navArgument("showId") { type = NavType.LongType }
+        )
     ) {
-        ShowDetails(navController)
+        ShowDetails(
+            navigateUp = {
+                navController.popBackStack()
+            },
+            openShowDetails = { showId ->
+                navController.navigate("show/$showId")
+            },
+            openEpisodeDetails = { episodeId ->
+                navController.navigate("episode/$episodeId")
+            }
+        )
     }
 }
 
