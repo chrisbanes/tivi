@@ -53,11 +53,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import app.tivi.Screen
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.RefreshButton
@@ -82,17 +80,22 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.threeten.bp.OffsetDateTime
 
 @Composable
-fun Watched(navController: NavController) {
+fun Watched(
+    openShowDetails: (showId: Long) -> Unit,
+    openUser: () -> Unit,
+) {
     Watched(
         viewModel = hiltViewModel(),
-        navController = navController,
+        openShowDetails = openShowDetails,
+        openUser = openUser,
     )
 }
 
 @Composable
 internal fun Watched(
     viewModel: WatchedViewModel,
-    navController: NavController,
+    openShowDetails: (showId: Long) -> Unit,
+    openUser: () -> Unit,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = WatchedViewState.Empty)
@@ -101,13 +104,8 @@ internal fun Watched(
 
     Watched(state = viewState, list = pagingItems) { action ->
         when (action) {
-            WatchedAction.LoginAction,
-            WatchedAction.OpenUserDetails -> {
-                navController.navigate(Screen.Account.route)
-            }
-            is WatchedAction.OpenShowDetails -> {
-                navController.navigate("show/${action.showId}")
-            }
+            WatchedAction.LoginAction, WatchedAction.OpenUserDetails -> openUser()
+            is WatchedAction.OpenShowDetails -> openShowDetails(action.showId)
             else -> viewModel.submitAction(action)
         }
     }

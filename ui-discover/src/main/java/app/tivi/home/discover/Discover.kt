@@ -51,8 +51,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import app.tivi.Screen
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.LocalTiviTextCreator
@@ -76,37 +74,45 @@ import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
-fun Discover(navController: NavController) {
+fun Discover(
+    openTrendingShows: () -> Unit,
+    openPopularShows: () -> Unit,
+    openRecommendedShows: () -> Unit,
+    openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
+    openUser: () -> Unit,
+) {
     Discover(
         viewModel = hiltViewModel(),
-        navController = navController,
+        openTrendingShows = openTrendingShows,
+        openPopularShows = openPopularShows,
+        openRecommendedShows = openRecommendedShows,
+        openShowDetails = openShowDetails,
+        openUser = openUser,
     )
 }
 
 @Composable
 internal fun Discover(
     viewModel: DiscoverViewModel,
-    navController: NavController,
+    openTrendingShows: () -> Unit,
+    openPopularShows: () -> Unit,
+    openRecommendedShows: () -> Unit,
+    openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
+    openUser: () -> Unit,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = DiscoverViewState.Empty)
 
     Discover(state = viewState) { action ->
+        // TODO: Remove this action thing and just pass the lambdas down
         when (action) {
-            DiscoverAction.LoginAction,
-            DiscoverAction.OpenUserDetails -> navController.navigate(Screen.Account.route)
+            DiscoverAction.LoginAction, DiscoverAction.OpenUserDetails -> openUser()
             is DiscoverAction.OpenShowDetails -> {
-                navController.navigate("show/${action.showId}")
-                // If we have an episodeId, we also open that
-                if (action.episodeId != null) {
-                    navController.navigate("episode/${action.episodeId}")
-                }
+                openShowDetails(action.showId, action.episodeId)
             }
-            DiscoverAction.OpenTrendingShows -> navController.navigate(Screen.Trending.route)
-            DiscoverAction.OpenPopularShows -> navController.navigate(Screen.Popular.route)
-            DiscoverAction.OpenRecommendedShows -> {
-                navController.navigate(Screen.RecommendedShows.route)
-            }
+            DiscoverAction.OpenTrendingShows -> openTrendingShows()
+            DiscoverAction.OpenPopularShows -> openPopularShows()
+            DiscoverAction.OpenRecommendedShows -> openRecommendedShows()
             else -> viewModel.submitAction(action)
         }
     }

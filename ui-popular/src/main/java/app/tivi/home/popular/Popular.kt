@@ -19,27 +19,28 @@ package app.tivi.home.popular
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 
 @Composable
-fun Popular(navController: NavController) {
+fun Popular(
+    openShowDetails: (showId: Long) -> Unit,
+) {
     Popular(
         viewModel = hiltViewModel(),
-        navController = navController,
+        openShowDetails = openShowDetails,
     )
 }
 
 @Composable
 internal fun Popular(
     viewModel: PopularShowsViewModel,
-    navController: NavController,
+    openShowDetails: (showId: Long) -> Unit,
 ) {
     EntryGrid(
         lazyPagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems(),
         title = stringResource(R.string.discover_popular_title),
-        onOpenShowDetails = { showId -> navController.navigate("show/$showId") }
+        onOpenShowDetails = openShowDetails,
     )
 }

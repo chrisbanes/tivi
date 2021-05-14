@@ -54,11 +54,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import app.tivi.Screen
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.Scaffold
@@ -81,17 +79,22 @@ import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
-fun Followed(navController: NavController) {
+fun Followed(
+    openShowDetails: (showId: Long) -> Unit,
+    openUser: () -> Unit,
+) {
     Followed(
         viewModel = hiltViewModel(),
-        navController = navController,
+        openShowDetails = openShowDetails,
+        openUser = openUser,
     )
 }
 
 @Composable
 internal fun Followed(
     viewModel: FollowedViewModel,
-    navController: NavController,
+    openShowDetails: (showId: Long) -> Unit,
+    openUser: () -> Unit,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = FollowedViewState.Empty)
@@ -102,12 +105,8 @@ internal fun Followed(
     ) { action ->
         when (action) {
             FollowedAction.LoginAction,
-            FollowedAction.OpenUserDetails -> {
-                navController.navigate(Screen.Account.route)
-            }
-            is FollowedAction.OpenShowDetails -> {
-                navController.navigate("show/${action.showId}")
-            }
+            FollowedAction.OpenUserDetails -> openUser()
+            is FollowedAction.OpenShowDetails -> openShowDetails(action.showId)
             else -> viewModel.submitAction(action)
         }
     }

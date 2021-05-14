@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,28 +42,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import app.tivi.AppNavigation
 import app.tivi.R
 import app.tivi.Screen
-import app.tivi.account.AccountUi
 import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.theme.AppBarAlphas
-import app.tivi.episodedetails.EpisodeDetails
-import app.tivi.home.discover.Discover
-import app.tivi.home.followed.Followed
-import app.tivi.home.popular.Popular
-import app.tivi.home.recommended.Recommended
-import app.tivi.home.search.Search
-import app.tivi.home.trending.Trending
-import app.tivi.home.watched.Watched
-import app.tivi.showdetails.details.ShowDetails
 import com.google.accompanist.insets.navigationBarsPadding
 
 @Composable
@@ -70,10 +56,11 @@ internal fun Home(
     onOpenSettings: () -> Unit,
 ) {
     val navController = rememberNavController()
-    val currentSelectedItem by navController.currentScreenAsState()
 
     Scaffold(
         bottomBar = {
+            val currentSelectedItem by navController.currentScreenAsState()
+
             HomeBottomNavigation(
                 selectedNavigation = currentSelectedItem,
                 onNavigationSelected = { selected ->
@@ -89,84 +76,30 @@ internal fun Home(
         }
     ) {
         Box(Modifier.fillMaxSize()) {
-            NavHost(
+            AppNavigation(
                 navController = navController,
-                startDestination = Screen.Discover.route
-            ) {
-                composable(Screen.Discover.route) {
-                    Discover(navController)
-                }
-                composable(Screen.Following.route) {
-                    Followed(navController)
-                }
-                composable(Screen.Watched.route) {
-                    Watched(navController)
-                }
-                composable(Screen.Search.route) {
-                    Search(navController)
-                }
-                composable(
-                    route = Screen.ShowDetails.route,
-                    arguments = listOf(navArgument("showId") { type = NavType.LongType })
-                ) {
-                    ShowDetails(navController)
-                }
-                composable(Screen.RecommendedShows.route) {
-                    Recommended(navController)
-                }
-                composable(Screen.Trending.route) {
-                    Trending(navController)
-                }
-                composable(Screen.Popular.route) {
-                    Popular(navController)
-                }
-                composable(
-                    route = Screen.EpisodeDetails.route,
-                    arguments = listOf(navArgument("episodeId") { type = NavType.LongType })
-                ) {
-                    EpisodeDetails(navController)
-                }
-                composable(Screen.Account.route) {
-                    // This should really be a dialog, but we're waiting on:
-                    // https://issuetracker.google.com/179608120
-                    AccountUi(navController, onOpenSettings)
-                }
-            }
+                onOpenSettings = onOpenSettings
+            )
         }
     }
 }
 
 /**
- * Returns true if this [NavDestination] matches the given route.
+ * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the
+ * returned [State] which is updated as the destination changes.
  */
-private fun NavDestination.matchesRoute(route: String): Boolean {
-    // Copied from Compose-Navigation NavGraphBuilder.kt
-    return hasDeepLink("android-app://androidx.navigation.compose/$route".toUri())
-}
-
-/**
- * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the return [State]
- * as the destination changes.
- */
+@Stable
 @Composable
 private fun NavController.currentScreenAsState(): State<Screen> {
     val selectedItem = remember { mutableStateOf(Screen.Discover) }
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            when {
-                destination.matchesRoute(Screen.Discover.route) -> {
-                    selectedItem.value = Screen.Discover
-                }
-                destination.matchesRoute(Screen.Watched.route) -> {
-                    selectedItem.value = Screen.Watched
-                }
-                destination.matchesRoute(Screen.Following.route) -> {
-                    selectedItem.value = Screen.Following
-                }
-                destination.matchesRoute(Screen.Search.route) -> {
-                    selectedItem.value = Screen.Search
-                }
+            when (destination.route) {
+                Screen.Discover.route -> selectedItem.value = Screen.Discover
+                Screen.Watched.route -> selectedItem.value = Screen.Watched
+                Screen.Following.route -> selectedItem.value = Screen.Following
+                Screen.Search.route -> selectedItem.value = Screen.Search
                 // We intentionally ignore any other destinations, as they're likely to be
                 // leaf destinations.
             }

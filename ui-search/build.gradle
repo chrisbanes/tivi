@@ -57,8 +57,6 @@ dependencies {
     implementation project(':common-ui-compose')
     implementation project(':common-imageloading')
 
-    implementation libs.androidx.navigation.compose
-
     implementation libs.androidx.lifecycle.viewmodel.ktx
 
     implementation libs.compose.foundation.foundation
@@ -66,7 +64,6 @@ dependencies {
     implementation libs.compose.material.material
     implementation libs.compose.animation.animation
     implementation libs.compose.ui.tooling
-
 
     implementation libs.accompanist.coil
     implementation libs.accompanist.insets
