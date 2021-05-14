@@ -68,7 +68,7 @@ internal fun Home(
                         launchSingleTop = true
                         restoreState = true
 
-                        popUpTo(currentSelectedItem.route) {
+                        popUpTo(navController.graph.startDestinationId) {
                             saveState = true
                         }
                     }
