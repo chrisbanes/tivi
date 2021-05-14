@@ -229,7 +229,11 @@ private fun NavGraphBuilder.addTrendingShows(navController: NavController) {
 
 private fun NavGraphBuilder.addPopularShows(navController: NavController) {
     composable(Screen.Popular.route) {
-        Popular(navController)
+        Popular(
+            openShowDetails = { showId ->
+                navController.navigate("show/$showId")
+            },
+        )
     }
 }
 
