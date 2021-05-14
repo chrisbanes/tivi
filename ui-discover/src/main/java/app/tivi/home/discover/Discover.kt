@@ -78,7 +78,7 @@ fun Discover(
     openTrendingShows: () -> Unit,
     openPopularShows: () -> Unit,
     openRecommendedShows: () -> Unit,
-    openShowDetails: (Long, Long?) -> Unit,
+    openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
     openUser: () -> Unit,
 ) {
     Discover(
@@ -97,7 +97,7 @@ internal fun Discover(
     openTrendingShows: () -> Unit,
     openPopularShows: () -> Unit,
     openRecommendedShows: () -> Unit,
-    openShowDetails: (Long, Long?) -> Unit,
+    openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
     openUser: () -> Unit,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
