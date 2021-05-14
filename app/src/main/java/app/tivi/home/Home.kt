@@ -103,6 +103,7 @@ internal fun Home(
                 addTrendingShows(navController)
                 addPopularShows(navController)
                 addAccount(navController, onOpenSettings)
+                addSearch(navController)
             }
         }
     }
@@ -136,7 +137,14 @@ private fun NavGraphBuilder.addDiscover(navController: NavController) {
 
 private fun NavGraphBuilder.addFollowedShows(navController: NavController) {
     composable(Screen.Following.route) {
-        Followed(navController)
+        Followed(
+            openShowDetails = { showId ->
+                navController.navigate("show/$showId")
+            },
+            openUser = {
+                navController.navigate(Screen.Account.route)
+            },
+        )
     }
 }
 

@@ -63,14 +63,11 @@ dependencies {
 
     implementation libs.androidx.core
 
-    implementation libs.androidx.navigation.compose
-
     implementation libs.compose.foundation.foundation
     implementation libs.compose.foundation.layout
     implementation libs.compose.material.material
     implementation libs.compose.animation.animation
     implementation libs.compose.ui.tooling
-
 
     implementation libs.accompanist.coil
     implementation libs.accompanist.insets
@@ -78,6 +75,5 @@ dependencies {
 
     implementation libs.androidx.hilt.compose
     implementation libs.hilt.library
-    implementation project(path: ':ui-discover')
     kapt libs.hilt.compiler
 }
