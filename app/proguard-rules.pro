@@ -29,10 +29,6 @@
     public <init>(android.content.Context, android.util.AttributeSet);
 }
 
--keep public class androidx.fragment.app.FragmentContainerView {
-    public <init>(android.content.Context, android.util.AttributeSet);
-}
-
 # For enumeration classes
 -keepclassmembers enum * {
     <fields>;
@@ -64,11 +60,11 @@
 -dontwarn com.google.errorprone.annotations.*
 
 # Keep trakt-java and tmdb-java entity names (for GSON)
--keepclassmembers class com.uwetrottmann.*.entities.** {
+-keep class com.uwetrottmann.*.entities.** {
     <fields>;
     <init>(...);
 }
--keepclassmembers class com.uwetrottmann.*.enums.** {
+-keep class com.uwetrottmann.*.enums.** {
     <fields>;
     <init>(...);
 }
