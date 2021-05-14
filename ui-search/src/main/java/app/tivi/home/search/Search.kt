@@ -54,7 +54,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.rememberFlowWithLifecycle
@@ -64,26 +63,26 @@ import app.tivi.data.resultentities.ShowDetailed
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun Search(navController: NavController) {
+fun Search(
+    openShowDetails: (showId: Long) -> Unit,
+) {
     Search(
         viewModel = hiltViewModel(),
-        navController = navController,
+        openShowDetails = openShowDetails,
     )
 }
 
 @Composable
 internal fun Search(
     viewModel: SearchViewModel,
-    navController: NavController,
+    openShowDetails: (showId: Long) -> Unit,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = SearchViewState.Empty)
 
     Search(state = viewState) { action ->
         when (action) {
-            is SearchAction.OpenShowDetails -> {
-                navController.navigate("show/${action.showId}")
-            }
+            is SearchAction.OpenShowDetails -> openShowDetails(action.showId)
             else -> viewModel.submitAction(action)
         }
     }

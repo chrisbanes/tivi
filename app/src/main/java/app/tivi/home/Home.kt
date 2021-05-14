@@ -163,7 +163,11 @@ private fun NavGraphBuilder.addWatchedShows(navController: NavController) {
 
 private fun NavGraphBuilder.addSearch(navController: NavController) {
     composable(Screen.Search.route) {
-        Search(navController)
+        Search(
+            openShowDetails = { showId ->
+                navController.navigate("show/$showId")
+            },
+        )
     }
 }
 
