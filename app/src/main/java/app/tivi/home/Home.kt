@@ -219,7 +219,11 @@ private fun NavGraphBuilder.addRecommendedShows(navController: NavController) {
 
 private fun NavGraphBuilder.addTrendingShows(navController: NavController) {
     composable(Screen.Trending.route) {
-        Trending(navController)
+        Trending(
+            openShowDetails = { showId ->
+                navController.navigate("show/$showId")
+            },
+        )
     }
 }
 

@@ -21,28 +21,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 
 @Composable
-fun Trending(navController: NavController) {
+fun Trending(
+    openShowDetails: (showId: Long) -> Unit,
+) {
     Trending(
         viewModel = hiltViewModel(),
-        navController = navController,
+        openShowDetails = openShowDetails,
     )
 }
 
 @Composable
 internal fun Trending(
     viewModel: TrendingShowsViewModel,
-    navController: NavController,
+    openShowDetails: (showId: Long) -> Unit,
 ) {
     EntryGrid(
         lazyPagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems(),
         title = stringResource(R.string.discover_trending_title),
-        onOpenShowDetails = { showId -> navController.navigate("show/$showId") },
+        onOpenShowDetails = openShowDetails,
         modifier = Modifier.fillMaxSize()
     )
 }
