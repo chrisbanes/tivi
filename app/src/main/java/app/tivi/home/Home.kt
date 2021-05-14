@@ -209,7 +209,11 @@ private fun NavGraphBuilder.addEpisodeDetails(navController: NavController) {
 
 private fun NavGraphBuilder.addRecommendedShows(navController: NavController) {
     composable(Screen.RecommendedShows.route) {
-        Recommended(navController)
+        Recommended(
+            openShowDetails = { showId ->
+                navController.navigate("show/$showId")
+            },
+        )
     }
 }
 

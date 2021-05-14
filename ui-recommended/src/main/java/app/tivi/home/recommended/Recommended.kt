@@ -21,27 +21,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 
 @Composable
-fun Recommended(navController: NavController) {
+fun Recommended(
+    openShowDetails: (showId: Long) -> Unit,
+) {
     Recommended(
         viewModel = hiltViewModel(),
-        navController = navController,
+        openShowDetails = openShowDetails,
     )
 }
 
 @Composable
 internal fun Recommended(
     viewModel: RecommendedShowsViewModel,
-    navController: NavController,
+    openShowDetails: (showId: Long) -> Unit,
 ) {
     EntryGrid(
         lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
         title = stringResource(R.string.discover_recommended_title),
-        onOpenShowDetails = { showId -> navController.navigate("show/$showId") },
+        onOpenShowDetails = openShowDetails,
         modifier = Modifier.fillMaxSize()
     )
 }
