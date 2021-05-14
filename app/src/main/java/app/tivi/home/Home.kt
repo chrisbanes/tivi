@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,29 +42,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import app.tivi.AppNavigation
 import app.tivi.R
 import app.tivi.Screen
-import app.tivi.account.AccountUi
 import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.theme.AppBarAlphas
-import app.tivi.episodedetails.EpisodeDetails
-import app.tivi.home.discover.Discover
-import app.tivi.home.followed.Followed
-import app.tivi.home.popular.Popular
-import app.tivi.home.recommended.Recommended
-import app.tivi.home.search.Search
-import app.tivi.home.trending.Trending
-import app.tivi.home.watched.Watched
-import app.tivi.showdetails.details.ShowDetails
 import com.google.accompanist.insets.navigationBarsPadding
 
 @Composable
@@ -71,10 +56,11 @@ internal fun Home(
     onOpenSettings: () -> Unit,
 ) {
     val navController = rememberNavController()
-    val currentSelectedItem by navController.currentScreenAsState()
 
     Scaffold(
         bottomBar = {
+            val currentSelectedItem by navController.currentScreenAsState()
+
             HomeBottomNavigation(
                 selectedNavigation = currentSelectedItem,
                 onNavigationSelected = { selected ->
@@ -90,197 +76,33 @@ internal fun Home(
         }
     ) {
         Box(Modifier.fillMaxSize()) {
-            NavHost(
+            AppNavigation(
                 navController = navController,
-                startDestination = Screen.Discover.route
-            ) {
-                addDiscover(navController)
-                addFollowedShows(navController)
-                addWatchedShows(navController)
-                addShowDetails(navController)
-                addEpisodeDetails(navController)
-                addRecommendedShows(navController)
-                addTrendingShows(navController)
-                addPopularShows(navController)
-                addAccount(navController, onOpenSettings)
-                addSearch(navController)
-            }
+                onOpenSettings = onOpenSettings
+            )
         }
     }
 }
 
-private fun NavGraphBuilder.addDiscover(navController: NavController) {
-    composable(Screen.Discover.route) {
-        Discover(
-            openTrendingShows = {
-                navController.navigate(Screen.Trending.route)
-            },
-            openPopularShows = {
-                navController.navigate(Screen.Popular.route)
-            },
-            openRecommendedShows = {
-                navController.navigate(Screen.RecommendedShows.route)
-            },
-            openShowDetails = { showId, episodeId ->
-                navController.navigate("show/$showId")
-                // If we have an episodeId, we also open that
-                if (episodeId != null) {
-                    navController.navigate("episode/$episodeId")
-                }
-            },
-            openUser = {
-                navController.navigate(Screen.Account.route)
-            },
-        )
-    }
-}
-
-private fun NavGraphBuilder.addFollowedShows(navController: NavController) {
-    composable(Screen.Following.route) {
-        Followed(
-            openShowDetails = { showId ->
-                navController.navigate("show/$showId")
-            },
-            openUser = {
-                navController.navigate(Screen.Account.route)
-            },
-        )
-    }
-}
-
-private fun NavGraphBuilder.addWatchedShows(navController: NavController) {
-    composable(Screen.Watched.route) {
-        Watched(
-            openShowDetails = { showId ->
-                navController.navigate("show/$showId")
-            },
-            openUser = {
-                navController.navigate(Screen.Account.route)
-            },
-        )
-    }
-}
-
-private fun NavGraphBuilder.addSearch(navController: NavController) {
-    composable(Screen.Search.route) {
-        Search(
-            openShowDetails = { showId ->
-                navController.navigate("show/$showId")
-            },
-        )
-    }
-}
-
-private fun NavGraphBuilder.addShowDetails(navController: NavController) {
-    composable(
-        route = Screen.ShowDetails.route,
-        arguments = listOf(
-            navArgument("showId") { type = NavType.LongType }
-        )
-    ) {
-        ShowDetails(
-            navigateUp = {
-                navController.popBackStack()
-            },
-            openShowDetails = { showId ->
-                navController.navigate("show/$showId")
-            },
-            openEpisodeDetails = { episodeId ->
-                navController.navigate("episode/$episodeId")
-            }
-        )
-    }
-}
-
-private fun NavGraphBuilder.addEpisodeDetails(navController: NavController) {
-    composable(
-        route = Screen.EpisodeDetails.route,
-        arguments = listOf(
-            navArgument("episodeId") { type = NavType.LongType }
-        )
-    ) {
-        EpisodeDetails(
-            navigateUp = {
-                navController.popBackStack()
-            },
-        )
-    }
-}
-
-private fun NavGraphBuilder.addRecommendedShows(navController: NavController) {
-    composable(Screen.RecommendedShows.route) {
-        Recommended(
-            openShowDetails = { showId ->
-                navController.navigate("show/$showId")
-            },
-        )
-    }
-}
-
-private fun NavGraphBuilder.addTrendingShows(navController: NavController) {
-    composable(Screen.Trending.route) {
-        Trending(
-            openShowDetails = { showId ->
-                navController.navigate("show/$showId")
-            },
-        )
-    }
-}
-
-private fun NavGraphBuilder.addPopularShows(navController: NavController) {
-    composable(Screen.Popular.route) {
-        Popular(
-            openShowDetails = { showId ->
-                navController.navigate("show/$showId")
-            },
-        )
-    }
-}
-
-private fun NavGraphBuilder.addAccount(
-    navController: NavController,
-    onOpenSettings: () -> Unit,
-) {
-    composable(Screen.Account.route) {
-        // This should really be a dialog, but we're waiting on:
-        // https://issuetracker.google.com/179608120
-        AccountUi(navController, onOpenSettings)
-    }
-}
-
 /**
- * Returns true if this [NavDestination] matches the given route.
+ * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the
+ * returned [State] which is updated as the destination changes.
  */
-private fun NavDestination.matchesRoute(route: String): Boolean {
-    // Copied from Compose-Navigation NavGraphBuilder.kt
-    return hasDeepLink("android-app://androidx.navigation.compose/$route".toUri())
-}
-
-/**
- * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the return [State]
- * as the destination changes.
- */
+@Stable
 @Composable
 private fun NavController.currentScreenAsState(): State<Screen> {
     val selectedItem = remember { mutableStateOf(Screen.Discover) }
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            when {
-                destination.matchesRoute(Screen.Discover.route) -> {
-                    selectedItem.value = Screen.Discover
-                }
-                destination.matchesRoute(Screen.Watched.route) -> {
-                    selectedItem.value = Screen.Watched
-                }
-                destination.matchesRoute(Screen.Following.route) -> {
-                    selectedItem.value = Screen.Following
-                }
-                destination.matchesRoute(Screen.Search.route) -> {
-                    selectedItem.value = Screen.Search
-                }
+            selectedItem.value = when (destination.route) {
+                Screen.Discover.route -> Screen.Discover
+                Screen.Watched.route -> Screen.Watched
+                Screen.Following.route -> Screen.Following
+                Screen.Search.route -> Screen.Search
                 // We intentionally ignore any other destinations, as they're likely to be
                 // leaf destinations.
+                else -> selectedItem.value
             }
         }
         addOnDestinationChangedListener(listener)
