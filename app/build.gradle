@@ -16,6 +16,7 @@
  */
 
 import java.nio.file.Files
+import static de.fayard.refreshVersions.core.Versions.versionFor
 
 plugins {
     id 'com.android.application'
@@ -105,7 +106,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.compose.get()
+        kotlinCompilerExtensionVersion versionFor("version.compose")
     }
 
     testOptions {

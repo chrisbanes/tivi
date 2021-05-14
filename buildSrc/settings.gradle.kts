@@ -1,7 +1,7 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -12,22 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-apply plugin: 'kotlin'
+pluginManagement {
+    plugins {
+        id("de.fayard.refreshVersions") version "0.10.0"
+    }    
+}
 
-dependencies {
-    api project(':base')
-    api project(':trakt')
-    api project(':tmdb')
-
-    api libs.androidx.room.common
-    implementation libs.androidx.collection
-
-    api libs.store
-
-    api libs.androidx.paging.common
-
-    api "org.threeten:threetenbp:_:no-tzdb"
+plugins {
+    id("de.fayard.refreshVersions")
 }

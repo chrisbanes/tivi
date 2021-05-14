@@ -14,6 +14,7 @@
  * limitations under the License.
  *
  */
+import static de.fayard.refreshVersions.core.Versions.versionFor
 
 apply plugin: 'com.android.library'
 
@@ -36,7 +37,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.compose.get()
+        kotlinCompilerExtensionVersion versionFor("version.compose")
     }
 }
 

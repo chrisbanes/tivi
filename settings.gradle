@@ -17,6 +17,9 @@
 
 plugins {
     id 'com.gradle.enterprise' version '3.0'
+
+    // See https://jmfayard.github.io/refreshVersions
+    id("de.fayard.refreshVersions") version "0.10.0"
 }
 
 gradleEnterprise {
