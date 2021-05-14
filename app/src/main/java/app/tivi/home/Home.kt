@@ -43,6 +43,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.NavGraph
 import androidx.navigation.compose.rememberNavController
 import app.tivi.AppNavigation
 import app.tivi.R
@@ -68,7 +70,7 @@ internal fun Home(
                         launchSingleTop = true
                         restoreState = true
 
-                        popUpTo(navController.graph.startDestinationId) {
+                        popUpTo(findStartDestination(navController.graph).id) {
                             saveState = true
                         }
                     }
@@ -84,6 +86,18 @@ internal fun Home(
             )
         }
     }
+}
+
+private val NavGraph.startDestination: NavDestination?
+    get() = findNode(startDestinationId)
+
+/**
+ * Copied from similar function in NavigationUI.kt
+ *
+ * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:navigation/navigation-ui/src/main/java/androidx/navigation/ui/NavigationUI.kt
+ */
+private tailrec fun findStartDestination(graph: NavDestination): NavDestination {
+    return if (graph is NavGraph) findStartDestination(graph.startDestination!!) else graph
 }
 
 /**
