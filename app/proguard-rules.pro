@@ -29,10 +29,6 @@
     public <init>(android.content.Context, android.util.AttributeSet);
 }
 
--keep public class androidx.fragment.app.FragmentContainerView {
-    public <init>(android.content.Context, android.util.AttributeSet);
-}
-
 # For enumeration classes
 -keepclassmembers enum * {
     <fields>;
