@@ -149,8 +149,15 @@ private fun NavGraphBuilder.addFollowedShows(navController: NavController) {
 }
 
 private fun NavGraphBuilder.addWatchedShows(navController: NavController) {
-    composable(Screen.Following.route) {
-        Watched(navController)
+    composable(Screen.Watched.route) {
+        Watched(
+            openShowDetails = { showId ->
+                navController.navigate("show/$showId")
+            },
+            openUser = {
+                navController.navigate(Screen.Account.route)
+            },
+        )
     }
 }
 
@@ -185,13 +192,13 @@ private fun NavGraphBuilder.addRecommendedShows(navController: NavController) {
 }
 
 private fun NavGraphBuilder.addTrendingShows(navController: NavController) {
-    composable(Screen.RecommendedShows.route) {
+    composable(Screen.Trending.route) {
         Trending(navController)
     }
 }
 
 private fun NavGraphBuilder.addPopularShows(navController: NavController) {
-    composable(Screen.RecommendedShows.route) {
+    composable(Screen.Popular.route) {
         Popular(navController)
     }
 }
