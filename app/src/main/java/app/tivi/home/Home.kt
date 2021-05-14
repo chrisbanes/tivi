@@ -95,14 +95,13 @@ private fun NavController.currentScreenAsState(): State<Screen> {
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            selectedItem.value = when (destination.route) {
-                Screen.Discover.route -> Screen.Discover
-                Screen.Watched.route -> Screen.Watched
-                Screen.Following.route -> Screen.Following
-                Screen.Search.route -> Screen.Search
+            when (destination.route) {
+                Screen.Discover.route -> selectedItem.value = Screen.Discover
+                Screen.Watched.route -> selectedItem.value = Screen.Watched
+                Screen.Following.route -> selectedItem.value = Screen.Following
+                Screen.Search.route -> selectedItem.value = Screen.Search
                 // We intentionally ignore any other destinations, as they're likely to be
                 // leaf destinations.
-                else -> selectedItem.value
             }
         }
         addOnDestinationChangedListener(listener)
