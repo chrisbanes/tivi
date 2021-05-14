@@ -66,8 +66,10 @@ internal fun Home(
                 onNavigationSelected = { selected ->
                     navController.navigate(selected.route) {
                         launchSingleTop = true
-                        popUpTo(Screen.Discover.route) {
-                            inclusive = false
+                        restoreState = true
+
+                        popUpTo(currentSelectedItem.route) {
+                            saveState = true
                         }
                     }
                 },
