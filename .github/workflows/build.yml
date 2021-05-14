@@ -53,8 +53,10 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
       - name: Build and check
-        # We don't run tests currently due to https://issuetracker.google.com/182468430
-        run: ./gradlew spotlessCheck assemble bundle lintDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
+        run: ./gradlew -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace \
+                 spotlessCheck \
+                 assemble bundle \
+                 app:lintDebug testDebug
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/main'

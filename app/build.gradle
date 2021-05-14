@@ -90,8 +90,7 @@ android {
         // Make the build fail on any lint errors
         abortOnError true
         // Allow lint to check dependencies
-        // TODO: re-enable this once https://issuetracker.google.com/issues/159733104 is fixed
-        checkDependencies false
+        checkDependencies true
     }
 
     buildFeatures {
