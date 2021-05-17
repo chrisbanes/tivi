@@ -65,6 +65,8 @@ fun SearchTextField(
         placeholder = { Text(text = hint) },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
+        maxLines = 1,
+        singleLine = true,
         modifier = modifier,
     )
 }
