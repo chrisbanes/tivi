@@ -24,7 +24,6 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -35,15 +34,13 @@ class UpdateRelatedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
 ) : Interactor<Params>() {
-    override suspend fun doWork(params: Params) {
-        withContext(dispatchers.io) {
-            relatedShowsStore.fetch(params.showId, params.forceLoad).forEach {
-                showsStore.fetch(it.otherShowId)
-                try {
-                    showImagesStore.fetch(it.showId)
-                } catch (t: Throwable) {
-                    logger.e("Error while fetching images for show: ${it.showId}", t)
-                }
+    override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
+        relatedShowsStore.fetch(params.showId, params.forceLoad).forEach {
+            showsStore.fetch(it.otherShowId)
+            try {
+                showImagesStore.fetch(it.otherShowId)
+            } catch (t: Throwable) {
+                logger.e("Error while fetching images for show: ${it.showId}", t)
             }
         }
     }
