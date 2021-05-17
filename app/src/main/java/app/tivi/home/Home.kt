@@ -121,7 +121,7 @@ private fun isRouteInDestinationChain(
 @Stable
 @Composable
 private fun NavController.currentScreenAsState(): State<Screen> {
-    val selectedItem = remember { mutableStateOf(Screen.Discover) }
+    val selectedItem = remember { mutableStateOf<Screen>(Screen.Discover) }
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
