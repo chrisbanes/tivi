@@ -16,9 +16,11 @@
 
 package app.tivi.home
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +31,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -39,6 +42,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -133,53 +138,71 @@ internal fun HomeBottomNavigation(
                 .height(56.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            BottomNavigationItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_weekend_black_24dp),
-                        contentDescription = stringResource(R.string.cd_discover_title)
-                    )
-                },
-                label = { Text(stringResource(R.string.discover_title)) },
+            HomeBottomNavigationItem(
+                label = stringResource(R.string.discover_title),
                 selected = selectedNavigation == Screen.Discover,
                 onClick = { onNavigationSelected(Screen.Discover) },
+                contentDescription = stringResource(R.string.cd_discover_title),
+                selectedPainter = painterResource(R.drawable.ic_weekend_filled),
+                painter = painterResource(R.drawable.ic_weekend_outline),
             )
 
-            BottomNavigationItem(
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = stringResource(R.string.cd_following_shows_title)
-                    )
-                },
-                label = { Text(stringResource(R.string.following_shows_title)) },
+            HomeBottomNavigationItem(
+                label = stringResource(R.string.following_shows_title),
                 selected = selectedNavigation == Screen.Following,
                 onClick = { onNavigationSelected(Screen.Following) },
+                contentDescription = stringResource(R.string.cd_following_shows_title),
+                selectedPainter = rememberVectorPainter(Icons.Default.Favorite),
+                painter = rememberVectorPainter(Icons.Default.FavoriteBorder),
             )
 
-            BottomNavigationItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_visibility),
-                        contentDescription = stringResource(R.string.cd_watched_shows_title)
-                    )
-                },
-                label = { Text(stringResource(R.string.watched_shows_title)) },
+            HomeBottomNavigationItem(
+                label = stringResource(R.string.watched_shows_title),
                 selected = selectedNavigation == Screen.Watched,
                 onClick = { onNavigationSelected(Screen.Watched) },
+                contentDescription = stringResource(R.string.cd_watched_shows_title),
+                selectedPainter = painterResource(R.drawable.ic_visibility),
+                painter = painterResource(R.drawable.ic_visibility_outline),
             )
 
-            BottomNavigationItem(
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = stringResource(R.string.cd_search_navigation_title)
-                    )
-                },
-                label = { Text(stringResource(R.string.search_navigation_title)) },
+            HomeBottomNavigationItem(
+                label = stringResource(R.string.search_navigation_title),
                 selected = selectedNavigation == Screen.Search,
                 onClick = { onNavigationSelected(Screen.Search) },
+                contentDescription = stringResource(R.string.cd_search_navigation_title),
+                painter = rememberVectorPainter(Icons.Default.Search),
             )
         }
     }
+}
+
+@Composable
+private fun RowScope.HomeBottomNavigationItem(
+    selected: Boolean,
+    selectedPainter: Painter? = null,
+    painter: Painter,
+    contentDescription: String,
+    label: String,
+    onClick: () -> Unit,
+) {
+    BottomNavigationItem(
+        icon = {
+            if (selectedPainter != null) {
+                Crossfade(targetState = selected) { selected ->
+                    Icon(
+                        painter = if (selected) selectedPainter else painter,
+                        contentDescription = contentDescription
+                    )
+                }
+            } else {
+                Icon(
+                    painter = painter,
+                    contentDescription = contentDescription
+                )
+            }
+        },
+        label = { Text(label) },
+        selected = selected,
+        onClick = onClick,
+    )
 }
