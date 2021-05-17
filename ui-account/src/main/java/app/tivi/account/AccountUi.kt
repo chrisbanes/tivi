@@ -108,7 +108,10 @@ internal fun AccountUi(
     viewState: AccountUiViewState,
     actioner: (AccountUiAction) -> Unit
 ) {
-    Surface {
+    Surface(
+        shape = MaterialTheme.shapes.medium,
+        elevation = 2.dp,
+    ) {
         Column {
             Spacer(modifier = Modifier.height(16.dp))
 

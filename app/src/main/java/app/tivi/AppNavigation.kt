@@ -17,6 +17,7 @@
 package app.tivi
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -205,6 +206,10 @@ private fun NavGraphBuilder.addAccount(
     composable(Screen.Account.route) {
         // This should really be a dialog, but we're waiting on:
         // https://issuetracker.google.com/179608120
-        AccountUi(navController, onOpenSettings)
+        Dialog(
+            onDismissRequest = { navController.popBackStack() }
+        ) {
+            AccountUi(navController, onOpenSettings)
+        }
     }
 }
