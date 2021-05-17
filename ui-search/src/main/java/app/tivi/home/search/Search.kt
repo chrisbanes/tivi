@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,7 +35,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -47,14 +45,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.data.entities.ShowTmdbImage
@@ -94,24 +91,12 @@ internal fun Search(
     state: SearchViewState,
     actioner: (SearchAction) -> Unit
 ) {
-    Surface(Modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxSize()) {
-            val searchBarHeight = remember { mutableStateOf(0) }
-
-            SearchList(
-                results = state.searchResults,
-                contentPadding = PaddingValues(
-                    top = with(LocalDensity.current) { searchBarHeight.value.toDp() }
-                ),
-                onShowClicked = { actioner(SearchAction.OpenShowDetails(it.id)) }
-            )
-
+    Scaffold(
+        topBar = {
             Box(
-                modifier = Modifier
-                    .onSizeChanged { searchBarHeight.value = it.height }
+                Modifier
                     .background(MaterialTheme.colors.surface.copy(alpha = 0.95f))
                     .fillMaxWidth()
-                    .align(Alignment.TopCenter)
             ) {
                 var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
                 SearchTextField(
@@ -128,6 +113,12 @@ internal fun Search(
                 )
             }
         }
+    ) { padding ->
+        SearchList(
+            results = state.searchResults,
+            contentPadding = padding,
+            onShowClicked = { actioner(SearchAction.OpenShowDetails(it.id)) }
+        )
     }
 }
 

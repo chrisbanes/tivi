@@ -420,7 +420,10 @@ private fun ShowDetailsScrollingContent(
         }
 
         // Spacer to push up content from under the FloatingActionButton
-        itemSpacer(56.dp + 16.dp + 16.dp)
+        item {
+            val height = LocalScaffoldPadding.current.calculateBottomPadding() + 56.dp + 32.dp
+            Spacer(Modifier.height(height))
+        }
     }
 }
 
