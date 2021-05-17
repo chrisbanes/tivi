@@ -433,25 +433,22 @@ private fun PosterInfoRow(
     posterImage: TmdbImageEntity?,
     modifier: Modifier = Modifier
 ) {
-    Row(modifier) {
-        if (posterImage != null) {
-            Image(
-                painter = rememberCoilPainter(posterImage, fadeIn = true),
-                contentDescription = stringResource(R.string.cd_show_poster, show.title ?: ""),
-                modifier = Modifier
-                    .weight(1f, fill = false)
-                    .aspectRatio(2 / 3f)
-                    .padding(start = 16.dp)
-                    .clip(MaterialTheme.shapes.medium),
-                alignment = Alignment.TopStart,
-            )
-        }
+    Row(modifier.padding(horizontal = 16.dp)) {
+        Image(
+            painter = rememberCoilPainter(posterImage, fadeIn = true),
+            contentDescription = stringResource(R.string.cd_show_poster, show.title ?: ""),
+            modifier = Modifier
+                .weight(1f)
+                .aspectRatio(2 / 3f)
+                .clip(MaterialTheme.shapes.medium),
+            alignment = Alignment.TopStart,
+        )
 
         InfoPanels(
             show = show,
             modifier = Modifier
-                .weight(1f, fill = false)
-                .padding(horizontal = 16.dp)
+                .weight(1f)
+                .padding(start = 16.dp)
         )
     }
 }
