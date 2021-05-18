@@ -14,6 +14,7 @@
  * limitations under the License.
  *
  */
+import static de.fayard.refreshVersions.core.Versions.versionFor
 
 apply plugin: 'com.android.library'
 
@@ -90,7 +91,7 @@ dependencies {
     kaptTest libs.hilt.compiler
 
     // Needed for Tzdb
-    testImplementation "org.threeten:threetenbp:${libs.versions.threetenbp.get()}"
+    testImplementation "org.threeten:threetenbp:_"
     // Needed for Main dispatcher to work
     testImplementation libs.kotlin.coroutines.android
 }

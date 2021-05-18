@@ -17,6 +17,7 @@
 
 import app.tivi.buildsrc.DependencyUpdates
 import app.tivi.buildsrc.ReleaseType
+import static de.fayard.refreshVersions.core.Versions.versionFor
 
 buildscript {
     ext.buildConfig = [
@@ -57,7 +58,7 @@ allprojects {
         mavenCentral()
 
         // Jetpack Compose SNAPSHOTs
-        def composeSnapshot = libs.versions.composesnapshot.get()
+        def composeSnapshot = versionFor("version.compose.snapshot")
         if (composeSnapshot.length() > 1) {
             maven { url "https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/" }
         }
@@ -90,7 +91,7 @@ subprojects {
             targetExclude("$buildDir/**/*.kt")
             targetExclude('bin/**/*.kt')
 
-            ktlint(libs.versions.ktlint.get())
+            ktlint(versionFor("version.ktlint"))
             licenseHeaderFile rootProject.file('spotless/copyright.kt')
         }
     }
