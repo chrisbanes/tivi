@@ -232,8 +232,9 @@ private fun NavGraphBuilder.addEpisodeDetails(navController: NavController) {
         arguments = listOf(
             navArgument("episodeId") { type = NavType.LongType }
         )
-    ) {
+    ) { backStackEntry ->
         EpisodeDetails(
+            id = backStackEntry.arguments!!.getLong("episodeId"),
             navigateUp = {
                 navController.popBackStack()
             },

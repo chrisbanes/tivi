@@ -16,14 +16,12 @@
 
 package app.tivi.episodedetails
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiError
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
+import app.tivi.common.compose.StateModel
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
@@ -33,29 +31,35 @@ import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
-import javax.inject.Inject
 
-@HiltViewModel
-internal class EpisodeDetailsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+internal class EpisodeDetailsViewModel @AssistedInject constructor(
+    @Assisted private val episodeId: Long,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
-    private val observeEpisodeWatches: ObserveEpisodeWatches,
+    observeEpisodeWatches: ObserveEpisodeWatches,
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger,
     private val snackbarManager: SnackbarManager
-) : ViewModel() {
-
-    private val episodeId: Long = savedStateHandle.get("episodeId")!!
+) : StateModel() {
+    /**
+     * Our Hilt [AssistedFactory] which allows us to inject a [EpisodeDetailsViewModel], but
+     * also pass in the [episodeId].
+     */
+    @AssistedFactory
+    internal interface Factory {
+        fun create(episodeId: Long): EpisodeDetailsViewModel
+    }
 
     private val loadingState = ObservableLoadingCounter()
 
@@ -79,7 +83,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     }
 
     init {
-        viewModelScope.launch {
+        coroutineScope.launch {
             pendingActions.collect { action ->
                 when (action) {
                     EpisodeDetailsAction.RefreshAction -> refresh(true)
@@ -98,7 +102,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     }
 
     internal fun submitAction(action: EpisodeDetailsAction) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             pendingActions.emit(action)
         }
     }
@@ -121,7 +125,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
         removeEpisodeWatches(RemoveEpisodeWatches.Params(episodeId)).watchStatus()
     }
 
-    private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
+    private fun Flow<InvokeStatus>.watchStatus() = coroutineScope.launch { collectStatus() }
 
     private suspend fun Flow<InvokeStatus>.collectStatus() = collect { status ->
         when (status) {
