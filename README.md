@@ -18,15 +18,15 @@ Tivi is a **work-in-progress** TV show tracking Android app, which connects to
 
 Tivi is an app that attempts to use the latest cutting edge libraries and tools. As a summary:
 
- * Entirely written in [Kotlin](https://kotlinlang.org/)
+ * Entirely written in [Kotlin](https://kotlinlang.org/).
+ * UI completely written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (see below).
  * Uses [Kotlin Coroutines](https://kotlinlang.org/docs/reference/coroutines/coroutines-guide.html) throughout.
- * Uses many of the [Architecture Components](https://developer.android.com/topic/libraries/architecture/): Room Lifecycle, Navigation
+ * Uses many of the [Architecture Components](https://developer.android.com/topic/libraries/architecture/), including: Room, Lifecycle, Navigation.
  * Uses [Hilt](https://dagger.dev/hilt/) for dependency injection
- * Slowly being migrated to use [Jetpack Compose](https://developer.android.com/jetpack/compose)
 
 ## Development setup
 
-First off, you require the latest Android Studio 4.2 Canary to be able to build the app. This is because the project is written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (more on that below).
+First off, you require the latest Android Studio Arctic Fox release to be able to build the app. This is because the project is written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (more on that below).
 
 ### Code style
 
@@ -34,7 +34,7 @@ This project uses [ktlint](https://github.com/pinterest/ktlint), provided via
 the [spotless](https://github.com/diffplug/spotless) gradle plugin, and the bundled project IntelliJ codestyle.
 
 If you find that one of your pull reviews does not pass the CI server check due to a code style conflict, you can
-easily fix it by running: `./gradlew spotlessApply`, or running IntelliJ/Android Studio's code formatter.
+easily fix it by running: `./gradlew spotlessApply`.
 
 ### API keys
 
@@ -60,7 +60,7 @@ TIVI_TMDB_API_KEY=<insert>
 ```
 
 ## Jetpack Compose
-As mentioned above, this project has been migrated to [Jetpack Compose](https://developer.android.com/jetpack/compose). The basic building blocks of the apps are still `Fragment`s, but each fragment's content is implemented in Compose. Some examples of the UI include:
+As mentioned above, this app's UI is completely written in [Jetpack Compose](https://developer.android.com/jetpack/compose). Some screens highlighted are:
 
 ### Show details
 [[source](/ui-showdetails)]
