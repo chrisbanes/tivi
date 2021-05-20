@@ -18,6 +18,8 @@ package app.tivi.episodedetails
 
 import android.app.Activity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.RememberObserver
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import app.tivi.api.UiError
@@ -25,7 +27,6 @@ import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
-import app.tivi.common.compose.StateModel
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
@@ -42,12 +43,63 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.components.ActivityComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
+
+/**
+ * This might be possible using `rememberCoroutineScope` and passing in a context, but from
+ * reading that wraps the job in a standard `Job`.
+ */
+@Composable
+private fun rememberSupervisorCoroutineScope(): CoroutineScope {
+    val scope = remember {
+        object : RememberObserver {
+            val coroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+
+            override fun onRemembered() = Unit
+
+            override fun onForgotten() {
+                coroutineScope.cancel()
+            }
+
+            override fun onAbandoned() {
+                coroutineScope.cancel()
+            }
+        }
+    }
+    return scope.coroutineScope
+}
+
+@Composable
+fun rememberEpisodeDetailsViewModel(
+    episodeId: Long
+): EpisodeDetailsViewModel {
+    // TODO: handle ContextWrappers and unwrap as necessary
+    val activity = LocalContext.current as Activity
+    val coroutineScope = rememberSupervisorCoroutineScope()
+
+    return remember(episodeId, activity, coroutineScope) {
+        // Use Hilt EntryPointAccessors to create an injected assisted factory,
+        // then create a ViewModel with the given episodeId. This is remember-ed using the
+        // id as the key, so it will be 'cleared' if the ID changes
+        EntryPointAccessors.fromActivity(
+            activity,
+            EpisodeDetailsViewModelEntryPoint::class.java
+        ).factory()
+            .create(
+                episodeId = episodeId,
+                coroutineScope = coroutineScope,
+            )
+    }
+}
 
 /**
  * A [EntryPoint] which allows us to inject using Hilt on-demand.
@@ -57,28 +109,24 @@ import org.threeten.bp.OffsetDateTime
 @EntryPoint
 @InstallIn(ActivityComponent::class)
 internal interface EpisodeDetailsViewModelEntryPoint {
-    fun factory(): EpisodeDetailsViewModel.Factory
+    fun factory(): EpisodeDetailsViewModelFactory
 }
 
-@Composable
-fun rememberEpisodeDetailsViewModel(
-    episodeId: Long
-): EpisodeDetailsViewModel {
-    // TODO: handle ContextWrappers and unwrap as necessary
-    val activity = LocalContext.current as Activity
-
-    return remember(episodeId, activity) {
-        // Use Hilt EntryPointAccessors to create an injected assisted factory,
-        // then create a ViewModel with the given episodeId. This is remember-ed using the
-        // id as the key, so it will be 'cleared' if the ID changes
-        EntryPointAccessors.fromActivity(
-            activity,
-            EpisodeDetailsViewModelEntryPoint::class.java
-        ).factory().create(episodeId)
-    }
+/**
+ * Our Hilt [AssistedFactory] which allows us to inject a [EpisodeDetailsViewModel], but
+ * also pass in the `episodeId`.
+ */
+@AssistedFactory
+internal interface EpisodeDetailsViewModelFactory {
+    fun create(
+        episodeId: Long,
+        coroutineScope: CoroutineScope
+    ): EpisodeDetailsViewModel
 }
 
+@Stable
 class EpisodeDetailsViewModel @AssistedInject constructor(
+    @Assisted private val coroutineScope: CoroutineScope,
     @Assisted private val episodeId: Long,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
@@ -87,17 +135,8 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger,
-    private val snackbarManager: SnackbarManager
-) : StateModel() {
-    /**
-     * Our Hilt [AssistedFactory] which allows us to inject a [EpisodeDetailsViewModel], but
-     * also pass in the [episodeId].
-     */
-    @AssistedFactory
-    internal interface Factory {
-        fun create(episodeId: Long): EpisodeDetailsViewModel
-    }
-
+    private val snackbarManager: SnackbarManager,
+) {
     private val loadingState = ObservableLoadingCounter()
 
     private val pendingActions = MutableSharedFlow<EpisodeDetailsAction>()
