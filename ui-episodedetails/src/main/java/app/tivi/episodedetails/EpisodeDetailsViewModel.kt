@@ -49,8 +49,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
@@ -141,6 +143,13 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 
     private val pendingActions = MutableSharedFlow<EpisodeDetailsAction>()
 
+    /**
+     * Our main 'ui state' flow. We use stateIn() to make it a hot flow which remains active
+     * for 5 seconds after all collectors are removed. This useful for when the app goes into
+     * the background as our composables use flowWithLifecycle().
+     *
+     * See https://medium.com/androiddevelopers/migrating-from-livedata-to-kotlins-flow-379292f419fb
+     */
     val state: Flow<EpisodeDetailsViewState> = combine(
         observeEpisodeDetails.observe(),
         observeEpisodeWatches.observe(),
@@ -156,7 +165,11 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
             refreshing = refreshing,
             error = error,
         )
-    }
+    }.stateIn(
+        scope = coroutineScope,
+        started = WhileSubscribed(5000),
+        initialValue = EpisodeDetailsViewState.Empty,
+    )
 
     init {
         coroutineScope.launch {
