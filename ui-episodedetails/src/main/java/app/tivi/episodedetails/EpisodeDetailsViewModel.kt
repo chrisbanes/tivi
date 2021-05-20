@@ -16,6 +16,10 @@
 
 package app.tivi.episodedetails
 
+import android.app.Activity
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import app.tivi.api.UiError
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
@@ -34,6 +38,10 @@ import app.tivi.util.ObservableLoadingCounter
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.android.components.ActivityComponent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
@@ -41,7 +49,36 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
-internal class EpisodeDetailsViewModel @AssistedInject constructor(
+/**
+ * A [EntryPoint] which allows us to inject using Hilt on-demand.
+ *
+ * See https://developer.android.com/training/dependency-injection/hilt-android#not-supported
+ */
+@EntryPoint
+@InstallIn(ActivityComponent::class)
+internal interface EpisodeDetailsViewModelEntryPoint {
+    fun factory(): EpisodeDetailsViewModel.Factory
+}
+
+@Composable
+fun rememberEpisodeDetailsViewModel(
+    episodeId: Long
+): EpisodeDetailsViewModel {
+    // TODO: handle ContextWrappers and unwrap as necessary
+    val activity = LocalContext.current as Activity
+
+    return remember(episodeId, activity) {
+        // Use Hilt EntryPointAccessors to create an injected assisted factory,
+        // then create a ViewModel with the given episodeId. This is remember-ed using the
+        // id as the key, so it will be 'cleared' if the ID changes
+        EntryPointAccessors.fromActivity(
+            activity,
+            EpisodeDetailsViewModelEntryPoint::class.java
+        ).factory().create(episodeId)
+    }
+}
+
+class EpisodeDetailsViewModel @AssistedInject constructor(
     @Assisted private val episodeId: Long,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
@@ -65,7 +102,7 @@ internal class EpisodeDetailsViewModel @AssistedInject constructor(
 
     private val pendingActions = MutableSharedFlow<EpisodeDetailsAction>()
 
-    val state = combine(
+    val state: Flow<EpisodeDetailsViewState> = combine(
         observeEpisodeDetails.observe(),
         observeEpisodeWatches.observe(),
         loadingState.observable,

@@ -28,6 +28,7 @@ import androidx.navigation.compose.navArgument
 import androidx.navigation.navigation
 import app.tivi.account.AccountUi
 import app.tivi.episodedetails.EpisodeDetails
+import app.tivi.episodedetails.rememberEpisodeDetailsViewModel
 import app.tivi.home.discover.Discover
 import app.tivi.home.followed.Followed
 import app.tivi.home.popular.Popular
@@ -234,7 +235,9 @@ private fun NavGraphBuilder.addEpisodeDetails(navController: NavController) {
         )
     ) { backStackEntry ->
         EpisodeDetails(
-            id = backStackEntry.arguments!!.getLong("episodeId"),
+            viewModel = rememberEpisodeDetailsViewModel(
+                episodeId = backStackEntry.arguments!!.getLong("episodeId")
+            ),
             navigateUp = {
                 navController.popBackStack()
             },

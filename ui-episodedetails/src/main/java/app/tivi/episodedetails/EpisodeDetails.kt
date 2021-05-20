@@ -16,7 +16,6 @@
 
 package app.tivi.episodedetails
 
-import android.app.Activity
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.Image
@@ -79,7 +78,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -102,49 +100,12 @@ import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.android.components.ActivityComponent
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
 
 @Composable
 fun EpisodeDetails(
-    id: Long,
-    navigateUp: () -> Unit,
-) {
-    // TODO: handle ContextWrappers and unwrap as necessary
-    val context = LocalContext.current as Activity
-
-    EpisodeDetails(
-        viewModel = remember(id) {
-            // Use Hilt EntryPointAccessors to create an injected assisted factory,
-            // then create a ViewModel with the given episodeId. This is remember-ed using the
-            // id as the key, so it will be 'cleared' if the ID changes
-            EntryPointAccessors.fromActivity(
-                context,
-                EpisodeDetailsViewModelEntryPoint::class.java
-            ).factory().create(id)
-        },
-        navigateUp = navigateUp,
-    )
-}
-
-/**
- * A [EntryPoint] which allows us to inject using Hilt on-demand.
- *
- * See https://developer.android.com/training/dependency-injection/hilt-android#not-supported
- */
-@EntryPoint
-@InstallIn(ActivityComponent::class)
-internal interface EpisodeDetailsViewModelEntryPoint {
-    fun factory(): EpisodeDetailsViewModel.Factory
-}
-
-@Composable
-internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
     navigateUp: () -> Unit,
 ) {
