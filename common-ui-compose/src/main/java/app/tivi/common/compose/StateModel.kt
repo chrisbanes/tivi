@@ -19,7 +19,7 @@ package app.tivi.common.compose
 import androidx.compose.runtime.RememberObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
 /**
@@ -32,7 +32,9 @@ abstract class StateModel : RememberObserver {
     /**
      * A [CoroutineScope] which can be used similar to `viewModelScope`
      */
-    protected val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main + Job())
+    protected val coroutineScope: CoroutineScope = CoroutineScope(
+        Dispatchers.Main.immediate + SupervisorJob()
+    )
 
     override fun onRemembered() {
     }
