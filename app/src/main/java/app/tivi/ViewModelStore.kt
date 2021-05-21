@@ -16,7 +16,6 @@
 
 package app.tivi
 
-import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +36,7 @@ import kotlinx.coroutines.isActive
 @Stable
 internal class ViewModelStore(
     coroutineScope: CoroutineScope,
-) : RememberObserver {
+) {
     private val viewModelMap = HashMap<Any, ViewModelStoreEntry>()
 
     // Create a copy of the provided CoroutineScope, but replacing the Job with
@@ -88,18 +87,6 @@ internal class ViewModelStore(
         )
 
         return flow
-    }
-
-    override fun onRemembered() {
-        // nothing to do
-    }
-
-    override fun onForgotten() {
-        coroutineScope.cancel()
-    }
-
-    override fun onAbandoned() {
-        coroutineScope.cancel()
     }
 
     /**
