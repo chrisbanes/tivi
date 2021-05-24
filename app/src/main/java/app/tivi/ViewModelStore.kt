@@ -61,7 +61,6 @@ internal class ViewModelStore(
     /**
      * Retrieve or create a ViewModel.
      */
-    @Synchronized
     fun <T : Any> viewModelFlow(
         key: Any,
         create: (scope: CoroutineScope) -> T
