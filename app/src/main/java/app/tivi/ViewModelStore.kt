@@ -14,21 +14,31 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package app.tivi
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+/**
+ * The amount of time before cancelling a ViewModel, after all UI has stop using a ViewModel
+ */
+private const val ViewModelCancelTimeout: Long = 5_000 // 5 seconds
 
 /**
  * TODO
@@ -38,6 +48,7 @@ internal class ViewModelStore(
     coroutineScope: CoroutineScope,
 ) {
     private val viewModelMap = HashMap<Any, ViewModelStoreEntry>()
+    private val mapLock = ReentrantLock()
 
     // Create a copy of the provided CoroutineScope, but replacing the Job with
     // a child SupervisorJob. This allows a ViewModel to be cancelled without affecting any
@@ -50,10 +61,11 @@ internal class ViewModelStore(
     /**
      * Retrieve or create a ViewModel.
      */
+    @Synchronized
     fun <T : Any> viewModelFlow(
         key: Any,
-        create: (CoroutineScope) -> T
-    ): StateFlow<T> {
+        create: (scope: CoroutineScope) -> T
+    ): StateFlow<T> = mapLock.withLock {
         // First check if we have a 'cached' ViewModel which is still active
         val cached = viewModelMap[key]?.takeIf { it.isActive }
         if (cached != null) {
@@ -62,21 +74,24 @@ internal class ViewModelStore(
         }
 
         // If not we'll create a new ViewModel
-
         val viewModelScope = createChildCoroutineScope()
 
         val flow = flow<T> {
             // This is a 'fake' flow which doesn't emit anything. The actual ViewModel is
             // created in the stateIn() below. We suspend the flow until its cancelled, which
             // happens when either the stateIn `WhileSubscribed`, or the parent scope is cancelled
-            awaitCancellation()
-        }.onCompletion {
-            // The flow has been cancelled, so we need to also cancel the
-            // ViewModel's coroutine scope
-            viewModelScope.cancel()
+            suspendCancellableCoroutine<Unit> { cont ->
+                cont.invokeOnCancellation {
+                    // The flow has been cancelled, so we need to also cancel the
+                    // ViewModel's coroutine scope
+                    viewModelScope.cancel()
+                    // Remove the entry from the map
+                    mapLock.withLock { viewModelMap.remove(key) }
+                }
+            }
         }.stateIn(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(ViewModelCancelTimeout),
             initialValue = create(viewModelScope),
         )
 
@@ -97,6 +112,12 @@ internal class ViewModelStore(
             SupervisorJob(coroutineScope.coroutineContext[Job])
     )
 }
+
+@Composable
+internal inline fun <T : Any> ViewModelStore.viewModel(
+    key: Any,
+    noinline create: (scope: CoroutineScope) -> T,
+): T = viewModelFlow(key, create).collectAsState().value
 
 private data class ViewModelStoreEntry(
     val coroutineScope: CoroutineScope,

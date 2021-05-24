@@ -18,7 +18,6 @@ package app.tivi
 
 import android.app.Activity
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -259,13 +258,13 @@ private fun NavGraphBuilder.addEpisodeDetails(
         // Collect our ViewModel from the store. The key must be unique to the ViewModel
         // and its parameters. ViewModels should use the CoroutineScope provided to them when
         // launching coroutines
-        val viewModel by viewModelStore.viewModelFlow("episode_details_$id") { coroutineScope ->
+        val viewModel = viewModelStore.viewModel("episode_details_$id") { scope ->
             createEpisodeDetailsViewModel(
                 episodeId = id,
                 activity = activity,
-                coroutineScope = coroutineScope
+                coroutineScope = scope,
             )
-        }.collectAsState()
+        }
 
         EpisodeDetails(
             viewModel = viewModel,
