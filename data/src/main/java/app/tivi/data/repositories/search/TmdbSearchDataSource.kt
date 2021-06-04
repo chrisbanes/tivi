@@ -31,7 +31,7 @@ class TmdbSearchDataSource @Inject constructor(
     private val mapper: TmdbShowResultsPageToTiviShows
 ) : SearchDataSource {
     override suspend fun search(query: String): Result<List<Pair<TiviShow, List<ShowTmdbImage>>>> = try {
-        tmdb.searchService().tv(query, 1, null, null)
+        tmdb.searchService().tv(query, 1, null, null, false)
             .executeWithRetry()
             .toResult(mapper::map)
     } catch (t: Throwable) {
