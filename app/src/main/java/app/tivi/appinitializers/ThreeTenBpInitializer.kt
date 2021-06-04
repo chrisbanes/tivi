@@ -19,6 +19,7 @@ package app.tivi.appinitializers
 import android.app.Application
 import app.tivi.util.AppCoroutineDispatchers
 import com.jakewharton.threetenabp.AndroidThreeTen
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.threeten.bp.zone.ZoneRulesProvider
@@ -32,6 +33,7 @@ class ThreeTenBpInitializer @Inject constructor(
         AndroidThreeTen.init(application)
 
         // Query the ZoneRulesProvider so that it is loaded on a background coroutine
+        @OptIn(DelicateCoroutinesApi::class)
         GlobalScope.launch(dispatchers.io) {
             ZoneRulesProvider.getAvailableZoneIds()
         }
