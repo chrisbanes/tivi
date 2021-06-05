@@ -17,7 +17,6 @@
 package app.tivi.inject
 
 import app.tivi.appinitializers.AppInitializer
-import app.tivi.appinitializers.ClearGlideCacheInitializer
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.PreferencesInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
@@ -63,8 +62,4 @@ abstract class AppModuleBinds {
     @Binds
     @IntoSet
     abstract fun provideTmdbInitializer(bind: TmdbInitializer): AppInitializer
-
-    @Binds
-    @IntoSet
-    abstract fun provideClearGlideInitializer(bind: ClearGlideCacheInitializer): AppInitializer
 }

@@ -53,11 +53,14 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
       - name: Build and check
+        # Move back to `testDebug` once we move to AGP 7.0.0-beta04
+        # https://issuetracker.google.com/issues/189559355
         run: |
           ./gradlew -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace \
                spotlessCheck \
                assemble bundle \
-               app:lintDebug testDebug
+               app:lintDebug \
+               data-android:testDebug
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/main'

@@ -301,7 +301,7 @@ private fun Backdrop(
                                     R.string.season_episode_number,
                                     seasonNumber,
                                     epNumber
-                                ).toUpperCase(locale),
+                                ).uppercase(locale),
                                 style = MaterialTheme.typography.overline
                             )
                         }

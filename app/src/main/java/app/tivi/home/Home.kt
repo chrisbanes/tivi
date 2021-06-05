@@ -48,8 +48,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.NavGraph
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import app.tivi.AppNavigation
 import app.tivi.R
@@ -75,7 +75,7 @@ internal fun Home(
                         launchSingleTop = true
                         restoreState = true
 
-                        popUpTo(findStartDestination(navController.graph).id) {
+                        popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
                     }
@@ -93,32 +93,6 @@ internal fun Home(
     }
 }
 
-private val NavGraph.startDestination: NavDestination?
-    get() = findNode(startDestinationId)
-
-/**
- * Copied from similar function in NavigationUI.kt
- *
- * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:navigation/navigation-ui/src/main/java/androidx/navigation/ui/NavigationUI.kt
- */
-private tailrec fun findStartDestination(graph: NavDestination): NavDestination {
-    return if (graph is NavGraph) findStartDestination(graph.startDestination!!) else graph
-}
-
-/**
- * Returns true if a destination with the given [route] is in the ancestor chain of [destination].
- */
-private fun isRouteInDestinationChain(
-    destination: NavDestination,
-    route: String,
-): Boolean {
-    var currentDestination: NavDestination = destination
-    while (currentDestination.route != route && currentDestination.parent != null) {
-        currentDestination = currentDestination.parent!!
-    }
-    return currentDestination.route == route
-}
-
 /**
  * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the
  * returned [State] which is updated as the destination changes.
@@ -131,16 +105,16 @@ private fun NavController.currentScreenAsState(): State<Screen> {
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             when {
-                isRouteInDestinationChain(destination, Screen.Discover.route) -> {
+                destination.hierarchy.any { it.route == Screen.Discover.route } -> {
                     selectedItem.value = Screen.Discover
                 }
-                isRouteInDestinationChain(destination, Screen.Watched.route) -> {
+                destination.hierarchy.any { it.route == Screen.Watched.route } -> {
                     selectedItem.value = Screen.Watched
                 }
-                isRouteInDestinationChain(destination, Screen.Following.route) -> {
+                destination.hierarchy.any { it.route == Screen.Following.route } -> {
                     selectedItem.value = Screen.Following
                 }
-                isRouteInDestinationChain(destination, Screen.Search.route) -> {
+                destination.hierarchy.any { it.route == Screen.Search.route } -> {
                     selectedItem.value = Screen.Search
                 }
             }
