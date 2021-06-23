@@ -51,8 +51,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
@@ -152,9 +153,11 @@ internal fun Discover(
         ) {
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.bodyWidth(),
             ) {
-                itemSpacer(16.dp)
+                item {
+                    Spacer(Modifier.height(Layout.gutter))
+                }
 
                 state.nextEpisodeWithShowToWatched?.let { nextEpisodeToWatch ->
                     item {
@@ -179,7 +182,9 @@ internal fun Discover(
                         )
                     }
 
-                    itemSpacer(16.dp)
+                    item {
+                        Spacer(Modifier.height(Layout.gutter))
+                    }
                 }
 
                 item {
@@ -212,7 +217,9 @@ internal fun Discover(
                     )
                 }
 
-                itemSpacer(16.dp)
+                item {
+                    Spacer(Modifier.height(Layout.gutter))
+                }
             }
         }
     }
@@ -227,7 +234,12 @@ private fun NextEpisodeToWatch(
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier) {
-        Row(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+        Row(
+            Modifier.padding(
+                horizontal = Layout.bodyMargin,
+                vertical = Layout.gutter,
+            )
+        ) {
             if (poster != null) {
                 PosterCard(
                     show = show,
@@ -237,7 +249,7 @@ private fun NextEpisodeToWatch(
                         .aspectRatio(2 / 3f)
                 )
 
-                Spacer(Modifier.width(16.dp))
+                Spacer(Modifier.width(Layout.gutter))
             }
 
             Column(Modifier.align(Alignment.CenterVertically)) {
@@ -272,7 +284,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
 ) {
     Column(modifier) {
         if (refreshing || items.isNotEmpty()) {
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(Layout.gutter))
 
             Header(
                 title = title,
@@ -311,7 +323,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
 ) {
     Carousel(
         items = items,
-        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+        contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
         itemSpacing = 4.dp,
         modifier = modifier
     ) { item, padding ->
@@ -336,7 +348,7 @@ private fun Header(
     content: @Composable RowScope.() -> Unit = {}
 ) {
     Row(modifier) {
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(Layout.bodyMargin))
 
         Text(
             text = title,
@@ -359,7 +371,7 @@ private fun Header(
 
         content()
 
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(Layout.bodyMargin))
     }
 }
 
