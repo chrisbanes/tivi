@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.common.compose
+package app.tivi.common.compose.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.R
 import app.tivi.data.entities.TraktUser
 import com.google.accompanist.coil.rememberCoilPainter
 

@@ -54,8 +54,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.rememberFlowWithLifecycle
+import app.tivi.common.compose.ui.foregroundColor
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.coil.rememberCoilPainter

@@ -16,7 +16,7 @@
 
 @file:Suppress("UNCHECKED_CAST")
 
-package app.tivi.common.compose
+package app.tivi.extensions
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

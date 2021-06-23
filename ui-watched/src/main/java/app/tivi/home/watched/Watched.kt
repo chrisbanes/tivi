@@ -58,13 +58,13 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.RefreshButton
-import app.tivi.common.compose.SearchTextField
-import app.tivi.common.compose.SortMenuPopup
-import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
+import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.SearchTextField
+import app.tivi.common.compose.ui.SortMenuPopup
+import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
