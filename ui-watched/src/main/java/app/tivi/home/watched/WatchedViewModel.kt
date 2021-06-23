@@ -20,7 +20,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import app.tivi.common.compose.combine
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -30,6 +29,7 @@ import app.tivi.domain.interactors.UpdateWatchedShows
 import app.tivi.domain.observers.ObservePagedWatchedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
+import app.tivi.extensions.combine
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector

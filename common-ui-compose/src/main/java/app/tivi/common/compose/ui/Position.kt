@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.common.compose
+package app.tivi.common.compose.ui
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +26,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.toSize
 
 inline val LayoutCoordinates.positionInParent: Offset
@@ -42,18 +41,6 @@ fun Modifier.onPositionInParentChanged(
     Modifier.onGloballyPositioned { coordinates ->
         if (coordinates.positionInParent != lastPosition) {
             lastPosition = coordinates.positionInParent
-            onChange(coordinates)
-        }
-    }
-}
-
-fun Modifier.onPositionInRootChanged(
-    onChange: (LayoutCoordinates) -> Unit
-) = composed {
-    var lastPosition by remember { mutableStateOf(Offset.Zero) }
-    Modifier.onGloballyPositioned { coordinates ->
-        if (coordinates.positionInRoot() != lastPosition) {
-            lastPosition = coordinates.positionInRoot()
             onChange(coordinates)
         }
     }

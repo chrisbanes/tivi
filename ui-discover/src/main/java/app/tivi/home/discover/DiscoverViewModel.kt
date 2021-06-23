@@ -18,7 +18,6 @@ package app.tivi.home.discover
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.common.compose.combine
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
@@ -28,6 +27,7 @@ import app.tivi.domain.observers.ObserveRecommendedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.domain.observers.ObserveUserDetails
+import app.tivi.extensions.combine
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectInto

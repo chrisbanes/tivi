@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.common.compose
+package app.tivi.common.compose.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.R
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
 import com.google.accompanist.coil.rememberCoilPainter

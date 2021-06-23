@@ -37,6 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import app.tivi.common.compose.theme.AppBarAlphas
+import app.tivi.common.compose.ui.PlaceholderPosterCard
+import app.tivi.common.compose.ui.PosterCard
+import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import com.google.accompanist.insets.LocalWindowInsets
