@@ -51,13 +51,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.PosterCard
-import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
 import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.insets.ui.Scaffold
 
 @Composable
 fun Search(

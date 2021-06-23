@@ -21,6 +21,7 @@ threetenbp = "1.5.1"
 accompanist-coil = { module = "com.google.accompanist:accompanist-coil", version.ref = "accompanist" }
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
+accompanist-insetsui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 
 android-gradlePlugin = "com.android.tools.build:gradle:7.1.0-alpha02"

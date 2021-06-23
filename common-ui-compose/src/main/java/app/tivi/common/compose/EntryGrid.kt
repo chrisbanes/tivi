@@ -19,19 +19,15 @@ package app.tivi.common.compose
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -43,7 +39,10 @@ import androidx.paging.compose.LazyPagingItems
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.rememberInsetsPaddingValues
+import com.google.accompanist.insets.ui.Scaffold
+import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -129,26 +128,15 @@ private fun EntryGridAppBar(
     onRefreshActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
+    TopAppBar(
+        backgroundColor = MaterialTheme.colors.surface.copy(
+            alpha = AppBarAlphas.translucentBarAlpha()
+        ),
         contentColor = MaterialTheme.colors.onSurface,
-        elevation = 4.dp,
-        modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier
-                .statusBarsPadding()
-                .height(56.dp)
-                .padding(start = 16.dp, end = 4.dp)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-
-            Spacer(Modifier.weight(1f))
-
+        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars),
+        modifier = modifier,
+        title = { Text(text = title) },
+        actions = {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 // This button refresh allows screen-readers, etc to trigger a refresh.
                 // We only show the button to trigger a refresh, not to indicate that
@@ -163,6 +151,6 @@ private fun EntryGridAppBar(
                     }
                 }
             }
-        }
-    }
+        },
+    )
 }

@@ -59,7 +59,6 @@ import androidx.paging.compose.items
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.RefreshButton
-import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
 import app.tivi.common.compose.UserProfileButton
@@ -73,7 +72,10 @@ import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.coil.rememberCoilPainter
-import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.rememberInsetsPaddingValues
+import com.google.accompanist.insets.ui.Scaffold
+import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -300,26 +302,15 @@ private fun WatchedAppBar(
     onUserActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
+    TopAppBar(
+        backgroundColor = MaterialTheme.colors.surface.copy(
+            alpha = AppBarAlphas.translucentBarAlpha()
+        ),
         contentColor = MaterialTheme.colors.onSurface,
-        elevation = 4.dp,
-        modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier
-                .statusBarsPadding()
-                .height(56.dp)
-                .padding(start = 16.dp, end = 4.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.watched_shows_title),
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-
-            Spacer(Modifier.weight(1f))
-
+        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars),
+        modifier = modifier,
+        title = { Text(text = stringResource(R.string.watched_shows_title)) },
+        actions = {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 // This button refresh allows screen-readers, etc to trigger a refresh.
                 // We only show the button to trigger a refresh, not to indicate that
@@ -333,14 +324,14 @@ private fun WatchedAppBar(
                         RefreshButton(onClick = onRefreshActionClick)
                     }
                 }
-
-                UserProfileButton(
-                    loggedIn = loggedIn,
-                    user = user,
-                    onClick = onUserActionClick,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
             }
-        }
-    }
+
+            UserProfileButton(
+                loggedIn = loggedIn,
+                user = user,
+                onClick = onUserActionClick,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+        },
+    )
 }

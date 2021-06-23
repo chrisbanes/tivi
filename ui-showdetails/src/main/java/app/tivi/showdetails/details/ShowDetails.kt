@@ -105,7 +105,6 @@ import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
-import app.tivi.common.compose.LocalScaffoldPadding
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
@@ -137,6 +136,7 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsHeight
+import com.google.accompanist.insets.ui.LocalScaffoldPadding
 import kotlinx.coroutines.flow.collect
 import org.threeten.bp.OffsetDateTime
 
