@@ -33,7 +33,9 @@
         <activity
             android:name=".home.MainActivity"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.Tivi.Home">
+            android:theme="@style/Theme.Tivi.Home"
+            android:resizeableActivity="true" tools:targetApi="n"
+            android:configChanges="colorMode|density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
