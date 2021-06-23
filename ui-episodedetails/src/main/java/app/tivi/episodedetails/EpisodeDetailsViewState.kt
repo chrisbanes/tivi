@@ -23,7 +23,7 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.Season
 
 @Immutable
-internal data class EpisodeDetailsViewState(
+data class EpisodeDetailsViewState(
     val season: Season? = null,
     val episode: Episode? = null,
     val watches: List<EpisodeWatchEntry> = emptyList(),

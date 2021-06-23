@@ -16,7 +16,12 @@
 
 package app.tivi
 
+import android.app.Activity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -28,6 +33,7 @@ import androidx.navigation.compose.navArgument
 import androidx.navigation.navigation
 import app.tivi.account.AccountUi
 import app.tivi.episodedetails.EpisodeDetails
+import app.tivi.episodedetails.createEpisodeDetailsViewModel
 import app.tivi.home.discover.Discover
 import app.tivi.home.followed.Followed
 import app.tivi.home.popular.Popular
@@ -69,20 +75,27 @@ internal fun AppNavigation(
     navController: NavHostController,
     onOpenSettings: () -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    // Create a ViewModelStore, which is used to store and cancel ViewModels appropriately.
+    val viewModelStore = remember(coroutineScope) {
+        ViewModelStore(coroutineScope)
+    }
+
     NavHost(
         navController = navController,
         startDestination = Screen.Discover.route
     ) {
-        addDiscoverTopLevel(navController, onOpenSettings)
-        addFollowingTopLevel(navController, onOpenSettings)
-        addWatchedTopLevel(navController, onOpenSettings)
-        addSearchTopLevel(navController, onOpenSettings)
+        addDiscoverTopLevel(navController, onOpenSettings, viewModelStore)
+        addFollowingTopLevel(navController, onOpenSettings, viewModelStore)
+        addWatchedTopLevel(navController, onOpenSettings, viewModelStore)
+        addSearchTopLevel(navController, onOpenSettings, viewModelStore)
     }
 }
 
 private fun NavGraphBuilder.addDiscoverTopLevel(
     navController: NavController,
     openSettings: () -> Unit,
+    viewModelStore: ViewModelStore,
 ) {
     navigation(
         route = Screen.Discover.route,
@@ -91,7 +104,7 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
         addDiscover(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
-        addEpisodeDetails(navController)
+        addEpisodeDetails(navController, viewModelStore)
         addRecommendedShows(navController)
         addTrendingShows(navController)
         addPopularShows(navController)
@@ -101,6 +114,7 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
 private fun NavGraphBuilder.addFollowingTopLevel(
     navController: NavController,
     openSettings: () -> Unit,
+    viewModelStore: ViewModelStore,
 ) {
     navigation(
         route = Screen.Following.route,
@@ -109,13 +123,14 @@ private fun NavGraphBuilder.addFollowingTopLevel(
         addFollowedShows(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
-        addEpisodeDetails(navController)
+        addEpisodeDetails(navController, viewModelStore)
     }
 }
 
 private fun NavGraphBuilder.addWatchedTopLevel(
     navController: NavController,
     openSettings: () -> Unit,
+    viewModelStore: ViewModelStore,
 ) {
     navigation(
         route = Screen.Watched.route,
@@ -124,13 +139,14 @@ private fun NavGraphBuilder.addWatchedTopLevel(
         addWatchedShows(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
-        addEpisodeDetails(navController)
+        addEpisodeDetails(navController, viewModelStore)
     }
 }
 
 private fun NavGraphBuilder.addSearchTopLevel(
     navController: NavController,
     openSettings: () -> Unit,
+    viewModelStore: ViewModelStore,
 ) {
     navigation(
         route = Screen.Search.route,
@@ -139,7 +155,7 @@ private fun NavGraphBuilder.addSearchTopLevel(
         addSearch(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
-        addEpisodeDetails(navController)
+        addEpisodeDetails(navController, viewModelStore)
     }
 }
 
@@ -226,17 +242,33 @@ private fun NavGraphBuilder.addShowDetails(navController: NavController) {
     }
 }
 
-private fun NavGraphBuilder.addEpisodeDetails(navController: NavController) {
+private fun NavGraphBuilder.addEpisodeDetails(
+    navController: NavController,
+    viewModelStore: ViewModelStore,
+) {
     composable(
         route = LeafScreen.EpisodeDetails.route,
         arguments = listOf(
             navArgument("episodeId") { type = NavType.LongType }
         )
-    ) {
+    ) { backStackEntry ->
+        val activity = LocalContext.current as Activity
+        val id = backStackEntry.arguments!!.getLong("episodeId")
+
+        // Collect our ViewModel from the store. The key must be unique to the ViewModel
+        // and its parameters. ViewModels should use the CoroutineScope provided to them when
+        // launching coroutines
+        val viewModel = viewModelStore.viewModel("episode_details_$id") { scope ->
+            createEpisodeDetailsViewModel(
+                episodeId = id,
+                activity = activity,
+                coroutineScope = scope,
+            )
+        }
+
         EpisodeDetails(
-            navigateUp = {
-                navController.popBackStack()
-            },
+            viewModel = viewModel,
+            navigateUp = { navController.popBackStack() },
         )
     }
 }
