@@ -20,19 +20,19 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalContentAlpha
@@ -56,9 +56,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
+import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.RefreshButton
@@ -79,6 +81,7 @@ import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlin.math.roundToInt
 
 @Composable
 fun Followed(
@@ -136,6 +139,7 @@ internal fun Followed(
         SwipeRefresh(
             state = rememberSwipeRefreshState(state.isLoading),
             onRefresh = { actioner(FollowedAction.RefreshAction) },
+            modifier = Modifier.bodyWidth(),
             indicatorPadding = paddingValues,
             indicator = { state, trigger ->
                 SwipeRefreshIndicator(
@@ -145,6 +149,10 @@ internal fun Followed(
                 )
             }
         ) {
+            val columns = Layout.columns
+            val bodyMargin = Layout.bodyMargin
+            val gutter = Layout.gutter
+
             LazyColumn(
                 contentPadding = paddingValues,
                 modifier = Modifier.fillMaxSize()
@@ -160,7 +168,13 @@ internal fun Followed(
                     )
                 }
 
-                items(list) { entry ->
+                itemsInGrid(
+                    lazyPagingItems = list,
+                    columns = (columns / 5f).roundToInt().coerceAtLeast(1),
+                    horizontalItemPadding = gutter,
+                    verticalItemPadding = gutter,
+                    contentPadding = PaddingValues(horizontal = bodyMargin),
+                ) { entry ->
                     if (entry != null) {
                         FollowedShowItem(
                             show = entry.show,
@@ -168,9 +182,7 @@ internal fun Followed(
                             watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
                             totalEpisodeCount = entry.stats?.episodeCount ?: 0,
                             onClick = { actioner(FollowedAction.OpenShowDetails(entry.show.id)) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(88.dp)
+                            modifier = Modifier.fillMaxWidth()
                         )
                     } else {
                         // TODO placeholder?
@@ -192,7 +204,7 @@ private fun FilterSortPanel(
     currentSortOption: SortOption,
     onSortSelected: (SortOption) -> Unit,
 ) {
-    Row(modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+    Row(modifier.padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)) {
         var filter by remember { mutableStateOf(TextFieldValue()) }
 
         SearchTextField(
@@ -232,16 +244,14 @@ private fun FollowedShowItem(
     Row(
         modifier
             .clickable(onClick = onClick)
-            .padding(vertical = 8.dp)
+            .padding(vertical = Layout.gutter)
     ) {
-        Spacer(Modifier.width(16.dp))
-
         if (poster != null) {
             Surface(
                 elevation = 1.dp,
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
-                    .fillMaxHeight()
+                    .heightIn(max = 72.dp)
                     .aspectRatio(2 / 3f)
             ) {
                 Image(
@@ -257,48 +267,35 @@ private fun FollowedShowItem(
 
         Spacer(Modifier.width(16.dp))
 
-        Column(
-            Modifier
-                .weight(1f)
-                .fillMaxHeight()
-        ) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(end = 16.dp)
-            ) {
+        Column {
+            Text(
+                text = textCreator.showTitle(show = show).toString(),
+                style = MaterialTheme.typography.subtitle1,
+            )
+
+            Spacer(Modifier.height(4.dp))
+
+            LinearProgressIndicator(
+                progress = when {
+                    totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
+                    else -> 0f
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(4.dp))
+
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Text(
-                    text = textCreator.showTitle(show = show).toString(),
-                    style = MaterialTheme.typography.subtitle1,
+                    text = textCreator.followedShowEpisodeWatchStatus(
+                        episodeCount = totalEpisodeCount,
+                        watchedEpisodeCount = watchedEpisodeCount
+                    ).toString(),
+                    style = MaterialTheme.typography.caption
                 )
-
-                Spacer(Modifier.weight(1f))
-
-                LinearProgressIndicator(
-                    progress = when {
-                        totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
-                        else -> 0f
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(Modifier.height(2.dp))
-
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = textCreator.followedShowEpisodeWatchStatus(
-                            episodeCount = totalEpisodeCount,
-                            watchedEpisodeCount = watchedEpisodeCount
-                        ).toString(),
-                        style = MaterialTheme.typography.caption
-                    )
-                }
-
-                Spacer(Modifier.height(8.dp))
             }
 
-            Divider()
+            Spacer(Modifier.height(8.dp))
         }
     }
 }
