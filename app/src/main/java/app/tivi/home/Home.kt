@@ -17,17 +17,13 @@
 package app.tivi.home
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
@@ -46,7 +42,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -54,9 +49,11 @@ import androidx.navigation.compose.rememberNavController
 import app.tivi.AppNavigation
 import app.tivi.R
 import app.tivi.Screen
-import app.tivi.common.compose.Scaffold
 import app.tivi.common.compose.theme.AppBarAlphas
-import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.rememberInsetsPaddingValues
+import com.google.accompanist.insets.ui.BottomNavigation
+import com.google.accompanist.insets.ui.Scaffold
 
 @Composable
 internal fun Home(
@@ -135,54 +132,46 @@ internal fun HomeBottomNavigation(
     onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
+    BottomNavigation(
+        backgroundColor = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
         contentColor = contentColorFor(MaterialTheme.colors.surface),
-        elevation = 8.dp,
+        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars),
         modifier = modifier
     ) {
-        Row(
-            Modifier
-                .navigationBarsPadding()
-                .fillMaxWidth()
-                .height(56.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            HomeBottomNavigationItem(
-                label = stringResource(R.string.discover_title),
-                selected = selectedNavigation == Screen.Discover,
-                onClick = { onNavigationSelected(Screen.Discover) },
-                contentDescription = stringResource(R.string.cd_discover_title),
-                selectedPainter = painterResource(R.drawable.ic_weekend_filled),
-                painter = painterResource(R.drawable.ic_weekend_outline),
-            )
+        HomeBottomNavigationItem(
+            label = stringResource(R.string.discover_title),
+            selected = selectedNavigation == Screen.Discover,
+            onClick = { onNavigationSelected(Screen.Discover) },
+            contentDescription = stringResource(R.string.cd_discover_title),
+            selectedPainter = painterResource(R.drawable.ic_weekend_filled),
+            painter = painterResource(R.drawable.ic_weekend_outline),
+        )
 
-            HomeBottomNavigationItem(
-                label = stringResource(R.string.following_shows_title),
-                selected = selectedNavigation == Screen.Following,
-                onClick = { onNavigationSelected(Screen.Following) },
-                contentDescription = stringResource(R.string.cd_following_shows_title),
-                selectedPainter = rememberVectorPainter(Icons.Default.Favorite),
-                painter = rememberVectorPainter(Icons.Default.FavoriteBorder),
-            )
+        HomeBottomNavigationItem(
+            label = stringResource(R.string.following_shows_title),
+            selected = selectedNavigation == Screen.Following,
+            onClick = { onNavigationSelected(Screen.Following) },
+            contentDescription = stringResource(R.string.cd_following_shows_title),
+            selectedPainter = rememberVectorPainter(Icons.Default.Favorite),
+            painter = rememberVectorPainter(Icons.Default.FavoriteBorder),
+        )
 
-            HomeBottomNavigationItem(
-                label = stringResource(R.string.watched_shows_title),
-                selected = selectedNavigation == Screen.Watched,
-                onClick = { onNavigationSelected(Screen.Watched) },
-                contentDescription = stringResource(R.string.cd_watched_shows_title),
-                selectedPainter = painterResource(R.drawable.ic_visibility),
-                painter = painterResource(R.drawable.ic_visibility_outline),
-            )
+        HomeBottomNavigationItem(
+            label = stringResource(R.string.watched_shows_title),
+            selected = selectedNavigation == Screen.Watched,
+            onClick = { onNavigationSelected(Screen.Watched) },
+            contentDescription = stringResource(R.string.cd_watched_shows_title),
+            selectedPainter = painterResource(R.drawable.ic_visibility),
+            painter = painterResource(R.drawable.ic_visibility_outline),
+        )
 
-            HomeBottomNavigationItem(
-                label = stringResource(R.string.search_navigation_title),
-                selected = selectedNavigation == Screen.Search,
-                onClick = { onNavigationSelected(Screen.Search) },
-                contentDescription = stringResource(R.string.cd_search_navigation_title),
-                painter = rememberVectorPainter(Icons.Default.Search),
-            )
-        }
+        HomeBottomNavigationItem(
+            label = stringResource(R.string.search_navigation_title),
+            selected = selectedNavigation == Screen.Search,
+            onClick = { onNavigationSelected(Screen.Search) },
+            contentDescription = stringResource(R.string.cd_search_navigation_title),
+            painter = rememberVectorPainter(Icons.Default.Search),
+        )
     }
 }
 
