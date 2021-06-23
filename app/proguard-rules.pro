@@ -68,3 +68,7 @@
     <fields>;
     <init>(...);
 }
+
+# Can remove this once we update to Navigation 2.4.0-alpha04
+# See: https://issuetracker.google.com/191654433
+-keep,allowobfuscation,allowshrinking class * extends androidx.navigation.Navigator
