@@ -27,12 +27,14 @@ import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.map
+import org.threeten.bp.Duration
 import javax.inject.Singleton
 
 typealias WatchedShowsStore = Store<Unit, List<WatchedShowEntry>>
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 internal object WatchedShowsModule {
     @Provides
@@ -52,7 +54,18 @@ internal object WatchedShowsModule {
                 }.getOrThrow()
         },
         sourceOfTruth = SourceOfTruth.of(
-            reader = { watchedShowsDao.entriesObservable() },
+            reader = {
+                watchedShowsDao.entriesObservable().map { entries ->
+                    when {
+                        // Store only treats null as 'no value', so convert to null
+                        entries.isEmpty() -> null
+                        // If the request is expired, our data is stale
+                        lastRequestStore.isRequestExpired(Duration.ofHours(6)) -> null
+                        // Otherwise, our data is fresh and valid
+                        else -> entries
+                    }
+                }
+            },
             writer = { _: Unit, response ->
                 watchedShowsDao.withTransaction {
                     val entries = response.map { (show, entry) ->

@@ -16,52 +16,55 @@
 
 package app.tivi.showdetails.details
 
-import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Box
-import androidx.compose.foundation.Icon
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.Text
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ConstraintLayout
-import androidx.compose.foundation.layout.ExperimentalLayout
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.InnerPadding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.SizeMode
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredHeightIn
-import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.foundation.layout.preferredSizeIn
-import androidx.compose.foundation.layout.preferredWidth
-import androidx.compose.foundation.layout.preferredWidthIn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyRowFor
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
-import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProvideEmphasis
-import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -71,49 +74,51 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
-import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ContextAmbient
-import androidx.compose.ui.platform.setContent
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
-import androidx.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
-import app.tivi.common.compose.IconResource
-import app.tivi.common.compose.InsetsAmbient
+import app.tivi.common.compose.LocalScaffoldPadding
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
-import app.tivi.common.compose.PopupMenu
-import app.tivi.common.compose.PopupMenuItem
-import app.tivi.common.compose.ProvideDisplayInsets
-import app.tivi.common.compose.TiviDateFormatterAmbient
-import app.tivi.common.compose.VectorImage
-import app.tivi.common.compose.navigationBarsPadding
-import app.tivi.common.compose.offset
-import app.tivi.common.compose.onSizeChanged
-import app.tivi.common.compose.rememberMutableState
-import app.tivi.common.compose.statusBarsHeight
+import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.SwipeDismissSnackbar
+import app.tivi.common.compose.foregroundColor
+import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.Season
+import app.tivi.data.entities.ShowStatus
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
@@ -127,59 +132,68 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import app.tivi.ui.animations.lerp
-import app.tivi.util.TiviDateFormatter
-import coil.request.ImageRequest
-import com.google.android.material.composethemeadapter.MdcTheme
-import dev.chrisbanes.accompanist.coil.CoilImage
-import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import com.google.accompanist.coil.rememberCoilPainter
+import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.statusBarsHeight
+import kotlinx.coroutines.flow.collect
 import org.threeten.bp.OffsetDateTime
 
-val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
+@Composable
+fun ShowDetails(
+    navigateUp: () -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    openEpisodeDetails: (episodeId: Long) -> Unit,
+) {
+    ShowDetails(
+        viewModel = hiltViewModel(),
+        navigateUp = navigateUp,
+        openShowDetails = openShowDetails,
+        openEpisodeDetails = openEpisodeDetails,
+    )
+}
 
-fun ViewGroup.composeShowDetails(
-    state: LiveData<ShowDetailsViewState>,
-    actioner: (ShowDetailsAction) -> Unit,
-    tiviDateFormatter: TiviDateFormatter,
-    textCreator: ShowDetailsTextCreator
-): Any = setContent(Recomposer.current()) {
-    Providers(
-        TiviDateFormatterAmbient provides tiviDateFormatter,
-        ShowDetailsTextCreatorAmbient provides textCreator
-    ) {
-        MdcTheme {
-            LogCompositions("MdcTheme")
+@Composable
+internal fun ShowDetails(
+    viewModel: ShowDetailsViewModel,
+    navigateUp: () -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    openEpisodeDetails: (episodeId: Long) -> Unit,
+) {
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = ShowDetailsViewState.Empty)
 
-            ProvideDisplayInsets {
-                LogCompositions("ProvideInsets")
-                val viewState by state.observeAsState()
-                if (viewState != null) {
-                    LogCompositions("ViewState observeAsState")
-                    ShowDetails(viewState!!, actioner)
-                }
+    ShowDetails(viewState = viewState) { action ->
+        when (action) {
+            ShowDetailsAction.NavigateUp -> navigateUp()
+            else -> viewModel.submitAction(action)
+        }
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.uiEffects.collect { effect ->
+            when (effect) {
+                is OpenShowUiEffect -> openShowDetails(effect.showId)
+                is OpenEpisodeUiEffect -> openEpisodeDetails(effect.episodeId)
+                else -> Unit // TODO: any remaining ui effects need to be passed down to the UI
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ShowDetails(
+internal fun ShowDetails(
     viewState: ShowDetailsViewState,
     actioner: (ShowDetailsAction) -> Unit
-) = ConstraintLayout(
-    modifier = Modifier.fillMaxSize()
-) {
+) = Box(modifier = Modifier.fillMaxSize()) {
     LogCompositions("ShowDetails")
 
-    val (appbar, fab, snackbar) = createRefs()
+    val listState = rememberLazyListState()
+    var backdropHeight by remember { mutableStateOf(0) }
 
-    val scrollState = rememberScrollState()
-    var backdropHeight by rememberMutableState { 0 }
-
-    ScrollableColumn(
-        scrollState = scrollState,
-        modifier = Modifier.fillMaxHeight()
-    ) {
+    Surface(Modifier.fillMaxSize()) {
         ShowDetailsScrollingContent(
             show = viewState.show,
             posterImage = viewState.posterImage,
@@ -190,58 +204,74 @@ fun ShowDetails(
             expandedSeasonIds = viewState.expandedSeasonIds,
             watchStats = viewState.watchStats,
             showRefreshing = viewState.refreshing,
-            scrollState = scrollState,
+            listState = listState,
             actioner = actioner,
-            onBackdropSizeChanged = { backdropHeight = it.height }
+            onBackdropSizeChanged = { backdropHeight = it.height },
+            modifier = Modifier.fillMaxSize()
         )
     }
+
+    val trigger = backdropHeight - LocalWindowInsets.current.statusBars.top
 
     OverlaidStatusBarAppBar(
-        scrollPosition = scrollState.value,
-        backdropHeight = backdropHeight,
-        appBar = {
-            ShowDetailsAppBar(
-                title = viewState.show.title ?: "",
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp,
-                isRefreshing = viewState.refreshing,
-                actioner = actioner
-            )
+        showAppBar = {
+            listState.firstVisibleItemIndex > 0 ||
+                listState.firstVisibleItemScrollOffset >= trigger
         },
-        modifier = Modifier.fillMaxWidth()
-            .constrainAs(appbar) {
-                top.linkTo(parent.top)
-            }
-    )
-
-    if (viewState.refreshError != null) {
-        // TODO: Convert this to swipe-to-dismiss
-        Snackbar(
-            text = { Text(viewState.refreshError.message) },
-            modifier = Modifier
-                .preferredWidthIn(maxWidth = 540.dp)
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                .clickable(onClick = { actioner(ClearError) })
-                .constrainAs(snackbar) {
-                    bottom.linkTo(fab.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
+        modifier = Modifier
+            .fillMaxWidth()
+            .align(Alignment.TopCenter)
+    ) {
+        ShowDetailsAppBar(
+            title = viewState.show.title ?: "",
+            backgroundColor = Color.Transparent,
+            elevation = 0.dp,
+            isRefreshing = viewState.refreshing,
+            actioner = actioner
         )
     }
 
-    ToggleShowFollowFloatingActionButton(
-        isFollowed = viewState.isFollowed,
-        expanded = scrollState.value < backdropHeight,
-        onClick = { actioner(FollowShowToggleAction) },
-        modifier = Modifier
-            .padding(16.dp)
-            .navigationBarsPadding(bottom = false)
-            .constrainAs(fab) {
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-            }
-    )
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .align(Alignment.BottomCenter)
+    ) {
+        SnackbarHost(
+            hostState = snackbarHostState,
+            snackbar = {
+                SwipeDismissSnackbar(
+                    data = it,
+                    onDismiss = { actioner(ShowDetailsAction.ClearError) }
+                )
+            },
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+        )
+
+        val expanded by remember {
+            derivedStateOf { listState.firstVisibleItemIndex > 0 }
+        }
+
+        ToggleShowFollowFloatingActionButton(
+            isFollowed = viewState.isFollowed,
+            expanded = { expanded },
+            onClick = { actioner(ShowDetailsAction.FollowShowToggleAction) },
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(16.dp)
+                .navigationBarsPadding(bottom = false)
+                .padding(LocalScaffoldPadding.current)
+        )
+    }
+
+    LaunchedEffect(viewState.refreshError) {
+        viewState.refreshError?.let { error ->
+            snackbarHostState.showSnackbar(error.message)
+        }
+    }
 }
 
 @Composable
@@ -255,164 +285,281 @@ private fun ShowDetailsScrollingContent(
     expandedSeasonIds: Set<Long>,
     watchStats: FollowedShowsWatchStats?,
     showRefreshing: Boolean,
-    scrollState: ScrollState,
+    listState: LazyListState,
     actioner: (ShowDetailsAction) -> Unit,
-    onBackdropSizeChanged: (IntSize) -> Unit
+    onBackdropSizeChanged: (IntSize) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LogCompositions("ShowDetailsScrollingContent")
 
-    Column(Modifier.fillMaxWidth()) {
-        Surface(
-            modifier = Modifier.fillMaxWidth()
-                .aspectRatio(16f / 10)
-                .onSizeChanged(onBackdropSizeChanged)
-        ) {
-            if (backdropImage != null) {
-                CoilImageWithCrossfade(
-                    data = backdropImage,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().offset { size ->
-                        Offset(
-                            x = 0f,
-                            y = (scrollState.value / 2)
-                                .coerceIn(-size.height.toFloat(), size.height.toFloat())
+    LazyColumn(
+        state = listState,
+        modifier = modifier
+    ) {
+        item {
+            BackdropImage(
+                backdropImage = backdropImage,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 10)
+                    .onSizeChanged(onBackdropSizeChanged)
+                    .clipToBounds()
+                    .offset {
+                        IntOffset(
+                            x = 0,
+                            y = if (listState.firstVisibleItemIndex == 0) {
+                                listState.firstVisibleItemScrollOffset / 2
+                            } else 0
                         )
+                    }
+            )
+        }
+
+        item {
+            ShowDetailsAppBar(
+                title = show.title ?: "",
+                elevation = 0.dp,
+                backgroundColor = Color.Transparent,
+                isRefreshing = showRefreshing,
+                actioner = actioner
+            )
+        }
+
+        item {
+            PosterInfoRow(
+                show = show,
+                posterImage = posterImage,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        itemSpacer(16.dp)
+
+        item {
+            Header(stringResource(R.string.details_about))
+        }
+
+        if (show.summary != null) {
+            item {
+                ExpandingText(
+                    text = show.summary!!,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+        }
+
+        if (show.genres.isNotEmpty()) {
+            item {
+                Genres(show.genres)
+            }
+        }
+
+        if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
+            itemSpacer(8.dp)
+
+            item {
+                Header(stringResource(id = R.string.details_next_episode_to_watch))
+            }
+            item {
+                NextEpisodeToWatch(
+                    season = nextEpisodeToWatch.season!!,
+                    episode = nextEpisodeToWatch.episode!!,
+                    onClick = {
+                        actioner(ShowDetailsAction.OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
                     }
                 )
             }
         }
 
-        Surface(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top),
-            elevation = 2.dp
-        ) {
-            Column(Modifier.fillMaxWidth()) {
-                ShowDetailsAppBar(
-                    title = show.title ?: "",
-                    elevation = 0.dp,
-                    backgroundColor = Color.Transparent,
-                    isRefreshing = showRefreshing,
-                    actioner = actioner
+        if (relatedShows.isNotEmpty()) {
+            itemSpacer(8.dp)
+
+            item {
+                Header(stringResource(R.string.details_related))
+            }
+            item {
+                RelatedShows(
+                    related = relatedShows,
+                    actioner = actioner,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(112.dp)
                 )
-
-                Row(Modifier.fillMaxWidth()) {
-                    if (posterImage != null) {
-                        Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                        CoilImageWithCrossfade(
-                            data = posterImage,
-                            alignment = Alignment.TopStart,
-                            modifier = Modifier.weight(1f, fill = false)
-                                .aspectRatio(2 / 3f)
-                                .clip(MaterialTheme.shapes.medium)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                    Box(Modifier.weight(1f, fill = false)) {
-                        InfoPanels(show)
-                    }
-
-                    Spacer(modifier = Modifier.preferredWidth(16.dp))
-                }
-
-                Spacer(modifier = Modifier.preferredHeight(16.dp))
-
-                Header(stringResource(R.string.details_about))
-
-                if (show.summary != null) {
-                    ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                        ExpandingText(
-                            show.summary!!,
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
-                }
-
-                if (show.genres.isNotEmpty()) {
-                    Genres(show.genres)
-                }
-
-                if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(id = R.string.details_next_episode_to_watch))
-                    NextEpisodeToWatch(
-                        season = nextEpisodeToWatch.season!!,
-                        episode = nextEpisodeToWatch.episode!!,
-                        onClick = {
-                            actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
-                        }
-                    )
-                }
-
-                if (relatedShows.isNotEmpty()) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(R.string.details_related))
-                    RelatedShows(
-                        relatedShows,
-                        actioner,
-                        Modifier.fillMaxWidth().preferredHeight(112.dp)
-                    )
-                }
-
-                if (watchStats != null) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(R.string.details_view_stats))
-                    WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
-                }
-
-                if (seasons.isNotEmpty()) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(R.string.show_details_seasons))
-                    Seasons(seasons, expandedSeasonIds, actioner)
-                }
-
-                // Spacer to push up content from under the FloatingActionButton
-                Spacer(Modifier.preferredHeight(56.dp + 16.dp + 16.dp))
             }
         }
+
+        if (watchStats != null) {
+            itemSpacer(8.dp)
+
+            item {
+                Header(stringResource(R.string.details_view_stats))
+            }
+            item {
+                WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
+            }
+        }
+
+        if (seasons.isNotEmpty()) {
+            itemSpacer(8.dp)
+
+            item {
+                Header(stringResource(R.string.show_details_seasons))
+            }
+
+            items(seasons) { season ->
+                SeasonWithEpisodesRow(
+                    season = season.season,
+                    episodes = season.episodes,
+                    expanded = season.season.id in expandedSeasonIds,
+                    actioner = actioner,
+                    modifier = Modifier.fillParentMaxWidth(),
+                )
+            }
+        }
+
+        // Spacer to push up content from under the FloatingActionButton
+        item {
+            val height = LocalScaffoldPadding.current.calculateBottomPadding() + 56.dp + 32.dp
+            Spacer(Modifier.height(height))
+        }
+    }
+}
+
+@Composable
+private fun PosterInfoRow(
+    show: TiviShow,
+    posterImage: TmdbImageEntity?,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier.padding(horizontal = 16.dp)) {
+        Image(
+            painter = rememberCoilPainter(posterImage, fadeIn = true),
+            contentDescription = stringResource(R.string.cd_show_poster, show.title ?: ""),
+            modifier = Modifier
+                .weight(1f)
+                .aspectRatio(2 / 3f)
+                .clip(MaterialTheme.shapes.medium),
+            alignment = Alignment.TopStart,
+        )
+
+        InfoPanels(
+            show = show,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 16.dp)
+        )
+    }
+}
+
+@Composable
+private fun BackdropImage(
+    backdropImage: TmdbImageEntity?,
+    modifier: Modifier = Modifier
+) {
+    Surface(modifier = modifier) {
+        if (backdropImage != null) {
+            Image(
+                painter = rememberCoilPainter(backdropImage, fadeIn = true),
+                contentDescription = stringResource(R.string.cd_show_poster),
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+        }
+        // TODO show a placeholder if null
     }
 }
 
 @Composable
 private fun OverlaidStatusBarAppBar(
-    scrollPosition: Float,
-    backdropHeight: Int,
+    showAppBar: () -> Boolean,
     modifier: Modifier = Modifier,
-    appBar: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     LogCompositions("OverlaidStatusBarAppBar")
 
-    val insets = InsetsAmbient.current
-    val trigger = (backdropHeight - insets.systemBars.top).coerceAtLeast(0)
+    Column(modifier) {
+        val transition = updateOverlaidStatusBarAppBarTransition(showAppBar())
 
-    val alpha = lerp(
-        startValue = 0.5f,
-        endValue = 1f,
-        fraction = if (trigger > 0) (scrollPosition / trigger).coerceIn(0f, 1f) else 0f
-    )
+        Surface(
+            elevation = transition.elevation,
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsHeight()
+                .graphicsLayer {
+                    alpha = transition.alpha
+                    translationY = transition.offset
+                },
+            content = {}
+        )
 
-    Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = alpha),
-        elevation = if (scrollPosition >= trigger) 2.dp else 0.dp,
-        modifier = modifier
-    ) {
-        Column(Modifier.fillMaxWidth()) {
-            Spacer(Modifier.statusBarsHeight())
-            if (scrollPosition >= trigger) {
-                appBar()
-            }
+        if (showAppBar()) {
+            Surface(
+                elevation = transition.elevation,
+                modifier = Modifier.fillMaxWidth(),
+                content = content,
+            )
         }
     }
 }
 
 @Composable
+private fun updateOverlaidStatusBarAppBarTransition(
+    showAppBar: Boolean
+): OverlaidStatusBarAppBarTransition {
+    LogCompositions("updateOverlaidStatusBarAppBarTransition")
+
+    val transition = updateTransition(showAppBar)
+
+    val elevation = transition.animateDp { show -> if (show) 2.dp else 0.dp }
+
+    val alpha = transition.animateFloat(
+        transitionSpec = {
+            when {
+                false isTransitioningTo true -> snap()
+                else -> tween(durationMillis = 300)
+            }
+        }
+    ) { show ->
+        if (show) 1f else 0f
+    }
+
+    val offset = transition.animateFloat(
+        transitionSpec = {
+            when {
+                false isTransitioningTo true -> spring()
+                // This is a bit of a hack. We don't actually want an offset transition
+                // on exit, so we just run a snap AFTER the alpha animation
+                // has finished (with some buffer)
+                else -> snap(delayMillis = 320)
+            }
+        }
+    ) { show ->
+        if (show) 0f else LocalWindowInsets.current.statusBars.top.toFloat()
+    }
+
+    return remember(transition) {
+        OverlaidStatusBarAppBarTransition(elevation, alpha, offset)
+    }
+}
+
+@Stable
+class OverlaidStatusBarAppBarTransition(
+    elevation: State<Dp>,
+    alpha: State<Float>,
+    offset: State<Float>,
+) {
+    val elevation: Dp by elevation
+    val alpha: Float by alpha
+    val offset: Float by offset
+}
+
+@Composable
 private fun NetworkInfoPanel(
     networkName: String,
+    modifier: Modifier = Modifier,
     networkLogoPath: String? = null,
-    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -420,22 +567,28 @@ private fun NetworkInfoPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
         if (networkLogoPath != null) {
             val tmdbImage = remember(networkLogoPath) {
                 ShowTmdbImage(path = networkLogoPath, type = ImageType.LOGO, showId = 0)
             }
 
-            CoilImage(
-                request = ImageRequest.Builder(ContextAmbient.current)
-                    .data(tmdbImage)
-                    .transformations(TrimTransparentEdgesTransformation)
-                    .build(),
-                contentScale = ContentScale.Fit,
+            Image(
+                painter = rememberCoilPainter(
+                    request = tmdbImage,
+                    requestBuilder = {
+                        transformations(TrimTransparentEdgesTransformation)
+                    },
+                ),
+                contentDescription = stringResource(R.string.cd_network_logo),
+                modifier = Modifier.sizeIn(maxWidth = 72.dp, maxHeight = 32.dp),
                 alignment = Alignment.TopStart,
-                colorFilter = if (isSystemInDarkTheme()) ColorFilter.tint(contentColor()) else null,
-                modifier = Modifier.preferredSizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
+                contentScale = ContentScale.Fit,
+                colorFilter = when {
+                    isSystemInDarkTheme() -> ColorFilter.tint(foregroundColor())
+                    else -> null
+                },
             )
         } else {
             Text(
@@ -457,10 +610,31 @@ private fun RuntimeInfoPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
         Text(
             text = stringResource(R.string.minutes_format, runtime),
+            style = MaterialTheme.typography.body2
+        )
+    }
+}
+
+@Composable
+private fun ShowStatusPanel(
+    showStatus: ShowStatus,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
+        Text(
+            text = stringResource(R.string.status_title),
+            style = MaterialTheme.typography.subtitle2
+        )
+
+        Spacer(Modifier.height(4.dp))
+
+        val textCreator = LocalTiviTextCreator.current
+        Text(
+            text = textCreator.showStatusText(showStatus).toString(),
             style = MaterialTheme.typography.body2
         )
     }
@@ -477,11 +651,11 @@ private fun AirsInfoPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
-        val textCreator = ShowDetailsTextCreatorAmbient.current
+        val textCreator = LocalTiviTextCreator.current
         Text(
-            text = textCreator.airsText(show)?.toString() ?: "No air date",
+            text = textCreator.airsText(show).toString(),
             style = MaterialTheme.typography.body2
         )
     }
@@ -498,16 +672,18 @@ private fun CertificateInfoPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
         Text(
             text = certification,
             style = MaterialTheme.typography.body2,
-            modifier = Modifier.border(
-                width = 1.dp,
-                color = MaterialTheme.colors.onSurface,
-                shape = RoundedCornerShape(2.dp)
-            ).padding(horizontal = 4.dp, vertical = 2.dp)
+            modifier = Modifier
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.onSurface,
+                    shape = RoundedCornerShape(2.dp)
+                )
+                .padding(horizontal = 4.dp, vertical = 2.dp)
         )
     }
 }
@@ -524,17 +700,18 @@ private fun TraktRatingInfoPanel(
             style = MaterialTheme.typography.subtitle2
         )
 
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
         Row {
-            VectorImage(
-                vector = Icons.Default.Star,
-                contentScale = ContentScale.Inside,
-                tintColor = MaterialTheme.colors.secondaryVariant,
-                modifier = Modifier.preferredSize(32.dp)
+            Image(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                colorFilter = ColorFilter.tint(MaterialTheme.colors.secondaryVariant),
+                modifier = Modifier.size(32.dp),
             )
 
-            Spacer(Modifier.preferredWidth(4.dp))
+            Spacer(Modifier.width(4.dp))
 
             Column {
                 Text(
@@ -559,23 +736,29 @@ private fun TraktRatingInfoPanel(
 
 @Composable
 private fun Header(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.subtitle1,
-        modifier = Modifier.fillMaxWidth()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-    )
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.subtitle1
+        )
+    }
 }
 
 @Composable
 private fun Genres(genres: List<Genre>) {
-    ProvideEmphasis(EmphasisAmbient.current.high) {
-        val textCreator = ShowDetailsTextCreatorAmbient.current
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        val textCreator = LocalTiviTextCreator.current
         Text(
             textCreator.genreString(genres).toString(),
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+            style = MaterialTheme.typography.body2
         )
     }
 }
@@ -588,37 +771,21 @@ private fun RelatedShows(
 ) {
     LogCompositions("RelatedShows")
 
-    LazyRowFor(
+    Carousel(
         items = related,
-        contentPadding = InnerPadding(start = 14.dp, end = 14.dp),
+        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+        itemSpacing = 4.dp,
         modifier = modifier
-    ) { item ->
-        Card(
+    ) { item, padding ->
+        PosterCard(
+            show = item.show,
+            poster = item.poster,
+            onClick = { actioner(ShowDetailsAction.OpenShowDetails(item.show.id)) },
             modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 2.dp)
+                .padding(padding)
                 .fillParentMaxHeight()
                 .aspectRatio(2 / 3f)
-        ) {
-            Stack(
-                Modifier.clickable { actioner(OpenShowDetails(item.show.id)) }
-            ) {
-                ProvideEmphasis(EmphasisAmbient.current.medium) {
-                    Text(
-                        text = item.show.title ?: "No title",
-                        style = MaterialTheme.typography.caption,
-                        modifier = Modifier.padding(4.dp)
-                            .gravity(Alignment.CenterStart)
-                    )
-                }
-                val poster = item.poster
-                if (poster != null) {
-                    CoilImageWithCrossfade(
-                        poster,
-                        modifier = Modifier.matchParentSize()
-                    )
-                }
-            }
-        }
+        )
     }
 }
 
@@ -629,20 +796,21 @@ private fun NextEpisodeToWatch(
     onClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
-            .preferredHeightIn(minHeight = 48.dp)
-            .wrapContentSize(Alignment.CenterStart)
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 48.dp)
+            .wrapContentHeight()
             .clickable(onClick = onClick)
             .padding(16.dp, 8.dp)
     ) {
-        val textCreator = ShowDetailsTextCreatorAmbient.current
+        val textCreator = LocalTiviTextCreator.current
 
         Text(
             textCreator.seasonEpisodeTitleText(season, episode),
             style = MaterialTheme.typography.caption
         )
 
-        Spacer(modifier = Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
 
         Text(
             episode.title ?: stringResource(R.string.episode_title_fallback, episode.number!!),
@@ -651,30 +819,33 @@ private fun NextEpisodeToWatch(
     }
 }
 
-@OptIn(ExperimentalLayout::class)
 @Composable
-private fun InfoPanels(show: TiviShow) {
+private fun InfoPanels(
+    show: TiviShow,
+    modifier: Modifier = Modifier,
+) {
     FlowRow(
-        mainAxisSize = SizeMode.Expand,
         mainAxisSpacing = 8.dp,
-        crossAxisSpacing = 8.dp
+        crossAxisSpacing = 8.dp,
+        modifier = modifier,
     ) {
-        ProvideEmphasis(EmphasisAmbient.current.high) {
-            if (show.traktRating != null) {
-                TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
-            }
-            if (show.network != null) {
-                NetworkInfoPanel(show.network!!, show.networkLogoPath)
-            }
-            if (show.certification != null) {
-                CertificateInfoPanel(show.certification!!)
-            }
-            if (show.runtime != null) {
-                RuntimeInfoPanel(show.runtime!!)
-            }
-            if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null) {
-                AirsInfoPanel(show)
-            }
+        if (show.traktRating != null) {
+            TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
+        }
+        if (show.network != null) {
+            NetworkInfoPanel(networkName = show.network!!, networkLogoPath = show.networkLogoPath)
+        }
+        if (show.status != null) {
+            ShowStatusPanel(show.status!!)
+        }
+        if (show.certification != null) {
+            CertificateInfoPanel(show.certification!!)
+        }
+        if (show.runtime != null) {
+            RuntimeInfoPanel(show.runtime!!)
+        }
+        if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null) {
+            AirsInfoPanel(show)
         }
     }
 }
@@ -685,41 +856,26 @@ private fun WatchStats(
     episodeCount: Int
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 8.dp)
     ) {
         LinearProgressIndicator(
+            progress = when {
+                episodeCount > 0 -> watchedEpisodeCount / episodeCount.toFloat()
+                else -> 0f
+            },
             modifier = Modifier.fillMaxWidth(),
-            progress = watchedEpisodeCount / episodeCount.toFloat()
         )
 
-        Spacer(modifier = Modifier.preferredHeight(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        val textCreator = ShowDetailsTextCreatorAmbient.current
+        val textCreator = LocalTiviTextCreator.current
 
         // TODO: Do something better with CharSequences containing markup/spans
         Text(
             text = "${textCreator.followedShowEpisodeWatchStatus(watchedEpisodeCount, episodeCount)}",
             style = MaterialTheme.typography.body2
-        )
-    }
-}
-
-@Composable
-private fun Seasons(
-    seasons: List<SeasonWithEpisodesAndWatches>,
-    expandedSeasonIds: Set<Long>,
-    actioner: (ShowDetailsAction) -> Unit
-) {
-    LogCompositions("Seasons")
-
-    seasons.forEach {
-        SeasonWithEpisodesRow(
-            season = it.season,
-            episodes = it.episodes,
-            expanded = it.season.id in expandedSeasonIds,
-            actioner = actioner,
-            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -733,41 +889,50 @@ private fun SeasonWithEpisodesRow(
     actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val elevation by animateDpAsState(if (expanded) 2.dp else 0.dp)
     Surface(
-        elevation = if (expanded) 2.dp else 0.dp,
+        elevation = elevation,
         modifier = modifier
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            if (expanded) Divider()
-
+        Column(Modifier.fillMaxWidth()) {
             SeasonRow(
-                season,
-                episodes.numberAired,
-                episodes.numberWatched,
-                episodes.numberAiredToWatch,
-                episodes.numberToAir,
-                episodes.nextToAir?.firstAired,
-                actioner,
-                modifier = Modifier.fillMaxWidth()
-                    .clickable(
-                        onClick = { actioner(ChangeSeasonExpandedAction(season.id, !expanded)) },
-                        enabled = !season.ignored
-                    )
+                season = season,
+                episodesAired = episodes.numberAired,
+                episodesWatched = episodes.numberWatched,
+                episodesToWatch = episodes.numberAiredToWatch,
+                episodesToAir = episodes.numberToAir,
+                nextToAirDate = episodes.nextToAir?.firstAired,
+                actioner = actioner,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(enabled = !season.ignored) {
+                        actioner(ShowDetailsAction.ChangeSeasonExpandedAction(season.id, !expanded))
+                    }
             )
 
+            // Ideally each EpisodeWithWatchesRow would be in a different item {}, but there
+            // are currently 2 issues for that:
+            // #1: AnimatedVisibility currently crashes in Lazy*: b/170287733
+            // #2: Can't use a Surface across different items: b/170472398
+            // So instead we bundle the items in an inner Column, within a single item.
             episodes.forEach { episodeEntry ->
                 AnimatedVisibility(visible = expanded) {
                     EpisodeWithWatchesRow(
-                        episodeEntry.episode,
-                        episodeEntry.isWatched,
-                        episodeEntry.hasPending,
-                        episodeEntry.onlyPendingDeletes,
-                        modifier = Modifier.fillMaxWidth()
+                        episode = episodeEntry.episode,
+                        isWatched = episodeEntry.isWatched,
+                        hasPending = episodeEntry.hasPending,
+                        onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .clickable {
-                                actioner(OpenEpisodeDetails(episodeEntry.episode.id))
+                                actioner(ShowDetailsAction.OpenEpisodeDetails(episodeEntry.episode.id))
                             }
                     )
                 }
+            }
+
+            AnimatedVisibility(visible = expanded) {
+                Divider()
             }
         }
     }
@@ -776,36 +941,39 @@ private fun SeasonWithEpisodesRow(
 @Composable
 private fun SeasonRow(
     season: Season,
-    episodeAired: Int,
+    episodesAired: Int,
     episodesWatched: Int,
     episodesToWatch: Int,
     episodesToAir: Int,
-    nextToAirDate: OffsetDateTime? = null,
     actioner: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    nextToAirDate: OffsetDateTime? = null,
 ) {
     Row(
-        modifier = modifier.preferredHeightIn(minHeight = 48.dp)
+        modifier = modifier
+            .heightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
     ) {
         Column(
-            modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically)
+            modifier = Modifier
+                .weight(1f)
+                .align(Alignment.CenterVertically)
         ) {
-            val textCreator = ShowDetailsTextCreatorAmbient.current
+            val textCreator = LocalTiviTextCreator.current
 
-            val emphasis = when {
-                season.ignored -> EmphasisAmbient.current.disabled
-                else -> EmphasisAmbient.current.high
+            val contentAlpha = when {
+                season.ignored -> ContentAlpha.disabled
+                else -> ContentAlpha.high
             }
-            ProvideEmphasis(emphasis) {
+            CompositionLocalProvider(LocalContentAlpha provides contentAlpha) {
                 Text(
                     text = season.title
                         ?: stringResource(R.string.season_title_fallback, season.number!!),
                     style = MaterialTheme.typography.body1
                 )
 
-                Spacer(Modifier.preferredHeight(4.dp))
+                Spacer(Modifier.height(4.dp))
 
                 Text(
                     text = textCreator.seasonSummaryText(
@@ -818,32 +986,76 @@ private fun SeasonRow(
                 )
             }
 
-            if (!season.ignored) {
-                Spacer(Modifier.preferredHeight(4.dp))
+            if (!season.ignored && episodesAired > 0) {
+                Spacer(Modifier.height(4.dp))
 
                 LinearProgressIndicator(
-                    episodesWatched / episodeAired.toFloat(),
+                    episodesWatched / episodesAired.toFloat(),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
         }
 
-        var showPopup by rememberMutableState { false }
+        var showMenu by remember { mutableStateOf(false) }
 
-        if (showPopup) {
-            SeasonRowOverflowMenu(
-                season = season,
-                episodesAired = episodeAired,
-                episodesWatched = episodesWatched,
-                episodesToAir = episodesToAir,
-                onDismiss = { showPopup = false },
-                actioner = actioner
-            )
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+            IconButton(onClick = { showMenu = true }) {
+                Icon(
+                    Icons.Default.MoreVert,
+                    stringResource(R.string.cd_open_overflow)
+                )
+            }
         }
 
-        ProvideEmphasis(EmphasisAmbient.current.medium) {
-            IconButton(onClick = { showPopup = true }) {
-                Icon(Icons.Default.MoreVert)
+        DropdownMenu(
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false }
+        ) {
+            if (season.ignored) {
+                DropdownMenuItem(
+                    onClick = { actioner(ShowDetailsAction.ChangeSeasonFollowedAction(season.id, true)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_follow))
+                }
+            } else {
+                DropdownMenuItem(
+                    onClick = { actioner(ShowDetailsAction.ChangeSeasonFollowedAction(season.id, false)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_ignore))
+                }
+            }
+
+            // Season number starts from 1, rather than 0
+            if (season.number ?: -100 >= 2) {
+                DropdownMenuItem(
+                    onClick = { actioner(ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction(season.id)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_ignore_previous))
+                }
+            }
+
+            if (episodesWatched > 0) {
+                DropdownMenuItem(
+                    onClick = { actioner(ShowDetailsAction.MarkSeasonUnwatchedAction(season.id)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_mark_all_unwatched))
+                }
+            }
+
+            if (episodesWatched < episodesAired) {
+                if (episodesToAir == 0) {
+                    DropdownMenuItem(
+                        onClick = { actioner(ShowDetailsAction.MarkSeasonWatchedAction(season.id)) }
+                    ) {
+                        Text(text = stringResource(id = R.string.popup_season_mark_watched_all))
+                    }
+                } else {
+                    DropdownMenuItem(
+                        onClick = { actioner(ShowDetailsAction.MarkSeasonWatchedAction(season.id, onlyAired = true)) }
+                    ) {
+                        Text(text = stringResource(id = R.string.popup_season_mark_watched_aired))
+                    }
+                }
             }
         }
     }
@@ -858,113 +1070,57 @@ private fun EpisodeWithWatchesRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.preferredHeightIn(minHeight = 48.dp)
+        modifier = modifier
+            .heightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            val textCreator = ShowDetailsTextCreatorAmbient.current
+            val textCreator = LocalTiviTextCreator.current
 
-            ProvideEmphasis(EmphasisAmbient.current.high) {
-                Text(
-                    text = textCreator.episodeNumberText(episode).toString(),
-                    style = MaterialTheme.typography.caption
-                )
+            Text(
+                text = textCreator.episodeNumberText(episode).toString(),
+                style = MaterialTheme.typography.caption
+            )
 
-                Spacer(Modifier.preferredHeight(2.dp))
+            Spacer(Modifier.height(2.dp))
 
-                Text(
-                    text = episode.title
-                        ?: stringResource(R.string.episode_title_fallback, episode.number!!),
-                    style = MaterialTheme.typography.body2
-                )
-            }
+            Text(
+                text = episode.title
+                    ?: stringResource(R.string.episode_title_fallback, episode.number!!),
+                style = MaterialTheme.typography.body2
+            )
         }
 
-        ProvideEmphasis(EmphasisAmbient.current.medium) {
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             var needSpacer = false
             if (hasPending) {
-                IconResource(
-                    resourceId = R.drawable.ic_cloud_upload,
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
+                Icon(
+                    painter = painterResource(R.drawable.ic_cloud_upload),
+                    contentDescription = stringResource(R.string.cd_episode_syncing),
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 )
                 needSpacer = true
             }
             if (isWatched) {
-                if (needSpacer) {
-                    Spacer(Modifier.preferredWidth(4.dp))
-                }
-                IconResource(
-                    resourceId = when {
-                        onlyPendingDeletes -> R.drawable.ic_visibility_off
-                        else -> R.drawable.ic_visibility
+                if (needSpacer) Spacer(Modifier.width(4.dp))
+
+                Icon(
+                    painter = painterResource(
+                        when {
+                            onlyPendingDeletes -> R.drawable.ic_visibility_off
+                            else -> R.drawable.ic_visibility
+                        }
+                    ),
+                    contentDescription = when {
+                        onlyPendingDeletes -> stringResource(R.string.cd_episode_deleted)
+                        else -> stringResource(R.string.cd_episode_watched)
                     },
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
         }
     }
-}
-
-@Composable
-private fun SeasonRowOverflowMenu(
-    season: Season,
-    episodesAired: Int,
-    episodesWatched: Int,
-    episodesToAir: Int,
-    onDismiss: () -> Unit,
-    actioner: (ShowDetailsAction) -> Unit
-) {
-    LogCompositions("SeasonRowOverflowMenu")
-
-    val items = ArrayList<PopupMenuItem>()
-
-    items += if (season.ignored) {
-        PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_follow),
-            onClick = { actioner(ChangeSeasonFollowedAction(season.id, true)) }
-        )
-    } else {
-        PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_ignore),
-            onClick = { actioner(ChangeSeasonFollowedAction(season.id, false)) }
-        )
-    }
-
-    // Season number starts from 1, rather than 0
-    if (season.number ?: -100 >= 2) {
-        items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_ignore_previous),
-            onClick = { actioner(UnfollowPreviousSeasonsFollowedAction(season.id)) }
-        )
-    }
-
-    if (episodesWatched > 0) {
-        items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_mark_all_unwatched),
-            onClick = { actioner(MarkSeasonUnwatchedAction(season.id)) }
-        )
-    }
-
-    if (episodesWatched < episodesAired) {
-        items += if (episodesToAir == 0) {
-            PopupMenuItem(
-                title = stringResource(id = R.string.popup_season_mark_watched_all),
-                onClick = { actioner(MarkSeasonWatchedAction(season.id)) }
-            )
-        } else {
-            PopupMenuItem(
-                title = stringResource(id = R.string.popup_season_mark_watched_aired),
-                onClick = { actioner(MarkSeasonWatchedAction(season.id, onlyAired = true)) }
-            )
-        }
-    }
-
-    PopupMenu(
-        items = items,
-        onDismiss = onDismiss,
-        alignment = Alignment.CenterEnd
-    )
 }
 
 @Composable
@@ -981,20 +1137,27 @@ private fun ShowDetailsAppBar(
     TopAppBar(
         title = { Text(text = title) },
         navigationIcon = {
-            IconButton(onClick = { actioner(NavigateUp) }) {
-                Icon(Icons.Default.ArrowBack)
+            IconButton(onClick = { actioner(ShowDetailsAction.NavigateUp) }) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = stringResource(R.string.cd_navigate_up)
+                )
             }
         },
         actions = {
             if (isRefreshing) {
                 AutoSizedCircularProgressIndicator(
-                    modifier = Modifier.aspectRatio(1f)
+                    modifier = Modifier
+                        .aspectRatio(1f)
                         .fillMaxHeight()
                         .padding(14.dp)
                 )
             } else {
-                IconButton(onClick = { actioner(RefreshAction) }) {
-                    Icon(Icons.Default.Refresh)
+                IconButton(onClick = { actioner(ShowDetailsAction.RefreshAction) }) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = stringResource(R.string.cd_refresh)
+                    )
                 }
             }
         },
@@ -1008,8 +1171,8 @@ private fun ShowDetailsAppBar(
 private fun ToggleShowFollowFloatingActionButton(
     isFollowed: Boolean,
     onClick: () -> Unit,
-    expanded: Boolean = true,
-    modifier: Modifier = Modifier
+    expanded: () -> Boolean,
+    modifier: Modifier = Modifier,
 ) {
     LogCompositions("ToggleShowFollowFloatingActionButton")
 
@@ -1017,9 +1180,13 @@ private fun ToggleShowFollowFloatingActionButton(
         onClick = onClick,
         icon = {
             Icon(
-                when {
+                imageVector = when {
                     isFollowed -> Icons.Default.FavoriteBorder
                     else -> Icons.Default.Favorite
+                },
+                contentDescription = when {
+                    isFollowed -> stringResource(R.string.cd_follow_show_remove)
+                    else -> stringResource(R.string.cd_follow_show_add)
                 }
             )
         },
@@ -1035,25 +1202,12 @@ private fun ToggleShowFollowFloatingActionButton(
             isFollowed -> MaterialTheme.colors.surface
             else -> MaterialTheme.colors.primary
         },
-        expanded = expanded,
+        expanded = expanded(),
         modifier = modifier
     )
 }
 
 private val previewShow = TiviShow(title = "Detective Penny")
-
-@Preview
-@Composable
-private fun PreviewSeasonRow() {
-    SeasonRowOverflowMenu(
-        season = Season(showId = 0, number = 1, ignored = false),
-        episodesAired = 10,
-        episodesToAir = 2,
-        episodesWatched = 3,
-        onDismiss = {},
-        actioner = {}
-    )
-}
 
 @Preview
 @Composable

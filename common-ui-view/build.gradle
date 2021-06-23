@@ -15,17 +15,9 @@
  *
  */
 
-import app.tivi.buildsrc.Libs
-
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-kapt'
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
 
 android {
     compileSdkVersion buildConfig.compileSdk
@@ -45,21 +37,12 @@ dependencies {
     implementation project(':base-android')
     api project(':common-ui-resources')
 
-    api Libs.AndroidX.Lifecycle.livedata
-    implementation Libs.AndroidX.Lifecycle.viewmodel
+    implementation libs.androidx.lifecycle.viewmodel.ktx
 
-    implementation Libs.Coroutines.core
+    implementation libs.kotlin.coroutines.core
 
-    api Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.recyclerview
-    implementation Libs.AndroidX.constraintlayout
-    implementation Libs.AndroidX.coreKtx
-    implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
-    implementation Libs.AndroidX.Navigation.ui
+    implementation libs.androidx.core
+    implementation libs.androidx.emoji
 
-    implementation Libs.Hilt.library
-
-    api Libs.Mdc.material
+    implementation libs.hilt.library
 }

@@ -15,8 +15,6 @@
  *
  */
 
-import app.tivi.buildsrc.Libs
-
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
@@ -38,28 +36,34 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion Libs.Kotlin.version
-        kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
 }
 
 dependencies {
     implementation project(':base-android')
+    implementation project(':data')
     api project(':common-imageloading')
 
-    implementation Libs.AndroidX.coreKtx
-    implementation Libs.AndroidX.Lifecycle.livedata
+    // TODO: Remove this dependency
+    api project(':common-ui-view')
 
-    implementation Libs.AndroidX.Compose.runtime
-    implementation Libs.AndroidX.Compose.foundation
-    implementation Libs.AndroidX.Compose.ui
-    implementation Libs.AndroidX.Compose.layout
-    implementation Libs.AndroidX.Compose.material
-    implementation Libs.AndroidX.Compose.animation
-    implementation Libs.AndroidX.Compose.tooling
-    implementation Libs.AndroidX.Compose.livedata
+    implementation libs.androidx.core
 
-    implementation Libs.Mdc.material
+    api libs.androidx.lifecycle.runtime
 
-    implementation Libs.Kotlin.stdlib
+    implementation libs.compose.ui.ui
+    implementation libs.compose.foundation.foundation
+    implementation libs.compose.foundation.layout
+    implementation libs.compose.material.material
+    implementation libs.compose.animation.animation
+    implementation libs.compose.ui.tooling
+
+    implementation libs.androidx.paging.compose
+
+    implementation libs.kotlin.stdlib
+
+    implementation libs.accompanist.coil
+    implementation libs.accompanist.insets
+    implementation libs.accompanist.swiperefresh
 }

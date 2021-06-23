@@ -16,6 +16,7 @@
 
 package app.tivi.home.discover
 
+import androidx.compose.runtime.Immutable
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
@@ -23,7 +24,8 @@ import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.trakt.TraktAuthState
 
-data class DiscoverViewState(
+@Immutable
+internal data class DiscoverViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
     val trendingItems: List<TrendingEntryWithShow> = emptyList(),
@@ -33,4 +35,11 @@ data class DiscoverViewState(
     val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
     val recommendedRefreshing: Boolean = false,
     val nextEpisodeWithShowToWatched: EpisodeWithSeasonWithShow? = null
-)
+) {
+    val refreshing
+        get() = trendingRefreshing || popularRefreshing || recommendedRefreshing
+
+    companion object {
+        val Empty = DiscoverViewState()
+    }
+}

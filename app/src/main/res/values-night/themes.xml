@@ -16,15 +16,17 @@
   -->
 
 <resources>
+    <style name="Platform.Theme.Tivi" parent="android:Theme.Material" />
+
     <style name="Theme.Tivi" parent="Base.Theme.Tivi">
-        <item name="colorSurface">@color/tivi_slate_200_10pc_over_surface</item>
-        <item name="colorOnSurface">#FFFFFF</item>
+<!--        <item name="colorSurface">@color/tivi_slate_200_10pc_over_surface</item>-->
+<!--        <item name="colorOnSurface">#FFFFFF</item>-->
 
-        <item name="colorPrimary">@color/tivi_slate_200</item>
-        <item name="colorOnPrimary">#000000</item>
+<!--        <item name="colorPrimary">@color/tivi_slate_200</item>-->
+<!--        <item name="colorOnPrimary">#000000</item>-->
 
-        <item name="colorSecondary">@color/tivi_mtrl_orange_500</item>
-        <item name="colorSecondaryVariant">@color/tivi_mtrl_orange_700</item>
-        <item name="colorOnSecondary">#000000</item>
+<!--        <item name="colorSecondary">@color/tivi_mtrl_orange_500</item>-->
+<!--        <item name="colorSecondaryVariant">@color/tivi_mtrl_orange_700</item>-->
+<!--        <item name="colorOnSecondary">#000000</item>-->
     </style>
 </resources>

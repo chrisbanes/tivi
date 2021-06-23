@@ -18,50 +18,50 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.fetch
-import app.tivi.data.fetchCollection
-import app.tivi.data.repositories.popularshows.PopularShowsLastRequestStore
 import app.tivi.data.repositories.popularshows.PopularShowsStore
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdatePopularShows.Params
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.plus
+import app.tivi.util.Logger
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Period
 import javax.inject.Inject
 
 class UpdatePopularShows @Inject constructor(
     private val popularShowStore: PopularShowsStore,
     private val popularDao: PopularDao,
-    private val lastRequestStore: PopularShowsLastRequestStore,
-    private val showsStore: ShowStore,
+    private val showStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
+    private val logger: Logger,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
-            val lastPage = popularDao.getLastPage()
             val page = when {
-                lastPage != null && params.page == Page.NEXT_PAGE -> lastPage + 1
+                params.page >= 0 -> params.page
+                params.page == UpdateTrendingShows.Page.NEXT_PAGE -> {
+                    val lastPage = popularDao.getLastPage()
+                    if (lastPage != null) lastPage + 1 else 0
+                }
                 else -> 0
             }
 
-            popularShowStore.fetchCollection(page, forceFresh = params.forceRefresh) {
-                // Refresh if our local data is over 7 days old
-                page == 0 && lastRequestStore.isRequestExpired(Period.ofDays(7))
-            }.asFlow().collect {
-                showsStore.fetch(it.showId)
-                showImagesStore.fetchCollection(it.showId)
+            popularShowStore.fetch(page, forceFresh = params.forceRefresh).forEach {
+                showStore.fetch(it.showId)
+                try {
+                    showImagesStore.fetch(it.showId)
+                } catch (t: Throwable) {
+                    logger.e("Error while fetching images for show: ${it.showId}", t)
+                }
             }
         }
     }
 
-    data class Params(val page: Page, val forceRefresh: Boolean)
+    data class Params(val page: Int, val forceRefresh: Boolean = false)
 
-    enum class Page {
-        NEXT_PAGE, REFRESH
+    object Page {
+        const val NEXT_PAGE = -1
+        const val REFRESH = -2
     }
 }

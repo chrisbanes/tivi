@@ -15,8 +15,8 @@
  *
  */
 
-import app.tivi.buildsrc.Libs
-import app.tivi.buildsrc.Versions
+import app.tivi.buildsrc.DependencyUpdates
+import app.tivi.buildsrc.ReleaseType
 
 buildscript {
     ext.buildConfig = [
@@ -28,64 +28,57 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
 
+        // Used for Accompanist snapshots
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
     dependencies {
-        classpath Libs.androidGradlePlugin
+        classpath libs.android.gradlePlugin
+        classpath libs.kotlin.gradlePlugin
 
-        classpath Libs.Kotlin.gradlePlugin
-        classpath Libs.Kotlin.extensions
+        classpath libs.kotlin.extensions
 
-        classpath Libs.gradlePlayPublisher
+        classpath libs.google.gmsGoogleServices
+        classpath libs.google.crashlyticsGradle
 
-        classpath Libs.Google.gmsGoogleServices
-        classpath Libs.Google.crashlyticsGradle
-        classpath Libs.Google.openSourceLicensesPlugin
-
-        classpath Libs.AndroidX.Navigation.safeArgs
-
-        classpath Libs.Hilt.gradlePlugin
+        classpath libs.hilt.gradlePlugin
     }
 }
 
 plugins {
-    id 'com.diffplug.spotless' version '5.4.0'
-    id 'com.github.ben-manes.versions' version '0.28.0'
+    id 'com.diffplug.spotless' version '5.14.0'
+    id 'com.github.ben-manes.versions' version '0.39.0'
 }
 
 allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter()
 
         // Jetpack Compose SNAPSHOTs
-        if (Libs.AndroidX.Compose.version.endsWith("SNAPSHOT")) {
-            maven { url Libs.AndroidX.Compose.snapshotUrl }
+        def composeSnapshot = libs.versions.composesnapshot.get()
+        if (composeSnapshot.length() > 1) {
+            maven { url "https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/" }
         }
 
-        // Used for Accompanist and Gradle Play Publisher snapshots
+        // Used for Accompanist snapshots
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-
-        // Used for Roomigrant
-        maven { url 'https://jitpack.io' }
     }
 }
 
 subprojects {
     configurations.configureEach {
-        resolutionStrategy {
-            eachDependency { DependencyResolveDetails details ->
-                if (details.requested.group == 'org.jetbrains.kotlin') {
-                    // kotlin-stdlib-jre7 no longer exists in 1.4, so we force the
-                    // kotlin-stdlib module instead
-                    if (details.requested.module.name == 'kotlin-stdlib-jre7') {
-                        details.useTarget Libs.Kotlin.stdlib
-                    }
-                }
+        // We forcefully exclude AppCompat + MDC from any transitive dependencies.
+        // This is a Compose app, so there's no need for these.
+        exclude group: 'androidx.appcompat'
+        exclude group: 'com.google.android.material', module: 'material'
+
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.jetbrains.kotlinx'
+                && details.requested.module.name == 'kotlinx-collections-immutable-jvm') {
+                // kotlinx-collections-immutable-jvm 0.3.4+ is available on Maven Central
+                details.useVersion '0.3.4'
             }
         }
     }
@@ -97,7 +90,7 @@ subprojects {
             targetExclude("$buildDir/**/*.kt")
             targetExclude('bin/**/*.kt')
 
-            ktlint(Versions.ktlint)
+            ktlint(libs.versions.ktlint.get())
             licenseHeaderFile rootProject.file('spotless/copyright.kt')
         }
     }
@@ -112,13 +105,25 @@ subprojects {
             freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.FlowPreview"
             freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
 
-            freeCompilerArgs += "-Xallow-jvm-ir-dependencies"
-
-            freeCompilerArgs += "-Xjvm-default=all"
-
             // Set JVM target to 1.8
             jvmTarget = "1.8"
         }
+    }
+}
+
+/**
+ * Update dependencyUpdates task to reject versions which are more 'unstable' than our
+ * current version.
+ */
+tasks.named("dependencyUpdates").configure {
+    rejectVersionIf {
+        def current = DependencyUpdates.versionToRelease(it.currentVersion)
+        // If we're using a SNAPSHOT, ignore since we must be doing so for a reason.
+        if (current == ReleaseType.SNAPSHOT) return true
+
+        // Otherwise we reject if the candidate is more 'unstable' than our version
+        def candidate = DependencyUpdates.versionToRelease(it.candidate.version)
+        return candidate.isLessStableThan(current)
     }
 }
 

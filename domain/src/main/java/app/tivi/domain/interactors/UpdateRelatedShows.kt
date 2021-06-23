@@ -17,36 +17,30 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.fetch
-import app.tivi.data.fetchCollection
-import app.tivi.data.repositories.relatedshows.RelatedShowsLastRequestStore
 import app.tivi.data.repositories.relatedshows.RelatedShowsStore
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.plus
+import app.tivi.util.Logger
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Period
 import javax.inject.Inject
 
 class UpdateRelatedShows @Inject constructor(
     private val relatedShowsStore: RelatedShowsStore,
-    private val lastRequestStore: RelatedShowsLastRequestStore,
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
+    private val logger: Logger,
 ) : Interactor<Params>() {
-    override suspend fun doWork(params: Params) {
-        withContext(dispatchers.io) {
-            relatedShowsStore.fetchCollection(params.showId, params.forceLoad) {
-                // Refresh if our local data is over 28 days old
-                lastRequestStore.isRequestExpired(params.showId, Period.ofDays(28))
-            }.asFlow().collect {
-                showsStore.fetch(it.otherShowId)
-                showImagesStore.fetchCollection(it.otherShowId)
+    override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
+        relatedShowsStore.fetch(params.showId, params.forceLoad).forEach {
+            showsStore.fetch(it.otherShowId)
+            try {
+                showImagesStore.fetch(it.otherShowId)
+            } catch (t: Throwable) {
+                logger.e("Error while fetching images for show: ${it.showId}", t)
             }
         }
     }

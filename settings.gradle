@@ -31,11 +31,7 @@ include ':base-android'
 include ':common-ui-view'
 include ':common-ui-resources'
 include ':common-ui-compose'
-include ':common-layouts'
-include ':common-epoxy'
 include ':common-imageloading'
-include ':common-databinding'
-include ':common-entrygrid'
 include ':data'
 include ':data-android'
 include ':trakt'
@@ -55,3 +51,7 @@ include ':ui-search'
 include ':ui-settings'
 include ':ui-account'
 include ':app'
+
+// Enable Gradle's version catalog support
+// https://docs.gradle.org/current/userguide/platforms.html
+enableFeaturePreview("VERSION_CATALOGS")

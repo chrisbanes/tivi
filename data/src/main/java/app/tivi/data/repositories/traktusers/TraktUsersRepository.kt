@@ -17,7 +17,6 @@
 package app.tivi.data.repositories.traktusers
 
 import app.tivi.data.entities.Success
-import app.tivi.extensions.asyncOrAwait
 import org.threeten.bp.Instant
 import org.threeten.bp.Period
 import javax.inject.Inject
@@ -32,22 +31,20 @@ class TraktUsersRepository @Inject constructor(
     fun observeUser(username: String) = traktUsersStore.observeUser(username)
 
     suspend fun updateUser(username: String) {
-        asyncOrAwait("update_user_$username") {
-            when (val response = traktDataSource.getUser(username)) {
-                is Success -> {
-                    var user = response.data
-                    // Tag the user as 'me' if that's what we're requesting
-                    if (username == "me") {
-                        user = user.copy(isMe = true)
-                    }
-                    // Make sure we use the current DB id (if present)
-                    val localUser = traktUsersStore.getUser(user.username)
-                    if (localUser != null) {
-                        user = user.copy(id = localUser.id)
-                    }
-                    val id = traktUsersStore.save(user)
-                    lastRequestStore.updateLastRequest(id, Instant.now())
+        when (val response = traktDataSource.getUser(username)) {
+            is Success -> {
+                var user = response.data
+                // Tag the user as 'me' if that's what we're requesting
+                if (username == "me") {
+                    user = user.copy(isMe = true)
                 }
+                // Make sure we use the current DB id (if present)
+                val localUser = traktUsersStore.getUser(user.username)
+                if (localUser != null) {
+                    user = user.copy(id = localUser.id)
+                }
+                val id = traktUsersStore.save(user)
+                lastRequestStore.updateLastRequest(id, Instant.now())
             }
         }
     }

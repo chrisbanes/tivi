@@ -16,120 +16,157 @@
 
 package app.tivi.account
 
-import android.view.ViewGroup
-import androidx.compose.foundation.Text
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.foundation.layout.preferredSizeIn
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
-import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
-import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.VectorAsset
-import androidx.compose.ui.platform.setContent
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
-import androidx.ui.tooling.preview.Preview
-import app.tivi.common.compose.ProvideDisplayInsets
-import app.tivi.common.compose.TiviDateFormatterAmbient
-import app.tivi.common.compose.VectorImage
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import app.tivi.common.compose.foregroundColor
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import app.tivi.util.TiviDateFormatter
-import com.google.android.material.composethemeadapter.MdcTheme
-import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import com.google.accompanist.coil.rememberCoilPainter
+import com.google.accompanist.flowlayout.FlowMainAxisAlignment
+import com.google.accompanist.flowlayout.FlowRow
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
-fun composeAccountUi(
-    viewGroup: ViewGroup,
-    state: LiveData<AccountUiViewState>,
-    actioner: (AccountUiAction) -> Unit,
-    tiviDateFormatter: TiviDateFormatter
-): Any = viewGroup.setContent(Recomposer.current()) {
-    MdcTheme {
-        Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
-            ProvideDisplayInsets {
-                val viewState by state.observeAsState()
-                if (viewState != null) {
-                    AccountUi(viewState!!, actioner)
-                }
-            }
+@Composable
+fun AccountUi(
+    navController: NavController,
+    onOpenSettings: () -> Unit,
+) {
+    AccountUi(
+        navController = navController,
+        viewModel = hiltViewModel(),
+        onOpenSettings = onOpenSettings,
+    )
+}
+
+@Composable
+internal fun AccountUi(
+    navController: NavController,
+    viewModel: AccountUiViewModel,
+    onOpenSettings: () -> Unit,
+) {
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = AccountUiViewState.Empty)
+
+    val loginLauncher = rememberLauncherForActivityResult(
+        viewModel.buildLoginActivityResult()
+    ) { result ->
+        if (result != null) {
+            viewModel.onLoginResult(result)
+        }
+    }
+
+    AccountUi(viewState) { action ->
+        when (action) {
+            is AccountUiAction.Close -> navController.popBackStack()
+            is AccountUiAction.OpenSettings -> onOpenSettings()
+            is AccountUiAction.Login -> loginLauncher.launch(Unit)
+            is AccountUiAction.Logout -> viewModel.logout()
         }
     }
 }
 
 @Composable
-fun AccountUi(
+internal fun AccountUi(
     viewState: AccountUiViewState,
     actioner: (AccountUiAction) -> Unit
 ) {
-    Surface {
+    Surface(
+        shape = MaterialTheme.shapes.medium,
+        elevation = 2.dp,
+    ) {
         Column {
-            Spacer(modifier = Modifier.preferredHeight(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             if (viewState.user != null) {
                 UserRow(
                     user = viewState.user,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
-                Spacer(modifier = Modifier.preferredHeight(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Row(
-                modifier = Modifier.gravity(Alignment.End)
+            FlowRow(
+                mainAxisAlignment = FlowMainAxisAlignment.End,
+                mainAxisSpacing = 8.dp,
+                crossAxisSpacing = 4.dp,
+                modifier = Modifier
                     .padding(horizontal = 16.dp)
+                    .wrapContentSize(Alignment.CenterEnd)
+                    .align(Alignment.End)
             ) {
                 if (viewState.authState == TraktAuthState.LOGGED_OUT) {
-                    OutlinedButton(onClick = { actioner(Login) }) {
+                    OutlinedButton(onClick = { actioner(AccountUiAction.Login) }) {
                         Text(text = stringResource(R.string.login))
                     }
                 } else {
-                    TextButton(onClick = { actioner(Login) }) {
+                    TextButton(onClick = { actioner(AccountUiAction.Login) }) {
                         Text(text = stringResource(R.string.refresh_credentials))
                     }
+                }
 
-                    Spacer(modifier = Modifier.preferredWidth(8.dp))
-
-                    OutlinedButton(onClick = { actioner(Logout) }) {
-                        Text(text = stringResource(R.string.logout))
-                    }
+                OutlinedButton(onClick = { actioner(AccountUiAction.Logout) }) {
+                    Text(text = stringResource(R.string.logout))
                 }
             }
 
-            Spacer(modifier = Modifier.preferredHeight(16.dp).fillMaxWidth())
+            Spacer(
+                modifier = Modifier
+                    .height(16.dp)
+                    .fillMaxWidth()
+            )
 
             Divider()
 
             AppAction(
-                label = stringResource(id = R.string.settings_title),
+                label = stringResource(R.string.settings_title),
                 icon = Icons.Default.Settings,
-                onClick = { actioner(OpenSettings) }
+                contentDescription = stringResource(R.string.settings_title),
+                onClick = { actioner(AccountUiAction.OpenSettings) }
             )
 
-            Spacer(modifier = Modifier.preferredHeight(8.dp).fillMaxWidth())
+            Spacer(
+                modifier = Modifier
+                    .height(8.dp)
+                    .fillMaxWidth()
+            )
         }
     }
 }
@@ -140,29 +177,29 @@ private fun UserRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        verticalGravity = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth()
     ) {
         val avatarUrl = user.avatarUrl
         if (avatarUrl != null) {
-            CoilImageWithCrossfade(
-                data = avatarUrl,
-                modifier = Modifier.preferredSize(40.dp)
-                    .clip(RoundedCornerShape(50))
+            Image(
+                painter = rememberCoilPainter(avatarUrl, fadeIn = true),
+                contentDescription = stringResource(R.string.cd_profile_pic, user.name),
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(50)),
             )
         }
 
-        Spacer(modifier = Modifier.preferredWidth(8.dp))
+        Spacer(modifier = Modifier.width(8.dp))
 
         Column {
-            ProvideEmphasis(EmphasisAmbient.current.high) {
-                Text(
-                    text = user.name,
-                    style = MaterialTheme.typography.subtitle2
-                )
-            }
+            Text(
+                text = user.name,
+                style = MaterialTheme.typography.subtitle2
+            )
 
-            ProvideEmphasis(EmphasisAmbient.current.medium) {
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Text(
                     text = user.username,
                     style = MaterialTheme.typography.caption
@@ -175,31 +212,33 @@ private fun UserRow(
 @Composable
 private fun AppAction(
     label: String,
-    icon: VectorAsset,
+    icon: ImageVector,
+    contentDescription: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
-        verticalGravity = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth()
-            .preferredSizeIn(minHeight = 48.dp)
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .sizeIn(minHeight = 48.dp)
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        ProvideEmphasis(EmphasisAmbient.current.high) {
-            Spacer(modifier = Modifier.preferredWidth(8.dp))
+        Spacer(modifier = Modifier.width(8.dp))
 
-            VectorImage(vector = icon)
+        Image(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            colorFilter = ColorFilter.tint(foregroundColor())
+        )
 
-            Spacer(modifier = Modifier.preferredWidth(16.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
-            ProvideEmphasis(EmphasisAmbient.current.high) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.body2
-                )
-            }
-        }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.body2
+        )
     }
 }
 

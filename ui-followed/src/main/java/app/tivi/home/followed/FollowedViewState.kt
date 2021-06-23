@@ -20,15 +20,18 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 
-data class FollowedViewState(
+internal data class FollowedViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
     val isLoading: Boolean = false,
-    val isEmpty: Boolean = false,
     val selectionOpen: Boolean = false,
     val selectedShowIds: Set<Long> = emptySet(),
     val filterActive: Boolean = false,
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
     val sort: SortOption = SortOption.SUPER_SORT
-)
+) {
+    companion object {
+        val Empty = FollowedViewState()
+    }
+}

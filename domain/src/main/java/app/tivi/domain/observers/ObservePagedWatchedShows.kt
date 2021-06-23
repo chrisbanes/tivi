@@ -16,8 +16,9 @@
 
 package app.tivi.domain.observers
 
-import androidx.paging.PagedList
-import app.tivi.data.FlowPagedListBuilder
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -29,18 +30,15 @@ class ObservePagedWatchedShows @Inject constructor(
     private val watchedShowDao: WatchedShowDao
 ) : PagingInteractor<ObservePagedWatchedShows.Params, WatchedShowEntryWithShow>() {
 
-    override fun createObservable(params: Params): Flow<PagedList<WatchedShowEntryWithShow>> {
-        return FlowPagedListBuilder(
-            watchedShowDao.observePagedList(params.filter, params.sort),
-            params.pagingConfig,
-            boundaryCallback = params.boundaryCallback
-        ).buildFlow()
-    }
+    override fun createObservable(
+        params: Params
+    ): Flow<PagingData<WatchedShowEntryWithShow>> = Pager(config = params.pagingConfig) {
+        watchedShowDao.observePagedList(params.filter, params.sort)
+    }.flow
 
     data class Params(
         val filter: String? = null,
         val sort: SortOption,
-        override val pagingConfig: PagedList.Config,
-        override val boundaryCallback: PagedList.BoundaryCallback<WatchedShowEntryWithShow>?
+        override val pagingConfig: PagingConfig,
     ) : Parameters<WatchedShowEntryWithShow>
 }

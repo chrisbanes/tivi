@@ -23,15 +23,14 @@ jobs:
     steps:
       - name: Generate build number
         shell: bash
-        run: |
-          echo "::set-env name=BUILD_NUMBER::$(expr $GITHUB_RUN_NUMBER + 5200)"
+        run: echo "BUILD_NUMBER=$(expr $GITHUB_RUN_NUMBER + 5210)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
 
       - name: set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 8
+          java-version: 11
 
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
@@ -44,18 +43,34 @@ jobs:
       - name: Copy CI gradle.properties
         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         continue-on-error: true # continue if the cache restore/upload fails
         with:
-          path: ~/.gradle/caches
+          path: |
+            ~/.gradle/caches/modules-*
+            ~/.gradle/caches/jars-*
+            ~/.gradle/caches/build-cache-*
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
       - name: Build and check
-        run: ./gradlew spotlessCheck assembleDebug assembleRelease bundleRelease app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
+        # Move back to `testDebug` once we move to AGP 7.0.0-beta04
+        # https://issuetracker.google.com/issues/189559355
+        run: |
+          ./gradlew -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace \
+               spotlessCheck \
+               assemble bundle \
+               app:lintDebug \
+               data-android:testDebug
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/main'
-        run: ./gradlew publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: release/play-account.json
+          packageName: app.tivi
+          track: internal
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          mappingFile: app/build/outputs/mapping/release/mapping.txt
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1

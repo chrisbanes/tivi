@@ -41,11 +41,15 @@ class TraktShowDataSource @Inject constructor(
         if (traktId == null && show.tmdbId != null) {
             // We need to fetch the search for the trakt id
             val response = searchService.get().idLookup(
-                IdType.TMDB, show.tmdbId.toString(),
-                Type.SHOW, Extended.NOSEASONS, 1, 1
+                IdType.TMDB,
+                show.tmdbId.toString(),
+                Type.SHOW,
+                Extended.NOSEASONS,
+                1,
+                1
             )
                 .execute()
-                .toResult { it[0].show?.ids?.trakt }
+                .toResult { it.getOrNull(0)?.show?.ids?.trakt }
             if (response is Success) {
                 traktId = response.get()
             } else if (response is ErrorResult) {

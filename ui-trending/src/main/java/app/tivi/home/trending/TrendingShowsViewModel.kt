@@ -16,33 +16,31 @@
 
 package app.tivi.home.trending
 
-import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.ViewModel
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.domain.interactors.ChangeShowFollowStatus
-import app.tivi.domain.interactors.UpdateTrendingShows
-import app.tivi.domain.interactors.UpdateTrendingShows.Page.NEXT_PAGE
-import app.tivi.domain.interactors.UpdateTrendingShows.Page.REFRESH
 import app.tivi.domain.observers.ObservePagedTrendingShows
-import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.EntryViewModel
-import app.tivi.util.Logger
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class TrendingShowsViewModel @ViewModelInject constructor(
-    override val dispatchers: AppCoroutineDispatchers,
-    override val pagingInteractor: ObservePagedTrendingShows,
-    private val interactor: UpdateTrendingShows,
-    override val logger: Logger,
-    override val changeShowFollowStatus: ChangeShowFollowStatus
-) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>() {
+@HiltViewModel
+internal class TrendingShowsViewModel @Inject constructor(
+    private val pagingInteractor: ObservePagedTrendingShows,
+) : ViewModel() {
+
+    val pagedList: Flow<PagingData<TrendingEntryWithShow>>
+        get() = pagingInteractor.observe()
+
     init {
-        pagingInteractor(ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))
-
-        launchObserves()
-
-        refresh(false)
+        pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
     }
 
-    override fun callLoadMore() = interactor(UpdateTrendingShows.Params(NEXT_PAGE, true))
-
-    override fun callRefresh(fromUser: Boolean) = interactor(UpdateTrendingShows.Params(REFRESH, fromUser))
+    companion object {
+        val PAGING_CONFIG = PagingConfig(
+            pageSize = 60,
+            initialLoadSize = 60
+        )
+    }
 }

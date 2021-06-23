@@ -16,8 +16,7 @@
   ~
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/settings_ui_category_title">
 
@@ -26,21 +25,13 @@
             android:entries="@array/prefs_theme_titles"
             android:entryValues="@array/prefs_theme_values"
             android:key="pref_theme"
-            android:title="@string/settings_theme_title"
-            app:useSimpleSummaryProvider="true" />
+            android:title="@string/settings_theme_title" />
 
-        <SwitchPreferenceCompat
+        <SwitchPreference
             android:key="pref_data_saver"
             android:defaultValue="false"
             android:title="@string/settings_data_saver_title"
             android:summaryOn="@string/settings_data_saver_summary_on" />
-
-        <Preference
-            android:key="pref_data_saver_disabled"
-            android:title="@string/settings_data_saver_title"
-            android:summary="@string/settings_data_saver_summary_system"
-            app:isPreferenceVisible="false"
-            android:enabled="false"/>
 
     </PreferenceCategory>
 
@@ -51,11 +42,6 @@
         <Preference
             android:key="privacy_policy"
             android:title="@string/view_privacy_policy" />
-
-        <Preference
-            android:key="open_source"
-            android:title="@string/settings_open_source"
-            android:summary="@string/settings_open_source_summary"/>
 
         <Preference
             android:key="version"

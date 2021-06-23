@@ -16,9 +16,9 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.foundation.Text
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 

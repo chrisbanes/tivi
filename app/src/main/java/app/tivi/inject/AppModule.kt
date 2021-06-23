@@ -18,10 +18,8 @@ package app.tivi.inject
 
 import android.app.Application
 import android.content.Context
-import androidx.navigation.ui.AppBarConfiguration
 import app.tivi.BuildConfig
 import app.tivi.extensions.withLocale
-import app.tivi.home.followed.R
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktModule
 import app.tivi.util.AppCoroutineDispatchers
@@ -29,8 +27,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
@@ -38,7 +36,7 @@ import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module(
     includes = [
         TraktModule::class,
@@ -112,15 +110,6 @@ object AppModule {
     ): DateTimeFormatter {
         return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(context)
     }
-
-    @Provides
-    @Singleton
-    fun provideAppBarConfiguration() = AppBarConfiguration.Builder(
-        R.id.navigation_followed,
-        R.id.navigation_watched,
-        R.id.navigation_discover,
-        R.id.navigation_search
-    ).build()
 
     @Provides
     @Singleton

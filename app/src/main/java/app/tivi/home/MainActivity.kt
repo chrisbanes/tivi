@@ -18,101 +18,53 @@ package app.tivi.home
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.navigation.NavController
-import app.tivi.AppNavigator
-import app.tivi.R
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.core.view.WindowCompat
+import androidx.lifecycle.ViewModelProvider
 import app.tivi.TiviActivity
-import app.tivi.databinding.ActivityMainBinding
-import app.tivi.extensions.hideSoftInput
-import app.tivi.extensions.setupWithNavController
-import app.tivi.trakt.TraktConstants
+import app.tivi.common.compose.LocalTiviDateFormatter
+import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.shouldUseDarkColors
+import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.settings.SettingsActivity
+import app.tivi.settings.TiviPreferences
+import app.tivi.util.TiviDateFormatter
+import app.tivi.util.TiviTextCreator
+import com.google.accompanist.insets.ProvideWindowInsets
 import dagger.hilt.android.AndroidEntryPoint
-import dev.chrisbanes.insetter.Insetter
-import dev.chrisbanes.insetter.Side
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : TiviActivity() {
-    private val viewModel: HomeActivityViewModel by viewModels()
+    private lateinit var viewModel: MainActivityViewModel
 
-    private lateinit var binding: ActivityMainBinding
-
-    var currentNavController: NavController? = null
-        private set
-
-    @Inject lateinit var navigator: AppNavigator
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+    @Inject internal lateinit var textCreator: TiviTextCreator
+    @Inject internal lateinit var preferences: TiviPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        Insetter.builder()
-            .applySystemWindowInsetsToPadding(Side.LEFT or Side.RIGHT)
-            .consumeSystemWindowInsets(Insetter.CONSUME_AUTO)
-            .applyToView(binding.root)
+        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
-        Insetter.builder()
-            .applySystemWindowInsetsToPadding(Side.BOTTOM)
-            .consumeSystemWindowInsets(Insetter.CONSUME_AUTO)
-            .applyToView(binding.homeBottomNavigation)
-
-        Insetter.setEdgeToEdgeSystemUiFlags(binding.homeRoot, true)
-
-        if (savedInstanceState == null) {
-            setupBottomNavigationBar()
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.liveData.observe(this) { invalidate() }
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        // Now that BottomNavigationBar has restored its instance state
-        // and its selectedItemId, we can proceed with setting up the
-        // BottomNavigationBar with Navigation
-        setupBottomNavigationBar()
-    }
-
-    fun invalidate() {
-    }
-
-    override fun handleIntent(intent: Intent) {
-        when (intent.action) {
-            TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
-                navigator.onAuthResponse(intent)
-            }
-        }
-    }
-
-    private fun setupBottomNavigationBar() {
-        binding.homeBottomNavigation.setupWithNavController(
-            listOf(
-                R.navigation.discover_nav_graph,
-                R.navigation.watched_nav_graph,
-                R.navigation.following_nav_graph,
-                R.navigation.search_nav_graph
-            ),
-            supportFragmentManager,
-            R.id.home_nav_container,
-            intent
-        ).observe(this) { navController ->
-            currentNavController = navController
-
-            navController.addOnDestinationChangedListener { _, destination, _ ->
-                if (destination.id != R.id.navigation_search) {
-                    hideSoftInput()
+        setContent {
+            CompositionLocalProvider(
+                LocalTiviDateFormatter provides tiviDateFormatter,
+                LocalTiviTextCreator provides textCreator,
+            ) {
+                ProvideWindowInsets(consumeWindowInsets = false) {
+                    TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
+                        Home(onOpenSettings = ::openSettings)
+                    }
                 }
             }
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return currentNavController?.navigateUp() ?: super.onSupportNavigateUp()
+    private fun openSettings() {
+        startActivity(Intent(this, SettingsActivity::class.java))
     }
 }

@@ -22,9 +22,10 @@ import app.tivi.actions.ShowTasks
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,6 +34,7 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
+@OptIn(DelicateCoroutinesApi::class)
 @Singleton
 class TraktManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
@@ -43,7 +45,7 @@ class TraktManager @Inject constructor(
     private val authState = MutableStateFlow(EmptyAuthState)
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
-    val state: Flow<TraktAuthState>
+    val state: StateFlow<TraktAuthState>
         get() = _state
 
     init {
@@ -57,12 +59,6 @@ class TraktManager @Inject constructor(
                     refreshToken(authState.refreshToken)
                 }
             }
-        }
-
-        // Read the auth state from prefs
-        GlobalScope.launch(dispatchers.main) {
-            val state = withContext(dispatchers.io) { readAuthState() }
-            authState.value = state
         }
 
         // Read the auth state from prefs

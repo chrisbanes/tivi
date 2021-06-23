@@ -16,6 +16,7 @@
 
 package app.tivi.data
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -36,7 +37,6 @@ import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.views.FollowedShowsLastWatched
 import app.tivi.data.views.FollowedShowsNextToWatch
 import app.tivi.data.views.FollowedShowsWatchStats
-import dev.matrix.roomigrant.GenerateRoomMigrations
 
 @Database(
     entities = [
@@ -60,8 +60,11 @@ import dev.matrix.roomigrant.GenerateRoomMigrations
         FollowedShowsLastWatched::class,
         FollowedShowsNextToWatch::class
     ],
-    version = 26
+    version = 26,
+    autoMigrations = [
+        AutoMigration(from = 24, to = 25),
+        AutoMigration(from = 25, to = 26),
+    ],
 )
 @TypeConverters(TiviTypeConverters::class)
-@GenerateRoomMigrations
 abstract class TiviRoomDatabase : RoomDatabase(), TiviDatabase

@@ -16,66 +16,44 @@
 
 package app.tivi.account
 
-import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.AppNavigator
-import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.ClearUserDetails
-import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
+import app.tivi.trakt.TraktAuthManager
 import app.tivi.trakt.TraktManager
-import kotlinx.coroutines.channels.Channel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import javax.inject.Provider
+import javax.inject.Inject
 
-class AccountUiViewModel @ViewModelInject constructor(
+@HiltViewModel
+internal class AccountUiViewModel @Inject constructor(
     private val traktManager: TraktManager,
+    private val traktAuthManager: TraktAuthManager,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
-    private val clearUserDetails: ClearUserDetails,
-    private val appNavigator: Provider<AppNavigator>
-) : ReduxViewModel<AccountUiViewState>(
-    AccountUiViewState()
-) {
-    private val pendingActions = Channel<AccountUiAction>(Channel.BUFFERED)
+    private val clearUserDetails: ClearUserDetails
+) : ViewModel(), TraktAuthManager by traktAuthManager {
+    val state = combine(
+        observeTraktAuthState.observe().distinctUntilChanged(),
+        observeUserDetails.observe(),
+    ) { authState, user ->
+        AccountUiViewState(
+            user = user,
+            authState = authState
+        )
+    }
 
     init {
-        viewModelScope.launch {
-            observeTraktAuthState.observe()
-                .distinctUntilChanged()
-                .collectAndSetState { copy(authState = it) }
-        }
-        observeTraktAuthState()
-
-        viewModelScope.launch {
-            observeUserDetails.observe()
-                .collectAndSetState { copy(user = it) }
-        }
+        observeTraktAuthState(Unit)
         observeUserDetails(ObserveUserDetails.Params("me"))
-
-        viewModelScope.launch {
-            pendingActions.consumeAsFlow().collect { action ->
-                when (action) {
-                    Login -> appNavigator.get().login()
-                    Logout -> logout()
-                }
-            }
-        }
     }
 
-    fun submitAction(action: AccountUiAction) {
-        viewModelScope.launch {
-            if (!pendingActions.isClosedForSend) {
-                pendingActions.send(action)
-            }
-        }
-    }
-
-    private fun logout() {
+    fun logout() {
         viewModelScope.launch {
             traktManager.clearAuth()
             clearUserDetails(ClearUserDetails.Params("me")).collect()

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import app.tivi.buildsrc.Libs
-
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
@@ -33,6 +31,7 @@ android {
 
     defaultConfig {
         minSdkVersion buildConfig.minSdk
+        manifestPlaceholders += ['appAuthRedirectScheme': 'empty']
     }
 
     compileOptions {
@@ -45,8 +44,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion Libs.Kotlin.version
-        kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
 }
 
@@ -56,37 +54,29 @@ dependencies {
     implementation project(':domain')
     implementation project(':common-ui-view')
     implementation project(':common-ui-compose')
-
     implementation project(':trakt-auth')
 
+    implementation libs.androidx.lifecycle.viewmodel.ktx
 
-    implementation Libs.AndroidX.Lifecycle.livedata
-    implementation Libs.AndroidX.Lifecycle.viewmodel
+    // For registerForActivityResult
+    implementation libs.androidx.activity.compose
 
-    implementation Libs.AndroidX.coreKtx
-    implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
+    implementation libs.androidx.navigation.compose
 
-    implementation Libs.AndroidX.Compose.runtime
-    implementation Libs.AndroidX.Compose.foundation
-    implementation Libs.AndroidX.Compose.ui
-    implementation Libs.AndroidX.Compose.layout
-    implementation Libs.AndroidX.Compose.material
-    implementation Libs.AndroidX.Compose.animation
-    implementation Libs.AndroidX.Compose.tooling
-    implementation Libs.AndroidX.Compose.livedata
+    implementation libs.compose.foundation.foundation
+    implementation libs.compose.foundation.layout
+    implementation libs.compose.material.material
+    implementation libs.compose.animation.animation
+    implementation libs.compose.ui.tooling
 
-    implementation Libs.Mdc.material
-    implementation Libs.Mdc.composeThemeAdapter
 
-    implementation Libs.Accompanist.coil
+    implementation libs.accompanist.coil
+    implementation libs.accompanist.insets
+    implementation libs.accompanist.flowlayout
 
-    implementation Libs.Kotlin.stdlib
+    implementation libs.kotlin.stdlib
 
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
-
-    implementation Libs.AndroidX.Hilt.viewmodel
-    kapt Libs.AndroidX.Hilt.compiler
+    implementation libs.androidx.hilt.compose
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 }

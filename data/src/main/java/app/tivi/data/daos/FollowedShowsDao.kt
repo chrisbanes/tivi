@@ -16,7 +16,7 @@
 
 package app.tivi.data.daos
 
-import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
@@ -34,35 +34,35 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
 
     @Transaction
     @Query(ENTRY_QUERY_SUPER_SORT)
-    internal abstract fun pagedListSuperSort(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    internal abstract fun pagedListSuperSort(): PagingSource<Int, FollowedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_SUPER_SORT_FILTER)
-    internal abstract fun pagedListSuperSortFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    internal abstract fun pagedListSuperSortFilter(filter: String): PagingSource<Int, FollowedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
-    internal abstract fun pagedListLastWatched(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    internal abstract fun pagedListLastWatched(): PagingSource<Int, FollowedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER)
-    internal abstract fun pagedListLastWatchedFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    internal abstract fun pagedListLastWatchedFilter(filter: String): PagingSource<Int, FollowedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_ALPHA)
-    internal abstract fun pagedListAlpha(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    internal abstract fun pagedListAlpha(): PagingSource<Int, FollowedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_ALPHA_FILTER)
-    internal abstract fun pagedListAlphaFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    internal abstract fun pagedListAlphaFilter(filter: String): PagingSource<Int, FollowedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_ADDED)
-    internal abstract fun pagedListAdded(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    internal abstract fun pagedListAdded(): PagingSource<Int, FollowedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_ADDED_FILTER)
-    internal abstract fun pagedListAddedFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    internal abstract fun pagedListAddedFilter(filter: String): PagingSource<Int, FollowedShowEntryWithShow>
 
     @Transaction
     @Query(

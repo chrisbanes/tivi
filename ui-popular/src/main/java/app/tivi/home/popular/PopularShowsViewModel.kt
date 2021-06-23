@@ -16,37 +16,31 @@
 
 package app.tivi.home.popular
 
-import androidx.hilt.lifecycle.ViewModelInject
-import app.tivi.base.InvokeStatus
+import androidx.lifecycle.ViewModel
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.domain.interactors.ChangeShowFollowStatus
-import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.observers.ObservePagedPopularShows
-import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.EntryViewModel
-import app.tivi.util.Logger
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class PopularShowsViewModel @ViewModelInject constructor(
-    override val dispatchers: AppCoroutineDispatchers,
-    override val pagingInteractor: ObservePagedPopularShows,
-    private val interactor: UpdatePopularShows,
-    override val logger: Logger,
-    override val changeShowFollowStatus: ChangeShowFollowStatus
-) : EntryViewModel<PopularEntryWithShow, ObservePagedPopularShows>() {
+@HiltViewModel
+internal class PopularShowsViewModel @Inject constructor(
+    private val pagingInteractor: ObservePagedPopularShows,
+) : ViewModel() {
+
+    val pagedList: Flow<PagingData<PopularEntryWithShow>>
+        get() = pagingInteractor.observe()
+
     init {
-        pagingInteractor(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
-
-        launchObserves()
-
-        refresh(false)
+        pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))
     }
 
-    override fun callLoadMore(): Flow<InvokeStatus> {
-        return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE, true))
-    }
-
-    override fun callRefresh(fromUser: Boolean): Flow<InvokeStatus> {
-        return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser))
+    companion object {
+        val PAGING_CONFIG = PagingConfig(
+            pageSize = 60,
+            initialLoadSize = 60
+        )
     }
 }

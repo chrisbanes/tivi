@@ -16,17 +16,22 @@
 
 package app.tivi.episodedetails
 
+import androidx.compose.runtime.Immutable
 import app.tivi.api.UiError
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.Season
 
-data class EpisodeDetailsViewState(
-    val episodeId: Long,
+@Immutable
+internal data class EpisodeDetailsViewState(
     val season: Season? = null,
     val episode: Episode? = null,
     val watches: List<EpisodeWatchEntry> = emptyList(),
     val canAddEpisodeWatch: Boolean = false,
     val refreshing: Boolean = false,
     val error: UiError? = null
-)
+) {
+    companion object {
+        val Empty = EpisodeDetailsViewState()
+    }
+}

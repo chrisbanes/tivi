@@ -29,12 +29,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.map
+import org.threeten.bp.Duration
 import javax.inject.Singleton
 
 typealias ShowImagesStore = Store<Long, List<ShowTmdbImage>>
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 internal abstract class ShowDataSourceBinds {
     @Binds
@@ -42,7 +44,7 @@ internal abstract class ShowDataSourceBinds {
     abstract fun bindTmdbShowImagesDataSource(source: TmdbShowImagesDataSource): ShowImagesDataSource
 }
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 object ShowImagesStoreModule {
     @Provides
@@ -67,7 +69,18 @@ object ShowImagesStoreModule {
             }
         },
         sourceOfTruth = SourceOfTruth.of(
-            reader = showTmdbImagesDao::getImagesForShowId,
+            reader = { showId ->
+                showTmdbImagesDao.getImagesForShowId(showId).map { entries ->
+                    when {
+                        // Store only treats null as 'no value', so convert to null
+                        entries.isEmpty() -> null
+                        // If the request is expired, our data is stale
+                        lastRequestStore.isRequestExpired(showId, Duration.ofDays(28)) -> null
+                        // Otherwise, our data is fresh and valid
+                        else -> entries
+                    }
+                }
+            },
             writer = showTmdbImagesDao::saveImages,
             delete = showTmdbImagesDao::deleteForShowId,
             deleteAll = showTmdbImagesDao::deleteAll

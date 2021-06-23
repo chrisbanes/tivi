@@ -23,11 +23,11 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 object RoomDatabaseModule {
     @Singleton
@@ -36,7 +36,6 @@ object RoomDatabaseModule {
         @ApplicationContext context: Context
     ): TiviRoomDatabase {
         val builder = Room.databaseBuilder(context, TiviRoomDatabase::class.java, "shows.db")
-            .addMigrations(*TiviRoomDatabase_Migrations.build())
             .fallbackToDestructiveMigration()
         if (Debug.isDebuggerConnected()) {
             builder.allowMainThreadQueries()
@@ -45,7 +44,7 @@ object RoomDatabaseModule {
     }
 }
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 object DatabaseDaoModule {
     @Provides
@@ -91,7 +90,7 @@ object DatabaseDaoModule {
     fun provideRecommendedShowsDao(db: TiviDatabase) = db.recommendedShowsDao()
 }
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 abstract class DatabaseModuleBinds {
     @Binds

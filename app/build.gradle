@@ -15,26 +15,14 @@
  *
  */
 
-import app.tivi.buildsrc.Libs
-
 import java.nio.file.Files
 
 plugins {
     id 'com.android.application'
     id 'dagger.hilt.android.plugin'
-    id 'com.github.triplet.play'
 
     id 'kotlin-android'
     id 'kotlin-kapt'
-
-    id 'com.google.android.gms.oss-licenses-plugin'
-    id 'androidx.navigation.safeargs.kotlin'
-}
-
-play {
-   track = 'internal'
-   defaultToAppBundles = true
-   serviceAccountCredentials = rootProject.file('release/play-account.json')
 }
 
 kapt {
@@ -59,7 +47,7 @@ android {
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
         versionCode appVersionCode
-        versionName "0.4.1"
+        versionName "0.5.1"
 
         // For now we're sticking to just shipping EN
         resConfigs "en"
@@ -94,33 +82,24 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    dexOptions {
-        // Don't pre-dex on CI
-        preDexLibraries !ci
-    }
-
     lintOptions {
         // Disable lintVital. Not needed since lint is run on CI
         checkReleaseBuilds false
-        // Allow lint to check dependencies
-        checkDependencies true
         // Ignore any tests
         ignoreTestSources true
-
-        // TODO: remove this once https://issuetracker.google.com/issues/159733104 is fixed
-        abortOnError false
-
-        // Lint doesn't seem to handle Kotlin int types + string format very well
-        disable 'StringFormatMatches'
-        // Seems to be broken in 4.0.0-alpha09 https://issuetracker.google.com/issues/148172219
-        disable 'Instantiatable'
+        // Make the build fail on any lint errors
+        abortOnError true
+        // Allow lint to check dependencies
+        checkDependencies true
     }
 
     buildFeatures {
-        // We need to keep this enabled because submodules use it
-        dataBinding true
-
         viewBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
 
     testOptions {
@@ -165,10 +144,8 @@ dependencies {
     implementation project(':base')
     implementation project(':base-android')
     implementation project(':common-ui-view')
-    implementation project(':common-epoxy')
     implementation project(':common-imageloading')
-    implementation project(':common-databinding')
-    implementation project(':common-entrygrid')
+    implementation project(':common-ui-compose')
     implementation project(':data')
     implementation project(':data-android')
     implementation project(':trakt')
@@ -189,47 +166,49 @@ dependencies {
     implementation project(':ui-search')
     implementation project(':ui-settings')
 
-    implementation Libs.AndroidX.Lifecycle.livedata
-    implementation Libs.AndroidX.Lifecycle.viewmodel
 
-    implementation Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.constraintlayout
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
-    implementation Libs.AndroidX.Navigation.ui
+    implementation libs.androidx.lifecycle.viewmodel.ktx
 
-    implementation Libs.Mdc.material
+    implementation libs.androidx.activity.compose
 
-    implementation Libs.Insetter.ktx
+    implementation libs.androidx.navigation.compose
 
-    implementation Libs.threeTenAbp
+    implementation libs.androidx.emoji
 
-    implementation Libs.timber
+    implementation libs.compose.foundation.foundation
+    implementation libs.compose.foundation.layout
+    implementation libs.compose.material.material
+    implementation libs.compose.animation.animation
+    implementation libs.compose.ui.tooling
+    implementation libs.compose.ui.viewbinding
 
-    implementation Libs.Kotlin.stdlib
+    implementation libs.accompanist.insets
 
-    implementation Libs.Coroutines.core
-    implementation Libs.Coroutines.android
+    implementation libs.threeTenAbp
 
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.timber
 
-    implementation Libs.AndroidX.Hilt.work
-    implementation Libs.AndroidX.Hilt.viewmodel
-    kapt Libs.AndroidX.Hilt.compiler
+    implementation libs.kotlin.stdlib
 
-    implementation Libs.Google.firebaseCore
-    implementation Libs.Google.crashlytics
-    implementation Libs.Google.openSourceLicensesLibrary
+    implementation libs.kotlin.coroutines.core
+    implementation libs.kotlin.coroutines.android
 
-    debugImplementation Libs.leakCanary
+    implementation libs.hilt.library
+    implementation libs.androidx.hilt.compose
+    kapt libs.hilt.compiler
 
-    testImplementation Libs.junit
-    testImplementation Libs.robolectric
-    testImplementation Libs.AndroidX.Test.core
-    testImplementation Libs.AndroidX.Test.rules
-    testImplementation Libs.AndroidX.Test.espressoCore
+    implementation libs.androidx.hilt.work
+    kapt libs.androidx.hilt.compiler
+
+    implementation libs.google.crashlytics
+    implementation libs.google.analytics
+
+    debugImplementation libs.leakCanary
+
+    testImplementation libs.junit
+    testImplementation libs.robolectric
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.rules
 }
 
 android.applicationVariants.all { variant ->

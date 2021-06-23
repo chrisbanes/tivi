@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import androidx.compose.runtime.Immutable
 import app.tivi.api.UiError
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
@@ -24,8 +25,8 @@ import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
 
-data class ShowDetailsViewState(
-    val showId: Long,
+@Immutable
+internal data class ShowDetailsViewState(
     val isFollowed: Boolean = false,
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val posterImage: ShowTmdbImage? = null,
@@ -35,10 +36,13 @@ data class ShowDetailsViewState(
     val watchStats: FollowedShowsWatchStats? = null,
     val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val expandedSeasonIds: Set<Long> = emptySet(),
-    val pendingUiEffects: List<UiEffect> = emptyList(), // TODO this should really be a queue
     val refreshing: Boolean = false,
     val refreshError: UiError? = null
-)
+) {
+    companion object {
+        val Empty = ShowDetailsViewState()
+    }
+}
 
 sealed class UiEffect
 data class OpenEpisodeUiEffect(val episodeId: Long, val seasonId: Long) : UiEffect()

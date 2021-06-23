@@ -19,11 +19,9 @@ package app.tivi
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.doOnPreDraw
+import androidx.fragment.app.FragmentActivity
 
-abstract class TiviActivity : AppCompatActivity() {
-    private var postponedTransition = false
+abstract class TiviActivity : FragmentActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -33,24 +31,6 @@ abstract class TiviActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
-    }
-
-    override fun postponeEnterTransition() {
-        super.postponeEnterTransition()
-        postponedTransition = true
-    }
-
-    override fun startPostponedEnterTransition() {
-        postponedTransition = false
-        super.startPostponedEnterTransition()
-    }
-
-    fun scheduleStartPostponedTransitions() {
-        if (postponedTransition) {
-            window.decorView.doOnPreDraw {
-                startPostponedEnterTransition()
-            }
-        }
     }
 
     open fun handleIntent(intent: Intent) {}

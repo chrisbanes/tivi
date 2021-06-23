@@ -24,20 +24,9 @@
     native <methods>;
 }
 
--keep public class * extends android.view.View {
+# We only need to keep ComposeView + FragmentContainerView
+-keep public class androidx.compose.ui.platform.ComposeView {
     public <init>(android.content.Context, android.util.AttributeSet);
-}
-
--keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet);
-}
-
--keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
-
--keepclassmembers class * extends android.app.Activity {
-   public void *(android.view.View);
 }
 
 # For enumeration classes
@@ -71,11 +60,15 @@
 -dontwarn com.google.errorprone.annotations.*
 
 # Keep trakt-java and tmdb-java entity names (for GSON)
--keepclassmembers class com.uwetrottmann.*.entities.** {
+-keep class com.uwetrottmann.*.entities.** {
     <fields>;
     <init>(...);
 }
--keepclassmembers class com.uwetrottmann.*.enums.** {
+-keep class com.uwetrottmann.*.enums.** {
     <fields>;
     <init>(...);
 }
+
+# Can remove this once we update to Navigation 2.4.0-alpha04
+# See: https://issuetracker.google.com/191654433
+-keep,allowobfuscation,allowshrinking class * extends androidx.navigation.Navigator

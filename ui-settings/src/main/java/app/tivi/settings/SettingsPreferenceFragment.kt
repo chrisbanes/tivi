@@ -14,66 +14,59 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package app.tivi.settings
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.preference.PreferenceFragment
+import android.preference.SwitchPreference
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.net.toUri
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import app.tivi.extensions.resolveThemeColor
-import app.tivi.util.PowerController
 import app.tivi.util.SaveData
 import app.tivi.util.SaveDataReason
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.collect
-import javax.inject.Inject
 
-@AndroidEntryPoint
-internal class SettingsPreferenceFragment : PreferenceFragmentCompat() {
-    @Inject lateinit var powerController: PowerController
+internal class SettingsPreferenceFragment : PreferenceFragment() {
+    internal var saveData: SaveData? = null
+        set(value) {
+            val pref = findPreference("pref_data_saver") as? SwitchPreference
+                ?: throw IllegalStateException()
+
+            pref.isEnabled = when (value) {
+                is SaveData.Enabled -> value.reason == SaveDataReason.PREFERENCE
+                else -> true
+            }
+
+            if (pref.isEnabled) {
+                pref.summary = null
+                pref.setSummaryOn(R.string.settings_data_saver_summary_on)
+            } else {
+                pref.summaryOn = null
+                pref.setSummary(R.string.settings_data_saver_summary_system)
+            }
+
+            field = value
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launchWhenStarted {
-            powerController.observeShouldSaveData(ignorePreference = true).collect { saveData ->
-                val pref = findPreference<Preference>("pref_data_saver")
-                    ?: throw CancellationException()
-                val prefDisabled = findPreference<Preference>("pref_data_saver_disabled")
-                    ?: throw CancellationException()
+        addPreferencesFromResource(R.xml.preferences)
 
-                pref.isVisible = saveData is SaveData.Disabled ||
-                    (saveData is SaveData.Enabled && saveData.reason == SaveDataReason.PREFERENCE)
-                prefDisabled.isVisible = !pref.isVisible
-            }
-        }
-    }
-
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey)
-
-        findPreference<Preference>("privacy_policy")?.setOnPreferenceClickListener {
+        findPreference("privacy_policy")?.setOnPreferenceClickListener {
             CustomTabsIntent.Builder()
-                .setToolbarColor(requireContext().resolveThemeColor(R.attr.colorPrimaryVariant))
+                .setToolbarColor(context.resolveThemeColor(android.R.attr.colorPrimary))
                 .build()
-                .launchUrl(requireContext(), getString(R.string.privacy_policy_url).toUri())
+                .launchUrl(context, getString(R.string.privacy_policy_url).toUri())
             true
         }
 
-        findPreference<Preference>("open_source")?.setOnPreferenceClickListener {
-            findNavController().navigate(R.id.navigation_licences)
-            true
-        }
-
-        findPreference<Preference>("version")?.apply {
-            val pkgManager: PackageManager = requireContext().packageManager
-            val pkgInfo = pkgManager.getPackageInfo(requireContext().packageName, 0)
+        findPreference("version")?.apply {
+            val pkgManager: PackageManager = context.packageManager
+            val pkgInfo = pkgManager.getPackageInfo(context.packageName, 0)
             summary = getString(
                 R.string.settings_app_version_summary,
                 pkgInfo.versionName,

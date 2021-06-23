@@ -16,7 +16,7 @@
 
 package app.tivi.data.daos
 
-import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
@@ -36,7 +36,7 @@ abstract class RecommendedDao : PaginatedEntryDao<RecommendedShowEntry, Recommen
 
     @Transaction
     @Query("SELECT * FROM recommended_entries ORDER BY page ASC, id ASC")
-    abstract fun entriesDataSource(): DataSource.Factory<Int, RecommendedEntryWithShow>
+    abstract fun entriesPagingSource(): PagingSource<Int, RecommendedEntryWithShow>
 
     @Query("DELETE FROM recommended_entries WHERE page = :page")
     abstract override suspend fun deletePage(page: Int)

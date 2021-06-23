@@ -17,11 +17,11 @@
 package app.tivi.data
 
 import com.dropbox.android.external.store4.Store
-import com.dropbox.android.external.store4.StoreRequest
 import com.dropbox.android.external.store4.StoreResponse
 import com.dropbox.android.external.store4.fresh
+import com.dropbox.android.external.store4.get
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.first
 
 suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     key: Key,
@@ -29,53 +29,9 @@ suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
 ): Output = when {
     // If we're forcing a fresh fetch, do it now
     forceFresh -> fresh(key)
-    else -> cachedOnly(key) ?: fresh(key)
+    else -> get(key)
 }
 
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
-    key: Key,
-    forceFresh: Boolean = false,
-    doFreshIf: suspend (Output) -> Boolean
-): Output = when {
-    // If we're forcing a fresh fetch, do it now
-    forceFresh -> fresh(key)
-    else -> {
-        // Else we'll check the current cached value
-        val cached = cachedOnly(key)
-        if (cached == null || doFreshIf(cached)) {
-            // Our cached value isn't valid, do a fresh fetch
-            fresh(key)
-        } else {
-            // We have a current cached value
-            cached
-        }
-    }
-}
-
-suspend inline fun <Key : Any, Output : Collection<Any>> Store<Key, Output>.fetchCollection(
-    key: Key,
-    forceFresh: Boolean = false
-): Output = fetch(key, forceFresh = forceFresh) {
-    it.isEmpty()
-}
-
-/**
- * A wrapper around [fetch] which supports non-nullable collection outputs.
- * Primarily it checks for empty collections
- */
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend inline fun <Key : Any, Output : Collection<Any>> Store<Key, Output>.fetchCollection(
-    key: Key,
-    forceFresh: Boolean = false,
-    crossinline doFreshIf: suspend (Output) -> Boolean
-): Output = fetch(key, forceFresh = forceFresh) {
-    it.isEmpty() || doFreshIf(it)
-}
-
-suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.cachedOnly(key: Key): Output? {
-    return stream(StoreRequest.cached(key, refresh = false))
-        .filterNot { it is StoreResponse.Loading }
-        .first()
-        .dataOrNull()
+fun <T> Flow<StoreResponse<T>>.filterForResult(): Flow<StoreResponse<T>> = filterNot {
+    it is StoreResponse.Loading || it is StoreResponse.NoNewData
 }

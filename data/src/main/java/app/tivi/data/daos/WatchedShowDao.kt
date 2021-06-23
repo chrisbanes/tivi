@@ -16,7 +16,7 @@
 
 package app.tivi.data.daos
 
-import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
@@ -42,7 +42,7 @@ abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithS
     fun observePagedList(
         filter: String?,
         sort: SortOption
-    ): DataSource.Factory<Int, WatchedShowEntryWithShow> {
+    ): PagingSource<Int, WatchedShowEntryWithShow> {
         val filtered = filter != null && filter.isNotEmpty()
         return when (sort) {
             SortOption.LAST_WATCHED -> {
@@ -65,19 +65,19 @@ abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithS
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
-    protected abstract fun pagedListLastWatched(): DataSource.Factory<Int, WatchedShowEntryWithShow>
+    protected abstract fun pagedListLastWatched(): PagingSource<Int, WatchedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER)
-    protected abstract fun pagedListLastWatchedFilter(filter: String): DataSource.Factory<Int, WatchedShowEntryWithShow>
+    protected abstract fun pagedListLastWatchedFilter(filter: String): PagingSource<Int, WatchedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_ALPHA)
-    protected abstract fun pagedListAlpha(): DataSource.Factory<Int, WatchedShowEntryWithShow>
+    protected abstract fun pagedListAlpha(): PagingSource<Int, WatchedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_ALPHA_FILTER)
-    protected abstract fun pagedListAlphaFilter(filter: String): DataSource.Factory<Int, WatchedShowEntryWithShow>
+    protected abstract fun pagedListAlphaFilter(filter: String): PagingSource<Int, WatchedShowEntryWithShow>
 
     @Query("DELETE FROM watched_entries")
     abstract override suspend fun deleteAll()

@@ -16,20 +16,17 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.cachedOnly
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.fetch
-import app.tivi.data.fetchCollection
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.Logger
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -37,7 +34,9 @@ class UpdateFollowedShows @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository,
     private val seasonEpisodeRepository: SeasonsEpisodesRepository,
     private val showStore: ShowStore,
+    private val showDao: TiviShowDao,
     private val showImagesStore: ShowImagesStore,
+    private val logger: Logger,
     private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<UpdateFollowedShows.Params>() {
 
@@ -48,9 +47,15 @@ class UpdateFollowedShows @Inject constructor(
             }
 
             // Finally sync the seasons/episodes and watches
-            followedShowsRepository.getFollowedShows().asFlow().collect {
+            followedShowsRepository.getFollowedShows().forEach {
+                ensureActive()
+
                 showStore.fetch(it.showId)
-                showImagesStore.fetchCollection(it.showId)
+                try {
+                    showImagesStore.fetch(it.showId)
+                } catch (t: Throwable) {
+                    logger.e("Error while fetching images for show: ${it.showId}", t)
+                }
 
                 ensureActive()
                 // Download the seasons + episodes
@@ -63,7 +68,7 @@ class UpdateFollowedShows @Inject constructor(
                     it.showId,
                     params.type,
                     params.forceRefresh,
-                    showStore.cachedOnly(it.showId)?.traktDataUpdate
+                    showDao.getShowWithId(it.showId)?.traktDataUpdate
                 )
             }
         }

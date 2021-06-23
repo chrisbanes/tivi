@@ -26,11 +26,11 @@ import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
-import app.tivi.extensions.asyncOrAwait
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -71,30 +71,28 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
-        asyncOrAwait("update_show_seasons_$showId") {
-            when (val response = traktSeasonsDataSource.getSeasonsEpisodes(showId)) {
-                is Success -> {
-                    response.data.distinctBy { it.first.number }.associate { (season, episodes) ->
-                        val localSeason = seasonsEpisodesStore.getSeasonWithTraktId(season.traktId!!)
-                            ?: Season(showId = showId)
-                        val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
+        when (val response = traktSeasonsDataSource.getSeasonsEpisodes(showId)) {
+            is Success -> {
+                response.data.distinctBy { it.first.number }.associate { (season, episodes) ->
+                    val localSeason = seasonsEpisodesStore.getSeasonWithTraktId(season.traktId!!)
+                        ?: Season(showId = showId)
+                    val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
 
-                        val mergedEpisodes = episodes.distinctBy(Episode::number).map {
-                            val localEpisode = seasonsEpisodesStore.getEpisodeWithTraktId(it.traktId!!)
-                                ?: Episode(seasonId = mergedSeason.id)
-                            mergeEpisode(localEpisode, it, Episode.EMPTY)
-                        }
-                        mergedSeason to mergedEpisodes
-                    }.also { seasonsEpisodesStore.save(showId, it) }
+                    val mergedEpisodes = episodes.distinctBy(Episode::number).map {
+                        val localEpisode = seasonsEpisodesStore.getEpisodeWithTraktId(it.traktId!!)
+                            ?: Episode(seasonId = mergedSeason.id)
+                        mergeEpisode(localEpisode, it, Episode.EMPTY)
+                    }
+                    mergedSeason to mergedEpisodes
+                }.also { seasonsEpisodesStore.save(showId, it) }
 
-                    seasonsLastRequestStore.updateLastRequest(showId)
-                }
-                is ErrorResult -> throw response.throwable
+                seasonsLastRequestStore.updateLastRequest(showId)
             }
+            is ErrorResult -> throw response.throwable
         }
     }
 
-    suspend fun updateEpisode(episodeId: Long) = asyncOrAwait("update_episode_$episodeId") {
+    suspend fun updateEpisode(episodeId: Long) = coroutineScope {
         val local = seasonsEpisodesStore.getEpisode(episodeId)!!
         val season = seasonsEpisodesStore.getSeason(local.seasonId)!!
         val traktResult = async {
@@ -152,7 +150,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
     }
 
-    suspend fun syncEpisodeWatchesForShow(showId: Long) = asyncOrAwait("sync_show_watches_$showId") {
+    suspend fun syncEpisodeWatchesForShow(showId: Long) {
         // Process any pending deletes
         episodeWatchStore.getEntriesWithDeleteAction(showId).also {
             it.isNotEmpty() && processPendingDeletes(it)
@@ -253,7 +251,8 @@ class SeasonsEpisodesRepository @Inject constructor(
         if (watchesForEpisode.isNotEmpty()) {
             // First mark them as pending deletion
             episodeWatchStore.updateEntriesWithAction(
-                watchesForEpisode.map { it.id }, PendingAction.DELETE
+                watchesForEpisode.map { it.id },
+                PendingAction.DELETE
             )
             syncEpisodeWatches(episodeId)
         }

@@ -15,8 +15,6 @@
  *
  */
 
-import app.tivi.buildsrc.Libs
-
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
@@ -40,30 +38,18 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    buildFeatures {
-        viewBinding true
-    }
 }
 
 dependencies {
     implementation project(':base')
     implementation project(':base-android')
-    implementation project(':domain')
     implementation project(':common-ui-resources')
     implementation project(':common-ui-view')
 
-    implementation Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.browser
-    implementation Libs.AndroidX.coreKtx
-    api Libs.AndroidX.preference
+    implementation libs.androidx.browser
+    implementation libs.androidx.core
+    implementation libs.androidx.lifecycle.runtime
 
-    implementation Libs.AndroidX.Navigation.fragment
-    implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-
-    implementation Libs.Mdc.material
-
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 }

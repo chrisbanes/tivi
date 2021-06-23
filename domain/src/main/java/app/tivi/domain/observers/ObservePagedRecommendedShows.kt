@@ -16,28 +16,38 @@
 
 package app.tivi.domain.observers
 
-import androidx.paging.PagedList
-import app.tivi.data.FlowPagedListBuilder
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.PagingInteractor
+import app.tivi.domain.RefreshOnlyRemoteMediator
+import app.tivi.domain.interactors.UpdateRecommendedShows
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+@OptIn(ExperimentalPagingApi::class)
 class ObservePagedRecommendedShows @Inject constructor(
-    private val recommendedDao: RecommendedDao
+    private val RecommendedShowsDao: RecommendedDao,
+    private val updateRecommendedShows: UpdateRecommendedShows,
 ) : PagingInteractor<ObservePagedRecommendedShows.Params, RecommendedEntryWithShow>() {
-
-    override fun createObservable(params: Params): Flow<PagedList<RecommendedEntryWithShow>> {
-        return FlowPagedListBuilder(
-            recommendedDao.entriesDataSource(),
-            params.pagingConfig,
-            boundaryCallback = params.boundaryCallback
-        ).buildFlow()
+    override fun createObservable(
+        params: Params
+    ): Flow<PagingData<RecommendedEntryWithShow>> {
+        return Pager(
+            config = params.pagingConfig,
+            remoteMediator = RefreshOnlyRemoteMediator {
+                updateRecommendedShows.executeSync(
+                    UpdateRecommendedShows.Params(forceRefresh = true)
+                )
+            },
+            pagingSourceFactory = RecommendedShowsDao::entriesPagingSource
+        ).flow
     }
 
     data class Params(
-        override val pagingConfig: PagedList.Config,
-        override val boundaryCallback: PagedList.BoundaryCallback<RecommendedEntryWithShow>?
+        override val pagingConfig: PagingConfig,
     ) : Parameters<RecommendedEntryWithShow>
 }

@@ -17,7 +17,6 @@
 package app.tivi.inject
 
 import app.tivi.appinitializers.AppInitializer
-import app.tivi.appinitializers.ClearGlideCacheInitializer
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.PreferencesInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
@@ -30,11 +29,11 @@ import app.tivi.util.TiviLogger
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import javax.inject.Singleton
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 abstract class AppModuleBinds {
     @Binds
@@ -63,8 +62,4 @@ abstract class AppModuleBinds {
     @Binds
     @IntoSet
     abstract fun provideTmdbInitializer(bind: TmdbInitializer): AppInitializer
-
-    @Binds
-    @IntoSet
-    abstract fun provideClearGlideInitializer(bind: ClearGlideCacheInitializer): AppInitializer
 }

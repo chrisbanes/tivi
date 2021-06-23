@@ -15,8 +15,6 @@
  *
  */
 
-import app.tivi.buildsrc.Libs
-
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
@@ -38,10 +36,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    buildFeatures {
-        dataBinding true
-    }
 }
 
 dependencies {
@@ -51,10 +45,10 @@ dependencies {
     implementation project(':common-ui-view')
     implementation project(':tmdb')
 
-    implementation Libs.AndroidX.coreKtx
+    implementation libs.androidx.core
 
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 
-    api Libs.Coil.coil
+    api libs.coil.coil
 }

@@ -18,7 +18,7 @@ package app.tivi.data.daos
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.RoomWarnings
+import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.Transaction
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -61,12 +61,12 @@ abstract class EpisodesDao : EntityDao<Episode>() {
     abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
 
     @Transaction
-    @Suppress(RoomWarnings.CURSOR_MISMATCH)
+    @RewriteQueriesToDropUnusedColumns
     @Query(latestWatchedEpisodeForShowId)
     abstract fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
 
     @Transaction
-    @Suppress(RoomWarnings.CURSOR_MISMATCH)
+    @RewriteQueriesToDropUnusedColumns
     @Query(nextEpisodeForShowIdAfter)
     abstract fun observeNextEpisodeForShowAfter(
         showId: Long,
@@ -75,7 +75,7 @@ abstract class EpisodesDao : EntityDao<Episode>() {
     ): Flow<EpisodeWithSeason?>
 
     @Transaction
-    @Suppress(RoomWarnings.CURSOR_MISMATCH)
+    @RewriteQueriesToDropUnusedColumns
     @Query(nextAiredEpisodeForShowIdAfter)
     abstract fun observeNextAiredEpisodeForShowAfter(
         showId: Long,

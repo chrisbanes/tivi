@@ -16,10 +16,16 @@
 
 package app.tivi.account
 
+import androidx.compose.runtime.Immutable
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 
-data class AccountUiViewState(
+@Immutable
+internal data class AccountUiViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
-)
+) {
+    companion object {
+        val Empty = AccountUiViewState()
+    }
+}

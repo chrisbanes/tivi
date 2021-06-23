@@ -72,8 +72,14 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
             ?: return ErrorResult(IllegalArgumentException("No Trakt ID for show with ID: $showId"))
 
         return usersService.get().history(
-            UserSlug.ME, HistoryType.SHOWS, showTraktId,
-            0, 10000, Extended.NOSEASONS, since, null
+            UserSlug.ME,
+            HistoryType.SHOWS,
+            showTraktId,
+            0,
+            10000,
+            Extended.NOSEASONS,
+            since,
+            null
         )
             .executeWithRetry()
             .toResult(pairMapperOf(episodeMapper, historyItemMapper))
@@ -84,8 +90,14 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         since: OffsetDateTime?
     ): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
         return usersService.get().history(
-            UserSlug.ME, HistoryType.SEASONS, seasonIdToTraktIdMapper.map(seasonId),
-            0, 10000, Extended.NOSEASONS, since, null
+            UserSlug.ME,
+            HistoryType.SEASONS,
+            seasonIdToTraktIdMapper.map(seasonId),
+            0,
+            10000,
+            Extended.NOSEASONS,
+            since,
+            null
         )
             .executeWithRetry()
             .toResult(pairMapperOf(episodeMapper, historyItemMapper))
@@ -111,7 +123,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         val items = SyncItems()
         items.episodes = watches.map {
             SyncEpisode()
-                .id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))!!
+                .id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))
                 .watchedAt(it.watchedAt.withOffsetSameInstant(ZoneOffset.UTC))
         }
         return syncService.get().addItemsToWatchedHistory(items)
