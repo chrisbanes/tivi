@@ -389,7 +389,10 @@ private fun DiscoverAppBar(
             alpha = AppBarAlphas.translucentBarAlpha()
         ),
         contentColor = MaterialTheme.colors.onSurface,
-        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars),
+        contentPadding = rememberInsetsPaddingValues(
+            insets = LocalWindowInsets.current.systemBars,
+            applyBottom = false,
+        ),
         modifier = modifier,
         title = { Text(text = stringResource(R.string.discover_title)) },
         actions = {

@@ -17,6 +17,7 @@
 package app.tivi.common.compose
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
@@ -27,6 +28,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isFinite
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.rememberInsetsPaddingValues
 
 object Layout {
 
@@ -70,4 +73,13 @@ fun Modifier.bodyWidth() = fillMaxWidth()
     .composed {
         val bodyMaxWidth = Layout.bodyMaxWidth
         if (bodyMaxWidth.isFinite) widthIn(max = bodyMaxWidth) else this
+    }
+    .composed {
+        padding(
+            rememberInsetsPaddingValues(
+                insets = LocalWindowInsets.current.systemBars,
+                applyBottom = false,
+                applyTop = false,
+            )
+        )
     }

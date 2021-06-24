@@ -283,7 +283,10 @@ private fun WatchedAppBar(
             alpha = AppBarAlphas.translucentBarAlpha()
         ),
         contentColor = MaterialTheme.colors.onSurface,
-        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars),
+        contentPadding = rememberInsetsPaddingValues(
+            insets = LocalWindowInsets.current.systemBars,
+            applyBottom = false,
+        ),
         modifier = modifier,
         title = { Text(text = stringResource(R.string.watched_shows_title)) },
         actions = {
