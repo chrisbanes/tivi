@@ -49,7 +49,6 @@ import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlin.math.roundToInt
 
 @Composable
 fun <E : Entry> EntryGrid(
@@ -93,7 +92,7 @@ fun <E : Entry> EntryGrid(
             ) {
                 itemsInGrid(
                     lazyPagingItems = lazyPagingItems,
-                    columns = (columns * 2 / 3f).roundToInt().coerceAtLeast(1),
+                    columns = columns / 2,
                     contentPadding = PaddingValues(horizontal = bodyMargin, vertical = gutter),
                     verticalItemPadding = gutter,
                     horizontalItemPadding = gutter,

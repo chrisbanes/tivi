@@ -81,7 +81,6 @@ import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlin.math.roundToInt
 
 @Composable
 fun Followed(
@@ -170,7 +169,7 @@ internal fun Followed(
 
                 itemsInGrid(
                     lazyPagingItems = list,
-                    columns = (columns / 5f).roundToInt().coerceAtLeast(1),
+                    columns = columns / 4,
                     horizontalItemPadding = gutter,
                     verticalItemPadding = gutter,
                     contentPadding = PaddingValues(horizontal = bodyMargin),
