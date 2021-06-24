@@ -17,7 +17,6 @@
 package app.tivi.home.followed
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,17 +26,14 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -48,7 +44,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -63,6 +58,7 @@ import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
+import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortMenuPopup
@@ -73,7 +69,6 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.Scaffold
@@ -245,24 +240,13 @@ private fun FollowedShowItem(
             .clickable(onClick = onClick)
             .padding(vertical = Layout.gutter)
     ) {
-        if (poster != null) {
-            Surface(
-                elevation = 1.dp,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .heightIn(max = 72.dp)
-                    .aspectRatio(2 / 3f)
-            ) {
-                Image(
-                    painter = rememberCoilPainter(poster, fadeIn = true),
-                    contentDescription = stringResource(
-                        R.string.cd_show_poster_image,
-                        show.title ?: ""
-                    ),
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-        }
+        PosterCard(
+            show = show,
+            poster = poster,
+            modifier = Modifier
+                .fillMaxWidth(0.2f) // 20% of the width
+                .aspectRatio(2 / 3f)
+        )
 
         Spacer(Modifier.width(16.dp))
 
