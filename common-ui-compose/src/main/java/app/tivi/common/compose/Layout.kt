@@ -26,6 +26,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isFinite
 
 object Layout {
 
@@ -66,4 +67,7 @@ object Layout {
 
 fun Modifier.bodyWidth() = fillMaxWidth()
     .wrapContentWidth(align = Alignment.CenterHorizontally)
-    .composed { widthIn(max = Layout.bodyMaxWidth) }
+    .composed {
+        val bodyMaxWidth = Layout.bodyMaxWidth
+        if (bodyMaxWidth.isFinite) widthIn(max = bodyMaxWidth) else this
+    }

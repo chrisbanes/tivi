@@ -197,7 +197,7 @@ private fun FilterSortPanel(
     currentSortOption: SortOption,
     onSortSelected: (SortOption) -> Unit,
 ) {
-    Row(modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+    Row(modifier.padding(vertical = 8.dp)) {
         var filter by remember { mutableStateOf(TextFieldValue()) }
 
         SearchTextField(
