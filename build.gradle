@@ -31,9 +31,13 @@ buildscript {
 
         // Used for Accompanist snapshots
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+
+        // Used for R8 bug fixes not yet in AGP 7.1.0-alpha02.
+        maven { url 'https://storage.googleapis.com/r8-releases/raw'}
     }
 
     dependencies {
+        classpath libs.android.r8
         classpath libs.android.gradlePlugin
         classpath libs.kotlin.gradlePlugin
 
