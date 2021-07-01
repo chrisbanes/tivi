@@ -10,7 +10,7 @@ Tivi is a **work-in-progress** TV show tracking Android app, which connects to
 
 ## Download
 
-<a href="https://play.tivi.app" target="_blank">
+<a href="https://play.google.com/store/apps/details?id=app.tivi" target="_blank">
 <img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
 </a>
 
