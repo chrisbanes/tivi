@@ -25,15 +25,6 @@
     </style>
 
     <style name="Theme.Tivi" parent="Base.Theme.Tivi">
-<!--        <item name="colorPrimary">@color/tivi_slate_700</item>-->
-<!--        <item name="colorOnPrimary">#FFFFFF</item>-->
-
-<!--        <item name="colorPrimaryVariant">@color/tivi_slate_600</item>-->
-<!--        <item name="colorPrimaryDark">@color/tivi_slate_800</item>-->
-
-<!--        <item name="colorSecondary">@color/tivi_mtrl_orange_700</item>-->
-<!--        <item name="colorSecondaryVariant">@color/tivi_mtrl_orange_500</item>-->
-<!--        <item name="colorOnSecondary">#000000</item>-->
     </style>
 
     <style name="Theme.Tivi.NoActionBar">
