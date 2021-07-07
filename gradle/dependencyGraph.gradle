@@ -103,7 +103,7 @@ task projectDependencyGraph {
 
         dot << '\n  # Dependencies\n\n'
         dependencies.forEach { key, traits ->
-            dot << "  \"${key.first.path}\" -> \"${key.second.path}\""
+            dot << "  \"${key.getV1().path}\" -> \"${key.getV2().path}\""
             if (!traits.isEmpty()) {
                 dot << " [${traits.join(", ")}]"
             }
