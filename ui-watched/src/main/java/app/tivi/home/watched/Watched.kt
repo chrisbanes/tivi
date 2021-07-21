@@ -70,7 +70,6 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
-import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.Scaffold
@@ -160,7 +159,9 @@ internal fun Watched(
                         sortOptions = state.availableSorts,
                         currentSortOption = state.sort,
                         onSortSelected = { actioner(WatchedAction.ChangeSort(it)) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = bodyMargin)
                     )
                 }
 

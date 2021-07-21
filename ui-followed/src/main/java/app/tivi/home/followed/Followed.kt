@@ -69,7 +69,6 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
-import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.Scaffold
