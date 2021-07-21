@@ -71,7 +71,7 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.Scaffold
@@ -242,7 +242,9 @@ private fun WatchedShowItem(
                     .aspectRatio(2 / 3f)
             ) {
                 Image(
-                    painter = rememberCoilPainter(poster, fadeIn = true),
+                    painter = rememberImagePainter(poster) {
+                        crossfade(true)
+                    },
                     contentDescription = stringResource(
                         R.string.cd_show_poster_image,
                         show.title

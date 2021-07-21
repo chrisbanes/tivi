@@ -64,7 +64,6 @@ dependencies {
     implementation libs.compose.animation.animation
     implementation libs.compose.ui.tooling
 
-    implementation libs.accompanist.coil
     implementation libs.accompanist.insets
     implementation libs.accompanist.swiperefresh
 

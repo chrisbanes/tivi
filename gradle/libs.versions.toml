@@ -1,16 +1,16 @@
 [versions]
-accompanist = "0.13.0"
+accompanist = "0.14.0"
 androidxhilt = "1.0.0"
 androidxlifecycle = "2.4.0-alpha02"
 androidxtest = "1.4.0"
-coil = "1.2.2"
-compose = "1.0.0-rc01"
+coil = "1.3.0"
+compose = "1.0.0-rc02"
 composesnapshot = "-" # a single character = no snapshot
-coroutines = "1.5.0"
+coroutines = "1.5.1"
 dagger = "2.37"
 hilt = "2.37"
 kotlin = "1.5.10"
-ktlint = "0.40.0"
+ktlint = "0.41.0"
 okhttp = "4.9.1"
 paging = "3.0.0"
 retrofit = "2.9.0"
@@ -18,16 +18,15 @@ room = "2.4.0-alpha03"
 threetenbp = "1.5.1"
 
 [libraries]
-accompanist-coil = { module = "com.google.accompanist:accompanist-coil", version.ref = "accompanist" }
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanist-insetsui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 
 android-r8 = "com.android.tools:r8:3.1.11-dev"
-android-gradlePlugin = "com.android.tools.build:gradle:7.1.0-alpha02"
+android-gradlePlugin = "com.android.tools.build:gradle:7.1.0-alpha03"
 
-androidx-activity-compose = "androidx.activity:activity-compose:1.3.0-rc01"
+androidx-activity-compose = "androidx.activity:activity-compose:1.3.0-rc02"
 androidx-appcompat = "androidx.appcompat:appcompat:1.3.0"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 androidx-browser = "androidx.browser:browser:1.3.0"
@@ -69,6 +68,7 @@ androidx-work-runtime = "androidx.work:work-runtime-ktx:2.5.0"
 appauth = "net.openid:appauth:0.8.1"
 
 coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
 
 compose-animation-animation = { module = "androidx.compose.animation:animation", version.ref = "compose" }
