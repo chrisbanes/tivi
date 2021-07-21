@@ -131,7 +131,7 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
@@ -435,7 +435,9 @@ private fun PosterInfoRow(
 ) {
     Row(modifier.padding(horizontal = 16.dp)) {
         Image(
-            painter = rememberCoilPainter(posterImage, fadeIn = true),
+            painter = rememberImagePainter(posterImage) {
+                crossfade(true)
+            },
             contentDescription = stringResource(R.string.cd_show_poster, show.title ?: ""),
             modifier = Modifier
                 .weight(1f)
@@ -461,7 +463,9 @@ private fun BackdropImage(
     Surface(modifier = modifier) {
         if (backdropImage != null) {
             Image(
-                painter = rememberCoilPainter(backdropImage, fadeIn = true),
+                painter = rememberImagePainter(backdropImage) {
+                    crossfade(true)
+                },
                 contentDescription = stringResource(R.string.cd_show_poster),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
@@ -575,12 +579,10 @@ private fun NetworkInfoPanel(
             }
 
             Image(
-                painter = rememberCoilPainter(
-                    request = tmdbImage,
-                    requestBuilder = {
-                        transformations(TrimTransparentEdgesTransformation)
-                    },
-                ),
+                painter = rememberImagePainter(tmdbImage) {
+                    crossfade(true)
+                    transformations(TrimTransparentEdgesTransformation)
+                },
                 contentDescription = stringResource(R.string.cd_network_logo),
                 modifier = Modifier.sizeIn(maxWidth = 72.dp, maxHeight = 32.dp),
                 alignment = Alignment.TopStart,

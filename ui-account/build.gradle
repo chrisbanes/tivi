@@ -70,7 +70,7 @@ dependencies {
     implementation libs.compose.ui.tooling
 
 
-    implementation libs.accompanist.coil
+    implementation libs.coil.compose
     implementation libs.accompanist.insets
     implementation libs.accompanist.flowlayout
 

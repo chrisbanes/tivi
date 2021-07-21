@@ -29,7 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.R
 import app.tivi.data.entities.TraktUser
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 
 @Composable
 fun UserProfileButton(
@@ -45,7 +45,9 @@ fun UserProfileButton(
         when {
             loggedIn && user?.avatarUrl != null -> {
                 Image(
-                    painter = rememberCoilPainter(user.avatarUrl!!),
+                    painter = rememberImagePainter(user.avatarUrl!!) {
+                        crossfade(true)
+                    },
                     contentDescription = stringResource(R.string.cd_profile_pic, user.name),
                     modifier = Modifier
                         .size(32.dp)

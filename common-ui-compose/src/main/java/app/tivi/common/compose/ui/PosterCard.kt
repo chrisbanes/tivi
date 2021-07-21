@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.R
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 
 @Composable
 fun PosterCard(
@@ -61,7 +61,9 @@ fun PosterCard(
             }
             if (poster != null) {
                 Image(
-                    painter = rememberCoilPainter(poster, fadeIn = true),
+                    painter = rememberImagePainter(poster) {
+                        crossfade(true)
+                    },
                     contentDescription = stringResource(
                         R.string.cd_show_poster_image,
                         show.title ?: "show"

@@ -58,7 +58,7 @@ import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.ui.foregroundColor
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import org.threeten.bp.OffsetDateTime
@@ -183,7 +183,9 @@ private fun UserRow(
         val avatarUrl = user.avatarUrl
         if (avatarUrl != null) {
             Image(
-                painter = rememberCoilPainter(avatarUrl, fadeIn = true),
+                painter = rememberImagePainter(avatarUrl) {
+                    crossfade(true)
+                },
                 contentDescription = stringResource(R.string.cd_profile_pic, user.name),
                 modifier = Modifier
                     .size(40.dp)
