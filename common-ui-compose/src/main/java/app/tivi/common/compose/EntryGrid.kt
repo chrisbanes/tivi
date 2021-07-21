@@ -26,13 +26,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -54,6 +59,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 fun <E : Entry> EntryGrid(
     lazyPagingItems: LazyPagingItems<out EntryWithShow<E>>,
     title: String,
+    onNavigateUp: () -> Unit,
     onOpenShowDetails: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -61,6 +67,7 @@ fun <E : Entry> EntryGrid(
         topBar = {
             EntryGridAppBar(
                 title = title,
+                onNavigateUp = onNavigateUp,
                 refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading,
                 onRefreshActionClick = { lazyPagingItems.refresh() },
                 modifier = Modifier.fillMaxWidth()
@@ -128,10 +135,19 @@ fun <E : Entry> EntryGrid(
 private fun EntryGridAppBar(
     title: String,
     refreshing: Boolean,
+    onNavigateUp: () -> Unit,
     onRefreshActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
+        navigationIcon = {
+            IconButton(onClick = { onNavigateUp() }) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = stringResource(R.string.cd_navigate_up)
+                )
+            }
+        },
         backgroundColor = MaterialTheme.colors.surface.copy(
             alpha = AppBarAlphas.translucentBarAlpha()
         ),
