@@ -27,10 +27,12 @@ import app.tivi.common.compose.EntryGrid
 @Composable
 fun Recommended(
     openShowDetails: (showId: Long) -> Unit,
+    navigateUp: () -> Unit,
 ) {
     Recommended(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
+        navigateUp = navigateUp,
     )
 }
 
@@ -38,11 +40,13 @@ fun Recommended(
 internal fun Recommended(
     viewModel: RecommendedShowsViewModel,
     openShowDetails: (showId: Long) -> Unit,
+    navigateUp: () -> Unit,
 ) {
     EntryGrid(
         lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
         title = stringResource(R.string.discover_recommended_title),
         onOpenShowDetails = openShowDetails,
+        onNavigateUp = navigateUp,
         modifier = Modifier.fillMaxSize()
     )
 }

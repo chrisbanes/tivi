@@ -97,7 +97,7 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
@@ -272,7 +272,9 @@ private fun Backdrop(
         Box(Modifier.fillMaxSize()) {
             if (episode.tmdbBackdropPath != null) {
                 Image(
-                    painter = rememberCoilPainter(episode, fadeIn = true),
+                    painter = rememberImagePainter(episode) {
+                        crossfade(true)
+                    },
                     contentDescription = stringResource(R.string.cd_show_poster),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,

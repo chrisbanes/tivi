@@ -63,7 +63,8 @@ dependencies {
 
     implementation libs.kotlin.stdlib
 
-    implementation libs.accompanist.coil
+    implementation libs.coil.compose
+
     api libs.accompanist.insets
     api libs.accompanist.insetsui
     implementation libs.accompanist.swiperefresh

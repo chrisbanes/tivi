@@ -247,6 +247,7 @@ private fun NavGraphBuilder.addRecommendedShows(navController: NavController) {
             openShowDetails = { showId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(showId))
             },
+            navigateUp = navController::navigateUp,
         )
     }
 }
@@ -257,6 +258,7 @@ private fun NavGraphBuilder.addTrendingShows(navController: NavController) {
             openShowDetails = { showId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(showId))
             },
+            navigateUp = navController::navigateUp,
         )
     }
 }
@@ -267,6 +269,7 @@ private fun NavGraphBuilder.addPopularShows(navController: NavController) {
             openShowDetails = { showId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(showId))
             },
+            navigateUp = navController::navigateUp,
         )
     }
 }

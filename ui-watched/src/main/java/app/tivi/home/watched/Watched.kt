@@ -70,6 +70,7 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
+import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.Scaffold
@@ -115,7 +116,7 @@ internal fun Watched(
 internal fun Watched(
     state: WatchedViewState,
     list: LazyPagingItems<WatchedShowEntryWithShow>,
-    actioner: (WatchedAction) -> Unit
+    actioner: (WatchedAction) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -276,7 +277,7 @@ private fun WatchedAppBar(
     refreshing: Boolean,
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.surface.copy(

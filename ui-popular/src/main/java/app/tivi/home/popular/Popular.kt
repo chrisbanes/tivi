@@ -26,10 +26,12 @@ import app.tivi.common.compose.rememberFlowWithLifecycle
 @Composable
 fun Popular(
     openShowDetails: (showId: Long) -> Unit,
+    navigateUp: () -> Unit,
 ) {
     Popular(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
+        navigateUp = navigateUp,
     )
 }
 
@@ -37,10 +39,12 @@ fun Popular(
 internal fun Popular(
     viewModel: PopularShowsViewModel,
     openShowDetails: (showId: Long) -> Unit,
+    navigateUp: () -> Unit,
 ) {
     EntryGrid(
         lazyPagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems(),
         title = stringResource(R.string.discover_popular_title),
         onOpenShowDetails = openShowDetails,
+        onNavigateUp = navigateUp,
     )
 }
