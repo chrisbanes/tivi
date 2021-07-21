@@ -117,7 +117,7 @@ internal fun Watched(
 internal fun Watched(
     state: WatchedViewState,
     list: LazyPagingItems<WatchedShowEntryWithShow>,
-    actioner: (WatchedAction) -> Unit
+    actioner: (WatchedAction) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -233,26 +233,24 @@ private fun WatchedShowItem(
     ) {
         Spacer(Modifier.width(16.dp))
 
-        if (poster != null) {
-            Surface(
-                elevation = 1.dp,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .fillMaxHeight()
-                    .aspectRatio(2 / 3f)
-            ) {
-                Image(
-                    painter = rememberImagePainter(poster) {
-                        crossfade(true)
-                    },
-                    contentDescription = stringResource(
-                        R.string.cd_show_poster_image,
-                        show.title
-                            ?: ""
-                    ),
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
+        Surface(
+            elevation = 1.dp,
+            modifier = Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .fillMaxHeight()
+                .aspectRatio(2 / 3f)
+        ) {
+            Image(
+                painter = rememberImagePainter(poster) {
+                    crossfade(true)
+                },
+                contentDescription = stringResource(
+                    R.string.cd_show_poster_image,
+                    show.title
+                        ?: ""
+                ),
+                modifier = Modifier.fillMaxSize(),
+            )
         }
 
         Spacer(Modifier.width(16.dp))
@@ -302,7 +300,7 @@ private fun WatchedAppBar(
     refreshing: Boolean,
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.surface.copy(

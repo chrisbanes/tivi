@@ -118,7 +118,7 @@ internal fun Followed(
 internal fun Followed(
     state: FollowedViewState,
     list: LazyPagingItems<FollowedShowEntryWithShow>,
-    actioner: (FollowedAction) -> Unit
+    actioner: (FollowedAction) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -236,25 +236,23 @@ private fun FollowedShowItem(
     ) {
         Spacer(Modifier.width(16.dp))
 
-        if (poster != null) {
-            Surface(
-                elevation = 1.dp,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .fillMaxHeight()
-                    .aspectRatio(2 / 3f)
-            ) {
-                Image(
-                    painter = rememberImagePainter(poster) {
-                        crossfade(true)
-                    },
-                    contentDescription = stringResource(
-                        R.string.cd_show_poster_image,
-                        show.title ?: ""
-                    ),
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
+        Surface(
+            elevation = 1.dp,
+            modifier = Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .fillMaxHeight()
+                .aspectRatio(2 / 3f)
+        ) {
+            Image(
+                painter = rememberImagePainter(poster) {
+                    crossfade(true)
+                },
+                contentDescription = stringResource(
+                    R.string.cd_show_poster_image,
+                    show.title ?: ""
+                ),
+                modifier = Modifier.fillMaxSize(),
+            )
         }
 
         Spacer(Modifier.width(16.dp))
@@ -312,7 +310,7 @@ private fun FollowedAppBar(
     refreshing: Boolean,
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.surface.copy(
