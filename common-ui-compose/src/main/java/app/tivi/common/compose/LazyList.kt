@@ -46,6 +46,26 @@ fun LazyListScope.itemSpacer(height: Dp) {
     }
 }
 
+fun LazyListScope.gutterSpacer() {
+    item {
+        Spacer(
+            Modifier
+                .height(Layout.gutter)
+                .fillParentMaxWidth()
+        )
+    }
+}
+
+fun LazyListScope.bodyMarginSpacer() {
+    item {
+        Spacer(
+            Modifier
+                .height(Layout.bodyMargin)
+                .fillParentMaxWidth()
+        )
+    }
+}
+
 /**
  * Displays a 'fake' grid using [LazyColumn]'s DSL. It's fake in that we just we add individual
  * column items, with a inner fake row.

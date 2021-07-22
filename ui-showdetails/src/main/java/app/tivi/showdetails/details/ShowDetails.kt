@@ -17,14 +17,11 @@
 package app.tivi.showdetails.details
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -65,7 +62,6 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -76,8 +72,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -92,7 +86,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -100,16 +93,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
-import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.bodyMarginSpacer
+import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Carousel
@@ -141,8 +133,9 @@ import coil.compose.rememberImagePainter
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsHeight
+import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.LocalScaffoldPadding
+import com.google.accompanist.insets.ui.TopAppBar
 import kotlinx.coroutines.flow.collect
 import org.threeten.bp.OffsetDateTime
 
@@ -197,7 +190,6 @@ internal fun ShowDetails(
     LogCompositions("ShowDetails")
 
     val listState = rememberLazyListState()
-    var backdropHeight by remember { mutableStateOf(0) }
 
     Surface(Modifier.fillMaxSize()) {
         ShowDetailsScrollingContent(
@@ -209,33 +201,42 @@ internal fun ShowDetails(
             seasons = viewState.seasons,
             expandedSeasonIds = viewState.expandedSeasonIds,
             watchStats = viewState.watchStats,
-            showRefreshing = viewState.refreshing,
             listState = listState,
             actioner = actioner,
-            onBackdropSizeChanged = { backdropHeight = it.height },
             modifier = Modifier.fillMaxSize()
         )
     }
 
-    val trigger = backdropHeight - LocalWindowInsets.current.statusBars.top
+    var appBarHeight by remember { mutableStateOf(0) }
+    val showAppBarBackground by remember {
+        derivedStateOf {
+            val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+            when {
+                visibleItemsInfo.isEmpty() -> false
+                appBarHeight <= 0 -> false
+                else -> {
+                    val firstVisibleItem = visibleItemsInfo[0]
+                    when {
+                        // If the first visible item is > 0, we want to show the app bar background
+                        firstVisibleItem.index > 0 -> true
+                        // If the first item is visible, only show the app bar background once the only
+                        // remaining part of the item is <= the app bar
+                        else -> firstVisibleItem.size + firstVisibleItem.offset <= appBarHeight
+                    }
+                }
+            }
+        }
+    }
 
-    OverlaidStatusBarAppBar(
-        showAppBar = {
-            listState.firstVisibleItemIndex > 0 ||
-                listState.firstVisibleItemScrollOffset >= trigger
-        },
+    ShowDetailsAppBar(
+        title = viewState.show.title,
+        isRefreshing = viewState.refreshing,
+        showAppBarBackground = showAppBarBackground,
+        actioner = actioner,
         modifier = Modifier
             .fillMaxWidth()
-            .align(Alignment.TopCenter)
-    ) {
-        ShowDetailsAppBar(
-            title = viewState.show.title ?: "",
-            backgroundColor = Color.Transparent,
-            elevation = 0.dp,
-            isRefreshing = viewState.refreshing,
-            actioner = actioner
-        )
-    }
+            .onSizeChanged { appBarHeight = it.height }
+    )
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -253,7 +254,7 @@ internal fun ShowDetails(
                 )
             },
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = Layout.bodyMargin)
                 .fillMaxWidth()
         )
 
@@ -267,7 +268,7 @@ internal fun ShowDetails(
             onClick = { actioner(ShowDetailsAction.FollowShowToggleAction) },
             modifier = Modifier
                 .align(Alignment.End)
-                .padding(16.dp)
+                .padding(Layout.bodyMargin)
                 .navigationBarsPadding(bottom = false)
                 .padding(LocalScaffoldPadding.current)
         )
@@ -290,10 +291,8 @@ private fun ShowDetailsScrollingContent(
     seasons: List<SeasonWithEpisodesAndWatches>,
     expandedSeasonIds: Set<Long>,
     watchStats: FollowedShowsWatchStats?,
-    showRefreshing: Boolean,
     listState: LazyListState,
     actioner: (ShowDetailsAction) -> Unit,
-    onBackdropSizeChanged: (IntSize) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LogCompositions("ShowDetailsScrollingContent")
@@ -309,7 +308,6 @@ private fun ShowDetailsScrollingContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 10)
-                    .onSizeChanged(onBackdropSizeChanged)
                     .clipToBounds()
                     .offset {
                         IntOffset(
@@ -322,15 +320,7 @@ private fun ShowDetailsScrollingContent(
             )
         }
 
-        item {
-            ShowDetailsAppBar(
-                title = null, // We don't show the title for the inline app bar
-                elevation = 0.dp,
-                backgroundColor = Color.Transparent,
-                isRefreshing = showRefreshing,
-                actioner = actioner
-            )
-        }
+        bodyMarginSpacer()
 
         item {
             PosterInfoRow(
@@ -340,7 +330,7 @@ private fun ShowDetailsScrollingContent(
             )
         }
 
-        itemSpacer(16.dp)
+        gutterSpacer()
 
         item {
             Header(stringResource(R.string.details_about))
@@ -352,7 +342,7 @@ private fun ShowDetailsScrollingContent(
                     text = show.summary!!,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
                 )
             }
         }
@@ -364,7 +354,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
-            itemSpacer(8.dp)
+            gutterSpacer()
 
             item {
                 Header(stringResource(id = R.string.details_next_episode_to_watch))
@@ -381,7 +371,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (relatedShows.isNotEmpty()) {
-            itemSpacer(8.dp)
+            gutterSpacer()
 
             item {
                 Header(stringResource(R.string.details_related))
@@ -398,7 +388,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (watchStats != null) {
-            itemSpacer(8.dp)
+            gutterSpacer()
 
             item {
                 Header(stringResource(R.string.details_view_stats))
@@ -409,7 +399,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (seasons.isNotEmpty()) {
-            itemSpacer(8.dp)
+            gutterSpacer()
 
             item {
                 Header(stringResource(R.string.show_details_seasons))
@@ -440,7 +430,7 @@ private fun PosterInfoRow(
     posterImage: TmdbImageEntity?,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier.padding(horizontal = 16.dp)) {
+    Row(modifier.padding(horizontal = Layout.bodyMargin)) {
         Image(
             painter = rememberImagePainter(posterImage) {
                 crossfade(true)
@@ -457,7 +447,7 @@ private fun PosterInfoRow(
             show = show,
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 16.dp)
+                .padding(start = Layout.gutter)
         )
     }
 }
@@ -507,90 +497,6 @@ private fun BackdropImage(
         }
         // TODO show a placeholder if null
     }
-}
-
-@Composable
-private fun OverlaidStatusBarAppBar(
-    showAppBar: () -> Boolean,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    LogCompositions("OverlaidStatusBarAppBar")
-
-    Column(modifier) {
-        val transition = updateOverlaidStatusBarAppBarTransition(showAppBar())
-
-        Surface(
-            elevation = transition.elevation,
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsHeight()
-                .graphicsLayer {
-                    alpha = transition.alpha
-                    translationY = transition.offset
-                },
-            content = {}
-        )
-
-        if (showAppBar()) {
-            Surface(
-                elevation = transition.elevation,
-                modifier = Modifier.fillMaxWidth(),
-                content = content,
-            )
-        }
-    }
-}
-
-@Composable
-private fun updateOverlaidStatusBarAppBarTransition(
-    showAppBar: Boolean,
-): OverlaidStatusBarAppBarTransition {
-    LogCompositions("updateOverlaidStatusBarAppBarTransition")
-
-    val transition = updateTransition(showAppBar)
-
-    val elevation = transition.animateDp { show -> if (show) 2.dp else 0.dp }
-
-    val alpha = transition.animateFloat(
-        transitionSpec = {
-            when {
-                false isTransitioningTo true -> snap()
-                else -> tween(durationMillis = 300)
-            }
-        }
-    ) { show ->
-        if (show) 1f else 0f
-    }
-
-    val offset = transition.animateFloat(
-        transitionSpec = {
-            when {
-                false isTransitioningTo true -> spring()
-                // This is a bit of a hack. We don't actually want an offset transition
-                // on exit, so we just run a snap AFTER the alpha animation
-                // has finished (with some buffer)
-                else -> snap(delayMillis = 320)
-            }
-        }
-    ) { show ->
-        if (show) 0f else LocalWindowInsets.current.statusBars.top.toFloat()
-    }
-
-    return remember(transition) {
-        OverlaidStatusBarAppBarTransition(elevation, alpha, offset)
-    }
-}
-
-@Stable
-class OverlaidStatusBarAppBarTransition(
-    elevation: State<Dp>,
-    alpha: State<Float>,
-    offset: State<Float>,
-) {
-    val elevation: Dp by elevation
-    val alpha: Float by alpha
-    val offset: Float by offset
 }
 
 @Composable
@@ -775,7 +681,7 @@ private fun Header(title: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
     ) {
         Text(
             text = title,
@@ -789,7 +695,7 @@ private fun Genres(genres: List<Genre>) {
     Box(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
     ) {
         val textCreator = LocalTiviTextCreator.current
         Text(
@@ -809,7 +715,7 @@ private fun RelatedShows(
 
     Carousel(
         items = related,
-        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+        contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
         itemSpacing = 4.dp,
         modifier = modifier
     ) { item, padding ->
@@ -837,7 +743,7 @@ private fun NextEpisodeToWatch(
             .heightIn(min = 48.dp)
             .wrapContentHeight()
             .clickable(onClick = onClick)
-            .padding(16.dp, 8.dp)
+            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
     ) {
         val textCreator = LocalTiviTextCreator.current
 
@@ -861,8 +767,8 @@ private fun InfoPanels(
     modifier: Modifier = Modifier,
 ) {
     FlowRow(
-        mainAxisSpacing = 8.dp,
-        crossAxisSpacing = 8.dp,
+        mainAxisSpacing = Layout.gutter,
+        crossAxisSpacing = Layout.gutter,
         modifier = modifier,
     ) {
         if (show.traktRating != null) {
@@ -894,7 +800,7 @@ private fun WatchStats(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 8.dp)
+            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
     ) {
         LinearProgressIndicator(
             progress = when {
@@ -904,7 +810,7 @@ private fun WatchStats(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Layout.gutter))
 
         val textCreator = LocalTiviTextCreator.current
 
@@ -989,7 +895,7 @@ private fun SeasonRow(
         modifier = modifier
             .heightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
-            .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
+            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
     ) {
         Column(
             modifier = Modifier
@@ -1109,7 +1015,7 @@ private fun EpisodeWithWatchesRow(
         modifier = modifier
             .heightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
     ) {
         Column(modifier = Modifier.weight(1f)) {
             val textCreator = LocalTiviTextCreator.current
@@ -1162,18 +1068,39 @@ private fun EpisodeWithWatchesRow(
 @Composable
 private fun ShowDetailsAppBar(
     title: String?,
-    elevation: Dp,
-    backgroundColor: Color,
     isRefreshing: Boolean,
+    showAppBarBackground: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LogCompositions("ShowDetailsAppBar")
 
+    val backgroundColor by animateColorAsState(
+        targetValue = when {
+            showAppBarBackground -> MaterialTheme.colors.surface
+            else -> Color.Transparent
+        },
+        animationSpec = spring(),
+    )
+
+    val elevation by animateDpAsState(
+        targetValue = when {
+            showAppBarBackground -> 4.dp
+            else -> 0.dp
+        },
+        animationSpec = spring(),
+    )
+
     TopAppBar(
         title = {
-            if (title != null) Text(text = title)
+            Crossfade(showAppBarBackground && title != null) { show ->
+                if (show) Text(text = title!!)
+            }
         },
+        contentPadding = rememberInsetsPaddingValues(
+            LocalWindowInsets.current.systemBars,
+            applyBottom = false
+        ),
         navigationIcon = {
             IconButton(onClick = { actioner(ShowDetailsAction.NavigateUp) }) {
                 Icon(
@@ -1252,8 +1179,7 @@ private val previewShow = TiviShow(title = "Detective Penny")
 private fun PreviewTopAppBar() {
     ShowDetailsAppBar(
         title = previewShow.title ?: "",
-        elevation = 1.dp,
-        backgroundColor = MaterialTheme.colors.surface,
+        showAppBarBackground = true,
         isRefreshing = true,
         actioner = {}
     )
