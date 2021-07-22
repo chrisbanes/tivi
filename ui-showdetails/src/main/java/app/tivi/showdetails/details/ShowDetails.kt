@@ -16,7 +16,6 @@
 
 package app.tivi.showdetails.details
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
@@ -49,7 +48,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -89,7 +87,6 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -136,7 +133,6 @@ import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.LocalScaffoldPadding
 import com.google.accompanist.insets.ui.TopAppBar
-import kotlinx.coroutines.flow.collect
 import org.threeten.bp.OffsetDateTime
 
 @Composable
@@ -144,12 +140,14 @@ fun ShowDetails(
     navigateUp: () -> Unit,
     openShowDetails: (showId: Long) -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
+    openSeasonDetails: (seasonId: Long) -> Unit,
 ) {
     ShowDetails(
         viewModel = hiltViewModel(),
         navigateUp = navigateUp,
         openShowDetails = openShowDetails,
         openEpisodeDetails = openEpisodeDetails,
+        openSeasonDetails = openSeasonDetails,
     )
 }
 
@@ -159,6 +157,7 @@ internal fun ShowDetails(
     navigateUp: () -> Unit,
     openShowDetails: (showId: Long) -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
+    openSeasonDetails: (seasonId: Long) -> Unit,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = ShowDetailsViewState.Empty)
@@ -166,17 +165,10 @@ internal fun ShowDetails(
     ShowDetails(viewState = viewState) { action ->
         when (action) {
             ShowDetailsAction.NavigateUp -> navigateUp()
+            is ShowDetailsAction.OpenShowDetails -> openShowDetails(action.showId)
+            is ShowDetailsAction.OpenEpisodeDetails -> openEpisodeDetails(action.episodeId)
+            is ShowDetailsAction.OpenSeason -> openSeasonDetails(action.seasonId)
             else -> viewModel.submitAction(action)
-        }
-    }
-
-    LaunchedEffect(viewModel) {
-        viewModel.uiEffects.collect { effect ->
-            when (effect) {
-                is OpenShowUiEffect -> openShowDetails(effect.showId)
-                is OpenEpisodeUiEffect -> openEpisodeDetails(effect.episodeId)
-                else -> Unit // TODO: any remaining ui effects need to be passed down to the UI
-            }
         }
     }
 }
@@ -199,7 +191,6 @@ internal fun ShowDetails(
             relatedShows = viewState.relatedShows,
             nextEpisodeToWatch = viewState.nextEpisodeToWatch,
             seasons = viewState.seasons,
-            expandedSeasonIds = viewState.expandedSeasonIds,
             watchStats = viewState.watchStats,
             listState = listState,
             actioner = actioner,
@@ -289,7 +280,6 @@ private fun ShowDetailsScrollingContent(
     relatedShows: List<RelatedShowEntryWithShow>,
     nextEpisodeToWatch: EpisodeWithSeason?,
     seasons: List<SeasonWithEpisodesAndWatches>,
-    expandedSeasonIds: Set<Long>,
     watchStats: FollowedShowsWatchStats?,
     listState: LazyListState,
     actioner: (ShowDetailsAction) -> Unit,
@@ -409,7 +399,6 @@ private fun ShowDetailsScrollingContent(
                 SeasonWithEpisodesRow(
                     season = season.season,
                     episodes = season.episodes,
-                    expanded = season.season.id in expandedSeasonIds,
                     actioner = actioner,
                     modifier = Modifier.fillParentMaxWidth(),
                 )
@@ -827,15 +816,10 @@ private fun WatchStats(
 private fun SeasonWithEpisodesRow(
     season: Season,
     episodes: List<EpisodeWithWatches>,
-    expanded: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val elevation by animateDpAsState(if (expanded) 2.dp else 0.dp)
-    Surface(
-        elevation = elevation,
-        modifier = modifier
-    ) {
+    Surface(modifier = modifier) {
         Column(Modifier.fillMaxWidth()) {
             SeasonRow(
                 season = season,
@@ -848,34 +832,9 @@ private fun SeasonWithEpisodesRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(enabled = !season.ignored) {
-                        actioner(ShowDetailsAction.ChangeSeasonExpandedAction(season.id, !expanded))
+                        actioner(ShowDetailsAction.OpenSeason(season.id))
                     }
             )
-
-            // Ideally each EpisodeWithWatchesRow would be in a different item {}, but there
-            // are currently 2 issues for that:
-            // #1: AnimatedVisibility currently crashes in Lazy*: b/170287733
-            // #2: Can't use a Surface across different items: b/170472398
-            // So instead we bundle the items in an inner Column, within a single item.
-            episodes.forEach { episodeEntry ->
-                AnimatedVisibility(visible = expanded) {
-                    EpisodeWithWatchesRow(
-                        episode = episodeEntry.episode,
-                        isWatched = episodeEntry.isWatched,
-                        hasPending = episodeEntry.hasPending,
-                        onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                actioner(ShowDetailsAction.OpenEpisodeDetails(episodeEntry.episode.id))
-                            }
-                    )
-                }
-            }
-
-            AnimatedVisibility(visible = expanded) {
-                Divider()
-            }
         }
     }
 }
@@ -998,68 +957,6 @@ private fun SeasonRow(
                         Text(text = stringResource(id = R.string.popup_season_mark_watched_aired))
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun EpisodeWithWatchesRow(
-    episode: Episode,
-    isWatched: Boolean,
-    hasPending: Boolean,
-    onlyPendingDeletes: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .heightIn(min = 48.dp)
-            .wrapContentHeight(Alignment.CenterVertically)
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            val textCreator = LocalTiviTextCreator.current
-
-            Text(
-                text = textCreator.episodeNumberText(episode).toString(),
-                style = MaterialTheme.typography.caption
-            )
-
-            Spacer(Modifier.height(2.dp))
-
-            Text(
-                text = episode.title
-                    ?: stringResource(R.string.episode_title_fallback, episode.number!!),
-                style = MaterialTheme.typography.body2
-            )
-        }
-
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            var needSpacer = false
-            if (hasPending) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_cloud_upload),
-                    contentDescription = stringResource(R.string.cd_episode_syncing),
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                )
-                needSpacer = true
-            }
-            if (isWatched) {
-                if (needSpacer) Spacer(Modifier.width(4.dp))
-
-                Icon(
-                    painter = painterResource(
-                        when {
-                            onlyPendingDeletes -> R.drawable.ic_visibility_off
-                            else -> R.drawable.ic_visibility
-                        }
-                    ),
-                    contentDescription = when {
-                        onlyPendingDeletes -> stringResource(R.string.cd_episode_deleted)
-                        else -> stringResource(R.string.cd_episode_watched)
-                    },
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
             }
         }
     }

@@ -36,6 +36,7 @@ import app.tivi.home.search.Search
 import app.tivi.home.trending.Trending
 import app.tivi.home.watched.Watched
 import app.tivi.showdetails.details.ShowDetails
+import app.tivi.showdetails.season.SeasonDetails
 
 internal sealed class Screen(val route: String) {
     object Discover : Screen("discoverroot")
@@ -56,6 +57,10 @@ private sealed class LeafScreen(val route: String) {
 
     object EpisodeDetails : LeafScreen("episode/{episodeId}") {
         fun createRoute(episodeId: Long): String = "episode/$episodeId"
+    }
+
+    object Season : LeafScreen("season/{seasonId}") {
+        fun createRoute(seasonId: Long): String = "season/$seasonId"
     }
 
     object RecommendedShows : LeafScreen("recommendedshows")
@@ -91,6 +96,7 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
         addDiscover(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
+        addSeason(navController)
         addEpisodeDetails(navController)
         addRecommendedShows(navController)
         addTrendingShows(navController)
@@ -109,6 +115,7 @@ private fun NavGraphBuilder.addFollowingTopLevel(
         addFollowedShows(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
+        addSeason(navController)
         addEpisodeDetails(navController)
     }
 }
@@ -124,6 +131,7 @@ private fun NavGraphBuilder.addWatchedTopLevel(
         addWatchedShows(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
+        addSeason(navController)
         addEpisodeDetails(navController)
     }
 }
@@ -139,6 +147,7 @@ private fun NavGraphBuilder.addSearchTopLevel(
         addSearch(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
+        addSeason(navController)
         addEpisodeDetails(navController)
     }
 }
@@ -221,6 +230,9 @@ private fun NavGraphBuilder.addShowDetails(navController: NavController) {
             },
             openEpisodeDetails = { episodeId ->
                 navController.navigate(LeafScreen.EpisodeDetails.createRoute(episodeId))
+            },
+            openSeasonDetails = { seasonId ->
+                navController.navigate(LeafScreen.Season.createRoute(seasonId))
             }
         )
     }
@@ -281,10 +293,24 @@ private fun NavGraphBuilder.addAccount(
     composable(LeafScreen.Account.route) {
         // This should really be a dialog, but we're waiting on:
         // https://issuetracker.google.com/179608120
-        Dialog(
-            onDismissRequest = { navController.popBackStack() }
-        ) {
+        Dialog(onDismissRequest = navController::popBackStack) {
             AccountUi(navController, onOpenSettings)
         }
+    }
+}
+
+private fun NavGraphBuilder.addSeason(navController: NavController) {
+    composable(
+        route = LeafScreen.Season.route,
+        arguments = listOf(
+            navArgument("seasonId") { type = NavType.LongType }
+        )
+    ) {
+        SeasonDetails(
+            navigateUp = navController::navigateUp,
+            openEpisodeDetails = { episodeId ->
+                navController.navigate(LeafScreen.EpisodeDetails.createRoute(episodeId))
+            },
+        )
     }
 }

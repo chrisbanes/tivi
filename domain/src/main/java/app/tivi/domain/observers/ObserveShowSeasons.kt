@@ -30,5 +30,5 @@ class ObserveShowSeasons @Inject constructor(
         return seasonsEpisodesRepository.observeSeasonsForShow(params.showId)
     }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+    data class Params(val showId: Long)
 }

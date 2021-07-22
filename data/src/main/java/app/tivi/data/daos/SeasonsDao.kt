@@ -33,6 +33,10 @@ abstract class SeasonsDao : EntityDao<Season>() {
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
     abstract suspend fun seasonsForShowId(showId: Long): List<Season>
 
+    @Transaction
+    @Query("SELECT * FROM seasons WHERE id = :seasonId")
+    abstract fun seasonWithEpisodes(seasonId: Long): Flow<SeasonWithEpisodesAndWatches>
+
     @Query("DELETE FROM seasons WHERE show_id = :showId")
     abstract suspend fun deleteWithShowId(showId: Long)
 

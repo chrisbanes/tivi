@@ -164,6 +164,7 @@ dependencies {
     implementation project(':ui-trending')
     implementation project(':ui-recommended')
     implementation project(':ui-search')
+    implementation project(':ui-season')
     implementation project(':ui-settings')
 
 

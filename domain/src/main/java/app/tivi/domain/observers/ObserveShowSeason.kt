@@ -22,13 +22,13 @@ import app.tivi.domain.SubjectInteractor
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ObserveShowSeasonData @Inject constructor(
+class ObserveShowSeason @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository
-) : SubjectInteractor<ObserveShowSeasonData.Params, List<SeasonWithEpisodesAndWatches>>() {
+) : SubjectInteractor<ObserveShowSeason.Params, SeasonWithEpisodesAndWatches>() {
 
-    override fun createObservable(params: Params): Flow<List<SeasonWithEpisodesAndWatches>> {
-        return seasonsEpisodesRepository.observeSeasonsForShow(params.showId)
+    override fun createObservable(params: Params): Flow<SeasonWithEpisodesAndWatches> {
+        return seasonsEpisodesRepository.observeSeason(params.seasonId)
     }
 
-    data class Params(val showId: Long)
+    data class Params(val seasonId: Long)
 }
