@@ -88,13 +88,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -102,6 +106,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.itemSpacer
@@ -111,6 +116,7 @@ import app.tivi.common.compose.ui.Carousel
 import app.tivi.common.compose.ui.ExpandableFloatingActionButton
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SwipeDismissSnackbar
+import app.tivi.common.compose.ui.drawForegroundGradientScrim
 import app.tivi.common.compose.ui.foregroundColor
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
@@ -186,7 +192,7 @@ internal fun ShowDetails(
 @Composable
 internal fun ShowDetails(
     viewState: ShowDetailsViewState,
-    actioner: (ShowDetailsAction) -> Unit
+    actioner: (ShowDetailsAction) -> Unit,
 ) = Box(modifier = Modifier.fillMaxSize()) {
     LogCompositions("ShowDetails")
 
@@ -299,6 +305,7 @@ private fun ShowDetailsScrollingContent(
         item {
             BackdropImage(
                 backdropImage = backdropImage,
+                showTitle = show.title ?: "",
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 10)
@@ -317,7 +324,7 @@ private fun ShowDetailsScrollingContent(
 
         item {
             ShowDetailsAppBar(
-                title = show.title ?: "",
+                title = null, // We don't show the title for the inline app bar
                 elevation = 0.dp,
                 backgroundColor = Color.Transparent,
                 isRefreshing = showRefreshing,
@@ -431,7 +438,7 @@ private fun ShowDetailsScrollingContent(
 private fun PosterInfoRow(
     show: TiviShow,
     posterImage: TmdbImageEntity?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(modifier.padding(horizontal = 16.dp)) {
         Image(
@@ -458,17 +465,44 @@ private fun PosterInfoRow(
 @Composable
 private fun BackdropImage(
     backdropImage: TmdbImageEntity?,
-    modifier: Modifier = Modifier
+    showTitle: String,
+    modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier) {
-        if (backdropImage != null) {
-            Image(
-                painter = rememberImagePainter(backdropImage) {
-                    crossfade(true)
-                },
-                contentDescription = stringResource(R.string.cd_show_poster),
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
+        Box {
+            if (backdropImage != null) {
+                Image(
+                    painter = rememberImagePainter(backdropImage) {
+                        crossfade(true)
+                    },
+                    contentDescription = stringResource(R.string.cd_show_poster),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .drawForegroundGradientScrim(Color.Black.copy(alpha = 0.7f)),
+                )
+            }
+
+            val originalTextStyle = MaterialTheme.typography.h4
+
+            val shadowSize = with(LocalDensity.current) {
+                originalTextStyle.fontSize.toPx() / 16
+            }
+
+            Text(
+                text = showTitle,
+                style = originalTextStyle.copy(
+                    color = Color.White,
+                    shadow = Shadow(
+                        color = Color.Black,
+                        offset = Offset(shadowSize, shadowSize),
+                        blurRadius = 0.1f,
+                    )
+                ),
+                fontWeight = FontWeight.Thin,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(Layout.bodyMargin)
             )
         }
         // TODO show a placeholder if null
@@ -510,7 +544,7 @@ private fun OverlaidStatusBarAppBar(
 
 @Composable
 private fun updateOverlaidStatusBarAppBarTransition(
-    showAppBar: Boolean
+    showAppBar: Boolean,
 ): OverlaidStatusBarAppBarTransition {
     LogCompositions("updateOverlaidStatusBarAppBarTransition")
 
@@ -604,7 +638,7 @@ private fun NetworkInfoPanel(
 @Composable
 private fun RuntimeInfoPanel(
     runtime: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         Text(
@@ -624,7 +658,7 @@ private fun RuntimeInfoPanel(
 @Composable
 private fun ShowStatusPanel(
     showStatus: ShowStatus,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         Text(
@@ -645,7 +679,7 @@ private fun ShowStatusPanel(
 @Composable
 private fun AirsInfoPanel(
     show: TiviShow,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         Text(
@@ -666,7 +700,7 @@ private fun AirsInfoPanel(
 @Composable
 private fun CertificateInfoPanel(
     certification: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         Text(
@@ -694,7 +728,7 @@ private fun CertificateInfoPanel(
 private fun TraktRatingInfoPanel(
     rating: Float,
     votes: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         Text(
@@ -769,7 +803,7 @@ private fun Genres(genres: List<Genre>) {
 private fun RelatedShows(
     related: List<RelatedShowEntryWithShow>,
     actioner: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LogCompositions("RelatedShows")
 
@@ -795,7 +829,7 @@ private fun RelatedShows(
 private fun NextEpisodeToWatch(
     season: Season,
     episode: Episode,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -855,7 +889,7 @@ private fun InfoPanels(
 @Composable
 private fun WatchStats(
     watchedEpisodeCount: Int,
-    episodeCount: Int
+    episodeCount: Int,
 ) {
     Column(
         modifier = Modifier
@@ -889,7 +923,7 @@ private fun SeasonWithEpisodesRow(
     episodes: List<EpisodeWithWatches>,
     expanded: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val elevation by animateDpAsState(if (expanded) 2.dp else 0.dp)
     Surface(
@@ -1069,7 +1103,7 @@ private fun EpisodeWithWatchesRow(
     isWatched: Boolean,
     hasPending: Boolean,
     onlyPendingDeletes: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -1127,17 +1161,19 @@ private fun EpisodeWithWatchesRow(
 
 @Composable
 private fun ShowDetailsAppBar(
-    title: String,
+    title: String?,
     elevation: Dp,
     backgroundColor: Color,
     isRefreshing: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LogCompositions("ShowDetailsAppBar")
 
     TopAppBar(
-        title = { Text(text = title) },
+        title = {
+            if (title != null) Text(text = title)
+        },
         navigationIcon = {
             IconButton(onClick = { actioner(ShowDetailsAction.NavigateUp) }) {
                 Icon(
