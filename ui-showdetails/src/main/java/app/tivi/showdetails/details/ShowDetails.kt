@@ -107,6 +107,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SwipeDismissSnackbar
 import app.tivi.common.compose.ui.drawForegroundGradientScrim
 import app.tivi.common.compose.ui.foregroundColor
+import app.tivi.common.compose.ui.iconButtonBackgroundScrim
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -999,10 +1000,13 @@ private fun ShowDetailsAppBar(
             applyBottom = false
         ),
         navigationIcon = {
-            IconButton(onClick = { actioner(ShowDetailsAction.NavigateUp) }) {
+            IconButton(
+                onClick = { actioner(ShowDetailsAction.NavigateUp) },
+                modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground),
+            ) {
                 Icon(
-                    Icons.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.cd_navigate_up)
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = stringResource(R.string.cd_navigate_up),
                 )
             }
         },
@@ -1012,10 +1016,13 @@ private fun ShowDetailsAppBar(
                     modifier = Modifier
                         .aspectRatio(1f)
                         .fillMaxHeight()
-                        .padding(14.dp)
+                        .padding(16.dp)
                 )
             } else {
-                IconButton(onClick = { actioner(ShowDetailsAction.RefreshAction) }) {
+                IconButton(
+                    onClick = { actioner(ShowDetailsAction.RefreshAction) },
+                    modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground),
+                ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = stringResource(R.string.cd_refresh)
