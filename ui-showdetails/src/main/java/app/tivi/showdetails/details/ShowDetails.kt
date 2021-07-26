@@ -57,7 +57,6 @@ import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -67,6 +66,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -99,12 +99,14 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.bodyMarginSpacer
 import app.tivi.common.compose.gutterSpacer
+import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Carousel
 import app.tivi.common.compose.ui.ExpandableFloatingActionButton
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SwipeDismissSnackbar
+import app.tivi.common.compose.ui.copy
 import app.tivi.common.compose.ui.drawForegroundGradientScrim
 import app.tivi.common.compose.ui.foregroundColor
 import app.tivi.common.compose.ui.iconButtonBackgroundScrim
@@ -130,9 +132,8 @@ import app.tivi.data.views.FollowedShowsWatchStats
 import coil.compose.rememberImagePainter
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.rememberInsetsPaddingValues
-import com.google.accompanist.insets.ui.LocalScaffoldPadding
+import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import org.threeten.bp.OffsetDateTime
 
@@ -179,96 +180,93 @@ internal fun ShowDetails(
 internal fun ShowDetails(
     viewState: ShowDetailsViewState,
     actioner: (ShowDetailsAction) -> Unit,
-) = Box(modifier = Modifier.fillMaxSize()) {
-    LogCompositions("ShowDetails")
-
+) {
+    val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
-
-    Surface(Modifier.fillMaxSize()) {
-        ShowDetailsScrollingContent(
-            show = viewState.show,
-            posterImage = viewState.posterImage,
-            backdropImage = viewState.backdropImage,
-            relatedShows = viewState.relatedShows,
-            nextEpisodeToWatch = viewState.nextEpisodeToWatch,
-            seasons = viewState.seasons,
-            watchStats = viewState.watchStats,
-            listState = listState,
-            actioner = actioner,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-
-    var appBarHeight by remember { mutableStateOf(0) }
-    val showAppBarBackground by remember {
-        derivedStateOf {
-            val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-            when {
-                visibleItemsInfo.isEmpty() -> false
-                appBarHeight <= 0 -> false
-                else -> {
-                    val firstVisibleItem = visibleItemsInfo[0]
-                    when {
-                        // If the first visible item is > 0, we want to show the app bar background
-                        firstVisibleItem.index > 0 -> true
-                        // If the first item is visible, only show the app bar background once the only
-                        // remaining part of the item is <= the app bar
-                        else -> firstVisibleItem.size + firstVisibleItem.offset <= appBarHeight
-                    }
-                }
-            }
-        }
-    }
-
-    ShowDetailsAppBar(
-        title = viewState.show.title,
-        isRefreshing = viewState.refreshing,
-        showAppBarBackground = showAppBarBackground,
-        actioner = actioner,
-        modifier = Modifier
-            .fillMaxWidth()
-            .onSizeChanged { appBarHeight = it.height }
-    )
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .align(Alignment.BottomCenter)
-    ) {
-        SnackbarHost(
-            hostState = snackbarHostState,
-            snackbar = {
-                SwipeDismissSnackbar(
-                    data = it,
-                    onDismiss = { actioner(ShowDetailsAction.ClearError) }
-                )
-            },
-            modifier = Modifier
-                .padding(horizontal = Layout.bodyMargin)
-                .fillMaxWidth()
-        )
-
-        val expanded by remember {
-            derivedStateOf { listState.firstVisibleItemIndex > 0 }
-        }
-
-        ToggleShowFollowFloatingActionButton(
-            isFollowed = viewState.isFollowed,
-            expanded = { expanded },
-            onClick = { actioner(ShowDetailsAction.FollowShowToggleAction) },
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(Layout.bodyMargin)
-                .navigationBarsPadding(bottom = false)
-                .padding(LocalScaffoldPadding.current)
-        )
-    }
 
     LaunchedEffect(viewState.refreshError) {
         viewState.refreshError?.let { error ->
-            snackbarHostState.showSnackbar(error.message)
+            scaffoldState.snackbarHostState.showSnackbar(error.message)
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            var appBarHeight by remember { mutableStateOf(0) }
+            val showAppBarBackground by remember {
+                derivedStateOf {
+                    val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+                    when {
+                        visibleItemsInfo.isEmpty() -> false
+                        appBarHeight <= 0 -> false
+                        else -> {
+                            val firstVisibleItem = visibleItemsInfo[0]
+                            when {
+                                // If the first visible item is > 0, we want to show the app bar background
+                                firstVisibleItem.index > 0 -> true
+                                // If the first item is visible, only show the app bar background once the only
+                                // remaining part of the item is <= the app bar
+                                else -> firstVisibleItem.size + firstVisibleItem.offset <= appBarHeight
+                            }
+                        }
+                    }
+                }
+            }
+
+            ShowDetailsAppBar(
+                title = viewState.show.title,
+                isRefreshing = viewState.refreshing,
+                showAppBarBackground = showAppBarBackground,
+                actioner = actioner,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onSizeChanged { appBarHeight = it.height }
+            )
+        },
+        floatingActionButton = {
+            val expanded by remember {
+                derivedStateOf {
+                    listState.firstVisibleItemIndex > 0
+                }
+            }
+
+            ToggleShowFollowFloatingActionButton(
+                isFollowed = viewState.isFollowed,
+                expanded = { expanded },
+                onClick = { actioner(ShowDetailsAction.FollowShowToggleAction) },
+            )
+        },
+        snackbarHost = { snackBarHostState ->
+            SnackbarHost(
+                hostState = snackBarHostState,
+                snackbar = { snackBarData ->
+                    SwipeDismissSnackbar(
+                        data = snackBarData,
+                        onDismiss = { actioner(ShowDetailsAction.ClearError) }
+                    )
+                },
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth()
+            )
+        }
+    ) { contentPadding ->
+        LogCompositions("ShowDetails")
+
+        Surface {
+            ShowDetailsScrollingContent(
+                show = viewState.show,
+                posterImage = viewState.posterImage,
+                backdropImage = viewState.backdropImage,
+                relatedShows = viewState.relatedShows,
+                nextEpisodeToWatch = viewState.nextEpisodeToWatch,
+                seasons = viewState.seasons,
+                watchStats = viewState.watchStats,
+                listState = listState,
+                actioner = actioner,
+                contentPadding = contentPadding,
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }
@@ -284,13 +282,15 @@ private fun ShowDetailsScrollingContent(
     watchStats: FollowedShowsWatchStats?,
     listState: LazyListState,
     actioner: (ShowDetailsAction) -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     LogCompositions("ShowDetailsScrollingContent")
 
     LazyColumn(
         state = listState,
-        modifier = modifier
+        contentPadding = contentPadding.copy(copyTop = false),
+        modifier = modifier,
     ) {
         item {
             BackdropImage(
@@ -407,10 +407,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         // Spacer to push up content from under the FloatingActionButton
-        item {
-            val height = LocalScaffoldPadding.current.calculateBottomPadding() + 56.dp + 32.dp
-            Spacer(Modifier.height(height))
-        }
+        itemSpacer(56.dp + 32.dp)
     }
 }
 
