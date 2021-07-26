@@ -23,8 +23,7 @@ accompanist-insets = { module = "com.google.accompanist:accompanist-insets", ver
 accompanist-insetsui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 
-android-r8 = "com.android.tools:r8:3.1.11-dev"
-android-gradlePlugin = "com.android.tools.build:gradle:7.1.0-alpha03"
+android-gradlePlugin = "com.android.tools.build:gradle:7.1.0-alpha04"
 
 androidx-activity-compose = "androidx.activity:activity-compose:1.3.0-rc02"
 androidx-appcompat = "androidx.appcompat:appcompat:1.3.0"
