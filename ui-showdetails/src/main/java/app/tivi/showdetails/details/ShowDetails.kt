@@ -142,14 +142,14 @@ fun ShowDetails(
     navigateUp: () -> Unit,
     openShowDetails: (showId: Long) -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
-    openSeasonDetails: (seasonId: Long) -> Unit,
+    openSeasons: (showId: Long, seasonId: Long) -> Unit,
 ) {
     ShowDetails(
         viewModel = hiltViewModel(),
         navigateUp = navigateUp,
         openShowDetails = openShowDetails,
         openEpisodeDetails = openEpisodeDetails,
-        openSeasonDetails = openSeasonDetails,
+        openSeasons = openSeasons,
     )
 }
 
@@ -159,7 +159,7 @@ internal fun ShowDetails(
     navigateUp: () -> Unit,
     openShowDetails: (showId: Long) -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
-    openSeasonDetails: (seasonId: Long) -> Unit,
+    openSeasons: (showId: Long, seasonId: Long) -> Unit,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = ShowDetailsViewState.Empty)
@@ -169,7 +169,7 @@ internal fun ShowDetails(
             ShowDetailsAction.NavigateUp -> navigateUp()
             is ShowDetailsAction.OpenShowDetails -> openShowDetails(action.showId)
             is ShowDetailsAction.OpenEpisodeDetails -> openEpisodeDetails(action.episodeId)
-            is ShowDetailsAction.OpenSeason -> openSeasonDetails(action.seasonId)
+            is ShowDetailsAction.OpenSeason -> openSeasons(viewState.show.id, action.seasonId)
             else -> viewModel.submitAction(action)
         }
     }

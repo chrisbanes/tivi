@@ -16,18 +16,18 @@
 
 package app.tivi.domain.observers
 
-import app.tivi.data.entities.Season
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.domain.SubjectInteractor
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ObserveShowSeasons @Inject constructor(
+class ObserveShowSeasonsEpisodesWatches @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository
-) : SubjectInteractor<ObserveShowSeasons.Params, List<Season>>() {
+) : SubjectInteractor<ObserveShowSeasonsEpisodesWatches.Params, List<SeasonWithEpisodesAndWatches>>() {
 
-    override fun createObservable(params: Params): Flow<List<Season>> {
-        return seasonsEpisodesRepository.observeSeasonsForShow(params.showId)
+    override fun createObservable(params: Params): Flow<List<SeasonWithEpisodesAndWatches>> {
+        return seasonsEpisodesRepository.observeSeasonsWithEpisodesWatchedForShow(params.showId)
     }
 
     data class Params(val showId: Long)

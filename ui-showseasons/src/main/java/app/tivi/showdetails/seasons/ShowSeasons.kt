@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.season
+package app.tivi.showdetails.seasons
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -56,31 +56,42 @@ import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.SwipeDismissSnackbar
 import app.tivi.data.entities.Episode
+import app.tivi.data.resultentities.EpisodeWithWatches
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
+import com.google.accompanist.insets.ui.LocalScaffoldPadding
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
 
 @Composable
-fun SeasonDetails(
+fun ShowSeasons(
     navigateUp: () -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
+    initialSeasonId: Long? = null,
 ) {
-    SeasonDetails(
+    ShowSeasons(
         viewModel = hiltViewModel(),
         navigateUp = navigateUp,
         openEpisodeDetails = openEpisodeDetails,
+        initialSeasonId = initialSeasonId,
     )
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-internal fun SeasonDetails(
-    viewModel: SeasonDetailsViewModel,
+internal fun ShowSeasons(
+    viewModel: ShowSeasonsViewModel,
     navigateUp: () -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
+    initialSeasonId: Long?,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
-        .collectAsState(initial = SeasonDetailsViewState.Empty)
+        .collectAsState(initial = ShowSeasonsViewState.Empty)
 
     val scaffoldState = rememberScaffoldState()
 
@@ -90,13 +101,25 @@ internal fun SeasonDetails(
         }
     }
 
+    val pagerState = rememberPagerState(pageCount = viewState.seasons.size)
+
+    if (initialSeasonId != null) {
+        LaunchedEffect(pagerState) {
+            val initialIndex = viewState.seasons.indexOfFirst { it.season.id == initialSeasonId }
+            if (initialIndex >= 0) {
+                pagerState.scrollToPage(initialIndex)
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
                 title = {
-                    val seasonTitle = viewState.season.title
-                    val seasonNumber = viewState.season.number
+                    val currentSeason = viewState.seasons.getOrNull(pagerState.currentPage)
+                    val seasonTitle = currentSeason?.season?.title
+                    val seasonNumber = currentSeason?.season?.number
                     Text(
                         text = when {
                             seasonTitle != null -> seasonTitle
@@ -138,25 +161,61 @@ internal fun SeasonDetails(
                     .fillMaxWidth()
             )
         }
-    ) { paddingValues ->
-        LazyColumn(
+    ) {
+        SeasonsPager(
+            seasons = viewState.seasons,
+            pagerState = pagerState,
+            openEpisodeDetails = openEpisodeDetails,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = paddingValues,
-        ) {
-            items(viewState.episodes, key = { it.episode.id }) { item ->
-                EpisodeWithWatchesRow(
-                    episode = item.episode,
-                    isWatched = item.hasWatches,
-                    hasPending = item.hasPending,
-                    onlyPendingDeletes = item.onlyPendingDeletes,
-                    modifier = Modifier
-                        .fillParentMaxWidth()
-                        .clickable { openEpisodeDetails(item.episode.id) },
-                )
-            }
+        )
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+private fun SeasonsPager(
+    seasons: List<SeasonWithEpisodesAndWatches>,
+    pagerState: PagerState,
+    openEpisodeDetails: (episodeId: Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    HorizontalPager(
+        state = pagerState,
+        modifier = modifier,
+    ) { page ->
+        val season = seasons[page]
+        EpisodesList(
+            episodes = season.episodes,
+            onEpisodeClick = openEpisodeDetails,
+            modifier = Modifier.fillMaxSize(),
+        )
+    }
+}
+
+@Composable
+private fun EpisodesList(
+    episodes: List<EpisodeWithWatches>,
+    onEpisodeClick: (episodeId: Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = LocalScaffoldPadding.current,
+    ) {
+        items(episodes, key = { it.episode.id }) { item ->
+            EpisodeWithWatchesRow(
+                episode = item.episode,
+                isWatched = item.hasWatches,
+                hasPending = item.hasPending,
+                onlyPendingDeletes = item.onlyPendingDeletes,
+                modifier = Modifier
+                    .fillParentMaxWidth()
+                    .clickable { onEpisodeClick(item.episode.id) },
+            )
         }
     }
 }
+
 
 @Composable
 private fun EpisodeWithWatchesRow(

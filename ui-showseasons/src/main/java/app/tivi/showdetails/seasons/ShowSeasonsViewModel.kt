@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.season
+package app.tivi.showdetails.seasons
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -28,7 +28,7 @@ import app.tivi.data.entities.ActionDate
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Params
-import app.tivi.domain.observers.ObserveShowSeason
+import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
@@ -40,34 +40,32 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@Suppress("unused")
 @HiltViewModel
-internal class SeasonDetailsViewModel @Inject constructor(
+internal class ShowSeasonsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    observeShowSeason: ObserveShowSeason,
+    observeShowSeasons: ObserveShowSeasonsEpisodesWatches,
     private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
     private val logger: Logger,
     private val snackbarManager: SnackbarManager
 ) : ViewModel() {
-    private val seasonId: Long = savedStateHandle.get("seasonId")!!
+    private val showId: Long = savedStateHandle.get("showId")!!
 
     private val loadingState = ObservableLoadingCounter()
 
     val state = combine(
-        observeShowSeason.observe().distinctUntilChanged(),
+        observeShowSeasons.observe().distinctUntilChanged(),
         loadingState.observable,
         snackbarManager.errors,
-    ) { seasonWithEpisodes, refreshing, error ->
-        SeasonDetailsViewState(
-            season = seasonWithEpisodes.season,
-            episodes = seasonWithEpisodes.episodes,
+    ) { seasons, refreshing, error ->
+        ShowSeasonsViewState(
+            seasons = seasons,
             refreshing = refreshing,
             refreshError = error,
         )
     }
 
     init {
-        observeShowSeason(ObserveShowSeason.Params(seasonId))
+        observeShowSeasons(ObserveShowSeasonsEpisodesWatches.Params(showId))
 
         refresh(false)
     }
@@ -96,12 +94,12 @@ internal class SeasonDetailsViewModel @Inject constructor(
         date: ActionDate = ActionDate.NOW,
     ) {
         changeSeasonWatchedStatus(
-            Params(seasonId, Action.WATCHED, onlyAired, date)
+            Params(showId, Action.WATCHED, onlyAired, date)
         ).watchStatus()
     }
 
     fun markSeasonUnwatched() {
-        changeSeasonWatchedStatus(Params(seasonId, Action.UNWATCH)).watchStatus()
+        changeSeasonWatchedStatus(Params(showId, Action.UNWATCH)).watchStatus()
     }
 
     fun clearError() {

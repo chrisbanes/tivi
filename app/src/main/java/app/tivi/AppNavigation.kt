@@ -36,7 +36,7 @@ import app.tivi.home.search.Search
 import app.tivi.home.trending.Trending
 import app.tivi.home.watched.Watched
 import app.tivi.showdetails.details.ShowDetails
-import app.tivi.showdetails.season.SeasonDetails
+import app.tivi.showdetails.seasons.ShowSeasons
 
 internal sealed class Screen(val route: String) {
     object Discover : Screen("discoverroot")
@@ -59,8 +59,11 @@ private sealed class LeafScreen(val route: String) {
         fun createRoute(episodeId: Long): String = "episode/$episodeId"
     }
 
-    object Season : LeafScreen("season/{seasonId}") {
-        fun createRoute(seasonId: Long): String = "season/$seasonId"
+    object ShowSeasons : LeafScreen("show/{showId}/seasons?seasonId={seasonId}") {
+        fun createRoute(showId: Long, seasonId: Long? = null): String {
+            return "show/$showId/seasons" +
+                if (seasonId != null) "?seasonId=$seasonId" else ""
+        }
     }
 
     object RecommendedShows : LeafScreen("recommendedshows")
@@ -96,7 +99,7 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
         addDiscover(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
-        addSeason(navController)
+        addShowSeasons(navController)
         addEpisodeDetails(navController)
         addRecommendedShows(navController)
         addTrendingShows(navController)
@@ -115,7 +118,7 @@ private fun NavGraphBuilder.addFollowingTopLevel(
         addFollowedShows(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
-        addSeason(navController)
+        addShowSeasons(navController)
         addEpisodeDetails(navController)
     }
 }
@@ -131,7 +134,7 @@ private fun NavGraphBuilder.addWatchedTopLevel(
         addWatchedShows(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
-        addSeason(navController)
+        addShowSeasons(navController)
         addEpisodeDetails(navController)
     }
 }
@@ -147,7 +150,7 @@ private fun NavGraphBuilder.addSearchTopLevel(
         addSearch(navController)
         addAccount(navController, openSettings)
         addShowDetails(navController)
-        addSeason(navController)
+        addShowSeasons(navController)
         addEpisodeDetails(navController)
     }
 }
@@ -231,8 +234,8 @@ private fun NavGraphBuilder.addShowDetails(navController: NavController) {
             openEpisodeDetails = { episodeId ->
                 navController.navigate(LeafScreen.EpisodeDetails.createRoute(episodeId))
             },
-            openSeasonDetails = { seasonId ->
-                navController.navigate(LeafScreen.Season.createRoute(seasonId))
+            openSeasons = { showId, seasonId ->
+                navController.navigate(LeafScreen.ShowSeasons.createRoute(showId, seasonId))
             }
         )
     }
@@ -242,7 +245,7 @@ private fun NavGraphBuilder.addEpisodeDetails(navController: NavController) {
     composable(
         route = LeafScreen.EpisodeDetails.route,
         arguments = listOf(
-            navArgument("episodeId") { type = NavType.LongType }
+            navArgument("episodeId") { type = NavType.LongType },
         )
     ) {
         EpisodeDetails(
@@ -299,18 +302,25 @@ private fun NavGraphBuilder.addAccount(
     }
 }
 
-private fun NavGraphBuilder.addSeason(navController: NavController) {
+private fun NavGraphBuilder.addShowSeasons(navController: NavController) {
     composable(
-        route = LeafScreen.Season.route,
+        route = LeafScreen.ShowSeasons.route,
         arguments = listOf(
-            navArgument("seasonId") { type = NavType.LongType }
+            navArgument("showId") {
+                type = NavType.LongType
+            },
+            navArgument("seasonId") {
+                type = NavType.StringType
+                nullable = true
+            }
         )
     ) {
-        SeasonDetails(
+        ShowSeasons(
             navigateUp = navController::navigateUp,
             openEpisodeDetails = { episodeId ->
                 navController.navigate(LeafScreen.EpisodeDetails.createRoute(episodeId))
             },
+            initialSeasonId = it.arguments?.getLong("seasonId")
         )
     }
 }

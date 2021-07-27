@@ -74,6 +74,7 @@ dependencies {
 
     implementation libs.coil.compose
     implementation libs.accompanist.insets
+    implementation libs.accompanist.pager
 
     implementation libs.androidx.hilt.compose
     implementation libs.hilt.library

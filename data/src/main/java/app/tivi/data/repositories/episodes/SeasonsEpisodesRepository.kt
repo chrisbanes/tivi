@@ -26,11 +26,13 @@ import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -49,7 +51,13 @@ class SeasonsEpisodesRepository @Inject constructor(
     private val traktAuthState: Provider<TraktAuthState>,
     private val transactionRunner: DatabaseTransactionRunner
 ) {
-    fun observeSeasonsForShow(showId: Long) = seasonsEpisodesStore.observeShowSeasonsWithEpisodes(showId)
+    fun observeSeasonsForShow(showId: Long): Flow<List<Season>> {
+        return seasonsEpisodesStore.observeShowSeasons(showId)
+    }
+
+    fun observeSeasonsWithEpisodesWatchedForShow(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
+        return seasonsEpisodesStore.observeShowSeasonsWithEpisodes(showId)
+    }
 
     fun observeSeason(seasonId: Long) = seasonsEpisodesStore.observeShowSeasonWithEpisodes(seasonId)
 

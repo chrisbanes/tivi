@@ -53,6 +53,10 @@ class SeasonsEpisodesStore @Inject constructor(
         return episodesDao.episodeWithIdObservable(episodeId)
     }
 
+    fun observeShowSeasons(showId: Long): Flow<List<Season>> {
+        return seasonsDao.observeSeasonsForShowId(showId)
+    }
+
     fun observeShowSeasonsWithEpisodes(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
         return seasonsDao.seasonsWithEpisodesForShowId(showId)
     }

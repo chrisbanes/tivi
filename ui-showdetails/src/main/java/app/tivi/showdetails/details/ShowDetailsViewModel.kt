@@ -39,7 +39,7 @@ import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowFollowStatus
 import app.tivi.domain.observers.ObserveShowImages
 import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
-import app.tivi.domain.observers.ObserveShowSeasons
+import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.extensions.combine
 import app.tivi.ui.SnackbarManager
@@ -64,7 +64,7 @@ internal class ShowDetailsViewModel @Inject constructor(
     private val updateRelatedShows: UpdateRelatedShows,
     observeRelatedShows: ObserveRelatedShows,
     private val updateShowSeasons: UpdateShowSeasonData,
-    observeShowSeasons: ObserveShowSeasons,
+    observeShowSeasons: ObserveShowSeasonsEpisodesWatches,
     private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
     observeShowFollowStatus: ObserveShowFollowStatus,
     observeNextEpisodeToWatch: ObserveShowNextEpisodeToWatch,
@@ -129,7 +129,7 @@ internal class ShowDetailsViewModel @Inject constructor(
         observeShowDetails(ObserveShowDetails.Params(showId))
         observeShowImages(ObserveShowImages.Params(showId))
         observeRelatedShows(ObserveRelatedShows.Params(showId))
-        observeShowSeasons(ObserveShowSeasons.Params(showId))
+        observeShowSeasons(ObserveShowSeasonsEpisodesWatches.Params(showId))
         observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(showId))
         observeShowViewStats(ObserveShowViewStats.Params(showId))
 

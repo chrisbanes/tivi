@@ -1,5 +1,5 @@
 [versions]
-accompanist = "0.14.0"
+accompanist = "0.15.0-SNAPSHOT"
 androidxhilt = "1.0.0"
 androidxlifecycle = "2.4.0-alpha02"
 androidxtest = "1.4.0"
@@ -22,6 +22,7 @@ accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayo
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanist-insetsui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 
 android-gradlePlugin = "com.android.tools.build:gradle:7.1.0-alpha04"
 

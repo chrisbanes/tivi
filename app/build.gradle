@@ -164,9 +164,8 @@ dependencies {
     implementation project(':ui-trending')
     implementation project(':ui-recommended')
     implementation project(':ui-search')
-    implementation project(':ui-season')
+    implementation project(':ui-showseasons')
     implementation project(':ui-settings')
-
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
 

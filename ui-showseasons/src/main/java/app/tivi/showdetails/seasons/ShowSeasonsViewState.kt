@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.season
+package app.tivi.showdetails.seasons
 
 import androidx.compose.runtime.Immutable
 import app.tivi.api.UiError
-import app.tivi.data.entities.Season
-import app.tivi.data.resultentities.EpisodeWithWatches
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 
 @Immutable
-internal data class SeasonDetailsViewState(
-    val season: Season,
-    val episodes: List<EpisodeWithWatches> = emptyList(),
+internal data class ShowSeasonsViewState(
+    val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val refreshing: Boolean = false,
     val refreshError: UiError? = null,
 ) {
     companion object {
-        val Empty = SeasonDetailsViewState(season = Season.EMPTY)
+        val Empty = ShowSeasonsViewState()
     }
 }
