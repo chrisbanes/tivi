@@ -374,9 +374,7 @@ private fun ShowDetailsScrollingContent(
                 RelatedShows(
                     related = relatedShows,
                     actioner = actioner,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(112.dp)
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -730,7 +728,7 @@ private fun RelatedShows(
             onClick = { actioner(ShowDetailsAction.OpenShowDetails(item.show.id)) },
             modifier = Modifier
                 .padding(padding)
-                .fillParentMaxHeight()
+                .fillParentMaxWidth(0.15f) // 15% of the available width
                 .aspectRatio(2 / 3f)
         )
     }
