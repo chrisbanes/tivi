@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -168,9 +169,13 @@ internal fun Watched(
                 itemsInGrid(
                     lazyPagingItems = list,
                     columns = columns / 4,
-                    contentPadding = PaddingValues(horizontal = bodyMargin, vertical = gutter),
-                    verticalItemPadding = gutter,
-                    horizontalItemPadding = gutter,
+                    // We minus 8.dp off the grid padding, as we use content padding on the items below
+                    contentPadding = PaddingValues(
+                        horizontal = bodyMargin - 8.dp,
+                        vertical = gutter - 8.dp
+                    ),
+                    verticalItemPadding = gutter - 8.dp,
+                    horizontalItemPadding = gutter - 8.dp,
                 ) { entry ->
                     if (entry != null) {
                         WatchedShowItem(
@@ -178,6 +183,7 @@ internal fun Watched(
                             poster = entry.poster,
                             lastWatched = entry.entry.lastWatched,
                             onClick = { actioner(WatchedAction.OpenShowDetails(entry.show.id)) },
+                            contentPadding = PaddingValues(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -232,13 +238,15 @@ private fun WatchedShowItem(
     poster: ShowTmdbImage?,
     lastWatched: OffsetDateTime,
     onClick: () -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     val textCreator = LocalTiviTextCreator.current
     Row(
         modifier
+            .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
-            .padding(vertical = 8.dp)
+            .padding(contentPadding)
     ) {
         PosterCard(
             show = show,

@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -76,7 +77,7 @@ fun <T : Any> LazyListScope.itemsInGrid(
     contentPadding: PaddingValues = PaddingValues(),
     horizontalItemPadding: Dp = 0.dp,
     verticalItemPadding: Dp = 0.dp,
-    itemContent: @Composable (T?) -> Unit
+    itemContent: @Composable LazyItemScope.(T?) -> Unit
 ) {
     val rows = when {
         lazyPagingItems.itemCount % columns == 0 -> lazyPagingItems.itemCount / columns
@@ -129,7 +130,7 @@ fun <T> LazyListScope.itemsInGrid(
     contentPadding: PaddingValues = PaddingValues(),
     horizontalItemPadding: Dp = 0.dp,
     verticalItemPadding: Dp = 0.dp,
-    itemContent: @Composable (T) -> Unit
+    itemContent: @Composable LazyItemScope.(T) -> Unit
 ) {
     val rows = when {
         items.size % columns == 0 -> items.size / columns

@@ -17,7 +17,6 @@
 package app.tivi.showdetails.details
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -100,6 +99,7 @@ import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.bodyMarginSpacer
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Carousel
@@ -120,7 +120,6 @@ import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.data.resultentities.EpisodeWithSeason
-import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.resultentities.nextToAir
@@ -287,6 +286,10 @@ private fun ShowDetailsScrollingContent(
 ) {
     LogCompositions("ShowDetailsScrollingContent")
 
+    val columns = Layout.columns
+    val gutter = Layout.gutter
+    val bodyMargin = Layout.bodyMargin
+
     LazyColumn(
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
@@ -396,11 +399,26 @@ private fun ShowDetailsScrollingContent(
                 Header(stringResource(R.string.show_details_seasons))
             }
 
-            items(seasons) { season ->
-                SeasonWithEpisodesRow(
+            itemsInGrid(
+                items = seasons,
+                columns = columns / 4,
+                // We minus 8.dp off the grid padding, as we use content padding on the items below
+                contentPadding = PaddingValues(
+                    horizontal = bodyMargin - 8.dp,
+                    vertical = gutter - 8.dp
+                ),
+                verticalItemPadding = gutter - 8.dp,
+                horizontalItemPadding = gutter - 8.dp,
+            ) { season ->
+                SeasonRow(
                     season = season.season,
-                    episodes = season.episodes,
+                    episodesAired = season.episodes.numberAired,
+                    episodesWatched = season.episodes.numberWatched,
+                    episodesToWatch = season.episodes.numberAiredToWatch,
+                    episodesToAir = season.episodes.numberToAir,
+                    nextToAirDate = season.episodes.nextToAir?.firstAired,
                     actioner = actioner,
+                    contentPadding = PaddingValues(8.dp),
                     modifier = Modifier.fillParentMaxWidth(),
                 )
             }
@@ -809,34 +827,6 @@ private fun WatchStats(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-private fun SeasonWithEpisodesRow(
-    season: Season,
-    episodes: List<EpisodeWithWatches>,
-    actioner: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(modifier = modifier) {
-        Column(Modifier.fillMaxWidth()) {
-            SeasonRow(
-                season = season,
-                episodesAired = episodes.numberAired,
-                episodesWatched = episodes.numberWatched,
-                episodesToWatch = episodes.numberAiredToWatch,
-                episodesToAir = episodes.numberToAir,
-                nextToAirDate = episodes.nextToAir?.firstAired,
-                actioner = actioner,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(enabled = !season.ignored) {
-                        actioner(ShowDetailsAction.OpenSeason(season.id))
-                    }
-            )
-        }
-    }
-}
-
 @Composable
 private fun SeasonRow(
     season: Season,
@@ -845,14 +835,19 @@ private fun SeasonRow(
     episodesToWatch: Int,
     episodesToAir: Int,
     actioner: (ShowDetailsAction) -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     nextToAirDate: OffsetDateTime? = null,
 ) {
     Row(
         modifier = modifier
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(enabled = !season.ignored) {
+                actioner(ShowDetailsAction.OpenSeason(season.id))
+            }
             .heightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+            .padding(contentPadding)
     ) {
         Column(
             modifier = Modifier
@@ -898,7 +893,10 @@ private fun SeasonRow(
         var showMenu by remember { mutableStateOf(false) }
 
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            IconButton(onClick = { showMenu = true }) {
+            IconButton(
+                onClick = { showMenu = true },
+                modifier = Modifier.align(Alignment.CenterVertically),
+            ) {
                 Icon(
                     Icons.Default.MoreVert,
                     stringResource(R.string.cd_open_overflow)

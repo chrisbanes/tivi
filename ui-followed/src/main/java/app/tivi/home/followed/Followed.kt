@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -165,9 +166,13 @@ internal fun Followed(
                 itemsInGrid(
                     lazyPagingItems = list,
                     columns = columns / 4,
-                    horizontalItemPadding = gutter,
-                    verticalItemPadding = gutter,
-                    contentPadding = PaddingValues(horizontal = bodyMargin),
+                    // We minus 8.dp off the grid padding, as we use content padding on the items below
+                    contentPadding = PaddingValues(
+                        horizontal = bodyMargin - 8.dp,
+                        vertical = gutter - 8.dp
+                    ),
+                    verticalItemPadding = gutter - 8.dp,
+                    horizontalItemPadding = gutter - 8.dp,
                 ) { entry ->
                     if (entry != null) {
                         FollowedShowItem(
@@ -176,6 +181,7 @@ internal fun Followed(
                             watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
                             totalEpisodeCount = entry.stats?.episodeCount ?: 0,
                             onClick = { actioner(FollowedAction.OpenShowDetails(entry.show.id)) },
+                            contentPadding = PaddingValues(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         )
                     } else {
@@ -232,13 +238,15 @@ private fun FollowedShowItem(
     watchedEpisodeCount: Int,
     totalEpisodeCount: Int,
     onClick: () -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     val textCreator = LocalTiviTextCreator.current
     Row(
         modifier
+            .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
-            .padding(vertical = Layout.gutter)
+            .padding(contentPadding)
     ) {
         PosterCard(
             show = show,
