@@ -28,6 +28,7 @@ import app.tivi.data.entities.ActionDate
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Params
+import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
@@ -43,6 +44,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class ShowSeasonsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    observeShowDetails: ObserveShowDetails,
     observeShowSeasons: ObserveShowSeasonsEpisodesWatches,
     private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
     private val logger: Logger,
@@ -54,10 +56,12 @@ internal class ShowSeasonsViewModel @Inject constructor(
 
     val state = combine(
         observeShowSeasons.observe().distinctUntilChanged(),
+        observeShowDetails.observe().distinctUntilChanged(),
         loadingState.observable,
         snackbarManager.errors,
-    ) { seasons, refreshing, error ->
+    ) { seasons, show, refreshing, error ->
         ShowSeasonsViewState(
+            show = show,
             seasons = seasons,
             refreshing = refreshing,
             refreshError = error,
@@ -65,6 +69,7 @@ internal class ShowSeasonsViewModel @Inject constructor(
     }
 
     init {
+        observeShowDetails(ObserveShowDetails.Params(showId))
         observeShowSeasons(ObserveShowSeasonsEpisodesWatches.Params(showId))
 
         refresh(false)

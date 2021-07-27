@@ -33,19 +33,27 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.SnackbarHost
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -55,18 +63,21 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.SwipeDismissSnackbar
+import app.tivi.common.compose.ui.TopAppBarWithBottomContent
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.LocalScaffoldPadding
 import com.google.accompanist.insets.ui.Scaffold
-import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 
 @Composable
 fun ShowSeasons(
@@ -115,21 +126,8 @@ internal fun ShowSeasons(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
-                title = {
-                    val currentSeason = viewState.seasons.getOrNull(pagerState.currentPage)
-                    val seasonTitle = currentSeason?.season?.title
-                    val seasonNumber = currentSeason?.season?.number
-                    Text(
-                        text = when {
-                            seasonTitle != null -> seasonTitle
-                            seasonNumber != null -> {
-                                stringResource(R.string.season_title_fallback, seasonNumber)
-                            }
-                            else -> ""
-                        }
-                    )
-                },
+            TopAppBarWithBottomContent(
+                title = { Text(text = viewState.show.title ?: "") },
                 contentPadding = rememberInsetsPaddingValues(
                     insets = LocalWindowInsets.current.systemBars,
                     applyBottom = false
@@ -145,6 +143,15 @@ internal fun ShowSeasons(
                 backgroundColor = MaterialTheme.colors.surface.copy(
                     alpha = AppBarAlphas.translucentBarAlpha()
                 ),
+                bottomContent = {
+                    SeasonPagerTabs(
+                        pagerState = pagerState,
+                        seasons = viewState.seasons.map { it.season },
+                        modifier = Modifier.fillMaxWidth(),
+                        backgroundColor = Color.Transparent,
+                        contentColor = LocalContentColor.current,
+                    )
+                }
             )
         },
         snackbarHost = { snackbarHostState ->
@@ -168,6 +175,47 @@ internal fun ShowSeasons(
             openEpisodeDetails = openEpisodeDetails,
             modifier = Modifier.fillMaxSize(),
         )
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+private fun SeasonPagerTabs(
+    pagerState: PagerState,
+    seasons: List<Season>,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colors.primarySurface,
+    contentColor: Color = contentColorFor(backgroundColor),
+) {
+    if (pagerState.pageCount == 0) return
+
+    val coroutineScope = rememberCoroutineScope()
+
+    ScrollableTabRow(
+        // Our selected tab is our current page
+        selectedTabIndex = pagerState.currentPage,
+        backgroundColor = backgroundColor,
+        contentColor = contentColor,
+        indicator = { tabPositions ->
+            TabRowDefaults.Indicator(
+                Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+            )
+        },
+        modifier = modifier,
+    ) {
+        // Add tabs for all of our pages
+        seasons.forEachIndexed { index, season ->
+            Tab(
+                text = { Text(text = LocalTiviTextCreator.current.seasonTitle(season)) },
+                selected = pagerState.currentPage == index,
+                onClick = {
+                    // Animate to the selected page when clicked
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(index)
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -215,7 +263,6 @@ private fun EpisodesList(
         }
     }
 }
-
 
 @Composable
 private fun EpisodeWithWatchesRow(
