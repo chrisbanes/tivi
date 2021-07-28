@@ -20,7 +20,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -89,16 +89,20 @@ fun <E : Entry> EntryGrid(
                 )
             }
         ) {
+            val columns = Layout.columns
+            val bodyMargin = Layout.bodyMargin
+            val gutter = Layout.gutter
+
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.bodyWidth().fillMaxHeight(),
             ) {
                 itemsInGrid(
                     lazyPagingItems = lazyPagingItems,
-                    columns = 3,
-                    contentPadding = PaddingValues(4.dp),
-                    verticalItemPadding = 2.dp,
-                    horizontalItemPadding = 2.dp
+                    columns = columns / 2,
+                    contentPadding = PaddingValues(horizontal = bodyMargin, vertical = gutter),
+                    verticalItemPadding = gutter,
+                    horizontalItemPadding = gutter,
                 ) { entry ->
                     val mod = Modifier
                         .aspectRatio(2 / 3f)

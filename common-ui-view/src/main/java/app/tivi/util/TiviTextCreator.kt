@@ -81,6 +81,16 @@ class TiviTextCreator @Inject constructor(
         } else ""
     }
 
+    fun seasonTitle(
+        season: Season
+    ): String = when {
+        season.title != null -> season.title!!
+        season.number != null -> {
+            context.getString(R.string.season_title_fallback, season.number)
+        }
+        else -> ""
+    }
+
     fun seasonSummaryText(
         watched: Int,
         toWatch: Int,

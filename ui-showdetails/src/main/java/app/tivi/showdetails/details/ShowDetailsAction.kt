@@ -36,13 +36,9 @@ internal sealed class ShowDetailsAction {
 
     data class UnfollowPreviousSeasonsFollowedAction(val seasonId: Long) : ShowDetailsAction()
 
-    data class ChangeSeasonExpandedAction(
-        val seasonId: Long,
-        val expanded: Boolean
-    ) : ShowDetailsAction()
-
     data class OpenShowDetails(val showId: Long) : ShowDetailsAction()
     data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsAction()
+    data class OpenSeason(val seasonId: Long) : ShowDetailsAction()
     object ClearError : ShowDetailsAction()
     object NavigateUp : ShowDetailsAction()
 }
