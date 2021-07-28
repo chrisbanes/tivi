@@ -224,9 +224,7 @@ private fun NavGraphBuilder.addShowDetails(navController: NavController) {
         )
     ) {
         ShowDetails(
-            navigateUp = {
-                navController.popBackStack()
-            },
+            navigateUp = navController::navigateUp,
             openShowDetails = { showId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(showId))
             },
@@ -248,9 +246,7 @@ private fun NavGraphBuilder.addEpisodeDetails(navController: NavController) {
         )
     ) {
         EpisodeDetails(
-            navigateUp = {
-                navController.popBackStack()
-            },
+            navigateUp = navController::navigateUp,
         )
     }
 }
@@ -295,7 +291,7 @@ private fun NavGraphBuilder.addAccount(
     composable(LeafScreen.Account.route) {
         // This should really be a dialog, but we're waiting on:
         // https://issuetracker.google.com/179608120
-        Dialog(onDismissRequest = navController::popBackStack) {
+        Dialog(onDismissRequest = navController::navigateUp) {
             AccountUi(navController, onOpenSettings)
         }
     }
