@@ -61,8 +61,7 @@ private sealed class LeafScreen(val route: String) {
 
     object ShowSeasons : LeafScreen("show/{showId}/seasons?seasonId={seasonId}") {
         fun createRoute(showId: Long, seasonId: Long? = null): String {
-            return "show/$showId/seasons" +
-                if (seasonId != null) "?seasonId=$seasonId" else ""
+            return "show/$showId/seasons" + (if (seasonId != null) "?seasonId=$seasonId" else "")
         }
     }
 
@@ -320,7 +319,7 @@ private fun NavGraphBuilder.addShowSeasons(navController: NavController) {
             openEpisodeDetails = { episodeId ->
                 navController.navigate(LeafScreen.EpisodeDetails.createRoute(episodeId))
             },
-            initialSeasonId = it.arguments?.getLong("seasonId")
+            initialSeasonId = it.arguments?.getString("seasonId")?.toLong()
         )
     }
 }

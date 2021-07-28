@@ -51,7 +51,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -116,8 +119,13 @@ internal fun ShowSeasons(
 
     val pagerState = rememberPagerState(pageCount = viewState.seasons.size)
 
-    if (initialSeasonId != null) {
-        LaunchedEffect(pagerState) {
+    var pagerBeenScrolled by remember { mutableStateOf(false) }
+    LaunchedEffect(pagerState.isScrollInProgress) {
+        if (pagerState.isScrollInProgress) pagerBeenScrolled = true
+    }
+
+    LaunchedEffect(initialSeasonId, viewState.seasons, pagerBeenScrolled) {
+        if (initialSeasonId != null && !pagerBeenScrolled) {
             val initialIndex = viewState.seasons.indexOfFirst { it.season.id == initialSeasonId }
             if (initialIndex >= 0) {
                 pagerState.scrollToPage(initialIndex)
@@ -175,7 +183,9 @@ internal fun ShowSeasons(
             seasons = viewState.seasons,
             pagerState = pagerState,
             openEpisodeDetails = openEpisodeDetails,
-            modifier = Modifier.fillMaxHeight().bodyWidth(),
+            modifier = Modifier
+                .fillMaxHeight()
+                .bodyWidth(),
         )
     }
 }
