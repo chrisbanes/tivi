@@ -171,11 +171,11 @@ internal fun Watched(
                     columns = columns / 4,
                     // We minus 8.dp off the grid padding, as we use content padding on the items below
                     contentPadding = PaddingValues(
-                        horizontal = bodyMargin - 8.dp,
-                        vertical = gutter - 8.dp
+                        horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
+                        vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
                     ),
-                    verticalItemPadding = gutter - 8.dp,
-                    horizontalItemPadding = gutter - 8.dp,
+                    verticalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
+                    horizontalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
                 ) { entry ->
                     if (entry != null) {
                         WatchedShowItem(

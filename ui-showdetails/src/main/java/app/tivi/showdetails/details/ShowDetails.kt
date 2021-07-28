@@ -91,12 +91,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
-import app.tivi.common.compose.bodyMarginSpacer
+import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
@@ -252,7 +253,7 @@ internal fun ShowDetails(
     ) { contentPadding ->
         LogCompositions("ShowDetails")
 
-        Surface {
+        Surface(modifier = Modifier.bodyWidth()) {
             ShowDetailsScrollingContent(
                 show = viewState.show,
                 posterImage = viewState.posterImage,
@@ -314,7 +315,9 @@ private fun ShowDetailsScrollingContent(
             )
         }
 
-        bodyMarginSpacer()
+        item {
+            Spacer(modifier = Modifier.height(max(gutter, bodyMargin)))
+        }
 
         item {
             PosterInfoRow(
@@ -402,11 +405,11 @@ private fun ShowDetailsScrollingContent(
                 columns = columns / 4,
                 // We minus 8.dp off the grid padding, as we use content padding on the items below
                 contentPadding = PaddingValues(
-                    horizontal = bodyMargin - 8.dp,
-                    vertical = gutter - 8.dp
+                    horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
+                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
                 ),
-                verticalItemPadding = gutter - 8.dp,
-                horizontalItemPadding = gutter - 8.dp,
+                verticalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
+                horizontalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
             ) { season ->
                 SeasonRow(
                     season = season.season,
@@ -495,7 +498,7 @@ private fun BackdropImage(
                 fontWeight = FontWeight.Thin,
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(Layout.bodyMargin)
+                    .padding(Layout.gutter * 2)
             )
         }
         // TODO show a placeholder if null
