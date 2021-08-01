@@ -43,7 +43,7 @@ internal class AndroidPowerController @Inject constructor(
         return merge(
             context.flowBroadcasts(IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED)),
             context.flowBroadcasts(IntentFilter(ConnectivityManager.ACTION_RESTRICT_BACKGROUND_CHANGED))
-        ).map { _ ->
+        ).map {
             shouldSaveData()
         }.onStart {
             emit(shouldSaveData())
