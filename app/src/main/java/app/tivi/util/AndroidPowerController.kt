@@ -19,7 +19,6 @@ package app.tivi.util
 import android.content.Context
 import android.content.IntentFilter
 import android.net.ConnectivityManager
-import android.os.Build
 import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
@@ -58,7 +57,7 @@ internal class AndroidPowerController @Inject constructor(
         powerManager.isPowerSaveMode -> {
             SaveData.Enabled(SaveDataReason.SYSTEM_POWER_SAVER)
         }
-        Build.VERSION.SDK_INT >= 24 && isBackgroundDataRestricted() -> {
+        isBackgroundDataRestricted() -> {
             SaveData.Enabled(SaveDataReason.SYSTEM_DATA_SAVER)
         }
         else -> SaveData.Disabled
