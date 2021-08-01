@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.common.compose
+package app.tivi.common.compose.ui
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring

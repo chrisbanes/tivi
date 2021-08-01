@@ -93,7 +93,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.hilt.navigation.compose.hiltViewModel
-import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
@@ -102,14 +101,15 @@ import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
+import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Carousel
 import app.tivi.common.compose.ui.ExpandableFloatingActionButton
+import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SwipeDismissSnackbar
 import app.tivi.common.compose.ui.copy
 import app.tivi.common.compose.ui.drawForegroundGradientScrim
-import app.tivi.common.compose.ui.foregroundColor
 import app.tivi.common.compose.ui.iconButtonBackgroundScrim
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode

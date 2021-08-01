@@ -16,7 +16,7 @@
 
 @file:Suppress("NOTHING_TO_INLINE")
 
-package app.tivi.common.compose.ui
+package app.tivi.common.compose.theme
 
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
