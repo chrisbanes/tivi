@@ -16,16 +16,24 @@
 
 package app.tivi
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navArgument
-import androidx.navigation.navigation
 import app.tivi.account.AccountUi
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.home.discover.Discover
@@ -37,6 +45,9 @@ import app.tivi.home.trending.Trending
 import app.tivi.home.watched.Watched
 import app.tivi.showdetails.details.ShowDetails
 import app.tivi.showdetails.seasons.ShowSeasons
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.navigation
 
 internal sealed class Screen(val route: String) {
     object Discover : Screen("discover")
@@ -85,12 +96,73 @@ private sealed class LeafScreen(
     object Account : LeafScreen("account")
 }
 
+@ExperimentalAnimationApi
+private fun tiviEnterTransition(
+    initial: NavBackStackEntry,
+    target: NavBackStackEntry,
+): EnterTransition {
+    val initialNavGraph = initial.destination.hostNavGraph
+    val targetNavGraph = target.destination.hostNavGraph
+
+    if (initialNavGraph.id != targetNavGraph.id) {
+        return fadeIn()
+    }
+
+    return fadeIn() + slideInHorizontally(initialOffsetX = { width -> width / 2 })
+}
+
+@ExperimentalAnimationApi
+private fun tiviExitTransition(
+    initial: NavBackStackEntry,
+    target: NavBackStackEntry,
+): ExitTransition {
+    val initialNavGraph = initial.destination.hostNavGraph
+    val targetNavGraph = target.destination.hostNavGraph
+
+    if (initialNavGraph.id != targetNavGraph.id) {
+        return fadeOut()
+    }
+
+    return fadeOut() + slideOutHorizontally(targetOffsetX = { width -> -width / 2 })
+}
+
+private fun NavDestination.isStartDestination(): Boolean {
+    return hostNavGraph.startDestinationId == this.id
+}
+
+private val NavDestination.hostNavGraph: NavGraph
+    get() = hierarchy.first { it is NavGraph } as NavGraph
+
+@Suppress("UNUSED_VARIABLE")
+@ExperimentalAnimationApi
+private fun tiviPopEnterTransition(
+    initial: NavBackStackEntry,
+    target: NavBackStackEntry,
+): EnterTransition {
+    if (initial.destination.isStartDestination() && target.destination.isStartDestination()) {
+        return fadeIn()
+    }
+    return fadeIn() + slideInHorizontally(initialOffsetX = { width -> -width / 2 })
+}
+
+@ExperimentalAnimationApi
+private fun tiviPopExitTransition(
+    initial: NavBackStackEntry,
+    target: NavBackStackEntry,
+): ExitTransition {
+    if (initial.destination.isStartDestination() && target.destination.isStartDestination()) {
+        return fadeOut()
+    }
+    return fadeOut() + slideOutHorizontally(targetOffsetX = { width -> width / 2 })
+}
+
+@ExperimentalAnimationApi
 @Composable
 internal fun AppNavigation(
     navController: NavHostController,
     onOpenSettings: () -> Unit,
 ) {
-    NavHost(
+    AnimatedNavHost(
         navController = navController,
         startDestination = Screen.Discover.route
     ) {
@@ -101,13 +173,18 @@ internal fun AppNavigation(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addDiscoverTopLevel(
     navController: NavController,
     openSettings: () -> Unit,
 ) {
     navigation(
         route = Screen.Discover.route,
-        startDestination = LeafScreen.Discover.createRoute(Screen.Discover)
+        startDestination = LeafScreen.Discover.createRoute(Screen.Discover),
+        enterTransition = ::tiviEnterTransition,
+        exitTransition = ::tiviExitTransition,
+        popEnterTransition = ::tiviPopEnterTransition,
+        popExitTransition = ::tiviPopExitTransition,
     ) {
         addDiscover(navController, Screen.Discover)
         addAccount(navController, Screen.Discover, openSettings)
@@ -120,13 +197,18 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addFollowingTopLevel(
     navController: NavController,
     openSettings: () -> Unit,
 ) {
     navigation(
         route = Screen.Following.route,
-        startDestination = LeafScreen.Following.createRoute(Screen.Following)
+        startDestination = LeafScreen.Following.createRoute(Screen.Following),
+        enterTransition = ::tiviEnterTransition,
+        exitTransition = ::tiviExitTransition,
+        popEnterTransition = ::tiviPopEnterTransition,
+        popExitTransition = ::tiviPopExitTransition,
     ) {
         addFollowedShows(navController, Screen.Following)
         addAccount(navController, Screen.Following, openSettings)
@@ -136,13 +218,18 @@ private fun NavGraphBuilder.addFollowingTopLevel(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addWatchedTopLevel(
     navController: NavController,
     openSettings: () -> Unit,
 ) {
     navigation(
         route = Screen.Watched.route,
-        startDestination = LeafScreen.Watched.createRoute(Screen.Watched)
+        startDestination = LeafScreen.Watched.createRoute(Screen.Watched),
+        enterTransition = ::tiviEnterTransition,
+        exitTransition = ::tiviExitTransition,
+        popEnterTransition = ::tiviPopEnterTransition,
+        popExitTransition = ::tiviPopExitTransition,
     ) {
         addWatchedShows(navController, Screen.Watched)
         addAccount(navController, Screen.Watched, openSettings)
@@ -152,13 +239,18 @@ private fun NavGraphBuilder.addWatchedTopLevel(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addSearchTopLevel(
     navController: NavController,
     openSettings: () -> Unit,
 ) {
     navigation(
         route = Screen.Search.route,
-        startDestination = LeafScreen.Search.createRoute(Screen.Search)
+        startDestination = LeafScreen.Search.createRoute(Screen.Search),
+        enterTransition = ::tiviEnterTransition,
+        exitTransition = ::tiviExitTransition,
+        popEnterTransition = ::tiviPopEnterTransition,
+        popExitTransition = ::tiviPopExitTransition,
     ) {
         addSearch(navController, Screen.Search)
         addAccount(navController, Screen.Search, openSettings)
@@ -168,6 +260,7 @@ private fun NavGraphBuilder.addSearchTopLevel(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addDiscover(
     navController: NavController,
     root: Screen,
@@ -197,6 +290,7 @@ private fun NavGraphBuilder.addDiscover(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addFollowedShows(
     navController: NavController,
     root: Screen,
@@ -213,6 +307,7 @@ private fun NavGraphBuilder.addFollowedShows(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addWatchedShows(
     navController: NavController,
     root: Screen,
@@ -229,6 +324,7 @@ private fun NavGraphBuilder.addWatchedShows(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addSearch(
     navController: NavController,
     root: Screen,
@@ -242,6 +338,7 @@ private fun NavGraphBuilder.addSearch(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addShowDetails(
     navController: NavController,
     root: Screen,
@@ -267,6 +364,7 @@ private fun NavGraphBuilder.addShowDetails(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addEpisodeDetails(
     navController: NavController,
     root: Screen,
@@ -283,6 +381,7 @@ private fun NavGraphBuilder.addEpisodeDetails(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addRecommendedShows(
     navController: NavController,
     root: Screen,
@@ -297,6 +396,7 @@ private fun NavGraphBuilder.addRecommendedShows(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addTrendingShows(
     navController: NavController,
     root: Screen,
@@ -311,6 +411,7 @@ private fun NavGraphBuilder.addTrendingShows(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addPopularShows(
     navController: NavController,
     root: Screen,
@@ -325,20 +426,18 @@ private fun NavGraphBuilder.addPopularShows(
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addAccount(
     navController: NavController,
     root: Screen,
     onOpenSettings: () -> Unit,
 ) {
-    composable(LeafScreen.Account.createRoute(root)) {
-        // This should really be a dialog, but we're waiting on:
-        // https://issuetracker.google.com/179608120
-        Dialog(onDismissRequest = navController::navigateUp) {
-            AccountUi(navController, onOpenSettings)
-        }
+    dialog(LeafScreen.Account.createRoute(root)) {
+        AccountUi(navController, onOpenSettings)
     }
 }
 
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.addShowSeasons(
     navController: NavController,
     root: Screen,

@@ -181,6 +181,7 @@ dependencies {
     implementation libs.compose.ui.viewbinding
 
     implementation libs.accompanist.insets
+    implementation libs.accompanist.navigation.animation
 
     implementation libs.threeTenAbp
 
