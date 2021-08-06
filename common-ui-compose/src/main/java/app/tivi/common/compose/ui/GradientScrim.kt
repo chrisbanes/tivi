@@ -17,7 +17,6 @@
 package app.tivi.common.compose.ui
 
 import androidx.annotation.FloatRange
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -36,7 +35,6 @@ import kotlin.math.pow
  * @param numStops The number of color stops to draw in the gradient. Higher numbers result in
  * the higher visual quality at the cost of draw performance. Defaults to `16`.
  */
-@Composable
 fun Modifier.drawForegroundGradientScrim(
     color: Color,
     decay: Float = 3.0f,

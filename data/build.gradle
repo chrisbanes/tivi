@@ -15,7 +15,10 @@
  *
  */
 
-apply plugin: 'kotlin'
+plugins {
+    id 'kotlin'
+    id 'com.android.lint'
+}
 
 dependencies {
     api project(':base')

@@ -17,5 +17,5 @@
   -->
 
 <resources>
-    <integer name="nav_anim_duration">350</integer>
+<!--    <integer name="nav_anim_duration">350</integer>-->
 </resources>
