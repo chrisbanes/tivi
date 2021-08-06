@@ -19,9 +19,9 @@ package app.tivi
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
+import androidx.activity.ComponentActivity
 
-abstract class TiviActivity : FragmentActivity() {
+abstract class TiviActivity : ComponentActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)

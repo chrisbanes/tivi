@@ -15,9 +15,12 @@
  *
  */
 
-apply plugin: 'kotlin'
+plugins {
+    id 'kotlin'
+    id 'kotlin-kapt'
+    id 'com.android.lint'
+}
 
-apply plugin: 'kotlin-kapt'
 kapt {
     correctErrorTypes = true
     useBuildCache = true

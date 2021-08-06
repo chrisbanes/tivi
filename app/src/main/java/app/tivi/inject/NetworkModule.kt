@@ -75,7 +75,7 @@ object NetworkModule {
                 }
             }
             // Around 4¢ worth of storage in 2020
-            .cache(Cache(File(context.cacheDir, "api_cache"), 50 * 1024 * 1024))
+            .cache(Cache(File(context.cacheDir, "api_cache"), 50L * 1024 * 1024))
             // Adjust the Connection pool to account for historical use of 3 separate clients
             // but reduce the keepAlive to 2 minutes to avoid keeping radio open.
             .connectionPool(ConnectionPool(10, 2, TimeUnit.MINUTES))

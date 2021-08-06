@@ -30,7 +30,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
@@ -52,16 +51,6 @@ fun LazyListScope.gutterSpacer() {
         Spacer(
             Modifier
                 .height(Layout.gutter)
-                .fillParentMaxWidth()
-        )
-    }
-}
-
-fun LazyListScope.bodyMarginSpacer() {
-    item {
-        Spacer(
-            Modifier
-                .height(Layout.bodyMargin)
                 .fillParentMaxWidth()
         )
     }
@@ -101,8 +90,7 @@ fun <T : Any> LazyListScope.itemsInGrid(
                     Box(modifier = Modifier.weight(1f)) {
                         val index = (row * columns) + column
                         if (index < lazyPagingItems.itemCount) {
-                            val item by lazyPagingItems.getAsState(index)
-                            itemContent(item)
+                            itemContent(lazyPagingItems[index])
                         }
                     }
                     if (column < columns - 1) {
