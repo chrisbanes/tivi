@@ -105,26 +105,26 @@ internal fun Discover(
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = DiscoverViewState.Empty)
-
-    Discover(state = viewState) { action ->
-        // TODO: Remove this action thing and just pass the lambdas down
-        when (action) {
-            DiscoverAction.LoginAction, DiscoverAction.OpenUserDetails -> openUser()
-            is DiscoverAction.OpenShowDetails -> {
-                openShowDetails(action.showId, action.episodeId)
-            }
-            DiscoverAction.OpenTrendingShows -> openTrendingShows()
-            DiscoverAction.OpenPopularShows -> openPopularShows()
-            DiscoverAction.OpenRecommendedShows -> openRecommendedShows()
-            else -> viewModel.submitAction(action)
-        }
-    }
+    Discover(
+        state = viewState,
+        refresh = { viewModel.submitAction(DiscoverAction.RefreshAction) },
+        openUser = openUser,
+        openShowDetails = openShowDetails,
+        openTrendingShows = openTrendingShows,
+        openRecommendedShows = openRecommendedShows,
+        openPopularShows = openPopularShows
+    )
 }
 
 @Composable
 internal fun Discover(
     state: DiscoverViewState,
-    actioner: (DiscoverAction) -> Unit
+    refresh: () -> Unit,
+    openUser: () -> Unit,
+    openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
+    openTrendingShows: () -> Unit,
+    openRecommendedShows: () -> Unit,
+    openPopularShows: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -132,8 +132,8 @@ internal fun Discover(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.refreshing,
-                onRefreshActionClick = { actioner(DiscoverAction.RefreshAction) },
-                onUserActionClick = { actioner(DiscoverAction.OpenUserDetails) },
+                onRefreshActionClick = refresh,
+                onUserActionClick = openUser,
                 modifier = Modifier.fillMaxWidth()
             )
         },
@@ -141,7 +141,7 @@ internal fun Discover(
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(state.refreshing),
-            onRefresh = { actioner(DiscoverAction.RefreshAction) },
+            onRefresh = refresh,
             indicatorPadding = paddingValues,
             indicator = { state, trigger ->
                 SwipeRefreshIndicator(
@@ -172,12 +172,7 @@ internal fun Discover(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    actioner(
-                                        DiscoverAction.OpenShowDetails(
-                                            showId = nextEpisodeToWatch.show.id,
-                                            episodeId = nextEpisodeToWatch.episode.id
-                                        )
-                                    )
+                                    openShowDetails(nextEpisodeToWatch.show.id, nextEpisodeToWatch.episode.id)
                                 }
                         )
                     }
@@ -192,8 +187,10 @@ internal fun Discover(
                         items = state.trendingItems,
                         title = stringResource(R.string.discover_trending_title),
                         refreshing = state.trendingRefreshing,
-                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(DiscoverAction.OpenTrendingShows) }
+                        onItemClick = {
+                            openShowDetails(it.id, null)
+                        },
+                        onMoreClick = openTrendingShows
                     )
                 }
 
@@ -202,8 +199,10 @@ internal fun Discover(
                         items = state.recommendedItems,
                         title = stringResource(R.string.discover_recommended_title),
                         refreshing = state.recommendedRefreshing,
-                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(DiscoverAction.OpenRecommendedShows) }
+                        onItemClick = {
+                            openShowDetails(it.id, null)
+                        },
+                        onMoreClick = openRecommendedShows
                     )
                 }
 
@@ -212,8 +211,8 @@ internal fun Discover(
                         items = state.popularItems,
                         title = stringResource(R.string.discover_popular_title),
                         refreshing = state.popularRefreshing,
-                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(DiscoverAction.OpenPopularShows) }
+                        onItemClick = { openShowDetails(it.id, null) },
+                        onMoreClick = openPopularShows
                     )
                 }
 
