@@ -85,7 +85,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.SwipeDismissSnackbar
@@ -120,8 +119,7 @@ internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
     navigateUp: () -> Unit,
 ) {
-    val viewState by rememberFlowWithLifecycle(viewModel.state)
-        .collectAsState(initial = EpisodeDetailsViewState.Empty)
+    val viewState by viewModel.state.collectAsState(initial = EpisodeDetailsViewState.Empty)
 
     EpisodeDetails(viewState = viewState) { action ->
         when (action) {

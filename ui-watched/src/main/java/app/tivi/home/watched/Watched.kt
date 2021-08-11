@@ -58,7 +58,6 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
-import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
@@ -98,10 +97,8 @@ internal fun Watched(
     openShowDetails: (showId: Long) -> Unit,
     openUser: () -> Unit,
 ) {
-    val viewState by rememberFlowWithLifecycle(viewModel.state)
-        .collectAsState(initial = WatchedViewState.Empty)
-    val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList)
-        .collectAsLazyPagingItems()
+    val viewState by viewModel.state.collectAsState(initial = WatchedViewState.Empty)
+    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
 
     Watched(state = viewState, list = pagingItems) { action ->
         when (action) {

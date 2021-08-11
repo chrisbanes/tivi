@@ -65,7 +65,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.SwipeDismissSnackbar
 import app.tivi.common.compose.ui.TopAppBarWithBottomContent
@@ -106,8 +105,7 @@ internal fun ShowSeasons(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     initialSeasonId: Long?,
 ) {
-    val viewState by rememberFlowWithLifecycle(viewModel.state)
-        .collectAsState(initial = ShowSeasonsViewState.Empty)
+    val viewState by viewModel.state.collectAsState(initial = ShowSeasonsViewState.Empty)
 
     val scaffoldState = rememberScaffoldState()
 
