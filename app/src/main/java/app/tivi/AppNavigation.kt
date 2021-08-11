@@ -73,7 +73,7 @@ private sealed class LeafScreen(
             showId: Long,
             seasonId: Long? = null,
         ): String {
-            return "{${root.route}/show/$showId/seasons".let {
+            return "${root.route}/show/$showId/seasons".let {
                 if (seasonId != null) "$it?seasonId=$seasonId" else it
             }
         }

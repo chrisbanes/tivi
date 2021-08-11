@@ -1,5 +1,5 @@
 [versions]
-accompanist = "0.16.0"
+accompanist = "0.16.1"
 androidxhilt = "1.0.0"
 androidxlifecycle = "2.4.0-alpha03"
 androidxtest = "1.4.0"
