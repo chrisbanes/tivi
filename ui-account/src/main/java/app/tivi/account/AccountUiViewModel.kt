@@ -26,7 +26,6 @@ import app.tivi.trakt.TraktManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,7 +38,7 @@ internal class AccountUiViewModel @Inject constructor(
     private val clearUserDetails: ClearUserDetails
 ) : ViewModel(), TraktAuthManager by traktAuthManager {
     val state = combine(
-        observeTraktAuthState.observe().distinctUntilChanged(),
+        observeTraktAuthState.observe(),
         observeUserDetails.observe(),
     ) { authState, user ->
         AccountUiViewState(

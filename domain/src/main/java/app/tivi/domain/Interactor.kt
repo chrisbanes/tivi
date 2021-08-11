@@ -98,4 +98,5 @@ abstract class SubjectInteractor<P : Any, T> {
     fun observe(): Flow<T> = paramState
         .distinctUntilChanged()
         .flatMapLatest { createObservable(it) }
+        .distinctUntilChanged()
 }

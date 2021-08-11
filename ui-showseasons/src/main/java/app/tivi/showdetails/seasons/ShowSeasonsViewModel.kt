@@ -37,7 +37,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -55,8 +54,8 @@ internal class ShowSeasonsViewModel @Inject constructor(
     private val loadingState = ObservableLoadingCounter()
 
     val state = combine(
-        observeShowSeasons.observe().distinctUntilChanged(),
-        observeShowDetails.observe().distinctUntilChanged(),
+        observeShowSeasons.observe(),
+        observeShowDetails.observe(),
         loadingState.observable,
         snackbarManager.errors,
     ) { seasons, show, refreshing, error ->

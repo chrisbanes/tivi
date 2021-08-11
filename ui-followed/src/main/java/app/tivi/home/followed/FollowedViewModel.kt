@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -75,8 +75,7 @@ internal class FollowedViewModel @Inject constructor(
         loadingState.observable,
         showSelection.observeSelectedShowIds(),
         showSelection.observeIsSelectionOpen(),
-        observeTraktAuthState.observe()
-            .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) },
+        observeTraktAuthState.observe(),
         observeUserDetails.observe(),
         filter,
         sort,
@@ -104,6 +103,13 @@ internal class FollowedViewModel @Inject constructor(
         }
         viewModelScope.launch {
             sort.collect { updateDataSource() }
+        }
+
+        viewModelScope.launch {
+            // When the user logs in, refresh...
+            observeTraktAuthState.observe()
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect { refresh(false) }
         }
 
         viewModelScope.launch {

@@ -35,8 +35,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -62,12 +61,11 @@ internal class DiscoverViewModel @Inject constructor(
         trendingLoadingState.observable,
         popularLoadingState.observable,
         recommendedLoadingState.observable,
-        observeTrendingShows.observe().distinctUntilChanged(),
-        observePopularShows.observe().distinctUntilChanged(),
-        observeRecommendedShows.observe().distinctUntilChanged(),
-        observeNextShowEpisodeToWatch.observe().distinctUntilChanged(),
-        observeTraktAuthState.observe().distinctUntilChanged()
-            .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) },
+        observeTrendingShows.observe(),
+        observePopularShows.observe(),
+        observeRecommendedShows.observe(),
+        observeNextShowEpisodeToWatch.observe(),
+        observeTraktAuthState.observe(),
         observeUserDetails.observe(),
     ) { trendingLoad, popularLoad, recommendLoad, trending, popular, recommended,
         nextShow, authState, user ->
@@ -100,7 +98,12 @@ internal class DiscoverViewModel @Inject constructor(
             }
         }
 
-        refresh(false)
+        viewModelScope.launch {
+            // When the user logs in, refresh...
+            observeTraktAuthState.observe()
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect { refresh(false) }
+        }
     }
 
     private fun refresh(fromUser: Boolean) {

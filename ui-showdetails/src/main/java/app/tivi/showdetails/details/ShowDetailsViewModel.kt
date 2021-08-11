@@ -50,7 +50,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -83,14 +82,14 @@ internal class ShowDetailsViewModel @Inject constructor(
     private val expandedSeasonId = MutableStateFlow<Long?>(null)
 
     val state = combine(
-        observeShowFollowStatus.observe().distinctUntilChanged(),
-        observeShowDetails.observe().distinctUntilChanged(),
-        observeShowImages.observe().distinctUntilChanged(),
+        observeShowFollowStatus.observe(),
+        observeShowDetails.observe(),
+        observeShowImages.observe(),
         loadingState.observable,
-        observeRelatedShows.observe().distinctUntilChanged(),
-        observeNextEpisodeToWatch.observe().distinctUntilChanged(),
-        observeShowSeasons.observe().distinctUntilChanged(),
-        observeShowViewStats.observe().distinctUntilChanged(),
+        observeRelatedShows.observe(),
+        observeNextEpisodeToWatch.observe(),
+        observeShowSeasons.observe(),
+        observeShowViewStats.observe(),
         snackbarManager.errors,
         expandedSeasonId,
     ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons,
