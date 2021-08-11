@@ -26,6 +26,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withTimeout
@@ -94,5 +95,7 @@ abstract class SubjectInteractor<P : Any, T> {
 
     protected abstract fun createObservable(params: P): Flow<T>
 
-    fun observe(): Flow<T> = paramState.flatMapLatest { createObservable(it) }
+    fun observe(): Flow<T> = paramState
+        .distinctUntilChanged()
+        .flatMapLatest { createObservable(it) }
 }
