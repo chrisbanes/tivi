@@ -192,9 +192,8 @@ internal class FollowedViewModel @Inject constructor(
 
     companion object {
         private val PAGING_CONFIG = PagingConfig(
-            pageSize = 60,
-            prefetchDistance = 20,
-            enablePlaceholders = false
+            pageSize = 16,
+            initialLoadSize = 32,
         )
     }
 }
