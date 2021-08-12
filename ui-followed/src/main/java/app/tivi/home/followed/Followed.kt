@@ -95,7 +95,7 @@ internal fun Followed(
     openShowDetails: (showId: Long) -> Unit,
     openUser: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState(initial = FollowedViewState.Empty)
+    val viewState by viewModel.state.collectAsState()
 
     Followed(
         state = viewState,

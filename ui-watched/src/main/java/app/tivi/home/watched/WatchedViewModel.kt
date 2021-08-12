@@ -38,8 +38,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -65,7 +68,7 @@ class WatchedViewModel @Inject constructor(
     private val filter = MutableStateFlow<String?>(null)
     private val sort = MutableStateFlow(SortOption.LAST_WATCHED)
 
-    val state: Flow<WatchedViewState> = combine(
+    val state: StateFlow<WatchedViewState> = combine(
         loadingState.observable,
         showSelection.observeSelectedShowIds(),
         showSelection.observeIsSelectionOpen(),
@@ -85,7 +88,11 @@ class WatchedViewModel @Inject constructor(
             availableSorts = availableSorts,
             sort = sort,
         )
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = WatchedViewState.Empty,
+    )
 
     init {
         observeTraktAuthState(Unit)

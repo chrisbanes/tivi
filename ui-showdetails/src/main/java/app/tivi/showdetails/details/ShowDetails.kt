@@ -159,7 +159,7 @@ internal fun ShowDetails(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     openSeasons: (showId: Long, seasonId: Long) -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState(initial = ShowDetailsViewState.Empty)
+    val viewState by viewModel.state.collectAsState()
 
     ShowDetails(viewState = viewState) { action ->
         when (action) {

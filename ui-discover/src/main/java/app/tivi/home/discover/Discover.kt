@@ -102,7 +102,7 @@ internal fun Discover(
     openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
     openUser: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState(initial = DiscoverViewState.Empty)
+    val viewState by viewModel.state.collectAsState()
     Discover(
         state = viewState,
         refresh = { viewModel.submitAction(DiscoverAction.RefreshAction) },

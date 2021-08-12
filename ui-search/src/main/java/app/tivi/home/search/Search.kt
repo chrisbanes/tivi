@@ -74,7 +74,7 @@ internal fun Search(
     viewModel: SearchViewModel,
     openShowDetails: (showId: Long) -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState(initial = SearchViewState.Empty)
+    val viewState by viewModel.state.collectAsState()
 
     Search(state = viewState) { action ->
         when (action) {

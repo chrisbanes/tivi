@@ -23,10 +23,13 @@ import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,7 +42,7 @@ internal class SearchViewModel @Inject constructor(
 
     private val pendingActions = MutableSharedFlow<SearchAction>()
 
-    val state = combine(
+    val state: StateFlow<SearchViewState> = combine(
         searchShows.flow,
         loadingState.observable,
     ) { results, refreshing ->
@@ -47,7 +50,11 @@ internal class SearchViewModel @Inject constructor(
             searchResults = results,
             refreshing = refreshing,
         )
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SearchViewState.Empty,
+    )
 
     init {
         viewModelScope.launch {

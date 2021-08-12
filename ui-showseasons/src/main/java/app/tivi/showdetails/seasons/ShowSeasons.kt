@@ -105,7 +105,7 @@ internal fun ShowSeasons(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     initialSeasonId: Long?,
 ) {
-    val viewState by viewModel.state.collectAsState(initial = ShowSeasonsViewState.Empty)
+    val viewState by viewModel.state.collectAsState()
 
     val scaffoldState = rememberScaffoldState()
 

@@ -119,7 +119,7 @@ internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
     navigateUp: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState(initial = EpisodeDetailsViewState.Empty)
+    val viewState by viewModel.state.collectAsState()
 
     EpisodeDetails(viewState = viewState) { action ->
         when (action) {

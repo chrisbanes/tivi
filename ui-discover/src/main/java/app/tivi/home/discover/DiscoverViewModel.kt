@@ -32,10 +32,12 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectInto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -57,7 +59,7 @@ internal class DiscoverViewModel @Inject constructor(
 
     private val pendingActions = MutableSharedFlow<DiscoverAction>()
 
-    val state: Flow<DiscoverViewState> = combine(
+    val state: StateFlow<DiscoverViewState> = combine(
         trendingLoadingState.observable,
         popularLoadingState.observable,
         recommendedLoadingState.observable,
@@ -80,7 +82,11 @@ internal class DiscoverViewModel @Inject constructor(
             recommendedRefreshing = recommendLoad,
             nextEpisodeWithShowToWatched = nextShow,
         )
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = DiscoverViewState.Empty,
+    )
 
     init {
         observeTrendingShows(ObserveTrendingShows.Params(10))

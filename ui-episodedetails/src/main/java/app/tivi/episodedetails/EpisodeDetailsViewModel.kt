@@ -36,8 +36,11 @@ import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -61,7 +64,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
 
     private val pendingActions = MutableSharedFlow<EpisodeDetailsAction>()
 
-    val state = combine(
+    val state: StateFlow<EpisodeDetailsViewState> = combine(
         observeEpisodeDetails.flow,
         observeEpisodeWatches.flow,
         loadingState.observable,
@@ -76,7 +79,11 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             refreshing = refreshing,
             error = error,
         )
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = EpisodeDetailsViewState.Empty,
+    )
 
     init {
         viewModelScope.launch {

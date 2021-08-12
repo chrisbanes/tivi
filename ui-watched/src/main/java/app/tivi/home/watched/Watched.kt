@@ -97,7 +97,7 @@ internal fun Watched(
     openShowDetails: (showId: Long) -> Unit,
     openUser: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState(initial = WatchedViewState.Empty)
+    val viewState by viewModel.state.collectAsState()
     val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
 
     Watched(state = viewState, list = pagingItems) { action ->

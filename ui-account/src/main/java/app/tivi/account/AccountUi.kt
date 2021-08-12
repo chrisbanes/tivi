@@ -81,7 +81,7 @@ internal fun AccountUi(
     viewModel: AccountUiViewModel,
     onOpenSettings: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState(initial = AccountUiViewState.Empty)
+    val viewState by viewModel.state.collectAsState()
 
     val loginLauncher = rememberLauncherForActivityResult(
         viewModel.buildLoginActivityResult()
