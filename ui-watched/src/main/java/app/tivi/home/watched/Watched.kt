@@ -17,9 +17,9 @@
 package app.tivi.home.watched
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -30,13 +30,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -55,25 +52,29 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
+import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.RefreshButton
-import app.tivi.common.compose.Scaffold
-import app.tivi.common.compose.SearchTextField
-import app.tivi.common.compose.SortMenuPopup
-import app.tivi.common.compose.UserProfileButton
+import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
+import app.tivi.common.compose.ui.PosterCard
+import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.SearchTextField
+import app.tivi.common.compose.ui.SortMenuPopup
+import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.coil.rememberCoilPainter
-import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.rememberInsetsPaddingValues
+import com.google.accompanist.insets.ui.Scaffold
+import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -115,7 +116,7 @@ internal fun Watched(
 internal fun Watched(
     state: WatchedViewState,
     list: LazyPagingItems<WatchedShowEntryWithShow>,
-    actioner: (WatchedAction) -> Unit
+    actioner: (WatchedAction) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -142,9 +143,15 @@ internal fun Watched(
                 )
             }
         ) {
+            val columns = Layout.columns
+            val bodyMargin = Layout.bodyMargin
+            val gutter = Layout.gutter
+
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .bodyWidth()
+                    .fillMaxHeight()
             ) {
                 item {
                     FilterSortPanel(
@@ -153,24 +160,34 @@ internal fun Watched(
                         sortOptions = state.availableSorts,
                         currentSortOption = state.sort,
                         onSortSelected = { actioner(WatchedAction.ChangeSort(it)) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = bodyMargin)
                     )
                 }
 
-                items(list) { entry ->
+                itemsInGrid(
+                    lazyPagingItems = list,
+                    columns = columns / 4,
+                    // We minus 8.dp off the grid padding, as we use content padding on the items below
+                    contentPadding = PaddingValues(
+                        horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
+                        vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+                    ),
+                    verticalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
+                    horizontalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
+                ) { entry ->
                     if (entry != null) {
                         WatchedShowItem(
                             show = entry.show,
                             poster = entry.poster,
                             lastWatched = entry.entry.lastWatched,
                             onClick = { actioner(WatchedAction.OpenShowDetails(entry.show.id)) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(88.dp)
+                            contentPadding = PaddingValues(8.dp),
+                            modifier = Modifier.fillMaxWidth()
                         )
-                    } else {
-                        // TODO placeholder?
                     }
+                    // TODO placeholder?
                 }
 
                 itemSpacer(16.dp)
@@ -188,7 +205,7 @@ private fun FilterSortPanel(
     currentSortOption: SortOption,
     onSortSelected: (SortOption) -> Unit,
 ) {
-    Row(modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+    Row(modifier.padding(vertical = 8.dp)) {
         var filter by remember { mutableStateOf(TextFieldValue()) }
 
         SearchTextField(
@@ -221,72 +238,43 @@ private fun WatchedShowItem(
     poster: ShowTmdbImage?,
     lastWatched: OffsetDateTime,
     onClick: () -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     val textCreator = LocalTiviTextCreator.current
     Row(
         modifier
+            .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
-            .padding(vertical = 8.dp)
+            .padding(contentPadding)
     ) {
-        Spacer(Modifier.width(16.dp))
-
-        if (poster != null) {
-            Surface(
-                elevation = 1.dp,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .fillMaxHeight()
-                    .aspectRatio(2 / 3f)
-            ) {
-                Image(
-                    painter = rememberCoilPainter(poster, fadeIn = true),
-                    contentDescription = stringResource(
-                        R.string.cd_show_poster_image,
-                        show.title
-                            ?: ""
-                    ),
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-        }
+        PosterCard(
+            show = show,
+            poster = poster,
+            modifier = Modifier
+                .fillMaxWidth(0.2f) // 20% of the width
+                .aspectRatio(2 / 3f)
+        )
 
         Spacer(Modifier.width(16.dp))
 
-        Column(
-            Modifier
-                .weight(1f)
-                .fillMaxHeight()
-        ) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(end = 16.dp)
-            ) {
+        Column {
+            Text(
+                text = textCreator.showTitle(show = show).toString(),
+                style = MaterialTheme.typography.subtitle1,
+            )
+
+            Spacer(Modifier.height(2.dp))
+
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Text(
-                    text = textCreator.showTitle(show = show).toString(),
-                    style = MaterialTheme.typography.subtitle1,
+                    text = stringResource(
+                        R.string.library_last_watched,
+                        LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatched)
+                    ),
+                    style = MaterialTheme.typography.caption,
                 )
-
-                Spacer(Modifier.height(2.dp))
-
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = stringResource(
-                            R.string.library_last_watched,
-                            LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatched)
-                        ),
-                        style = MaterialTheme.typography.caption,
-                    )
-                }
-
-                Spacer(Modifier.weight(1f))
-
-                Spacer(Modifier.height(8.dp))
             }
-
-            Divider()
         }
     }
 }
@@ -298,28 +286,20 @@ private fun WatchedAppBar(
     refreshing: Boolean,
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
+    TopAppBar(
+        backgroundColor = MaterialTheme.colors.surface.copy(
+            alpha = AppBarAlphas.translucentBarAlpha()
+        ),
         contentColor = MaterialTheme.colors.onSurface,
-        elevation = 4.dp,
-        modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier
-                .statusBarsPadding()
-                .height(56.dp)
-                .padding(start = 16.dp, end = 4.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.watched_shows_title),
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-
-            Spacer(Modifier.weight(1f))
-
+        contentPadding = rememberInsetsPaddingValues(
+            insets = LocalWindowInsets.current.systemBars,
+            applyBottom = false,
+        ),
+        modifier = modifier,
+        title = { Text(text = stringResource(R.string.watched_shows_title)) },
+        actions = {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 // This button refresh allows screen-readers, etc to trigger a refresh.
                 // We only show the button to trigger a refresh, not to indicate that
@@ -333,14 +313,14 @@ private fun WatchedAppBar(
                         RefreshButton(onClick = onRefreshActionClick)
                     }
                 }
-
-                UserProfileButton(
-                    loggedIn = loggedIn,
-                    user = user,
-                    onClick = onUserActionClick,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
             }
-        }
-    }
+
+            UserProfileButton(
+                loggedIn = loggedIn,
+                user = user,
+                onClick = onUserActionClick,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+        },
+    )
 }

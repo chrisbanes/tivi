@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,45 +16,70 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isFinite
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.rememberInsetsPaddingValues
 
-inline val LayoutCoordinates.positionInParent: Offset
-    get() = parentCoordinates?.localPositionOf(this, Offset.Zero) ?: Offset.Zero
+object Layout {
 
-inline val LayoutCoordinates.boundsInParent: Rect
-    get() = Rect(positionInParent, size.toSize())
-
-fun Modifier.onPositionInParentChanged(
-    onChange: (LayoutCoordinates) -> Unit
-) = composed {
-    var lastPosition by remember { mutableStateOf(Offset.Zero) }
-    Modifier.onGloballyPositioned { coordinates ->
-        if (coordinates.positionInParent != lastPosition) {
-            lastPosition = coordinates.positionInParent
-            onChange(coordinates)
+    val bodyMargin: Dp
+        @Composable get() = when (LocalConfiguration.current.screenWidthDp) {
+            in 0..599 -> 16.dp
+            in 600..904 -> 32.dp
+            in 905..1239 -> 0.dp
+            in 1240..1439 -> 200.dp
+            else -> 0.dp
         }
-    }
+
+    val gutter: Dp
+        @Composable get() = when (LocalConfiguration.current.screenWidthDp) {
+            in 0..599 -> 8.dp
+            in 600..904 -> 16.dp
+            in 905..1239 -> 16.dp
+            in 1240..1439 -> 32.dp
+            else -> 32.dp
+        }
+
+    val bodyMaxWidth: Dp
+        @Composable get() = when (LocalConfiguration.current.screenWidthDp) {
+            in 0..599 -> Dp.Infinity
+            in 600..904 -> Dp.Infinity
+            in 905..1239 -> 840.dp
+            in 1240..1439 -> Dp.Infinity
+            else -> 1040.dp
+        }
+
+    val columns: Int
+        @Composable get() = when (LocalConfiguration.current.screenWidthDp) {
+            in 0..599 -> 4
+            in 600..904 -> 8
+            else -> 12
+        }
 }
 
-fun Modifier.onPositionInRootChanged(
-    onChange: (LayoutCoordinates) -> Unit
-) = composed {
-    var lastPosition by remember { mutableStateOf(Offset.Zero) }
-    Modifier.onGloballyPositioned { coordinates ->
-        if (coordinates.positionInRoot() != lastPosition) {
-            lastPosition = coordinates.positionInRoot()
-            onChange(coordinates)
-        }
+fun Modifier.bodyWidth() = fillMaxWidth()
+    .wrapContentWidth(align = Alignment.CenterHorizontally)
+    .composed {
+        val bodyMaxWidth = Layout.bodyMaxWidth
+        if (bodyMaxWidth.isFinite) widthIn(max = bodyMaxWidth) else this
     }
-}
+    .composed {
+        padding(
+            rememberInsetsPaddingValues(
+                insets = LocalWindowInsets.current.systemBars,
+                applyBottom = false,
+                applyTop = false,
+            )
+        )
+    }

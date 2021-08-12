@@ -35,7 +35,7 @@ internal data class ShowDetailsViewState(
     val nextEpisodeToWatch: EpisodeWithSeason? = null,
     val watchStats: FollowedShowsWatchStats? = null,
     val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
-    val expandedSeasonIds: Set<Long> = emptySet(),
+    val expandedSeasonId: Long? = null,
     val refreshing: Boolean = false,
     val refreshError: UiError? = null
 ) {

@@ -17,16 +17,6 @@
   -->
 
 <resources>
-    <color name="tivi_slate_200">#81A9B3</color>
-    <color name="tivi_slate_600">#4A6572</color>
-    <color name="tivi_slate_700">#344955</color>
-    <color name="tivi_slate_800">#232F34</color>
-
-    <color name="tivi_slate_200_10pc_over_surface">#16191A</color>
-
-    <color name="tivi_mtrl_orange_500">#f9aa33</color>
-    <color name="tivi_mtrl_orange_700">#C78522</color>
-
     <color name="tv_test_grey">#c0c0c0</color>
     <color name="tv_test_yellow">#bdc200</color>
     <color name="tv_test_cyan">#00c6c2</color>
@@ -34,10 +24,7 @@
     <color name="tv_test_magenta">#e400cb</color>
     <color name="tv_test_red">#e10000</color>
     <color name="tv_test_blue">#2400cd</color>
-
     <color name="launcher_icon_background">#333333</color>
-
-    <color name="swipe_away_background">#DEDEDE</color>
 
     <color name="system_ui_scrim_light">#B3FFFFFF</color> <!-- 70% white -->
     <color name="system_ui_scrim_dark">#30000000</color> <!-- 19% black -->

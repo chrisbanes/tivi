@@ -19,31 +19,38 @@ package app.tivi.common.compose
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import app.tivi.common.compose.theme.AppBarAlphas
+import app.tivi.common.compose.ui.PlaceholderPosterCard
+import app.tivi.common.compose.ui.PosterCard
+import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.rememberInsetsPaddingValues
+import com.google.accompanist.insets.ui.Scaffold
+import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -52,6 +59,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 fun <E : Entry> EntryGrid(
     lazyPagingItems: LazyPagingItems<out EntryWithShow<E>>,
     title: String,
+    onNavigateUp: () -> Unit,
     onOpenShowDetails: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -59,6 +67,7 @@ fun <E : Entry> EntryGrid(
         topBar = {
             EntryGridAppBar(
                 title = title,
+                onNavigateUp = onNavigateUp,
                 refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading,
                 onRefreshActionClick = { lazyPagingItems.refresh() },
                 modifier = Modifier.fillMaxWidth()
@@ -80,16 +89,20 @@ fun <E : Entry> EntryGrid(
                 )
             }
         ) {
+            val columns = Layout.columns
+            val bodyMargin = Layout.bodyMargin
+            val gutter = Layout.gutter
+
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.bodyWidth().fillMaxHeight(),
             ) {
                 itemsInGrid(
                     lazyPagingItems = lazyPagingItems,
-                    columns = 3,
-                    contentPadding = PaddingValues(4.dp),
-                    verticalItemPadding = 2.dp,
-                    horizontalItemPadding = 2.dp
+                    columns = columns / 2,
+                    contentPadding = PaddingValues(horizontal = bodyMargin, vertical = gutter),
+                    verticalItemPadding = gutter,
+                    horizontalItemPadding = gutter,
                 ) { entry ->
                     val mod = Modifier
                         .aspectRatio(2 / 3f)
@@ -126,29 +139,27 @@ fun <E : Entry> EntryGrid(
 private fun EntryGridAppBar(
     title: String,
     refreshing: Boolean,
+    onNavigateUp: () -> Unit,
     onRefreshActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
+    TopAppBar(
+        navigationIcon = {
+            IconButton(onClick = { onNavigateUp() }) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = stringResource(R.string.cd_navigate_up)
+                )
+            }
+        },
+        backgroundColor = MaterialTheme.colors.surface.copy(
+            alpha = AppBarAlphas.translucentBarAlpha()
+        ),
         contentColor = MaterialTheme.colors.onSurface,
-        elevation = 4.dp,
-        modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier
-                .statusBarsPadding()
-                .height(56.dp)
-                .padding(start = 16.dp, end = 4.dp)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-
-            Spacer(Modifier.weight(1f))
-
+        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars),
+        modifier = modifier,
+        title = { Text(text = title) },
+        actions = {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 // This button refresh allows screen-readers, etc to trigger a refresh.
                 // We only show the button to trigger a refresh, not to indicate that
@@ -163,6 +174,6 @@ private fun EntryGridAppBar(
                     }
                 }
             }
-        }
-    }
+        },
+    )
 }

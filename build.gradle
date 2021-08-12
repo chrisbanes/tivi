@@ -21,7 +21,7 @@ import app.tivi.buildsrc.ReleaseType
 buildscript {
     ext.buildConfig = [
             'compileSdk': 30,
-            'minSdk'    : 23,
+            'minSdk'    : 24, // https://issuetracker.google.com/issues/194289155
             'targetSdk' : 30,
     ]
 
@@ -47,8 +47,8 @@ buildscript {
 }
 
 plugins {
-    id 'com.diffplug.spotless' version '5.12.5'
-    id 'com.github.ben-manes.versions' version '0.38.0'
+    id 'com.diffplug.spotless' version '5.14.2'
+    id 'com.github.ben-manes.versions' version '0.39.0'
 }
 
 allprojects {
@@ -70,17 +70,9 @@ allprojects {
 subprojects {
     configurations.configureEach {
         // We forcefully exclude AppCompat + MDC from any transitive dependencies.
-        // This is a Compose app, so there's no need for these.
+        // This is a Compose app, so there's no need for these
         exclude group: 'androidx.appcompat'
         exclude group: 'com.google.android.material', module: 'material'
-
-        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-            if (details.requested.group == 'org.jetbrains.kotlinx'
-                && details.requested.module.name == 'kotlinx-collections-immutable-jvm') {
-                // kotlinx-collections-immutable-jvm 0.3.4+ is available on Maven Central
-                details.useVersion '0.3.4'
-            }
-        }
     }
 
     apply plugin: 'com.diffplug.spotless'

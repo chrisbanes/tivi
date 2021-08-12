@@ -83,20 +83,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.AutoSizedCircularProgressIndicator
-import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.compose.SwipeDismissSnackbar
-import app.tivi.common.compose.TiviAlertDialog
-import app.tivi.common.compose.boundsInParent
-import app.tivi.common.compose.onPositionInParentChanged
 import app.tivi.common.compose.rememberFlowWithLifecycle
+import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.ui.ExpandingText
+import app.tivi.common.compose.ui.SwipeDismissSnackbar
+import app.tivi.common.compose.ui.TiviAlertDialog
+import app.tivi.common.compose.ui.boundsInParent
+import app.tivi.common.compose.ui.onPositionInParentChanged
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
@@ -261,7 +261,9 @@ private fun Backdrop(
         Box(Modifier.fillMaxSize()) {
             if (episode.tmdbBackdropPath != null) {
                 Image(
-                    painter = rememberCoilPainter(episode, fadeIn = true),
+                    painter = rememberImagePainter(episode) {
+                        crossfade(true)
+                    },
                     contentDescription = stringResource(R.string.cd_show_poster),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
@@ -290,7 +292,7 @@ private fun Backdrop(
                                     R.string.season_episode_number,
                                     seasonNumber,
                                     epNumber
-                                ).toUpperCase(locale),
+                                ).uppercase(locale),
                                 style = MaterialTheme.typography.overline
                             )
                         }

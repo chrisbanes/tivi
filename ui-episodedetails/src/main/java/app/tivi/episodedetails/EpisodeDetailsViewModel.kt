@@ -42,7 +42,8 @@ import dagger.hilt.android.components.ActivityComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -116,9 +117,9 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
      *
      * See https://medium.com/androiddevelopers/migrating-from-livedata-to-kotlins-flow-379292f419fb
      */
-    val state: Flow<EpisodeDetailsViewState> = combine(
-        observeEpisodeDetails.observe(),
-        observeEpisodeWatches.observe(),
+    val state: StateFlow<EpisodeDetailsViewState> = combine(
+        observeEpisodeDetails.flow,
+        observeEpisodeWatches.flow,
         loadingState.observable,
         snackbarManager.errors,
     ) { episodeDetails, episodeWatches, refreshing, error ->
@@ -133,7 +134,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         )
     }.stateIn(
         scope = coroutineScope,
-        started = WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = EpisodeDetailsViewState.Empty,
     )
 

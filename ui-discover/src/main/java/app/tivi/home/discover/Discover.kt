@@ -51,16 +51,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import app.tivi.common.compose.AutoSizedCircularProgressIndicator
-import app.tivi.common.compose.Carousel
+import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.PosterCard
-import app.tivi.common.compose.RefreshButton
-import app.tivi.common.compose.Scaffold
-import app.tivi.common.compose.UserProfileButton
-import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
+import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.ui.Carousel
+import app.tivi.common.compose.ui.PosterCard
+import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -68,7 +68,10 @@ import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.rememberInsetsPaddingValues
+import com.google.accompanist.insets.ui.Scaffold
+import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -102,26 +105,26 @@ internal fun Discover(
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = DiscoverViewState.Empty)
-
-    Discover(state = viewState) { action ->
-        // TODO: Remove this action thing and just pass the lambdas down
-        when (action) {
-            DiscoverAction.LoginAction, DiscoverAction.OpenUserDetails -> openUser()
-            is DiscoverAction.OpenShowDetails -> {
-                openShowDetails(action.showId, action.episodeId)
-            }
-            DiscoverAction.OpenTrendingShows -> openTrendingShows()
-            DiscoverAction.OpenPopularShows -> openPopularShows()
-            DiscoverAction.OpenRecommendedShows -> openRecommendedShows()
-            else -> viewModel.submitAction(action)
-        }
-    }
+    Discover(
+        state = viewState,
+        refresh = { viewModel.submitAction(DiscoverAction.RefreshAction) },
+        openUser = openUser,
+        openShowDetails = openShowDetails,
+        openTrendingShows = openTrendingShows,
+        openRecommendedShows = openRecommendedShows,
+        openPopularShows = openPopularShows
+    )
 }
 
 @Composable
 internal fun Discover(
     state: DiscoverViewState,
-    actioner: (DiscoverAction) -> Unit
+    refresh: () -> Unit,
+    openUser: () -> Unit,
+    openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
+    openTrendingShows: () -> Unit,
+    openRecommendedShows: () -> Unit,
+    openPopularShows: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -129,8 +132,8 @@ internal fun Discover(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.refreshing,
-                onRefreshActionClick = { actioner(DiscoverAction.RefreshAction) },
-                onUserActionClick = { actioner(DiscoverAction.OpenUserDetails) },
+                onRefreshActionClick = refresh,
+                onUserActionClick = openUser,
                 modifier = Modifier.fillMaxWidth()
             )
         },
@@ -138,7 +141,7 @@ internal fun Discover(
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(state.refreshing),
-            onRefresh = { actioner(DiscoverAction.RefreshAction) },
+            onRefresh = refresh,
             indicatorPadding = paddingValues,
             indicator = { state, trigger ->
                 SwipeRefreshIndicator(
@@ -150,9 +153,11 @@ internal fun Discover(
         ) {
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.bodyWidth(),
             ) {
-                itemSpacer(16.dp)
+                item {
+                    Spacer(Modifier.height(Layout.gutter))
+                }
 
                 state.nextEpisodeWithShowToWatched?.let { nextEpisodeToWatch ->
                     item {
@@ -167,17 +172,14 @@ internal fun Discover(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    actioner(
-                                        DiscoverAction.OpenShowDetails(
-                                            showId = nextEpisodeToWatch.show.id,
-                                            episodeId = nextEpisodeToWatch.episode.id
-                                        )
-                                    )
+                                    openShowDetails(nextEpisodeToWatch.show.id, nextEpisodeToWatch.episode.id)
                                 }
                         )
                     }
 
-                    itemSpacer(16.dp)
+                    item {
+                        Spacer(Modifier.height(Layout.gutter))
+                    }
                 }
 
                 item {
@@ -185,8 +187,10 @@ internal fun Discover(
                         items = state.trendingItems,
                         title = stringResource(R.string.discover_trending_title),
                         refreshing = state.trendingRefreshing,
-                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(DiscoverAction.OpenTrendingShows) }
+                        onItemClick = {
+                            openShowDetails(it.id, null)
+                        },
+                        onMoreClick = openTrendingShows
                     )
                 }
 
@@ -195,8 +199,10 @@ internal fun Discover(
                         items = state.recommendedItems,
                         title = stringResource(R.string.discover_recommended_title),
                         refreshing = state.recommendedRefreshing,
-                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(DiscoverAction.OpenRecommendedShows) }
+                        onItemClick = {
+                            openShowDetails(it.id, null)
+                        },
+                        onMoreClick = openRecommendedShows
                     )
                 }
 
@@ -205,12 +211,14 @@ internal fun Discover(
                         items = state.popularItems,
                         title = stringResource(R.string.discover_popular_title),
                         refreshing = state.popularRefreshing,
-                        onItemClick = { actioner(DiscoverAction.OpenShowDetails(it.id)) },
-                        onMoreClick = { actioner(DiscoverAction.OpenPopularShows) }
+                        onItemClick = { openShowDetails(it.id, null) },
+                        onMoreClick = openPopularShows
                     )
                 }
 
-                itemSpacer(16.dp)
+                item {
+                    Spacer(Modifier.height(Layout.gutter))
+                }
             }
         }
     }
@@ -225,7 +233,12 @@ private fun NextEpisodeToWatch(
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier) {
-        Row(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+        Row(
+            Modifier.padding(
+                horizontal = Layout.bodyMargin,
+                vertical = Layout.gutter,
+            )
+        ) {
             if (poster != null) {
                 PosterCard(
                     show = show,
@@ -235,7 +248,7 @@ private fun NextEpisodeToWatch(
                         .aspectRatio(2 / 3f)
                 )
 
-                Spacer(Modifier.width(16.dp))
+                Spacer(Modifier.width(Layout.gutter))
             }
 
             Column(Modifier.align(Alignment.CenterVertically)) {
@@ -270,7 +283,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
 ) {
     Column(modifier) {
         if (refreshing || items.isNotEmpty()) {
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(Layout.gutter))
 
             Header(
                 title = title,
@@ -309,7 +322,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
 ) {
     Carousel(
         items = items,
-        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+        contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
         itemSpacing = 4.dp,
         modifier = modifier
     ) { item, padding ->
@@ -334,7 +347,7 @@ private fun Header(
     content: @Composable RowScope.() -> Unit = {}
 ) {
     Row(modifier) {
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(Layout.bodyMargin))
 
         Text(
             text = title,
@@ -357,7 +370,7 @@ private fun Header(
 
         content()
 
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(Layout.bodyMargin))
     }
 }
 
@@ -370,26 +383,18 @@ private fun DiscoverAppBar(
     onUserActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
+    TopAppBar(
+        backgroundColor = MaterialTheme.colors.surface.copy(
+            alpha = AppBarAlphas.translucentBarAlpha()
+        ),
         contentColor = MaterialTheme.colors.onSurface,
-        elevation = 4.dp,
-        modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier
-                .statusBarsPadding()
-                .height(56.dp)
-                .padding(start = 16.dp, end = 4.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.discover_title),
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-
-            Spacer(Modifier.weight(1f))
-
+        contentPadding = rememberInsetsPaddingValues(
+            insets = LocalWindowInsets.current.systemBars,
+            applyBottom = false,
+        ),
+        modifier = modifier,
+        title = { Text(text = stringResource(R.string.discover_title)) },
+        actions = {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 // This button refresh allows screen-readers, etc to trigger a refresh.
                 // We only show the button to trigger a refresh, not to indicate that
@@ -398,21 +403,21 @@ private fun DiscoverAppBar(
                 Crossfade(
                     targetState = refreshing,
                     modifier = Modifier.align(Alignment.CenterVertically)
-                ) { refreshing ->
-                    if (!refreshing) {
+                ) { isRefreshing ->
+                    if (!isRefreshing) {
                         RefreshButton(onClick = onRefreshActionClick)
                     }
                 }
-
-                UserProfileButton(
-                    loggedIn = loggedIn,
-                    user = user,
-                    onClick = onUserActionClick,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
             }
-        }
-    }
+
+            UserProfileButton(
+                loggedIn = loggedIn,
+                user = user,
+                onClick = onUserActionClick,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+        },
+    )
 }
 
 @Preview

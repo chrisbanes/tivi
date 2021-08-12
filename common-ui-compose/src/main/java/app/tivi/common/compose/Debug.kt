@@ -28,7 +28,7 @@ class Ref(var value: Int)
 const val EnableDebugCompositionLogs = false
 
 /**
- * An effect which longs the number compositions at the invoked point of the slot table.
+ * An effect which logs the number compositions at the invoked point of the slot table.
  * Thanks to [objcode](https://github.com/objcode) for this code.
  *
  * This is an inline function to act as like a C-style #include to the host composable function.

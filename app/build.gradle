@@ -15,8 +15,6 @@
  *
  */
 
-import java.nio.file.Files
-
 plugins {
     id 'com.android.application'
     id 'dagger.hilt.android.plugin'
@@ -47,7 +45,7 @@ android {
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
         versionCode appVersionCode
-        versionName "0.5.1"
+        versionName "0.6.0"
 
         // For now we're sticking to just shipping EN
         resConfigs "en"
@@ -164,8 +162,8 @@ dependencies {
     implementation project(':ui-trending')
     implementation project(':ui-recommended')
     implementation project(':ui-search')
+    implementation project(':ui-showseasons')
     implementation project(':ui-settings')
-
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
 
@@ -223,11 +221,7 @@ android.applicationVariants.all { variant ->
     }
 }
 
-def googleServices = file("google-services.json")
-if (!googleServices.exists()) {
-    // If there isn't a google-services.json available, we'll copy our fake version to the
-    // google-services.json
-    Files.copy(file("fake-google-services.json").toPath(), googleServices.toPath())
+if (file("google-services.json").exists()) {
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
 }
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'

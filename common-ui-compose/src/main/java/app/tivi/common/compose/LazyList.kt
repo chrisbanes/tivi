@@ -27,9 +27,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
@@ -46,6 +46,16 @@ fun LazyListScope.itemSpacer(height: Dp) {
     }
 }
 
+fun LazyListScope.gutterSpacer() {
+    item {
+        Spacer(
+            Modifier
+                .height(Layout.gutter)
+                .fillParentMaxWidth()
+        )
+    }
+}
+
 /**
  * Displays a 'fake' grid using [LazyColumn]'s DSL. It's fake in that we just we add individual
  * column items, with a inner fake row.
@@ -56,7 +66,7 @@ fun <T : Any> LazyListScope.itemsInGrid(
     contentPadding: PaddingValues = PaddingValues(),
     horizontalItemPadding: Dp = 0.dp,
     verticalItemPadding: Dp = 0.dp,
-    itemContent: @Composable (T?) -> Unit
+    itemContent: @Composable LazyItemScope.(T?) -> Unit
 ) {
     val rows = when {
         lazyPagingItems.itemCount % columns == 0 -> lazyPagingItems.itemCount / columns
@@ -80,8 +90,7 @@ fun <T : Any> LazyListScope.itemsInGrid(
                     Box(modifier = Modifier.weight(1f)) {
                         val index = (row * columns) + column
                         if (index < lazyPagingItems.itemCount) {
-                            val item by lazyPagingItems.getAsState(index)
-                            itemContent(item)
+                            itemContent(lazyPagingItems[index])
                         }
                     }
                     if (column < columns - 1) {
@@ -109,7 +118,7 @@ fun <T> LazyListScope.itemsInGrid(
     contentPadding: PaddingValues = PaddingValues(),
     horizontalItemPadding: Dp = 0.dp,
     verticalItemPadding: Dp = 0.dp,
-    itemContent: @Composable (T) -> Unit
+    itemContent: @Composable LazyItemScope.(T) -> Unit
 ) {
     val rows = when {
         items.size % columns == 0 -> items.size / columns

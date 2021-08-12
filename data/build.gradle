@@ -15,7 +15,10 @@
  *
  */
 
-apply plugin: 'kotlin'
+plugins {
+    id 'kotlin'
+    id 'com.android.lint'
+}
 
 dependencies {
     api project(':base')
@@ -23,11 +26,10 @@ dependencies {
     api project(':tmdb')
 
     api libs.androidx.room.common
+    api libs.androidx.paging.common
     implementation libs.androidx.collection
 
     api libs.store
-
-    api libs.androidx.paging.common
 
     api "org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb"
 }
