@@ -17,6 +17,7 @@
 package app.tivi
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -89,10 +90,12 @@ private sealed class LeafScreen(
 internal fun AppNavigation(
     navController: NavHostController,
     onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Discover.route
+        startDestination = Screen.Discover.route,
+        modifier = modifier,
     ) {
         addDiscoverTopLevel(navController, onOpenSettings)
         addFollowingTopLevel(navController, onOpenSettings)
