@@ -24,9 +24,11 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthManager
 import app.tivi.trakt.TraktManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,15 +40,20 @@ internal class AccountUiViewModel @Inject constructor(
     observeUserDetails: ObserveUserDetails,
     private val clearUserDetails: ClearUserDetails
 ) : ViewModel(), TraktAuthManager by traktAuthManager {
-    val state = combine(
-        observeTraktAuthState.observe().distinctUntilChanged(),
-        observeUserDetails.observe(),
+
+    val state: StateFlow<AccountUiViewState> = combine(
+        observeTraktAuthState.flow,
+        observeUserDetails.flow,
     ) { authState, user ->
         AccountUiViewState(
             user = user,
             authState = authState
         )
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = AccountUiViewState.Empty,
+    )
 
     init {
         observeTraktAuthState(Unit)

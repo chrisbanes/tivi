@@ -37,14 +37,14 @@ class MainActivityViewModel @Inject constructor(
 ) : ViewModel() {
     init {
         viewModelScope.launch {
-            observeUserDetails.observe().collect { user ->
+            observeUserDetails.flow.collect { user ->
                 logger.setUserId(user?.username ?: "")
             }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launch {
-            observeTraktAuthState.observe().collect { state ->
+            observeTraktAuthState.flow.collect { state ->
                 if (state == TraktAuthState.LOGGED_IN) refreshMe()
             }
         }
