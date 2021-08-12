@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
+import app.tivi.common.compose.rememberFlowWithLifecycle
 
 @Composable
 fun Popular(
@@ -41,7 +42,7 @@ internal fun Popular(
     navigateUp: () -> Unit,
 ) {
     EntryGrid(
-        lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
+        lazyPagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems(),
         title = stringResource(R.string.discover_popular_title),
         onOpenShowDetails = openShowDetails,
         onNavigateUp = navigateUp,

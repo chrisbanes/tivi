@@ -54,6 +54,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Carousel
@@ -102,7 +103,8 @@ internal fun Discover(
     openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
     openUser: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = DiscoverViewState.Empty)
     Discover(
         state = viewState,
         refresh = { viewModel.submitAction(DiscoverAction.RefreshAction) },

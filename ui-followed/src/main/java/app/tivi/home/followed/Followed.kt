@@ -57,6 +57,7 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
@@ -95,11 +96,12 @@ internal fun Followed(
     openShowDetails: (showId: Long) -> Unit,
     openUser: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = FollowedViewState.Empty)
 
     Followed(
         state = viewState,
-        list = viewModel.pagedList.collectAsLazyPagingItems()
+        list = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems()
     ) { action ->
         when (action) {
             FollowedAction.LoginAction,

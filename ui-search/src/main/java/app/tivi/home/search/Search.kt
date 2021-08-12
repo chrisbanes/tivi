@@ -51,6 +51,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.itemsInGrid
+import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.data.entities.ShowTmdbImage
@@ -74,7 +75,8 @@ internal fun Search(
     viewModel: SearchViewModel,
     openShowDetails: (showId: Long) -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState by rememberFlowWithLifecycle(viewModel.state)
+        .collectAsState(initial = SearchViewState.Empty)
 
     Search(state = viewState) { action ->
         when (action) {
