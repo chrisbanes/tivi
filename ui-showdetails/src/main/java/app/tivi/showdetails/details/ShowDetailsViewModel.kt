@@ -82,14 +82,14 @@ internal class ShowDetailsViewModel @Inject constructor(
     private val expandedSeasonId = MutableStateFlow<Long?>(null)
 
     val state = combine(
-        observeShowFollowStatus.observe(),
-        observeShowDetails.observe(),
-        observeShowImages.observe(),
+        observeShowFollowStatus.flow,
+        observeShowDetails.flow,
+        observeShowImages.flow,
         loadingState.observable,
-        observeRelatedShows.observe(),
-        observeNextEpisodeToWatch.observe(),
-        observeShowSeasons.observe(),
-        observeShowViewStats.observe(),
+        observeRelatedShows.flow,
+        observeNextEpisodeToWatch.flow,
+        observeShowSeasons.flow,
+        observeShowViewStats.flow,
         snackbarManager.errors,
         expandedSeasonId,
     ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons,

@@ -54,8 +54,8 @@ internal class ShowSeasonsViewModel @Inject constructor(
     private val loadingState = ObservableLoadingCounter()
 
     val state = combine(
-        observeShowSeasons.observe(),
-        observeShowDetails.observe(),
+        observeShowSeasons.flow,
+        observeShowDetails.flow,
         loadingState.observable,
         snackbarManager.errors,
     ) { seasons, show, refreshing, error ->

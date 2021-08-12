@@ -59,7 +59,7 @@ internal class FollowedViewModel @Inject constructor(
     private val showSelection = ShowStateSelector()
 
     val pagedList: Flow<PagingData<FollowedShowEntryWithShow>>
-        get() = observePagedFollowedShows.observe()
+        get() = observePagedFollowedShows.flow
 
     private val availableSorts = listOf(
         SortOption.SUPER_SORT,
@@ -75,8 +75,8 @@ internal class FollowedViewModel @Inject constructor(
         loadingState.observable,
         showSelection.observeSelectedShowIds(),
         showSelection.observeIsSelectionOpen(),
-        observeTraktAuthState.observe(),
-        observeUserDetails.observe(),
+        observeTraktAuthState.flow,
+        observeUserDetails.flow,
         filter,
         sort,
     ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort ->
@@ -107,7 +107,7 @@ internal class FollowedViewModel @Inject constructor(
 
         viewModelScope.launch {
             // When the user logs in, refresh...
-            observeTraktAuthState.observe()
+            observeTraktAuthState.flow
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .collect { refresh(false) }
         }

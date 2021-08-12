@@ -31,7 +31,7 @@ internal class PopularShowsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val pagedList: Flow<PagingData<PopularEntryWithShow>>
-        get() = pagingInteractor.observe()
+        get() = pagingInteractor.flow
 
     init {
         pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))

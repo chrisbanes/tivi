@@ -38,8 +38,8 @@ internal class AccountUiViewModel @Inject constructor(
     private val clearUserDetails: ClearUserDetails
 ) : ViewModel(), TraktAuthManager by traktAuthManager {
     val state = combine(
-        observeTraktAuthState.observe(),
-        observeUserDetails.observe(),
+        observeTraktAuthState.flow,
+        observeUserDetails.flow,
     ) { authState, user ->
         AccountUiViewState(
             user = user,

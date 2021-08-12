@@ -60,7 +60,7 @@ class WatchedViewModel @Inject constructor(
     private val showSelection = ShowStateSelector()
 
     val pagedList: Flow<PagingData<WatchedShowEntryWithShow>>
-        get() = observePagedWatchedShows.observe()
+        get() = observePagedWatchedShows.flow
 
     private val filter = MutableStateFlow<String?>(null)
     private val sort = MutableStateFlow(SortOption.LAST_WATCHED)
@@ -69,8 +69,8 @@ class WatchedViewModel @Inject constructor(
         loadingState.observable,
         showSelection.observeSelectedShowIds(),
         showSelection.observeIsSelectionOpen(),
-        observeTraktAuthState.observe(),
-        observeUserDetails.observe(),
+        observeTraktAuthState.flow,
+        observeUserDetails.flow,
         filter,
         sort,
     ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort ->
@@ -101,7 +101,7 @@ class WatchedViewModel @Inject constructor(
 
         viewModelScope.launch {
             // When the user logs in, refresh...
-            observeTraktAuthState.observe()
+            observeTraktAuthState.flow
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .collect { refresh(false) }
         }

@@ -89,14 +89,14 @@ abstract class SubjectInteractor<P : Any, T> {
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
+    val flow: Flow<T> = paramState
+        .distinctUntilChanged()
+        .flatMapLatest { createObservable(it) }
+        .distinctUntilChanged()
+
     operator fun invoke(params: P) {
         paramState.tryEmit(params)
     }
 
     protected abstract fun createObservable(params: P): Flow<T>
-
-    fun observe(): Flow<T> = paramState
-        .distinctUntilChanged()
-        .flatMapLatest { createObservable(it) }
-        .distinctUntilChanged()
 }

@@ -61,12 +61,12 @@ internal class DiscoverViewModel @Inject constructor(
         trendingLoadingState.observable,
         popularLoadingState.observable,
         recommendedLoadingState.observable,
-        observeTrendingShows.observe(),
-        observePopularShows.observe(),
-        observeRecommendedShows.observe(),
-        observeNextShowEpisodeToWatch.observe(),
-        observeTraktAuthState.observe(),
-        observeUserDetails.observe(),
+        observeTrendingShows.flow,
+        observePopularShows.flow,
+        observeRecommendedShows.flow,
+        observeNextShowEpisodeToWatch.flow,
+        observeTraktAuthState.flow,
+        observeUserDetails.flow,
     ) { trendingLoad, popularLoad, recommendLoad, trending, popular, recommended,
         nextShow, authState, user ->
         DiscoverViewState(
@@ -100,7 +100,7 @@ internal class DiscoverViewModel @Inject constructor(
 
         viewModelScope.launch {
             // When the user logs in, refresh...
-            observeTraktAuthState.observe()
+            observeTraktAuthState.flow
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .collect { refresh(false) }
         }

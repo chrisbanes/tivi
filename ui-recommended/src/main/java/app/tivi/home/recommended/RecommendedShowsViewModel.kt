@@ -30,7 +30,7 @@ internal class RecommendedShowsViewModel @Inject constructor(
     private val pagingInteractor: ObservePagedRecommendedShows,
 ) : ViewModel() {
     val pagedList: Flow<PagingData<RecommendedEntryWithShow>>
-        get() = pagingInteractor.observe()
+        get() = pagingInteractor.flow
 
     init {
         pagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))

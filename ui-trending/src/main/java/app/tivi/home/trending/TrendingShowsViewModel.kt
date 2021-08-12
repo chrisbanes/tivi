@@ -31,7 +31,7 @@ internal class TrendingShowsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val pagedList: Flow<PagingData<TrendingEntryWithShow>>
-        get() = pagingInteractor.observe()
+        get() = pagingInteractor.flow
 
     init {
         pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))

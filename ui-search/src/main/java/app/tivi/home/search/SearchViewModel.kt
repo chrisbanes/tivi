@@ -40,7 +40,7 @@ internal class SearchViewModel @Inject constructor(
     private val pendingActions = MutableSharedFlow<SearchAction>()
 
     val state = combine(
-        searchShows.observe(),
+        searchShows.flow,
         loadingState.observable,
     ) { results, refreshing ->
         SearchViewState(

@@ -62,8 +62,8 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     private val pendingActions = MutableSharedFlow<EpisodeDetailsAction>()
 
     val state = combine(
-        observeEpisodeDetails.observe(),
-        observeEpisodeWatches.observe(),
+        observeEpisodeDetails.flow,
+        observeEpisodeWatches.flow,
         loadingState.observable,
         snackbarManager.errors,
     ) { episodeDetails, episodeWatches, refreshing, error ->
