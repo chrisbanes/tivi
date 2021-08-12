@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -62,8 +63,8 @@ class WatchedViewModel @Inject constructor(
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()
 
-    val pagedList: Flow<PagingData<WatchedShowEntryWithShow>>
-        get() = observePagedWatchedShows.flow
+    val pagedList: Flow<PagingData<WatchedShowEntryWithShow>> =
+        observePagedWatchedShows.flow.cachedIn(viewModelScope)
 
     private val filter = MutableStateFlow<String?>(null)
     private val sort = MutableStateFlow(SortOption.LAST_WATCHED)

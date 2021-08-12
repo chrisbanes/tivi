@@ -17,8 +17,10 @@
 package app.tivi.home.recommended
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.observers.ObservePagedRecommendedShows
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,10 +29,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class RecommendedShowsViewModel @Inject constructor(
-    private val pagingInteractor: ObservePagedRecommendedShows,
+    pagingInteractor: ObservePagedRecommendedShows,
 ) : ViewModel() {
-    val pagedList: Flow<PagingData<RecommendedEntryWithShow>>
-        get() = pagingInteractor.flow
+    val pagedList: Flow<PagingData<RecommendedEntryWithShow>> =
+        pagingInteractor.flow.cachedIn(viewModelScope)
 
     init {
         pagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))

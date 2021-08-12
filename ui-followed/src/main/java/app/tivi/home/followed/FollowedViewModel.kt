@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
@@ -53,7 +54,7 @@ internal class FollowedViewModel @Inject constructor(
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
-    private val observeUserDetails: ObserveUserDetails,
+    observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
 ) : ViewModel() {
     private val pendingActions = MutableSharedFlow<FollowedAction>()
@@ -61,8 +62,8 @@ internal class FollowedViewModel @Inject constructor(
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()
 
-    val pagedList: Flow<PagingData<FollowedShowEntryWithShow>>
-        get() = observePagedFollowedShows.flow
+    val pagedList: Flow<PagingData<FollowedShowEntryWithShow>> =
+        observePagedFollowedShows.flow.cachedIn(viewModelScope)
 
     private val availableSorts = listOf(
         SortOption.SUPER_SORT,

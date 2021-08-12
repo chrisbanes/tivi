@@ -17,8 +17,10 @@
 package app.tivi.home.popular
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.domain.observers.ObservePagedPopularShows
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,11 +29,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class PopularShowsViewModel @Inject constructor(
-    private val pagingInteractor: ObservePagedPopularShows,
+    pagingInteractor: ObservePagedPopularShows,
 ) : ViewModel() {
 
-    val pagedList: Flow<PagingData<PopularEntryWithShow>>
-        get() = pagingInteractor.flow
+    val pagedList: Flow<PagingData<PopularEntryWithShow>> =
+        pagingInteractor.flow.cachedIn(viewModelScope)
 
     init {
         pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))
