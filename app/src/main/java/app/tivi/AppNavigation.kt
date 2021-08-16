@@ -186,8 +186,15 @@ private fun NavGraphBuilder.addDiscover(
             openRecommendedShows = {
                 navController.navigate(LeafScreen.RecommendedShows.createRoute(root))
             },
-            openShowDetails = { showId, episodeId ->
+            openShowDetails = { showId, seasonId, episodeId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
+
+                // If we have an season id, we also open that
+                if (seasonId != null) {
+                    navController.navigate(
+                        LeafScreen.ShowSeasons.createRoute(root, showId, seasonId)
+                    )
+                }
                 // If we have an episodeId, we also open that
                 if (episodeId != null) {
                     navController.navigate(LeafScreen.EpisodeDetails.createRoute(root, episodeId))
