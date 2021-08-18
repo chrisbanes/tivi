@@ -22,19 +22,28 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import timber.log.Timber
 import java.util.regex.Pattern
 import javax.inject.Inject
+import javax.inject.Provider
 
 class TiviLogger @Inject constructor(
-    private val firebaseCrashlytics: FirebaseCrashlytics
+    private val firebaseCrashlytics: Provider<FirebaseCrashlytics>,
 ) : Logger {
     fun setup(debugMode: Boolean) {
         if (debugMode) {
             Timber.plant(TiviDebugTree())
         }
-        Timber.plant(CrashlyticsTree(firebaseCrashlytics))
+        try {
+            Timber.plant(CrashlyticsTree(firebaseCrashlytics.get()))
+        } catch (e: IllegalStateException) {
+            // Firebase is likely not setup in this project. Ignore the exception
+        }
     }
 
     override fun setUserId(id: String) {
-        firebaseCrashlytics.setUserId(id)
+        try {
+            firebaseCrashlytics.get().setUserId(id)
+        } catch (e: IllegalStateException) {
+            // Firebase is likely not setup in this project. Ignore the exception
+        }
     }
 
     override fun v(message: String, vararg args: Any?) {

@@ -28,7 +28,6 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.extensions.combine
-import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectInto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +35,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,7 +49,7 @@ internal class DiscoverViewModel @Inject constructor(
     observeRecommendedShows: ObserveRecommendedShows,
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
-    observeUserDetails: ObserveUserDetails
+    observeUserDetails: ObserveUserDetails,
 ) : ViewModel() {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
@@ -105,10 +103,8 @@ internal class DiscoverViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            // When the user logs in, refresh...
-            observeTraktAuthState.flow
-                .filter { it == TraktAuthState.LOGGED_IN }
-                .collect { refresh(false) }
+            // Each time the auth state changes, refresh...
+            observeTraktAuthState.flow.collect { refresh(false) }
         }
     }
 

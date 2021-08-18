@@ -81,7 +81,7 @@ fun Discover(
     openTrendingShows: () -> Unit,
     openPopularShows: () -> Unit,
     openRecommendedShows: () -> Unit,
-    openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
+    openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
     openUser: () -> Unit,
 ) {
     Discover(
@@ -100,7 +100,7 @@ internal fun Discover(
     openTrendingShows: () -> Unit,
     openPopularShows: () -> Unit,
     openRecommendedShows: () -> Unit,
-    openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
+    openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
     openUser: () -> Unit,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
@@ -121,7 +121,7 @@ internal fun Discover(
     state: DiscoverViewState,
     refresh: () -> Unit,
     openUser: () -> Unit,
-    openShowDetails: (showId: Long, episodeId: Long?) -> Unit,
+    openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
     openTrendingShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openPopularShows: () -> Unit,
@@ -172,7 +172,11 @@ internal fun Discover(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    openShowDetails(nextEpisodeToWatch.show.id, nextEpisodeToWatch.episode.id)
+                                    openShowDetails(
+                                        nextEpisodeToWatch.show.id,
+                                        nextEpisodeToWatch.episode.seasonId,
+                                        nextEpisodeToWatch.episode.id,
+                                    )
                                 }
                         )
                     }
@@ -188,7 +192,7 @@ internal fun Discover(
                         title = stringResource(R.string.discover_trending_title),
                         refreshing = state.trendingRefreshing,
                         onItemClick = {
-                            openShowDetails(it.id, null)
+                            openShowDetails(it.id, null, null)
                         },
                         onMoreClick = openTrendingShows
                     )
@@ -200,7 +204,7 @@ internal fun Discover(
                         title = stringResource(R.string.discover_recommended_title),
                         refreshing = state.recommendedRefreshing,
                         onItemClick = {
-                            openShowDetails(it.id, null)
+                            openShowDetails(it.id, null, null)
                         },
                         onMoreClick = openRecommendedShows
                     )
@@ -211,7 +215,7 @@ internal fun Discover(
                         items = state.popularItems,
                         title = stringResource(R.string.discover_popular_title),
                         refreshing = state.popularRefreshing,
-                        onItemClick = { openShowDetails(it.id, null) },
+                        onItemClick = { openShowDetails(it.id, null, null) },
                         onMoreClick = openPopularShows
                     )
                 }
