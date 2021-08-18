@@ -68,34 +68,6 @@ internal class ViewModelStore(
     /**
      * Retrieve or create a ViewModel.
      */
-    fun <T : Any> viewModelFlow(
-        key: Any,
-        navBackStackEntry: NavBackStackEntry,
-        create: (scope: CoroutineScope) -> T,
-    ): StateFlow<T> = viewModelFlow(
-        key = key,
-        cancellationSignal = {
-            // With a NavBackStackEntry, we use it's lifecycle as the signal to
-            // cancel the scope
-            suspendCancellableCoroutine<Unit> { cont ->
-                val observer = LifecycleEventObserver { _, event ->
-                    // Once the lifecycle is destroyed, cancel the coroutine
-                    if (event == Lifecycle.Event.ON_DESTROY) {
-                        cont.cancel()
-                    }
-                }
-                navBackStackEntry.lifecycle.addObserver(observer)
-                cont.invokeOnCancellation {
-                    navBackStackEntry.lifecycle.removeObserver(observer)
-                }
-            }
-        },
-        create = create,
-    )
-
-    /**
-     * Retrieve or create a ViewModel.
-     */
     @SuppressLint("LogNotTimber")
     fun <T : Any> viewModelFlow(
         key: Any,
@@ -164,6 +136,33 @@ internal class ViewModelStore(
     )
 }
 
+/**
+ * Retrieve or create a ViewModel.
+ */
+internal fun <T : Any> ViewModelStore.viewModelFlow(
+    navBackStackEntry: NavBackStackEntry,
+    create: (scope: CoroutineScope) -> T,
+): StateFlow<T> = viewModelFlow(
+    key = navBackStackEntry.id,
+    cancellationSignal = {
+        // With a NavBackStackEntry, we use it's lifecycle as the signal to
+        // cancel the scope
+        suspendCancellableCoroutine<Unit> { cont ->
+            val observer = LifecycleEventObserver { _, event ->
+                // Once the lifecycle is destroyed, cancel the coroutine
+                if (event == Lifecycle.Event.ON_DESTROY) {
+                    cont.cancel()
+                }
+            }
+            navBackStackEntry.lifecycle.addObserver(observer)
+            cont.invokeOnCancellation {
+                navBackStackEntry.lifecycle.removeObserver(observer)
+            }
+        }
+    },
+    create = create,
+)
+
 @Composable
 internal inline fun <T : Any> ViewModelStore.viewModel(
     key: Any,
@@ -172,10 +171,9 @@ internal inline fun <T : Any> ViewModelStore.viewModel(
 
 @Composable
 internal inline fun <T : Any> ViewModelStore.viewModel(
-    key: Any,
     navBackStackEntry: NavBackStackEntry,
     noinline create: (scope: CoroutineScope) -> T,
-): T = viewModelFlow(key, navBackStackEntry, create).collectAsState().value
+): T = viewModelFlow(navBackStackEntry, create).collectAsState().value
 
 private data class ViewModelStoreEntry(
     val coroutineScope: CoroutineScope,

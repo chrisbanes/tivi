@@ -198,10 +198,7 @@ private fun NavGraphBuilder.addDiscover(
         // Collect our ViewModel from the store. The key must be unique to the ViewModel
         // and its parameters. ViewModels should use the CoroutineScope provided to them when
         // launching coroutines
-        val viewModel = viewModelStore.viewModel(
-            key = "discover",
-            navBackStackEntry = backStackEntry,
-        ) { scope ->
+        val viewModel = viewModelStore.viewModel(backStackEntry) { scope ->
             createDiscoverViewModel(
                 activity = activity,
                 coroutineScope = scope,
@@ -326,10 +323,7 @@ private fun NavGraphBuilder.addEpisodeDetails(
         // Collect our ViewModel from the store. The key must be unique to the ViewModel
         // and its parameters. ViewModels should use the CoroutineScope provided to them when
         // launching coroutines
-        val viewModel = viewModelStore.viewModel(
-            key = "episode_details_$id",
-            navBackStackEntry = backStackEntry,
-        ) { scope ->
+        val viewModel = viewModelStore.viewModel(backStackEntry) { scope ->
             createEpisodeDetailsViewModel(
                 episodeId = id,
                 activity = activity,
