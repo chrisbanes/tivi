@@ -35,6 +35,7 @@ import app.tivi.account.AccountUi
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.episodedetails.createEpisodeDetailsViewModel
 import app.tivi.home.discover.Discover
+import app.tivi.home.discover.createDiscoverViewModel
 import app.tivi.home.followed.Followed
 import app.tivi.home.popular.Popular
 import app.tivi.home.recommended.Recommended
@@ -124,7 +125,7 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
         route = Screen.Discover.route,
         startDestination = LeafScreen.Discover.createRoute(Screen.Discover)
     ) {
-        addDiscover(navController, Screen.Discover)
+        addDiscover(navController, Screen.Discover, viewModelStore)
         addAccount(navController, Screen.Discover, openSettings)
         addShowDetails(navController, Screen.Discover)
         addShowSeasons(navController, Screen.Discover)
@@ -189,9 +190,25 @@ private fun NavGraphBuilder.addSearchTopLevel(
 private fun NavGraphBuilder.addDiscover(
     navController: NavController,
     root: Screen,
+    viewModelStore: ViewModelStore,
 ) {
-    composable(LeafScreen.Discover.createRoute(root)) {
+    composable(LeafScreen.Discover.createRoute(root)) { backStackEntry ->
+        val activity = LocalContext.current as Activity
+
+        // Collect our ViewModel from the store. The key must be unique to the ViewModel
+        // and its parameters. ViewModels should use the CoroutineScope provided to them when
+        // launching coroutines
+        val viewModel = viewModelStore.viewModel(
+            key = "discover",
+            navBackStackEntry = backStackEntry,
+        ) { scope ->
+            createDiscoverViewModel(
+                activity = activity,
+                coroutineScope = scope,
+            )
+        }
         Discover(
+            viewModel = viewModel,
             openTrendingShows = {
                 navController.navigate(LeafScreen.Trending.createRoute(root))
             },

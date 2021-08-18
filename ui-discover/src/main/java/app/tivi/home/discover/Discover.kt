@@ -50,7 +50,6 @@ import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
@@ -78,24 +77,6 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun Discover(
-    openTrendingShows: () -> Unit,
-    openPopularShows: () -> Unit,
-    openRecommendedShows: () -> Unit,
-    openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openUser: () -> Unit,
-) {
-    Discover(
-        viewModel = hiltViewModel(),
-        openTrendingShows = openTrendingShows,
-        openPopularShows = openPopularShows,
-        openRecommendedShows = openRecommendedShows,
-        openShowDetails = openShowDetails,
-        openUser = openUser,
-    )
-}
-
-@Composable
-internal fun Discover(
     viewModel: DiscoverViewModel,
     openTrendingShows: () -> Unit,
     openPopularShows: () -> Unit,

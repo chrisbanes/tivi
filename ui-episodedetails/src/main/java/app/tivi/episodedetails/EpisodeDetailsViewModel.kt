@@ -64,7 +64,7 @@ fun createEpisodeDetailsViewModel(
     return EntryPointAccessors.fromActivity(
         activity,
         EpisodeDetailsViewModelEntryPoint::class.java
-    ).factory().create(
+    ).episodeDetailsViewModelFactory().create(
         episodeId = episodeId,
         coroutineScope = coroutineScope,
     )
@@ -78,12 +78,12 @@ fun createEpisodeDetailsViewModel(
 @EntryPoint
 @InstallIn(ActivityComponent::class)
 internal interface EpisodeDetailsViewModelEntryPoint {
-    fun factory(): EpisodeDetailsViewModelFactory
+    fun episodeDetailsViewModelFactory(): EpisodeDetailsViewModelFactory
 }
 
 /**
  * Our Hilt [AssistedFactory] which allows us to inject a [EpisodeDetailsViewModel], but
- * also pass in the `episodeId`.
+ * also pass in the `episodeId` and `coroutineScope`.
  */
 @AssistedFactory
 internal interface EpisodeDetailsViewModelFactory {

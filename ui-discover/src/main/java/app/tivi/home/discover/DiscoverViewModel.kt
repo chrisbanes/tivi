@@ -16,8 +16,8 @@
 
 package app.tivi.home.discover
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Activity
+import androidx.compose.runtime.Stable
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
@@ -30,17 +30,62 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.extensions.combine
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectInto
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.android.components.ActivityComponent
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-internal class DiscoverViewModel @Inject constructor(
+/**
+ * Creates an injected [DiscoverViewModel] using Hilt.
+ */
+fun createDiscoverViewModel(
+    activity: Activity,
+    coroutineScope: CoroutineScope,
+): DiscoverViewModel {
+    // Use Hilt EntryPointAccessors to create an injected assisted factory,
+    // then create a ViewModel with the given episodeId. This is remember-ed using the
+    // id as the key, so it will be 'cleared' if the ID changes
+    return EntryPointAccessors.fromActivity(
+        activity,
+        DiscoverViewModelEntryPoint::class.java
+    ).discoverViewModelFactory().create(coroutineScope = coroutineScope)
+}
+
+/**
+ * A [EntryPoint] which allows us to inject using Hilt on-demand.
+ *
+ * See https://developer.android.com/training/dependency-injection/hilt-android#not-supported
+ */
+@EntryPoint
+@InstallIn(ActivityComponent::class)
+internal interface DiscoverViewModelEntryPoint {
+    fun discoverViewModelFactory(): DiscoverViewModelFactory
+}
+
+/**
+ * Our Hilt [AssistedFactory] which allows us to inject a [DiscoverViewModel], but
+ * also pass in the `coroutineScope`.
+ */
+@AssistedFactory
+internal interface DiscoverViewModelFactory {
+    fun create(
+        coroutineScope: CoroutineScope
+    ): DiscoverViewModel
+}
+
+@Stable
+class DiscoverViewModel @AssistedInject constructor(
+    @Assisted private val coroutineScope: CoroutineScope,
     private val updatePopularShows: UpdatePopularShows,
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
@@ -50,7 +95,7 @@ internal class DiscoverViewModel @Inject constructor(
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
-) : ViewModel() {
+) {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
     private val recommendedLoadingState = ObservableLoadingCounter()
@@ -81,7 +126,7 @@ internal class DiscoverViewModel @Inject constructor(
             nextEpisodeWithShowToWatched = nextShow,
         )
     }.stateIn(
-        scope = viewModelScope,
+        scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = DiscoverViewState.Empty,
     )
@@ -94,7 +139,7 @@ internal class DiscoverViewModel @Inject constructor(
         observeTraktAuthState(Unit)
         observeUserDetails(ObserveUserDetails.Params("me"))
 
-        viewModelScope.launch {
+        coroutineScope.launch {
             pendingActions.collect { action ->
                 when (action) {
                     DiscoverAction.RefreshAction -> refresh(true)
@@ -102,29 +147,29 @@ internal class DiscoverViewModel @Inject constructor(
             }
         }
 
-        viewModelScope.launch {
+        coroutineScope.launch {
             // Each time the auth state changes, refresh...
             observeTraktAuthState.flow.collect { refresh(false) }
         }
     }
 
     private fun refresh(fromUser: Boolean) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             updatePopularShows(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser))
                 .collectInto(popularLoadingState)
         }
-        viewModelScope.launch {
+        coroutineScope.launch {
             updateTrendingShows(UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH, fromUser))
                 .collectInto(trendingLoadingState)
         }
-        viewModelScope.launch {
+        coroutineScope.launch {
             updateRecommendedShows(UpdateRecommendedShows.Params(forceRefresh = fromUser))
                 .collectInto(recommendedLoadingState)
         }
     }
 
-    fun submitAction(action: DiscoverAction) {
-        viewModelScope.launch {
+    internal fun submitAction(action: DiscoverAction) {
+        coroutineScope.launch {
             pendingActions.emit(action)
         }
     }
