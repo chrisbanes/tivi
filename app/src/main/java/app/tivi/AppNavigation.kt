@@ -20,8 +20,8 @@ import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -309,7 +309,10 @@ private fun NavGraphBuilder.addEpisodeDetails(
         // Collect our ViewModel from the store. The key must be unique to the ViewModel
         // and its parameters. ViewModels should use the CoroutineScope provided to them when
         // launching coroutines
-        val viewModel = viewModelStore.viewModel("episode_details_$id") { scope ->
+        val viewModel = viewModelStore.viewModel(
+            key = "episode_details_$id",
+            navBackStackEntry = backStackEntry,
+        ) { scope ->
             createEpisodeDetailsViewModel(
                 episodeId = id,
                 activity = activity,

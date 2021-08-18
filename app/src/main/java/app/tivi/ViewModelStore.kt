@@ -18,17 +18,24 @@
 
 package app.tivi
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavBackStackEntry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -63,7 +70,37 @@ internal class ViewModelStore(
      */
     fun <T : Any> viewModelFlow(
         key: Any,
-        create: (scope: CoroutineScope) -> T
+        navBackStackEntry: NavBackStackEntry,
+        create: (scope: CoroutineScope) -> T,
+    ): StateFlow<T> = viewModelFlow(
+        key = key,
+        cancellationSignal = {
+            // With a NavBackStackEntry, we use it's lifecycle as the signal to
+            // cancel the scope
+            suspendCancellableCoroutine<Unit> { cont ->
+                val observer = LifecycleEventObserver { _, event ->
+                    // Once the lifecycle is destroyed, cancel the coroutine
+                    if (event == Lifecycle.Event.ON_DESTROY) {
+                        cont.cancel()
+                    }
+                }
+                navBackStackEntry.lifecycle.addObserver(observer)
+                cont.invokeOnCancellation {
+                    navBackStackEntry.lifecycle.removeObserver(observer)
+                }
+            }
+        },
+        create = create,
+    )
+
+    /**
+     * Retrieve or create a ViewModel.
+     */
+    @SuppressLint("LogNotTimber")
+    fun <T : Any> viewModelFlow(
+        key: Any,
+        cancellationSignal: (suspend () -> Unit)? = null,
+        create: (scope: CoroutineScope) -> T,
     ): StateFlow<T> = mapLock.withLock {
         // First check if we have a 'cached' ViewModel which is still active
         val cached = viewModelMap[key]?.takeIf { it.isActive }
@@ -76,21 +113,36 @@ internal class ViewModelStore(
         val viewModelScope = createChildCoroutineScope()
 
         val flow = flow<T> {
+            Log.d("ViewModelStore", "Creating CoroutineScope with key: $key")
+
             // This is a 'fake' flow which doesn't emit anything. The actual ViewModel is
-            // created in the stateIn() below. We suspend the flow until its cancelled, which
-            // happens when either the stateIn `WhileSubscribed`, or the parent scope is cancelled
-            suspendCancellableCoroutine<Unit> { cont ->
-                cont.invokeOnCancellation {
-                    // The flow has been cancelled, so we need to also cancel the
-                    // ViewModel's coroutine scope
-                    viewModelScope.cancel()
-                    // Remove the entry from the map
-                    mapLock.withLock { viewModelMap.remove(key) }
-                }
+            // created in the stateIn() below
+
+            if (cancellationSignal != null) {
+                // If we've been given a cancellation signal, invoke it
+                cancellationSignal()
+            } else {
+                // Otherwise we this is a no-op suspend call, and we let the WhileSubscribed
+                // behavior control the cancellation
+                awaitCancellation()
             }
+        }.onCompletion {
+            // The flow has been cancelled, so we need to also cancel the
+            // ViewModel's coroutine scope
+            Log.d("ViewModelStore", "Cancelling CoroutineScope with key: $key")
+            viewModelScope.cancel()
+            // Remove the entry from the map
+            mapLock.withLock { viewModelMap.remove(key) }
         }.stateIn(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(ViewModelCancelTimeout),
+            started = when {
+                // If we've been given a cancellation signal, we rely solely on that to tell us
+                // when to cancel, so use Eagerly
+                cancellationSignal != null -> SharingStarted.Eagerly
+                // Otherwise we use the implicit behavior of cancelling the scope with a
+                // 5 seconds timeout
+                else -> SharingStarted.WhileSubscribed(ViewModelCancelTimeout)
+            },
             initialValue = create(viewModelScope),
         )
 
@@ -116,7 +168,14 @@ internal class ViewModelStore(
 internal inline fun <T : Any> ViewModelStore.viewModel(
     key: Any,
     noinline create: (scope: CoroutineScope) -> T,
-): T = viewModelFlow(key, create).collectAsState().value
+): T = viewModelFlow(key, null, create).collectAsState().value
+
+@Composable
+internal inline fun <T : Any> ViewModelStore.viewModel(
+    key: Any,
+    navBackStackEntry: NavBackStackEntry,
+    noinline create: (scope: CoroutineScope) -> T,
+): T = viewModelFlow(key, navBackStackEntry, create).collectAsState().value
 
 private data class ViewModelStoreEntry(
     val coroutineScope: CoroutineScope,
