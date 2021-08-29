@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package app.tivi
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
@@ -58,7 +59,7 @@ internal sealed class Screen(val route: String) {
 }
 
 private sealed class LeafScreen(
-    private val route: String
+    private val route: String,
 ) {
     fun createRoute(root: Screen) = "${root.route}/$route"
 
@@ -98,66 +99,6 @@ private sealed class LeafScreen(
 }
 
 @ExperimentalAnimationApi
-private fun tiviEnterTransition(
-    initial: NavBackStackEntry,
-    target: NavBackStackEntry,
-): EnterTransition {
-    val initialNavGraph = initial.destination.hostNavGraph
-    val targetNavGraph = target.destination.hostNavGraph
-
-    if (initialNavGraph.id != targetNavGraph.id) {
-        return fadeIn()
-    }
-
-    return fadeIn() + slideInHorizontally(initialOffsetX = { width -> width / 2 })
-}
-
-@ExperimentalAnimationApi
-private fun tiviExitTransition(
-    initial: NavBackStackEntry,
-    target: NavBackStackEntry,
-): ExitTransition {
-    val initialNavGraph = initial.destination.hostNavGraph
-    val targetNavGraph = target.destination.hostNavGraph
-
-    if (initialNavGraph.id != targetNavGraph.id) {
-        return fadeOut()
-    }
-
-    return fadeOut() + slideOutHorizontally(targetOffsetX = { width -> -width / 2 })
-}
-
-private fun NavDestination.isStartDestination(): Boolean {
-    return hostNavGraph.startDestinationId == this.id
-}
-
-private val NavDestination.hostNavGraph: NavGraph
-    get() = hierarchy.first { it is NavGraph } as NavGraph
-
-@Suppress("UNUSED_VARIABLE")
-@ExperimentalAnimationApi
-private fun tiviPopEnterTransition(
-    initial: NavBackStackEntry,
-    target: NavBackStackEntry,
-): EnterTransition {
-    if (initial.destination.isStartDestination() && target.destination.isStartDestination()) {
-        return fadeIn()
-    }
-    return fadeIn() + slideInHorizontally(initialOffsetX = { width -> -width / 2 })
-}
-
-@ExperimentalAnimationApi
-private fun tiviPopExitTransition(
-    initial: NavBackStackEntry,
-    target: NavBackStackEntry,
-): ExitTransition {
-    if (initial.destination.isStartDestination() && target.destination.isStartDestination()) {
-        return fadeOut()
-    }
-    return fadeOut() + slideOutHorizontally(targetOffsetX = { width -> width / 2 })
-}
-
-@ExperimentalAnimationApi
 @Composable
 internal fun AppNavigation(
     navController: NavHostController,
@@ -167,6 +108,10 @@ internal fun AppNavigation(
     AnimatedNavHost(
         navController = navController,
         startDestination = Screen.Discover.route,
+        enterTransition = { initial, target -> defaultTiviEnterTransition(initial, target) },
+        exitTransition = { initial, target -> defaultTiviExitTransition(initial, target) },
+        popEnterTransition = { _, _ -> defaultTiviPopEnterTransition() },
+        popExitTransition = { _, _ -> defaultTiviPopExitTransition() },
         modifier = modifier,
     ) {
         addDiscoverTopLevel(navController, onOpenSettings)
@@ -184,10 +129,6 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
     navigation(
         route = Screen.Discover.route,
         startDestination = LeafScreen.Discover.createRoute(Screen.Discover),
-        enterTransition = ::tiviEnterTransition,
-        exitTransition = ::tiviExitTransition,
-        popEnterTransition = ::tiviPopEnterTransition,
-        popExitTransition = ::tiviPopExitTransition,
     ) {
         addDiscover(navController, Screen.Discover)
         addAccount(navController, Screen.Discover, openSettings)
@@ -208,10 +149,6 @@ private fun NavGraphBuilder.addFollowingTopLevel(
     navigation(
         route = Screen.Following.route,
         startDestination = LeafScreen.Following.createRoute(Screen.Following),
-        enterTransition = ::tiviEnterTransition,
-        exitTransition = ::tiviExitTransition,
-        popEnterTransition = ::tiviPopEnterTransition,
-        popExitTransition = ::tiviPopExitTransition,
     ) {
         addFollowedShows(navController, Screen.Following)
         addAccount(navController, Screen.Following, openSettings)
@@ -229,10 +166,6 @@ private fun NavGraphBuilder.addWatchedTopLevel(
     navigation(
         route = Screen.Watched.route,
         startDestination = LeafScreen.Watched.createRoute(Screen.Watched),
-        enterTransition = ::tiviEnterTransition,
-        exitTransition = ::tiviExitTransition,
-        popEnterTransition = ::tiviPopEnterTransition,
-        popExitTransition = ::tiviPopExitTransition,
     ) {
         addWatchedShows(navController, Screen.Watched)
         addAccount(navController, Screen.Watched, openSettings)
@@ -250,10 +183,6 @@ private fun NavGraphBuilder.addSearchTopLevel(
     navigation(
         route = Screen.Search.route,
         startDestination = LeafScreen.Search.createRoute(Screen.Search),
-        enterTransition = ::tiviEnterTransition,
-        exitTransition = ::tiviExitTransition,
-        popEnterTransition = ::tiviPopEnterTransition,
-        popExitTransition = ::tiviPopExitTransition,
     ) {
         addSearch(navController, Screen.Search)
         addAccount(navController, Screen.Search, openSettings)
@@ -472,4 +401,47 @@ private fun NavGraphBuilder.addShowSeasons(
             initialSeasonId = it.arguments?.getString("seasonId")?.toLong()
         )
     }
+}
+
+@ExperimentalAnimationApi
+private fun AnimatedContentScope<*>.defaultTiviEnterTransition(
+    initial: NavBackStackEntry,
+    target: NavBackStackEntry,
+): EnterTransition {
+    val initialNavGraph = initial.destination.hostNavGraph
+    val targetNavGraph = target.destination.hostNavGraph
+    // If we're crossing nav graphs (bottom navigation graphs), we crossfade
+    if (initialNavGraph.id != targetNavGraph.id) {
+        return fadeIn()
+    }
+    // Otherwise we're in the same nav graph, we can imply a direction
+    return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.Start)
+}
+
+@ExperimentalAnimationApi
+private fun AnimatedContentScope<*>.defaultTiviExitTransition(
+    initial: NavBackStackEntry,
+    target: NavBackStackEntry,
+): ExitTransition {
+    val initialNavGraph = initial.destination.hostNavGraph
+    val targetNavGraph = target.destination.hostNavGraph
+    // If we're crossing nav graphs (bottom navigation graphs), we crossfade
+    if (initialNavGraph.id != targetNavGraph.id) {
+        return fadeOut()
+    }
+    // Otherwise we're in the same nav graph, we can imply a direction
+    return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.Start)
+}
+
+private val NavDestination.hostNavGraph: NavGraph
+    get() = hierarchy.first { it is NavGraph } as NavGraph
+
+@ExperimentalAnimationApi
+private fun AnimatedContentScope<*>.defaultTiviPopEnterTransition(): EnterTransition {
+    return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.End)
+}
+
+@ExperimentalAnimationApi
+private fun AnimatedContentScope<*>.defaultTiviPopExitTransition(): ExitTransition {
+    return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.End)
 }
