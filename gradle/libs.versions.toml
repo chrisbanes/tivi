@@ -27,6 +27,7 @@ gradleDependencyUpdate = { id = "com.github.ben-manes.versions", version.ref="gr
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanist-insetsui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 accompanist-pager-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }

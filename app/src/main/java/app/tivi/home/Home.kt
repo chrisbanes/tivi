@@ -19,6 +19,7 @@ package app.tivi.home
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -60,7 +61,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.rememberNavController
 import app.tivi.AppNavigation
 import app.tivi.R
 import app.tivi.Screen
@@ -70,13 +70,14 @@ import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.insets.ui.Scaffold
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun Home(
     onOpenSettings: () -> Unit,
 ) {
-    val navController = rememberNavController()
+    val navController = rememberAnimatedNavController()
 
     val configuration = LocalConfiguration.current
     val useBottomNavigation by remember {
