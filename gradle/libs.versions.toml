@@ -31,7 +31,7 @@ accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiper
 accompanist-pager-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 
-android-pluginGradle = "com.android.tools.build:gradle:7.1.0-alpha09"
+android-pluginGradle = "com.android.tools.build:gradle:7.1.0-alpha10"
 
 androidx-activity-compose = "androidx.activity:activity-compose:1.3.1"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
