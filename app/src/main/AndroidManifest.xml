@@ -35,6 +35,7 @@
             android:configChanges="colorMode|density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
+            android:exported="true"
             android:theme="@style/Theme.Tivi.Home"
             tools:targetApi="n">
             <intent-filter>
@@ -45,6 +46,7 @@
 
         <activity
             android:name="net.openid.appauth.RedirectUriReceiverActivity"
+            android:exported="true"
             tools:node="replace">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
