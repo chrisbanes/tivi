@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_PARAMETER")
-
 package app.tivi
 
 import androidx.compose.animation.AnimatedContentScope
