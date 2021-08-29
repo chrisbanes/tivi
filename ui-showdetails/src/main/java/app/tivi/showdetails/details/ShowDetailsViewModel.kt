@@ -49,8 +49,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -83,14 +84,14 @@ internal class ShowDetailsViewModel @Inject constructor(
     private val expandedSeasonId = MutableStateFlow<Long?>(null)
 
     val state = combine(
-        observeShowFollowStatus.observe().distinctUntilChanged(),
-        observeShowDetails.observe().distinctUntilChanged(),
-        observeShowImages.observe().distinctUntilChanged(),
+        observeShowFollowStatus.flow,
+        observeShowDetails.flow,
+        observeShowImages.flow,
         loadingState.observable,
-        observeRelatedShows.observe().distinctUntilChanged(),
-        observeNextEpisodeToWatch.observe().distinctUntilChanged(),
-        observeShowSeasons.observe().distinctUntilChanged(),
-        observeShowViewStats.observe().distinctUntilChanged(),
+        observeRelatedShows.flow,
+        observeNextEpisodeToWatch.flow,
+        observeShowSeasons.flow,
+        observeShowViewStats.flow,
         snackbarManager.errors,
         expandedSeasonId,
     ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons,
@@ -108,7 +109,11 @@ internal class ShowDetailsViewModel @Inject constructor(
             refreshing = refreshing,
             refreshError = error,
         )
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ShowDetailsViewState.Empty,
+    )
 
     init {
         viewModelScope.launch {

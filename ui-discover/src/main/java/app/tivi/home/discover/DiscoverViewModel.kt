@@ -28,15 +28,14 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.extensions.combine
-import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectInto
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,7 +49,7 @@ internal class DiscoverViewModel @Inject constructor(
     observeRecommendedShows: ObserveRecommendedShows,
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
-    observeUserDetails: ObserveUserDetails
+    observeUserDetails: ObserveUserDetails,
 ) : ViewModel() {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
@@ -58,17 +57,16 @@ internal class DiscoverViewModel @Inject constructor(
 
     private val pendingActions = MutableSharedFlow<DiscoverAction>()
 
-    val state: Flow<DiscoverViewState> = combine(
+    val state: StateFlow<DiscoverViewState> = combine(
         trendingLoadingState.observable,
         popularLoadingState.observable,
         recommendedLoadingState.observable,
-        observeTrendingShows.observe().distinctUntilChanged(),
-        observePopularShows.observe().distinctUntilChanged(),
-        observeRecommendedShows.observe().distinctUntilChanged(),
-        observeNextShowEpisodeToWatch.observe().distinctUntilChanged(),
-        observeTraktAuthState.observe().distinctUntilChanged()
-            .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) },
-        observeUserDetails.observe(),
+        observeTrendingShows.flow,
+        observePopularShows.flow,
+        observeRecommendedShows.flow,
+        observeNextShowEpisodeToWatch.flow,
+        observeTraktAuthState.flow,
+        observeUserDetails.flow,
     ) { trendingLoad, popularLoad, recommendLoad, trending, popular, recommended,
         nextShow, authState, user ->
         DiscoverViewState(
@@ -82,7 +80,11 @@ internal class DiscoverViewModel @Inject constructor(
             recommendedRefreshing = recommendLoad,
             nextEpisodeWithShowToWatched = nextShow,
         )
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = DiscoverViewState.Empty,
+    )
 
     init {
         observeTrendingShows(ObserveTrendingShows.Params(10))
@@ -100,7 +102,10 @@ internal class DiscoverViewModel @Inject constructor(
             }
         }
 
-        refresh(false)
+        viewModelScope.launch {
+            // Each time the auth state changes, refresh...
+            observeTraktAuthState.flow.collect { refresh(false) }
+        }
     }
 
     private fun refresh(fromUser: Boolean) {

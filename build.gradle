@@ -34,21 +34,21 @@ buildscript {
     }
 
     dependencies {
-        classpath libs.android.gradlePlugin
-        classpath libs.kotlin.gradlePlugin
+        classpath libs.android.pluginGradle
+        classpath libs.kotlin.pluginGradle
 
         classpath libs.kotlin.extensions
 
         classpath libs.google.gmsGoogleServices
         classpath libs.google.crashlyticsGradle
 
-        classpath libs.hilt.gradlePlugin
+        classpath libs.hilt.pluginGradle
     }
 }
 
 plugins {
-    id 'com.diffplug.spotless' version '5.14.2'
-    id 'com.github.ben-manes.versions' version '0.39.0'
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.gradleDependencyUpdate)
 }
 
 allprojects {

@@ -122,13 +122,15 @@ class TiviTextCreator @Inject constructor(
         return text
     }
 
-    fun episodeNumberText(episode: Episode): CharSequence? {
+    fun episodeNumberText(episode: Episode): CharSequence {
         val text = StringBuilder()
         text.append(context.getString(R.string.episode_number, episode.number))
-        if (episode.firstAired?.isAfter(OffsetDateTime.now()) == true) {
+
+        episode.firstAired?.also {
             text.append(" \u2022 ")
-            text.append(tiviDateFormatter.formatShortRelativeTime(episode.firstAired!!))
+            text.append(tiviDateFormatter.formatShortRelativeTime(it))
         }
+
         return text
     }
 

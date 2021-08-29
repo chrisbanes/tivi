@@ -24,6 +24,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -161,10 +162,12 @@ private fun tiviPopExitTransition(
 internal fun AppNavigation(
     navController: NavHostController,
     onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     AnimatedNavHost(
         navController = navController,
-        startDestination = Screen.Discover.route
+        startDestination = Screen.Discover.route,
+        modifier = modifier,
     ) {
         addDiscoverTopLevel(navController, onOpenSettings)
         addFollowingTopLevel(navController, onOpenSettings)
@@ -276,8 +279,15 @@ private fun NavGraphBuilder.addDiscover(
             openRecommendedShows = {
                 navController.navigate(LeafScreen.RecommendedShows.createRoute(root))
             },
-            openShowDetails = { showId, episodeId ->
+            openShowDetails = { showId, seasonId, episodeId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
+
+                // If we have an season id, we also open that
+                if (seasonId != null) {
+                    navController.navigate(
+                        LeafScreen.ShowSeasons.createRoute(root, showId, seasonId)
+                    )
+                }
                 // If we have an episodeId, we also open that
                 if (episodeId != null) {
                     navController.navigate(LeafScreen.EpisodeDetails.createRoute(root, episodeId))

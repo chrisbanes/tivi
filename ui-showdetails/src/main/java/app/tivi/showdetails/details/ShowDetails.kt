@@ -43,7 +43,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
@@ -1046,8 +1045,8 @@ private fun ToggleShowFollowFloatingActionButton(
         icon = {
             Icon(
                 imageVector = when {
-                    isFollowed -> Icons.Default.FavoriteBorder
-                    else -> Icons.Default.Favorite
+                    isFollowed -> Icons.Default.Favorite
+                    else -> Icons.Default.FavoriteBorder
                 },
                 contentDescription = when {
                     isFollowed -> stringResource(R.string.cd_follow_show_remove)
@@ -1064,8 +1063,8 @@ private fun ToggleShowFollowFloatingActionButton(
             )
         },
         backgroundColor = when {
-            isFollowed -> MaterialTheme.colors.surface
-            else -> MaterialTheme.colors.primary
+            isFollowed -> MaterialTheme.colors.primary
+            else -> MaterialTheme.colors.surface
         },
         expanded = expanded(),
         modifier = modifier

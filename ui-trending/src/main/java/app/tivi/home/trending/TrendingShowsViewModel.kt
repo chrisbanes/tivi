@@ -17,8 +17,10 @@
 package app.tivi.home.trending
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.observers.ObservePagedTrendingShows
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,11 +29,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class TrendingShowsViewModel @Inject constructor(
-    private val pagingInteractor: ObservePagedTrendingShows,
+    pagingInteractor: ObservePagedTrendingShows,
 ) : ViewModel() {
 
-    val pagedList: Flow<PagingData<TrendingEntryWithShow>>
-        get() = pagingInteractor.observe()
+    val pagedList: Flow<PagingData<TrendingEntryWithShow>> =
+        pagingInteractor.flow.cachedIn(viewModelScope)
 
     init {
         pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))

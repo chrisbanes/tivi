@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
@@ -39,8 +40,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,7 +54,7 @@ internal class FollowedViewModel @Inject constructor(
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
-    private val observeUserDetails: ObserveUserDetails,
+    observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
 ) : ViewModel() {
     private val pendingActions = MutableSharedFlow<FollowedAction>()
@@ -58,8 +62,8 @@ internal class FollowedViewModel @Inject constructor(
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()
 
-    val pagedList: Flow<PagingData<FollowedShowEntryWithShow>>
-        get() = observePagedFollowedShows.observe()
+    val pagedList: Flow<PagingData<FollowedShowEntryWithShow>> =
+        observePagedFollowedShows.flow.cachedIn(viewModelScope)
 
     private val availableSorts = listOf(
         SortOption.SUPER_SORT,
@@ -71,13 +75,12 @@ internal class FollowedViewModel @Inject constructor(
     private val filter = MutableStateFlow<String?>(null)
     private val sort = MutableStateFlow(SortOption.SUPER_SORT)
 
-    val state: Flow<FollowedViewState> = combine(
+    val state: StateFlow<FollowedViewState> = combine(
         loadingState.observable,
         showSelection.observeSelectedShowIds(),
         showSelection.observeIsSelectionOpen(),
-        observeTraktAuthState.observe()
-            .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) },
-        observeUserDetails.observe(),
+        observeTraktAuthState.flow,
+        observeUserDetails.flow,
         filter,
         sort,
     ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort ->
@@ -92,7 +95,11 @@ internal class FollowedViewModel @Inject constructor(
             availableSorts = availableSorts,
             sort = sort,
         )
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = WhileSubscribed(5000),
+        initialValue = FollowedViewState.Empty,
+    )
 
     init {
         observeTraktAuthState(Unit)
@@ -104,6 +111,13 @@ internal class FollowedViewModel @Inject constructor(
         }
         viewModelScope.launch {
             sort.collect { updateDataSource() }
+        }
+
+        viewModelScope.launch {
+            // When the user logs in, refresh...
+            observeTraktAuthState.flow
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect { refresh(false) }
         }
 
         viewModelScope.launch {
@@ -186,9 +200,8 @@ internal class FollowedViewModel @Inject constructor(
 
     companion object {
         private val PAGING_CONFIG = PagingConfig(
-            pageSize = 60,
-            prefetchDistance = 20,
-            enablePlaceholders = false
+            pageSize = 16,
+            initialLoadSize = 32,
         )
     }
 }

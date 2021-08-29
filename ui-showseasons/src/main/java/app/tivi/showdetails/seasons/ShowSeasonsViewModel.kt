@@ -35,9 +35,11 @@ import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,9 +56,9 @@ internal class ShowSeasonsViewModel @Inject constructor(
 
     private val loadingState = ObservableLoadingCounter()
 
-    val state = combine(
-        observeShowSeasons.observe().distinctUntilChanged(),
-        observeShowDetails.observe().distinctUntilChanged(),
+    val state: StateFlow<ShowSeasonsViewState> = combine(
+        observeShowSeasons.flow,
+        observeShowDetails.flow,
         loadingState.observable,
         snackbarManager.errors,
     ) { seasons, show, refreshing, error ->
@@ -66,7 +68,11 @@ internal class ShowSeasonsViewModel @Inject constructor(
             refreshing = refreshing,
             refreshError = error,
         )
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ShowSeasonsViewState.Empty,
+    )
 
     init {
         observeShowDetails(ObserveShowDetails.Params(showId))
