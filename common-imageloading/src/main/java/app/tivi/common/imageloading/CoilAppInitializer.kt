@@ -27,8 +27,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
-class CoilAppInitializer @OptIn(ExperimentalCoilApi::class)
-@Inject constructor(
+@OptIn(ExperimentalCoilApi::class)
+class CoilAppInitializer @Inject constructor(
     private val tmdbImageEntityInterceptor: TmdbImageEntityCoilInterceptor,
     private val episodeEntityInterceptor: EpisodeEntityCoilInterceptor,
     private val okHttpClient: OkHttpClient,
