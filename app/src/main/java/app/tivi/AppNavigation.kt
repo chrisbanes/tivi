@@ -33,7 +33,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.dialog
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
 import app.tivi.account.AccountUi
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.home.discover.Discover

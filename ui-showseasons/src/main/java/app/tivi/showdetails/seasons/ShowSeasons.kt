@@ -117,7 +117,7 @@ internal fun ShowSeasons(
         }
     }
 
-    val pagerState = rememberPagerState(pageCount = viewState.seasons.size)
+    val pagerState = rememberPagerState()
 
     var pagerBeenScrolled by remember { mutableStateOf(false) }
     LaunchedEffect(pagerState.isScrollInProgress) {
@@ -240,6 +240,7 @@ private fun SeasonsPager(
     modifier: Modifier = Modifier,
 ) {
     HorizontalPager(
+        count = seasons.size,
         state = pagerState,
         modifier = modifier,
     ) { page ->
