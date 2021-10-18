@@ -67,6 +67,8 @@ dependencies {
     implementation libs.accompanist.insets
     implementation libs.accompanist.swiperefresh
 
+    implementation libs.snapper
+
     implementation libs.androidx.hilt.compose
     implementation libs.hilt.library
     kapt libs.hilt.compiler

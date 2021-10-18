@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,6 +37,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
@@ -52,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
@@ -77,6 +80,9 @@ import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import dev.chrisbanes.snapper.ExperimentalSnapperApi
+import dev.chrisbanes.snapper.SnapOffsets
+import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
 @Composable
 fun Discover(
@@ -320,15 +326,29 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
     }
 }
 
+@OptIn(ExperimentalSnapperApi::class)
 @Composable
 private fun <T : EntryWithShow<*>> EntryShowCarousel(
     items: List<T>,
     onItemClick: (TiviShow) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val lazyListState = rememberLazyListState()
+    val contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+
     LazyRow(
+        state = lazyListState,
         modifier = modifier,
-        contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
+        flingBehavior = rememberSnapperFlingBehavior(
+            lazyListState = lazyListState,
+            snapOffsetForItem = SnapOffsets.Start,
+            endContentPadding = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
+            maximumFlingDistance = {
+                // Max fling = 1x scrollable width
+                (it.endScrollOffset - it.startScrollOffset).toFloat()
+            }
+        ),
+        contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(items) { item ->
