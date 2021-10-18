@@ -52,15 +52,19 @@ jobs:
             ~/.gradle/caches/build-cache-*
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
-      - name: Build and check
-        # Move back to `testDebug` once we move to AGP 7.0.0-beta04
-        # https://issuetracker.google.com/issues/189559355
-        run: |
-          ./gradlew -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace \
-               spotlessCheck \
-               assemble bundle \
-               app:lintDebug \
-               data-android:testDebug
+      - uses: burrunan/gradle-cache-action@v1
+        name: Build and check
+        with:
+          gradle-dependencies-cache-key: |
+            gradle/libs.versions.toml
+          arguments: |
+            spotlessCheck
+            assemble
+            bundle
+            app:lintDebug
+            testDebug
+          properties: |
+            tivi.versioncode=$BUILD_NUMBER
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/main'
