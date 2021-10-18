@@ -92,7 +92,6 @@ android {
     }
 
     buildFeatures {
-        viewBinding true
         compose true
     }
 
@@ -178,7 +177,6 @@ dependencies {
     implementation libs.compose.material.material
     implementation libs.compose.animation.animation
     implementation libs.compose.ui.tooling
-    implementation libs.compose.ui.viewbinding
 
     implementation libs.accompanist.insets
     implementation libs.accompanist.navigation.animation
