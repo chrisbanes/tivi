@@ -64,7 +64,8 @@ jobs:
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/main'
-        uses: r0adkll/upload-google-play@v1
+        # Pinned version due to https://github.com/r0adkll/upload-google-play/issues/80
+        uses: r0adkll/upload-google-play@v1.0.15
         with:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
