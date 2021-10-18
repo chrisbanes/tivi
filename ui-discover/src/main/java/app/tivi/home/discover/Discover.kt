@@ -20,6 +20,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
@@ -57,7 +60,6 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
-import app.tivi.common.compose.ui.Carousel
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.UserProfileButton
@@ -324,21 +326,21 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
     onItemClick: (TiviShow) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Carousel(
-        items = items,
+    LazyRow(
+        modifier = modifier,
         contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
-        itemSpacing = 4.dp,
-        modifier = modifier
-    ) { item, padding ->
-        PosterCard(
-            show = item.show,
-            poster = item.poster,
-            onClick = { onItemClick(item.show) },
-            modifier = Modifier
-                .padding(padding)
-                .fillParentMaxHeight()
-                .aspectRatio(2 / 3f)
-        )
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        items(items) { item ->
+            PosterCard(
+                show = item.show,
+                poster = item.poster,
+                onClick = { onItemClick(item.show) },
+                modifier = Modifier
+                    .fillParentMaxHeight()
+                    .aspectRatio(2 / 3f)
+            )
+        }
     }
 }
 

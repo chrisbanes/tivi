@@ -24,6 +24,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -43,6 +44,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
@@ -102,7 +105,6 @@ import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
-import app.tivi.common.compose.ui.Carousel
 import app.tivi.common.compose.ui.ExpandableFloatingActionButton
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
@@ -718,21 +720,21 @@ private fun RelatedShows(
 ) {
     LogCompositions("RelatedShows")
 
-    Carousel(
-        items = related,
+    LazyRow(
+        modifier = modifier,
         contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
-        itemSpacing = 4.dp,
-        modifier = modifier
-    ) { item, padding ->
-        PosterCard(
-            show = item.show,
-            poster = item.poster,
-            onClick = { actioner(ShowDetailsAction.OpenShowDetails(item.show.id)) },
-            modifier = Modifier
-                .padding(padding)
-                .fillParentMaxWidth(0.15f) // 15% of the available width
-                .aspectRatio(2 / 3f)
-        )
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        items(related) { item ->
+            PosterCard(
+                show = item.show,
+                poster = item.poster,
+                onClick = { actioner(ShowDetailsAction.OpenShowDetails(item.show.id)) },
+                modifier = Modifier
+                    .fillParentMaxWidth(0.15f) // 15% of the available width
+                    .aspectRatio(2 / 3f)
+            )
+        }
     }
 }
 
