@@ -62,7 +62,7 @@ allprojects {
             maven { url "https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/" }
         }
 
-        // Used for Accompanist snapshots
+        // Used for snapshots
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
