@@ -32,7 +32,7 @@ accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiper
 accompanist-pager-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 
-snapper = "dev.chrisbanes.snapper:snapper:0.1.0-SNAPSHOT"
+snapper = "dev.chrisbanes.snapper:snapper:0.1.0"
 
 android-pluginGradle = "com.android.tools.build:gradle:7.1.0-beta01"
 
