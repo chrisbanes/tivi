@@ -18,7 +18,6 @@ package app.tivi.domain.interactors
 
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject

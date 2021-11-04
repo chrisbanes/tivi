@@ -22,7 +22,6 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowSeasonData.Params
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
