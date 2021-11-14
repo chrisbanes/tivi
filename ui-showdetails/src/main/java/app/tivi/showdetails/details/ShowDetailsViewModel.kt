@@ -16,11 +16,17 @@
 
 package app.tivi.showdetails.details
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.cash.molecule.launchMolecule
 import app.tivi.api.UiMessageManager
 import app.tivi.data.entities.ActionDate
+import app.tivi.data.entities.TiviShow
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
@@ -38,13 +44,12 @@ import app.tivi.domain.observers.ObserveShowImages
 import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.domain.observers.ObserveShowViewStats
-import app.tivi.extensions.combine
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -72,23 +77,28 @@ internal class ShowDetailsViewModel @Inject constructor(
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
-    val state = combine(
-        observeShowFollowStatus.flow,
-        observeShowDetails.flow,
-        observeShowImages.flow,
-        loadingState.observable,
-        observeRelatedShows.flow,
-        observeNextEpisodeToWatch.flow,
-        observeShowSeasons.flow,
-        observeShowViewStats.flow,
-        uiMessageManager.message,
-    ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons, stats,
-        message ->
+    // Need to add a MonotonicFrameClock
+    // See: https://github.com/cashapp/molecule/#frame-clock
+    private val moleculeScope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
+
+    val state: StateFlow<ShowDetailsViewState> = moleculeScope.launchMolecule {
+        val loadingCounter = remember { ObservableLoadingCounter() }
+
+        val isFollowed by observeShowFollowStatus.flow.collectAsState(false)
+        val show by observeShowDetails.flow.collectAsState(TiviShow.EMPTY_SHOW)
+        val showImages by observeShowImages.flow.collectAsState(null)
+        val refreshing by loadingCounter.observable.collectAsState(false)
+        val relatedShows by observeRelatedShows.flow.collectAsState(emptyList())
+        val nextEpisode by observeNextEpisodeToWatch.flow.collectAsState(null)
+        val seasons by observeShowSeasons.flow.collectAsState(emptyList())
+        val stats by observeShowViewStats.flow.collectAsState(null)
+        val message by uiMessageManager.message.collectAsState(null)
+
         ShowDetailsViewState(
             isFollowed = isFollowed,
             show = show,
-            posterImage = showImages.poster,
-            backdropImage = showImages.backdrop,
+            posterImage = showImages?.poster,
+            backdropImage = showImages?.backdrop,
             relatedShows = relatedShows,
             nextEpisodeToWatch = nextEpisode,
             seasons = seasons,
@@ -96,11 +106,7 @@ internal class ShowDetailsViewModel @Inject constructor(
             refreshing = refreshing,
             message = message,
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ShowDetailsViewState.Empty,
-    )
+    }
 
     init {
         observeShowFollowStatus(ObserveShowFollowStatus.Params(showId))
@@ -111,7 +117,8 @@ internal class ShowDetailsViewModel @Inject constructor(
         observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(showId))
         observeShowViewStats(ObserveShowViewStats.Params(showId))
 
-        refresh(false)
+        // Refresh on start
+        refresh(fromUser = false)
     }
 
     fun refresh(fromUser: Boolean = true) {
@@ -148,7 +155,7 @@ internal class ShowDetailsViewModel @Inject constructor(
     fun setSeasonWatched(
         seasonId: Long,
         onlyAired: Boolean = false,
-        date: ActionDate = ActionDate.NOW
+        date: ActionDate = ActionDate.NOW,
     ) {
         viewModelScope.launch {
             changeSeasonWatchedStatus(

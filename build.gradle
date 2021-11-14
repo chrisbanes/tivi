@@ -43,6 +43,8 @@ buildscript {
         classpath libs.google.crashlyticsGradle
 
         classpath libs.hilt.pluginGradle
+
+        classpath libs.molecule.gradle
     }
 }
 

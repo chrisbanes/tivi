@@ -125,6 +125,8 @@ leakCanary = "com.squareup.leakcanary:leakcanary-android:2.8.1"
 
 mockK = "io.mockk:mockk:1.12.2"
 
+molecule-gradle = "app.cash.molecule:molecule-gradle-plugin:0.2.0"
+
 okhttp-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 

@@ -27,6 +27,8 @@ kapt {
 
 apply plugin: 'dagger.hilt.android.plugin'
 
+apply plugin: 'app.cash.molecule'
+
 android {
     compileSdkVersion buildConfig.compileSdk
 
