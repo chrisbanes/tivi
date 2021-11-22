@@ -3,6 +3,7 @@ accompanist = "0.21.0-beta"
 androidxhilt = "1.0.0"
 androidxlifecycle = "2.4.0"
 androidxtest = "1.4.0"
+chucker = "3.5.2"
 coil = "1.4.0"
 compose = "1.1.0-beta02"
 composesnapshot = "-" # a single character = no snapshot
@@ -74,6 +75,9 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "android
 androidx-work-runtime = "androidx.work:work-runtime-ktx:2.7.0"
 
 appauth = "net.openid:appauth:0.8.1"
+
+chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
+chucker-noop = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
 coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
