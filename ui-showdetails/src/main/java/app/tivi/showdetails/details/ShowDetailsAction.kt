@@ -19,19 +19,19 @@ package app.tivi.showdetails.details
 import app.tivi.data.entities.ActionDate
 
 internal sealed class ShowDetailsAction {
-    object RefreshAction : ShowDetailsAction()
+    data class RefreshAction(val fromUser: Boolean = true) : ShowDetailsAction()
     object FollowShowToggleAction : ShowDetailsAction()
 
     data class MarkSeasonWatchedAction(
         val seasonId: Long,
         val onlyAired: Boolean = false,
-        val date: ActionDate = ActionDate.NOW
+        val date: ActionDate = ActionDate.NOW,
     ) : ShowDetailsAction()
 
     data class MarkSeasonUnwatchedAction(val seasonId: Long) : ShowDetailsAction()
     data class ChangeSeasonFollowedAction(
         val seasonId: Long,
-        val followed: Boolean
+        val followed: Boolean,
     ) : ShowDetailsAction()
 
     data class UnfollowPreviousSeasonsFollowedAction(val seasonId: Long) : ShowDetailsAction()
