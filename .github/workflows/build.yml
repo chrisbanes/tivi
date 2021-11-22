@@ -54,6 +54,8 @@ jobs:
 
       - uses: burrunan/gradle-cache-action@v1
         name: Build and check
+        env:
+          ORG_GRADLE_PROJECT_tivi.versioncode: ${{ env.BUILD_NUMBER }}
         with:
           gradle-dependencies-cache-key: |
             gradle/libs.versions.toml
@@ -63,8 +65,6 @@ jobs:
             bundle
             app:lintDebug
             testDebug
-          properties: |
-            tivi.versioncode=$BUILD_NUMBER
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/main'
