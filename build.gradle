@@ -68,13 +68,6 @@ allprojects {
 }
 
 subprojects {
-    configurations.configureEach {
-        // We forcefully exclude AppCompat + MDC from any transitive dependencies.
-        // This is a Compose app, so there's no need for these
-        exclude group: 'androidx.appcompat'
-        exclude group: 'com.google.android.material', module: 'material'
-    }
-
     apply plugin: 'com.diffplug.spotless'
     spotless {
         kotlin {

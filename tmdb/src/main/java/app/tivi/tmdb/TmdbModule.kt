@@ -19,6 +19,7 @@ package app.tivi.tmdb
 import com.uwetrottmann.tmdb2.Tmdb
 import dagger.Module
 import dagger.Provides
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -35,16 +36,18 @@ object TmdbModule {
     @Provides
     fun provideTmdb(
         client: OkHttpClient,
-        @Named("tmdb-api") apiKey: String
+        @Named("tmdb-api") apiKey: String,
+        @Named("chucker") chucker: Interceptor,
     ): Tmdb {
         return object : Tmdb(apiKey) {
             override fun okHttpClient(): OkHttpClient {
-                return client.newBuilder().apply {
-                    setOkHttpClientDefaults(this)
-                    connectTimeout(20, TimeUnit.SECONDS)
-                    readTimeout(20, TimeUnit.SECONDS)
-                    writeTimeout(20, TimeUnit.SECONDS)
-                }.build()
+                return client.newBuilder()
+                    .also { setOkHttpClientDefaults(it) }
+                    .addInterceptor(chucker)
+                    .connectTimeout(20, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .writeTimeout(20, TimeUnit.SECONDS)
+                    .build()
             }
         }
     }

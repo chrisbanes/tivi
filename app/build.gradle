@@ -200,6 +200,9 @@ dependencies {
     implementation libs.google.crashlytics
     implementation libs.google.analytics
 
+    releaseImplementation libs.chucker.noop
+    debugImplementation libs.chucker.library
+
     debugImplementation libs.leakCanary
 
     testImplementation libs.junit
