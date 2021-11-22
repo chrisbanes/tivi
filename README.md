@@ -26,7 +26,7 @@ Tivi is an app that attempts to use the latest cutting edge libraries and tools.
 
 ## Development setup
 
-First off, you require the latest [Android Studio Arctic Fox](https://developer.android.com/studio/preview) release to be able to build the app. This is because the project is written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (more on that below).
+First off, you require the latest [Android Studio Bumblebee](https://developer.android.com/studio/preview) release to be able to build the app.
 
 ### Code style
 
