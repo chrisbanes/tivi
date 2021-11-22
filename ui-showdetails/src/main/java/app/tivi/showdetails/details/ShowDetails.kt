@@ -141,6 +141,9 @@ import com.google.accompanist.insets.ui.TopAppBar
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 @Composable
@@ -167,16 +170,16 @@ internal fun ShowDetails(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     openSeasons: (showId: Long, seasonId: Long) -> Unit,
 ) {
-    val viewState by rememberFlowWithLifecycle(viewModel.state)
-        .collectAsState(initial = ShowDetailsViewState.Empty)
-
-    ShowDetails(viewState = viewState) { action ->
-        when (action) {
-            ShowDetailsAction.NavigateUp -> navigateUp()
-            is ShowDetailsAction.OpenShowDetails -> openShowDetails(action.showId)
-            is ShowDetailsAction.OpenEpisodeDetails -> openEpisodeDetails(action.episodeId)
-            is ShowDetailsAction.OpenSeason -> openSeasons(viewState.show.id, action.seasonId)
-            else -> viewModel.submitAction(action)
+    val viewState by rememberFlowWithLifecycle(viewModel.state).collectAsState(null)
+    viewState?.let { state ->
+        ShowDetails(viewState = state, effects = viewModel.effects) { action ->
+            when (action) {
+                ShowDetailsAction.NavigateUp -> navigateUp()
+                is ShowDetailsAction.OpenShowDetails -> openShowDetails(action.showId)
+                is ShowDetailsAction.OpenEpisodeDetails -> openEpisodeDetails(action.episodeId)
+                is ShowDetailsAction.OpenSeason -> openSeasons(state.show.id, action.seasonId)
+                else -> viewModel.submitAction(action)
+            }
         }
     }
 }
@@ -185,14 +188,24 @@ internal fun ShowDetails(
 @Composable
 internal fun ShowDetails(
     viewState: ShowDetailsViewState,
+    effects: Flow<ShowDetailsUiEffect>,
     actioner: (ShowDetailsAction) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
 
-    LaunchedEffect(viewState.refreshError) {
-        viewState.refreshError?.let { error ->
-            scaffoldState.snackbarHostState.showSnackbar(error.message)
+    LaunchedEffect(effects) {
+        effects.collect { effect ->
+            when (effect) {
+                is ShowDetailsUiEffect.ShowError -> {
+                    launch {
+                        scaffoldState.snackbarHostState.showSnackbar(effect.message)
+                    }
+                }
+                ShowDetailsUiEffect.ClearError -> {
+                    scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                }
+            }
         }
     }
 
@@ -1036,7 +1049,7 @@ private fun ShowDetailsAppBar(
                 )
             } else {
                 IconButton(
-                    onClick = { actioner(ShowDetailsAction.RefreshAction) },
+                    onClick = { actioner(ShowDetailsAction.RefreshAction()) },
                     modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground),
                 ) {
                     Icon(

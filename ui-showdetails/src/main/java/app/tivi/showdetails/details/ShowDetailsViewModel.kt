@@ -48,7 +48,6 @@ import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
@@ -81,7 +80,9 @@ internal class ShowDetailsViewModel @Inject constructor(
 
     private val pendingActions = MutableSharedFlow<ShowDetailsAction>()
 
-    private val expandedSeasonId = MutableStateFlow<Long?>(null)
+    private val _effects = MutableSharedFlow<ShowDetailsUiEffect>()
+    val effects: Flow<ShowDetailsUiEffect>
+        get() = _effects
 
     val state = combine(
         observeShowFollowStatus.flow,
@@ -92,10 +93,7 @@ internal class ShowDetailsViewModel @Inject constructor(
         observeNextEpisodeToWatch.flow,
         observeShowSeasons.flow,
         observeShowViewStats.flow,
-        snackbarManager.errors,
-        expandedSeasonId,
-    ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons,
-        stats, error, expandedSeasonId ->
+    ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons, stats ->
         ShowDetailsViewState(
             isFollowed = isFollowed,
             show = show,
@@ -105,9 +103,7 @@ internal class ShowDetailsViewModel @Inject constructor(
             nextEpisodeToWatch = nextEpisode,
             seasons = seasons,
             watchStats = stats,
-            expandedSeasonId = expandedSeasonId,
             refreshing = refreshing,
-            refreshError = error,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -126,6 +122,15 @@ internal class ShowDetailsViewModel @Inject constructor(
                     is ShowDetailsAction.ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
                     is ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
                     is ShowDetailsAction.ClearError -> snackbarManager.removeCurrentError()
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            snackbarManager.errors.collect {
+                when {
+                    it != null -> _effects.emit(ShowDetailsUiEffect.ShowError(it.message))
+                    else -> _effects.emit(ShowDetailsUiEffect.ClearError)
                 }
             }
         }
