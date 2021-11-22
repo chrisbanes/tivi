@@ -43,7 +43,7 @@ jobs:
       - uses: burrunan/gradle-cache-action@v1
         name: Build and check
         env:
-          ORG_GRADLE_PROJECT_tivi.versioncode: ${{ env.BUILD_NUMBER }}
+          ORG_GRADLE_PROJECT_TIVI_VERSIONCODE: ${{ env.BUILD_NUMBER }}
         with:
           gradle-dependencies-cache-key: |
             gradle/libs.versions.toml

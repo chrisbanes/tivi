@@ -28,7 +28,7 @@ kapt {
     useBuildCache = true
 }
 
-def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
+def appVersionCode = propOrDef("TIVI_VERSIONCODE", 17) as Integer
 println("APK version code: " + appVersionCode)
 
 def useReleaseKeystore = rootProject.file("release/app-release.jks").exists()
@@ -137,6 +137,7 @@ android {
 
         qa {
             // This is a release build with Chucker enabled
+            initWith release
             matchingFallbacks = [ 'release' ]
         }
     }
