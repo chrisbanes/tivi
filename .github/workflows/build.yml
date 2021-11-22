@@ -37,30 +37,22 @@ jobs:
         env:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
-      - name: Generate cache key
-        run: ./checksum.sh checksum.txt
-
       - name: Copy CI gradle.properties
         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
-      - uses: actions/cache@v2
-        continue-on-error: true # continue if the cache restore/upload fails
+      - uses: burrunan/gradle-cache-action@v1
+        name: Build and check
+        env:
+          ORG_GRADLE_PROJECT_tivi.versioncode: ${{ env.BUILD_NUMBER }}
         with:
-          path: |
-            ~/.gradle/caches/modules-*
-            ~/.gradle/caches/jars-*
-            ~/.gradle/caches/build-cache-*
-          key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
-
-      - name: Build and check
-        # Move back to `testDebug` once we move to AGP 7.0.0-beta04
-        # https://issuetracker.google.com/issues/189559355
-        run: |
-          ./gradlew -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace \
-               spotlessCheck \
-               assemble bundle \
-               app:lintDebug \
-               data-android:testDebug
+          gradle-dependencies-cache-key: |
+            gradle/libs.versions.toml
+          arguments: |
+            spotlessCheck
+            assemble
+            bundle
+            app:lintDebug
+            testDebug
 
       - name: Publish qa to Play Store
         if: github.ref == 'refs/heads/main'
