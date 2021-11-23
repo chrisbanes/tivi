@@ -72,7 +72,7 @@ androidx-test-junit = "androidx.test.ext:junit-ktx:1.1.3"
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidxtest" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxtest" }
 
-androidx-work-runtime = "androidx.work:work-runtime-ktx:2.7.0"
+androidx-work-runtime = "androidx.work:work-runtime-ktx:2.7.1"
 
 appauth = "net.openid:appauth:0.8.1"
 

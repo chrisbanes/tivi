@@ -19,8 +19,8 @@ package app.tivi.tasks
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
-import androidx.work.PeriodicWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import app.tivi.actions.ShowTasks
 import java.util.concurrent.TimeUnit
@@ -30,7 +30,7 @@ class ShowTasksImpl @Inject constructor(
     private val workManager: WorkManager
 ) : ShowTasks {
     override fun syncShowWatchedEpisodes(showId: Long) {
-        val request = OneTimeWorkRequest.Builder(SyncShowWatchedProgress::class.java)
+        val request = OneTimeWorkRequestBuilder<SyncShowWatchedProgress>()
             .addTag(SyncShowWatchedProgress.TAG)
             .setInputData(SyncShowWatchedProgress.buildData(showId))
             .build()
@@ -38,14 +38,14 @@ class ShowTasksImpl @Inject constructor(
     }
 
     override fun syncFollowedShows() {
-        val request = OneTimeWorkRequest.Builder(SyncAllFollowedShows::class.java)
+        val request = OneTimeWorkRequestBuilder<SyncAllFollowedShows>()
             .addTag(SyncAllFollowedShows.TAG)
             .build()
         workManager.enqueue(request)
     }
 
     override fun syncFollowedShowsWhenIdle() {
-        val request = OneTimeWorkRequest.Builder(SyncAllFollowedShows::class.java)
+        val request = OneTimeWorkRequestBuilder<SyncAllFollowedShows>()
             .addTag(SyncAllFollowedShows.TAG)
             .setConstraints(
                 Constraints.Builder()
@@ -57,24 +57,20 @@ class ShowTasksImpl @Inject constructor(
     }
 
     override fun setupNightSyncs() {
-        val request = PeriodicWorkRequest.Builder(
-            SyncAllFollowedShows::class.java,
-            24L,
-            TimeUnit.HOURS,
-            12L,
-            TimeUnit.HOURS
+        val request = PeriodicWorkRequestBuilder<SyncAllFollowedShows>(
+            repeatInterval = 24,
+            repeatIntervalTimeUnit = TimeUnit.HOURS,
         ).setConstraints(
             Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .setRequiresBatteryNotLow(true)
-                .setRequiresDeviceIdle(true)
+                .setRequiredNetworkType(NetworkType.UNMETERED)
+                .setRequiresCharging(true)
                 .build()
         ).build()
 
         workManager.enqueueUniquePeriodicWork(
             SyncAllFollowedShows.NIGHTLY_SYNC_TAG,
             ExistingPeriodicWorkPolicy.REPLACE,
-            request
+            request,
         )
     }
 }
