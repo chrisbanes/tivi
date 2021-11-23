@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Generate build number
         shell: bash
-        run: echo "BUILD_NUMBER=$(expr $GITHUB_RUN_NUMBER + 5210)" >> $GITHUB_ENV
+        run: echo "BUILD_NUMBER=$(( $GITHUB_RUN_NUMBER + 6000 + (($GITHUB_RUN_NUMBER - 980) * 3) ))" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
 
@@ -51,10 +51,10 @@ jobs:
             spotlessCheck
             assemble
             bundle
-            app:lintDebug
+            app:lintQaDebug
             testDebug
 
-      - name: Publish qa to Play Store
+      - name: Publish QA build to internal track
         if: github.ref == 'refs/heads/main'
         # Pinned version due to https://github.com/r0adkll/upload-google-play/issues/80
         uses: r0adkll/upload-google-play@v1.0.15
@@ -62,10 +62,10 @@ jobs:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
           track: internal
-          releaseFiles: app/build/outputs/bundle/qa/app-qa.aab
-          mappingFile: app/build/outputs/mapping/qa/mapping.txt
+          releaseFiles: app/build/outputs/bundle/qaRelease/app-qa-release.aab
+          mappingFile: app/build/outputs/mapping/qaRelease/mapping.txt
 
-      - name: Publish release to Play Store
+      - name: Publish Release build to alpha track
         if: github.ref == 'refs/heads/main'
         # Pinned version due to https://github.com/r0adkll/upload-google-play/issues/80
         uses: r0adkll/upload-google-play@v1.0.15
@@ -73,8 +73,8 @@ jobs:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
           track: alpha
-          releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          mappingFile: app/build/outputs/mapping/release/mapping.txt
+          releaseFiles: app/build/outputs/bundle/standardRelease/app-standard-release.aab
+          mappingFile: app/build/outputs/mapping/standardRelease/mapping.txt
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
@@ -82,7 +82,7 @@ jobs:
         with:
           draft: true
           files: |
-            app/build/outputs/apk/release/app-release.apk
+            app/build/outputs/apk/standard/release/app-standard-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
