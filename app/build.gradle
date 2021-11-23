@@ -139,6 +139,7 @@ android {
             // This is a release build with Chucker enabled
             initWith release
             matchingFallbacks = [ 'release' ]
+            proguardFiles += 'proguard-rules-chucker.pro'
         }
     }
 }
