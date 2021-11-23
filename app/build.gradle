@@ -134,12 +134,30 @@ android {
             minifyEnabled true
             proguardFiles 'proguard-rules.pro'
         }
+    }
 
+    flavorDimensions "mode"
+    productFlavors {
         qa {
-            // This is a release build with Chucker enabled
-            initWith release
-            matchingFallbacks = [ 'release' ]
+            dimension "mode"
+            // This is a build with Chucker enabled
             proguardFiles += 'proguard-rules-chucker.pro'
+        }
+
+        standard {
+            dimension "mode"
+            // Standard build is always ahead of the QA builds as it goes straight to
+            // the alpha channel. This is the 'release' flavour
+            versionCode android.defaultConfig.versionCode + 1
+        }
+    }
+
+    variantFilter { variant ->
+        // Ignore the standardDebug variant, QA == debug
+        def isQa = variant.flavors.any { it.name.contains("qa") }
+        def isDebug = variant.buildType.name == "debug"
+        if (!isQa && isDebug) {
+            setIgnore(true)
         }
     }
 }
@@ -207,9 +225,8 @@ dependencies {
     implementation libs.google.crashlytics
     implementation libs.google.analytics
 
-    releaseImplementation libs.chucker.noop
+    standardImplementation libs.chucker.noop
     qaImplementation libs.chucker.library
-    debugImplementation libs.chucker.library
 
     debugImplementation libs.leakCanary
 
