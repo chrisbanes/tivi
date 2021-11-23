@@ -21,7 +21,7 @@ import app.tivi.buildsrc.ReleaseType
 buildscript {
     ext.buildConfig = [
             'compileSdk': 31,
-            'minSdk'    : 24, // https://issuetracker.google.com/issues/194289155
+            'minSdk'    : 23,
             'targetSdk' : 31,
     ]
 
