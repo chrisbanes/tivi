@@ -106,10 +106,10 @@ internal fun AppNavigation(
     AnimatedNavHost(
         navController = navController,
         startDestination = Screen.Discover.route,
-        enterTransition = { initial, target -> defaultTiviEnterTransition(initial, target) },
-        exitTransition = { initial, target -> defaultTiviExitTransition(initial, target) },
-        popEnterTransition = { _, _ -> defaultTiviPopEnterTransition() },
-        popExitTransition = { _, _ -> defaultTiviPopExitTransition() },
+        enterTransition = { defaultTiviEnterTransition(initialState, targetState) },
+        exitTransition = { defaultTiviExitTransition(initialState, targetState) },
+        popEnterTransition = { defaultTiviPopEnterTransition() },
+        popExitTransition = { defaultTiviPopExitTransition() },
         modifier = modifier,
     ) {
         addDiscoverTopLevel(navController, onOpenSettings)
