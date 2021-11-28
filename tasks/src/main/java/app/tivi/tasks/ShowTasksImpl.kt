@@ -69,7 +69,7 @@ class ShowTasksImpl @Inject constructor(
 
         workManager.enqueueUniquePeriodicWork(
             SyncAllFollowedShows.NIGHTLY_SYNC_TAG,
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.KEEP,
             request,
         )
     }
