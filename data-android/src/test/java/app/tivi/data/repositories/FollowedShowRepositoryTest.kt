@@ -36,6 +36,8 @@ import app.tivi.utils.insertShow
 import app.tivi.utils.show
 import app.tivi.utils.show2
 import com.google.common.truth.Truth.assertThat
+import com.uwetrottmann.trakt5.entities.ListIds
+import com.uwetrottmann.trakt5.entities.TraktList
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import io.mockk.coEvery
@@ -66,7 +68,11 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync() = testScope.runBlockingTest {
-        coEvery { traktDataSource.getFollowedListId() } returns Success(0)
+        coEvery { traktDataSource.getFollowedListId() } returns Success(
+            TraktList().apply {
+                ids = ListIds().apply { trakt = 0 }
+            }
+        )
         coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow1Network to show))
 
         repository.syncFollowedShows()
@@ -79,7 +85,11 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     fun testSync_emptyResponse() = testScope.runBlockingTest {
         insertFollowedShow(database)
 
-        coEvery { traktDataSource.getFollowedListId() } returns Success(0)
+        coEvery { traktDataSource.getFollowedListId() } returns Success(
+            TraktList().apply {
+                ids = ListIds().apply { trakt = 0 }
+            }
+        )
         coEvery { traktDataSource.getListShows(0) } returns Success(emptyList())
 
         repository.syncFollowedShows()
@@ -91,7 +101,11 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     fun testSync_responseDifferentShow() = testScope.runBlockingTest {
         insertFollowedShow(database)
 
-        coEvery { traktDataSource.getFollowedListId() } returns Success(0)
+        coEvery { traktDataSource.getFollowedListId() } returns Success(
+            TraktList().apply {
+                ids = ListIds().apply { trakt = 0 }
+            }
+        )
         coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow2Network to show2))
 
         repository.syncFollowedShows()

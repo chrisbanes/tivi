@@ -126,7 +126,7 @@ okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp"
 retrofit-gsonConverter = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 retrofit-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
-robolectric = "org.robolectric:robolectric:4.6.1"
+robolectric = "org.robolectric:robolectric:4.7.3"
 
 store = "com.dropbox.mobile.store:store4:4.0.2-KT15"
 
