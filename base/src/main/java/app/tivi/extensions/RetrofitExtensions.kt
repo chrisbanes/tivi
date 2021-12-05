@@ -25,6 +25,7 @@ import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Response
+import retrofit2.awaitResponse
 import java.io.IOException
 
 inline fun <T> Response<T>.bodyOrThrow(): T {
@@ -32,95 +33,82 @@ inline fun <T> Response<T>.bodyOrThrow(): T {
     return body()!!
 }
 
-inline fun <T> Response<T>.toException() = HttpException(this)
-
-suspend inline fun <T> Call<T>.executeWithRetry(
+suspend fun <T> withRetry(
     defaultDelay: Long = 100,
     maxAttempts: Int = 3,
-    shouldRetry: (Exception) -> Boolean = ::defaultShouldRetry
-): Response<T> {
+    shouldRetry: (Throwable) -> Boolean = ::defaultShouldRetry,
+    block: suspend () -> Result<T>
+): Result<T> {
     repeat(maxAttempts) { attempt ->
-        var nextDelay = attempt * attempt * defaultDelay
+        when (val response = block()) {
+            is Success -> return response
+            is ErrorResult -> {
+                // The response failed, so lets see if we should retry again
+                if (attempt == maxAttempts - 1 || !shouldRetry(response.throwable)) {
+                    throw response.throwable
+                }
 
-        try {
-            // Clone a new ready call if needed
-            val call = if (isExecuted) clone() else this
-            return call.execute()
-        } catch (e: Exception) {
-            // The response failed, so lets see if we should retry again
-            if (attempt == (maxAttempts - 1) || !shouldRetry(e)) {
-                throw e
-            }
+                var nextDelay = attempt * attempt * defaultDelay
 
-            if (e is HttpException) {
-                // If we have a HttpException, check whether we have a Retry-After
-                // header to decide how long to delay
-                val retryAfterHeader = e.response()?.headers()?.get("Retry-After")
-                if (retryAfterHeader != null && retryAfterHeader.isNotEmpty()) {
-                    // Got a Retry-After value, try and parse it to an long
-                    try {
-                        nextDelay = (retryAfterHeader.toLong() + 10).coerceAtLeast(defaultDelay)
-                    } catch (nfe: NumberFormatException) {
-                        // Probably won't happen, ignore the value and use the generated default above
+                if (response.throwable is HttpException) {
+                    // If we have a HttpException, check whether we have a Retry-After
+                    // header to decide how long to delay
+                    response.throwable.retryAfter?.let {
+                        nextDelay = it.coerceAtLeast(defaultDelay)
                     }
                 }
+
+                delay(nextDelay)
             }
         }
-
-        delay(nextDelay)
     }
 
     // We should never hit here
     throw IllegalStateException("Unknown exception from executeWithRetry")
 }
 
-suspend inline fun <T> Call<T>.fetchBodyWithRetry(
-    firstDelay: Long = 100,
-    maxAttempts: Int = 3,
-    shouldRetry: (Exception) -> Boolean = ::defaultShouldRetry
-) = executeWithRetry(firstDelay, maxAttempts, shouldRetry).bodyOrThrow()
+private val HttpException.retryAfter: Long?
+    get() {
+        val retryAfterHeader = response()?.headers()?.get("Retry-After")
+        if (retryAfterHeader != null && retryAfterHeader.isNotEmpty()) {
+            // Got a Retry-After value, try and parse it to an long
+            try {
+                return retryAfterHeader.toLong() + 10
+            } catch (nfe: NumberFormatException) {
+                // Probably won't happen, ignore the value and use the generated default above
+            }
+        }
+        return null
+    }
 
-inline fun defaultShouldRetry(exception: Exception) = when (exception) {
-    is HttpException -> exception.code() == 429
+private fun defaultShouldRetry(throwable: Throwable) = when (throwable) {
+    is HttpException -> throwable.code() == 429
     is IOException -> true
     else -> false
 }
 
-inline fun <T> Response<T>.isFromNetwork(): Boolean {
-    return raw().cacheResponse == null
+private val Response<*>.isFromNetwork: Boolean
+    get() = raw().cacheResponse == null
+
+suspend fun <T> Call<T>.awaitUnit(): Result<Unit> = try {
+    Success(data = Unit, responseModified = awaitResponse().isFromNetwork)
+} catch (t: Throwable) {
+    ErrorResult(t)
 }
 
-inline fun <T> Response<T>.isFromCache(): Boolean {
-    return raw().cacheResponse != null
-}
-
-inline fun <T> Response<T>.toResultUnit(): Result<Unit> = try {
-    if (isSuccessful) {
-        Success(data = Unit, responseModified = isFromNetwork())
-    } else {
-        ErrorResult(toException())
+suspend fun <T, E> Call<T>.awaitResult(
+    mapper: suspend (T) -> E,
+): Result<E> = try {
+    awaitResponse().let {
+        if (it.isSuccessful) {
+            Success(
+                data = mapper(it.bodyOrThrow()),
+                responseModified = it.isFromNetwork
+            )
+        } else {
+            ErrorResult(HttpException(it))
+        }
     }
-} catch (e: Exception) {
-    ErrorResult(e)
-}
-
-inline fun <T> Response<T>.toResult(): Result<T> = try {
-    if (isSuccessful) {
-        Success(data = bodyOrThrow(), responseModified = isFromNetwork())
-    } else {
-        ErrorResult(toException())
-    }
-} catch (e: Exception) {
-    ErrorResult(e)
-}
-
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend fun <T, E> Response<T>.toResult(mapper: suspend (T) -> E): Result<E> = try {
-    if (isSuccessful) {
-        Success(data = mapper(bodyOrThrow()), responseModified = isFromNetwork())
-    } else {
-        ErrorResult(toException())
-    }
-} catch (e: Exception) {
-    ErrorResult(e)
+} catch (t: Throwable) {
+    ErrorResult(t)
 }

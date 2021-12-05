@@ -21,8 +21,8 @@ import app.tivi.data.entities.Result
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbImagesToShowImages
-import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.toResult
+import app.tivi.extensions.awaitResult
+import app.tivi.extensions.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 
@@ -32,12 +32,12 @@ class TmdbShowImagesDataSource @Inject constructor(
 ) : ShowImagesDataSource {
     override suspend fun getShowImages(show: TiviShow): Result<List<ShowTmdbImage>> {
         val tmdbId = show.tmdbId
-        return if (tmdbId != null) {
-            tmdb.tvService().tv(tmdbId, null)
-                .executeWithRetry()
-                .toResult(mapper::map)
-        } else {
-            ErrorResult(IllegalArgumentException("TmdbId for show does not exist [$show]"))
+            ?: return ErrorResult(IllegalArgumentException("TmdbId for show does not exist [$show]"))
+
+        return withRetry {
+            tmdb.tvService()
+                .tv(tmdbId, null)
+                .awaitResult { mapper.map(it) }
         }
     }
 }

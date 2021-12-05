@@ -16,25 +16,24 @@
 
 package app.tivi.data.repositories.search
 
-import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbShowResultsPageToTiviShows
-import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.toResult
+import app.tivi.extensions.awaitResult
+import app.tivi.extensions.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 
 class TmdbSearchDataSource @Inject constructor(
     private val tmdb: Tmdb,
-    private val mapper: TmdbShowResultsPageToTiviShows
+    private val mapper: TmdbShowResultsPageToTiviShows,
 ) : SearchDataSource {
-    override suspend fun search(query: String): Result<List<Pair<TiviShow, List<ShowTmdbImage>>>> = try {
-        tmdb.searchService().tv(query, 1, null, null, false)
-            .executeWithRetry()
-            .toResult(mapper::map)
-    } catch (t: Throwable) {
-        ErrorResult(t)
+    override suspend fun search(
+        query: String,
+    ): Result<List<Pair<TiviShow, List<ShowTmdbImage>>>> = withRetry {
+        tmdb.searchService()
+            .tv(query, 1, null, null, false)
+            .awaitResult { mapper.map(it) }
     }
 }

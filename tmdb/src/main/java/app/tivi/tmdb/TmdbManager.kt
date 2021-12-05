@@ -16,12 +16,13 @@
 
 package app.tivi.tmdb
 
-import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
+import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,11 +37,11 @@ class TmdbManager @Inject constructor(
 
     suspend fun refreshConfiguration() {
         try {
-            val config = withContext(dispatchers.io) {
-                tmdbClient.configurationService().configuration().fetchBodyWithRetry()
+            val response = withContext(dispatchers.io) {
+                tmdbClient.configurationService().configuration().awaitResponse()
             }
-            onConfigurationLoaded(config)
-        } catch (e: Exception) {
+            onConfigurationLoaded(response.bodyOrThrow())
+        } catch (t: Throwable) {
             // TODO
         }
     }

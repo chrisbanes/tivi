@@ -22,8 +22,8 @@ import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.data.mappers.TraktTrendingShowToTiviShow
 import app.tivi.data.mappers.TraktTrendingShowToTrendingShowEntry
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.toResult
+import app.tivi.extensions.awaitResult
+import app.tivi.extensions.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
@@ -39,10 +39,10 @@ class TraktTrendingShowsDataSource @Inject constructor(
     suspend operator fun invoke(
         page: Int,
         pageSize: Int
-    ): Result<List<Pair<TiviShow, TrendingShowEntry>>> {
-        // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
-        return showService.get().trending(page + 1, pageSize, Extended.NOSEASONS)
-            .executeWithRetry()
-            .toResult(responseMapper)
+    ): Result<List<Pair<TiviShow, TrendingShowEntry>>> = withRetry {
+        showService.get()
+            // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
+            .trending(page + 1, pageSize, Extended.NOSEASONS)
+            .awaitResult(responseMapper)
     }
 }
