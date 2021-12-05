@@ -21,8 +21,8 @@ import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktEpisodeToEpisode
-import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.toResult
+import app.tivi.extensions.awaitResult
+import app.tivi.extensions.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Episodes
 import javax.inject.Inject
@@ -40,9 +40,10 @@ class TraktEpisodeDataSource @Inject constructor(
     ): Result<Episode> {
         val traktId = traktIdMapper.map(showId)
             ?: return ErrorResult(IllegalArgumentException("No Trakt ID for show with ID: $showId"))
-
-        return service.get().summary(traktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
-            .executeWithRetry()
-            .toResult(episodeMapper::map)
+        return withRetry {
+            service.get()
+                .summary(traktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
+                .awaitResult { episodeMapper.map(it) }
+        }
     }
 }

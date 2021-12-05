@@ -176,7 +176,7 @@ class FollowedShowsRepository @Inject constructor(
         if (followedShowsStore.traktListId == null) {
             val result = dataSource.getFollowedListId()
             if (result is Success) {
-                followedShowsStore.traktListId = result.get()
+                followedShowsStore.traktListId = result.get().ids?.trakt
             }
         }
         return followedShowsStore.traktListId

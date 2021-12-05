@@ -16,7 +16,6 @@
 
 package app.tivi.data.repositories.followedshows
 
-import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.Success
@@ -24,10 +23,9 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktListEntryToFollowedShowEntry
 import app.tivi.data.mappers.TraktListEntryToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.bodyOrThrow
-import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.toResult
-import app.tivi.extensions.toResultUnit
+import app.tivi.extensions.awaitResult
+import app.tivi.extensions.awaitUnit
+import app.tivi.extensions.withRetry
 import com.uwetrottmann.trakt5.entities.ShowIds
 import com.uwetrottmann.trakt5.entities.SyncItems
 import com.uwetrottmann.trakt5.entities.SyncShow
@@ -42,7 +40,7 @@ import javax.inject.Provider
 class TraktFollowedShowsDataSource @Inject constructor(
     private val usersService: Provider<Users>,
     listEntryToShowMapper: TraktListEntryToTiviShow,
-    listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry
+    listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry,
 ) : FollowedShowsDataSource {
     companion object {
         private val LIST_NAME = "Following"
@@ -61,9 +59,11 @@ class TraktFollowedShowsDataSource @Inject constructor(
                 }
             }
         }
-        return usersService.get().addListItems(UserSlug.ME, listId.toString(), syncItems)
-            .executeWithRetry()
-            .toResultUnit()
+        return withRetry {
+            usersService.get()
+                .addListItems(UserSlug.ME, listId.toString(), syncItems)
+                .awaitUnit()
+        }
     }
 
     override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>): Result<Unit> {
@@ -77,42 +77,39 @@ class TraktFollowedShowsDataSource @Inject constructor(
                 }
             }
         }
-        return usersService.get().deleteListItems(UserSlug.ME, listId.toString(), syncItems)
-            .executeWithRetry()
-            .toResultUnit()
+        return withRetry {
+            usersService.get()
+                .deleteListItems(UserSlug.ME, listId.toString(), syncItems)
+                .awaitUnit()
+        }
     }
 
     override suspend fun getListShows(listId: Int): Result<List<Pair<FollowedShowEntry, TiviShow>>> {
-        return usersService.get().listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
-            .executeWithRetry()
-            .toResult(listShowsMapper)
+        return withRetry {
+            usersService.get()
+                .listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
+                .awaitResult(listShowsMapper)
+        }
     }
 
-    override suspend fun getFollowedListId(): Result<Int> {
-        val fetchResult: Result<Int>? = try {
-            usersService.get().lists(UserSlug.ME)
-                .executeWithRetry()
-                .bodyOrThrow()
-                .firstOrNull { it.name == LIST_NAME }
-                ?.let { Success(it.ids.trakt) }
-        } catch (t: Throwable) {
-            ErrorResult(t)
+    override suspend fun getFollowedListId(): Result<TraktList> {
+        val fetchResult: Result<TraktList> = withRetry {
+            usersService.get()
+                .lists(UserSlug.ME)
+                .awaitResult { list ->
+                    list.first { it.name == LIST_NAME }
+                }
         }
 
         if (fetchResult is Success) {
             return fetchResult
         }
 
-        return try {
+        return withRetry {
             usersService.get().createList(
                 UserSlug.ME,
-                TraktList().name(LIST_NAME).privacy(ListPrivacy.PRIVATE)
-            )
-                .executeWithRetry()
-                .bodyOrThrow()
-                .let { Success(it.ids.trakt) }
-        } catch (t: Throwable) {
-            ErrorResult(t)
+                TraktList().name(LIST_NAME)!!.privacy(ListPrivacy.PRIVATE)
+            ).awaitResult { it }
         }
     }
 }

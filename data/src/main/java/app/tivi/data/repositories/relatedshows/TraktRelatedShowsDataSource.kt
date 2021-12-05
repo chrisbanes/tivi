@@ -24,8 +24,8 @@ import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.toResult
+import app.tivi.extensions.awaitResult
+import app.tivi.extensions.withRetry
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
@@ -35,20 +35,20 @@ import javax.inject.Provider
 internal class TraktRelatedShowsDataSource @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val showService: Provider<Shows>,
-    private val showMapper: TraktShowToTiviShow
+    showMapper: TraktShowToTiviShow
 ) {
-    private val entryMapper = object : IndexedMapper<Show, RelatedShowEntry> {
-        override suspend fun map(index: Int, from: Show): RelatedShowEntry {
-            return RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
-        }
+    private val entryMapper = IndexedMapper<Show, RelatedShowEntry> { index, _ ->
+        RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
     }
     private val resultMapper = pairMapperOf(showMapper, entryMapper)
 
     suspend operator fun invoke(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>> {
         val traktId = traktIdMapper.map(showId)
             ?: return ErrorResult(IllegalArgumentException("No Trakt ID for show with ID: $showId"))
-        return showService.get().related(traktId.toString(), 0, 10, Extended.NOSEASONS)
-            .executeWithRetry()
-            .toResult(resultMapper)
+        return withRetry {
+            showService.get()
+                .related(traktId.toString(), 0, 10, Extended.NOSEASONS)
+                .awaitResult(resultMapper)
+        }
     }
 }

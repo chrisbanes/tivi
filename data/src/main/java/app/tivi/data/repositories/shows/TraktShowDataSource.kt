@@ -21,7 +21,7 @@ import app.tivi.data.entities.Result
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.extensions.toResult
+import app.tivi.extensions.awaitResult
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.IdType
 import com.uwetrottmann.trakt5.enums.Type
@@ -47,9 +47,7 @@ class TraktShowDataSource @Inject constructor(
                 Extended.NOSEASONS,
                 1,
                 1
-            )
-                .execute()
-                .toResult { it.getOrNull(0)?.show?.ids?.trakt }
+            ).awaitResult { it.getOrNull(0)?.show?.ids?.trakt }
             if (response is Success) {
                 traktId = response.get()
             } else if (response is ErrorResult) {
@@ -63,9 +61,7 @@ class TraktShowDataSource @Inject constructor(
                 null /* lang */, show.country /* countries */, null /* runtime */, null /* ratings */,
                 null /* certs */, show.network /* networks */, null /* status */,
                 Extended.NOSEASONS, 1, 1
-            )
-                .execute()
-                .toResult { it[0].show?.ids?.trakt }
+            ).awaitResult { it[0].show?.ids?.trakt }
             if (response is Success) {
                 traktId = response.get()
             } else if (response is ErrorResult) {
@@ -74,9 +70,9 @@ class TraktShowDataSource @Inject constructor(
         }
 
         return if (traktId != null) {
-            showService.get().summary(traktId.toString(), Extended.FULL)
-                .execute()
-                .toResult(mapper::map)
+            showService.get()
+                .summary(traktId.toString(), Extended.FULL)
+                .awaitResult(mapper::map)
         } else {
             ErrorResult(IllegalArgumentException("Trakt ID for show does not exist: [$show]"))
         }

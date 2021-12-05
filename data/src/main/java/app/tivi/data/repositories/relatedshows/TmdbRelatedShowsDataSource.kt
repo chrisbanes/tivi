@@ -24,8 +24,8 @@ import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbBaseShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.mappers.unwrapTmdbShowResults
-import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.toResult
+import app.tivi.extensions.awaitResult
+import app.tivi.extensions.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import javax.inject.Inject
@@ -33,19 +33,18 @@ import javax.inject.Inject
 class TmdbRelatedShowsDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
-    showMapper: TmdbBaseShowToTiviShow
+    showMapper: TmdbBaseShowToTiviShow,
 ) {
-    private val entryMapper = object : IndexedMapper<BaseTvShow, RelatedShowEntry> {
-        override suspend fun map(index: Int, from: BaseTvShow): RelatedShowEntry {
-            return RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
-        }
+    private val entryMapper = IndexedMapper<BaseTvShow, RelatedShowEntry> { index, _ ->
+        RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
     }
-
     private val resultMapper = unwrapTmdbShowResults(pairMapperOf(showMapper, entryMapper))
 
-    suspend operator fun invoke(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>> {
-        return tmdb.tvService().recommendations(tmdbIdMapper.map(showId), 1, null)
-            .executeWithRetry()
-            .toResult(resultMapper)
+    suspend operator fun invoke(
+        showId: Long
+    ): Result<List<Pair<TiviShow, RelatedShowEntry>>> = withRetry {
+        tmdb.tvService()
+            .recommendations(tmdbIdMapper.map(showId), 1, null)
+            .awaitResult(resultMapper)
     }
 }

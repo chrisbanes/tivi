@@ -22,8 +22,8 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.toResult
+import app.tivi.extensions.awaitResult
+import app.tivi.extensions.withRetry
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
@@ -32,12 +32,10 @@ import javax.inject.Provider
 
 class TraktPopularShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
-    private val showMapper: TraktShowToTiviShow
+    showMapper: TraktShowToTiviShow
 ) {
-    private val entryMapper = object : IndexedMapper<Show, PopularShowEntry> {
-        override suspend fun map(index: Int, from: Show): PopularShowEntry {
-            return PopularShowEntry(showId = 0, pageOrder = index, page = 0)
-        }
+    private val entryMapper = IndexedMapper<Show, PopularShowEntry> { index, _ ->
+        PopularShowEntry(showId = 0, pageOrder = index, page = 0)
     }
 
     private val resultsMapper = pairMapperOf(showMapper, entryMapper)
@@ -45,9 +43,8 @@ class TraktPopularShowsDataSource @Inject constructor(
     suspend operator fun invoke(
         page: Int,
         pageSize: Int
-    ): Result<List<Pair<TiviShow, PopularShowEntry>>> {
-        return showService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
-            .executeWithRetry()
-            .toResult(resultsMapper)
+    ): Result<List<Pair<TiviShow, PopularShowEntry>>> = withRetry {
+        showService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
+            .awaitResult(resultsMapper)
     }
 }

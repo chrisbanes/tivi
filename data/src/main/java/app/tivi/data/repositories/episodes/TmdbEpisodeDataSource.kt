@@ -20,8 +20,8 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Result
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbEpisodeToEpisode
-import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.toResult
+import app.tivi.extensions.awaitResult
+import app.tivi.extensions.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 
@@ -34,10 +34,9 @@ class TmdbEpisodeDataSource @Inject constructor(
         showId: Long,
         seasonNumber: Int,
         episodeNumber: Int
-    ): Result<Episode> {
-        return tmdb.tvEpisodesService()
+    ): Result<Episode> = withRetry {
+        tmdb.tvEpisodesService()
             .episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber, null)
-            .executeWithRetry()
-            .toResult(episodeMapper::map)
+            .awaitResult { episodeMapper.map(it) }
     }
 }
