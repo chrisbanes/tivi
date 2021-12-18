@@ -120,6 +120,7 @@ class WatchedViewModel @Inject constructor(
                     WatchedAction.RefreshAction -> refresh(fromUser = true)
                     is WatchedAction.FilterShows -> setFilter(action.filter)
                     is WatchedAction.ChangeSort -> setSort(action.sort)
+                    else -> Unit
                 }
             }
         }

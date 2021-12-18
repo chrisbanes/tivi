@@ -75,6 +75,7 @@ internal class SearchViewModel @Inject constructor(
                     is SearchAction.Search -> {
                         searchQuery.value = action.searchTerm
                     }
+                    else -> Unit
                 }
             }
         }

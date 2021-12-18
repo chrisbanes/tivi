@@ -122,6 +122,7 @@ internal class ShowDetailsViewModel @Inject constructor(
                     is ShowDetailsAction.ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
                     is ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
                     is ShowDetailsAction.ClearError -> snackbarManager.removeCurrentError()
+                    else -> Unit
                 }
             }
         }

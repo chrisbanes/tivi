@@ -94,6 +94,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
                     EpisodeDetailsAction.RemoveAllEpisodeWatchesAction -> markUnwatched()
                     is EpisodeDetailsAction.RemoveEpisodeWatchAction -> removeWatchEntry(action)
                     EpisodeDetailsAction.ClearError -> snackbarManager.removeCurrentError()
+                    else -> Unit
                 }
             }
         }

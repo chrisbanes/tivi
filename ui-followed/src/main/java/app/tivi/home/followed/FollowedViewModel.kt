@@ -126,6 +126,7 @@ internal class FollowedViewModel @Inject constructor(
                     FollowedAction.RefreshAction -> refresh(true)
                     is FollowedAction.FilterShows -> setFilter(action.filter)
                     is FollowedAction.ChangeSort -> setSort(action.sort)
+                    else -> Unit
                 }
             }
         }
