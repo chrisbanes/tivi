@@ -98,6 +98,7 @@ internal class DiscoverViewModel @Inject constructor(
             pendingActions.collect { action ->
                 when (action) {
                     DiscoverAction.RefreshAction -> refresh(true)
+                    else -> Unit
                 }
             }
         }

@@ -26,26 +26,25 @@ import javax.inject.Singleton
 class TraktUsersRepository @Inject constructor(
     private val traktUsersStore: TraktUsersStore,
     private val lastRequestStore: TraktUsersLastRequestStore,
-    private val traktDataSource: TraktUsersDataSource
+    private val traktDataSource: TraktUsersDataSource,
 ) {
     fun observeUser(username: String) = traktUsersStore.observeUser(username)
 
     suspend fun updateUser(username: String) {
-        when (val response = traktDataSource.getUser(username)) {
-            is Success -> {
-                var user = response.data
-                // Tag the user as 'me' if that's what we're requesting
-                if (username == "me") {
-                    user = user.copy(isMe = true)
-                }
-                // Make sure we use the current DB id (if present)
-                val localUser = traktUsersStore.getUser(user.username)
-                if (localUser != null) {
-                    user = user.copy(id = localUser.id)
-                }
-                val id = traktUsersStore.save(user)
-                lastRequestStore.updateLastRequest(id, Instant.now())
+        val response = traktDataSource.getUser(username)
+        if (response is Success) {
+            var user = response.data
+            // Tag the user as 'me' if that's what we're requesting
+            if (username == "me") {
+                user = user.copy(isMe = true)
             }
+            // Make sure we use the current DB id (if present)
+            val localUser = traktUsersStore.getUser(user.username)
+            if (localUser != null) {
+                user = user.copy(id = localUser.id)
+            }
+            val id = traktUsersStore.save(user)
+            lastRequestStore.updateLastRequest(id, Instant.now())
         }
     }
 

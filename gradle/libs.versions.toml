@@ -1,23 +1,24 @@
 [versions]
-accompanist = "0.21.3-beta"
+accompanist = "0.21.5-rc"
 androidxhilt = "1.0.0"
 androidxlifecycle = "2.4.0"
 androidxtest = "1.4.0"
 chucker = "3.5.2"
 coil = "1.4.0"
-compose = "1.1.0-beta03"
+compose = "1.1.0-rc01"
+composecompiler = "1.1.0-rc02" # rc02 works with Kotlin 1.6.10
 composesnapshot = "-" # a single character = no snapshot
 coroutines = "1.5.2"
-dagger = "2.40.2"
-hilt = "2.40.2"
-kotlin = "1.5.31"
-ktlint = "0.42.1"
+dagger = "2.40.5"
+hilt = "2.40.5"
+kotlin = "1.6.10"
+ktlint = "0.43.2"
 okhttp = "4.9.3"
 paging = "3.1.0"
 retrofit = "2.9.0"
-room = "2.4.0-beta02"
+room = "2.4.0"
 threetenbp = "1.5.2"
-spotless = "6.0.0"
+spotless = "6.0.5"
 gradleDependencyUpdate = "0.39.0"
 
 [plugins]
@@ -35,17 +36,17 @@ accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pa
 
 snapper = "dev.chrisbanes.snapper:snapper:0.1.0"
 
-android-pluginGradle = "com.android.tools.build:gradle:7.1.0-beta04"
+android-pluginGradle = "com.android.tools.build:gradle:7.1.0-beta05"
 
 androidx-activity-compose = "androidx.activity:activity-compose:1.4.0"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 androidx-browser = "androidx.browser:browser:1.4.0"
-androidx-collection = "androidx.collection:collection-ktx:1.1.0"
+androidx-collection = "androidx.collection:collection-ktx:1.2.0"
 androidx-core = "androidx.core:core-ktx:1.7.0"
 androidx-emoji = "androidx.emoji:emoji:1.1.0"
 
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidxhilt" }
-androidx-hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0-beta01"
+androidx-hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0-rc01"
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidxhilt" }
 
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
@@ -97,9 +98,9 @@ compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding", versio
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 dagger-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 
-google-analytics = "com.google.firebase:firebase-analytics-ktx:20.0.0"
-google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.2.4"
-google-crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.8.0"
+google-analytics = "com.google.firebase:firebase-analytics-ktx:20.0.2"
+google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.2.6"
+google-crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.8.1"
 google-gmsGoogleServices = "com.google.gms:google-services:4.3.10"
 
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
@@ -128,7 +129,7 @@ retrofit-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = 
 
 robolectric = "org.robolectric:robolectric:4.7.3"
 
-store = "com.dropbox.mobile.store:store4:4.0.2-KT15"
+store = "com.dropbox.mobile.store:store4:4.0.4-KT15"
 
 threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.3.1"
 
