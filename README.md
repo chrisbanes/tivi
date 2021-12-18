@@ -16,7 +16,7 @@ Tivi is a **work-in-progress** TV show tracking Android app, which connects to
 
 ## Android development
 
-Tivi is an app that attempts to use the latest cutting edge libraries and tools. As a summary:
+Tivi is an app that attempts to use the latest libraries and tools. As a summary:
 
  * Entirely written in [Kotlin](https://kotlinlang.org/).
  * UI completely written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (see below).
@@ -26,7 +26,7 @@ Tivi is an app that attempts to use the latest cutting edge libraries and tools.
 
 ## Development setup
 
-First off, you require the latest [Android Studio Bumblebee](https://developer.android.com/studio/preview) release to be able to build the app.
+First off, you require the latest [Android Studio Arctic Fox](https://developer.android.com/studio) (or newer) to be able to build the app.
 
 ### Code style
 
