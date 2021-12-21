@@ -40,10 +40,10 @@ class FollowedShowsStore @Inject constructor(
     var traktListId: Int? = null
 
     private val syncer = syncerForEntity(
-        followedShowsDao,
-        { it.traktId },
-        { entity, id -> entity.copy(id = id ?: 0) },
-        logger
+        entityDao = followedShowsDao,
+        entityToKey = { it.traktId },
+        mapper = { entity, id -> entity.copy(id = id ?: 0) },
+        logger = logger
     )
 
     suspend fun getEntryForShowId(showId: Long): FollowedShowEntry? = followedShowsDao.entryWithShowId(showId)
