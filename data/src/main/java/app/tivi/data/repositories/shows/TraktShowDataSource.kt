@@ -61,7 +61,8 @@ class TraktShowDataSource @Inject constructor(
                 null /* lang */, show.country /* countries */, null /* runtime */, null /* ratings */,
                 null /* certs */, show.network /* networks */, null /* status */,
                 Extended.NOSEASONS, 1, 1
-            ).awaitResult { it[0].show?.ids?.trakt }
+            ).awaitResult { it.firstOrNull()?.show?.ids?.trakt }
+
             if (response is Success) {
                 traktId = response.get()
             } else if (response is ErrorResult) {
