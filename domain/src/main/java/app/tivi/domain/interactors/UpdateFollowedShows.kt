@@ -47,29 +47,37 @@ class UpdateFollowedShows @Inject constructor(
             }
 
             // Finally sync the seasons/episodes and watches
-            followedShowsRepository.getFollowedShows().forEach {
+            followedShowsRepository.getFollowedShows().forEach { entry ->
                 ensureActive()
 
-                showStore.fetch(it.showId)
+                showStore.fetch(entry.showId)
                 try {
-                    showImagesStore.fetch(it.showId)
+                    showImagesStore.fetch(entry.showId)
                 } catch (t: Throwable) {
-                    logger.e("Error while fetching images for show: ${it.showId}", t)
+                    logger.e(t, "Error while fetching images for show: ${entry.showId}")
                 }
 
                 ensureActive()
                 // Download the seasons + episodes
-                if (params.forceRefresh || seasonEpisodeRepository.needShowSeasonsUpdate(it.showId)) {
-                    seasonEpisodeRepository.updateSeasonsEpisodes(it.showId)
+                if (params.forceRefresh || seasonEpisodeRepository.needShowSeasonsUpdate(entry.showId)) {
+                    try {
+                        seasonEpisodeRepository.updateSeasonsEpisodes(entry.showId)
+                    } catch (t: Throwable) {
+                        logger.e(t, "Error while updating show seasons/episodes: ${entry.showId}")
+                    }
                 }
 
                 ensureActive()
-                seasonEpisodeRepository.updateShowEpisodeWatches(
-                    it.showId,
-                    params.type,
-                    params.forceRefresh,
-                    showDao.getShowWithId(it.showId)?.traktDataUpdate
-                )
+                try {
+                    seasonEpisodeRepository.updateShowEpisodeWatches(
+                        showId = entry.showId,
+                        refreshType = params.type,
+                        forceRefresh = params.forceRefresh,
+                        lastUpdated = showDao.getShowWithId(entry.showId)?.traktDataUpdate
+                    )
+                } catch (t: Throwable) {
+                    logger.e(t, "Error while updating show episode watches: ${entry.showId}")
+                }
             }
         }
     }
