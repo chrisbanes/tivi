@@ -60,7 +60,7 @@ class ChangeShowFollowStatus @Inject constructor(
                 try {
                     showImagesStore.fetch(it.showId)
                 } catch (t: Throwable) {
-                    logger.e("Error while fetching image", t)
+                    logger.e(t, "Error while fetching image")
                 }
             }
 

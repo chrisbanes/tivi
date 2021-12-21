@@ -39,22 +39,16 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor? {
-        if (!BuildConfig.DEBUG) {
-            return null
-        }
-
+        if (!BuildConfig.DEBUG) return null
         return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.HEADERS
+            level = HttpLoggingInterceptor.Level.BASIC
         }
     }
 
     @Singleton
     @Provides
     fun provideHttpEventListener(): LoggingEventListener.Factory? {
-        if (!BuildConfig.DEBUG) {
-            return null
-        }
-
+        if (!BuildConfig.DEBUG) return null
         return LoggingEventListener.Factory()
     }
 

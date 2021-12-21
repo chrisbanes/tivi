@@ -44,7 +44,7 @@ class UpdateWatchedShows @Inject constructor(
                 try {
                     showImagesStore.fetch(it.showId)
                 } catch (t: Throwable) {
-                    logger.e("Error while fetching images for show: ${it.showId}", t)
+                    logger.e(t, "Error while fetching images for show: ${it.showId}")
                 }
             }
         }
