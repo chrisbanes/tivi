@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package app.tivi.appinitializers
+package app.tivi.util
 
-import android.app.Application
-import app.tivi.BuildConfig
-import app.tivi.util.Logger
-import javax.inject.Inject
-
-class TimberInitializer @Inject constructor(
-    private val logger: Logger
-) : AppInitializer {
-    override fun init(application: Application) = logger.setup(BuildConfig.DEBUG)
+interface Analytics {
+    fun trackScreenView(
+        label: String,
+        route: String?,
+        arguments: Any? = null,
+    )
 }

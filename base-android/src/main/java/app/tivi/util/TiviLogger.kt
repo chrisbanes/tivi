@@ -24,10 +24,10 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Provider
 
-class TiviLogger @Inject constructor(
+internal class TiviLogger @Inject constructor(
     private val firebaseCrashlytics: Provider<FirebaseCrashlytics>,
 ) : Logger {
-    fun setup(debugMode: Boolean) {
+    override fun setup(debugMode: Boolean) {
         if (debugMode) {
             Timber.plant(TiviDebugTree())
         }

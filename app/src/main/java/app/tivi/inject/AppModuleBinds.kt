@@ -23,25 +23,18 @@ import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
 import app.tivi.appinitializers.TmdbInitializer
 import app.tivi.util.AndroidPowerController
-import app.tivi.util.Logger
 import app.tivi.util.PowerController
-import app.tivi.util.TiviLogger
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 abstract class AppModuleBinds {
     @Binds
     internal abstract fun providePowerController(bind: AndroidPowerController): PowerController
-
-    @Singleton
-    @Binds
-    abstract fun provideLogger(bind: TiviLogger): Logger
 
     @Binds
     @IntoSet

@@ -65,6 +65,7 @@ import app.tivi.AppNavigation
 import app.tivi.R
 import app.tivi.Screen
 import app.tivi.common.compose.theme.AppBarAlphas
+import app.tivi.util.Analytics
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.rememberInsetsPaddingValues
@@ -75,9 +76,22 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun Home(
+    analytics: Analytics,
     onOpenSettings: () -> Unit,
 ) {
     val navController = rememberAnimatedNavController()
+
+    DisposableEffect(navController, analytics) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, arguments ->
+            analytics.trackScreenView(
+                label = destination.label?.toString() ?: destination.displayName,
+                route = destination.route,
+                arguments = arguments,
+            )
+        }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose { navController.removeOnDestinationChangedListener(listener) }
+    }
 
     val configuration = LocalConfiguration.current
     val useBottomNavigation by remember {
@@ -129,7 +143,11 @@ internal fun Home(
                     modifier = Modifier.fillMaxHeight(),
                 )
 
-                Divider(Modifier.fillMaxHeight().width(1.dp))
+                Divider(
+                    Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                )
             }
 
             AppNavigation(
