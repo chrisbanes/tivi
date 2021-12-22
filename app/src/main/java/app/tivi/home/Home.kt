@@ -84,7 +84,7 @@ internal fun Home(
     DisposableEffect(navController, analytics) {
         val listener = NavController.OnDestinationChangedListener { _, destination, arguments ->
             analytics.trackScreenView(
-                label = destination.label?.toString() ?: destination.displayName,
+                label = destination.label?.toString() ?: "Composable",
                 route = destination.route,
                 arguments = arguments,
             )
