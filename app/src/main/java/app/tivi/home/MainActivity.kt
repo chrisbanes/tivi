@@ -29,6 +29,7 @@ import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.settings.SettingsActivity
 import app.tivi.settings.TiviPreferences
+import app.tivi.util.Analytics
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -42,13 +43,14 @@ class MainActivity : TiviActivity() {
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
     @Inject internal lateinit var textCreator: TiviTextCreator
     @Inject internal lateinit var preferences: TiviPreferences
+    @Inject internal lateinit var analytics: Analytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
 
         setContent {
             CompositionLocalProvider(
@@ -57,7 +59,10 @@ class MainActivity : TiviActivity() {
             ) {
                 ProvideWindowInsets(consumeWindowInsets = false) {
                     TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
-                        Home(onOpenSettings = ::openSettings)
+                        Home(
+                            analytics = analytics,
+                            onOpenSettings = ::openSettings,
+                        )
                     }
                 }
             }

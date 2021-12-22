@@ -43,6 +43,7 @@ dependencies {
     implementation project(':data')
 
     implementation libs.google.crashlytics
+    implementation libs.google.analytics
 
     implementation libs.androidx.core
 
