@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -111,6 +112,9 @@ internal fun AccountUi(
     Surface(
         shape = MaterialTheme.shapes.medium,
         elevation = 2.dp,
+        // FIXME: Force the dialog to wrap the content. Need to work out why
+        // this doesn't work automatically
+        modifier = Modifier.heightIn(min = 200.dp),
     ) {
         Column {
             Spacer(modifier = Modifier.height(16.dp))
