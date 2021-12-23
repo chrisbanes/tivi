@@ -17,17 +17,17 @@
 package app.tivi.data.repositories.relatedshows
 
 import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbBaseShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.mappers.unwrapTmdbShowResults
-import app.tivi.extensions.awaitResult
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.BaseTvShow
+import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class TmdbRelatedShowsDataSource @Inject constructor(
@@ -42,9 +42,10 @@ class TmdbRelatedShowsDataSource @Inject constructor(
 
     suspend operator fun invoke(
         showId: Long
-    ): Result<List<Pair<TiviShow, RelatedShowEntry>>> = withRetry {
+    ): List<Pair<TiviShow, RelatedShowEntry>> = withRetry {
         tmdb.tvService()
             .recommendations(tmdbIdMapper.map(showId), 1, null)
-            .awaitResult(resultMapper)
+            .awaitResponse()
+            .let { resultMapper.invoke(it.bodyOrThrow()) }
     }
 }

@@ -19,7 +19,6 @@ package app.tivi.data.repositories.relatedshows
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.Success
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
@@ -47,11 +46,7 @@ internal object RelatedShowsModule {
     ): RelatedShowsStore = StoreBuilder.from(
         fetcher = Fetcher.of { showId: Long ->
             tmdbRelatedShows(showId)
-                .also {
-                    if (it is Success) {
-                        lastRequestStore.updateLastRequest(showId)
-                    }
-                }.getOrThrow()
+                .also { lastRequestStore.updateLastRequest(showId) }
         },
         sourceOfTruth = SourceOfTruth.of(
             reader = { showId ->

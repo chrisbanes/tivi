@@ -16,15 +16,15 @@
 
 package app.tivi.data.repositories.watchedshows
 
-import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.mappers.TraktBaseShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.awaitResult
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Sync
+import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -36,9 +36,10 @@ class TraktWatchedShowsDataSource @Inject constructor(
         WatchedShowEntry(showId = 0, lastWatched = from.last_watched_at!!)
     }
 
-    suspend operator fun invoke(): Result<List<Pair<TiviShow, WatchedShowEntry>>> = withRetry {
+    suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>> = withRetry {
         syncService.get()
             .watchedShows(Extended.NOSEASONS)
-            .awaitResult(responseMapper)
+            .awaitResponse()
+            .let { responseMapper.invoke(it.bodyOrThrow()) }
     }
 }

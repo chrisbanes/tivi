@@ -17,7 +17,6 @@
 package app.tivi.data.repositories.shows
 
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
@@ -45,11 +44,7 @@ object ShowStoreModule {
     ): ShowStore = StoreBuilder.from(
         fetcher = Fetcher.of { id: Long ->
             traktShowDataSource.getShow(showDao.getShowWithIdOrThrow(id))
-                .also {
-                    if (it is Success<*>) {
-                        lastRequestStore.updateLastRequest(id)
-                    }
-                }.getOrThrow()
+                .also { lastRequestStore.updateLastRequest(id) }
         },
         sourceOfTruth = SourceOfTruth.of(
             reader = { showId ->

@@ -18,27 +18,26 @@ package app.tivi.data.repositories.episodes
 
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.Result
 import app.tivi.data.entities.Season
 import org.threeten.bp.OffsetDateTime
 
 interface SeasonsEpisodesDataSource {
-    suspend fun getSeasonsEpisodes(showId: Long): Result<List<Pair<Season, List<Episode>>>>
+    suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>>
     suspend fun getShowEpisodeWatches(
         showId: Long,
         since: OffsetDateTime? = null
-    ): Result<List<Pair<Episode, EpisodeWatchEntry>>>
+    ): List<Pair<Episode, EpisodeWatchEntry>>
 
     suspend fun getEpisodeWatches(
         episodeId: Long,
         since: OffsetDateTime? = null
-    ): Result<List<EpisodeWatchEntry>>
+    ): List<EpisodeWatchEntry>
 
     suspend fun getSeasonWatches(
         seasonId: Long,
         since: OffsetDateTime? = null
-    ): Result<List<Pair<Episode, EpisodeWatchEntry>>>
+    ): List<Pair<Episode, EpisodeWatchEntry>>
 
-    suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit>
-    suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit>
+    suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>)
+    suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>)
 }

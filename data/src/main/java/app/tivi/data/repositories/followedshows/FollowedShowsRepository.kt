@@ -20,7 +20,6 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
-import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.syncers.ItemSyncerResult
 import app.tivi.trakt.TraktAuthState
@@ -111,7 +110,7 @@ class FollowedShowsRepository @Inject constructor(
     ): ItemSyncerResult<FollowedShowEntry> {
         val response = dataSource.getListShows(listId)
         logger.d("pullDownTraktFollowedList. Response: %s", response)
-        return response.getOrThrow().map { (entry, show) ->
+        return response.map { (entry, show) ->
             // Grab the show id if it exists, or save the show and use it's generated ID
             val showId = showDao.getIdOrSavePlaceholder(show)
             // Create a followed show entry with the show id
@@ -137,10 +136,8 @@ class FollowedShowsRepository @Inject constructor(
             val response = dataSource.addShowIdsToList(listId, shows)
             logger.v("processPendingAdditions. Trakt response: %s", response)
 
-            if (response is Success) {
-                // Now update the database
-                followedShowsStore.updateEntriesWithAction(pending.map { it.id }, PendingAction.NOTHING)
-            }
+            // Now update the database
+            followedShowsStore.updateEntriesWithAction(pending.map { it.id }, PendingAction.NOTHING)
         } else {
             // We're not logged in, so just update the database
             followedShowsStore.updateEntriesWithAction(pending.map { it.id }, PendingAction.NOTHING)
@@ -162,10 +159,8 @@ class FollowedShowsRepository @Inject constructor(
             val response = dataSource.removeShowIdsFromList(listId, shows)
             logger.v("processPendingDelete. Trakt response: %s", response)
 
-            if (response is Success) {
-                // Now update the database
-                followedShowsStore.deleteEntriesInIds(pending.map { it.id })
-            }
+            // Now update the database
+            followedShowsStore.deleteEntriesInIds(pending.map { it.id })
         } else {
             // We're not logged in, so just update the database
             followedShowsStore.deleteEntriesInIds(pending.map { it.id })
@@ -174,9 +169,10 @@ class FollowedShowsRepository @Inject constructor(
 
     private suspend fun getFollowedTraktListId(): Int? {
         if (followedShowsStore.traktListId == null) {
-            val result = dataSource.getFollowedListId()
-            if (result is Success) {
-                followedShowsStore.traktListId = result.get().ids?.trakt
+            followedShowsStore.traktListId = try {
+                dataSource.getFollowedListId().ids?.trakt
+            } catch (e: Exception) {
+                null
             }
         }
         return followedShowsStore.traktListId

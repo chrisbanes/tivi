@@ -16,7 +16,6 @@
 
 package app.tivi.data.repositories.traktusers
 
-import app.tivi.data.entities.Success
 import org.threeten.bp.Instant
 import org.threeten.bp.Period
 import javax.inject.Inject
@@ -31,21 +30,17 @@ class TraktUsersRepository @Inject constructor(
     fun observeUser(username: String) = traktUsersStore.observeUser(username)
 
     suspend fun updateUser(username: String) {
-        val response = traktDataSource.getUser(username)
-        if (response is Success) {
-            var user = response.data
+        var user = traktDataSource.getUser(username).let {
             // Tag the user as 'me' if that's what we're requesting
-            if (username == "me") {
-                user = user.copy(isMe = true)
-            }
-            // Make sure we use the current DB id (if present)
-            val localUser = traktUsersStore.getUser(user.username)
-            if (localUser != null) {
-                user = user.copy(id = localUser.id)
-            }
-            val id = traktUsersStore.save(user)
-            lastRequestStore.updateLastRequest(id, Instant.now())
+            if (username == "me") it.copy(isMe = true) else it
         }
+        // Make sure we use the current DB id (if present)
+        val localUser = traktUsersStore.getUser(user.username)
+        if (localUser != null) {
+            user = user.copy(id = localUser.id)
+        }
+        val id = traktUsersStore.save(user)
+        lastRequestStore.updateLastRequest(id, Instant.now())
     }
 
     suspend fun needUpdate(username: String): Boolean {

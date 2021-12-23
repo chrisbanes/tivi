@@ -17,16 +17,16 @@
 package app.tivi.data.repositories.popularshows
 
 import app.tivi.data.entities.PopularShowEntry
-import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.awaitResult
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.withRetry
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
+import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -43,8 +43,9 @@ class TraktPopularShowsDataSource @Inject constructor(
     suspend operator fun invoke(
         page: Int,
         pageSize: Int
-    ): Result<List<Pair<TiviShow, PopularShowEntry>>> = withRetry {
+    ): List<Pair<TiviShow, PopularShowEntry>> = withRetry {
         showService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
-            .awaitResult(resultsMapper)
+            .awaitResponse()
+            .let { resultsMapper.invoke(it.bodyOrThrow()) }
     }
 }
