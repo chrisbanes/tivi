@@ -31,7 +31,6 @@ android {
 
     defaultConfig {
         minSdkVersion buildConfig.minSdk
-        manifestPlaceholders += ['appAuthRedirectScheme': 'empty']
     }
 
     compileOptions {
