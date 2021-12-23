@@ -232,6 +232,7 @@ internal fun EpisodeDetails(
 
                         Spacer(Modifier.height(8.dp))
                         Spacer(Modifier.navigationBarsHeight())
+                        Spacer(Modifier.navigationBarsHeight())
                     }
                 }
             }
