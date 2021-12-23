@@ -46,7 +46,6 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
@@ -57,6 +56,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.rememberDismissState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -98,9 +98,9 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
 import coil.compose.rememberImagePainter
-import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.insets.ui.Scaffold
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
@@ -135,16 +135,25 @@ internal fun EpisodeDetails(
 @Composable
 internal fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
-    actioner: (EpisodeDetailsAction) -> Unit
+    actioner: (EpisodeDetailsAction) -> Unit,
 ) {
-    Box {
-        Column {
+    val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(viewState.error) {
+        viewState.error?.let { error ->
+            scaffoldState.snackbarHostState.showSnackbar(error.message)
+        }
+    }
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = {
             Surface {
                 if (viewState.episode != null && viewState.season != null) {
                     Backdrop(
                         season = viewState.season,
                         episode = viewState.episode,
-                        modifier = Modifier.aspectRatio(16 / 10f)
+                        modifier = Modifier.aspectRatio(16 / 9f)
                     )
                 }
                 EpisodeDetailsAppBar(
@@ -157,106 +166,101 @@ internal fun EpisodeDetails(
                         .statusBarsPadding()
                 )
             }
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                Surface(elevation = 2.dp) {
-                    Column {
-                        val episode = viewState.episode
-                        if (episode != null) {
-                            InfoPanes(episode)
+        },
+        snackbarHost = { snackbarHostState ->
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = {
+                    SwipeDismissSnackbar(
+                        data = it,
+                        onDismiss = { actioner(EpisodeDetailsAction.ClearError) }
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+            )
+        }
+    ) { contentPadding ->
+        Surface(
+            elevation = 2.dp,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            Column(
+                Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(contentPadding)
+            ) {
+                val episode = viewState.episode
+                if (episode != null) {
+                    InfoPanes(episode)
 
-                            ExpandingText(
-                                text = episode.summary ?: "No summary",
-                                modifier = Modifier.padding(16.dp)
-                            )
-                        }
+                    ExpandingText(
+                        text = episode.summary ?: "No summary",
+                        modifier = Modifier.padding(16.dp),
+                    )
+                }
 
-                        val watches = viewState.watches
+                if (viewState.canAddEpisodeWatch) {
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                        if (viewState.canAddEpisodeWatch) {
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            if (watches.isEmpty()) {
-                                MarkWatchedButton(
-                                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                                    actioner = actioner
-                                )
-                            } else {
-                                AddWatchButton(
-                                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                                    actioner = actioner
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        if (watches.isNotEmpty()) {
-                            var openDialog by remember { mutableStateOf(false) }
-
-                            EpisodeWatchesHeader(
-                                onSweepWatchesClick = { openDialog = true }
-                            )
-
-                            if (openDialog) {
-                                RemoveAllWatchesDialog(
-                                    actioner = actioner,
-                                    onDialogClosed = { openDialog = false }
-                                )
-                            }
-                        }
-
-                        watches.forEach { watch ->
-                            key(watch.id) {
-                                val dismissState = rememberDismissState {
-                                    if (it != DismissValue.Default) {
-                                        actioner(EpisodeDetailsAction.RemoveEpisodeWatchAction(watch.id))
-                                    }
-                                    it != DismissValue.DismissedToEnd
-                                }
-
-                                SwipeToDismiss(
-                                    state = dismissState,
-                                    modifier = Modifier.padding(vertical = 4.dp),
-                                    directions = setOf(DismissDirection.EndToStart),
-                                    background = {
-                                        val fraction = dismissState.progress.fraction
-                                        EpisodeWatchSwipeBackground(
-                                            swipeProgress = fraction,
-                                            wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f
-                                        )
-                                    },
-                                    dismissContent = { EpisodeWatch(episodeWatchEntry = watch) }
-                                )
-                            }
-                        }
-
-                        Spacer(Modifier.height(8.dp))
-                        Spacer(Modifier.navigationBarsHeight())
+                    if (viewState.watches.isEmpty()) {
+                        MarkWatchedButton(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            actioner = actioner
+                        )
+                    } else {
+                        AddWatchButton(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            actioner = actioner
+                        )
                     }
                 }
-            }
-        }
 
-        val snackbarHostState = remember { SnackbarHostState() }
+                Spacer(modifier = Modifier.height(16.dp))
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            snackbar = {
-                SwipeDismissSnackbar(
-                    data = it,
-                    onDismiss = { actioner(EpisodeDetailsAction.ClearError) }
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-        )
+                if (viewState.watches.isNotEmpty()) {
+                    var openDialog by remember { mutableStateOf(false) }
 
-        LaunchedEffect(viewState.error) {
-            viewState.error?.let { error ->
-                snackbarHostState.showSnackbar(error.message)
+                    EpisodeWatchesHeader(
+                        onSweepWatchesClick = { openDialog = true }
+                    )
+
+                    if (openDialog) {
+                        RemoveAllWatchesDialog(
+                            actioner = actioner,
+                            onDialogClosed = { openDialog = false }
+                        )
+                    }
+                }
+
+                viewState.watches.forEach { watch ->
+                    key(watch.id) {
+                        val dismissState = rememberDismissState {
+                            if (it != DismissValue.Default) {
+                                actioner(EpisodeDetailsAction.RemoveEpisodeWatchAction(watch.id))
+                            }
+                            it != DismissValue.DismissedToEnd
+                        }
+
+                        SwipeToDismiss(
+                            state = dismissState,
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            directions = setOf(DismissDirection.EndToStart),
+                            background = {
+                                val fraction = dismissState.progress.fraction
+                                EpisodeWatchSwipeBackground(
+                                    swipeProgress = fraction,
+                                    wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f
+                                )
+                            },
+                            dismissContent = { EpisodeWatch(episodeWatchEntry = watch) }
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(8.dp))
             }
         }
     }
@@ -266,7 +270,7 @@ internal fun EpisodeDetails(
 private fun Backdrop(
     season: Season,
     episode: Episode,
-    modifier: Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier) {
         Box(Modifier.fillMaxSize()) {
@@ -461,7 +465,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 @Composable
 private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
-    wouldCompleteOnRelease: Boolean = false
+    wouldCompleteOnRelease: Boolean = false,
 ) {
     var iconCenter by remember { mutableStateOf(Offset(0f, 0f)) }
     val maxRadius = hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
@@ -510,7 +514,7 @@ private fun EpisodeWatchSwipeBackground(
 private fun Modifier.drawGrowingCircle(
     color: Color,
     center: Offset,
-    radius: Float
+    radius: Float,
 ) = drawWithContent {
     drawContent()
 
@@ -526,7 +530,7 @@ private fun Modifier.drawGrowingCircle(
 @Composable
 private fun MarkWatchedButton(
     modifier: Modifier = Modifier,
-    actioner: (EpisodeDetailsAction) -> Unit
+    actioner: (EpisodeDetailsAction) -> Unit,
 ) {
     Button(
         modifier = modifier,
@@ -542,7 +546,7 @@ private fun MarkWatchedButton(
 @Composable
 private fun AddWatchButton(
     modifier: Modifier = Modifier,
-    actioner: (EpisodeDetailsAction) -> Unit
+    actioner: (EpisodeDetailsAction) -> Unit,
 ) {
     OutlinedButton(
         modifier = modifier,
@@ -555,7 +559,7 @@ private fun AddWatchButton(
 @Composable
 private fun RemoveAllWatchesDialog(
     actioner: (EpisodeDetailsAction) -> Unit,
-    onDialogClosed: () -> Unit
+    onDialogClosed: () -> Unit,
 ) {
     TiviAlertDialog(
         title = stringResource(R.string.episode_remove_watches_dialog_title),
@@ -576,7 +580,7 @@ private fun EpisodeDetailsAppBar(
     isRefreshing: Boolean,
     actioner: (EpisodeDetailsAction) -> Unit,
     elevation: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         title = {},
