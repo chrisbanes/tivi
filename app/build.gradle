@@ -47,9 +47,6 @@ android {
         versionCode appVersionCode
         versionName "0.6.2"
 
-        // For now we're sticking to just shipping EN
-        resConfigs "en"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_TRAKT_CLIENT_ID", "") + "\""
