@@ -161,10 +161,6 @@ private class CrashlyticsTree(
     }
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        if (t != null) {
-            firebaseCrashlytics.recordException(t)
-        } else {
-            firebaseCrashlytics.log(message)
-        }
+        firebaseCrashlytics.log(message)
     }
 }
