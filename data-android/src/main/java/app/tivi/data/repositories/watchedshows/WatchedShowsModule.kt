@@ -18,7 +18,6 @@ package app.tivi.data.repositories.watchedshows
 
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
-import app.tivi.data.entities.Success
 import app.tivi.data.entities.WatchedShowEntry
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
@@ -45,13 +44,11 @@ internal object WatchedShowsModule {
         showDao: TiviShowDao,
         lastRequestStore: WatchedShowsLastRequestStore
     ): WatchedShowsStore = StoreBuilder.from(
-        fetcher = Fetcher.of { _: Unit ->
+        fetcher = Fetcher.of {
             traktWatchedShows()
                 .also {
-                    if (it is Success) {
-                        lastRequestStore.updateLastRequest()
-                    }
-                }.getOrThrow()
+                    lastRequestStore.updateLastRequest()
+                }
         },
         sourceOfTruth = SourceOfTruth.of(
             reader = {

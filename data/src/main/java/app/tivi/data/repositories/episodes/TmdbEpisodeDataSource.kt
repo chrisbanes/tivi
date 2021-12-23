@@ -17,12 +17,12 @@
 package app.tivi.data.repositories.episodes
 
 import app.tivi.data.entities.Episode
-import app.tivi.data.entities.Result
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbEpisodeToEpisode
-import app.tivi.extensions.awaitResult
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
+import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class TmdbEpisodeDataSource @Inject constructor(
@@ -34,9 +34,10 @@ class TmdbEpisodeDataSource @Inject constructor(
         showId: Long,
         seasonNumber: Int,
         episodeNumber: Int
-    ): Result<Episode> = withRetry {
+    ): Episode = withRetry {
         tmdb.tvEpisodesService()
             .episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber, null)
-            .awaitResult { episodeMapper.map(it) }
+            .awaitResponse()
+            .let { episodeMapper.map(it.bodyOrThrow()) }
     }
 }

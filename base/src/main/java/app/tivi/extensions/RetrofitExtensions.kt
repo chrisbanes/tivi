@@ -18,42 +18,38 @@
 
 package app.tivi.extensions
 
-import app.tivi.data.entities.ErrorResult
-import app.tivi.data.entities.Result
-import app.tivi.data.entities.Success
 import kotlinx.coroutines.delay
-import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Response
-import retrofit2.awaitResponse
 import java.io.IOException
 
-inline fun <T> Response<T>.bodyOrThrow(): T {
-    if (!isSuccessful) throw HttpException(this)
-    return body()!!
-}
+inline fun <T> Response<T>.bodyOrThrow(): T = if (isSuccessful) body()!! else throw HttpException(this)
 
 suspend fun <T> withRetry(
     defaultDelay: Long = 100,
     maxAttempts: Int = 3,
     shouldRetry: (Throwable) -> Boolean = ::defaultShouldRetry,
-    block: suspend () -> Result<T>
-): Result<T> {
+    block: suspend () -> T
+): T {
     repeat(maxAttempts) { attempt ->
-        when (val response = block()) {
-            is Success -> return response
-            is ErrorResult -> {
+        val response = runCatching { block() }
+
+        when {
+            response.isSuccess -> return response.getOrThrow()
+            response.isFailure -> {
+                val exception = response.exceptionOrNull()!!
+
                 // The response failed, so lets see if we should retry again
-                if (attempt == maxAttempts - 1 || !shouldRetry(response.throwable)) {
-                    throw response.throwable
+                if (attempt == maxAttempts - 1 || !shouldRetry(exception)) {
+                    throw exception
                 }
 
                 var nextDelay = attempt * attempt * defaultDelay
 
-                if (response.throwable is HttpException) {
+                if (exception is HttpException) {
                     // If we have a HttpException, check whether we have a Retry-After
                     // header to decide how long to delay
-                    response.throwable.retryAfter?.let {
+                    exception.retryAfter?.let {
                         nextDelay = it.coerceAtLeast(defaultDelay)
                     }
                 }
@@ -89,26 +85,3 @@ private fun defaultShouldRetry(throwable: Throwable) = when (throwable) {
 
 private val Response<*>.isFromNetwork: Boolean
     get() = raw().cacheResponse == null
-
-suspend fun <T> Call<T>.awaitUnit(): Result<Unit> = try {
-    Success(data = Unit, responseModified = awaitResponse().isFromNetwork)
-} catch (t: Throwable) {
-    ErrorResult(t)
-}
-
-suspend fun <T, E> Call<T>.awaitResult(
-    mapper: suspend (T) -> E,
-): Result<E> = try {
-    awaitResponse().let {
-        if (it.isSuccessful) {
-            Success(
-                data = mapper(it.bodyOrThrow()),
-                responseModified = it.isFromNetwork
-            )
-        } else {
-            ErrorResult(HttpException(it))
-        }
-    }
-} catch (t: Throwable) {
-    ErrorResult(t)
-}

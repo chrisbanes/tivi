@@ -18,7 +18,6 @@ package app.tivi.data.repositories.search
 
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.Success
 import app.tivi.data.resultentities.ShowDetailed
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,7 +27,7 @@ class SearchRepository @Inject constructor(
     private val searchStore: SearchStore,
     private val showTmdbImagesDao: ShowTmdbImagesDao,
     private val showDao: TiviShowDao,
-    private val tmdbDataSource: TmdbSearchDataSource
+    private val tmdbDataSource: TmdbSearchDataSource,
 ) {
     suspend fun search(query: String): List<ShowDetailed> {
         if (query.isBlank()) {
@@ -41,23 +40,23 @@ class SearchRepository @Inject constructor(
         }
 
         // We need to hit TMDb instead
-        return when (val tmdbResult = tmdbDataSource.search(query)) {
-            is Success -> {
-                tmdbResult.data.map { (show, images) ->
-                    val showId = showDao.getIdOrSavePlaceholder(show)
-                    if (images.isNotEmpty()) {
-                        showTmdbImagesDao.saveImagesIfEmpty(showId, images.map { it.copy(showId = showId) })
-                    }
-                    showId
-                }.also { results ->
-                    // We need to save the search results
-                    searchStore.setResults(query, results.toLongArray())
-                }.mapNotNull {
-                    // Finally map back to a TiviShow instance
-                    showDao.getShowWithIdDetailed(it)
+        return try {
+            val tmdbResult = tmdbDataSource.search(query)
+            tmdbResult.map { (show, images) ->
+                val showId = showDao.getIdOrSavePlaceholder(show)
+                if (images.isNotEmpty()) {
+                    showTmdbImagesDao.saveImagesIfEmpty(showId, images.map { it.copy(showId = showId) })
                 }
+                showId
+            }.also { results ->
+                // We need to save the search results
+                searchStore.setResults(query, results.toLongArray())
+            }.mapNotNull {
+                // Finally map back to a TiviShow instance
+                showDao.getShowWithIdDetailed(it)
             }
-            else -> emptyList()
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 }

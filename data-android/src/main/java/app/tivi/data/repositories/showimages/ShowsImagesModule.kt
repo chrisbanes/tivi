@@ -19,7 +19,6 @@ package app.tivi.data.repositories.showimages
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ShowTmdbImage
-import app.tivi.data.entities.Success
 import app.tivi.inject.Tmdb
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
@@ -58,15 +57,10 @@ object ShowImagesStoreModule {
         fetcher = Fetcher.of { showId: Long ->
             val show = showDao.getShowWithId(showId)
                 ?: throw IllegalArgumentException("Show with ID $showId does not exist")
-            val result = tmdbShowImagesDataSource.getShowImages(show)
 
-            if (result is Success) {
-                lastRequestStore.updateLastRequest(showId)
-            }
-
-            result.getOrThrow().map {
-                it.copy(showId = showId)
-            }
+            tmdbShowImagesDataSource.getShowImages(show)
+                .also { lastRequestStore.updateLastRequest(showId) }
+                .map { it.copy(showId = showId) }
         },
         sourceOfTruth = SourceOfTruth.of(
             reader = { showId ->

@@ -16,13 +16,13 @@
 
 package app.tivi.data.repositories.search
 
-import app.tivi.data.entities.Result
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbShowResultsPageToTiviShows
-import app.tivi.extensions.awaitResult
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
+import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class TmdbSearchDataSource @Inject constructor(
@@ -31,9 +31,10 @@ class TmdbSearchDataSource @Inject constructor(
 ) : SearchDataSource {
     override suspend fun search(
         query: String,
-    ): Result<List<Pair<TiviShow, List<ShowTmdbImage>>>> = withRetry {
+    ): List<Pair<TiviShow, List<ShowTmdbImage>>> = withRetry {
         tmdb.searchService()
             .tv(query, 1, null, null, false)
-            .awaitResult { mapper.map(it) }
+            .awaitResponse()
+            .let { mapper.map(it.bodyOrThrow()) }
     }
 }
