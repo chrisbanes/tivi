@@ -17,12 +17,13 @@
 package app.tivi.domain.observers
 
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.filterForResult
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
 import com.dropbox.android.external.store4.StoreRequest
+import com.dropbox.android.external.store4.StoreResponse
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -34,7 +35,7 @@ class ObserveShowDetails @Inject constructor(
 
     override fun createObservable(params: Params): Flow<TiviShow> {
         return showStore.stream(StoreRequest.cached(params.showId, refresh = false))
-            .filterForResult()
+            .filter { it is StoreResponse.Data }
             .map { it.requireData() }
             .flowOn(dispatchers.computation)
     }

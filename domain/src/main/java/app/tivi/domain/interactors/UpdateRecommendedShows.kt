@@ -43,7 +43,11 @@ class UpdateRecommendedShows @Inject constructor(
 
         withContext(dispatchers.io) {
             recommendedShowsStore.fetch(0, forceFresh = params.forceRefresh).forEach {
-                showStore.fetch(it.showId)
+                try {
+                    showStore.fetch(it.showId)
+                } catch (t: Throwable) {
+                    logger.e(t, "Error while show info: ${it.showId}")
+                }
                 try {
                     showImagesStore.fetch(it.showId)
                 } catch (t: Throwable) {
