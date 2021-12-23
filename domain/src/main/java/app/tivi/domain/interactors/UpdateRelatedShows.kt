@@ -36,7 +36,11 @@ class UpdateRelatedShows @Inject constructor(
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
         relatedShowsStore.fetch(params.showId, params.forceLoad).forEach {
-            showsStore.fetch(it.otherShowId)
+            try {
+                showsStore.fetch(it.otherShowId)
+            } catch (t: Throwable) {
+                logger.e(t, "Error while show info: ${it.otherShowId}")
+            }
             try {
                 showImagesStore.fetch(it.otherShowId)
             } catch (t: Throwable) {

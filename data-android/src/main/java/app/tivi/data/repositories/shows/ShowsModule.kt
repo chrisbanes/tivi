@@ -40,11 +40,26 @@ object ShowStoreModule {
     fun provideShowStore(
         showDao: TiviShowDao,
         lastRequestStore: ShowLastRequestStore,
-        traktShowDataSource: TraktShowDataSource
+        traktShowDataSource: TraktShowDataSource,
+        tmdbShowDataSource: TmdbShowDataSource,
     ): ShowStore = StoreBuilder.from(
         fetcher = Fetcher.of { id: Long ->
-            traktShowDataSource.getShow(showDao.getShowWithIdOrThrow(id))
-                .also { lastRequestStore.updateLastRequest(id) }
+            val savedShow = showDao.getShowWithIdOrThrow(id)
+
+            val traktResult = runCatching { traktShowDataSource.getShow(savedShow) }
+            if (traktResult.isSuccess) {
+                lastRequestStore.updateLastRequest(id)
+                return@of traktResult.getOrThrow()
+            }
+
+            // If trakt fails, try TMDb
+            val tmdbResult = runCatching { tmdbShowDataSource.getShow(savedShow) }
+            if (tmdbResult.isSuccess) {
+                lastRequestStore.updateLastRequest(id)
+                return@of tmdbResult.getOrThrow()
+            }
+
+            throw traktResult.exceptionOrNull()!!
         },
         sourceOfTruth = SourceOfTruth.of(
             reader = { showId ->
