@@ -16,19 +16,18 @@
 
 package app.tivi.data.repositories.relatedshows
 
-import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.awaitResult
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.withRetry
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
+import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -42,13 +41,14 @@ internal class TraktRelatedShowsDataSource @Inject constructor(
     }
     private val resultMapper = pairMapperOf(showMapper, entryMapper)
 
-    suspend operator fun invoke(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>> {
+    suspend operator fun invoke(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
         val traktId = traktIdMapper.map(showId)
-            ?: return ErrorResult(IllegalArgumentException("No Trakt ID for show with ID: $showId"))
+            ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
         return withRetry {
             showService.get()
                 .related(traktId.toString(), 0, 10, Extended.NOSEASONS)
-                .awaitResult(resultMapper)
+                .awaitResponse()
+                .let { resultMapper.invoke(it.bodyOrThrow()) }
         }
     }
 }

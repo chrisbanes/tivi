@@ -16,10 +16,9 @@
 
 package app.tivi.data.repositories.showimages
 
-import app.tivi.data.entities.Result
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 
 interface ShowImagesDataSource {
-    suspend fun getShowImages(show: TiviShow): Result<List<ShowTmdbImage>>
+    suspend fun getShowImages(show: TiviShow): List<ShowTmdbImage>
 }

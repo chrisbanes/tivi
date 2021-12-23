@@ -20,8 +20,6 @@ import app.tivi.data.DatabaseModuleBinds
 import app.tivi.data.DatabaseTest
 import app.tivi.data.TiviDatabase
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.ErrorResult
-import app.tivi.data.entities.Success
 import app.tivi.data.repositories.episodes.EpisodeDataSourceBinds
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
@@ -68,12 +66,10 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync() = testScope.runBlockingTest {
-        coEvery { traktDataSource.getFollowedListId() } returns Success(
-            TraktList().apply {
-                ids = ListIds().apply { trakt = 0 }
-            }
-        )
-        coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow1Network to show))
+        coEvery { traktDataSource.getFollowedListId() } returns TraktList().apply {
+            ids = ListIds().apply { trakt = 0 }
+        }
+        coEvery { traktDataSource.getListShows(0) } returns listOf(followedShow1Network to show)
 
         repository.syncFollowedShows()
 
@@ -85,12 +81,11 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     fun testSync_emptyResponse() = testScope.runBlockingTest {
         insertFollowedShow(database)
 
-        coEvery { traktDataSource.getFollowedListId() } returns Success(
-            TraktList().apply {
-                ids = ListIds().apply { trakt = 0 }
-            }
-        )
-        coEvery { traktDataSource.getListShows(0) } returns Success(emptyList())
+        coEvery { traktDataSource.getFollowedListId() } returns TraktList().apply {
+            ids = ListIds().apply { trakt = 0 }
+        }
+
+        coEvery { traktDataSource.getListShows(0) } returns emptyList()
 
         repository.syncFollowedShows()
 
@@ -101,12 +96,10 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     fun testSync_responseDifferentShow() = testScope.runBlockingTest {
         insertFollowedShow(database)
 
-        coEvery { traktDataSource.getFollowedListId() } returns Success(
-            TraktList().apply {
-                ids = ListIds().apply { trakt = 0 }
-            }
-        )
-        coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow2Network to show2))
+        coEvery { traktDataSource.getFollowedListId() } returns TraktList().apply {
+            ids = ListIds().apply { trakt = 0 }
+        }
+        coEvery { traktDataSource.getListShows(0) } returns listOf(followedShow2Network to show2)
 
         repository.syncFollowedShows()
 
@@ -119,12 +112,11 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followShowsDao.insert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
+        coEvery { traktDataSource.getFollowedListId() } throws IllegalArgumentException()
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows())
-            .isEmpty()
+        assertThat(repository.getFollowedShows()).isEmpty()
     }
 
     @Test
@@ -132,7 +124,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followShowsDao.insert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
+        coEvery { traktDataSource.getFollowedListId() } throws IllegalArgumentException()
 
         repository.syncFollowedShows()
 

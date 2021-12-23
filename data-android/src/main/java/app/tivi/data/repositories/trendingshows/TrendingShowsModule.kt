@@ -18,7 +18,6 @@ package app.tivi.data.repositories.trendingshows
 
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.TrendingDao
-import app.tivi.data.entities.Success
 import app.tivi.data.entities.TrendingShowEntry
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
@@ -48,10 +47,10 @@ object TrendingShowsModule {
         fetcher = Fetcher.of { page: Int ->
             traktTrendingShows(page, 20)
                 .also {
-                    if (page == 0 && it is Success) {
+                    if (page == 0) {
                         lastRequestStore.updateLastRequest()
                     }
-                }.getOrThrow()
+                }
         },
         sourceOfTruth = SourceOfTruth.of(
             reader = { page ->

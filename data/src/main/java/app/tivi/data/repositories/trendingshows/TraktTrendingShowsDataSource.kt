@@ -16,16 +16,16 @@
 
 package app.tivi.data.repositories.trendingshows
 
-import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.data.mappers.TraktTrendingShowToTiviShow
 import app.tivi.data.mappers.TraktTrendingShowToTrendingShowEntry
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.awaitResult
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
+import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -39,10 +39,11 @@ class TraktTrendingShowsDataSource @Inject constructor(
     suspend operator fun invoke(
         page: Int,
         pageSize: Int
-    ): Result<List<Pair<TiviShow, TrendingShowEntry>>> = withRetry {
+    ): List<Pair<TiviShow, TrendingShowEntry>> = withRetry {
         showService.get()
             // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
             .trending(page + 1, pageSize, Extended.NOSEASONS)
-            .awaitResult(responseMapper)
+            .awaitResponse()
+            .let { responseMapper.invoke(it.bodyOrThrow()) }
     }
 }

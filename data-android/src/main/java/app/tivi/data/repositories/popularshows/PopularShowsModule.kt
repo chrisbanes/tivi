@@ -19,7 +19,6 @@ package app.tivi.data.repositories.popularshows
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.PopularShowEntry
-import app.tivi.data.entities.Success
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
@@ -48,10 +47,8 @@ internal object PopularShowsModule {
         fetcher = Fetcher.of { page: Int ->
             traktPopularShows(page, 20)
                 .also {
-                    if (page == 0 && it is Success) {
-                        lastRequestStore.updateLastRequest()
-                    }
-                }.getOrThrow()
+                    if (page == 0) lastRequestStore.updateLastRequest()
+                }
         },
         sourceOfTruth = SourceOfTruth.of(
             reader = { page ->

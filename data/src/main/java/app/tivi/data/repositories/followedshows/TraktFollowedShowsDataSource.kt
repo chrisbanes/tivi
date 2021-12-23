@@ -17,14 +17,11 @@
 package app.tivi.data.repositories.followedshows
 
 import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.Result
-import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktListEntryToFollowedShowEntry
 import app.tivi.data.mappers.TraktListEntryToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.awaitResult
-import app.tivi.extensions.awaitUnit
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.withRetry
 import com.uwetrottmann.trakt5.entities.ShowIds
 import com.uwetrottmann.trakt5.entities.SyncItems
@@ -34,6 +31,7 @@ import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.ListPrivacy
 import com.uwetrottmann.trakt5.services.Users
+import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -48,7 +46,7 @@ class TraktFollowedShowsDataSource @Inject constructor(
 
     private val listShowsMapper = pairMapperOf(listEntryToFollowedEntry, listEntryToShowMapper)
 
-    override suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>): Result<Unit> {
+    override suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>) {
         val syncItems = SyncItems()
         syncItems.shows = shows.map { show ->
             SyncShow().apply {
@@ -59,14 +57,15 @@ class TraktFollowedShowsDataSource @Inject constructor(
                 }
             }
         }
-        return withRetry {
+        withRetry {
             usersService.get()
                 .addListItems(UserSlug.ME, listId.toString(), syncItems)
-                .awaitUnit()
+                .awaitResponse()
+                .bodyOrThrow()
         }
     }
 
-    override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>): Result<Unit> {
+    override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>) {
         val syncItems = SyncItems()
         syncItems.shows = shows.map { show ->
             SyncShow().apply {
@@ -77,39 +76,45 @@ class TraktFollowedShowsDataSource @Inject constructor(
                 }
             }
         }
-        return withRetry {
+        withRetry {
             usersService.get()
                 .deleteListItems(UserSlug.ME, listId.toString(), syncItems)
-                .awaitUnit()
+                .awaitResponse()
+                .bodyOrThrow()
         }
     }
 
-    override suspend fun getListShows(listId: Int): Result<List<Pair<FollowedShowEntry, TiviShow>>> {
+    override suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>> {
         return withRetry {
             usersService.get()
                 .listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
-                .awaitResult(listShowsMapper)
+                .awaitResponse()
+                .let { listShowsMapper.invoke(it.bodyOrThrow()) }
         }
     }
 
-    override suspend fun getFollowedListId(): Result<TraktList> {
-        val fetchResult: Result<TraktList> = withRetry {
+    override suspend fun getFollowedListId(): TraktList {
+        val fetchResult = withRetry {
             usersService.get()
                 .lists(UserSlug.ME)
-                .awaitResult { list ->
-                    list.first { it.name == LIST_NAME }
+                .awaitResponse()
+                .let { response ->
+                    response.bodyOrThrow().firstOrNull { it.name == LIST_NAME }
                 }
         }
 
-        if (fetchResult is Success) {
+        if (fetchResult != null) {
             return fetchResult
         }
 
         return withRetry {
-            usersService.get().createList(
-                UserSlug.ME,
-                TraktList().name(LIST_NAME)!!.privacy(ListPrivacy.PRIVATE)
-            ).awaitResult { it }
+            usersService.get()
+                .createList(
+                    UserSlug.ME,
+                    TraktList().name(LIST_NAME)!!.privacy(ListPrivacy.PRIVATE)
+                )
+                .awaitResponse()
+                .bodyOrThrow()
         }
     }
 }

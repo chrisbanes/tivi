@@ -19,7 +19,6 @@ package app.tivi.data.repositories.recommendedshows
 import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RecommendedShowEntry
-import app.tivi.data.entities.Success
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
@@ -48,10 +47,10 @@ internal object RecommendedShowsModule {
         fetcher = Fetcher.of { page: Int ->
             traktRecommendedShows(page, 20)
                 .also {
-                    if (page == 0 && it is Success) {
+                    if (page == 0) {
                         lastRequestStore.updateLastRequest()
                     }
-                }.getOrThrow()
+                }
         },
         sourceOfTruth = SourceOfTruth.of(
             reader = { page ->
