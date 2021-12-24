@@ -42,6 +42,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.Weekend
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
@@ -315,12 +319,12 @@ private sealed class HomeNavigationItem(
 }
 
 private val HomeNavigationItems = listOf(
-    HomeNavigationItem.ResourceIcon(
+    HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Discover,
         labelResId = R.string.discover_title,
         contentDescriptionResId = R.string.cd_discover_title,
-        iconResId = R.drawable.ic_weekend_outline,
-        selectedIconResId = R.drawable.ic_weekend_filled,
+        iconImageVector = Icons.Outlined.Weekend,
+        selectedImageVector = Icons.Default.Weekend,
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Following,
@@ -329,12 +333,12 @@ private val HomeNavigationItems = listOf(
         iconImageVector = Icons.Default.FavoriteBorder,
         selectedImageVector = Icons.Default.Favorite,
     ),
-    HomeNavigationItem.ResourceIcon(
+    HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Watched,
         labelResId = R.string.watched_shows_title,
         contentDescriptionResId = R.string.cd_watched_shows_title,
-        iconResId = R.drawable.ic_visibility_outline,
-        selectedIconResId = R.drawable.ic_visibility,
+        iconImageVector = Icons.Outlined.Visibility,
+        selectedImageVector = Icons.Default.Visibility,
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Search,

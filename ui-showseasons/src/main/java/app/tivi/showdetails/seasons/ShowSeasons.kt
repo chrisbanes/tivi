@@ -44,6 +44,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -58,7 +61,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -312,7 +314,7 @@ private fun EpisodeWithWatchesRow(
             var needSpacer = false
             if (hasPending) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_cloud_upload),
+                    imageVector = Icons.Default.CloudUpload,
                     contentDescription = stringResource(R.string.cd_episode_syncing),
                     modifier = Modifier.align(Alignment.CenterVertically),
                 )
@@ -322,12 +324,10 @@ private fun EpisodeWithWatchesRow(
                 if (needSpacer) Spacer(Modifier.width(4.dp))
 
                 Icon(
-                    painter = painterResource(
-                        when {
-                            onlyPendingDeletes -> R.drawable.ic_visibility_off
-                            else -> R.drawable.ic_visibility
-                        }
-                    ),
+                    imageVector = when {
+                        onlyPendingDeletes -> Icons.Default.VisibilityOff
+                        else -> Icons.Default.Visibility
+                    },
                     contentDescription = when {
                         onlyPendingDeletes -> stringResource(R.string.cd_episode_deleted)
                         else -> stringResource(R.string.cd_episode_watched)

@@ -21,10 +21,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.R
@@ -54,15 +56,12 @@ fun UserProfileButton(
                         .clip(CircleShape),
                 )
             }
-            loggedIn -> {
-                Icon(
-                    painter = painterResource(R.drawable.ic_person),
-                    contentDescription = stringResource(R.string.cd_user_profile)
-                )
-            }
             else -> {
                 Icon(
-                    painter = painterResource(R.drawable.ic_person_outline),
+                    imageVector = when {
+                        loggedIn -> Icons.Default.Person
+                        else -> Icons.Outlined.Person
+                    },
                     contentDescription = stringResource(R.string.cd_user_profile)
                 )
             }

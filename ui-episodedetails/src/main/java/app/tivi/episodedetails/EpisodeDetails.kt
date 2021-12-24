@@ -52,10 +52,14 @@ import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -73,12 +77,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -325,7 +326,7 @@ private fun InfoPanes(episode: Episode) {
     Row {
         episode.traktRating?.let { rating ->
             InfoPane(
-                icon = Icons.Default.Star,
+                imageVector = Icons.Default.Star,
                 label = stringResource(R.string.trakt_rating_text, rating * 10f),
                 contentDescription = stringResource(R.string.cd_trakt_rating, rating * 10f),
                 modifier = Modifier.weight(1f)
@@ -336,7 +337,7 @@ private fun InfoPanes(episode: Episode) {
             val formatter = LocalTiviDateFormatter.current
             val formattedDate = formatter.formatShortRelativeTime(firstAired)
             InfoPane(
-                painter = painterResource(R.drawable.ic_calendar_today),
+                imageVector = Icons.Default.CalendarToday,
                 label = formattedDate,
                 contentDescription = stringResource(
                     R.string.cd_episode_first_aired,
@@ -350,30 +351,15 @@ private fun InfoPanes(episode: Episode) {
 
 @Composable
 private fun InfoPane(
-    icon: ImageVector,
+    imageVector: ImageVector,
     contentDescription: String?,
     label: String,
     modifier: Modifier = Modifier,
 ) {
-    InfoPane(
-        painter = rememberVectorPainter(image = icon),
-        contentDescription = contentDescription,
-        label = label,
-        modifier = modifier
-    )
-}
-
-@Composable
-private fun InfoPane(
-    painter: Painter,
-    contentDescription: String?,
-    label: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.padding(all = 16.dp)) {
+    Column(modifier = modifier.padding(16.dp)) {
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Icon(
-                painter = painter,
+                imageVector = imageVector,
                 contentDescription = contentDescription,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
@@ -408,7 +394,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
                 onClick = { onSweepWatchesClick() }
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_delete_sweep),
+                    imageVector = Icons.Default.DeleteSweep,
                     contentDescription = stringResource(R.string.cd_delete),
                 )
             }
@@ -436,7 +422,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_publish),
+                        imageVector = Icons.Default.Publish,
                         contentDescription = stringResource(R.string.cd_episode_syncing),
                         modifier = Modifier
                             .padding(start = 8.dp)
@@ -446,7 +432,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 
                 if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_visibility_off),
+                        imageVector = Icons.Default.VisibilityOff,
                         contentDescription = stringResource(R.string.cd_episode_deleted),
                         modifier = Modifier
                             .padding(start = 8.dp)
