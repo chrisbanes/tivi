@@ -36,7 +36,17 @@ class SearchShows @Inject constructor(
                 remoteResults
             } else {
                 when {
-                    params.query.isNotBlank() -> showFtsDao.search("*$params.query*")
+                    params.query.isNotBlank() -> {
+                        try {
+                            showFtsDao.search("*$params.query*")
+                        } catch (e: Exception) {
+                            // Re-throw wrapped exception with the query
+                            throw IllegalArgumentException(
+                                "Error while searching database with query: ${params.query}",
+                                e,
+                            )
+                        }
+                    }
                     else -> emptyList()
                 }
             }
