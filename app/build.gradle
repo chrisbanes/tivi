@@ -139,6 +139,7 @@ android {
             dimension "mode"
             // This is a build with Chucker enabled
             proguardFiles += 'proguard-rules-chucker.pro'
+            versionNameSuffix "-qa"
         }
 
         standard {
