@@ -19,7 +19,7 @@ package app.tivi.episodedetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.api.UiError
+import app.tivi.api.UiMessage
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
@@ -77,7 +77,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             canAddEpisodeWatch = episodeDetails.episode?.firstAired?.isBefore(OffsetDateTime.now())
                 ?: true,
             refreshing = refreshing,
-            error = error,
+            message = error,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -137,7 +137,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             InvokeSuccess -> loadingState.removeLoader()
             is InvokeError -> {
                 logger.i(status.throwable)
-                snackbarManager.addError(UiError(status.throwable))
+                snackbarManager.addError(UiMessage(status.throwable))
                 loadingState.removeLoader()
             }
         }

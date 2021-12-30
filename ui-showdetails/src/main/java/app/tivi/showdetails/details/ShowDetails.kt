@@ -58,7 +58,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -110,7 +109,7 @@ import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.ExpandableFloatingActionButton
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
-import app.tivi.common.compose.ui.SwipeDismissSnackbar
+import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.copy
 import app.tivi.common.compose.ui.drawForegroundGradientScrim
 import app.tivi.common.compose.ui.iconButtonBackgroundScrim
@@ -256,14 +255,9 @@ internal fun ShowDetails(
             )
         },
         snackbarHost = { snackBarHostState ->
-            SnackbarHost(
+            SwipeDismissSnackbarHost(
                 hostState = snackBarHostState,
-                snackbar = { snackBarData ->
-                    SwipeDismissSnackbar(
-                        data = snackBarData,
-                        onDismiss = { actioner(ShowDetailsAction.ClearError) }
-                    )
-                },
+                onDismiss = { actioner(ShowDetailsAction.ClearError) },
                 modifier = Modifier
                     .padding(horizontal = Layout.bodyMargin)
                     .fillMaxWidth()

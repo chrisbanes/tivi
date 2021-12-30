@@ -16,7 +16,7 @@
 
 package app.tivi.ui
 
-import app.tivi.api.UiError
+import app.tivi.api.UiMessage
 import app.tivi.extensions.delayFlow
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
@@ -31,16 +31,16 @@ import javax.inject.Inject
 
 class SnackbarManager @Inject constructor() {
     // We want a maximum of 3 errors queued
-    private val pendingErrors = Channel<UiError>(3, BufferOverflow.DROP_OLDEST)
+    private val pendingErrors = Channel<UiMessage>(3, BufferOverflow.DROP_OLDEST)
     private val removeErrorSignal = Channel<Unit>(Channel.RENDEZVOUS)
 
     /**
-     * A flow of [UiError]s to display in the UI, usually as snackbars. The flow will immediately
+     * A flow of [UiMessage]s to display in the UI, usually as snackbars. The flow will immediately
      * emit `null`, and will then emit errors sent via [addError]. Once 6 seconds has elapsed,
      * or [removeCurrentError] is called (if before that) `null` will be emitted to remove
      * the current error.
      */
-    val errors: Flow<UiError?> = flow {
+    val errors: Flow<UiMessage?> = flow {
         emit(null)
 
         pendingErrors.receiveAsFlow().collect {
@@ -58,10 +58,10 @@ class SnackbarManager @Inject constructor() {
     }
 
     /**
-     * Add [error] to the queue of errors to display.
+     * Add [message] to the queue of errors to display.
      */
-    suspend fun addError(error: UiError) {
-        pendingErrors.send(error)
+    suspend fun addError(message: UiMessage) {
+        pendingErrors.send(message)
     }
 
     /**

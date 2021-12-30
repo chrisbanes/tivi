@@ -140,8 +140,8 @@ internal fun EpisodeDetails(
 ) {
     val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(viewState.error) {
-        viewState.error?.let { error ->
+    LaunchedEffect(viewState.message) {
+        viewState.message?.let { error ->
             scaffoldState.snackbarHostState.showSnackbar(error.message)
         }
     }

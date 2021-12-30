@@ -17,7 +17,7 @@
 package app.tivi.showdetails.seasons
 
 import androidx.compose.runtime.Immutable
-import app.tivi.api.UiError
+import app.tivi.api.UiMessage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 
@@ -26,7 +26,7 @@ internal data class ShowSeasonsViewState(
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val refreshing: Boolean = false,
-    val refreshError: UiError? = null,
+    val refreshMessage: UiMessage? = null,
 ) {
     companion object {
         val Empty = ShowSeasonsViewState()

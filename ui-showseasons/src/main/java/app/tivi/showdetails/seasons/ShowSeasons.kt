@@ -113,8 +113,8 @@ internal fun ShowSeasons(
 
     val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(viewState.refreshError) {
-        viewState.refreshError?.let { error ->
+    LaunchedEffect(viewState.refreshMessage) {
+        viewState.refreshMessage?.let { error ->
             scaffoldState.snackbarHostState.showSnackbar(error.message)
         }
     }
