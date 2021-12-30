@@ -45,7 +45,6 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Surface
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
@@ -85,11 +84,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.ExpandingText
-import app.tivi.common.compose.ui.SwipeDismissSnackbar
+import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.TiviAlertDialog
 import app.tivi.common.compose.ui.boundsInParent
 import app.tivi.common.compose.ui.onPositionInParentChanged
@@ -99,7 +99,6 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
 import coil.compose.rememberImagePainter
-import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.insets.ui.Scaffold
 import org.threeten.bp.OffsetDateTime
@@ -140,9 +139,11 @@ internal fun EpisodeDetails(
 ) {
     val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(viewState.message) {
-        viewState.message?.let { error ->
-            scaffoldState.snackbarHostState.showSnackbar(error.message)
+    viewState.messages.firstOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            // Notify the view model that the message has been dismissed
+            actioner(EpisodeDetailsAction.ClearMessage(message.id))
         }
     }
 
@@ -169,20 +170,13 @@ internal fun EpisodeDetails(
             }
         },
         snackbarHost = { snackbarHostState ->
-            SnackbarHost(
+            SwipeDismissSnackbarHost(
                 hostState = snackbarHostState,
-                snackbar = {
-                    SwipeDismissSnackbar(
-                        data = it,
-                        onDismiss = { actioner(EpisodeDetailsAction.ClearError) }
-                    )
-                },
                 modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
                     .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
             )
-        }
+        },
     ) { contentPadding ->
         Surface(
             elevation = 2.dp,

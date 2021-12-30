@@ -29,7 +29,7 @@ internal data class EpisodeDetailsViewState(
     val watches: List<EpisodeWatchEntry> = emptyList(),
     val canAddEpisodeWatch: Boolean = false,
     val refreshing: Boolean = false,
-    val message: UiMessage? = null
+    val messages: List<UiMessage> = emptyList(),
 ) {
     companion object {
         val Empty = EpisodeDetailsViewState()

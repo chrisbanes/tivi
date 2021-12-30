@@ -22,5 +22,5 @@ internal sealed class EpisodeDetailsAction {
     object AddEpisodeWatchAction : EpisodeDetailsAction()
     data class RemoveEpisodeWatchAction(val watchId: Long) : EpisodeDetailsAction()
     object RemoveAllEpisodeWatchesAction : EpisodeDetailsAction()
-    object ClearError : EpisodeDetailsAction()
+    data class ClearMessage(val id: Long) : EpisodeDetailsAction()
 }

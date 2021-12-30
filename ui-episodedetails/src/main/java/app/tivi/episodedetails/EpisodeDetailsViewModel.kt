@@ -20,6 +20,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiMessage
+import app.tivi.api.UiMessageManager
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
@@ -30,7 +31,6 @@ import app.tivi.domain.interactors.RemoveEpisodeWatches
 import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
-import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,12 +55,11 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger,
-    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
-
     private val episodeId: Long = savedStateHandle.get("episodeId")!!
 
     private val loadingState = ObservableLoadingCounter()
+    private val uiMessageManager = UiMessageManager()
 
     private val pendingActions = MutableSharedFlow<EpisodeDetailsAction>()
 
@@ -68,8 +67,8 @@ internal class EpisodeDetailsViewModel @Inject constructor(
         observeEpisodeDetails.flow,
         observeEpisodeWatches.flow,
         loadingState.observable,
-        snackbarManager.errors,
-    ) { episodeDetails, episodeWatches, refreshing, error ->
+        uiMessageManager.messages,
+    ) { episodeDetails, episodeWatches, refreshing, messages ->
         EpisodeDetailsViewState(
             episode = episodeDetails.episode,
             season = episodeDetails.season,
@@ -77,7 +76,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             canAddEpisodeWatch = episodeDetails.episode?.firstAired?.isBefore(OffsetDateTime.now())
                 ?: true,
             refreshing = refreshing,
-            message = error,
+            messages = messages,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -93,7 +92,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
                     EpisodeDetailsAction.AddEpisodeWatchAction -> markWatched()
                     EpisodeDetailsAction.RemoveAllEpisodeWatchesAction -> markUnwatched()
                     is EpisodeDetailsAction.RemoveEpisodeWatchAction -> removeWatchEntry(action)
-                    EpisodeDetailsAction.ClearError -> snackbarManager.removeCurrentError()
+                    is EpisodeDetailsAction.ClearMessage -> uiMessageManager.clearMessage(action.id)
                     else -> Unit
                 }
             }
@@ -137,7 +136,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             InvokeSuccess -> loadingState.removeLoader()
             is InvokeError -> {
                 logger.i(status.throwable)
-                snackbarManager.addError(UiMessage(status.throwable))
+                uiMessageManager.emitMessage(UiMessage(status.throwable))
                 loadingState.removeLoader()
             }
         }
