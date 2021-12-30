@@ -123,19 +123,27 @@ internal fun EpisodeDetails(
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = EpisodeDetailsViewState.Empty)
 
-    EpisodeDetails(viewState = viewState) { action ->
-        when (action) {
-            EpisodeDetailsAction.Close -> navigateUp()
-            else -> viewModel.submitAction(action)
-        }
-    }
+    EpisodeDetails(
+        viewState = viewState,
+        navigateUp = navigateUp,
+        refresh = { viewModel.refresh() },
+        onRemoveAllWatches = { viewModel.removeAllWatches() },
+        onRemoveWatch = { viewModel.removeWatchEntry(it) },
+        onAddWatch = { viewModel.addWatch() },
+        clearMessage = { viewModel.clearMessage(it) },
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
-    actioner: (EpisodeDetailsAction) -> Unit,
+    navigateUp: () -> Unit,
+    refresh: () -> Unit,
+    onRemoveAllWatches: () -> Unit,
+    onRemoveWatch: (id: Long) -> Unit,
+    onAddWatch: () -> Unit,
+    clearMessage: (id: Long) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -143,7 +151,7 @@ internal fun EpisodeDetails(
         LaunchedEffect(message) {
             scaffoldState.snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
-            actioner(EpisodeDetailsAction.ClearMessage(message.id))
+            clearMessage(message.id)
         }
     }
 
@@ -161,7 +169,8 @@ internal fun EpisodeDetails(
                 EpisodeDetailsAppBar(
                     backgroundColor = Color.Transparent,
                     isRefreshing = viewState.refreshing,
-                    actioner = actioner,
+                    navigateUp = navigateUp,
+                    refresh = refresh,
                     elevation = 0.dp,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -202,13 +211,13 @@ internal fun EpisodeDetails(
 
                     if (viewState.watches.isEmpty()) {
                         MarkWatchedButton(
+                            onClick = onAddWatch,
                             modifier = Modifier.align(Alignment.CenterHorizontally),
-                            actioner = actioner
                         )
                     } else {
                         AddWatchButton(
+                            onClick = onAddWatch,
                             modifier = Modifier.align(Alignment.CenterHorizontally),
-                            actioner = actioner
                         )
                     }
                 }
@@ -224,8 +233,11 @@ internal fun EpisodeDetails(
 
                     if (openDialog) {
                         RemoveAllWatchesDialog(
-                            actioner = actioner,
-                            onDialogClosed = { openDialog = false }
+                            onConfirm = {
+                                onRemoveAllWatches()
+                                openDialog = false
+                            },
+                            onDismiss = { openDialog = false }
                         )
                     }
                 }
@@ -234,7 +246,7 @@ internal fun EpisodeDetails(
                     key(watch.id) {
                         val dismissState = rememberDismissState {
                             if (it != DismissValue.Default) {
-                                actioner(EpisodeDetailsAction.RemoveEpisodeWatchAction(watch.id))
+                                onRemoveWatch(watch.id)
                             }
                             it != DismissValue.DismissedToEnd
                         }
@@ -509,12 +521,12 @@ private fun Modifier.drawGrowingCircle(
 
 @Composable
 private fun MarkWatchedButton(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    actioner: (EpisodeDetailsAction) -> Unit,
 ) {
     Button(
+        onClick = onClick,
         modifier = modifier,
-        onClick = { actioner(EpisodeDetailsAction.AddEpisodeWatchAction) }
     ) {
         Text(
             text = stringResource(R.string.episode_mark_watched),
@@ -525,12 +537,12 @@ private fun MarkWatchedButton(
 
 @Composable
 private fun AddWatchButton(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    actioner: (EpisodeDetailsAction) -> Unit,
 ) {
     OutlinedButton(
+        onClick = onClick,
         modifier = modifier,
-        onClick = { actioner(EpisodeDetailsAction.AddEpisodeWatchAction) }
     ) {
         Text(text = stringResource(R.string.episode_add_watch))
     }
@@ -538,19 +550,16 @@ private fun AddWatchButton(
 
 @Composable
 private fun RemoveAllWatchesDialog(
-    actioner: (EpisodeDetailsAction) -> Unit,
-    onDialogClosed: () -> Unit,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     TiviAlertDialog(
         title = stringResource(R.string.episode_remove_watches_dialog_title),
         message = stringResource(R.string.episode_remove_watches_dialog_message),
         confirmText = stringResource(R.string.episode_remove_watches_dialog_confirm),
-        onConfirm = {
-            actioner(EpisodeDetailsAction.RemoveAllEpisodeWatchesAction)
-            onDialogClosed()
-        },
+        onConfirm = { onConfirm() },
         dismissText = stringResource(R.string.dialog_dismiss),
-        onDismissRequest = { onDialogClosed() }
+        onDismissRequest = { onDismiss() }
     )
 }
 
@@ -558,14 +567,15 @@ private fun RemoveAllWatchesDialog(
 private fun EpisodeDetailsAppBar(
     backgroundColor: Color,
     isRefreshing: Boolean,
-    actioner: (EpisodeDetailsAction) -> Unit,
+    navigateUp: () -> Unit,
+    refresh: () -> Unit,
     elevation: Dp,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         title = {},
         navigationIcon = {
-            IconButton(onClick = { actioner(EpisodeDetailsAction.Close) }) {
+            IconButton(onClick = navigateUp) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.cd_close),
@@ -581,7 +591,7 @@ private fun EpisodeDetailsAppBar(
                         .padding(14.dp)
                 )
             } else {
-                IconButton(onClick = { actioner(EpisodeDetailsAction.RefreshAction) }) {
+                IconButton(onClick = refresh) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = stringResource(R.string.cd_refresh)
@@ -620,6 +630,11 @@ fun PreviewEpisodeDetails() {
                 )
             )
         ),
-        actioner = {}
+        navigateUp = {},
+        refresh = {},
+        onRemoveAllWatches = {},
+        onRemoveWatch = {},
+        onAddWatch = {},
+        clearMessage = {},
     )
 }

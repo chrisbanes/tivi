@@ -30,10 +30,8 @@ import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -55,8 +53,6 @@ internal class EpisodeDetailsViewModel @Inject constructor(
 
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
-
-    private val pendingActions = MutableSharedFlow<EpisodeDetailsAction>()
 
     val state: StateFlow<EpisodeDetailsViewState> = combine(
         observeEpisodeDetails.flow,
@@ -80,32 +76,13 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     )
 
     init {
-        viewModelScope.launch {
-            pendingActions.collect { action ->
-                when (action) {
-                    EpisodeDetailsAction.RefreshAction -> refresh(true)
-                    EpisodeDetailsAction.AddEpisodeWatchAction -> markWatched()
-                    EpisodeDetailsAction.RemoveAllEpisodeWatchesAction -> markUnwatched()
-                    is EpisodeDetailsAction.RemoveEpisodeWatchAction -> removeWatchEntry(action)
-                    is EpisodeDetailsAction.ClearMessage -> uiMessageManager.clearMessage(action.id)
-                    else -> Unit
-                }
-            }
-        }
-
         observeEpisodeDetails(ObserveEpisodeDetails.Params(episodeId))
         observeEpisodeWatches(ObserveEpisodeWatches.Params(episodeId))
 
         refresh(false)
     }
 
-    internal fun submitAction(action: EpisodeDetailsAction) {
-        viewModelScope.launch {
-            pendingActions.emit(action)
-        }
-    }
-
-    private fun refresh(fromUserInteraction: Boolean) {
+    fun refresh(fromUserInteraction: Boolean = true) {
         viewModelScope.launch {
             updateEpisodeDetails(
                 UpdateEpisodeDetails.Params(episodeId, fromUserInteraction)
@@ -113,15 +90,15 @@ internal class EpisodeDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun removeWatchEntry(action: EpisodeDetailsAction.RemoveEpisodeWatchAction) {
+    fun removeWatchEntry(watchId: Long) {
         viewModelScope.launch {
             removeEpisodeWatch(
-                RemoveEpisodeWatch.Params(action.watchId)
+                RemoveEpisodeWatch.Params(watchId)
             ).collectStatus(loadingState, logger, uiMessageManager)
         }
     }
 
-    private fun markWatched() {
+    fun addWatch() {
         viewModelScope.launch {
             addEpisodeWatch(
                 AddEpisodeWatch.Params(episodeId, OffsetDateTime.now())
@@ -129,11 +106,17 @@ internal class EpisodeDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun markUnwatched() {
+    fun removeAllWatches() {
         viewModelScope.launch {
             removeEpisodeWatches(
                 RemoveEpisodeWatches.Params(episodeId)
             ).collectStatus(loadingState, logger, uiMessageManager)
+        }
+    }
+
+    fun clearMessage(id: Long) {
+        viewModelScope.launch {
+            uiMessageManager.clearMessage(id)
         }
     }
 }
