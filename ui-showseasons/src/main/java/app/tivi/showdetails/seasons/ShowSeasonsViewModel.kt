@@ -19,22 +19,16 @@ package app.tivi.showdetails.seasons
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
-import app.tivi.base.InvokeError
-import app.tivi.base.InvokeStarted
-import app.tivi.base.InvokeStatus
-import app.tivi.base.InvokeSuccess
 import app.tivi.domain.interactors.UpdateShowSeasons
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -80,19 +74,9 @@ internal class ShowSeasonsViewModel @Inject constructor(
 
     fun refresh(fromUser: Boolean = true) {
         viewModelScope.launch {
-            updateShowSeasons(UpdateShowSeasons.Params(showId, fromUser)).collectStatus()
-        }
-    }
-
-    private suspend fun Flow<InvokeStatus>.collectStatus() = collect { status ->
-        when (status) {
-            InvokeStarted -> loadingState.addLoader()
-            InvokeSuccess -> loadingState.removeLoader()
-            is InvokeError -> {
-                logger.i(status.throwable)
-                uiMessageManager.emitMessage(UiMessage(status.throwable))
-                loadingState.removeLoader()
-            }
+            updateShowSeasons(
+                UpdateShowSeasons.Params(showId, fromUser)
+            ).collectStatus(loadingState, logger, uiMessageManager)
         }
     }
 

@@ -19,12 +19,7 @@ package app.tivi.episodedetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
-import app.tivi.base.InvokeError
-import app.tivi.base.InvokeStarted
-import app.tivi.base.InvokeStatus
-import app.tivi.base.InvokeSuccess
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
@@ -33,8 +28,8 @@ import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -50,7 +45,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
-    private val observeEpisodeWatches: ObserveEpisodeWatches,
+    observeEpisodeWatches: ObserveEpisodeWatches,
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
@@ -111,34 +106,34 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     }
 
     private fun refresh(fromUserInteraction: Boolean) {
-        updateEpisodeDetails(
-            UpdateEpisodeDetails.Params(episodeId, fromUserInteraction)
-        ).watchStatus()
+        viewModelScope.launch {
+            updateEpisodeDetails(
+                UpdateEpisodeDetails.Params(episodeId, fromUserInteraction)
+            ).collectStatus(loadingState, logger, uiMessageManager)
+        }
     }
 
     private fun removeWatchEntry(action: EpisodeDetailsAction.RemoveEpisodeWatchAction) {
-        removeEpisodeWatch(RemoveEpisodeWatch.Params(action.watchId)).watchStatus()
+        viewModelScope.launch {
+            removeEpisodeWatch(
+                RemoveEpisodeWatch.Params(action.watchId)
+            ).collectStatus(loadingState, logger, uiMessageManager)
+        }
     }
 
     private fun markWatched() {
-        addEpisodeWatch(AddEpisodeWatch.Params(episodeId, OffsetDateTime.now())).watchStatus()
+        viewModelScope.launch {
+            addEpisodeWatch(
+                AddEpisodeWatch.Params(episodeId, OffsetDateTime.now())
+            ).collectStatus(loadingState, logger, uiMessageManager)
+        }
     }
 
     private fun markUnwatched() {
-        removeEpisodeWatches(RemoveEpisodeWatches.Params(episodeId)).watchStatus()
-    }
-
-    private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
-
-    private suspend fun Flow<InvokeStatus>.collectStatus() = collect { status ->
-        when (status) {
-            InvokeStarted -> loadingState.addLoader()
-            InvokeSuccess -> loadingState.removeLoader()
-            is InvokeError -> {
-                logger.i(status.throwable)
-                uiMessageManager.emitMessage(UiMessage(status.throwable))
-                loadingState.removeLoader()
-            }
+        viewModelScope.launch {
+            removeEpisodeWatches(
+                RemoveEpisodeWatches.Params(episodeId)
+            ).collectStatus(loadingState, logger, uiMessageManager)
         }
     }
 }
