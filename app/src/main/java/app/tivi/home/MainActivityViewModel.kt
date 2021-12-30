@@ -18,6 +18,7 @@ package app.tivi.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.tivi.domain.interactors.ClearTraktAuthState
 import app.tivi.domain.interactors.UpdateUserDetails
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
@@ -26,6 +27,7 @@ import app.tivi.util.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,6 +35,7 @@ class MainActivityViewModel @Inject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     private val updateUserDetails: UpdateUserDetails,
     observeUserDetails: ObserveUserDetails,
+    private val clearTraktAuthState: ClearTraktAuthState,
     private val logger: Logger
 ) : ViewModel() {
     init {
@@ -53,7 +56,16 @@ class MainActivityViewModel @Inject constructor(
 
     private fun refreshMe() {
         viewModelScope.launch {
-            updateUserDetails.executeSync(UpdateUserDetails.Params("me", false))
+            try {
+                updateUserDetails.executeSync(UpdateUserDetails.Params("me", false))
+            } catch (e: HttpException) {
+                if (e.code() == 401) {
+                    // If we got a 401 back from Trakt, we should clear out the auth state
+                    clearTraktAuthState.executeSync(Unit)
+                }
+            } catch (t: Throwable) {
+                // no-op
+            }
         }
     }
 }
