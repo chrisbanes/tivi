@@ -20,6 +20,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiMessageManager
+import app.tivi.data.entities.ActionDate
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
@@ -42,9 +43,7 @@ import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -72,8 +71,6 @@ internal class ShowDetailsViewModel @Inject constructor(
 
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
-
-    private val pendingActions = MutableSharedFlow<ShowDetailsAction>()
 
     val state = combine(
         observeShowFollowStatus.flow,
@@ -106,21 +103,6 @@ internal class ShowDetailsViewModel @Inject constructor(
     )
 
     init {
-        viewModelScope.launch {
-            pendingActions.collect { action ->
-                when (action) {
-                    is ShowDetailsAction.RefreshAction -> refresh(true)
-                    ShowDetailsAction.FollowShowToggleAction -> onToggleMyShowsButtonClicked()
-                    is ShowDetailsAction.MarkSeasonWatchedAction -> onMarkSeasonWatched(action)
-                    is ShowDetailsAction.MarkSeasonUnwatchedAction -> onMarkSeasonUnwatched(action)
-                    is ShowDetailsAction.ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
-                    is ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
-                    is ShowDetailsAction.ClearMessage -> uiMessageManager.clearMessage(action.id)
-                    else -> Unit
-                }
-            }
-        }
-
         observeShowFollowStatus(ObserveShowFollowStatus.Params(showId))
         observeShowDetails(ObserveShowDetails.Params(showId))
         observeShowImages(ObserveShowImages.Params(showId))
@@ -132,7 +114,7 @@ internal class ShowDetailsViewModel @Inject constructor(
         refresh(false)
     }
 
-    private fun refresh(fromUser: Boolean) {
+    fun refresh(fromUser: Boolean = true) {
         viewModelScope.launch {
             updateShowDetails(
                 UpdateShowDetails.Params(showId, fromUser)
@@ -155,11 +137,7 @@ internal class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    fun submitAction(action: ShowDetailsAction) {
-        viewModelScope.launch { pendingActions.emit(action) }
-    }
-
-    private fun onToggleMyShowsButtonClicked() {
+    fun toggleFollowShow() {
         viewModelScope.launch {
             changeShowFollowStatus(
                 ChangeShowFollowStatus.Params(showId, TOGGLE)
@@ -167,29 +145,33 @@ internal class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun onMarkSeasonWatched(action: ShowDetailsAction.MarkSeasonWatchedAction) {
+    fun setSeasonWatched(
+        seasonId: Long,
+        onlyAired: Boolean = false,
+        date: ActionDate = ActionDate.NOW
+    ) {
         viewModelScope.launch {
             changeSeasonWatchedStatus(
-                Params(action.seasonId, Action.WATCHED, action.onlyAired, action.date)
+                Params(seasonId, Action.WATCHED, onlyAired, date)
             ).collectStatus(loadingState, logger, uiMessageManager)
         }
     }
 
-    private fun onMarkSeasonUnwatched(action: ShowDetailsAction.MarkSeasonUnwatchedAction) {
+    fun setSeasonUnwatched(seasonId: Long) {
         viewModelScope.launch {
             changeSeasonWatchedStatus(
-                Params(action.seasonId, Action.UNWATCH)
+                Params(seasonId, Action.UNWATCH)
             ).collectStatus(loadingState, logger, uiMessageManager)
         }
     }
 
-    private fun onChangeSeasonFollowState(action: ShowDetailsAction.ChangeSeasonFollowedAction) {
+    fun setSeasonFollowed(seasonId: Long, followed: Boolean) {
         viewModelScope.launch {
             changeSeasonFollowStatus(
                 ChangeSeasonFollowStatus.Params(
-                    action.seasonId,
-                    when {
-                        action.followed -> ChangeSeasonFollowStatus.Action.FOLLOW
+                    seasonId = seasonId,
+                    action = when {
+                        followed -> ChangeSeasonFollowStatus.Action.FOLLOW
                         else -> ChangeSeasonFollowStatus.Action.IGNORE
                     }
                 )
@@ -197,16 +179,20 @@ internal class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun onUnfollowPreviousSeasonsFollowState(
-        action: ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction
-    ) {
+    fun unfollowPreviousSeasons(seasonId: Long) {
         viewModelScope.launch {
             changeSeasonFollowStatus(
                 ChangeSeasonFollowStatus.Params(
-                    action.seasonId,
-                    ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS
+                    seasonId = seasonId,
+                    action = ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS
                 )
             ).collectStatus(loadingState, logger, uiMessageManager)
+        }
+    }
+
+    fun clearMessage(id: Long) {
+        viewModelScope.launch {
+            uiMessageManager.clearMessage(id)
         }
     }
 }

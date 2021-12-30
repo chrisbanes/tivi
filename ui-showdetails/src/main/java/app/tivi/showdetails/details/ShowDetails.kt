@@ -90,7 +90,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -168,15 +167,21 @@ internal fun ShowDetails(
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state).collectAsState(null)
     viewState?.let { state ->
-        ShowDetails(viewState = state) { action ->
-            when (action) {
-                ShowDetailsAction.NavigateUp -> navigateUp()
-                is ShowDetailsAction.OpenShowDetails -> openShowDetails(action.showId)
-                is ShowDetailsAction.OpenEpisodeDetails -> openEpisodeDetails(action.episodeId)
-                is ShowDetailsAction.OpenSeason -> openSeasons(state.show.id, action.seasonId)
-                else -> viewModel.submitAction(action)
-            }
-        }
+        ShowDetails(
+            viewState = state,
+            navigateUp = navigateUp,
+            openShowDetails = openShowDetails,
+            openEpisodeDetails = openEpisodeDetails,
+            refresh = { viewModel.refresh() },
+            clearMessage = { viewModel.clearMessage(it) },
+            openSeason = { openSeasons(state.show.id, it) },
+            onSeasonFollowed = { viewModel.setSeasonFollowed(it, true) },
+            onSeasonUnfollowed = { viewModel.setSeasonFollowed(it, false) },
+            unfollowPreviousSeasons = { viewModel.unfollowPreviousSeasons(it) },
+            onMarkSeasonWatched = { viewModel.setSeasonWatched(it, onlyAired = true) },
+            onMarkSeasonUnwatched = { viewModel.setSeasonUnwatched(it) },
+            onToggleShowFollowed = { viewModel.toggleFollowShow() },
+        )
     }
 }
 
@@ -184,7 +189,18 @@ internal fun ShowDetails(
 @Composable
 internal fun ShowDetails(
     viewState: ShowDetailsViewState,
-    actioner: (ShowDetailsAction) -> Unit,
+    navigateUp: () -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    openEpisodeDetails: (episodeId: Long) -> Unit,
+    refresh: () -> Unit,
+    clearMessage: (id: Long) -> Unit,
+    openSeason: (seasonId: Long) -> Unit,
+    onSeasonFollowed: (seasonId: Long) -> Unit,
+    onSeasonUnfollowed: (seasonId: Long) -> Unit,
+    unfollowPreviousSeasons: (seasonId: Long) -> Unit,
+    onMarkSeasonWatched: (seasonId: Long) -> Unit,
+    onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
+    onToggleShowFollowed: () -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
@@ -193,7 +209,7 @@ internal fun ShowDetails(
         LaunchedEffect(message) {
             scaffoldState.snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
-            actioner(ShowDetailsAction.ClearMessage(message.id))
+            clearMessage(message.id)
         }
     }
 
@@ -224,7 +240,8 @@ internal fun ShowDetails(
                 title = viewState.show.title,
                 isRefreshing = viewState.refreshing,
                 showAppBarBackground = showAppBarBackground,
-                actioner = actioner,
+                navigateUp = navigateUp,
+                refresh = refresh,
                 modifier = Modifier
                     .fillMaxWidth()
                     .onSizeChanged { appBarHeight = it.height }
@@ -240,7 +257,7 @@ internal fun ShowDetails(
             ToggleShowFollowFloatingActionButton(
                 isFollowed = viewState.isFollowed,
                 expanded = { expanded },
-                onClick = { actioner(ShowDetailsAction.FollowShowToggleAction) },
+                onClick = onToggleShowFollowed,
             )
         },
         snackbarHost = { snackBarHostState ->
@@ -264,8 +281,15 @@ internal fun ShowDetails(
                 seasons = viewState.seasons,
                 watchStats = viewState.watchStats,
                 listState = listState,
-                actioner = actioner,
+                openShowDetails = openShowDetails,
+                openEpisodeDetails = openEpisodeDetails,
                 contentPadding = contentPadding,
+                openSeason = openSeason,
+                onSeasonFollowed = onSeasonFollowed,
+                onSeasonUnfollowed = onSeasonUnfollowed,
+                unfollowPreviousSeasons = unfollowPreviousSeasons,
+                onMarkSeasonWatched = onMarkSeasonWatched,
+                onMarkSeasonUnwatched = onMarkSeasonUnwatched,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -282,7 +306,14 @@ private fun ShowDetailsScrollingContent(
     seasons: List<SeasonWithEpisodesAndWatches>,
     watchStats: FollowedShowsWatchStats?,
     listState: LazyListState,
-    actioner: (ShowDetailsAction) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    openEpisodeDetails: (episodeId: Long) -> Unit,
+    openSeason: (seasonId: Long) -> Unit,
+    onSeasonFollowed: (seasonId: Long) -> Unit,
+    onSeasonUnfollowed: (seasonId: Long) -> Unit,
+    unfollowPreviousSeasons: (seasonId: Long) -> Unit,
+    onMarkSeasonWatched: (seasonId: Long) -> Unit,
+    onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
@@ -361,9 +392,7 @@ private fun ShowDetailsScrollingContent(
                 NextEpisodeToWatch(
                     season = nextEpisodeToWatch.season!!,
                     episode = nextEpisodeToWatch.episode!!,
-                    onClick = {
-                        actioner(ShowDetailsAction.OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
-                    }
+                    onClick = { openEpisodeDetails(nextEpisodeToWatch.episode!!.id) }
                 )
             }
         }
@@ -377,8 +406,8 @@ private fun ShowDetailsScrollingContent(
             item {
                 RelatedShows(
                     related = relatedShows,
-                    actioner = actioner,
-                    modifier = Modifier.fillMaxWidth()
+                    openShowDetails = openShowDetails,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
@@ -419,8 +448,13 @@ private fun ShowDetailsScrollingContent(
                     episodesToWatch = season.episodes.numberAiredToWatch,
                     episodesToAir = season.episodes.numberToAir,
                     nextToAirDate = season.episodes.nextToAir?.firstAired,
-                    actioner = actioner,
                     contentPadding = PaddingValues(8.dp),
+                    openSeason = openSeason,
+                    onSeasonFollowed = onSeasonFollowed,
+                    onSeasonUnfollowed = onSeasonUnfollowed,
+                    unfollowPreviousSeasons = unfollowPreviousSeasons,
+                    onMarkSeasonWatched = onMarkSeasonWatched,
+                    onMarkSeasonUnwatched = onMarkSeasonUnwatched,
                     modifier = Modifier.fillParentMaxWidth(),
                 )
             }
@@ -716,7 +750,7 @@ private fun Genres(genres: List<Genre>) {
 @Composable
 private fun RelatedShows(
     related: List<RelatedShowEntryWithShow>,
-    actioner: (ShowDetailsAction) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LogCompositions("RelatedShows")
@@ -743,7 +777,7 @@ private fun RelatedShows(
             PosterCard(
                 show = item.show,
                 poster = item.poster,
-                onClick = { actioner(ShowDetailsAction.OpenShowDetails(item.show.id)) },
+                onClick = { openShowDetails(item.show.id) },
                 modifier = Modifier
                     .fillParentMaxWidth(0.15f) // 15% of the available width
                     .aspectRatio(2 / 3f)
@@ -850,7 +884,13 @@ private fun SeasonRow(
     episodesWatched: Int,
     episodesToWatch: Int,
     episodesToAir: Int,
-    actioner: (ShowDetailsAction) -> Unit,
+    openSeason: (seasonId: Long) -> Unit,
+    onSeasonFollowed: (seasonId: Long) -> Unit,
+    onSeasonUnfollowed: (seasonId: Long) -> Unit,
+    unfollowPreviousSeasons: (seasonId: Long) -> Unit,
+    onMarkSeasonWatched: (seasonId: Long) -> Unit,
+    onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
+
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     nextToAirDate: OffsetDateTime? = null,
@@ -859,7 +899,7 @@ private fun SeasonRow(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
             .clickable(enabled = !season.ignored) {
-                actioner(ShowDetailsAction.OpenSeason(season.id))
+                openSeason(season.id)
             }
             .heightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
@@ -926,13 +966,19 @@ private fun SeasonRow(
         ) {
             if (season.ignored) {
                 DropdownMenuItem(
-                    onClick = { actioner(ShowDetailsAction.ChangeSeasonFollowedAction(season.id, true)) }
+                    onClick = {
+                        onSeasonFollowed(season.id)
+                        showMenu = false
+                    }
                 ) {
                     Text(text = stringResource(id = R.string.popup_season_follow))
                 }
             } else {
                 DropdownMenuItem(
-                    onClick = { actioner(ShowDetailsAction.ChangeSeasonFollowedAction(season.id, false)) }
+                    onClick = {
+                        onSeasonUnfollowed(season.id)
+                        showMenu = false
+                    }
                 ) {
                     Text(text = stringResource(id = R.string.popup_season_ignore))
                 }
@@ -941,7 +987,10 @@ private fun SeasonRow(
             // Season number starts from 1, rather than 0
             if (season.number ?: -100 >= 2) {
                 DropdownMenuItem(
-                    onClick = { actioner(ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction(season.id)) }
+                    onClick = {
+                        unfollowPreviousSeasons(season.id)
+                        showMenu = false
+                    }
                 ) {
                     Text(text = stringResource(id = R.string.popup_season_ignore_previous))
                 }
@@ -949,25 +998,29 @@ private fun SeasonRow(
 
             if (episodesWatched > 0) {
                 DropdownMenuItem(
-                    onClick = { actioner(ShowDetailsAction.MarkSeasonUnwatchedAction(season.id)) }
+                    onClick = {
+                        onMarkSeasonUnwatched(season.id)
+                        showMenu = false
+                    }
                 ) {
                     Text(text = stringResource(id = R.string.popup_season_mark_all_unwatched))
                 }
             }
 
             if (episodesWatched < episodesAired) {
-                if (episodesToAir == 0) {
-                    DropdownMenuItem(
-                        onClick = { actioner(ShowDetailsAction.MarkSeasonWatchedAction(season.id)) }
-                    ) {
-                        Text(text = stringResource(id = R.string.popup_season_mark_watched_all))
+                DropdownMenuItem(
+                    onClick = {
+                        onMarkSeasonWatched(season.id)
+                        showMenu = false
                     }
-                } else {
-                    DropdownMenuItem(
-                        onClick = { actioner(ShowDetailsAction.MarkSeasonWatchedAction(season.id, onlyAired = true)) }
-                    ) {
-                        Text(text = stringResource(id = R.string.popup_season_mark_watched_aired))
-                    }
+                ) {
+                    Text(
+                        text = if (episodesToAir == 0) {
+                            stringResource(id = R.string.popup_season_mark_watched_all)
+                        } else {
+                            stringResource(id = R.string.popup_season_mark_watched_aired)
+                        }
+                    )
                 }
             }
         }
@@ -979,7 +1032,8 @@ private fun ShowDetailsAppBar(
     title: String?,
     isRefreshing: Boolean,
     showAppBarBackground: Boolean,
-    actioner: (ShowDetailsAction) -> Unit,
+    navigateUp: () -> Unit,
+    refresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LogCompositions("ShowDetailsAppBar")
@@ -1012,7 +1066,7 @@ private fun ShowDetailsAppBar(
         ),
         navigationIcon = {
             IconButton(
-                onClick = { actioner(ShowDetailsAction.NavigateUp) },
+                onClick = navigateUp,
                 modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground),
             ) {
                 Icon(
@@ -1031,7 +1085,7 @@ private fun ShowDetailsAppBar(
                 )
             } else {
                 IconButton(
-                    onClick = { actioner(ShowDetailsAction.RefreshAction()) },
+                    onClick = refresh,
                     modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground),
                 ) {
                     Icon(
@@ -1084,18 +1138,5 @@ private fun ToggleShowFollowFloatingActionButton(
         },
         expanded = expanded(),
         modifier = modifier
-    )
-}
-
-private val previewShow = TiviShow(title = "Detective Penny")
-
-@Preview
-@Composable
-private fun PreviewTopAppBar() {
-    ShowDetailsAppBar(
-        title = previewShow.title ?: "",
-        showAppBarBackground = true,
-        isRefreshing = true,
-        actioner = {}
     )
 }
