@@ -129,7 +129,7 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
         startDestination = LeafScreen.Discover.createRoute(Screen.Discover),
     ) {
         addDiscover(navController, Screen.Discover)
-        addAccount(navController, Screen.Discover, openSettings)
+        addAccount(Screen.Discover, openSettings)
         addShowDetails(navController, Screen.Discover)
         addShowSeasons(navController, Screen.Discover)
         addEpisodeDetails(navController, Screen.Discover)
@@ -149,7 +149,7 @@ private fun NavGraphBuilder.addFollowingTopLevel(
         startDestination = LeafScreen.Following.createRoute(Screen.Following),
     ) {
         addFollowedShows(navController, Screen.Following)
-        addAccount(navController, Screen.Following, openSettings)
+        addAccount(Screen.Following, openSettings)
         addShowDetails(navController, Screen.Following)
         addShowSeasons(navController, Screen.Following)
         addEpisodeDetails(navController, Screen.Following)
@@ -166,7 +166,7 @@ private fun NavGraphBuilder.addWatchedTopLevel(
         startDestination = LeafScreen.Watched.createRoute(Screen.Watched),
     ) {
         addWatchedShows(navController, Screen.Watched)
-        addAccount(navController, Screen.Watched, openSettings)
+        addAccount(Screen.Watched, openSettings)
         addShowDetails(navController, Screen.Watched)
         addShowSeasons(navController, Screen.Watched)
         addEpisodeDetails(navController, Screen.Watched)
@@ -183,7 +183,7 @@ private fun NavGraphBuilder.addSearchTopLevel(
         startDestination = LeafScreen.Search.createRoute(Screen.Search),
     ) {
         addSearch(navController, Screen.Search)
-        addAccount(navController, Screen.Search, openSettings)
+        addAccount(Screen.Search, openSettings)
         addShowDetails(navController, Screen.Search)
         addShowSeasons(navController, Screen.Search)
         addEpisodeDetails(navController, Screen.Search)
@@ -365,12 +365,13 @@ private fun NavGraphBuilder.addPopularShows(
 
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addAccount(
-    navController: NavController,
     root: Screen,
     onOpenSettings: () -> Unit,
 ) {
     dialog(LeafScreen.Account.createRoute(root)) {
-        AccountUi(navController, onOpenSettings)
+        AccountUi(
+            openSettings = onOpenSettings
+        )
     }
 }
 
