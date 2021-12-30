@@ -140,9 +140,6 @@ import com.google.accompanist.insets.ui.TopAppBar
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 @Composable
@@ -171,7 +168,7 @@ internal fun ShowDetails(
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state).collectAsState(null)
     viewState?.let { state ->
-        ShowDetails(viewState = state, effects = viewModel.effects) { action ->
+        ShowDetails(viewState = state) { action ->
             when (action) {
                 ShowDetailsAction.NavigateUp -> navigateUp()
                 is ShowDetailsAction.OpenShowDetails -> openShowDetails(action.showId)
@@ -187,24 +184,16 @@ internal fun ShowDetails(
 @Composable
 internal fun ShowDetails(
     viewState: ShowDetailsViewState,
-    effects: Flow<ShowDetailsUiEffect>,
     actioner: (ShowDetailsAction) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
 
-    LaunchedEffect(effects) {
-        effects.collect { effect ->
-            when (effect) {
-                is ShowDetailsUiEffect.ShowError -> {
-                    launch {
-                        scaffoldState.snackbarHostState.showSnackbar(effect.message)
-                    }
-                }
-                ShowDetailsUiEffect.ClearError -> {
-                    scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-                }
-            }
+    viewState.messages.firstOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            // Notify the view model that the message has been dismissed
+            actioner(ShowDetailsAction.ClearMessage(message.id))
         }
     }
 
@@ -257,7 +246,6 @@ internal fun ShowDetails(
         snackbarHost = { snackBarHostState ->
             SwipeDismissSnackbarHost(
                 hostState = snackBarHostState,
-                onDismiss = { actioner(ShowDetailsAction.ClearError) },
                 modifier = Modifier
                     .padding(horizontal = Layout.bodyMargin)
                     .fillMaxWidth()

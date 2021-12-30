@@ -17,6 +17,7 @@
 package app.tivi.showdetails.details
 
 import androidx.compose.runtime.Immutable
+import app.tivi.api.UiMessage
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EpisodeWithSeason
@@ -26,35 +27,18 @@ import app.tivi.data.views.FollowedShowsWatchStats
 
 @Immutable
 internal data class ShowDetailsViewState(
-    val isFollowed: Boolean,
-    val show: TiviShow,
-    val posterImage: ShowTmdbImage?,
-    val backdropImage: ShowTmdbImage?,
-    val relatedShows: List<RelatedShowEntryWithShow>,
-    val nextEpisodeToWatch: EpisodeWithSeason?,
-    val watchStats: FollowedShowsWatchStats?,
-    val seasons: List<SeasonWithEpisodesAndWatches>,
-    val refreshing: Boolean,
+    val isFollowed: Boolean = false,
+    val show: TiviShow = TiviShow.EMPTY_SHOW,
+    val posterImage: ShowTmdbImage? = null,
+    val backdropImage: ShowTmdbImage? = null,
+    val relatedShows: List<RelatedShowEntryWithShow> = emptyList(),
+    val nextEpisodeToWatch: EpisodeWithSeason? = null,
+    val watchStats: FollowedShowsWatchStats? = null,
+    val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
+    val refreshing: Boolean = false,
+    val messages: List<UiMessage> = emptyList(),
 ) {
     companion object {
-        val Empty = ShowDetailsViewState(
-            isFollowed = false,
-            show = TiviShow.EMPTY_SHOW,
-            posterImage = null,
-            backdropImage = null,
-            relatedShows = emptyList(),
-            nextEpisodeToWatch = null,
-            watchStats = null,
-            seasons = emptyList(),
-            refreshing = false,
-        )
+        val Empty = ShowDetailsViewState()
     }
-}
-
-internal sealed class ShowDetailsUiEffect {
-    data class ShowError(val message: String) : ShowDetailsUiEffect() {
-        constructor(throwable: Throwable?) : this("Error: ${throwable?.localizedMessage}")
-    }
-
-    object ClearError : ShowDetailsUiEffect()
 }

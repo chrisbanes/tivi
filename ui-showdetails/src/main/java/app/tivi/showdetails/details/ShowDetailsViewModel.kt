@@ -20,6 +20,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiMessage
+import app.tivi.api.UiMessageManager
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
@@ -42,7 +43,6 @@ import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.extensions.combine
-import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -72,17 +72,13 @@ internal class ShowDetailsViewModel @Inject constructor(
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
     private val logger: Logger,
-    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
     private val showId: Long = savedStateHandle.get("showId")!!
 
     private val loadingState = ObservableLoadingCounter()
+    private val uiMessageManager = UiMessageManager()
 
     private val pendingActions = MutableSharedFlow<ShowDetailsAction>()
-
-    private val _effects = MutableSharedFlow<ShowDetailsUiEffect>()
-    val effects: Flow<ShowDetailsUiEffect>
-        get() = _effects
 
     val state = combine(
         observeShowFollowStatus.flow,
@@ -93,7 +89,9 @@ internal class ShowDetailsViewModel @Inject constructor(
         observeNextEpisodeToWatch.flow,
         observeShowSeasons.flow,
         observeShowViewStats.flow,
-    ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons, stats ->
+        uiMessageManager.messages,
+    ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons, stats,
+        messages ->
         ShowDetailsViewState(
             isFollowed = isFollowed,
             show = show,
@@ -104,6 +102,7 @@ internal class ShowDetailsViewModel @Inject constructor(
             seasons = seasons,
             watchStats = stats,
             refreshing = refreshing,
+            messages = messages,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -121,17 +120,8 @@ internal class ShowDetailsViewModel @Inject constructor(
                     is ShowDetailsAction.MarkSeasonUnwatchedAction -> onMarkSeasonUnwatched(action)
                     is ShowDetailsAction.ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
                     is ShowDetailsAction.UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
-                    is ShowDetailsAction.ClearError -> snackbarManager.removeCurrentError()
+                    is ShowDetailsAction.ClearMessage -> uiMessageManager.clearMessage(action.id)
                     else -> Unit
-                }
-            }
-        }
-
-        viewModelScope.launch {
-            snackbarManager.errors.collect {
-                when {
-                    it != null -> _effects.emit(ShowDetailsUiEffect.ShowError(it.message))
-                    else -> _effects.emit(ShowDetailsUiEffect.ClearError)
                 }
             }
         }
@@ -162,7 +152,7 @@ internal class ShowDetailsViewModel @Inject constructor(
             InvokeSuccess -> loadingState.removeLoader()
             is InvokeError -> {
                 logger.i(status.throwable)
-                snackbarManager.addError(UiMessage(status.throwable))
+                uiMessageManager.emitMessage(UiMessage(status.throwable))
                 loadingState.removeLoader()
             }
         }
