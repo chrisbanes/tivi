@@ -110,22 +110,25 @@ internal fun Watched(
     Watched(
         state = viewState,
         list = pagingItems,
+        openShowDetails = openShowDetails,
         onMessageShown = { viewModel.clearMessage(it) },
-    ) { action ->
-        when (action) {
-            WatchedAction.LoginAction, WatchedAction.OpenUserDetails -> openUser()
-            is WatchedAction.OpenShowDetails -> openShowDetails(action.showId)
-            else -> viewModel.submitAction(action)
-        }
-    }
+        openUser = openUser,
+        refresh = { viewModel.refresh() },
+        onFilterChanged = { viewModel.setFilter(it) },
+        onSortSelected = { viewModel.setSort(it) },
+    )
 }
 
 @Composable
 internal fun Watched(
     state: WatchedViewState,
     list: LazyPagingItems<WatchedShowEntryWithShow>,
+    openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
-    actioner: (WatchedAction) -> Unit,
+    refresh: () -> Unit,
+    openUser: () -> Unit,
+    onFilterChanged: (String) -> Unit,
+    onSortSelected: (SortOption) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -144,8 +147,8 @@ internal fun Watched(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.isLoading,
-                onRefreshActionClick = { actioner(WatchedAction.RefreshAction) },
-                onUserActionClick = { actioner(WatchedAction.OpenUserDetails) },
+                onRefreshActionClick = refresh,
+                onUserActionClick = openUser,
                 modifier = Modifier.fillMaxWidth()
             )
         },
@@ -161,7 +164,7 @@ internal fun Watched(
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(state.isLoading),
-            onRefresh = { actioner(WatchedAction.RefreshAction) },
+            onRefresh = refresh,
             indicatorPadding = paddingValues,
             indicator = { state, trigger ->
                 SwipeRefreshIndicator(
@@ -184,10 +187,10 @@ internal fun Watched(
                 item {
                     FilterSortPanel(
                         filterHint = stringResource(R.string.filter_shows, list.itemCount),
-                        onFilterChanged = { actioner(WatchedAction.FilterShows(it)) },
+                        onFilterChanged = onFilterChanged,
                         sortOptions = state.availableSorts,
                         currentSortOption = state.sort,
-                        onSortSelected = { actioner(WatchedAction.ChangeSort(it)) },
+                        onSortSelected = onSortSelected,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = bodyMargin)
@@ -210,7 +213,7 @@ internal fun Watched(
                             show = entry.show,
                             poster = entry.poster,
                             lastWatched = entry.entry.lastWatched,
-                            onClick = { actioner(WatchedAction.OpenShowDetails(entry.show.id)) },
+                            onClick = { openShowDetails(entry.show.id) },
                             contentPadding = PaddingValues(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         )
