@@ -16,14 +16,17 @@
 
 package app.tivi.util
 
+import app.tivi.api.UiMessage
+import app.tivi.api.UiMessageManager
+import app.tivi.base.InvokeError
+import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
+import app.tivi.base.InvokeSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
 import java.util.concurrent.atomic.AtomicInteger
 
 class ObservableLoadingCounter {
@@ -42,8 +45,18 @@ class ObservableLoadingCounter {
     }
 }
 
-suspend fun Flow<InvokeStatus>.collectInto(counter: ObservableLoadingCounter) {
-    return onStart { counter.addLoader() }
-        .onCompletion { counter.removeLoader() }
-        .collect()
+suspend fun Flow<InvokeStatus>.collectStatus(
+    counter: ObservableLoadingCounter,
+    logger: Logger? = null,
+    uiMessageManager: UiMessageManager? = null,
+) = collect { status ->
+    when (status) {
+        InvokeStarted -> counter.addLoader()
+        InvokeSuccess -> counter.removeLoader()
+        is InvokeError -> {
+            logger?.i(status.throwable)
+            uiMessageManager?.emitMessage(UiMessage(status.throwable))
+            counter.removeLoader()
+        }
+    }
 }

@@ -35,7 +35,7 @@ import app.tivi.extensions.combine
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
-import app.tivi.util.collectInto
+import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -188,8 +188,9 @@ internal class FollowedViewModel @Inject constructor(
 
     private fun refreshFollowed(fromInteraction: Boolean) {
         viewModelScope.launch {
-            updateFollowedShows(UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK))
-                .collectInto(loadingState)
+            updateFollowedShows(
+                UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK)
+            ).collectStatus(loadingState)
         }
     }
 
