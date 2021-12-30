@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.seasons
+package app.tivi.common.compose
 
-import androidx.compose.runtime.Immutable
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import app.tivi.api.UiMessage
-import app.tivi.data.entities.TiviShow
-import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 
-@Immutable
-internal data class ShowSeasonsViewState(
-    val show: TiviShow = TiviShow.EMPTY_SHOW,
-    val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
-    val refreshing: Boolean = false,
-    val messages: List<UiMessage> = emptyList(),
-) {
-    companion object {
-        val Empty = ShowSeasonsViewState()
-    }
+fun CombinedLoadStates.appendErrorOrNull(): UiMessage? {
+    return (append.takeIf { it is LoadState.Error } as? LoadState.Error)
+        ?.let { UiMessage(it.error) }
+}
+
+fun CombinedLoadStates.prependErrorOrNull(): UiMessage? {
+    return (prepend.takeIf { it is LoadState.Error } as? LoadState.Error)
+        ?.let { UiMessage(it.error) }
+}
+
+fun CombinedLoadStates.refreshErrorOrNull(): UiMessage? {
+    return (refresh.takeIf { it is LoadState.Error } as? LoadState.Error)
+        ?.let { UiMessage(it.error) }
 }

@@ -34,8 +34,10 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +56,7 @@ import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
+import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
@@ -78,21 +81,33 @@ internal fun Search(
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = SearchViewState.Empty)
 
-    Search(state = viewState) { action ->
-        when (action) {
-            is SearchAction.OpenShowDetails -> openShowDetails(action.showId)
-            else -> viewModel.submitAction(action)
-        }
-    }
+    Search(
+        state = viewState,
+        openShowDetails = openShowDetails,
+        onSearchQueryChanged = { viewModel.search(it) },
+        onMessageShown = { viewModel.clearMessage(it) },
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 internal fun Search(
     state: SearchViewState,
-    actioner: (SearchAction) -> Unit
+    openShowDetails: (showId: Long) -> Unit,
+    onSearchQueryChanged: (query: String) -> Unit,
+    onMessageShown: (id: Long) -> Unit,
 ) {
+    val scaffoldState = rememberScaffoldState()
+
+    state.messages.firstOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            onMessageShown(message.id)
+        }
+    }
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             Surface(
                 color = MaterialTheme.colors.surface.copy(alpha = 0.95f),
@@ -110,19 +125,27 @@ internal fun Search(
                         value = searchQuery,
                         onValueChange = { value ->
                             searchQuery = value
-                            actioner(SearchAction.Search(value.text))
+                            onSearchQueryChanged(value.text)
                         },
                         hint = stringResource(R.string.search_hint),
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
+        },
+        snackbarHost = { snackbarHostState ->
+            SwipeDismissSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth()
+            )
         }
     ) { padding ->
         SearchList(
             results = state.searchResults,
             contentPadding = padding,
-            onShowClicked = { actioner(SearchAction.OpenShowDetails(it.id)) },
+            onShowClicked = { openShowDetails(it.id) },
             modifier = Modifier.bodyWidth()
         )
     }

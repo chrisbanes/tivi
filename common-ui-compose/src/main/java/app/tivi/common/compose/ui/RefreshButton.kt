@@ -16,6 +16,7 @@
 
 package app.tivi.common.compose.ui
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -38,13 +39,15 @@ fun RefreshButton(
         enabled = !refreshing,
         modifier = modifier
     ) {
-        if (refreshing) {
-            AutoSizedCircularProgressIndicator(Modifier.size(20.dp))
-        } else {
-            Icon(
-                imageVector = Icons.Default.Refresh,
-                contentDescription = stringResource(R.string.cd_refresh)
-            )
+        Crossfade(refreshing) { targetRefreshing ->
+            if (targetRefreshing) {
+                AutoSizedCircularProgressIndicator(Modifier.size(20.dp))
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = stringResource(R.string.cd_refresh)
+                )
+            }
         }
     }
 }

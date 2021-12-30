@@ -37,7 +37,6 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScrollableTabRow
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
@@ -69,7 +68,8 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
-import app.tivi.common.compose.ui.SwipeDismissSnackbar
+import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.TopAppBarWithBottomContent
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -100,7 +100,6 @@ fun ShowSeasons(
     )
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 internal fun ShowSeasons(
     viewModel: ShowSeasonsViewModel,
@@ -109,13 +108,35 @@ internal fun ShowSeasons(
     initialSeasonId: Long?,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
-        .collectAsState(initial = ShowSeasonsViewState.Empty)
+        .collectAsState(ShowSeasonsViewState.Empty)
 
+    ShowSeasons(
+        viewState = viewState,
+        navigateUp = navigateUp,
+        openEpisodeDetails = openEpisodeDetails,
+        refresh = { viewModel.refresh() },
+        onMessageShown = { viewModel.clearMessage(it) },
+        initialSeasonId = initialSeasonId,
+    )
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+internal fun ShowSeasons(
+    viewState: ShowSeasonsViewState,
+    navigateUp: () -> Unit,
+    openEpisodeDetails: (episodeId: Long) -> Unit,
+    refresh: () -> Unit,
+    onMessageShown: (id: Long) -> Unit,
+    initialSeasonId: Long?,
+) {
     val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(viewState.refreshError) {
-        viewState.refreshError?.let { error ->
-            scaffoldState.snackbarHostState.showSnackbar(error.message)
+    viewState.messages.firstOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            // Notify the view model that the message has been dismissed
+            onMessageShown(message.id)
         }
     }
 
@@ -126,10 +147,10 @@ internal fun ShowSeasons(
         if (pagerState.isScrollInProgress) pagerBeenScrolled = true
     }
 
-    LaunchedEffect(initialSeasonId, viewState.seasons, pagerBeenScrolled) {
-        if (initialSeasonId != null && !pagerBeenScrolled) {
-            val initialIndex = viewState.seasons.indexOfFirst { it.season.id == initialSeasonId }
-            if (initialIndex >= 0) {
+    if (initialSeasonId != null && !pagerBeenScrolled && pagerState.pageCount > 0) {
+        val initialIndex = viewState.seasons.indexOfFirst { it.season.id == initialSeasonId }
+        LaunchedEffect(initialIndex, pagerState.pageCount) {
+            if (initialIndex in 0 until pagerState.pageCount) {
                 pagerState.scrollToPage(initialIndex)
             }
         }
@@ -152,6 +173,12 @@ internal fun ShowSeasons(
                         )
                     }
                 },
+                actions = {
+                    RefreshButton(
+                        refreshing = viewState.refreshing,
+                        onClick = refresh,
+                    )
+                },
                 backgroundColor = MaterialTheme.colors.surface.copy(
                     alpha = AppBarAlphas.translucentBarAlpha()
                 ),
@@ -167,14 +194,8 @@ internal fun ShowSeasons(
             )
         },
         snackbarHost = { snackbarHostState ->
-            SnackbarHost(
+            SwipeDismissSnackbarHost(
                 hostState = snackbarHostState,
-                snackbar = { snackbarData ->
-                    SwipeDismissSnackbar(
-                        data = snackbarData,
-                        onDismiss = { viewModel.clearError() }
-                    )
-                },
                 modifier = Modifier
                     .padding(horizontal = Layout.bodyMargin)
                     .fillMaxWidth()

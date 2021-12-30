@@ -18,39 +18,38 @@ package app.tivi.home.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.tivi.api.UiMessage
+import app.tivi.api.UiMessageManager
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class SearchViewModel @Inject constructor(
-    private val searchShows: SearchShows
+    private val searchShows: SearchShows,
 ) : ViewModel() {
     private val searchQuery = MutableStateFlow("")
     private val loadingState = ObservableLoadingCounter()
-
-    private val pendingActions = MutableSharedFlow<SearchAction>()
+    private val uiMessageManager = UiMessageManager()
 
     val state: StateFlow<SearchViewState> = combine(
+        searchQuery,
         searchShows.flow,
         loadingState.observable,
-    ) { results, refreshing ->
-        SearchViewState(
-            searchResults = results,
-            refreshing = refreshing,
-        )
-    }.stateIn(
+        uiMessageManager.messages,
+        ::SearchViewState
+    ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SearchViewState.Empty,
@@ -59,7 +58,7 @@ internal class SearchViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             searchQuery.debounce(300)
-                .collectLatest { query ->
+                .onEach { query ->
                     val job = launch {
                         loadingState.addLoader()
                         searchShows(SearchShows.Params(query))
@@ -67,23 +66,18 @@ internal class SearchViewModel @Inject constructor(
                     job.invokeOnCompletion { loadingState.removeLoader() }
                     job.join()
                 }
-        }
-
-        viewModelScope.launch {
-            pendingActions.collect { action ->
-                when (action) {
-                    is SearchAction.Search -> {
-                        searchQuery.value = action.searchTerm
-                    }
-                    else -> Unit
-                }
-            }
+                .catch { throwable -> uiMessageManager.emitMessage(UiMessage(throwable)) }
+                .collect()
         }
     }
 
-    fun submitAction(action: SearchAction) {
+    fun search(searchTerm: String) {
+        searchQuery.value = searchTerm
+    }
+
+    fun clearMessage(id: Long) {
         viewModelScope.launch {
-            pendingActions.emit(action)
+            uiMessageManager.clearMessage(id)
         }
     }
 }

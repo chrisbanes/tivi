@@ -17,6 +17,7 @@
 package app.tivi.home.discover
 
 import androidx.compose.runtime.Immutable
+import app.tivi.api.UiMessage
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
@@ -34,7 +35,8 @@ internal data class DiscoverViewState(
     val popularRefreshing: Boolean = false,
     val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
     val recommendedRefreshing: Boolean = false,
-    val nextEpisodeWithShowToWatched: EpisodeWithSeasonWithShow? = null
+    val nextEpisodeWithShowToWatched: EpisodeWithSeasonWithShow? = null,
+    val messages: List<UiMessage> = emptyList(),
 ) {
     val refreshing
         get() = trendingRefreshing || popularRefreshing || recommendedRefreshing

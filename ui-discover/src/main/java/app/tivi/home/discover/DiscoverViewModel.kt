@@ -18,6 +18,7 @@ package app.tivi.home.discover
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.tivi.api.UiMessageManager
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
@@ -28,10 +29,10 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.extensions.combine
+import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectInto
+import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -50,12 +51,12 @@ internal class DiscoverViewModel @Inject constructor(
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
+    private val logger: Logger,
 ) : ViewModel() {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
     private val recommendedLoadingState = ObservableLoadingCounter()
-
-    private val pendingActions = MutableSharedFlow<DiscoverAction>()
+    private val uiMessageManager = UiMessageManager()
 
     val state: StateFlow<DiscoverViewState> = combine(
         trendingLoadingState.observable,
@@ -67,8 +68,11 @@ internal class DiscoverViewModel @Inject constructor(
         observeNextShowEpisodeToWatch.flow,
         observeTraktAuthState.flow,
         observeUserDetails.flow,
-    ) { trendingLoad, popularLoad, recommendLoad, trending, popular, recommended,
-        nextShow, authState, user ->
+        uiMessageManager.messages,
+    ) {
+        trendingLoad, popularLoad, recommendLoad, trending, popular, recommended,
+        nextShow, authState, user, messages,
+        ->
         DiscoverViewState(
             user = user,
             authState = authState,
@@ -79,6 +83,7 @@ internal class DiscoverViewModel @Inject constructor(
             recommendedItems = recommended,
             recommendedRefreshing = recommendLoad,
             nextEpisodeWithShowToWatched = nextShow,
+            messages = messages,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -95,38 +100,32 @@ internal class DiscoverViewModel @Inject constructor(
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launch {
-            pendingActions.collect { action ->
-                when (action) {
-                    DiscoverAction.RefreshAction -> refresh(true)
-                    else -> Unit
-                }
-            }
-        }
-
-        viewModelScope.launch {
             // Each time the auth state changes, refresh...
             observeTraktAuthState.flow.collect { refresh(false) }
         }
     }
 
-    private fun refresh(fromUser: Boolean) {
+    fun refresh(fromUser: Boolean = true) {
         viewModelScope.launch {
-            updatePopularShows(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser))
-                .collectInto(popularLoadingState)
+            updatePopularShows(
+                UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser)
+            ).collectStatus(popularLoadingState, logger, uiMessageManager)
         }
         viewModelScope.launch {
-            updateTrendingShows(UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH, fromUser))
-                .collectInto(trendingLoadingState)
+            updateTrendingShows(
+                UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH, fromUser)
+            ).collectStatus(trendingLoadingState, logger, uiMessageManager)
         }
         viewModelScope.launch {
-            updateRecommendedShows(UpdateRecommendedShows.Params(forceRefresh = fromUser))
-                .collectInto(recommendedLoadingState)
+            updateRecommendedShows(
+                UpdateRecommendedShows.Params(forceRefresh = fromUser)
+            ).collectStatus(recommendedLoadingState, logger, uiMessageManager)
         }
     }
 
-    fun submitAction(action: DiscoverAction) {
+    fun clearMessage(id: Long) {
         viewModelScope.launch {
-            pendingActions.emit(action)
+            uiMessageManager.clearMessage(id)
         }
     }
 }

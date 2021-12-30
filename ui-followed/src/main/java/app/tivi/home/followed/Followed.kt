@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,8 +38,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +67,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortMenuPopup
+import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
@@ -99,43 +103,67 @@ internal fun Followed(
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = FollowedViewState.Empty)
+    val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList)
+        .collectAsLazyPagingItems()
 
     Followed(
         state = viewState,
-        list = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems()
-    ) { action ->
-        when (action) {
-            FollowedAction.LoginAction,
-            FollowedAction.OpenUserDetails -> openUser()
-            is FollowedAction.OpenShowDetails -> openShowDetails(action.showId)
-            else -> viewModel.submitAction(action)
-        }
-    }
+        list = pagingItems,
+        openShowDetails = openShowDetails,
+        onMessageShown = { viewModel.clearMessage(it) },
+        openUser = openUser,
+        refresh = { viewModel.refresh() },
+        onFilterChanged = { viewModel.setFilter(it) },
+        onSortSelected = { viewModel.setSort(it) },
+    )
 }
 
 @Composable
 internal fun Followed(
     state: FollowedViewState,
     list: LazyPagingItems<FollowedShowEntryWithShow>,
-    actioner: (FollowedAction) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    onMessageShown: (id: Long) -> Unit,
+    refresh: () -> Unit,
+    openUser: () -> Unit,
+    onFilterChanged: (String) -> Unit,
+    onSortSelected: (SortOption) -> Unit,
 ) {
+    val scaffoldState = rememberScaffoldState()
+
+    state.messages.firstOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            // Notify the view model that the message has been dismissed
+            onMessageShown(message.id)
+        }
+    }
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             FollowedAppBar(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.isLoading,
-                onRefreshActionClick = { actioner(FollowedAction.RefreshAction) },
-                onUserActionClick = { actioner(FollowedAction.OpenUserDetails) },
+                onRefreshActionClick = refresh,
+                onUserActionClick = openUser,
                 modifier = Modifier.fillMaxWidth()
+            )
+        },
+        snackbarHost = { snackbarHostState ->
+            SwipeDismissSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth()
             )
         },
         modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(state.isLoading),
-            onRefresh = { actioner(FollowedAction.RefreshAction) },
-            modifier = Modifier.bodyWidth(),
+            onRefresh = refresh,
             indicatorPadding = paddingValues,
             indicator = { state, trigger ->
                 SwipeRefreshIndicator(
@@ -151,16 +179,20 @@ internal fun Followed(
 
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .bodyWidth()
+                    .fillMaxHeight()
             ) {
                 item {
                     FilterSortPanel(
                         filterHint = stringResource(R.string.filter_shows, list.itemCount),
-                        onFilterChanged = { actioner(FollowedAction.FilterShows(it)) },
+                        onFilterChanged = onFilterChanged,
                         sortOptions = state.availableSorts,
                         currentSortOption = state.sort,
-                        onSortSelected = { actioner(FollowedAction.ChangeSort(it)) },
-                        modifier = Modifier.fillMaxWidth()
+                        onSortSelected = onSortSelected,
+                        modifier = Modifier
+                            .fillParentMaxWidth()
+                            .padding(horizontal = bodyMargin)
                     )
                 }
 
@@ -181,13 +213,12 @@ internal fun Followed(
                             poster = entry.poster,
                             watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
                             totalEpisodeCount = entry.stats?.episodeCount ?: 0,
-                            onClick = { actioner(FollowedAction.OpenShowDetails(entry.show.id)) },
+                            onClick = { openShowDetails(entry.show.id) },
                             contentPadding = PaddingValues(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         )
-                    } else {
-                        // TODO placeholder?
                     }
+                    // TODO placeholder?
                 }
 
                 itemSpacer(16.dp)

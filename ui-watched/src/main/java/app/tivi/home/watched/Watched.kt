@@ -37,8 +37,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +67,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortMenuPopup
+import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
@@ -104,37 +107,64 @@ internal fun Watched(
     val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList)
         .collectAsLazyPagingItems()
 
-    Watched(state = viewState, list = pagingItems) { action ->
-        when (action) {
-            WatchedAction.LoginAction, WatchedAction.OpenUserDetails -> openUser()
-            is WatchedAction.OpenShowDetails -> openShowDetails(action.showId)
-            else -> viewModel.submitAction(action)
-        }
-    }
+    Watched(
+        state = viewState,
+        list = pagingItems,
+        openShowDetails = openShowDetails,
+        onMessageShown = { viewModel.clearMessage(it) },
+        openUser = openUser,
+        refresh = { viewModel.refresh() },
+        onFilterChanged = { viewModel.setFilter(it) },
+        onSortSelected = { viewModel.setSort(it) },
+    )
 }
 
 @Composable
 internal fun Watched(
     state: WatchedViewState,
     list: LazyPagingItems<WatchedShowEntryWithShow>,
-    actioner: (WatchedAction) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    onMessageShown: (id: Long) -> Unit,
+    refresh: () -> Unit,
+    openUser: () -> Unit,
+    onFilterChanged: (String) -> Unit,
+    onSortSelected: (SortOption) -> Unit,
 ) {
+    val scaffoldState = rememberScaffoldState()
+
+    state.messages.firstOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            // Notify the view model that the message has been dismissed
+            onMessageShown(message.id)
+        }
+    }
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             WatchedAppBar(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.isLoading,
-                onRefreshActionClick = { actioner(WatchedAction.RefreshAction) },
-                onUserActionClick = { actioner(WatchedAction.OpenUserDetails) },
+                onRefreshActionClick = refresh,
+                onUserActionClick = openUser,
                 modifier = Modifier.fillMaxWidth()
+            )
+        },
+        snackbarHost = { snackbarHostState ->
+            SwipeDismissSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth()
             )
         },
         modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(state.isLoading),
-            onRefresh = { actioner(WatchedAction.RefreshAction) },
+            onRefresh = refresh,
             indicatorPadding = paddingValues,
             indicator = { state, trigger ->
                 SwipeRefreshIndicator(
@@ -157,10 +187,10 @@ internal fun Watched(
                 item {
                     FilterSortPanel(
                         filterHint = stringResource(R.string.filter_shows, list.itemCount),
-                        onFilterChanged = { actioner(WatchedAction.FilterShows(it)) },
+                        onFilterChanged = onFilterChanged,
                         sortOptions = state.availableSorts,
                         currentSortOption = state.sort,
-                        onSortSelected = { actioner(WatchedAction.ChangeSort(it)) },
+                        onSortSelected = onSortSelected,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = bodyMargin)
@@ -183,7 +213,7 @@ internal fun Watched(
                             show = entry.show,
                             poster = entry.poster,
                             lastWatched = entry.entry.lastWatched,
-                            onClick = { actioner(WatchedAction.OpenShowDetails(entry.show.id)) },
+                            onClick = { openShowDetails(entry.show.id) },
                             contentPadding = PaddingValues(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         )

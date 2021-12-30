@@ -16,12 +16,14 @@
 
 package app.tivi.home.search
 
+import app.tivi.api.UiMessage
 import app.tivi.data.resultentities.ShowDetailed
 
 internal data class SearchViewState(
     val query: String = "",
     val searchResults: List<ShowDetailed> = emptyList(),
-    val refreshing: Boolean = false
+    val refreshing: Boolean = false,
+    val messages: List<UiMessage> = emptyList(),
 ) {
     companion object {
         val Empty = SearchViewState()

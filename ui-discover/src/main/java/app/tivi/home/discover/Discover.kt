@@ -45,8 +45,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -65,6 +67,7 @@ import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -113,14 +116,16 @@ internal fun Discover(
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.state)
         .collectAsState(initial = DiscoverViewState.Empty)
+
     Discover(
         state = viewState,
-        refresh = { viewModel.submitAction(DiscoverAction.RefreshAction) },
+        refresh = { viewModel.refresh() },
         openUser = openUser,
         openShowDetails = openShowDetails,
         openTrendingShows = openTrendingShows,
         openRecommendedShows = openRecommendedShows,
-        openPopularShows = openPopularShows
+        openPopularShows = openPopularShows,
+        onMessageShown = { viewModel.clearMessage(it) },
     )
 }
 
@@ -133,8 +138,20 @@ internal fun Discover(
     openTrendingShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openPopularShows: () -> Unit,
+    onMessageShown: (id: Long) -> Unit,
 ) {
+    val scaffoldState = rememberScaffoldState()
+
+    state.messages.firstOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            // Notify the view model that the message has been dismissed
+            onMessageShown(message.id)
+        }
+    }
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             DiscoverAppBar(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
@@ -143,6 +160,14 @@ internal fun Discover(
                 onRefreshActionClick = refresh,
                 onUserActionClick = openUser,
                 modifier = Modifier.fillMaxWidth()
+            )
+        },
+        snackbarHost = { snackbarHostState ->
+            SwipeDismissSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth()
             )
         },
         modifier = Modifier.fillMaxSize(),

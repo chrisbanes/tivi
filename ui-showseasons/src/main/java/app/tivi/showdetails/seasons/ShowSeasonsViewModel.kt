@@ -19,25 +19,16 @@ package app.tivi.showdetails.seasons
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.api.UiError
-import app.tivi.base.InvokeError
-import app.tivi.base.InvokeStarted
-import app.tivi.base.InvokeStatus
-import app.tivi.base.InvokeSuccess
-import app.tivi.data.entities.ActionDate
-import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
-import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
-import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Params
+import app.tivi.api.UiMessageManager
+import app.tivi.domain.interactors.UpdateShowSeasons
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
-import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -48,25 +39,25 @@ internal class ShowSeasonsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     observeShowDetails: ObserveShowDetails,
     observeShowSeasons: ObserveShowSeasonsEpisodesWatches,
-    private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
+    private val updateShowSeasons: UpdateShowSeasons,
     private val logger: Logger,
-    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
     private val showId: Long = savedStateHandle.get("showId")!!
 
     private val loadingState = ObservableLoadingCounter()
+    private val uiMessageManager = UiMessageManager()
 
     val state: StateFlow<ShowSeasonsViewState> = combine(
         observeShowSeasons.flow,
         observeShowDetails.flow,
         loadingState.observable,
-        snackbarManager.errors,
-    ) { seasons, show, refreshing, error ->
+        uiMessageManager.messages,
+    ) { seasons, show, refreshing, messages ->
         ShowSeasonsViewState(
             show = show,
             seasons = seasons,
             refreshing = refreshing,
-            refreshError = error,
+            messages = messages,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -81,41 +72,17 @@ internal class ShowSeasonsViewModel @Inject constructor(
         refresh(false)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun refresh(fromUser: Boolean) {
-        // TODO
-    }
-
-    private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
-
-    private suspend fun Flow<InvokeStatus>.collectStatus() = collect { status ->
-        when (status) {
-            InvokeStarted -> loadingState.addLoader()
-            InvokeSuccess -> loadingState.removeLoader()
-            is InvokeError -> {
-                logger.i(status.throwable)
-                snackbarManager.addError(UiError(status.throwable))
-                loadingState.removeLoader()
-            }
+    fun refresh(fromUser: Boolean = true) {
+        viewModelScope.launch {
+            updateShowSeasons(
+                UpdateShowSeasons.Params(showId, fromUser)
+            ).collectStatus(loadingState, logger, uiMessageManager)
         }
     }
 
-    fun markSeasonWatched(
-        onlyAired: Boolean = false,
-        date: ActionDate = ActionDate.NOW,
-    ) {
-        changeSeasonWatchedStatus(
-            Params(showId, Action.WATCHED, onlyAired, date)
-        ).watchStatus()
-    }
-
-    fun markSeasonUnwatched() {
-        changeSeasonWatchedStatus(Params(showId, Action.UNWATCH)).watchStatus()
-    }
-
-    fun clearError() {
+    fun clearMessage(id: Long) {
         viewModelScope.launch {
-            snackbarManager.removeCurrentError()
+            uiMessageManager.clearMessage(id)
         }
     }
 }
