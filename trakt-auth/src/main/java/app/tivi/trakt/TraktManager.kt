@@ -26,6 +26,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,7 +47,7 @@ class TraktManager @Inject constructor(
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
     val state: StateFlow<TraktAuthState>
-        get() = _state
+        get() = _state.asStateFlow()
 
     init {
         // Observer which updates local state

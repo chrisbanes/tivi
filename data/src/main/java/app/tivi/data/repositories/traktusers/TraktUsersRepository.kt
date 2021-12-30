@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.traktusers
 
+import app.tivi.extensions.withRetry
 import org.threeten.bp.Instant
 import org.threeten.bp.Period
 import javax.inject.Inject
@@ -30,7 +31,9 @@ class TraktUsersRepository @Inject constructor(
     fun observeUser(username: String) = traktUsersStore.observeUser(username)
 
     suspend fun updateUser(username: String) {
-        var user = traktDataSource.getUser(username).let {
+        var user = withRetry {
+            traktDataSource.getUser(username)
+        }.let {
             // Tag the user as 'me' if that's what we're requesting
             if (username == "me") it.copy(isMe = true) else it
         }
