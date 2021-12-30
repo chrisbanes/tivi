@@ -37,8 +37,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +66,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortMenuPopup
+import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
@@ -102,7 +105,8 @@ internal fun Followed(
 
     Followed(
         state = viewState,
-        list = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems()
+        list = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems(),
+        onMessageShown = { viewModel.clearMessage(it) },
     ) { action ->
         when (action) {
             FollowedAction.LoginAction,
@@ -117,8 +121,19 @@ internal fun Followed(
 internal fun Followed(
     state: FollowedViewState,
     list: LazyPagingItems<FollowedShowEntryWithShow>,
+    onMessageShown: (id: Long) -> Unit,
     actioner: (FollowedAction) -> Unit,
 ) {
+    val scaffoldState = rememberScaffoldState()
+
+    state.messages.firstOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            // Notify the view model that the message has been dismissed
+            onMessageShown(message.id)
+        }
+    }
+
     Scaffold(
         topBar = {
             FollowedAppBar(
@@ -128,6 +143,14 @@ internal fun Followed(
                 onRefreshActionClick = { actioner(FollowedAction.RefreshAction) },
                 onUserActionClick = { actioner(FollowedAction.OpenUserDetails) },
                 modifier = Modifier.fillMaxWidth()
+            )
+        },
+        snackbarHost = { snackbarHostState ->
+            SwipeDismissSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth()
             )
         },
         modifier = Modifier.fillMaxSize(),

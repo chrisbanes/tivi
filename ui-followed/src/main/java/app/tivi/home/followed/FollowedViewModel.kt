@@ -21,6 +21,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import app.tivi.api.UiMessageManager
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
@@ -33,6 +34,7 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.extensions.combine
 import app.tivi.trakt.TraktAuthState
+import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectStatus
@@ -56,10 +58,12 @@ internal class FollowedViewModel @Inject constructor(
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
+    private val logger: Logger,
 ) : ViewModel() {
     private val pendingActions = MutableSharedFlow<FollowedAction>()
 
     private val loadingState = ObservableLoadingCounter()
+    private val uiMessageManager = UiMessageManager()
     private val showSelection = ShowStateSelector()
 
     val pagedList: Flow<PagingData<FollowedShowEntryWithShow>> =
@@ -83,7 +87,8 @@ internal class FollowedViewModel @Inject constructor(
         observeUserDetails.flow,
         filter,
         sort,
-    ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort ->
+        uiMessageManager.messages,
+    ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort, messages, ->
         FollowedViewState(
             user = user,
             authState = authState,
@@ -94,6 +99,7 @@ internal class FollowedViewModel @Inject constructor(
             filterActive = !filter.isNullOrEmpty(),
             availableSorts = availableSorts,
             sort = sort,
+            messages = messages,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -190,13 +196,19 @@ internal class FollowedViewModel @Inject constructor(
         viewModelScope.launch {
             updateFollowedShows(
                 UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK)
-            ).collectStatus(loadingState)
+            ).collectStatus(loadingState, logger, uiMessageManager)
         }
     }
 
     fun submitAction(action: FollowedAction) {
         viewModelScope.launch {
             pendingActions.emit(action)
+        }
+    }
+
+    fun clearMessage(id: Long) {
+        viewModelScope.launch {
+            uiMessageManager.clearMessage(id)
         }
     }
 

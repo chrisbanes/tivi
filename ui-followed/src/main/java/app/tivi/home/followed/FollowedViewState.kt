@@ -16,6 +16,7 @@
 
 package app.tivi.home.followed
 
+import app.tivi.api.UiMessage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
@@ -29,7 +30,8 @@ internal data class FollowedViewState(
     val filterActive: Boolean = false,
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
-    val sort: SortOption = SortOption.SUPER_SORT
+    val sort: SortOption = SortOption.SUPER_SORT,
+    val messages: List<UiMessage> = emptyList(),
 ) {
     companion object {
         val Empty = FollowedViewState()
