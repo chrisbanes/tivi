@@ -16,6 +16,7 @@
 
 package app.tivi.home.watched
 
+import app.tivi.api.UiMessage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
@@ -30,7 +31,8 @@ data class WatchedViewState(
     val filterActive: Boolean = false,
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
-    val sort: SortOption = SortOption.LAST_WATCHED
+    val sort: SortOption = SortOption.LAST_WATCHED,
+    val messages: List<UiMessage> = emptyList(),
 ) {
     companion object {
         val Empty = WatchedViewState()

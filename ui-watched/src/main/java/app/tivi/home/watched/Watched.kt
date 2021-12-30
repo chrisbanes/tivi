@@ -37,8 +37,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +67,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortMenuPopup
+import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
@@ -104,7 +107,11 @@ internal fun Watched(
     val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList)
         .collectAsLazyPagingItems()
 
-    Watched(state = viewState, list = pagingItems) { action ->
+    Watched(
+        state = viewState,
+        list = pagingItems,
+        onMessageShown = { viewModel.clearMessage(it) },
+    ) { action ->
         when (action) {
             WatchedAction.LoginAction, WatchedAction.OpenUserDetails -> openUser()
             is WatchedAction.OpenShowDetails -> openShowDetails(action.showId)
@@ -117,9 +124,21 @@ internal fun Watched(
 internal fun Watched(
     state: WatchedViewState,
     list: LazyPagingItems<WatchedShowEntryWithShow>,
+    onMessageShown: (id: Long) -> Unit,
     actioner: (WatchedAction) -> Unit,
 ) {
+    val scaffoldState = rememberScaffoldState()
+
+    state.messages.firstOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            // Notify the view model that the message has been dismissed
+            onMessageShown(message.id)
+        }
+    }
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             WatchedAppBar(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
@@ -128,6 +147,14 @@ internal fun Watched(
                 onRefreshActionClick = { actioner(WatchedAction.RefreshAction) },
                 onUserActionClick = { actioner(WatchedAction.OpenUserDetails) },
                 modifier = Modifier.fillMaxWidth()
+            )
+        },
+        snackbarHost = { snackbarHostState ->
+            SwipeDismissSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth()
             )
         },
         modifier = Modifier.fillMaxSize(),

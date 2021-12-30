@@ -21,6 +21,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import app.tivi.api.UiMessageManager
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -32,6 +33,7 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.extensions.combine
 import app.tivi.trakt.TraktAuthState
+import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectStatus
@@ -54,9 +56,11 @@ class WatchedViewModel @Inject constructor(
     private val observePagedWatchedShows: ObservePagedWatchedShows,
     observeTraktAuthState: ObserveTraktAuthState,
     private val getTraktAuthState: GetTraktAuthState,
-    observeUserDetails: ObserveUserDetails
+    observeUserDetails: ObserveUserDetails,
+    private val logger: Logger,
 ) : ViewModel() {
     private val pendingActions = MutableSharedFlow<WatchedAction>()
+    private val uiMessageManager = UiMessageManager()
 
     private val availableSorts = listOf(SortOption.LAST_WATCHED, SortOption.ALPHABETICAL)
 
@@ -77,7 +81,8 @@ class WatchedViewModel @Inject constructor(
         observeUserDetails.flow,
         filter,
         sort,
-    ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort ->
+        uiMessageManager.messages,
+    ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort, messages, ->
         WatchedViewState(
             user = user,
             authState = authState,
@@ -88,6 +93,7 @@ class WatchedViewModel @Inject constructor(
             filterActive = !filter.isNullOrEmpty(),
             availableSorts = availableSorts,
             sort = sort,
+            messages = messages,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -187,8 +193,15 @@ class WatchedViewModel @Inject constructor(
 
     private fun refreshWatched(fromUser: Boolean) {
         viewModelScope.launch {
-            updateWatchedShows(UpdateWatchedShows.Params(forceRefresh = fromUser))
-                .collectStatus(loadingState)
+            updateWatchedShows(
+                UpdateWatchedShows.Params(forceRefresh = fromUser)
+            ).collectStatus(loadingState, logger, uiMessageManager)
+        }
+    }
+
+    fun clearMessage(id: Long) {
+        viewModelScope.launch {
+            uiMessageManager.clearMessage(id)
         }
     }
 
