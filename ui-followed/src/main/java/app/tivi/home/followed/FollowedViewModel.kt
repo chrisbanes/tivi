@@ -40,7 +40,6 @@ import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
@@ -60,8 +59,6 @@ internal class FollowedViewModel @Inject constructor(
     private val getTraktAuthState: GetTraktAuthState,
     private val logger: Logger,
 ) : ViewModel() {
-    private val pendingActions = MutableSharedFlow<FollowedAction>()
-
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val showSelection = ShowStateSelector()
@@ -125,17 +122,6 @@ internal class FollowedViewModel @Inject constructor(
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .collect { refresh(false) }
         }
-
-        viewModelScope.launch {
-            pendingActions.collect { action ->
-                when (action) {
-                    FollowedAction.RefreshAction -> refresh(true)
-                    is FollowedAction.FilterShows -> setFilter(action.filter)
-                    is FollowedAction.ChangeSort -> setSort(action.sort)
-                    else -> Unit
-                }
-            }
-        }
     }
 
     private fun updateDataSource() {
@@ -148,7 +134,7 @@ internal class FollowedViewModel @Inject constructor(
         )
     }
 
-    private fun refresh(fromUser: Boolean) {
+    fun refresh(fromUser: Boolean = true) {
         viewModelScope.launch {
             if (getTraktAuthState.executeSync(Unit) == TraktAuthState.LOGGED_IN) {
                 refreshFollowed(fromUser)
@@ -156,13 +142,13 @@ internal class FollowedViewModel @Inject constructor(
         }
     }
 
-    private fun setFilter(filter: String?) {
+    fun setFilter(filter: String?) {
         viewModelScope.launch {
             this@FollowedViewModel.filter.emit(filter)
         }
     }
 
-    private fun setSort(sort: SortOption) {
+    fun setSort(sort: SortOption) {
         viewModelScope.launch {
             this@FollowedViewModel.sort.emit(sort)
         }
@@ -197,12 +183,6 @@ internal class FollowedViewModel @Inject constructor(
             updateFollowedShows(
                 UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK)
             ).collectStatus(loadingState, logger, uiMessageManager)
-        }
-    }
-
-    fun submitAction(action: FollowedAction) {
-        viewModelScope.launch {
-            pendingActions.emit(action)
         }
     }
 
