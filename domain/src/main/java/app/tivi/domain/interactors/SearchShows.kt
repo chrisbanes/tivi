@@ -16,6 +16,7 @@
 
 package app.tivi.domain.interactors
 
+import android.database.sqlite.SQLiteException
 import app.tivi.data.daos.ShowFtsDao
 import app.tivi.data.repositories.search.SearchRepository
 import app.tivi.data.resultentities.ShowDetailed
@@ -27,29 +28,24 @@ import javax.inject.Inject
 class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,
     private val showFtsDao: ShowFtsDao,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : SuspendingWorkInteractor<SearchShows.Params, List<ShowDetailed>>() {
-    override suspend fun doWork(params: Params): List<ShowDetailed> {
-        return withContext(dispatchers.io) {
-            val remoteResults = searchRepository.search(params.query)
-            if (remoteResults.isNotEmpty()) {
-                remoteResults
-            } else {
-                when {
-                    params.query.isNotBlank() -> {
-                        try {
-                            showFtsDao.search("*$params.query*")
-                        } catch (e: Exception) {
-                            // Re-throw wrapped exception with the query
-                            throw IllegalArgumentException(
-                                "Error while searching database with query: ${params.query}",
-                                e,
-                            )
-                        }
-                    }
-                    else -> emptyList()
+    override suspend fun doWork(params: Params): List<ShowDetailed> = withContext(dispatchers.io) {
+        val remoteResults = searchRepository.search(params.query)
+        when {
+            remoteResults.isNotEmpty() -> remoteResults
+            params.query.isNotBlank() -> {
+                try {
+                    showFtsDao.search("*$params.query*")
+                } catch (sqe: SQLiteException) {
+                    // Re-throw wrapped exception with the query
+                    throw SQLiteException(
+                        "Error while searching database with query: ${params.query}",
+                        sqe,
+                    )
                 }
             }
+            else -> emptyList()
         }
     }
 
