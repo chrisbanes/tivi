@@ -147,10 +147,10 @@ internal fun ShowSeasons(
         if (pagerState.isScrollInProgress) pagerBeenScrolled = true
     }
 
-    LaunchedEffect(initialSeasonId, viewState.seasons, pagerBeenScrolled) {
-        if (initialSeasonId != null && !pagerBeenScrolled) {
-            val initialIndex = viewState.seasons.indexOfFirst { it.season.id == initialSeasonId }
-            if (initialIndex >= 0) {
+    if (initialSeasonId != null && !pagerBeenScrolled && pagerState.pageCount > 0) {
+        val initialIndex = viewState.seasons.indexOfFirst { it.season.id == initialSeasonId }
+        LaunchedEffect(initialIndex, pagerState.pageCount) {
+            if (initialIndex in 0 until pagerState.pageCount) {
                 pagerState.scrollToPage(initialIndex)
             }
         }
