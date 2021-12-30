@@ -145,7 +145,7 @@ private fun EntryGridAppBar(
 ) {
     TopAppBar(
         navigationIcon = {
-            IconButton(onClick = { onNavigateUp() }) {
+            IconButton(onClick = onNavigateUp) {
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = stringResource(R.string.cd_navigate_up)
