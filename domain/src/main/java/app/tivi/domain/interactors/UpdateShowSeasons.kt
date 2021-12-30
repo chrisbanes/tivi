@@ -17,21 +17,37 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
+import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowSeasons.Params
 import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UpdateShowSeasons @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+    private val followedShowsRepository: FollowedShowsRepository,
     private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
-            seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
+            if (followedShowsRepository.isShowFollowed(params.showId)) {
+                // Then update the seasons/episodes
+                if (params.forceRefresh || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
+                    seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
+                }
+
+                ensureActive()
+                // Finally update any watched progress
+                if (params.forceRefresh || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
+                    seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)
+                }
+            } else {
+                seasonsEpisodesRepository.removeShowSeasonData(params.showId)
+            }
         }
     }
 
-    data class Params(val showId: Long)
+    data class Params(val showId: Long, val forceRefresh: Boolean)
 }

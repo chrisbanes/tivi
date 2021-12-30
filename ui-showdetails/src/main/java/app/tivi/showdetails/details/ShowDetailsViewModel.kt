@@ -34,7 +34,7 @@ import app.tivi.domain.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.domain.interactors.UpdateRelatedShows
 import app.tivi.domain.interactors.UpdateShowDetails
 import app.tivi.domain.interactors.UpdateShowImages
-import app.tivi.domain.interactors.UpdateShowSeasonData
+import app.tivi.domain.interactors.UpdateShowSeasons
 import app.tivi.domain.observers.ObserveRelatedShows
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowFollowStatus
@@ -63,7 +63,7 @@ internal class ShowDetailsViewModel @Inject constructor(
     private val updateShowImages: UpdateShowImages,
     private val updateRelatedShows: UpdateRelatedShows,
     observeRelatedShows: ObserveRelatedShows,
-    private val updateShowSeasons: UpdateShowSeasonData,
+    private val updateShowSeasons: UpdateShowSeasons,
     observeShowSeasons: ObserveShowSeasonsEpisodesWatches,
     private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
     observeShowFollowStatus: ObserveShowFollowStatus,
@@ -141,7 +141,7 @@ internal class ShowDetailsViewModel @Inject constructor(
         updateShowDetails(UpdateShowDetails.Params(showId, fromUser)).watchStatus()
         updateShowImages(UpdateShowImages.Params(showId, fromUser)).watchStatus()
         updateRelatedShows(UpdateRelatedShows.Params(showId, fromUser)).watchStatus()
-        updateShowSeasons(UpdateShowSeasonData.Params(showId, fromUser)).watchStatus()
+        updateShowSeasons(UpdateShowSeasons.Params(showId, fromUser)).watchStatus()
     }
 
     private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }

@@ -16,7 +16,6 @@
 
 package app.tivi.data.repositories.episodes
 
-import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
@@ -47,7 +46,6 @@ class SeasonsEpisodesRepository @Inject constructor(
     @Trakt private val traktEpisodeDataSource: EpisodeDataSource,
     @Tmdb private val tmdbEpisodeDataSource: EpisodeDataSource,
     private val traktAuthState: Provider<TraktAuthState>,
-    private val transactionRunner: DatabaseTransactionRunner
 ) {
     fun observeSeasonsForShow(showId: Long): Flow<List<Season>> {
         return seasonsEpisodesStore.observeShowSeasons(showId)

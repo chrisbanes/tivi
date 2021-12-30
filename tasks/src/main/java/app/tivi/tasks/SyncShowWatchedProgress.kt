@@ -21,7 +21,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import app.tivi.domain.interactors.UpdateShowSeasonData
+import app.tivi.domain.interactors.UpdateShowSeasons
 import app.tivi.util.Logger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -30,7 +30,7 @@ import dagger.assisted.AssistedInject
 class SyncShowWatchedProgress @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val updateShowSeasonData: UpdateShowSeasonData,
+    private val updateShowSeasons: UpdateShowSeasons,
     private val logger: Logger
 ) : CoroutineWorker(context, params) {
     companion object {
@@ -46,7 +46,7 @@ class SyncShowWatchedProgress @AssistedInject constructor(
         val showId = inputData.getLong(PARAM_SHOW_ID, -1)
         logger.d("$TAG worker running for show id: $showId")
 
-        updateShowSeasonData.executeSync(UpdateShowSeasonData.Params(showId, true))
+        updateShowSeasons.executeSync(UpdateShowSeasons.Params(showId, true))
 
         return Result.success()
     }
