@@ -33,8 +33,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,6 +47,7 @@ import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.PlaceholderPosterCard
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import com.google.accompanist.insets.LocalWindowInsets
@@ -63,7 +66,26 @@ fun <E : Entry> EntryGrid(
     onOpenShowDetails: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scaffoldState = rememberScaffoldState()
+
+    lazyPagingItems.loadState.prependErrorOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+        }
+    }
+    lazyPagingItems.loadState.appendErrorOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+        }
+    }
+    lazyPagingItems.loadState.refreshErrorOrNull()?.let { message ->
+        LaunchedEffect(message) {
+            scaffoldState.snackbarHostState.showSnackbar(message.message)
+        }
+    }
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             EntryGridAppBar(
                 title = title,
@@ -71,6 +93,14 @@ fun <E : Entry> EntryGrid(
                 refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading,
                 onRefreshActionClick = { lazyPagingItems.refresh() },
                 modifier = Modifier.fillMaxWidth()
+            )
+        },
+        snackbarHost = { snackbarHostState ->
+            SwipeDismissSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth()
             )
         },
         modifier = modifier,
@@ -95,7 +125,9 @@ fun <E : Entry> EntryGrid(
 
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.bodyWidth().fillMaxHeight(),
+                modifier = Modifier
+                    .bodyWidth()
+                    .fillMaxHeight(),
             ) {
                 itemsInGrid(
                     lazyPagingItems = lazyPagingItems,
@@ -141,7 +173,7 @@ private fun EntryGridAppBar(
     refreshing: Boolean,
     onNavigateUp: () -> Unit,
     onRefreshActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         navigationIcon = {
