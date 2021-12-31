@@ -16,7 +16,7 @@
 
 package app.tivi.home
 
-import app.tivi.ContentViewFetcher
+import app.tivi.ContentViewSetter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,7 +26,7 @@ import dagger.hilt.components.SingletonComponent
 @Module
 object StandardContentViewModule {
     @Provides
-    fun provideContentViewSetter(): ContentViewFetcher = ContentViewFetcher { activity, view ->
+    fun provideContentViewSetter(): ContentViewSetter = ContentViewSetter { activity, view ->
         activity.setContentView(view)
     }
 }
