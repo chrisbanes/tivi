@@ -68,10 +68,10 @@ internal class DiscoverViewModel @Inject constructor(
         observeNextShowEpisodeToWatch.flow,
         observeTraktAuthState.flow,
         observeUserDetails.flow,
-        uiMessageManager.messages,
+        uiMessageManager.message,
     ) {
         trendingLoad, popularLoad, recommendLoad, trending, popular, recommended,
-        nextShow, authState, user, messages,
+        nextShow, authState, user, message,
         ->
         DiscoverViewState(
             user = user,
@@ -83,7 +83,7 @@ internal class DiscoverViewModel @Inject constructor(
             recommendedItems = recommended,
             recommendedRefreshing = recommendLoad,
             nextEpisodeWithShowToWatched = nextShow,
-            messages = messages,
+            message = message,
         )
     }.stateIn(
         scope = viewModelScope,

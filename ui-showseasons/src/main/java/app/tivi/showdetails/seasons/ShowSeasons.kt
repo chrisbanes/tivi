@@ -132,7 +132,7 @@ internal fun ShowSeasons(
 ) {
     val scaffoldState = rememberScaffoldState()
 
-    viewState.messages.firstOrNull()?.let { message ->
+    viewState.message?.let { message ->
         LaunchedEffect(message) {
             scaffoldState.snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed

@@ -23,7 +23,7 @@ internal data class SearchViewState(
     val query: String = "",
     val searchResults: List<ShowDetailed> = emptyList(),
     val refreshing: Boolean = false,
-    val messages: List<UiMessage> = emptyList(),
+    val message: UiMessage? = null,
 ) {
     companion object {
         val Empty = SearchViewState()

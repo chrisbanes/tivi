@@ -51,13 +51,13 @@ internal class ShowSeasonsViewModel @Inject constructor(
         observeShowSeasons.flow,
         observeShowDetails.flow,
         loadingState.observable,
-        uiMessageManager.messages,
-    ) { seasons, show, refreshing, messages ->
+        uiMessageManager.message,
+    ) { seasons, show, refreshing, message ->
         ShowSeasonsViewState(
             show = show,
             seasons = seasons,
             refreshing = refreshing,
-            messages = messages,
+            message = message,
         )
     }.stateIn(
         scope = viewModelScope,

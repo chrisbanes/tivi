@@ -130,7 +130,7 @@ internal fun EpisodeDetails(
         onRemoveAllWatches = { viewModel.removeAllWatches() },
         onRemoveWatch = { viewModel.removeWatchEntry(it) },
         onAddWatch = { viewModel.addWatch() },
-        clearMessage = { viewModel.clearMessage(it) },
+        onMessageShown = { viewModel.clearMessage(it) },
     )
 }
 
@@ -143,15 +143,15 @@ internal fun EpisodeDetails(
     onRemoveAllWatches: () -> Unit,
     onRemoveWatch: (id: Long) -> Unit,
     onAddWatch: () -> Unit,
-    clearMessage: (id: Long) -> Unit,
+    onMessageShown: (id: Long) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
 
-    viewState.messages.firstOrNull()?.let { message ->
+    viewState.message?.let { message ->
         LaunchedEffect(message) {
             scaffoldState.snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
-            clearMessage(message.id)
+            onMessageShown(message.id)
         }
     }
 
@@ -635,6 +635,6 @@ fun PreviewEpisodeDetails() {
         onRemoveAllWatches = {},
         onRemoveWatch = {},
         onAddWatch = {},
-        clearMessage = {},
+        onMessageShown = {},
     )
 }
