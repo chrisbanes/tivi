@@ -23,7 +23,6 @@ import app.tivi.extensions.withLocale
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktModule
 import app.tivi.util.AppCoroutineDispatchers
-import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.Module
@@ -32,7 +31,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
-import okhttp3.Interceptor
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 import java.io.File
@@ -123,16 +121,4 @@ object AppModule {
     fun provideFirebaseAnalytics(
         @ApplicationContext context: Context
     ): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
-
-    @Provides
-    @Named("chucker")
-    @Singleton
-    fun provideChuckerInterceptor(@ApplicationContext context: Context): Interceptor {
-        return ChuckerInterceptor.Builder(context)
-            .redactHeaders(
-                "trakt-api-key",
-                "Authorization",
-            )
-            .build()
-    }
 }

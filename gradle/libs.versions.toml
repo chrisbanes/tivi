@@ -10,6 +10,7 @@ composecompiler = "1.1.0-rc02" # rc02 works with Kotlin 1.6.10
 composesnapshot = "-" # a single character = no snapshot
 coroutines = "1.5.2"
 dagger = "2.40.5"
+debugdrawer = "0.9.8-SNAPSHOT"
 hilt = "2.40.5"
 kotlin = "1.6.10"
 ktlint = "0.43.2"
@@ -78,7 +79,6 @@ androidx-work-runtime = "androidx.work:work-runtime-ktx:2.7.1"
 appauth = "net.openid:appauth:0.8.1"
 
 chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
-chucker-noop = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
 coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
@@ -103,6 +103,12 @@ google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.2.6"
 google-crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.8.1"
 google-gmsGoogleServices = "com.google.gms:google-services:4.3.10"
 
+debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
+debugdrawer-leakcanary = { module = "au.com.gridstone.debugdrawer:debugdrawer-leakcanary", version.ref = "debugdrawer" }
+debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retrofit", version.ref = "debugdrawer" }
+debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber", version.ref = "debugdrawer" }
+debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-okhttp-logger", version.ref = "debugdrawer" }
+
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-pluginGradle = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
@@ -126,6 +132,7 @@ okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp"
 
 retrofit-gsonConverter = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 retrofit-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofit" }
 
 robolectric = "org.robolectric:robolectric:4.7.3"
 

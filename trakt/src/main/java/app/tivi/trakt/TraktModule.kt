@@ -19,9 +19,7 @@ package app.tivi.trakt
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -34,17 +32,10 @@ object TraktModule {
         @Named("trakt-client-id") clientId: String,
         @Named("trakt-client-secret") clientSecret: String,
         @Named("trakt-auth-redirect-uri") redirectUri: String,
-        @Named("chucker") chucker: Interceptor,
     ): TraktV2 = object : TraktV2(clientId, clientSecret, redirectUri) {
-        override fun okHttpClient(): OkHttpClient {
-            return client.newBuilder()
-                .also { setOkHttpClientDefaults(it) }
-                .addInterceptor(chucker)
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
-                .writeTimeout(20, TimeUnit.SECONDS)
-                .build()
-        }
+        override fun okHttpClient(): OkHttpClient = client.newBuilder()
+            .apply { setOkHttpClientDefaults(this) }
+            .build()
     }
 }
 

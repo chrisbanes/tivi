@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package app.tivi.inject
 
 import android.content.Context
-import app.tivi.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,9 +25,8 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import okhttp3.logging.LoggingEventListener
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -38,47 +36,25 @@ import javax.inject.Singleton
 object NetworkModule {
     @Singleton
     @Provides
-    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor? {
-        if (!BuildConfig.DEBUG) return null
-        return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BASIC
-        }
-    }
-
-    @Singleton
-    @Provides
-    fun provideHttpEventListener(): LoggingEventListener.Factory? {
-        if (!BuildConfig.DEBUG) return null
-        return LoggingEventListener.Factory()
-    }
-
-    @Singleton
-    @Provides
     fun provideOkHttpClient(
-        httpLoggingInterceptor: HttpLoggingInterceptor?,
-        loggingEventListener: LoggingEventListener.Factory?,
-        @ApplicationContext context: Context
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .apply {
-                if (httpLoggingInterceptor != null) {
-                    addInterceptor(httpLoggingInterceptor)
-                }
-                if (loggingEventListener != null) {
-                    eventListenerFactory(loggingEventListener)
-                }
+        @ApplicationContext context: Context,
+        interceptors: Set<@JvmSuppressWildcards Interceptor>,
+    ): OkHttpClient = OkHttpClient.Builder()
+        .apply { interceptors.forEach(::addInterceptor) }
+        // Around 4¢ worth of storage in 2020
+        .cache(Cache(File(context.cacheDir, "api_cache"), 50L * 1024 * 1024))
+        // Adjust the Connection pool to account for historical use of 3 separate clients
+        // but reduce the keepAlive to 2 minutes to avoid keeping radio open.
+        .connectionPool(ConnectionPool(10, 2, TimeUnit.MINUTES))
+        .dispatcher(
+            Dispatcher().apply {
+                // Allow for increased number of concurrent image fetches on same host
+                maxRequestsPerHost = 10
             }
-            // Around 4¢ worth of storage in 2020
-            .cache(Cache(File(context.cacheDir, "api_cache"), 50L * 1024 * 1024))
-            // Adjust the Connection pool to account for historical use of 3 separate clients
-            // but reduce the keepAlive to 2 minutes to avoid keeping radio open.
-            .connectionPool(ConnectionPool(10, 2, TimeUnit.MINUTES))
-            .dispatcher(
-                Dispatcher().apply {
-                    // Allow for high number of concurrent image fetches on same host.
-                    maxRequestsPerHost = 15
-                }
-            )
-            .build()
-    }
+        )
+        // Increase timeouts
+        .connectTimeout(20, TimeUnit.SECONDS)
+        .readTimeout(20, TimeUnit.SECONDS)
+        .writeTimeout(20, TimeUnit.SECONDS)
+        .build()
 }

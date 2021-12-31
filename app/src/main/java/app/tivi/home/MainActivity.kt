@@ -18,10 +18,16 @@ package app.tivi.home
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.compose.setContent
+import androidx.activity.ComponentActivity
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewTreeLifecycleOwner
+import androidx.lifecycle.ViewTreeViewModelStoreOwner
+import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import app.tivi.ContentViewSetter
 import app.tivi.TiviActivity
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
@@ -44,6 +50,7 @@ class MainActivity : TiviActivity() {
     @Inject internal lateinit var textCreator: TiviTextCreator
     @Inject internal lateinit var preferences: TiviPreferences
     @Inject internal lateinit var analytics: Analytics
+    @Inject internal lateinit var contentViewSetter: ContentViewSetter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,24 +59,48 @@ class MainActivity : TiviActivity() {
 
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
 
-        setContent {
-            CompositionLocalProvider(
-                LocalTiviDateFormatter provides tiviDateFormatter,
-                LocalTiviTextCreator provides textCreator,
-            ) {
-                ProvideWindowInsets(consumeWindowInsets = false) {
-                    TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
-                        Home(
-                            analytics = analytics,
-                            onOpenSettings = ::openSettings,
-                        )
-                    }
+        val composeView = ComposeView(this).apply {
+            setContent {
+                TiviContent()
+            }
+        }
+
+        // Copied from setContent {} ext-fun
+        setOwners()
+        contentViewSetter.setContentView(this, composeView)
+    }
+
+    @Composable
+    private fun TiviContent() {
+        CompositionLocalProvider(
+            LocalTiviDateFormatter provides tiviDateFormatter,
+            LocalTiviTextCreator provides textCreator,
+        ) {
+            ProvideWindowInsets(consumeWindowInsets = false) {
+                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
+                    Home(
+                        analytics = analytics,
+                        onOpenSettings = {
+                            startActivity(
+                                Intent(this@MainActivity, SettingsActivity::class.java)
+                            )
+                        },
+                    )
                 }
             }
         }
     }
+}
 
-    private fun openSettings() {
-        startActivity(Intent(this, SettingsActivity::class.java))
+private fun ComponentActivity.setOwners() {
+    val decorView = window.decorView
+    if (ViewTreeLifecycleOwner.get(decorView) == null) {
+        ViewTreeLifecycleOwner.set(decorView, this)
+    }
+    if (ViewTreeViewModelStoreOwner.get(decorView) == null) {
+        ViewTreeViewModelStoreOwner.set(decorView, this)
+    }
+    if (ViewTreeSavedStateRegistryOwner.get(decorView) == null) {
+        ViewTreeSavedStateRegistryOwner.set(decorView, this)
     }
 }
