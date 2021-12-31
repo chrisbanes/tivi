@@ -224,10 +224,16 @@ dependencies {
     implementation libs.google.crashlytics
     implementation libs.google.analytics
 
-    standardImplementation libs.chucker.noop
     qaImplementation libs.chucker.library
 
-    debugImplementation libs.leakCanary
+    qaImplementation libs.debugdrawer.debugdrawer
+    qaImplementation libs.debugdrawer.leakcanary
+    qaImplementation libs.debugdrawer.retrofit
+    qaImplementation libs.retrofit.mock
+    qaImplementation libs.debugdrawer.timber
+    qaImplementation libs.debugdrawer.okhttplogger
+
+    qaImplementation libs.leakCanary
 
     testImplementation libs.junit
     testImplementation libs.robolectric

@@ -14,30 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi.tmdb
+package app.tivi.home
 
-import com.uwetrottmann.tmdb2.Tmdb
+import app.tivi.ContentViewFetcher
 import dagger.Module
 import dagger.Provides
-import okhttp3.OkHttpClient
-import javax.inject.Named
-import javax.inject.Singleton
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
+@InstallIn(SingletonComponent::class)
 @Module
-object TmdbModule {
+object StandardContentViewModule {
     @Provides
-    fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
-        return tmdbManager.getLatestImageProvider()
-    }
-
-    @Singleton
-    @Provides
-    fun provideTmdb(
-        client: OkHttpClient,
-        @Named("tmdb-api") apiKey: String,
-    ): Tmdb = object : Tmdb(apiKey) {
-        override fun okHttpClient(): OkHttpClient = client.newBuilder()
-            .apply { setOkHttpClientDefaults(this) }
-            .build()
+    fun provideContentViewSetter(): ContentViewFetcher = ContentViewFetcher { activity, view ->
+        activity.setContentView(view)
     }
 }
