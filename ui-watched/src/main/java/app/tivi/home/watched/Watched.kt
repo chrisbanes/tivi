@@ -132,7 +132,7 @@ internal fun Watched(
 ) {
     val scaffoldState = rememberScaffoldState()
 
-    state.messages.firstOrNull()?.let { message ->
+    state.message?.let { message ->
         LaunchedEffect(message) {
             scaffoldState.snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed

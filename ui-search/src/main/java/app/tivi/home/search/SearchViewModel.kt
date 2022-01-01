@@ -47,7 +47,7 @@ internal class SearchViewModel @Inject constructor(
         searchQuery,
         searchShows.flow,
         loadingState.observable,
-        uiMessageManager.messages,
+        uiMessageManager.message,
         ::SearchViewState
     ).stateIn(
         scope = viewModelScope,

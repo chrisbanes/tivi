@@ -16,9 +16,10 @@
 
 package app.tivi.api
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.UUID
@@ -40,7 +41,11 @@ class UiMessageManager {
     private val mutex = Mutex()
 
     private val _messages = MutableStateFlow(emptyList<UiMessage>())
-    val messages: StateFlow<List<UiMessage>> = _messages.asStateFlow()
+
+    /**
+     * A flow emitting the current message to display.
+     */
+    val message: Flow<UiMessage?> = _messages.map { it.firstOrNull() }.distinctUntilChanged()
 
     suspend fun emitMessage(message: UiMessage) {
         mutex.withLock {

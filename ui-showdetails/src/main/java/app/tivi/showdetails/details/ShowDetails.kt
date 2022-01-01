@@ -173,7 +173,7 @@ internal fun ShowDetails(
             openShowDetails = openShowDetails,
             openEpisodeDetails = openEpisodeDetails,
             refresh = { viewModel.refresh() },
-            clearMessage = { viewModel.clearMessage(it) },
+            onMessageShown = { viewModel.clearMessage(it) },
             openSeason = { openSeasons(state.show.id, it) },
             onSeasonFollowed = { viewModel.setSeasonFollowed(it, true) },
             onSeasonUnfollowed = { viewModel.setSeasonFollowed(it, false) },
@@ -193,7 +193,7 @@ internal fun ShowDetails(
     openShowDetails: (showId: Long) -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
     refresh: () -> Unit,
-    clearMessage: (id: Long) -> Unit,
+    onMessageShown: (id: Long) -> Unit,
     openSeason: (seasonId: Long) -> Unit,
     onSeasonFollowed: (seasonId: Long) -> Unit,
     onSeasonUnfollowed: (seasonId: Long) -> Unit,
@@ -205,11 +205,11 @@ internal fun ShowDetails(
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
 
-    viewState.messages.firstOrNull()?.let { message ->
+    viewState.message?.let { message ->
         LaunchedEffect(message) {
             scaffoldState.snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
-            clearMessage(message.id)
+            onMessageShown(message.id)
         }
     }
 

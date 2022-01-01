@@ -58,8 +58,8 @@ internal class EpisodeDetailsViewModel @Inject constructor(
         observeEpisodeDetails.flow,
         observeEpisodeWatches.flow,
         loadingState.observable,
-        uiMessageManager.messages,
-    ) { episodeDetails, episodeWatches, refreshing, messages ->
+        uiMessageManager.message,
+    ) { episodeDetails, episodeWatches, refreshing, message ->
         EpisodeDetailsViewState(
             episode = episodeDetails.episode,
             season = episodeDetails.season,
@@ -67,7 +67,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             canAddEpisodeWatch = episodeDetails.episode?.firstAired?.isBefore(OffsetDateTime.now())
                 ?: true,
             refreshing = refreshing,
-            messages = messages,
+            message = message,
         )
     }.stateIn(
         scope = viewModelScope,

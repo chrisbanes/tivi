@@ -99,7 +99,7 @@ internal fun Search(
 ) {
     val scaffoldState = rememberScaffoldState()
 
-    state.messages.firstOrNull()?.let { message ->
+    state.message?.let { message ->
         LaunchedEffect(message) {
             scaffoldState.snackbarHostState.showSnackbar(message.message)
             onMessageShown(message.id)

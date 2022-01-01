@@ -36,7 +36,7 @@ internal data class ShowDetailsViewState(
     val watchStats: FollowedShowsWatchStats? = null,
     val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val refreshing: Boolean = false,
-    val messages: List<UiMessage> = emptyList(),
+    val message: UiMessage? = null,
 ) {
     companion object {
         val Empty = ShowDetailsViewState()

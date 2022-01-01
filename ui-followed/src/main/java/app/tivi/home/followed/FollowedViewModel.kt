@@ -84,8 +84,8 @@ internal class FollowedViewModel @Inject constructor(
         observeUserDetails.flow,
         filter,
         sort,
-        uiMessageManager.messages,
-    ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort, messages, ->
+        uiMessageManager.message,
+    ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort, message ->
         FollowedViewState(
             user = user,
             authState = authState,
@@ -96,7 +96,7 @@ internal class FollowedViewModel @Inject constructor(
             filterActive = !filter.isNullOrEmpty(),
             availableSorts = availableSorts,
             sort = sort,
-            messages = messages,
+            message = message,
         )
     }.stateIn(
         scope = viewModelScope,
