@@ -25,11 +25,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 
 @Composable
-fun Recommended(
+fun RecommendedShows(
     openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit,
 ) {
-    Recommended(
+    RecommendedShows(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
         navigateUp = navigateUp,
@@ -37,7 +37,7 @@ fun Recommended(
 }
 
 @Composable
-internal fun Recommended(
+internal fun RecommendedShows(
     viewModel: RecommendedShowsViewModel,
     openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit,

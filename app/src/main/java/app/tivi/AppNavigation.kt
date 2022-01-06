@@ -32,21 +32,19 @@ import androidx.navigation.NavGraph
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import app.tivi.account.AccountUi
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.home.discover.Discover
 import app.tivi.home.followed.Followed
-import app.tivi.home.popular.Popular
-import app.tivi.home.recommended.Recommended
+import app.tivi.home.popular.PopularShows
+import app.tivi.home.recommended.RecommendedShows
 import app.tivi.home.search.Search
-import app.tivi.home.trending.Trending
+import app.tivi.home.trending.TrendingShows
 import app.tivi.home.watched.Watched
 import app.tivi.showdetails.details.ShowDetails
 import app.tivi.showdetails.seasons.ShowSeasons
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 
 internal sealed class Screen(val route: String) {
@@ -195,7 +193,10 @@ private fun NavGraphBuilder.addDiscover(
     navController: NavController,
     root: Screen,
 ) {
-    composable(LeafScreen.Discover.createRoute(root)) {
+    composable(
+        route = LeafScreen.Discover.createRoute(root),
+        debugLabel = "Discover()",
+    ) {
         Discover(
             openTrendingShows = {
                 navController.navigate(LeafScreen.Trending.createRoute(root))
@@ -232,7 +233,10 @@ private fun NavGraphBuilder.addFollowedShows(
     navController: NavController,
     root: Screen,
 ) {
-    composable(LeafScreen.Following.createRoute(root)) {
+    composable(
+        route = LeafScreen.Following.createRoute(root),
+        debugLabel = "Followed()",
+    ) {
         Followed(
             openShowDetails = { showId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
@@ -249,7 +253,10 @@ private fun NavGraphBuilder.addWatchedShows(
     navController: NavController,
     root: Screen,
 ) {
-    composable(LeafScreen.Watched.createRoute(root)) {
+    composable(
+        route = LeafScreen.Watched.createRoute(root),
+        debugLabel = "Watched()",
+    ) {
         Watched(
             openShowDetails = { showId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
@@ -282,9 +289,10 @@ private fun NavGraphBuilder.addShowDetails(
 ) {
     composable(
         route = LeafScreen.ShowDetails.createRoute(root),
+        debugLabel = "ShowDetails()",
         arguments = listOf(
             navArgument("showId") { type = NavType.LongType }
-        )
+        ),
     ) {
         ShowDetails(
             navigateUp = navController::navigateUp,
@@ -308,6 +316,7 @@ private fun NavGraphBuilder.addEpisodeDetails(
 ) {
     composable(
         route = LeafScreen.EpisodeDetails.createRoute(root),
+        debugLabel = "EpisodeDetails()",
         arguments = listOf(
             navArgument("episodeId") { type = NavType.LongType },
         )
@@ -323,8 +332,11 @@ private fun NavGraphBuilder.addRecommendedShows(
     navController: NavController,
     root: Screen,
 ) {
-    composable(LeafScreen.RecommendedShows.createRoute(root)) {
-        Recommended(
+    composable(
+        route = LeafScreen.RecommendedShows.createRoute(root),
+        debugLabel = "RecommendedShows()",
+    ) {
+        RecommendedShows(
             openShowDetails = { showId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
             },
@@ -338,8 +350,11 @@ private fun NavGraphBuilder.addTrendingShows(
     navController: NavController,
     root: Screen,
 ) {
-    composable(LeafScreen.Trending.createRoute(root)) {
-        Trending(
+    composable(
+        route = LeafScreen.Trending.createRoute(root),
+        debugLabel = "TrendingShows()",
+    ) {
+        TrendingShows(
             openShowDetails = { showId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
             },
@@ -353,8 +368,11 @@ private fun NavGraphBuilder.addPopularShows(
     navController: NavController,
     root: Screen,
 ) {
-    composable(LeafScreen.Popular.createRoute(root)) {
-        Popular(
+    composable(
+        route = LeafScreen.Popular.createRoute(root),
+        debugLabel = "PopularShows()",
+    ) {
+        PopularShows(
             openShowDetails = { showId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
             },
@@ -368,7 +386,10 @@ private fun NavGraphBuilder.addAccount(
     root: Screen,
     onOpenSettings: () -> Unit,
 ) {
-    dialog(LeafScreen.Account.createRoute(root)) {
+    dialog(
+        route = LeafScreen.Account.createRoute(root),
+        debugLabel = "AccountUi()",
+    ) {
         AccountUi(
             openSettings = onOpenSettings
         )
@@ -382,6 +403,7 @@ private fun NavGraphBuilder.addShowSeasons(
 ) {
     composable(
         route = LeafScreen.ShowSeasons.createRoute(root),
+        debugLabel = "ShowSeasons()",
         arguments = listOf(
             navArgument("showId") {
                 type = NavType.LongType

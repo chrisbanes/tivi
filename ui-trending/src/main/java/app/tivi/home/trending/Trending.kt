@@ -26,11 +26,11 @@ import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 
 @Composable
-fun Trending(
+fun TrendingShows(
     openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit,
 ) {
-    Trending(
+    TrendingShows(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
         navigateUp = navigateUp,
@@ -38,7 +38,7 @@ fun Trending(
 }
 
 @Composable
-internal fun Trending(
+internal fun TrendingShows(
     viewModel: TrendingShowsViewModel,
     openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit,
