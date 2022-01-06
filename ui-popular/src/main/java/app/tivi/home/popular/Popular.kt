@@ -24,11 +24,11 @@ import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 
 @Composable
-fun Popular(
+fun PopularShows(
     openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit,
 ) {
-    Popular(
+    PopularShows(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
         navigateUp = navigateUp,
@@ -36,7 +36,7 @@ fun Popular(
 }
 
 @Composable
-internal fun Popular(
+internal fun PopularShows(
     viewModel: PopularShowsViewModel,
     openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit,

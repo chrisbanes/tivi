@@ -48,6 +48,7 @@ import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -69,6 +70,7 @@ import app.tivi.AppNavigation
 import app.tivi.R
 import app.tivi.Screen
 import app.tivi.common.compose.theme.AppBarAlphas
+import app.tivi.debugLabel
 import app.tivi.util.Analytics
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsHeight
@@ -76,6 +78,7 @@ import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import kotlinx.coroutines.flow.collect
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -85,16 +88,16 @@ internal fun Home(
 ) {
     val navController = rememberAnimatedNavController()
 
-    DisposableEffect(navController, analytics) {
-        val listener = NavController.OnDestinationChangedListener { _, destination, arguments ->
+    // Launch an effect to track changes to the current back stack entry, and push them
+    // as a screen views to analytics
+    LaunchedEffect(navController, analytics) {
+        navController.currentBackStackEntryFlow.collect { entry ->
             analytics.trackScreenView(
-                label = destination.label?.toString() ?: "Composable",
-                route = destination.route,
-                arguments = arguments,
+                label = entry.debugLabel,
+                route = entry.destination.route,
+                arguments = entry.arguments,
             )
         }
-        navController.addOnDestinationChangedListener(listener)
-        onDispose { navController.removeOnDestinationChangedListener(listener) }
     }
 
     val configuration = LocalConfiguration.current

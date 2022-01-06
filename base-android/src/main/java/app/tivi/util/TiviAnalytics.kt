@@ -34,10 +34,16 @@ internal class TiviAnalytics @Inject constructor(
             firebaseAnalytics.get().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
                 param(FirebaseAnalytics.Param.SCREEN_NAME, label)
                 if (route != null) param("screen_route", route)
+
+                // Expand out the rest of the parameters
                 when {
                     arguments is Bundle -> {
                         for (key in arguments.keySet()) {
-                            param("screen_arg_$key", arguments.get(key).toString())
+                            val value = arguments.get(key).toString()
+                            // We don't want to include the label or route twice
+                            if (value == label || value == route) continue
+
+                            param("screen_arg_$key", value)
                         }
                     }
                     arguments != null -> param("screen_arg", arguments.toString())
