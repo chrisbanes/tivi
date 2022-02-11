@@ -33,11 +33,10 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import javax.inject.Inject
@@ -61,13 +60,13 @@ class EpisodesTest : DatabaseTest() {
     }
 
     @Test
-    fun insert() = testScope.runBlockingTest {
+    fun insert() = runTest {
         episodeDao.insert(s1e1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(s1e1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
-    fun insert_withSameTraktId() = testScope.runBlockingTest {
+    fun insert_withSameTraktId() = runTest {
         episodeDao.insert(s1e1)
         // Make a copy with a 0 id
         val copy = s1e1.copy(id = 0)
@@ -75,14 +74,14 @@ class EpisodesTest : DatabaseTest() {
     }
 
     @Test
-    fun delete() = testScope.runBlockingTest {
+    fun delete() = runTest {
         episodeDao.insert(s1e1)
         episodeDao.deleteEntity(s1e1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
     }
 
     @Test
-    fun deleteSeason_deletesEpisode() = testScope.runBlockingTest {
+    fun deleteSeason_deletesEpisode() = runTest {
         episodeDao.insert(s1e1)
         // Now delete season
         seasonsDao.deleteEntity(s1)
@@ -90,13 +89,13 @@ class EpisodesTest : DatabaseTest() {
     }
 
     @Test
-    fun showIdForEpisodeId() = testScope.runBlockingTest {
+    fun showIdForEpisodeId() = runTest {
         episodeDao.insert(s1e1)
         assertThat(episodeDao.showIdForEpisodeId(s1e1.id), `is`(showId))
     }
 
     @Test
-    fun nextAiredEpisodeAfter() = testScope.runBlockingTest {
+    fun nextAiredEpisodeAfter() = runTest {
         episodeDao.insertAll(s1_episodes)
 
         assertThat(
@@ -122,10 +121,5 @@ class EpisodesTest : DatabaseTest() {
                 .first()?.episode,
             nullValue()
         )
-    }
-
-    @After
-    fun cleanup() {
-        testScope.cleanupTestCoroutines()
     }
 }

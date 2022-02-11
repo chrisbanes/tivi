@@ -1,14 +1,14 @@
 [versions]
-accompanist = "0.21.5-rc"
+accompanist = "0.23.0"
 androidxhilt = "1.0.0"
-androidxlifecycle = "2.4.0"
+androidxlifecycle = "2.4.1"
 androidxtest = "1.4.0"
 chucker = "3.5.2"
 coil = "1.4.0"
-compose = "1.1.0-rc01"
-composecompiler = "1.1.0-rc02" # rc02 works with Kotlin 1.6.10
+compose = "1.1.0"
+composecompiler = "1.1.0" # rc02 works with Kotlin 1.6.10
 composesnapshot = "-" # a single character = no snapshot
-coroutines = "1.5.2"
+coroutines = "1.6.0"
 dagger = "2.40.5"
 debugdrawer = "0.9.8-SNAPSHOT"
 hilt = "2.40.5"
@@ -17,10 +17,10 @@ ktlint = "0.43.2"
 okhttp = "4.9.3"
 paging = "3.1.0"
 retrofit = "2.9.0"
-room = "2.4.0"
+room = "2.4.1"
 threetenbp = "1.5.2"
-spotless = "6.0.5"
-gradleDependencyUpdate = "0.39.0"
+spotless = "6.2.2"
+gradleDependencyUpdate = "0.41.0"
 
 [plugins]
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
@@ -35,9 +35,9 @@ accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiper
 accompanist-pager-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 
-snapper = "dev.chrisbanes.snapper:snapper:0.1.0"
+snapper = "dev.chrisbanes.snapper:snapper:0.1.2"
 
-android-pluginGradle = "com.android.tools.build:gradle:7.0.4"
+android-pluginGradle = "com.android.tools.build:gradle:7.1.1"
 
 androidx-activity-compose = "androidx.activity:activity-compose:1.4.0"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
@@ -47,7 +47,7 @@ androidx-core = "androidx.core:core-ktx:1.7.0"
 androidx-emoji = "androidx.emoji:emoji:1.1.0"
 
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidxhilt" }
-androidx-hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0-rc01"
+androidx-hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0"
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidxhilt" }
 
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
@@ -99,7 +99,7 @@ dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = 
 dagger-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 
 google-analytics = "com.google.firebase:firebase-analytics-ktx:20.0.2"
-google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.2.6"
+google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.2.7"
 google-crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.8.1"
 google-gmsGoogleServices = "com.google.gms:google-services:4.3.10"
 
@@ -123,9 +123,9 @@ kotlin-extensions = { module = "org.jetbrains.kotlin:kotlin-android-extensions",
 kotlin-pluginGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
-leakCanary = "com.squareup.leakcanary:leakcanary-android:2.7"
+leakCanary = "com.squareup.leakcanary:leakcanary-android:2.8.1"
 
-mockK = "io.mockk:mockk:1.12.1"
+mockK = "io.mockk:mockk:1.12.2"
 
 okhttp-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }

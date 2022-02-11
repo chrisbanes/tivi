@@ -34,11 +34,11 @@ import app.tivi.utils.s1e1w_id
 import app.tivi.utils.showId
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import javax.inject.Inject
@@ -55,7 +55,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
     fun setup() {
         hiltRule.inject()
 
-        runBlockingTest {
+        runBlocking {
             // We'll assume that there's a show, season and s1_episodes in the db
             insertShow(database)
             seasonsDao.insert(s1)
@@ -64,13 +64,13 @@ class EpisodeWatchEntryTest : DatabaseTest() {
     }
 
     @Test
-    fun insert() = testScope.runBlockingTest {
+    fun insert() = runTest {
         episodeWatchEntryDao.insert(s1e1w)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(s1e1w))
     }
 
     @Test(expected = SQLiteConstraintException::class)
-    fun insert_withSameTraktId() = testScope.runBlockingTest {
+    fun insert_withSameTraktId() = runTest {
         episodeWatchEntryDao.insert(s1e1w)
         // Make a copy with a 0 id
         val copy = s1e1w.copy(id = 0)
@@ -78,7 +78,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
     }
 
     @Test
-    fun fetchEntries_WithPendingSendAction() = testScope.runBlockingTest {
+    fun fetchEntries_WithPendingSendAction() = runTest {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingSend)
         assertThat(
             episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
@@ -87,7 +87,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
     }
 
     @Test
-    fun fetchEntries_WithPendingDeleteAction() = testScope.runBlockingTest {
+    fun fetchEntries_WithPendingDeleteAction() = runTest {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingDelete)
         assertThat(
             episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
@@ -96,22 +96,17 @@ class EpisodeWatchEntryTest : DatabaseTest() {
     }
 
     @Test
-    fun delete() = testScope.runBlockingTest {
+    fun delete() = runTest {
         episodeWatchEntryDao.insert(s1e1w)
         episodeWatchEntryDao.deleteEntity(s1e1w)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))
     }
 
     @Test
-    fun deleteEpisode_deletesWatch() = testScope.runBlockingTest {
+    fun deleteEpisode_deletesWatch() = runTest {
         episodeWatchEntryDao.insert(s1e1w)
         // Now delete episode
         episodesDao.deleteEntity(s1e1)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))
-    }
-
-    @After
-    fun cleanup() {
-        testScope.cleanupTestCoroutines()
     }
 }

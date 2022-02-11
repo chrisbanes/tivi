@@ -40,8 +40,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import io.mockk.coEvery
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
-import org.junit.After
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import javax.inject.Inject
@@ -65,7 +64,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     }
 
     @Test
-    fun testSync() = testScope.runBlockingTest {
+    fun testSync() = runTest {
         coEvery { traktDataSource.getFollowedListId() } returns TraktList().apply {
             ids = ListIds().apply { trakt = 0 }
         }
@@ -78,7 +77,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     }
 
     @Test
-    fun testSync_emptyResponse() = testScope.runBlockingTest {
+    fun testSync_emptyResponse() = runTest {
         insertFollowedShow(database)
 
         coEvery { traktDataSource.getFollowedListId() } returns TraktList().apply {
@@ -93,7 +92,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     }
 
     @Test
-    fun testSync_responseDifferentShow() = testScope.runBlockingTest {
+    fun testSync_responseDifferentShow() = runTest {
         insertFollowedShow(database)
 
         coEvery { traktDataSource.getFollowedListId() } returns TraktList().apply {
@@ -108,7 +107,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     }
 
     @Test
-    fun testSync_pendingDelete() = testScope.runBlockingTest {
+    fun testSync_pendingDelete() = runTest {
         followShowsDao.insert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
@@ -120,7 +119,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     }
 
     @Test
-    fun testSync_pendingAdd() = testScope.runBlockingTest {
+    fun testSync_pendingAdd() = runTest {
         followShowsDao.insert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
@@ -130,10 +129,5 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
         assertThat(repository.getFollowedShows())
             .containsExactly(followedShow1Local)
-    }
-
-    @After
-    fun cleanup() {
-        testScope.cleanupTestCoroutines()
     }
 }

@@ -15,4 +15,14 @@
   ~ limitations under the License.
   -->
 
-<manifest package="app.tivi.account" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="app.tivi.account">
+
+    <application>
+        <activity
+            android:name="net.openid.appauth.RedirectUriReceiverActivity"
+            tools:node="remove" />
+    </application>
+
+</manifest>
