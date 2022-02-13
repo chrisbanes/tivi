@@ -56,6 +56,14 @@ jobs:
             app:lintQaDebug
             testDebug
 
+      - name: Create release for tags
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          generate_release_notes: true
+          files: |
+            app/build/outputs/apk/standard/release/app-standard-release.apk
+
       - name: Publish QA build to internal track
         if: github.ref == 'refs/heads/main'
         # Pinned version due to https://github.com/r0adkll/upload-google-play/issues/80
@@ -78,13 +86,30 @@ jobs:
           releaseFiles: app/build/outputs/bundle/standardRelease/app-standard-release.aab
           mappingFile: app/build/outputs/mapping/standardRelease/mapping.txt
 
-      - name: Create release for tags
-        uses: softprops/action-gh-release@v1
+      - name: Build Changelog for beta release
+        id: build_changelog
         if: startsWith(github.ref, 'refs/tags/v')
+        uses: mikepenz/release-changelog-builder-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Writing changelog for beta release
+        if: steps.build_changelog.outcome == 'success'
+        run: |
+            mkdir playwhatsnew
+            echo "${{ steps.build_changelog.outputs.changelog }}" > playwhatsnew/whatsnew-en-US
+
+      - name: Publish tagged release to beta track
+        if: startsWith(github.ref, 'refs/tags/v')
+        # Pinned version due to https://github.com/r0adkll/upload-google-play/issues/80
+        uses: r0adkll/upload-google-play@v1.0.15
         with:
-          generate_release_notes: true
-          files: |
-            app/build/outputs/apk/standard/release/app-standard-release.apk
+          serviceAccountJson: release/play-account.json
+          packageName: app.tivi
+          track: beta
+          whatsNewDirectory: playwhatsnew
+          releaseFiles: app/build/outputs/bundle/standardRelease/app-standard-release.aab
+          mappingFile: app/build/outputs/mapping/standardRelease/mapping.txt
 
       - name: Clean secrets
         if: always()
