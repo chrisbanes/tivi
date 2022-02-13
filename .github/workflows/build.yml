@@ -80,11 +80,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/v')
         with:
-          draft: true
+          generate_release_notes: true
           files: |
             app/build/outputs/apk/standard/release/app-standard-release.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Clean secrets
         if: always()
