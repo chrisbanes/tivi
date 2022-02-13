@@ -30,11 +30,11 @@ import app.tivi.utils.s2
 import app.tivi.utils.showId
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import javax.inject.Inject
@@ -49,21 +49,21 @@ class SeasonsTest : DatabaseTest() {
     fun setup() {
         hiltRule.inject()
 
-        runBlockingTest {
+        runBlocking {
             // We'll assume that there's a show in the db
             insertShow(database)
         }
     }
 
     @Test
-    fun insertSeason() = testScope.runBlockingTest {
+    fun insertSeason() = runTest {
         seasonsDao.insert(s1)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(s1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
-    fun insert_withSameTraktId() = testScope.runBlockingTest {
+    fun insert_withSameTraktId() = runTest {
         seasonsDao.insert(s1)
 
         // Make a copy with a 0 id
@@ -73,7 +73,7 @@ class SeasonsTest : DatabaseTest() {
     }
 
     @Test
-    fun specialsOrder() = testScope.runBlockingTest {
+    fun specialsOrder() = runTest {
         seasonsDao.insert(s0)
         seasonsDao.insert(s1)
         seasonsDao.insert(s2)
@@ -86,7 +86,7 @@ class SeasonsTest : DatabaseTest() {
     }
 
     @Test
-    fun deleteSeason() = testScope.runBlockingTest {
+    fun deleteSeason() = runTest {
         seasonsDao.insert(s1)
         seasonsDao.deleteEntity(s1)
 
@@ -94,16 +94,11 @@ class SeasonsTest : DatabaseTest() {
     }
 
     @Test
-    fun deleteShow_deletesSeason() = testScope.runBlockingTest {
+    fun deleteShow_deletesSeason() = runTest {
         seasonsDao.insert(s1)
         // Now delete show
         deleteShow(database)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
-    }
-
-    @After
-    fun cleanup() {
-        testScope.cleanupTestCoroutines()
     }
 }
