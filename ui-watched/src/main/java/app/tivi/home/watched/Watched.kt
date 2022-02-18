@@ -41,7 +41,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,6 +61,7 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
+import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
@@ -102,8 +102,7 @@ internal fun Watched(
     openShowDetails: (showId: Long) -> Unit,
     openUser: () -> Unit,
 ) {
-    val viewState by rememberFlowWithLifecycle(viewModel.state)
-        .collectAsState(initial = WatchedViewState.Empty)
+    val viewState by rememberStateWithLifecycle(viewModel.state)
     val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList)
         .collectAsLazyPagingItems()
 

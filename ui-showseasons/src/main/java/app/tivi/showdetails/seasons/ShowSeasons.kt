@@ -51,7 +51,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,7 +65,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.rememberFlowWithLifecycle
+import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
@@ -107,8 +106,7 @@ internal fun ShowSeasons(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     initialSeasonId: Long?,
 ) {
-    val viewState by rememberFlowWithLifecycle(viewModel.state)
-        .collectAsState(ShowSeasonsViewState.Empty)
+    val viewState by rememberStateWithLifecycle(viewModel.state)
 
     ShowSeasons(
         viewState = viewState,

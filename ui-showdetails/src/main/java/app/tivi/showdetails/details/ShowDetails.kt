@@ -71,7 +71,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -102,7 +101,7 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
-import app.tivi.common.compose.rememberFlowWithLifecycle
+import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.ExpandableFloatingActionButton
@@ -165,24 +164,22 @@ internal fun ShowDetails(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     openSeasons: (showId: Long, seasonId: Long) -> Unit,
 ) {
-    val viewState by rememberFlowWithLifecycle(viewModel.state).collectAsState(null)
-    viewState?.let { state ->
-        ShowDetails(
-            viewState = state,
-            navigateUp = navigateUp,
-            openShowDetails = openShowDetails,
-            openEpisodeDetails = openEpisodeDetails,
-            refresh = { viewModel.refresh() },
-            onMessageShown = { viewModel.clearMessage(it) },
-            openSeason = { openSeasons(state.show.id, it) },
-            onSeasonFollowed = { viewModel.setSeasonFollowed(it, true) },
-            onSeasonUnfollowed = { viewModel.setSeasonFollowed(it, false) },
-            unfollowPreviousSeasons = { viewModel.unfollowPreviousSeasons(it) },
-            onMarkSeasonWatched = { viewModel.setSeasonWatched(it, onlyAired = true) },
-            onMarkSeasonUnwatched = { viewModel.setSeasonUnwatched(it) },
-            onToggleShowFollowed = { viewModel.toggleFollowShow() },
-        )
-    }
+    val viewState by rememberStateWithLifecycle(viewModel.state)
+    ShowDetails(
+        viewState = viewState,
+        navigateUp = navigateUp,
+        openShowDetails = openShowDetails,
+        openEpisodeDetails = openEpisodeDetails,
+        refresh = { viewModel.refresh() },
+        onMessageShown = { viewModel.clearMessage(it) },
+        openSeason = { openSeasons(viewState.show.id, it) },
+        onSeasonFollowed = { viewModel.setSeasonFollowed(it, true) },
+        onSeasonUnfollowed = { viewModel.setSeasonFollowed(it, false) },
+        unfollowPreviousSeasons = { viewModel.unfollowPreviousSeasons(it) },
+        onMarkSeasonWatched = { viewModel.setSeasonWatched(it, onlyAired = true) },
+        onMarkSeasonUnwatched = { viewModel.setSeasonUnwatched(it) },
+        onToggleShowFollowed = { viewModel.toggleFollowShow() },
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -985,7 +982,7 @@ private fun SeasonRow(
             }
 
             // Season number starts from 1, rather than 0
-            if (season.number ?: -100 >= 2) {
+            if ((season.number ?: -100) >= 2) {
                 DropdownMenuItem(
                     onClick = {
                         unfollowPreviousSeasons(season.id)
