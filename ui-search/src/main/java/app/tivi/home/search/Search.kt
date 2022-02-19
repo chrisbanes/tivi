@@ -38,7 +38,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +52,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.itemsInGrid
-import app.tivi.common.compose.rememberFlowWithLifecycle
+import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
@@ -78,8 +77,7 @@ internal fun Search(
     viewModel: SearchViewModel,
     openShowDetails: (showId: Long) -> Unit,
 ) {
-    val viewState by rememberFlowWithLifecycle(viewModel.state)
-        .collectAsState(initial = SearchViewState.Empty)
+    val viewState by rememberStateWithLifecycle(viewModel.state)
 
     Search(
         state = viewState,
