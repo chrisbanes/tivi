@@ -103,7 +103,6 @@ google-crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.8.
 google-gmsGoogleServices = "com.google.gms:google-services:4.3.10"
 
 debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
-debugdrawer-leakcanary = { module = "au.com.gridstone.debugdrawer:debugdrawer-leakcanary", version.ref = "debugdrawer" }
 debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retrofit", version.ref = "debugdrawer" }
 debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber", version.ref = "debugdrawer" }
 debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-okhttp-logger", version.ref = "debugdrawer" }

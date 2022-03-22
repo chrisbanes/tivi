@@ -226,7 +226,6 @@ dependencies {
     qaImplementation libs.chucker.library
 
     qaImplementation libs.debugdrawer.debugdrawer
-    qaImplementation libs.debugdrawer.leakcanary
     qaImplementation libs.debugdrawer.retrofit
     qaImplementation libs.retrofit.mock
     qaImplementation libs.debugdrawer.timber

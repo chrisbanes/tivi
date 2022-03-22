@@ -21,7 +21,6 @@ import app.tivi.ContentViewSetter
 import app.tivi.NetworkBehaviorSimulatorInterceptor
 import au.com.gridstone.debugdrawer.DebugDrawer
 import au.com.gridstone.debugdrawer.DeviceInfoModule
-import au.com.gridstone.debugdrawer.leakcanary.LeakCanaryModule
 import au.com.gridstone.debugdrawer.okhttplogs.HttpLogger
 import au.com.gridstone.debugdrawer.okhttplogs.OkHttpLoggerModule
 import au.com.gridstone.debugdrawer.retrofit.DebugRetrofitConfig
@@ -51,8 +50,6 @@ object QaContentViewModule {
             .addSectionTitle("Logs")
             .addModule(OkHttpLoggerModule(httpLogger))
             .addModule(TimberModule())
-            .addSectionTitle("Leaks")
-            .addModule(LeakCanaryModule)
             .addSectionTitle("Device information")
             .addModule(DeviceInfoModule())
             .buildMainContainer()
