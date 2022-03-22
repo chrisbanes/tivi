@@ -38,7 +38,6 @@ import app.tivi.settings.TiviPreferences
 import app.tivi.util.Analytics
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
-import com.google.accompanist.insets.ProvideWindowInsets
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -76,17 +75,15 @@ class MainActivity : TiviActivity() {
             LocalTiviDateFormatter provides tiviDateFormatter,
             LocalTiviTextCreator provides textCreator,
         ) {
-            ProvideWindowInsets(consumeWindowInsets = false) {
-                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
-                    Home(
-                        analytics = analytics,
-                        onOpenSettings = {
-                            startActivity(
-                                Intent(this@MainActivity, SettingsActivity::class.java)
-                            )
-                        },
-                    )
-                }
+            TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
+                Home(
+                    analytics = analytics,
+                    onOpenSettings = {
+                        startActivity(
+                            Intent(this@MainActivity, SettingsActivity::class.java)
+                        )
+                    },
+                )
             }
         }
     }

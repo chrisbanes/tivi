@@ -26,13 +26,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -75,8 +80,6 @@ import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -366,9 +369,8 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
             lazyListState = lazyListState,
             snapOffsetForItem = SnapOffsets.Start,
             endContentPadding = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
-            maximumFlingDistance = {
-                // Max fling = 1x scrollable width
-                (it.endScrollOffset - it.startScrollOffset).toFloat()
+            snapIndex = { _, startIndex, targetIndex ->
+                targetIndex.coerceIn(startIndex - 1, startIndex + 1)
             }
         ),
         contentPadding = contentPadding,
@@ -437,10 +439,9 @@ private fun DiscoverAppBar(
             alpha = AppBarAlphas.translucentBarAlpha()
         ),
         contentColor = MaterialTheme.colors.onSurface,
-        contentPadding = rememberInsetsPaddingValues(
-            insets = LocalWindowInsets.current.systemBars,
-            applyBottom = false,
-        ),
+        contentPadding = WindowInsets.systemBars
+            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+            .asPaddingValues(),
         modifier = modifier,
         title = { Text(text = stringResource(R.string.discover_title)) },
         actions = {

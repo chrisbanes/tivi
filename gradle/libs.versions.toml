@@ -1,12 +1,12 @@
 [versions]
-accompanist = "0.23.0"
+accompanist = "0.24.4-alpha"
 androidxhilt = "1.0.0"
 androidxlifecycle = "2.4.1"
 androidxtest = "1.4.0"
 chucker = "3.5.2"
 coil = "1.4.0"
-compose = "1.1.0"
-composecompiler = "1.1.0" # rc02 works with Kotlin 1.6.10
+compose = "1.2.0-alpha05"
+composecompiler = "1.2.0-alpha05" # rc02 works with Kotlin 1.6.10
 composesnapshot = "-" # a single character = no snapshot
 coroutines = "1.6.0"
 dagger = "2.40.5"
@@ -28,18 +28,17 @@ gradleDependencyUpdate = { id = "com.github.ben-manes.versions", version.ref = "
 
 [libraries]
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
-accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanist-insetsui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 accompanist-pager-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 
-snapper = "dev.chrisbanes.snapper:snapper:0.1.2"
+snapper = "dev.chrisbanes.snapper:snapper:0.2.0"
 
 android-pluginGradle = "com.android.tools.build:gradle:7.1.1"
 
-androidx-activity-compose = "androidx.activity:activity-compose:1.4.0"
+androidx-activity-compose = "androidx.activity:activity-compose:1.5.0-alpha03"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 androidx-browser = "androidx.browser:browser:1.4.0"
 androidx-collection = "androidx.collection:collection-ktx:1.2.0"
@@ -54,7 +53,7 @@ androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-kt
 androidx-lifecycle-viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07"
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxlifecycle" }
 
-androidx-navigation-compose = "androidx.navigation:navigation-compose:2.4.0-beta02"
+androidx-navigation-compose = "androidx.navigation:navigation-compose:2.5.0-alpha03"
 
 androidx-paging-common = { module = "androidx.paging:paging-common-ktx", version.ref = "paging" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
