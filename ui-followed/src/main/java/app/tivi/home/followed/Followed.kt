@@ -31,26 +31,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
@@ -63,10 +56,9 @@ import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
+import app.tivi.common.compose.ui.FilterSortPanel
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.compose.ui.SearchTextField
-import app.tivi.common.compose.ui.SortMenuPopup
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.data.entities.ShowTmdbImage
@@ -222,42 +214,6 @@ internal fun Followed(
 
                 itemSpacer(16.dp)
             }
-        }
-    }
-}
-
-@Composable
-private fun FilterSortPanel(
-    filterHint: String,
-    onFilterChanged: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    sortOptions: List<SortOption>,
-    currentSortOption: SortOption,
-    onSortSelected: (SortOption) -> Unit,
-) {
-    Row(modifier.padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)) {
-        var filter by remember { mutableStateOf(TextFieldValue()) }
-
-        SearchTextField(
-            value = filter,
-            onValueChange = { value ->
-                filter = value
-                onFilterChanged(value.text)
-            },
-            hint = filterHint,
-            modifier = Modifier.weight(1f)
-        )
-
-        SortMenuPopup(
-            sortOptions = sortOptions,
-            currentSortOption = currentSortOption,
-            onSortSelected = onSortSelected,
-            modifier = Modifier.align(Alignment.CenterVertically)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Sort,
-                contentDescription = stringResource(R.string.cd_sort_list),
-            )
         }
     }
 }
