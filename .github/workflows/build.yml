@@ -98,7 +98,7 @@ jobs:
         run: mkdir playwhatsnew
 
       - name: Write changelog for beta release
-        uses: DamianReeves/write-file-action
+        uses: DamianReeves/write-file-action@v1
         if: steps.build_changelog.outcome == 'success'
         with:
           path: playwhatsnew/whatsnew-en-US
