@@ -18,9 +18,9 @@ package app.tivi.common.compose.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Person
@@ -50,10 +50,10 @@ fun UserProfileButton(
                     painter = rememberImagePainter(user.avatarUrl!!) {
                         crossfade(true)
                     },
-                    contentDescription = stringResource(R.string.cd_profile_pic, user.name),
+                    contentDescription = stringResource(R.string.cd_profile_pic, user.name ?: user.username),
                     modifier = Modifier
                         .size(32.dp)
-                        .clip(CircleShape),
+                        .clip(MaterialTheme.shapes.small),
                 )
             }
             else -> {

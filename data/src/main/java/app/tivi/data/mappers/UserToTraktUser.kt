@@ -24,7 +24,7 @@ import javax.inject.Singleton
 @Singleton
 class UserToTraktUser @Inject constructor() : Mapper<User, TraktUser> {
     override suspend fun map(from: User) = TraktUser(
-        username = from.username,
+        username = from.username!!,
         name = from.name,
         location = from.location,
         about = from.about,

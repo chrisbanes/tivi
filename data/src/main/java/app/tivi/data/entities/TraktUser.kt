@@ -29,7 +29,7 @@ import org.threeten.bp.OffsetDateTime
 data class TraktUser(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long = 0,
     @ColumnInfo(name = "username") val username: String,
-    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "name") val name: String? = null,
     @ColumnInfo(name = "joined_date") val joined: OffsetDateTime? = null,
     @ColumnInfo(name = "location") val location: String? = null,
     @ColumnInfo(name = "about") val about: String? = null,

@@ -184,7 +184,7 @@ private fun UserRow(
                 painter = rememberImagePainter(avatarUrl) {
                     crossfade(true)
                 },
-                contentDescription = stringResource(R.string.cd_profile_pic, user.name),
+                contentDescription = stringResource(R.string.cd_profile_pic, user.name ?: user.username),
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(50)),
@@ -195,7 +195,7 @@ private fun UserRow(
 
         Column {
             Text(
-                text = user.name,
+                text = user.name ?: stringResource(R.string.account_name_unknown),
                 style = MaterialTheme.typography.subtitle2
             )
 
