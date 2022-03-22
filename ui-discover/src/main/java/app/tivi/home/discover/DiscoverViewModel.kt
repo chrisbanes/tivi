@@ -35,7 +35,6 @@ import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -69,9 +68,8 @@ internal class DiscoverViewModel @Inject constructor(
         observeTraktAuthState.flow,
         observeUserDetails.flow,
         uiMessageManager.message,
-    ) {
-        trendingLoad, popularLoad, recommendLoad, trending, popular, recommended,
-        nextShow, authState, user, message,
+    ) { trendingLoad, popularLoad, recommendLoad, trending, popular, recommended, nextShow,
+            authState, user, message,
         ->
         DiscoverViewState(
             user = user,
