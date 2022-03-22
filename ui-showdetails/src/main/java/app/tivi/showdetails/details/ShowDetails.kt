@@ -30,6 +30,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -38,9 +41,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -131,8 +136,6 @@ import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import coil.compose.rememberImagePainter
 import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -762,9 +765,8 @@ private fun RelatedShows(
             lazyListState = lazyListState,
             snapOffsetForItem = SnapOffsets.Start,
             endContentPadding = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
-            maximumFlingDistance = {
-                // Max fling = 1x scrollable width
-                (it.endScrollOffset - it.startScrollOffset).toFloat()
+            snapIndex = { _, startIndex, targetIndex ->
+                targetIndex.coerceIn(startIndex - 1, startIndex + 1)
             }
         ),
         contentPadding = contentPadding,
@@ -1057,10 +1059,9 @@ private fun ShowDetailsAppBar(
                 if (show) Text(text = title!!)
             }
         },
-        contentPadding = rememberInsetsPaddingValues(
-            LocalWindowInsets.current.systemBars,
-            applyBottom = false
-        ),
+        contentPadding = WindowInsets.systemBars
+            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+            .asPaddingValues(),
         navigationIcon = {
             IconButton(
                 onClick = navigateUp,

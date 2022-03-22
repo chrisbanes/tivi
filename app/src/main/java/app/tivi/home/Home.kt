@@ -22,11 +22,18 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -72,13 +79,9 @@ import app.tivi.Screen
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.debugLabel
 import app.tivi.util.Analytics
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsHeight
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import kotlinx.coroutines.flow.collect
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -126,7 +129,7 @@ internal fun Home(
             } else {
                 Spacer(
                     Modifier
-                        .navigationBarsHeight()
+                        .windowInsetsBottomHeight(WindowInsets.navigationBars)
                         .fillMaxWidth()
                 )
             }
@@ -213,7 +216,7 @@ internal fun HomeBottomNavigation(
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
         contentColor = contentColorFor(MaterialTheme.colors.surface),
-        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars),
+        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
         modifier = modifier
     ) {
         HomeNavigationItems.forEach { item ->
@@ -249,10 +252,9 @@ internal fun HomeNavigationRail(
             contentColor = MaterialTheme.colors.onSurface,
             elevation = 0.dp,
             modifier = Modifier.padding(
-                rememberInsetsPaddingValues(
-                    LocalWindowInsets.current.systemBars,
-                    applyEnd = false
-                )
+                WindowInsets.systemBars
+                    .only(WindowInsetsSides.Start + WindowInsetsSides.Vertical)
+                    .asPaddingValues()
             )
         ) {
             HomeNavigationItems.forEach { item ->

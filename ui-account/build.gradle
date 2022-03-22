@@ -70,7 +70,7 @@ dependencies {
 
 
     implementation libs.coil.compose
-    implementation libs.accompanist.insets
+
     implementation libs.accompanist.flowlayout
 
     implementation libs.kotlin.stdlib

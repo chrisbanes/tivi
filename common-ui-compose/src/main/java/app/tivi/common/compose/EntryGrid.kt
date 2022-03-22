@@ -19,10 +19,13 @@ package app.tivi.common.compose
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
@@ -50,8 +53,6 @@ import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -188,7 +189,7 @@ private fun EntryGridAppBar(
             alpha = AppBarAlphas.translucentBarAlpha()
         ),
         contentColor = MaterialTheme.colors.onSurface,
-        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.statusBars),
+        contentPadding = WindowInsets.statusBars.asPaddingValues(),
         modifier = modifier,
         title = { Text(text = title) },
         actions = {
