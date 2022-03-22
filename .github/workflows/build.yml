@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Generate build number
         shell: bash
-        run: echo "BUILD_NUMBER=$(( $GITHUB_RUN_NUMBER + 6000 + (($GITHUB_RUN_NUMBER - 980) * 3) ))" >> $GITHUB_ENV
+        run: echo "ORG_GRADLE_PROJECT_TIVI_VERSIONCODE=$(( $GITHUB_RUN_NUMBER + 6000 + (($GITHUB_RUN_NUMBER - 980) * 3) ))" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
 
@@ -43,9 +43,7 @@ jobs:
         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
       - uses: burrunan/gradle-cache-action@v1
-        name: Build and check
-        env:
-          ORG_GRADLE_PROJECT_TIVI_VERSIONCODE: ${{ env.BUILD_NUMBER }}
+        name: Build
         with:
           gradle-dependencies-cache-key: |
             gradle/libs.versions.toml
@@ -54,7 +52,14 @@ jobs:
             assemble
             bundle
             app:lintQaDebug
-            testDebug
+
+      - uses: burrunan/gradle-cache-action@v1
+        name: Check
+        with:
+          execution-only-caches: true
+          gradle-dependencies-cache-key: |
+            gradle/libs.versions.toml
+          arguments: testDebug
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
