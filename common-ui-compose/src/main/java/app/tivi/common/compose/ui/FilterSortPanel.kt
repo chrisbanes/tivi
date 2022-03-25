@@ -44,7 +44,9 @@ fun FilterSortPanel(
     onSortSelected: (SortOption) -> Unit,
 ) {
     Row(modifier.padding(vertical = 8.dp)) {
-        var filter by rememberSaveable { mutableStateOf(TextFieldValue()) }
+        var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+            mutableStateOf(TextFieldValue())
+        }
 
         SearchTextField(
             value = filter,
