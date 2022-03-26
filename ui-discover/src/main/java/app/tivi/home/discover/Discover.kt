@@ -19,6 +19,7 @@ package app.tivi.home.discover
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -352,7 +353,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
     }
 }
 
-@OptIn(ExperimentalSnapperApi::class)
+@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun <T : EntryWithShow<*>> EntryShowCarousel(
     items: List<T>,
@@ -373,12 +374,16 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        items(items) { item ->
+        items(
+            items = items,
+            key = { it.show.id },
+        ) { item ->
             PosterCard(
                 show = item.show,
                 poster = item.poster,
                 onClick = { onItemClick(item.show) },
                 modifier = Modifier
+                    .animateItemPlacement()
                     .fillParentMaxHeight()
                     .aspectRatio(2 / 3f)
             )

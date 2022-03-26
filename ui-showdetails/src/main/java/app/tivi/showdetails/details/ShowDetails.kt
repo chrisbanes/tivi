@@ -20,6 +20,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -746,7 +747,7 @@ private fun Genres(genres: List<Genre>) {
     }
 }
 
-@OptIn(ExperimentalSnapperApi::class)
+@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun RelatedShows(
     related: List<RelatedShowEntryWithShow>,
@@ -769,12 +770,16 @@ private fun RelatedShows(
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        items(related) { item ->
+        items(
+            items = related,
+            key = { it.show.id },
+        ) { item ->
             PosterCard(
                 show = item.show,
                 poster = item.poster,
                 onClick = { openShowDetails(item.show.id) },
                 modifier = Modifier
+                    .animateItemPlacement()
                     .fillParentMaxWidth(0.21f) // 21% of the available width
                     .aspectRatio(2 / 3f)
             )
