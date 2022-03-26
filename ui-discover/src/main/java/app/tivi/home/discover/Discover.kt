@@ -369,9 +369,6 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
             lazyListState = lazyListState,
             snapOffsetForItem = SnapOffsets.Start,
             endContentPadding = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
-            snapIndex = { _, startIndex, targetIndex ->
-                targetIndex.coerceIn(startIndex - 1, startIndex + 1)
-            }
         ),
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(4.dp),

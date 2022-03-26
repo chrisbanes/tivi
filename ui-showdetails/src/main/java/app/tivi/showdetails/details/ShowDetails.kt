@@ -765,9 +765,6 @@ private fun RelatedShows(
             lazyListState = lazyListState,
             snapOffsetForItem = SnapOffsets.Start,
             endContentPadding = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
-            snapIndex = { _, startIndex, targetIndex ->
-                targetIndex.coerceIn(startIndex - 1, startIndex + 1)
-            }
         ),
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -778,7 +775,7 @@ private fun RelatedShows(
                 poster = item.poster,
                 onClick = { openShowDetails(item.show.id) },
                 modifier = Modifier
-                    .fillParentMaxWidth(0.15f) // 15% of the available width
+                    .fillParentMaxWidth(0.21f) // 21% of the available width
                     .aspectRatio(2 / 3f)
             )
         }
