@@ -73,6 +73,20 @@ subprojects {
             freeCompilerArgs += "-opt-in=kotlinx.coroutines.FlowPreview"
             freeCompilerArgs += "-opt-in=kotlin.Experimental"
 
+
+            if (project.hasProperty("tivi.enableComposeCompilerReports")) {
+                freeCompilerArgs += [
+                    "-P",
+                    "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
+                        project.buildDir.absolutePath + "/compose_metrics"
+                ]
+                freeCompilerArgs += [
+                    "-P",
+                    "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
+                        project.buildDir.absolutePath + "/compose_metrics"
+                ]
+            }
+
             // Set JVM target to 11
             jvmTarget = JavaVersion.VERSION_11
         }
