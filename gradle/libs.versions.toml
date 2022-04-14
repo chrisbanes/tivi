@@ -1,12 +1,12 @@
 [versions]
-accompanist = "0.24.4-alpha"
+accompanist = "0.24.6-alpha"
 androidxhilt = "1.0.0"
 androidxlifecycle = "2.4.1"
 androidxtest = "1.4.0"
 chucker = "3.5.2"
 coil = "1.4.0"
-compose = "1.2.0-alpha05"
-composecompiler = "1.2.0-alpha05" # rc02 works with Kotlin 1.6.10
+compose = "1.2.0-alpha07"
+composecompiler = "1.2.0-alpha07"
 composesnapshot = "-" # a single character = no snapshot
 coroutines = "1.6.0"
 dagger = "2.41"
@@ -91,6 +91,7 @@ compose-material-material = { module = "androidx.compose.material:material", ver
 compose-ui-test = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose-ui-uitextfonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "compose" }
 compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "compose" }
 compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding", version.ref = "compose" }
 
