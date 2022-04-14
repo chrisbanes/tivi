@@ -843,7 +843,8 @@ private fun InfoPanels(
             RuntimeInfoPanel(show.runtime!!)
         }
         if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null &&
-            show.status == ShowStatus.IN_PRODUCTION) {
+            show.status == ShowStatus.IN_PRODUCTION
+        ) {
             AirsInfoPanel(show)
         }
     }
