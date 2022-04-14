@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,46 @@
 package app.tivi.common.compose.theme
 
 import androidx.compose.material.Typography
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import app.tivi.common.compose.R
 
-private val Inter = FontFamily(
-    Font(R.font.inter_300, FontWeight.Light),
-    Font(R.font.inter_400, FontWeight.Normal),
-    Font(R.font.inter_500, FontWeight.Medium),
-    Font(R.font.inter_700, FontWeight.Bold)
+@ExperimentalTextApi
+internal fun createSingleGoogleFontFamily(
+    name: String,
+    provider: GoogleFont.Provider = GmsFontProvider,
+    weights: List<FontWeight>,
+): FontFamily = FontFamily(
+    weights.map { weight ->
+        Font(
+            googleFont = GoogleFont(name),
+            fontProvider = provider,
+            weight = weight,
+        )
+    }
 )
 
-val TiviTypography = Typography(defaultFontFamily = Inter)
+@ExperimentalTextApi
+internal val GmsFontProvider: GoogleFont.Provider by lazy {
+    GoogleFont.Provider(
+        providerAuthority = "com.google.android.gms.fonts",
+        providerPackage = "com.google.android.gms",
+        certificates = R.array.com_google_android_gms_fonts_certs,
+    )
+}
+
+@OptIn(ExperimentalTextApi::class)
+val TiviTypography = Typography(
+    defaultFontFamily = createSingleGoogleFontFamily(
+        name = "Inter",
+        weights = listOf(
+            FontWeight.Light,
+            FontWeight.Normal,
+            FontWeight.Medium,
+            FontWeight.Bold,
+        ),
+    )
+)

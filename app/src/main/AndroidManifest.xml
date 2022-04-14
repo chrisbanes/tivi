@@ -76,10 +76,6 @@
         </provider>
 
         <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-
-        <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
 
