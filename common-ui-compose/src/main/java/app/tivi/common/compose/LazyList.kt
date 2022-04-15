@@ -16,6 +16,9 @@
 
 package app.tivi.common.compose
 
+import android.annotation.SuppressLint
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -29,6 +32,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -56,6 +63,56 @@ fun LazyListScope.gutterSpacer() {
     }
 }
 
+fun <T : Any> LazyGridScope.items(
+    items: LazyPagingItems<T>,
+    key: ((item: T) -> Any)? = null,
+    span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
+    contentType: (item: T) -> Any? = { null },
+    itemContent: @Composable LazyGridItemScope.(item: T?) -> Unit,
+) {
+    items(
+        count = items.itemCount,
+        span = { index ->
+            val item = items.peek(index)
+            when {
+                item != null && span != null -> span(item)
+                else -> GridItemSpan(0)
+            }
+        },
+        contentType = { index ->
+            items.peek(index)?.let { contentType(it) }
+        },
+        key = if (key == null) null else { index ->
+            val item = items.peek(index)
+            if (item == null) {
+                PagingPlaceholderKey(index)
+            } else {
+                key(item)
+            }
+        }
+    ) { index ->
+        itemContent(items[index])
+    }
+}
+
+@SuppressLint("BanParcelableUsage")
+internal data class PagingPlaceholderKey(private val index: Int) : Parcelable {
+    override fun writeToParcel(parcel: Parcel, flags: Int) = parcel.writeInt(index)
+    override fun describeContents(): Int = 0
+
+    companion object {
+        @Suppress("unused")
+        @JvmField
+        val CREATOR: Parcelable.Creator<PagingPlaceholderKey> =
+            object : Parcelable.Creator<PagingPlaceholderKey> {
+                override fun createFromParcel(parcel: Parcel) =
+                    PagingPlaceholderKey(parcel.readInt())
+
+                override fun newArray(size: Int) = arrayOfNulls<PagingPlaceholderKey?>(size)
+            }
+    }
+}
+
 /**
  * Displays a 'fake' grid using [LazyColumn]'s DSL. It's fake in that we just we add individual
  * column items, with a inner fake row.
@@ -66,7 +123,7 @@ fun <T : Any> LazyListScope.itemsInGrid(
     contentPadding: PaddingValues = PaddingValues(),
     horizontalItemPadding: Dp = 0.dp,
     verticalItemPadding: Dp = 0.dp,
-    itemContent: @Composable LazyItemScope.(T?) -> Unit
+    itemContent: @Composable LazyItemScope.(T?) -> Unit,
 ) {
     val rows = when {
         lazyPagingItems.itemCount % columns == 0 -> lazyPagingItems.itemCount / columns
@@ -118,7 +175,7 @@ fun <T> LazyListScope.itemsInGrid(
     contentPadding: PaddingValues = PaddingValues(),
     horizontalItemPadding: Dp = 0.dp,
     verticalItemPadding: Dp = 0.dp,
-    itemContent: @Composable LazyItemScope.(T) -> Unit
+    itemContent: @Composable LazyItemScope.(T) -> Unit,
 ) {
     val rows = when {
         items.size % columns == 0 -> items.size / columns
