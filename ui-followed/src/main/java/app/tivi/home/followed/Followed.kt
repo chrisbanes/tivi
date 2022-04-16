@@ -37,7 +37,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LinearProgressIndicator
@@ -60,6 +59,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
+import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.items
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.rememberStateWithLifecycle
@@ -189,9 +189,7 @@ internal fun Followed(
                     .bodyWidth()
                     .fillMaxHeight(),
             ) {
-                item(
-                    span = { GridItemSpan(maxLineSpan) },
-                ) {
+                fullSpanItem {
                     FilterSortPanel(
                         filterHint = stringResource(R.string.filter_shows, list.itemCount),
                         onFilterChanged = onFilterChanged,
