@@ -26,7 +26,8 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import androidx.savedstate.findViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import app.tivi.ContentViewSetter
 import app.tivi.TiviActivity
 import app.tivi.common.compose.LocalTiviDateFormatter
@@ -66,6 +67,7 @@ class MainActivity : TiviActivity() {
 
         // Copied from setContent {} ext-fun
         setOwners()
+
         contentViewSetter.setContentView(this, composeView)
     }
 
@@ -97,7 +99,7 @@ private fun ComponentActivity.setOwners() {
     if (ViewTreeViewModelStoreOwner.get(decorView) == null) {
         ViewTreeViewModelStoreOwner.set(decorView, this)
     }
-    if (ViewTreeSavedStateRegistryOwner.get(decorView) == null) {
-        ViewTreeSavedStateRegistryOwner.set(decorView, this)
+    if (decorView.findViewTreeSavedStateRegistryOwner() == null) {
+        decorView.setViewTreeSavedStateRegistryOwner(this)
     }
 }

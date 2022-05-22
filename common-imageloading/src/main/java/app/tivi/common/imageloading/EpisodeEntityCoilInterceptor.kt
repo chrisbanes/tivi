@@ -21,8 +21,8 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 import coil.annotation.ExperimentalCoilApi
 import coil.intercept.Interceptor
 import coil.request.ImageResult
-import coil.size.PixelSize
 import coil.size.Size
+import coil.size.pxOrElse
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import javax.inject.Inject
@@ -48,8 +48,9 @@ class EpisodeEntityCoilInterceptor @Inject constructor(
     private fun handles(data: Episode): Boolean = data.tmdbBackdropPath != null
 
     private fun map(data: Episode, size: Size): HttpUrl {
-        val width = if (size is PixelSize) size.width else 0
-        val urlProvider = tmdbImageUrlProvider.get()
-        return urlProvider.getBackdropUrl(data.tmdbBackdropPath!!, width).toHttpUrl()
+        return tmdbImageUrlProvider.get().getBackdropUrl(
+            path = data.tmdbBackdropPath!!,
+            imageWidth = size.width.pxOrElse { 0 }
+        ).toHttpUrl()
     }
 }

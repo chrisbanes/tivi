@@ -16,7 +16,6 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -35,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.R
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
-import coil.compose.rememberImagePainter
 
 @Composable
 fun PosterCard(
@@ -60,10 +58,9 @@ fun PosterCard(
                 )
             }
             if (poster != null) {
-                Image(
-                    painter = rememberImagePainter(poster) {
-                        crossfade(true)
-                    },
+                AsyncImage(
+                    model = poster,
+                    requestBuilder = { crossfade(true) },
                     contentDescription = stringResource(
                         R.string.cd_show_poster_image,
                         show.title ?: "show"

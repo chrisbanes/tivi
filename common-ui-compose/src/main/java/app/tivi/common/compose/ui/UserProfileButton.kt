@@ -16,7 +16,6 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -31,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.R
 import app.tivi.data.entities.TraktUser
-import coil.compose.rememberImagePainter
 
 @Composable
 fun UserProfileButton(
@@ -46,10 +44,9 @@ fun UserProfileButton(
     ) {
         when {
             loggedIn && user?.avatarUrl != null -> {
-                Image(
-                    painter = rememberImagePainter(user.avatarUrl!!) {
-                        crossfade(true)
-                    },
+                AsyncImage(
+                    model = user.avatarUrl!!,
+                    requestBuilder = { crossfade(true) },
                     contentDescription = stringResource(R.string.cd_profile_pic, user.name ?: user.username),
                     modifier = Modifier
                         .size(32.dp)

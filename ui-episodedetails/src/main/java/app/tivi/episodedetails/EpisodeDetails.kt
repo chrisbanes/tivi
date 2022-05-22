@@ -18,7 +18,6 @@ package app.tivi.episodedetails
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -87,6 +86,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.rememberStateWithLifecycle
+import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
@@ -98,7 +98,6 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
-import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.ui.Scaffold
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
@@ -280,10 +279,9 @@ private fun Backdrop(
     Surface(modifier = modifier) {
         Box(Modifier.fillMaxSize()) {
             if (episode.tmdbBackdropPath != null) {
-                Image(
-                    painter = rememberImagePainter(episode) {
-                        crossfade(true)
-                    },
+                AsyncImage(
+                    model = episode,
+                    requestBuilder = { crossfade(true) },
                     contentDescription = stringResource(R.string.cd_show_poster),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,

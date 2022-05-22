@@ -86,9 +86,9 @@ subprojects {
             allWarningsAsErrors = true
 
             // Enable experimental coroutines APIs, including Flow
-            freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-            freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.FlowPreview"
-            freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
+            freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+            freeCompilerArgs += "-opt-in=kotlinx.coroutines.FlowPreview"
+            freeCompilerArgs += "-opt-in=kotlin.Experimental"
 
             // Set JVM target to 11
             jvmTarget = JavaVersion.VERSION_11
