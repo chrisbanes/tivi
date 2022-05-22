@@ -28,6 +28,10 @@ kapt {
     useBuildCache = true
 }
 
+hilt {
+    enableAggregatingTask = true
+}
+
 def appVersionCode = propOrDef("TIVI_VERSIONCODE", 17) as Integer
 println("APK version code: " + appVersionCode)
 
@@ -212,6 +216,8 @@ dependencies {
 
     implementation libs.kotlin.coroutines.core
     implementation libs.kotlin.coroutines.android
+
+    implementation libs.okhttp.loggingInterceptor
 
     implementation libs.hilt.library
     implementation libs.androidx.hilt.compose

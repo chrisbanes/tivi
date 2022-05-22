@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.episodes
 
+import app.tivi.data.bodyOrThrow
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.Season
@@ -27,8 +28,7 @@ import app.tivi.data.mappers.TraktHistoryItemToEpisodeWatchEntry
 import app.tivi.data.mappers.TraktSeasonToSeasonWithEpisodes
 import app.tivi.data.mappers.forLists
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.bodyOrThrow
-import app.tivi.extensions.withRetry
+import app.tivi.data.withRetry
 import com.uwetrottmann.trakt5.entities.EpisodeIds
 import com.uwetrottmann.trakt5.entities.SyncEpisode
 import com.uwetrottmann.trakt5.entities.SyncItems

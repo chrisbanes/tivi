@@ -29,6 +29,8 @@ dependencies {
     api libs.androidx.paging.common
     implementation libs.androidx.collection
 
+    implementation libs.retrofit.retrofit
+
     api libs.store
 
     api "org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb"

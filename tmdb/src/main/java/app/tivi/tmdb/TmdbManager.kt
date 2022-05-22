@@ -16,7 +16,6 @@
 
 package app.tivi.tmdb
 
-import app.tivi.extensions.bodyOrThrow
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
@@ -40,7 +39,7 @@ class TmdbManager @Inject constructor(
             val response = withContext(dispatchers.io) {
                 tmdbClient.configurationService().configuration().awaitResponse()
             }
-            onConfigurationLoaded(response.bodyOrThrow())
+            onConfigurationLoaded(response.body()!!)
         } catch (t: Throwable) {
             // TODO
         }

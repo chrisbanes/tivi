@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 @file:Suppress("NOTHING_TO_INLINE")
 
-package app.tivi.extensions
+package app.tivi.data
 
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
@@ -82,6 +82,3 @@ private fun defaultShouldRetry(throwable: Throwable) = when (throwable) {
     is IOException -> true
     else -> false
 }
-
-private val Response<*>.isFromNetwork: Boolean
-    get() = raw().cacheResponse == null
