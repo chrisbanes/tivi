@@ -16,7 +16,7 @@
 
 package app.tivi.data.repositories.traktusers
 
-import app.tivi.extensions.withRetry
+import app.tivi.data.withRetry
 import org.threeten.bp.Instant
 import org.threeten.bp.Period
 import javax.inject.Inject

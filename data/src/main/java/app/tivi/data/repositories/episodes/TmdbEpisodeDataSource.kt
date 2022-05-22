@@ -16,11 +16,11 @@
 
 package app.tivi.data.repositories.episodes
 
+import app.tivi.data.bodyOrThrow
 import app.tivi.data.entities.Episode
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbEpisodeToEpisode
-import app.tivi.extensions.bodyOrThrow
-import app.tivi.extensions.withRetry
+import app.tivi.data.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import retrofit2.awaitResponse
 import javax.inject.Inject

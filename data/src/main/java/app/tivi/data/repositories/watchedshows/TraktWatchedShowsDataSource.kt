@@ -16,12 +16,12 @@
 
 package app.tivi.data.repositories.watchedshows
 
+import app.tivi.data.bodyOrThrow
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.mappers.TraktBaseShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.extensions.bodyOrThrow
-import app.tivi.extensions.withRetry
+import app.tivi.data.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Sync
 import retrofit2.awaitResponse
