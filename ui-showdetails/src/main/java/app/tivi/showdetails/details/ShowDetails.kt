@@ -109,6 +109,7 @@ import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.foregroundColor
+import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.ExpandableFloatingActionButton
 import app.tivi.common.compose.ui.ExpandingText
@@ -135,7 +136,6 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import coil.compose.rememberImagePainter
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
@@ -473,10 +473,9 @@ private fun PosterInfoRow(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier.padding(horizontal = Layout.bodyMargin)) {
-        Image(
-            painter = rememberImagePainter(posterImage) {
-                crossfade(true)
-            },
+        AsyncImage(
+            model = posterImage,
+            requestBuilder = { crossfade(true) },
             contentDescription = stringResource(R.string.cd_show_poster, show.title ?: ""),
             modifier = Modifier
                 .weight(1f)
@@ -503,10 +502,9 @@ private fun BackdropImage(
     Surface(modifier = modifier) {
         Box {
             if (backdropImage != null) {
-                Image(
-                    painter = rememberImagePainter(backdropImage) {
-                        crossfade(true)
-                    },
+                AsyncImage(
+                    model = backdropImage,
+                    requestBuilder = { crossfade(true) },
                     contentDescription = stringResource(R.string.cd_show_poster),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -560,8 +558,9 @@ private fun NetworkInfoPanel(
                 ShowTmdbImage(path = networkLogoPath, type = ImageType.LOGO, showId = 0)
             }
 
-            Image(
-                painter = rememberImagePainter(tmdbImage) {
+            AsyncImage(
+                model = tmdbImage,
+                requestBuilder = {
                     crossfade(true)
                     transformations(TrimTransparentEdgesTransformation)
                 },

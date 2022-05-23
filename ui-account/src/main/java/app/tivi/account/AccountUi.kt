@@ -55,9 +55,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.foregroundColor
+import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import coil.compose.rememberImagePainter
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import org.threeten.bp.OffsetDateTime
@@ -180,10 +180,9 @@ private fun UserRow(
     ) {
         val avatarUrl = user.avatarUrl
         if (avatarUrl != null) {
-            Image(
-                painter = rememberImagePainter(avatarUrl) {
-                    crossfade(true)
-                },
+            AsyncImage(
+                model = avatarUrl,
+                requestBuilder = { crossfade(true) },
                 contentDescription = stringResource(R.string.cd_profile_pic, user.name ?: user.username),
                 modifier = Modifier
                     .size(40.dp)

@@ -24,8 +24,8 @@ import app.tivi.util.SaveData
 import coil.annotation.ExperimentalCoilApi
 import coil.intercept.Interceptor
 import coil.request.ImageResult
-import coil.size.PixelSize
 import coil.size.Size
+import coil.size.pxOrElse
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import javax.inject.Inject
@@ -34,7 +34,7 @@ import javax.inject.Provider
 @ExperimentalCoilApi
 class TmdbImageEntityCoilInterceptor @Inject constructor(
     private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>,
-    private val powerController: PowerController
+    private val powerController: PowerController,
 ) : Interceptor {
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
         val request = when (val data = chain.request.data) {
@@ -49,13 +49,11 @@ class TmdbImageEntityCoilInterceptor @Inject constructor(
     }
 
     private fun map(data: TmdbImageEntity, size: Size): HttpUrl {
-        val width = if (size is PixelSize) {
-            when (powerController.shouldSaveData()) {
-                is SaveData.Disabled -> size.width
-                // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
-                is SaveData.Enabled -> size.width / 2
-            }
-        } else 0
+        val width = when (powerController.shouldSaveData()) {
+            is SaveData.Disabled -> size.width.pxOrElse { 0 }
+            // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
+            is SaveData.Enabled -> size.width.pxOrElse { 0 } / 2
+        }
 
         val urlProvider = tmdbImageUrlProvider.get()
         return when (data.type) {
