@@ -17,6 +17,8 @@
 package app.tivi.common.compose
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -26,7 +28,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
@@ -51,6 +54,7 @@ import app.tivi.common.compose.ui.PlaceholderPosterCard
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
+import app.tivi.common.compose.ui.plus
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import com.google.accompanist.insets.ui.Scaffold
@@ -59,6 +63,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <E : Entry> EntryGrid(
     lazyPagingItems: LazyPagingItems<out EntryWithShow<E>>,
@@ -124,20 +129,22 @@ fun <E : Entry> EntryGrid(
             val bodyMargin = Layout.bodyMargin
             val gutter = Layout.gutter
 
-            LazyColumn(
-                contentPadding = paddingValues,
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns / 2),
+                contentPadding = paddingValues +
+                    PaddingValues(horizontal = bodyMargin, vertical = gutter),
+                horizontalArrangement = Arrangement.spacedBy(gutter),
+                verticalArrangement = Arrangement.spacedBy(gutter),
                 modifier = Modifier
                     .bodyWidth()
                     .fillMaxHeight(),
             ) {
-                itemsInGrid(
-                    lazyPagingItems = lazyPagingItems,
-                    columns = columns / 2,
-                    contentPadding = PaddingValues(horizontal = bodyMargin, vertical = gutter),
-                    verticalItemPadding = gutter,
-                    horizontalItemPadding = gutter,
+                items(
+                    items = lazyPagingItems,
+                    key = { it.show.id },
                 ) { entry ->
                     val mod = Modifier
+                        .animateItemPlacement()
                         .aspectRatio(2 / 3f)
                         .fillMaxWidth()
                     if (entry != null) {
@@ -145,7 +152,7 @@ fun <E : Entry> EntryGrid(
                             show = entry.show,
                             poster = entry.poster,
                             onClick = { onOpenShowDetails(entry.show.id) },
-                            modifier = mod
+                            modifier = mod,
                         )
                     } else {
                         PlaceholderPosterCard(mod)
@@ -153,7 +160,7 @@ fun <E : Entry> EntryGrid(
                 }
 
                 if (lazyPagingItems.loadState.append == LoadState.Loading) {
-                    item {
+                    fullSpanItem {
                         Box(
                             Modifier
                                 .fillMaxWidth()

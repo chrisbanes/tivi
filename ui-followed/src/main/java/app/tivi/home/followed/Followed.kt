@@ -17,7 +17,9 @@
 package app.tivi.home.followed
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,7 +36,8 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalContentAlpha
@@ -56,8 +59,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.itemSpacer
-import app.tivi.common.compose.itemsInGrid
+import app.tivi.common.compose.fullSpanItem
+import app.tivi.common.compose.items
 import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
@@ -66,6 +69,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.UserProfileButton
+import app.tivi.common.compose.ui.plus
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
@@ -112,6 +116,7 @@ internal fun Followed(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun Followed(
     state: FollowedViewState,
@@ -171,13 +176,20 @@ internal fun Followed(
             val bodyMargin = Layout.bodyMargin
             val gutter = Layout.gutter
 
-            LazyColumn(
-                contentPadding = paddingValues,
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns / 4),
+                contentPadding = paddingValues + PaddingValues(
+                    horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
+                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+                ),
+                // We minus 8.dp off the grid padding, as we use content padding on the items below
+                horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
+                verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
                 modifier = Modifier
                     .bodyWidth()
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
             ) {
-                item {
+                fullSpanItem {
                     FilterSortPanel(
                         filterHint = stringResource(R.string.filter_shows, list.itemCount),
                         onFilterChanged = onFilterChanged,
@@ -185,21 +197,14 @@ internal fun Followed(
                         currentSortOption = state.sort,
                         onSortSelected = onSortSelected,
                         modifier = Modifier
-                            .fillParentMaxWidth()
+                            .fillMaxWidth()
                             .padding(horizontal = bodyMargin)
                     )
                 }
 
-                itemsInGrid(
-                    lazyPagingItems = list,
-                    columns = columns / 4,
-                    // We minus 8.dp off the grid padding, as we use content padding on the items below
-                    contentPadding = PaddingValues(
-                        horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-                        vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
-                    ),
-                    verticalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
-                    horizontalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
+                items(
+                    items = list,
+                    key = { it.show.id },
                 ) { entry ->
                     if (entry != null) {
                         FollowedShowItem(
@@ -209,13 +214,12 @@ internal fun Followed(
                             totalEpisodeCount = entry.stats?.episodeCount ?: 0,
                             onClick = { openShowDetails(entry.show.id) },
                             contentPadding = PaddingValues(8.dp),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .animateItemPlacement()
+                                .fillMaxWidth()
                         )
                     }
-                    // TODO placeholder?
                 }
-
-                itemSpacer(16.dp)
             }
         }
     }
