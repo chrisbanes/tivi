@@ -58,7 +58,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
@@ -186,7 +185,6 @@ internal fun ShowDetails(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ShowDetails(
     viewState: ShowDetailsViewState,
@@ -892,7 +890,6 @@ private fun SeasonRow(
     unfollowPreviousSeasons: (seasonId: Long) -> Unit,
     onMarkSeasonWatched: (seasonId: Long) -> Unit,
     onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
-
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     nextToAirDate: OffsetDateTime? = null,
@@ -948,82 +945,110 @@ private fun SeasonRow(
             }
         }
 
-        var showMenu by remember { mutableStateOf(false) }
-
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            IconButton(
-                onClick = { showMenu = true },
-                modifier = Modifier.align(Alignment.CenterVertically),
-            ) {
-                Icon(
-                    Icons.Default.MoreVert,
-                    stringResource(R.string.cd_open_overflow)
+            Box(modifier = Modifier.align(Alignment.CenterVertically)) {
+                var showMenu by remember { mutableStateOf(false) }
+
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = stringResource(R.string.cd_open_overflow)
+                    )
+                }
+
+                SeasonDropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false },
+                    season = season,
+                    episodesAired = episodesAired,
+                    episodesWatched = episodesWatched,
+                    episodesToAir = episodesToAir,
+                    onSeasonFollowed = onSeasonFollowed,
+                    onSeasonUnfollowed = onSeasonUnfollowed,
+                    unfollowPreviousSeasons = unfollowPreviousSeasons,
+                    onMarkSeasonWatched = onMarkSeasonWatched,
+                    onMarkSeasonUnwatched = onMarkSeasonUnwatched
                 )
             }
         }
+    }
+}
 
-        DropdownMenu(
-            expanded = showMenu,
-            onDismissRequest = { showMenu = false }
-        ) {
-            if (season.ignored) {
-                DropdownMenuItem(
-                    onClick = {
-                        onSeasonFollowed(season.id)
-                        showMenu = false
-                    }
-                ) {
-                    Text(text = stringResource(id = R.string.popup_season_follow))
+@Composable
+private fun SeasonDropdownMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    season: Season,
+    episodesAired: Int,
+    episodesWatched: Int,
+    episodesToAir: Int,
+    onSeasonFollowed: (seasonId: Long) -> Unit,
+    onSeasonUnfollowed: (seasonId: Long) -> Unit,
+    unfollowPreviousSeasons: (seasonId: Long) -> Unit,
+    onMarkSeasonWatched: (seasonId: Long) -> Unit,
+    onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
+) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismissRequest,
+    ) {
+        if (season.ignored) {
+            DropdownMenuItem(
+                onClick = {
+                    onSeasonFollowed(season.id)
+                    onDismissRequest()
                 }
-            } else {
-                DropdownMenuItem(
-                    onClick = {
-                        onSeasonUnfollowed(season.id)
-                        showMenu = false
-                    }
-                ) {
-                    Text(text = stringResource(id = R.string.popup_season_ignore))
-                }
+            ) {
+                Text(text = stringResource(id = R.string.popup_season_follow))
             }
-
-            // Season number starts from 1, rather than 0
-            if ((season.number ?: -100) >= 2) {
-                DropdownMenuItem(
-                    onClick = {
-                        unfollowPreviousSeasons(season.id)
-                        showMenu = false
-                    }
-                ) {
-                    Text(text = stringResource(id = R.string.popup_season_ignore_previous))
+        } else {
+            DropdownMenuItem(
+                onClick = {
+                    onSeasonUnfollowed(season.id)
+                    onDismissRequest()
                 }
+            ) {
+                Text(text = stringResource(id = R.string.popup_season_ignore))
             }
+        }
 
-            if (episodesWatched > 0) {
-                DropdownMenuItem(
-                    onClick = {
-                        onMarkSeasonUnwatched(season.id)
-                        showMenu = false
-                    }
-                ) {
-                    Text(text = stringResource(id = R.string.popup_season_mark_all_unwatched))
+        // Season number starts from 1, rather than 0
+        if ((season.number ?: -100) >= 2) {
+            DropdownMenuItem(
+                onClick = {
+                    unfollowPreviousSeasons(season.id)
+                    onDismissRequest()
                 }
+            ) {
+                Text(text = stringResource(id = R.string.popup_season_ignore_previous))
             }
+        }
 
-            if (episodesWatched < episodesAired) {
-                DropdownMenuItem(
-                    onClick = {
-                        onMarkSeasonWatched(season.id)
-                        showMenu = false
-                    }
-                ) {
-                    Text(
-                        text = if (episodesToAir == 0) {
-                            stringResource(id = R.string.popup_season_mark_watched_all)
-                        } else {
-                            stringResource(id = R.string.popup_season_mark_watched_aired)
-                        }
-                    )
+        if (episodesWatched > 0) {
+            DropdownMenuItem(
+                onClick = {
+                    onMarkSeasonUnwatched(season.id)
+                    onDismissRequest()
                 }
+            ) {
+                Text(text = stringResource(id = R.string.popup_season_mark_all_unwatched))
+            }
+        }
+
+        if (episodesWatched < episodesAired) {
+            DropdownMenuItem(
+                onClick = {
+                    onMarkSeasonWatched(season.id)
+                    onDismissRequest()
+                }
+            ) {
+                Text(
+                    text = if (episodesToAir == 0) {
+                        stringResource(id = R.string.popup_season_mark_watched_all)
+                    } else {
+                        stringResource(id = R.string.popup_season_mark_watched_aired)
+                    }
+                )
             }
         }
     }
