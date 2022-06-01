@@ -34,9 +34,7 @@ internal class ActivityTraktAuthManager @Inject constructor(
     private val clientAuth: Lazy<ClientAuthentication>,
     private val logger: Logger
 ) : TraktAuthManager {
-    private val authService by lazy(LazyThreadSafetyMode.NONE) {
-        AuthorizationService(context)
-    }
+    private val authService = AuthorizationService(context)
 
     override fun buildLoginIntent(): Intent {
         return authService.getAuthorizationRequestIntent(requestProvider.get())
