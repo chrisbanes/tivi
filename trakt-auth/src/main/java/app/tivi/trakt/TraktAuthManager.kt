@@ -23,15 +23,15 @@ import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 
 interface TraktAuthManager {
-    fun buildLoginActivityResult(): LoginTrakt = LoginTrakt(buildLoginIntent())
+    fun buildLoginActivityResult(): LoginTrakt = LoginTrakt { buildLoginIntent() }
     fun buildLoginIntent(): Intent
     fun onLoginResult(result: LoginTrakt.Result)
 }
 
 class LoginTrakt internal constructor(
-    private val loginIntent: Intent,
+    private val intentBuilder: () -> Intent,
 ) : ActivityResultContract<Unit, LoginTrakt.Result?>() {
-    override fun createIntent(context: Context, input: Unit?): Intent = loginIntent
+    override fun createIntent(context: Context, input: Unit?): Intent = intentBuilder()
 
     override fun parseResult(
         resultCode: Int,
