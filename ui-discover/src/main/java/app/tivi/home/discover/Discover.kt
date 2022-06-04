@@ -175,7 +175,7 @@ internal fun Discover(
         modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
         SwipeRefresh(
-            state = rememberSwipeRefreshState(state.refreshing),
+            state = rememberSwipeRefreshState(false),
             onRefresh = refresh,
             indicatorPadding = paddingValues,
             indicator = { state, trigger ->
