@@ -38,7 +38,7 @@ fun SortMenuPopup(
     onSortSelected: (SortOption) -> Unit,
     modifier: Modifier = Modifier,
     currentSortOption: SortOption? = null,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     Box(modifier) {
         var sortPopupOpen by remember { mutableStateOf(false) }
@@ -50,7 +50,7 @@ fun SortMenuPopup(
 
         DropdownMenu(
             expanded = sortPopupOpen,
-            onDismissRequest = { sortPopupOpen = false },
+            onDismissRequest = { sortPopupOpen = false }
         ) {
             for (sort in sortOptions) {
                 DropdownMenuItem(

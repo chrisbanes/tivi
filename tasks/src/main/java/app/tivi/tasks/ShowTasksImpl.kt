@@ -59,7 +59,7 @@ class ShowTasksImpl @Inject constructor(
     override fun setupNightSyncs() {
         val request = PeriodicWorkRequestBuilder<SyncAllFollowedShows>(
             repeatInterval = 24,
-            repeatIntervalTimeUnit = TimeUnit.HOURS,
+            repeatIntervalTimeUnit = TimeUnit.HOURS
         ).setConstraints(
             Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.UNMETERED)
@@ -70,7 +70,7 @@ class ShowTasksImpl @Inject constructor(
         workManager.enqueueUniquePeriodicWork(
             SyncAllFollowedShows.NIGHTLY_SYNC_TAG,
             ExistingPeriodicWorkPolicy.KEEP,
-            request,
+            request
         )
     }
 }

@@ -67,18 +67,18 @@ import com.google.accompanist.insets.ui.Scaffold
 
 @Composable
 fun Search(
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Long) -> Unit
 ) {
     Search(
         viewModel = hiltViewModel(),
-        openShowDetails = openShowDetails,
+        openShowDetails = openShowDetails
     )
 }
 
 @Composable
 internal fun Search(
     viewModel: SearchViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Long) -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
@@ -86,7 +86,7 @@ internal fun Search(
         state = viewState,
         openShowDetails = openShowDetails,
         onSearchQueryChanged = { viewModel.search(it) },
-        onMessageShown = { viewModel.clearMessage(it) },
+        onMessageShown = { viewModel.clearMessage(it) }
     )
 }
 
@@ -96,7 +96,7 @@ internal fun Search(
     state: SearchViewState,
     openShowDetails: (showId: Long) -> Unit,
     onSearchQueryChanged: (query: String) -> Unit,
-    onMessageShown: (id: Long) -> Unit,
+    onMessageShown: (id: Long) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -158,7 +158,7 @@ private fun SearchList(
     results: List<ShowDetailed>,
     onShowClicked: (TiviShow) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val arrangement = Arrangement.spacedBy(Layout.gutter)
 
@@ -167,11 +167,11 @@ private fun SearchList(
         contentPadding = contentPadding,
         verticalArrangement = arrangement,
         horizontalArrangement = arrangement,
-        modifier = modifier,
+        modifier = modifier
     ) {
         items(
             items = results,
-            key = { it.show.id },
+            key = { it.show.id }
         ) { item ->
             SearchRow(
                 show = item.show,
@@ -209,7 +209,7 @@ private fun SearchRow(
         ) {
             Text(
                 text = show.title ?: "No title",
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.subtitle1
             )
 
             if (show.summary?.isNotEmpty() == true) {
@@ -218,7 +218,7 @@ private fun SearchRow(
                         text = show.summary!!,
                         style = MaterialTheme.typography.caption,
                         overflow = TextOverflow.Ellipsis,
-                        maxLines = 2,
+                        maxLines = 2
                     )
                 }
             }

@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit
 abstract class Interactor<in P> {
     operator fun invoke(
         params: P,
-        timeoutMs: Long = defaultTimeoutMs,
+        timeoutMs: Long = defaultTimeoutMs
     ): Flow<InvokeStatus> = flow {
         try {
             withTimeout(timeoutMs) {

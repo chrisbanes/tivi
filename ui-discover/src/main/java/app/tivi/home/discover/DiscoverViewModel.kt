@@ -50,7 +50,7 @@ internal class DiscoverViewModel @Inject constructor(
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
-    private val logger: Logger,
+    private val logger: Logger
 ) : ViewModel() {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
@@ -67,9 +67,9 @@ internal class DiscoverViewModel @Inject constructor(
         observeNextShowEpisodeToWatch.flow,
         observeTraktAuthState.flow,
         observeUserDetails.flow,
-        uiMessageManager.message,
+        uiMessageManager.message
     ) { trendingLoad, popularLoad, recommendLoad, trending, popular, recommended, nextShow,
-            authState, user, message,
+            authState, user, message
         ->
         DiscoverViewState(
             user = user,
@@ -81,12 +81,12 @@ internal class DiscoverViewModel @Inject constructor(
             recommendedItems = recommended,
             recommendedRefreshing = recommendLoad,
             nextEpisodeWithShowToWatched = nextShow,
-            message = message,
+            message = message
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = DiscoverViewState.Empty,
+        initialValue = DiscoverViewState.Empty
     )
 
     init {

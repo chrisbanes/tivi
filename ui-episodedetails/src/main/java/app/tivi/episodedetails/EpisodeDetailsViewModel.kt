@@ -47,7 +47,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
-    private val logger: Logger,
+    private val logger: Logger
 ) : ViewModel() {
     private val episodeId: Long = savedStateHandle.get("episodeId")!!
 
@@ -58,7 +58,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
         observeEpisodeDetails.flow,
         observeEpisodeWatches.flow,
         loadingState.observable,
-        uiMessageManager.message,
+        uiMessageManager.message
     ) { episodeDetails, episodeWatches, refreshing, message ->
         EpisodeDetailsViewState(
             episode = episodeDetails.episode,
@@ -67,12 +67,12 @@ internal class EpisodeDetailsViewModel @Inject constructor(
             canAddEpisodeWatch = episodeDetails.episode?.firstAired?.isBefore(OffsetDateTime.now())
                 ?: true,
             refreshing = refreshing,
-            message = message,
+            message = message
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = EpisodeDetailsViewState.Empty,
+        initialValue = EpisodeDetailsViewState.Empty
     )
 
     init {

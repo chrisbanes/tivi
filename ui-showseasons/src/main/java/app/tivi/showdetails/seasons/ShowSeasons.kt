@@ -92,13 +92,13 @@ import kotlinx.coroutines.launch
 fun ShowSeasons(
     navigateUp: () -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
-    initialSeasonId: Long? = null,
+    initialSeasonId: Long? = null
 ) {
     ShowSeasons(
         viewModel = hiltViewModel(),
         navigateUp = navigateUp,
         openEpisodeDetails = openEpisodeDetails,
-        initialSeasonId = initialSeasonId,
+        initialSeasonId = initialSeasonId
     )
 }
 
@@ -107,7 +107,7 @@ internal fun ShowSeasons(
     viewModel: ShowSeasonsViewModel,
     navigateUp: () -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
-    initialSeasonId: Long?,
+    initialSeasonId: Long?
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
@@ -117,7 +117,7 @@ internal fun ShowSeasons(
         openEpisodeDetails = openEpisodeDetails,
         refresh = { viewModel.refresh() },
         onMessageShown = { viewModel.clearMessage(it) },
-        initialSeasonId = initialSeasonId,
+        initialSeasonId = initialSeasonId
     )
 }
 
@@ -129,7 +129,7 @@ internal fun ShowSeasons(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     refresh: () -> Unit,
     onMessageShown: (id: Long) -> Unit,
-    initialSeasonId: Long?,
+    initialSeasonId: Long?
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -176,7 +176,7 @@ internal fun ShowSeasons(
                 actions = {
                     RefreshButton(
                         refreshing = viewState.refreshing,
-                        onClick = refresh,
+                        onClick = refresh
                     )
                 },
                 backgroundColor = MaterialTheme.colors.surface.copy(
@@ -188,7 +188,7 @@ internal fun ShowSeasons(
                         seasons = viewState.seasons.map { it.season },
                         modifier = Modifier.fillMaxWidth(),
                         backgroundColor = Color.Transparent,
-                        contentColor = LocalContentColor.current,
+                        contentColor = LocalContentColor.current
                     )
                 }
             )
@@ -208,7 +208,7 @@ internal fun ShowSeasons(
             openEpisodeDetails = openEpisodeDetails,
             modifier = Modifier
                 .fillMaxHeight()
-                .bodyWidth(),
+                .bodyWidth()
         )
     }
 }
@@ -220,7 +220,7 @@ private fun SeasonPagerTabs(
     seasons: List<Season>,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.primarySurface,
-    contentColor: Color = contentColorFor(backgroundColor),
+    contentColor: Color = contentColorFor(backgroundColor)
 ) {
     if (pagerState.pageCount == 0) return
 
@@ -236,7 +236,7 @@ private fun SeasonPagerTabs(
                 Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
             )
         },
-        modifier = modifier,
+        modifier = modifier
     ) {
         // Add tabs for all of our pages
         seasons.forEachIndexed { index, season ->
@@ -260,18 +260,18 @@ private fun SeasonsPager(
     seasons: List<SeasonWithEpisodesAndWatches>,
     pagerState: PagerState,
     openEpisodeDetails: (episodeId: Long) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     HorizontalPager(
         count = seasons.size,
         state = pagerState,
-        modifier = modifier,
+        modifier = modifier
     ) { page ->
         val season = seasons[page]
         EpisodesList(
             episodes = season.episodes,
             onEpisodeClick = openEpisodeDetails,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -280,11 +280,11 @@ private fun SeasonsPager(
 private fun EpisodesList(
     episodes: List<EpisodeWithWatches>,
     onEpisodeClick: (episodeId: Long) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = LocalScaffoldPadding.current,
+        contentPadding = LocalScaffoldPadding.current
     ) {
         items(episodes, key = { it.episode.id }) { item ->
             EpisodeWithWatchesRow(
@@ -294,7 +294,7 @@ private fun EpisodesList(
                 onlyPendingDeletes = item.onlyPendingDeletes,
                 modifier = Modifier
                     .fillParentMaxWidth()
-                    .clickable { onEpisodeClick(item.episode.id) },
+                    .clickable { onEpisodeClick(item.episode.id) }
             )
         }
     }
@@ -306,7 +306,7 @@ private fun EpisodeWithWatchesRow(
     isWatched: Boolean,
     hasPending: Boolean,
     onlyPendingDeletes: Boolean,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -337,7 +337,7 @@ private fun EpisodeWithWatchesRow(
                 Icon(
                     imageVector = Icons.Default.CloudUpload,
                     contentDescription = stringResource(R.string.cd_episode_syncing),
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 needSpacer = true
             }

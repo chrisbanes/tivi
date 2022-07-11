@@ -26,6 +26,7 @@ import javax.inject.Inject
 @HiltAndroidApp
 class TiviApplication : Application(), Configuration.Provider {
     @Inject lateinit var initializers: AppInitializers
+
     @Inject lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {

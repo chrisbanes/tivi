@@ -31,7 +31,7 @@ object TraktModule {
         client: OkHttpClient,
         @Named("trakt-client-id") clientId: String,
         @Named("trakt-client-secret") clientSecret: String,
-        @Named("trakt-auth-redirect-uri") redirectUri: String,
+        @Named("trakt-auth-redirect-uri") redirectUri: String
     ): TraktV2 = object : TraktV2(clientId, clientSecret, redirectUri) {
         override fun okHttpClient(): OkHttpClient = client.newBuilder()
             .apply { setOkHttpClientDefaults(this) }

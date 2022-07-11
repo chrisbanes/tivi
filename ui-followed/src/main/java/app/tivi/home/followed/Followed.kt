@@ -85,12 +85,12 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @Composable
 fun Followed(
     openShowDetails: (showId: Long) -> Unit,
-    openUser: () -> Unit,
+    openUser: () -> Unit
 ) {
     Followed(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
-        openUser = openUser,
+        openUser = openUser
     )
 }
 
@@ -98,7 +98,7 @@ fun Followed(
 internal fun Followed(
     viewModel: FollowedViewModel,
     openShowDetails: (showId: Long) -> Unit,
-    openUser: () -> Unit,
+    openUser: () -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
     val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList)
@@ -112,7 +112,7 @@ internal fun Followed(
         openUser = openUser,
         refresh = { viewModel.refresh() },
         onFilterChanged = { viewModel.setFilter(it) },
-        onSortSelected = { viewModel.setSort(it) },
+        onSortSelected = { viewModel.setSort(it) }
     )
 }
 
@@ -126,7 +126,7 @@ internal fun Followed(
     refresh: () -> Unit,
     openUser: () -> Unit,
     onFilterChanged: (String) -> Unit,
-    onSortSelected: (SortOption) -> Unit,
+    onSortSelected: (SortOption) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -158,7 +158,7 @@ internal fun Followed(
                     .fillMaxWidth()
             )
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(state.isLoading),
@@ -180,14 +180,14 @@ internal fun Followed(
                 columns = GridCells.Fixed(columns / 4),
                 contentPadding = paddingValues + PaddingValues(
                     horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp)
                 ),
                 // We minus 8.dp off the grid padding, as we use content padding on the items below
                 horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
                 verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
                 modifier = Modifier
                     .bodyWidth()
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
             ) {
                 fullSpanItem {
                     FilterSortPanel(
@@ -204,7 +204,7 @@ internal fun Followed(
 
                 items(
                     items = list,
-                    key = { it.show.id },
+                    key = { it.show.id }
                 ) { entry ->
                     if (entry != null) {
                         FollowedShowItem(
@@ -233,7 +233,7 @@ private fun FollowedShowItem(
     totalEpisodeCount: Int,
     onClick: () -> Unit,
     contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val textCreator = LocalTiviTextCreator.current
     Row(
@@ -255,7 +255,7 @@ private fun FollowedShowItem(
         Column {
             Text(
                 text = textCreator.showTitle(show = show).toString(),
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.subtitle1
             )
 
             Spacer(Modifier.height(4.dp))
@@ -292,7 +292,7 @@ private fun FollowedAppBar(
     refreshing: Boolean,
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.surface.copy(
@@ -326,6 +326,6 @@ private fun FollowedAppBar(
                 onClick = onUserActionClick,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
-        },
+        }
     )
 }

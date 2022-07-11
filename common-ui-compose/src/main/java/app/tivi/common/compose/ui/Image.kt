@@ -40,7 +40,7 @@ fun AsyncImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality
 ) {
     coil.compose.AsyncImage(
         model = requestBuilder?.let { builder ->

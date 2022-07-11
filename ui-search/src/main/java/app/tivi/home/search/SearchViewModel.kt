@@ -37,7 +37,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class SearchViewModel @Inject constructor(
-    private val searchShows: SearchShows,
+    private val searchShows: SearchShows
 ) : ViewModel() {
     private val searchQuery = MutableStateFlow("")
     private val loadingState = ObservableLoadingCounter()
@@ -52,7 +52,7 @@ internal class SearchViewModel @Inject constructor(
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = SearchViewState.Empty,
+        initialValue = SearchViewState.Empty
     )
 
     init {

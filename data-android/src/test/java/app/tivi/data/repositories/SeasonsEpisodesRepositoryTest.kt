@@ -57,11 +57,17 @@ import javax.inject.Inject
 @HiltAndroidTest
 class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     @Inject lateinit var database: TiviDatabase
+
     @Inject lateinit var episodeWatchDao: EpisodeWatchEntryDao
+
     @Inject lateinit var seasonsDao: SeasonsDao
+
     @Inject lateinit var episodesDao: EpisodesDao
+
     @Inject lateinit var watchStore: EpisodeWatchStore
+
     @Inject lateinit var repository: SeasonsEpisodesRepository
+
     @Inject lateinit var seasonsDataSource: SeasonsEpisodesDataSource
 
     @Before

@@ -47,13 +47,13 @@ fun TopAppBarWithBottomContent(
     backgroundColor: Color = MaterialTheme.colors.primarySurface,
     contentColor: Color = contentColorFor(backgroundColor),
     elevation: Dp = AppBarDefaults.TopAppBarElevation,
-    contentPadding: PaddingValues? = null,
+    contentPadding: PaddingValues? = null
 ) {
     Surface(
         color = backgroundColor,
         elevation = elevation,
         contentColor = contentColor,
-        modifier = modifier,
+        modifier = modifier
     ) {
         Column(contentPadding?.let { Modifier.padding(it) } ?: Modifier) {
             TopAppBar(
@@ -62,7 +62,7 @@ fun TopAppBarWithBottomContent(
                 actions = actions,
                 backgroundColor = Color.Transparent,
                 contentColor = LocalContentColor.current,
-                elevation = 0.dp,
+                elevation = 0.dp
             )
 
             bottomContent?.invoke()

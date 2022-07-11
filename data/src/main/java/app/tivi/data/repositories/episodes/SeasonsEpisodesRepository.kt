@@ -45,7 +45,7 @@ class SeasonsEpisodesRepository @Inject constructor(
     private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
     @Trakt private val traktEpisodeDataSource: EpisodeDataSource,
     @Tmdb private val tmdbEpisodeDataSource: EpisodeDataSource,
-    private val traktAuthState: Provider<TraktAuthState>,
+    private val traktAuthState: Provider<TraktAuthState>
 ) {
     fun observeSeasonsForShow(showId: Long): Flow<List<Season>> {
         return seasonsEpisodesStore.observeShowSeasons(showId)

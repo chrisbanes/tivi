@@ -49,7 +49,9 @@ fun <T> rememberStateWithLifecycle(
 ): State<T> {
     val initialValue = remember(stateFlow) { stateFlow.value }
     return produceState(
-        key1 = stateFlow, key2 = lifecycle, key3 = minActiveState,
+        key1 = stateFlow,
+        key2 = lifecycle,
+        key3 = minActiveState,
         initialValue = initialValue
     ) {
         lifecycle.repeatOnLifecycle(minActiveState) {

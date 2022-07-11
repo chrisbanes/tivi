@@ -38,7 +38,7 @@ import javax.inject.Provider
 class TraktFollowedShowsDataSource @Inject constructor(
     private val usersService: Provider<Users>,
     listEntryToShowMapper: TraktListEntryToTiviShow,
-    listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry,
+    listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry
 ) : FollowedShowsDataSource {
     companion object {
         private val LIST_NAME = "Following"

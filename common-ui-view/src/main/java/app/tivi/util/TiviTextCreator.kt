@@ -39,7 +39,7 @@ import javax.inject.Inject
 
 class TiviTextCreator @Inject constructor(
     @ActivityContext private val context: Context,
-    private val tiviDateFormatter: TiviDateFormatter,
+    private val tiviDateFormatter: TiviDateFormatter
 ) {
     fun showTitle(
         show: TiviShow

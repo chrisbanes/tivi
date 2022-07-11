@@ -43,7 +43,7 @@ internal class AccountUiViewModel @Inject constructor(
 
     val state: StateFlow<AccountUiViewState> = combine(
         observeTraktAuthState.flow,
-        observeUserDetails.flow,
+        observeUserDetails.flow
     ) { authState, user ->
         AccountUiViewState(
             user = user,
@@ -52,7 +52,7 @@ internal class AccountUiViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = AccountUiViewState.Empty,
+        initialValue = AccountUiViewState.Empty
     )
 
     init {

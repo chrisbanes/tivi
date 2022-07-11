@@ -41,7 +41,7 @@ object ShowStoreModule {
         showDao: TiviShowDao,
         lastRequestStore: ShowLastRequestStore,
         traktShowDataSource: TraktShowDataSource,
-        tmdbShowDataSource: TmdbShowDataSource,
+        tmdbShowDataSource: TmdbShowDataSource
     ): ShowStore = StoreBuilder.from(
         fetcher = Fetcher.of { id: Long ->
             val savedShow = showDao.getShowWithIdOrThrow(id)

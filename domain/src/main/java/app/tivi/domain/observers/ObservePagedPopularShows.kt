@@ -31,7 +31,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalPagingApi::class)
 class ObservePagedPopularShows @Inject constructor(
     private val PopularShowsDao: PopularDao,
-    private val updatePopularShows: UpdatePopularShows,
+    private val updatePopularShows: UpdatePopularShows
 ) : PagingInteractor<ObservePagedPopularShows.Params, PopularEntryWithShow>() {
     override fun createObservable(
         params: Params
@@ -48,6 +48,6 @@ class ObservePagedPopularShows @Inject constructor(
     }
 
     data class Params(
-        override val pagingConfig: PagingConfig,
+        override val pagingConfig: PagingConfig
     ) : Parameters<PopularEntryWithShow>
 }

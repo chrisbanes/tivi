@@ -25,7 +25,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 internal class TiviLogger @Inject constructor(
-    private val firebaseCrashlytics: Provider<FirebaseCrashlytics>,
+    private val firebaseCrashlytics: Provider<FirebaseCrashlytics>
 ) : Logger {
     override fun setup(debugMode: Boolean) {
         if (debugMode) {

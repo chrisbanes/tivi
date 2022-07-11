@@ -51,8 +51,10 @@ fun AutoSizedCircularProgressIndicator(
 
 // Default stroke size
 private val DefaultStrokeWidth = 4.dp
+
 // Preferred diameter for CircularProgressIndicator
 private val DefaultDiameter = 40.dp
+
 // Internal padding added by CircularProgressIndicator
 private val InternalPadding = 4.dp
 

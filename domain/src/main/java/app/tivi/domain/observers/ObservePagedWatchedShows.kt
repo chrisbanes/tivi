@@ -39,6 +39,6 @@ class ObservePagedWatchedShows @Inject constructor(
     data class Params(
         val filter: String? = null,
         val sort: SortOption,
-        override val pagingConfig: PagingConfig,
+        override val pagingConfig: PagingConfig
     ) : Parameters<WatchedShowEntryWithShow>
 }

@@ -28,12 +28,12 @@ import app.tivi.common.compose.rememberFlowWithLifecycle
 @Composable
 fun TrendingShows(
     openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit,
+    navigateUp: () -> Unit
 ) {
     TrendingShows(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
-        navigateUp = navigateUp,
+        navigateUp = navigateUp
     )
 }
 
@@ -41,7 +41,7 @@ fun TrendingShows(
 internal fun TrendingShows(
     viewModel: TrendingShowsViewModel,
     openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit,
+    navigateUp: () -> Unit
 ) {
     EntryGrid(
         lazyPagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems(),

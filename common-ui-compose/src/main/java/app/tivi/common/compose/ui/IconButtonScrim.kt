@@ -27,12 +27,12 @@ import androidx.compose.ui.graphics.Shape
 fun Modifier.iconButtonBackgroundScrim(
     enabled: Boolean = true,
     @FloatRange(from = 0.0, to = 1.0) alpha: Float = 0.4f,
-    shape: Shape = CircleShape,
+    shape: Shape = CircleShape
 ): Modifier = composed {
     if (enabled) {
         Modifier.background(
             color = MaterialTheme.colors.surface.copy(alpha = alpha),
-            shape = shape,
+            shape = shape
         )
     } else this
 }

@@ -44,7 +44,7 @@ internal fun NavGraphBuilder.composable(
     exitTransition: (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?)? = null,
     popEnterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?)? = enterTransition,
     popExitTransition: (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?)? = exitTransition,
-    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit,
+    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
 ) {
     composable(
         route = route,
@@ -59,7 +59,7 @@ internal fun NavGraphBuilder.composable(
         exitTransition = exitTransition,
         popEnterTransition = popEnterTransition,
         popExitTransition = popExitTransition,
-        content = content,
+        content = content
     )
 }
 
@@ -72,7 +72,7 @@ internal fun NavGraphBuilder.dialog(
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
     dialogProperties: DialogProperties = DialogProperties(),
-    content: @Composable (NavBackStackEntry) -> Unit,
+    content: @Composable (NavBackStackEntry) -> Unit
 ) {
     dialog(
         route = route,

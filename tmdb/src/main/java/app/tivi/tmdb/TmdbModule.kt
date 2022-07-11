@@ -34,7 +34,7 @@ object TmdbModule {
     @Provides
     fun provideTmdb(
         client: OkHttpClient,
-        @Named("tmdb-api") apiKey: String,
+        @Named("tmdb-api") apiKey: String
     ): Tmdb = object : Tmdb(apiKey) {
         override fun okHttpClient(): OkHttpClient = client.newBuilder()
             .apply { setOkHttpClientDefaults(this) }
