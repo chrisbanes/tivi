@@ -47,9 +47,13 @@ class MainActivity : TiviActivity() {
     private lateinit var viewModel: MainActivityViewModel
 
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+
     @Inject internal lateinit var textCreator: TiviTextCreator
+
     @Inject internal lateinit var preferences: TiviPreferences
+
     @Inject internal lateinit var analytics: Analytics
+
     @Inject internal lateinit var contentViewSetter: ContentViewSetter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,7 +79,7 @@ class MainActivity : TiviActivity() {
     private fun TiviContent() {
         CompositionLocalProvider(
             LocalTiviDateFormatter provides tiviDateFormatter,
-            LocalTiviTextCreator provides textCreator,
+            LocalTiviTextCreator provides textCreator
         ) {
             TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                 Home(
@@ -84,7 +88,7 @@ class MainActivity : TiviActivity() {
                         startActivity(
                             Intent(this@MainActivity, SettingsActivity::class.java)
                         )
-                    },
+                    }
                 )
             }
         }

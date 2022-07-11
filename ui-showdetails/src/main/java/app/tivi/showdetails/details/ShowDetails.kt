@@ -148,14 +148,14 @@ fun ShowDetails(
     navigateUp: () -> Unit,
     openShowDetails: (showId: Long) -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
-    openSeasons: (showId: Long, seasonId: Long) -> Unit,
+    openSeasons: (showId: Long, seasonId: Long) -> Unit
 ) {
     ShowDetails(
         viewModel = hiltViewModel(),
         navigateUp = navigateUp,
         openShowDetails = openShowDetails,
         openEpisodeDetails = openEpisodeDetails,
-        openSeasons = openSeasons,
+        openSeasons = openSeasons
     )
 }
 
@@ -165,7 +165,7 @@ internal fun ShowDetails(
     navigateUp: () -> Unit,
     openShowDetails: (showId: Long) -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
-    openSeasons: (showId: Long, seasonId: Long) -> Unit,
+    openSeasons: (showId: Long, seasonId: Long) -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
     ShowDetails(
@@ -181,7 +181,7 @@ internal fun ShowDetails(
         unfollowPreviousSeasons = { viewModel.unfollowPreviousSeasons(it) },
         onMarkSeasonWatched = { viewModel.setSeasonWatched(it, onlyAired = true) },
         onMarkSeasonUnwatched = { viewModel.setSeasonUnwatched(it) },
-        onToggleShowFollowed = { viewModel.toggleFollowShow() },
+        onToggleShowFollowed = { viewModel.toggleFollowShow() }
     )
 }
 
@@ -199,7 +199,7 @@ internal fun ShowDetails(
     unfollowPreviousSeasons: (seasonId: Long) -> Unit,
     onMarkSeasonWatched: (seasonId: Long) -> Unit,
     onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
-    onToggleShowFollowed: () -> Unit,
+    onToggleShowFollowed: () -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
@@ -256,7 +256,7 @@ internal fun ShowDetails(
             ToggleShowFollowFloatingActionButton(
                 isFollowed = viewState.isFollowed,
                 expanded = { expanded },
-                onClick = onToggleShowFollowed,
+                onClick = onToggleShowFollowed
             )
         },
         snackbarHost = { snackBarHostState ->
@@ -314,7 +314,7 @@ private fun ShowDetailsScrollingContent(
     onMarkSeasonWatched: (seasonId: Long) -> Unit,
     onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
     contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     LogCompositions("ShowDetailsScrollingContent")
 
@@ -325,7 +325,7 @@ private fun ShowDetailsScrollingContent(
     LazyColumn(
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
-        modifier = modifier,
+        modifier = modifier
     ) {
         item {
             BackdropImage(
@@ -406,7 +406,7 @@ private fun ShowDetailsScrollingContent(
                 RelatedShows(
                     related = relatedShows,
                     openShowDetails = openShowDetails,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -435,10 +435,10 @@ private fun ShowDetailsScrollingContent(
                 // We minus 8.dp off the grid padding, as we use content padding on the items below
                 contentPadding = PaddingValues(
                     horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp)
                 ),
                 verticalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
-                horizontalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
+                horizontalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp)
             ) { season ->
                 SeasonRow(
                     season = season.season,
@@ -454,7 +454,7 @@ private fun ShowDetailsScrollingContent(
                     unfollowPreviousSeasons = unfollowPreviousSeasons,
                     onMarkSeasonWatched = onMarkSeasonWatched,
                     onMarkSeasonUnwatched = onMarkSeasonUnwatched,
-                    modifier = Modifier.fillParentMaxWidth(),
+                    modifier = Modifier.fillParentMaxWidth()
                 )
             }
         }
@@ -468,7 +468,7 @@ private fun ShowDetailsScrollingContent(
 private fun PosterInfoRow(
     show: TiviShow,
     posterImage: TmdbImageEntity?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(modifier.padding(horizontal = Layout.bodyMargin)) {
         AsyncImage(
@@ -479,7 +479,7 @@ private fun PosterInfoRow(
                 .weight(1f)
                 .aspectRatio(2 / 3f)
                 .clip(MaterialTheme.shapes.medium),
-            alignment = Alignment.TopStart,
+            alignment = Alignment.TopStart
         )
 
         InfoPanels(
@@ -495,7 +495,7 @@ private fun PosterInfoRow(
 private fun BackdropImage(
     backdropImage: TmdbImageEntity?,
     showTitle: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Surface(modifier = modifier) {
         Box {
@@ -507,7 +507,7 @@ private fun BackdropImage(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
-                        .drawForegroundGradientScrim(Color.Black.copy(alpha = 0.7f)),
+                        .drawForegroundGradientScrim(Color.Black.copy(alpha = 0.7f))
                 )
             }
 
@@ -524,7 +524,7 @@ private fun BackdropImage(
                     shadow = Shadow(
                         color = Color.Black,
                         offset = Offset(shadowSize, shadowSize),
-                        blurRadius = 0.1f,
+                        blurRadius = 0.1f
                     )
                 ),
                 fontWeight = FontWeight.Thin,
@@ -541,7 +541,7 @@ private fun BackdropImage(
 private fun NetworkInfoPanel(
     networkName: String,
     modifier: Modifier = Modifier,
-    networkLogoPath: String? = null,
+    networkLogoPath: String? = null
 ) {
     Column(modifier) {
         Text(
@@ -569,7 +569,7 @@ private fun NetworkInfoPanel(
                 colorFilter = when {
                     isSystemInDarkTheme() -> ColorFilter.tint(foregroundColor())
                     else -> null
-                },
+                }
             )
         } else {
             Text(
@@ -583,7 +583,7 @@ private fun NetworkInfoPanel(
 @Composable
 private fun RuntimeInfoPanel(
     runtime: Int,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -603,7 +603,7 @@ private fun RuntimeInfoPanel(
 @Composable
 private fun ShowStatusPanel(
     showStatus: ShowStatus,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -624,7 +624,7 @@ private fun ShowStatusPanel(
 @Composable
 private fun AirsInfoPanel(
     show: TiviShow,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -645,7 +645,7 @@ private fun AirsInfoPanel(
 @Composable
 private fun CertificateInfoPanel(
     certification: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -673,7 +673,7 @@ private fun CertificateInfoPanel(
 private fun TraktRatingInfoPanel(
     rating: Float,
     votes: Int,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -689,7 +689,7 @@ private fun TraktRatingInfoPanel(
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 colorFilter = ColorFilter.tint(MaterialTheme.colors.secondaryVariant),
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier.size(32.dp)
             )
 
             Spacer(Modifier.width(4.dp))
@@ -749,7 +749,7 @@ private fun Genres(genres: List<Genre>) {
 private fun RelatedShows(
     related: List<RelatedShowEntryWithShow>,
     openShowDetails: (showId: Long) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     LogCompositions("RelatedShows")
 
@@ -762,14 +762,14 @@ private fun RelatedShows(
         flingBehavior = rememberSnapperFlingBehavior(
             lazyListState = lazyListState,
             snapOffsetForItem = SnapOffsets.Start,
-            endContentPadding = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
+            endContentPadding = contentPadding.calculateEndPadding(LayoutDirection.Ltr)
         ),
         contentPadding = contentPadding,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(
             items = related,
-            key = { it.show.id },
+            key = { it.show.id }
         ) { item ->
             PosterCard(
                 show = item.show,
@@ -788,7 +788,7 @@ private fun RelatedShows(
 private fun NextEpisodeToWatch(
     season: Season,
     episode: Episode,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -817,12 +817,12 @@ private fun NextEpisodeToWatch(
 @Composable
 private fun InfoPanels(
     show: TiviShow,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     FlowRow(
         mainAxisSpacing = Layout.gutter,
         crossAxisSpacing = Layout.gutter,
-        modifier = modifier,
+        modifier = modifier
     ) {
         if (show.traktRating != null) {
             TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
@@ -850,7 +850,7 @@ private fun InfoPanels(
 @Composable
 private fun WatchStats(
     watchedEpisodeCount: Int,
-    episodeCount: Int,
+    episodeCount: Int
 ) {
     Column(
         modifier = Modifier
@@ -862,7 +862,7 @@ private fun WatchStats(
                 episodeCount > 0 -> watchedEpisodeCount / episodeCount.toFloat()
                 else -> 0f
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(Layout.gutter))
@@ -892,7 +892,7 @@ private fun SeasonRow(
     onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
-    nextToAirDate: OffsetDateTime? = null,
+    nextToAirDate: OffsetDateTime? = null
 ) {
     Row(
         modifier = modifier
@@ -986,11 +986,11 @@ private fun SeasonDropdownMenu(
     onSeasonUnfollowed: (seasonId: Long) -> Unit,
     unfollowPreviousSeasons: (seasonId: Long) -> Unit,
     onMarkSeasonWatched: (seasonId: Long) -> Unit,
-    onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
+    onMarkSeasonUnwatched: (seasonId: Long) -> Unit
 ) {
     DropdownMenu(
         expanded = expanded,
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onDismissRequest
     ) {
         if (season.ignored) {
             DropdownMenuItem(
@@ -1061,7 +1061,7 @@ private fun ShowDetailsAppBar(
     showAppBarBackground: Boolean,
     navigateUp: () -> Unit,
     refresh: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     LogCompositions("ShowDetailsAppBar")
 
@@ -1070,7 +1070,7 @@ private fun ShowDetailsAppBar(
             showAppBarBackground -> MaterialTheme.colors.surface
             else -> Color.Transparent
         },
-        animationSpec = spring(),
+        animationSpec = spring()
     )
 
     val elevation by animateDpAsState(
@@ -1078,7 +1078,7 @@ private fun ShowDetailsAppBar(
             showAppBarBackground -> 4.dp
             else -> 0.dp
         },
-        animationSpec = spring(),
+        animationSpec = spring()
     )
 
     TopAppBar(
@@ -1093,11 +1093,11 @@ private fun ShowDetailsAppBar(
         navigationIcon = {
             IconButton(
                 onClick = navigateUp,
-                modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground),
+                modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground)
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.cd_navigate_up),
+                    contentDescription = stringResource(R.string.cd_navigate_up)
                 )
             }
         },
@@ -1112,7 +1112,7 @@ private fun ShowDetailsAppBar(
             } else {
                 IconButton(
                     onClick = refresh,
-                    modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground),
+                    modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
@@ -1132,7 +1132,7 @@ private fun ToggleShowFollowFloatingActionButton(
     isFollowed: Boolean,
     onClick: () -> Unit,
     expanded: () -> Boolean,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     LogCompositions("ToggleShowFollowFloatingActionButton")
 

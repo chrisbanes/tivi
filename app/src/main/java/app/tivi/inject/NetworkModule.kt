@@ -38,7 +38,7 @@ object NetworkModule {
     @Provides
     fun provideOkHttpClient(
         @ApplicationContext context: Context,
-        interceptors: Set<@JvmSuppressWildcards Interceptor>,
+        interceptors: Set<@JvmSuppressWildcards Interceptor>
     ): OkHttpClient = OkHttpClient.Builder()
         .apply { interceptors.forEach(::addInterceptor) }
         // Around 4¢ worth of storage in 2020

@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class RecommendedShowsViewModel @Inject constructor(
-    pagingInteractor: ObservePagedRecommendedShows,
+    pagingInteractor: ObservePagedRecommendedShows
 ) : ViewModel() {
     val pagedList: Flow<PagingData<RecommendedEntryWithShow>> =
         pagingInteractor.flow.cachedIn(viewModelScope)

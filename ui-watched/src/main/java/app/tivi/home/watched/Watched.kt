@@ -86,12 +86,12 @@ import org.threeten.bp.OffsetDateTime
 @Composable
 fun Watched(
     openShowDetails: (showId: Long) -> Unit,
-    openUser: () -> Unit,
+    openUser: () -> Unit
 ) {
     Watched(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
-        openUser = openUser,
+        openUser = openUser
     )
 }
 
@@ -99,7 +99,7 @@ fun Watched(
 internal fun Watched(
     viewModel: WatchedViewModel,
     openShowDetails: (showId: Long) -> Unit,
-    openUser: () -> Unit,
+    openUser: () -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
     val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList)
@@ -113,7 +113,7 @@ internal fun Watched(
         openUser = openUser,
         refresh = { viewModel.refresh() },
         onFilterChanged = { viewModel.setFilter(it) },
-        onSortSelected = { viewModel.setSort(it) },
+        onSortSelected = { viewModel.setSort(it) }
     )
 }
 
@@ -127,7 +127,7 @@ internal fun Watched(
     refresh: () -> Unit,
     openUser: () -> Unit,
     onFilterChanged: (String) -> Unit,
-    onSortSelected: (SortOption) -> Unit,
+    onSortSelected: (SortOption) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -159,7 +159,7 @@ internal fun Watched(
                     .fillMaxWidth()
             )
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(state.isLoading),
@@ -181,14 +181,14 @@ internal fun Watched(
                 columns = GridCells.Fixed(columns / 4),
                 contentPadding = paddingValues + PaddingValues(
                     horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp)
                 ),
                 // We minus 8.dp off the grid padding, as we use content padding on the items below
                 horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
                 verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
                 modifier = Modifier
                     .bodyWidth()
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
             ) {
                 fullSpanItem {
                     FilterSortPanel(
@@ -205,7 +205,7 @@ internal fun Watched(
 
                 items(
                     items = list,
-                    key = { it.show.id },
+                    key = { it.show.id }
                 ) { entry ->
                     if (entry != null) {
                         WatchedShowItem(
@@ -232,7 +232,7 @@ private fun WatchedShowItem(
     lastWatched: OffsetDateTime,
     onClick: () -> Unit,
     contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val textCreator = LocalTiviTextCreator.current
     Row(
@@ -254,7 +254,7 @@ private fun WatchedShowItem(
         Column {
             Text(
                 text = textCreator.showTitle(show = show).toString(),
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.subtitle1
             )
 
             Spacer(Modifier.height(2.dp))
@@ -265,7 +265,7 @@ private fun WatchedShowItem(
                         R.string.library_last_watched,
                         LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatched)
                     ),
-                    style = MaterialTheme.typography.caption,
+                    style = MaterialTheme.typography.caption
                 )
             }
         }
@@ -279,7 +279,7 @@ private fun WatchedAppBar(
     refreshing: Boolean,
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.surface.copy(
@@ -313,6 +313,6 @@ private fun WatchedAppBar(
                 onClick = onUserActionClick,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
-        },
+        }
     )
 }

@@ -43,6 +43,7 @@ import javax.inject.Inject
 @HiltAndroidTest
 class SeasonsTest : DatabaseTest() {
     @Inject lateinit var database: TiviDatabase
+
     @Inject lateinit var seasonsDao: SeasonsDao
 
     @Before

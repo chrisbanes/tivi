@@ -30,7 +30,7 @@ fun PaddingValues.copy(
     copyStart: Boolean = true,
     copyTop: Boolean = true,
     copyEnd: Boolean = true,
-    copyBottom: Boolean = true,
+    copyBottom: Boolean = true
 ): PaddingValues {
     return remember(this) {
         derivedStateOf {
@@ -38,7 +38,7 @@ fun PaddingValues.copy(
                 start = if (copyStart) calculateStartPadding(LayoutDirection.Ltr) else 0.dp,
                 top = if (copyTop) calculateTopPadding() else 0.dp,
                 end = if (copyEnd) calculateEndPadding(LayoutDirection.Ltr) else 0.dp,
-                bottom = if (copyBottom) calculateBottomPadding() else 0.dp,
+                bottom = if (copyBottom) calculateBottomPadding() else 0.dp
             )
         }
     }.value
@@ -50,5 +50,5 @@ operator fun PaddingValues.plus(plus: PaddingValues): PaddingValues = PaddingVal
     top = this.calculateTopPadding() + plus.calculateTopPadding(),
     end = this.calculateEndPadding(LayoutDirection.Ltr) +
         plus.calculateEndPadding(LayoutDirection.Ltr),
-    bottom = this.calculateBottomPadding() + plus.calculateBottomPadding(),
+    bottom = this.calculateBottomPadding() + plus.calculateBottomPadding()
 )

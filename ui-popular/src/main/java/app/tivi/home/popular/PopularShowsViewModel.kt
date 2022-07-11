@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class PopularShowsViewModel @Inject constructor(
-    pagingInteractor: ObservePagedPopularShows,
+    pagingInteractor: ObservePagedPopularShows
 ) : ViewModel() {
 
     val pagedList: Flow<PagingData<PopularEntryWithShow>> =

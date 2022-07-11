@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class TrendingShowsViewModel @Inject constructor(
-    pagingInteractor: ObservePagedTrendingShows,
+    pagingInteractor: ObservePagedTrendingShows
 ) : ViewModel() {
 
     val pagedList: Flow<PagingData<TrendingEntryWithShow>> =

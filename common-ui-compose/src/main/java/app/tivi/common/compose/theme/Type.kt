@@ -28,13 +28,13 @@ import app.tivi.common.compose.R
 internal fun createSingleGoogleFontFamily(
     name: String,
     provider: GoogleFont.Provider = GmsFontProvider,
-    weights: List<FontWeight>,
+    weights: List<FontWeight>
 ): FontFamily = FontFamily(
     weights.map { weight ->
         Font(
             googleFont = GoogleFont(name),
             fontProvider = provider,
-            weight = weight,
+            weight = weight
         )
     }
 )
@@ -44,7 +44,7 @@ internal val GmsFontProvider: GoogleFont.Provider by lazy {
     GoogleFont.Provider(
         providerAuthority = "com.google.android.gms.fonts",
         providerPackage = "com.google.android.gms",
-        certificates = R.array.com_google_android_gms_fonts_certs,
+        certificates = R.array.com_google_android_gms_fonts_certs
     )
 }
 
@@ -56,7 +56,7 @@ val TiviTypography = Typography(
             FontWeight.Light,
             FontWeight.Normal,
             FontWeight.Medium,
-            FontWeight.Bold,
-        ),
+            FontWeight.Bold
+        )
     )
 )

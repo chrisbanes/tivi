@@ -31,7 +31,7 @@ internal data class FollowedViewState(
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
     val sort: SortOption = SortOption.SUPER_SORT,
-    val message: UiMessage? = null,
+    val message: UiMessage? = null
 ) {
     companion object {
         val Empty = FollowedViewState()

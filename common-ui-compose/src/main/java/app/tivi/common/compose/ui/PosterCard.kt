@@ -40,7 +40,7 @@ fun PosterCard(
     show: TiviShow,
     modifier: Modifier = Modifier,
     poster: TmdbImageEntity? = null,
-    onClick: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null
 ) {
     Card(modifier = modifier) {
         Box(
@@ -66,7 +66,7 @@ fun PosterCard(
                         show.title ?: "show"
                     ),
                     modifier = Modifier.matchParentSize(),
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Crop
                 )
             }
         }

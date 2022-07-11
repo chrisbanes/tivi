@@ -23,12 +23,12 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 internal class TiviAnalytics @Inject constructor(
-    private val firebaseAnalytics: Provider<FirebaseAnalytics>,
+    private val firebaseAnalytics: Provider<FirebaseAnalytics>
 ) : Analytics {
     override fun trackScreenView(
         label: String,
         route: String?,
-        arguments: Any?,
+        arguments: Any?
     ) {
         try {
             firebaseAnalytics.get().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
@@ -39,11 +39,11 @@ internal class TiviAnalytics @Inject constructor(
                 when {
                     arguments is Bundle -> {
                         for (key in arguments.keySet()) {
-                            val value = arguments.get(key).toString()
+                            val value = arguments.getString(key)
                             // We don't want to include the label or route twice
                             if (value == label || value == route) continue
 
-                            param("screen_arg_$key", value)
+                            param("screen_arg_$key", value ?: "")
                         }
                     }
                     arguments != null -> param("screen_arg", arguments.toString())

@@ -65,7 +65,7 @@ internal class ShowDetailsViewModel @Inject constructor(
     observeShowViewStats: ObserveShowViewStats,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
-    private val logger: Logger,
+    private val logger: Logger
 ) : ViewModel() {
     private val showId: Long = savedStateHandle.get("showId")!!
 
@@ -81,7 +81,7 @@ internal class ShowDetailsViewModel @Inject constructor(
         observeNextEpisodeToWatch.flow,
         observeShowSeasons.flow,
         observeShowViewStats.flow,
-        uiMessageManager.message,
+        uiMessageManager.message
     ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons, stats,
         message ->
         ShowDetailsViewState(
@@ -94,12 +94,12 @@ internal class ShowDetailsViewModel @Inject constructor(
             seasons = seasons,
             watchStats = stats,
             refreshing = refreshing,
-            message = message,
+            message = message
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ShowDetailsViewState.Empty,
+        initialValue = ShowDetailsViewState.Empty
     )
 
     init {

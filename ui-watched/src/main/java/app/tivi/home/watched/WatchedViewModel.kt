@@ -56,7 +56,7 @@ class WatchedViewModel @Inject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     private val getTraktAuthState: GetTraktAuthState,
     observeUserDetails: ObserveUserDetails,
-    private val logger: Logger,
+    private val logger: Logger
 ) : ViewModel() {
     private val uiMessageManager = UiMessageManager()
 
@@ -79,7 +79,7 @@ class WatchedViewModel @Inject constructor(
         observeUserDetails.flow,
         filter,
         sort,
-        uiMessageManager.message,
+        uiMessageManager.message
     ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort, message ->
         WatchedViewState(
             user = user,
@@ -91,12 +91,12 @@ class WatchedViewModel @Inject constructor(
             filterActive = !filter.isNullOrEmpty(),
             availableSorts = availableSorts,
             sort = sort,
-            message = message,
+            message = message
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = WatchedViewState.Empty,
+        initialValue = WatchedViewState.Empty
     )
 
     init {
@@ -191,7 +191,7 @@ class WatchedViewModel @Inject constructor(
     companion object {
         private val PAGING_CONFIG = PagingConfig(
             pageSize = 16,
-            initialLoadSize = 32,
+            initialLoadSize = 32
         )
     }
 }

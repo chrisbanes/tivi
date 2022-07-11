@@ -31,7 +31,7 @@ import javax.inject.Provider
 class TraktShowDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     private val searchService: Provider<Search>,
-    private val mapper: TraktShowToTiviShow,
+    private val mapper: TraktShowToTiviShow
 ) : ShowDataSource {
     override suspend fun getShow(show: TiviShow): TiviShow {
         var traktId = show.traktId

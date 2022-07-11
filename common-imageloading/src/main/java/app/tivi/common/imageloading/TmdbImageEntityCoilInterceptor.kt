@@ -34,7 +34,7 @@ import javax.inject.Provider
 @ExperimentalCoilApi
 class TmdbImageEntityCoilInterceptor @Inject constructor(
     private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>,
-    private val powerController: PowerController,
+    private val powerController: PowerController
 ) : Interceptor {
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
         val request = when (val data = chain.request.data) {

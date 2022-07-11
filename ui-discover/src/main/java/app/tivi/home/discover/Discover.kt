@@ -96,7 +96,7 @@ fun Discover(
     openPopularShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openUser: () -> Unit,
+    openUser: () -> Unit
 ) {
     Discover(
         viewModel = hiltViewModel(),
@@ -104,7 +104,7 @@ fun Discover(
         openPopularShows = openPopularShows,
         openRecommendedShows = openRecommendedShows,
         openShowDetails = openShowDetails,
-        openUser = openUser,
+        openUser = openUser
     )
 }
 
@@ -115,7 +115,7 @@ internal fun Discover(
     openPopularShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openUser: () -> Unit,
+    openUser: () -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
@@ -127,7 +127,7 @@ internal fun Discover(
         openTrendingShows = openTrendingShows,
         openRecommendedShows = openRecommendedShows,
         openPopularShows = openPopularShows,
-        onMessageShown = { viewModel.clearMessage(it) },
+        onMessageShown = { viewModel.clearMessage(it) }
     )
 }
 
@@ -140,7 +140,7 @@ internal fun Discover(
     openTrendingShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openPopularShows: () -> Unit,
-    onMessageShown: (id: Long) -> Unit,
+    onMessageShown: (id: Long) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -172,7 +172,7 @@ internal fun Discover(
                     .fillMaxWidth()
             )
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(false),
@@ -188,7 +188,7 @@ internal fun Discover(
         ) {
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.bodyWidth(),
+                modifier = Modifier.bodyWidth()
             ) {
                 item {
                     Spacer(Modifier.height(Layout.gutter))
@@ -210,7 +210,7 @@ internal fun Discover(
                                     openShowDetails(
                                         nextEpisodeToWatch.show.id,
                                         nextEpisodeToWatch.episode.seasonId,
-                                        nextEpisodeToWatch.episode.id,
+                                        nextEpisodeToWatch.episode.id
                                     )
                                 }
                         )
@@ -269,13 +269,13 @@ private fun NextEpisodeToWatch(
     poster: TmdbImageEntity?,
     season: Season,
     episode: Episode,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Surface(modifier) {
         Row(
             Modifier.padding(
                 horizontal = Layout.bodyMargin,
-                vertical = Layout.gutter,
+                vertical = Layout.gutter
             )
         ) {
             if (poster != null) {
@@ -369,14 +369,14 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
         flingBehavior = rememberSnapperFlingBehavior(
             lazyListState = lazyListState,
             snapOffsetForItem = SnapOffsets.Start,
-            endContentPadding = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
+            endContentPadding = contentPadding.calculateEndPadding(LayoutDirection.Ltr)
         ),
         contentPadding = contentPadding,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(
             items = items,
-            key = { it.show.id },
+            key = { it.show.id }
         ) { item ->
             PosterCard(
                 show = item.show,
@@ -468,7 +468,7 @@ private fun DiscoverAppBar(
                 onClick = onUserActionClick,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
-        },
+        }
     )
 }
 

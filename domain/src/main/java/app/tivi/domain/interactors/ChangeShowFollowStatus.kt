@@ -35,7 +35,7 @@ class ChangeShowFollowStatus @Inject constructor(
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
     private val showTasks: ShowTasks,
-    private val logger: Logger,
+    private val logger: Logger
 ) : Interactor<ChangeShowFollowStatus.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

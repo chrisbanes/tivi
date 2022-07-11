@@ -49,8 +49,11 @@ import javax.inject.Inject
 @HiltAndroidTest
 class FollowedShowRepositoryTest : DatabaseTest() {
     @Inject lateinit var followShowsDao: FollowedShowsDao
+
     @Inject lateinit var repository: FollowedShowsRepository
+
     @Inject lateinit var database: TiviDatabase
+
     @Inject lateinit var traktDataSource: TraktFollowedShowsDataSource
 
     @Before

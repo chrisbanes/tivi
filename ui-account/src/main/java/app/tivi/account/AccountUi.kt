@@ -65,18 +65,18 @@ import org.threeten.bp.ZoneOffset
 
 @Composable
 fun AccountUi(
-    openSettings: () -> Unit,
+    openSettings: () -> Unit
 ) {
     AccountUi(
         viewModel = hiltViewModel(),
-        openSettings = openSettings,
+        openSettings = openSettings
     )
 }
 
 @Composable
 internal fun AccountUi(
     viewModel: AccountUiViewModel,
-    openSettings: () -> Unit,
+    openSettings: () -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
@@ -101,14 +101,14 @@ internal fun AccountUi(
     viewState: AccountUiViewState,
     openSettings: () -> Unit,
     login: () -> Unit,
-    logout: () -> Unit,
+    logout: () -> Unit
 ) {
     Surface(
         shape = MaterialTheme.shapes.medium,
         elevation = 2.dp,
         // FIXME: Force the dialog to wrap the content. Need to work out why
         // this doesn't work automatically
-        modifier = Modifier.heightIn(min = 200.dp),
+        modifier = Modifier.heightIn(min = 200.dp)
     ) {
         Column {
             Spacer(modifier = Modifier.height(16.dp))
@@ -157,7 +157,7 @@ internal fun AccountUi(
                 label = stringResource(R.string.settings_title),
                 icon = Icons.Default.Settings,
                 contentDescription = stringResource(R.string.settings_title),
-                onClick = openSettings,
+                onClick = openSettings
             )
 
             Spacer(
@@ -186,7 +186,7 @@ private fun UserRow(
                 contentDescription = stringResource(R.string.cd_profile_pic, user.name ?: user.username),
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(RoundedCornerShape(50)),
+                    .clip(RoundedCornerShape(50))
             )
         }
 

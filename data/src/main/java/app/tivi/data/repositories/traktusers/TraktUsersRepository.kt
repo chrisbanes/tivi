@@ -26,7 +26,7 @@ import javax.inject.Singleton
 class TraktUsersRepository @Inject constructor(
     private val traktUsersStore: TraktUsersStore,
     private val lastRequestStore: TraktUsersLastRequestStore,
-    private val traktDataSource: TraktUsersDataSource,
+    private val traktDataSource: TraktUsersDataSource
 ) {
     fun observeUser(username: String) = traktUsersStore.observeUser(username)
 

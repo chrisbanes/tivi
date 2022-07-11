@@ -46,7 +46,7 @@ object QaNetworkModule {
     ): Interceptor = ChuckerInterceptor.Builder(context)
         .redactHeaders(
             "trakt-api-key",
-            "Authorization",
+            "Authorization"
         )
         .build()
 }

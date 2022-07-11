@@ -28,7 +28,7 @@ import javax.inject.Inject
 class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,
     private val showFtsDao: ShowFtsDao,
-    private val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers
 ) : SuspendingWorkInteractor<SearchShows.Params, List<ShowDetailed>>() {
     override suspend fun doWork(params: Params): List<ShowDetailed> = withContext(dispatchers.io) {
         val remoteResults = searchRepository.search(params.query)
@@ -41,7 +41,7 @@ class SearchShows @Inject constructor(
                     // Re-throw wrapped exception with the query
                     throw SQLiteException(
                         "Error while searching database with query: ${params.query}",
-                        sqe,
+                        sqe
                     )
                 }
             }

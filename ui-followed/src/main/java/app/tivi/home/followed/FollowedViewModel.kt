@@ -57,7 +57,7 @@ internal class FollowedViewModel @Inject constructor(
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
-    private val logger: Logger,
+    private val logger: Logger
 ) : ViewModel() {
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
@@ -84,7 +84,7 @@ internal class FollowedViewModel @Inject constructor(
         observeUserDetails.flow,
         filter,
         sort,
-        uiMessageManager.message,
+        uiMessageManager.message
     ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort, message ->
         FollowedViewState(
             user = user,
@@ -96,12 +96,12 @@ internal class FollowedViewModel @Inject constructor(
             filterActive = !filter.isNullOrEmpty(),
             availableSorts = availableSorts,
             sort = sort,
-            message = message,
+            message = message
         )
     }.stateIn(
         scope = viewModelScope,
         started = WhileSubscribed(5000),
-        initialValue = FollowedViewState.Empty,
+        initialValue = FollowedViewState.Empty
     )
 
     init {
@@ -195,7 +195,7 @@ internal class FollowedViewModel @Inject constructor(
     companion object {
         private val PAGING_CONFIG = PagingConfig(
             pageSize = 16,
-            initialLoadSize = 32,
+            initialLoadSize = 32
         )
     }
 }

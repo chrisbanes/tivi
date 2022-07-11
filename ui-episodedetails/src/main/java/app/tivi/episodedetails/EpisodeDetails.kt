@@ -105,18 +105,18 @@ import kotlin.math.hypot
 
 @Composable
 fun EpisodeDetails(
-    navigateUp: () -> Unit,
+    navigateUp: () -> Unit
 ) {
     EpisodeDetails(
         viewModel = hiltViewModel(),
-        navigateUp = navigateUp,
+        navigateUp = navigateUp
     )
 }
 
 @Composable
 internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
-    navigateUp: () -> Unit,
+    navigateUp: () -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
@@ -127,7 +127,7 @@ internal fun EpisodeDetails(
         onRemoveAllWatches = { viewModel.removeAllWatches() },
         onRemoveWatch = { viewModel.removeWatchEntry(it) },
         onAddWatch = { viewModel.addWatch() },
-        onMessageShown = { viewModel.clearMessage(it) },
+        onMessageShown = { viewModel.clearMessage(it) }
     )
 }
 
@@ -140,7 +140,7 @@ internal fun EpisodeDetails(
     onRemoveAllWatches: () -> Unit,
     onRemoveWatch: (id: Long) -> Unit,
     onAddWatch: () -> Unit,
-    onMessageShown: (id: Long) -> Unit,
+    onMessageShown: (id: Long) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -182,11 +182,11 @@ internal fun EpisodeDetails(
                     .padding(horizontal = Layout.bodyMargin)
                     .fillMaxWidth()
             )
-        },
+        }
     ) { contentPadding ->
         Surface(
             elevation = 2.dp,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
         ) {
             Column(
                 Modifier
@@ -199,7 +199,7 @@ internal fun EpisodeDetails(
 
                     ExpandingText(
                         text = episode.summary ?: "No summary",
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
 
@@ -209,12 +209,12 @@ internal fun EpisodeDetails(
                     if (viewState.watches.isEmpty()) {
                         MarkWatchedButton(
                             onClick = onAddWatch,
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     } else {
                         AddWatchButton(
                             onClick = onAddWatch,
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     }
                 }
@@ -274,7 +274,7 @@ internal fun EpisodeDetails(
 private fun Backdrop(
     season: Season,
     episode: Episode,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Surface(modifier = modifier) {
         Box(Modifier.fillMaxSize()) {
@@ -284,7 +284,7 @@ private fun Backdrop(
                     requestBuilder = { crossfade(true) },
                     contentDescription = stringResource(R.string.cd_show_poster),
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Crop
                 )
             }
 
@@ -360,7 +360,7 @@ private fun InfoPane(
     imageVector: ImageVector,
     contentDescription: String?,
     label: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(16.dp)) {
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
@@ -401,7 +401,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Default.DeleteSweep,
-                    contentDescription = stringResource(R.string.cd_delete),
+                    contentDescription = stringResource(R.string.cd_delete)
                 )
             }
         }
@@ -432,7 +432,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                         contentDescription = stringResource(R.string.cd_episode_syncing),
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .align(Alignment.CenterVertically),
+                            .align(Alignment.CenterVertically)
                     )
                 }
 
@@ -442,7 +442,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                         contentDescription = stringResource(R.string.cd_episode_deleted),
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .align(Alignment.CenterVertically),
+                            .align(Alignment.CenterVertically)
                     )
                 }
             }
@@ -453,7 +453,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 @Composable
 private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
-    wouldCompleteOnRelease: Boolean = false,
+    wouldCompleteOnRelease: Boolean = false
 ) {
     var iconCenter by remember { mutableStateOf(Offset(0f, 0f)) }
     val maxRadius = hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
@@ -502,7 +502,7 @@ private fun EpisodeWatchSwipeBackground(
 private fun Modifier.drawGrowingCircle(
     color: Color,
     center: Offset,
-    radius: Float,
+    radius: Float
 ) = drawWithContent {
     drawContent()
 
@@ -518,11 +518,11 @@ private fun Modifier.drawGrowingCircle(
 @Composable
 private fun MarkWatchedButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier
     ) {
         Text(
             text = stringResource(R.string.episode_mark_watched),
@@ -534,11 +534,11 @@ private fun MarkWatchedButton(
 @Composable
 private fun AddWatchButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier
     ) {
         Text(text = stringResource(R.string.episode_add_watch))
     }
@@ -547,7 +547,7 @@ private fun AddWatchButton(
 @Composable
 private fun RemoveAllWatchesDialog(
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     TiviAlertDialog(
         title = stringResource(R.string.episode_remove_watches_dialog_title),
@@ -566,7 +566,7 @@ private fun EpisodeDetailsAppBar(
     navigateUp: () -> Unit,
     refresh: () -> Unit,
     elevation: Dp,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
         title = {},
@@ -574,7 +574,7 @@ private fun EpisodeDetailsAppBar(
             IconButton(onClick = navigateUp) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(R.string.cd_close),
+                    contentDescription = stringResource(R.string.cd_close)
                 )
             }
         },
@@ -631,6 +631,6 @@ fun PreviewEpisodeDetails() {
         onRemoveAllWatches = {},
         onRemoveWatch = {},
         onAddWatch = {},
-        onMessageShown = {},
+        onMessageShown = {}
     )
 }

@@ -36,7 +36,7 @@ internal data class DiscoverViewState(
     val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
     val recommendedRefreshing: Boolean = false,
     val nextEpisodeWithShowToWatched: EpisodeWithSeasonWithShow? = null,
-    val message: UiMessage? = null,
+    val message: UiMessage? = null
 ) {
     val refreshing: Boolean
         get() = trendingRefreshing || popularRefreshing || recommendedRefreshing

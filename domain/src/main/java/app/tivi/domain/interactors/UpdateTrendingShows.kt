@@ -34,7 +34,7 @@ class UpdateTrendingShows @Inject constructor(
     private val showStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
-    private val logger: Logger,
+    private val logger: Logger
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

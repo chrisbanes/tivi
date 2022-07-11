@@ -27,7 +27,7 @@ class SearchRepository @Inject constructor(
     private val searchStore: SearchStore,
     private val showTmdbImagesDao: ShowTmdbImagesDao,
     private val showDao: TiviShowDao,
-    private val tmdbDataSource: TmdbSearchDataSource,
+    private val tmdbDataSource: TmdbSearchDataSource
 ) {
     suspend fun search(query: String): List<ShowDetailed> {
         if (query.isBlank()) {

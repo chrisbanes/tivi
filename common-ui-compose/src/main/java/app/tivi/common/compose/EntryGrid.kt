@@ -70,7 +70,7 @@ fun <E : Entry> EntryGrid(
     title: String,
     onNavigateUp: () -> Unit,
     onOpenShowDetails: (Long) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -109,7 +109,7 @@ fun <E : Entry> EntryGrid(
                     .fillMaxWidth()
             )
         },
-        modifier = modifier,
+        modifier = modifier
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(
@@ -137,11 +137,11 @@ fun <E : Entry> EntryGrid(
                 verticalArrangement = Arrangement.spacedBy(gutter),
                 modifier = Modifier
                     .bodyWidth()
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
             ) {
                 items(
                     items = lazyPagingItems,
-                    key = { it.show.id },
+                    key = { it.show.id }
                 ) { entry ->
                     val mod = Modifier
                         .animateItemPlacement()
@@ -152,7 +152,7 @@ fun <E : Entry> EntryGrid(
                             show = entry.show,
                             poster = entry.poster,
                             onClick = { onOpenShowDetails(entry.show.id) },
-                            modifier = mod,
+                            modifier = mod
                         )
                     } else {
                         PlaceholderPosterCard(mod)
@@ -181,7 +181,7 @@ private fun EntryGridAppBar(
     refreshing: Boolean,
     onNavigateUp: () -> Unit,
     onRefreshActionClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
         navigationIcon = {
@@ -214,6 +214,6 @@ private fun EntryGridAppBar(
                     }
                 }
             }
-        },
+        }
     )
 }

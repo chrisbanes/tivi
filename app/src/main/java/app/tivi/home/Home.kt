@@ -87,7 +87,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 @Composable
 internal fun Home(
     analytics: Analytics,
-    onOpenSettings: () -> Unit,
+    onOpenSettings: () -> Unit
 ) {
     val navController = rememberAnimatedNavController()
 
@@ -98,7 +98,7 @@ internal fun Home(
             analytics.trackScreenView(
                 label = entry.debugLabel,
                 route = entry.destination.route,
-                arguments = entry.arguments,
+                arguments = entry.arguments
             )
         }
     }
@@ -150,7 +150,7 @@ internal fun Home(
                             }
                         }
                     },
-                    modifier = Modifier.fillMaxHeight(),
+                    modifier = Modifier.fillMaxHeight()
                 )
 
                 Divider(
@@ -165,7 +165,7 @@ internal fun Home(
                 onOpenSettings = onOpenSettings,
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
             )
         }
     }
@@ -211,7 +211,7 @@ private fun NavController.currentScreenAsState(): State<Screen> {
 internal fun HomeBottomNavigation(
     selectedNavigation: Screen,
     onNavigationSelected: (Screen) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
@@ -229,7 +229,7 @@ internal fun HomeBottomNavigation(
                 },
                 label = { Text(text = stringResource(item.labelResId)) },
                 selected = selectedNavigation == item.screen,
-                onClick = { onNavigationSelected(item.screen) },
+                onClick = { onNavigationSelected(item.screen) }
             )
         }
     }
@@ -240,12 +240,12 @@ internal fun HomeBottomNavigation(
 internal fun HomeNavigationRail(
     selectedNavigation: Screen,
     onNavigationSelected: (Screen) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Surface(
         color = MaterialTheme.colors.surface,
         elevation = NavigationRailDefaults.Elevation,
-        modifier = modifier,
+        modifier = modifier
     ) {
         NavigationRail(
             backgroundColor = Color.Transparent,
@@ -268,7 +268,7 @@ internal fun HomeNavigationRail(
                     alwaysShowLabel = false,
                     label = { Text(text = stringResource(item.labelResId)) },
                     selected = selectedNavigation == item.screen,
-                    onClick = { onNavigationSelected(item.screen) },
+                    onClick = { onNavigationSelected(item.screen) }
                 )
             }
         }
@@ -290,13 +290,13 @@ private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) 
         Crossfade(targetState = selected) {
             Icon(
                 painter = if (it) selectedPainter else painter,
-                contentDescription = stringResource(item.contentDescriptionResId),
+                contentDescription = stringResource(item.contentDescriptionResId)
             )
         }
     } else {
         Icon(
             painter = painter,
-            contentDescription = stringResource(item.contentDescriptionResId),
+            contentDescription = stringResource(item.contentDescriptionResId)
         )
     }
 }
@@ -304,14 +304,14 @@ private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) 
 private sealed class HomeNavigationItem(
     val screen: Screen,
     @StringRes val labelResId: Int,
-    @StringRes val contentDescriptionResId: Int,
+    @StringRes val contentDescriptionResId: Int
 ) {
     class ResourceIcon(
         screen: Screen,
         @StringRes labelResId: Int,
         @StringRes contentDescriptionResId: Int,
         @DrawableRes val iconResId: Int,
-        @DrawableRes val selectedIconResId: Int? = null,
+        @DrawableRes val selectedIconResId: Int? = null
     ) : HomeNavigationItem(screen, labelResId, contentDescriptionResId)
 
     class ImageVectorIcon(
@@ -319,7 +319,7 @@ private sealed class HomeNavigationItem(
         @StringRes labelResId: Int,
         @StringRes contentDescriptionResId: Int,
         val iconImageVector: ImageVector,
-        val selectedImageVector: ImageVector? = null,
+        val selectedImageVector: ImageVector? = null
     ) : HomeNavigationItem(screen, labelResId, contentDescriptionResId)
 }
 
@@ -329,26 +329,26 @@ private val HomeNavigationItems = listOf(
         labelResId = R.string.discover_title,
         contentDescriptionResId = R.string.cd_discover_title,
         iconImageVector = Icons.Outlined.Weekend,
-        selectedImageVector = Icons.Default.Weekend,
+        selectedImageVector = Icons.Default.Weekend
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Following,
         labelResId = R.string.following_shows_title,
         contentDescriptionResId = R.string.cd_following_shows_title,
         iconImageVector = Icons.Default.FavoriteBorder,
-        selectedImageVector = Icons.Default.Favorite,
+        selectedImageVector = Icons.Default.Favorite
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Watched,
         labelResId = R.string.watched_shows_title,
         contentDescriptionResId = R.string.cd_watched_shows_title,
         iconImageVector = Icons.Outlined.Visibility,
-        selectedImageVector = Icons.Default.Visibility,
+        selectedImageVector = Icons.Default.Visibility
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Search,
         labelResId = R.string.search_navigation_title,
         contentDescriptionResId = R.string.cd_search_navigation_title,
-        iconImageVector = Icons.Default.Search,
-    ),
+        iconImageVector = Icons.Default.Search
+    )
 )

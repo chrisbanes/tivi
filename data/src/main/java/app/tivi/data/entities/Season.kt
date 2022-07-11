@@ -39,7 +39,8 @@ import androidx.room.PrimaryKey
     ]
 )
 data class Season(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id")
+    override val id: Long = 0,
     @ColumnInfo(name = "show_id") val showId: Long,
     @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,
     @ColumnInfo(name = "tmdb_id") override val tmdbId: Int? = null,

@@ -31,7 +31,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalPagingApi::class)
 class ObservePagedRecommendedShows @Inject constructor(
     private val RecommendedShowsDao: RecommendedDao,
-    private val updateRecommendedShows: UpdateRecommendedShows,
+    private val updateRecommendedShows: UpdateRecommendedShows
 ) : PagingInteractor<ObservePagedRecommendedShows.Params, RecommendedEntryWithShow>() {
     override fun createObservable(
         params: Params
@@ -48,6 +48,6 @@ class ObservePagedRecommendedShows @Inject constructor(
     }
 
     data class Params(
-        override val pagingConfig: PagingConfig,
+        override val pagingConfig: PagingConfig
     ) : Parameters<RecommendedEntryWithShow>
 }

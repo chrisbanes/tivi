@@ -53,7 +53,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
     private val syncService: Provider<Sync>,
     private val seasonMapper: TraktSeasonToSeasonWithEpisodes,
     private val episodeMapper: TraktHistoryEntryToEpisode,
-    private val historyItemMapper: TraktHistoryItemToEpisodeWatchEntry,
+    private val historyItemMapper: TraktHistoryItemToEpisodeWatchEntry
 ) : SeasonsEpisodesDataSource {
     override suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>> {
         return withRetry {
@@ -66,7 +66,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
 
     override suspend fun getShowEpisodeWatches(
         showId: Long,
-        since: OffsetDateTime?,
+        since: OffsetDateTime?
     ): List<Pair<Episode, EpisodeWatchEntry>> {
         val showTraktId = showIdToTraktIdMapper.map(showId)
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
@@ -89,7 +89,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
 
     override suspend fun getSeasonWatches(
         seasonId: Long,
-        since: OffsetDateTime?,
+        since: OffsetDateTime?
     ): List<Pair<Episode, EpisodeWatchEntry>> = withRetry {
         usersService.get().history(
             UserSlug.ME,
@@ -107,7 +107,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
 
     override suspend fun getEpisodeWatches(
         episodeId: Long,
-        since: OffsetDateTime?,
+        since: OffsetDateTime?
     ): List<EpisodeWatchEntry> = withRetry {
         usersService.get().history(
             UserSlug.ME,

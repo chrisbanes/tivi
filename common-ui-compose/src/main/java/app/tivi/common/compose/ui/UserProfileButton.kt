@@ -36,7 +36,7 @@ fun UserProfileButton(
     loggedIn: Boolean,
     user: TraktUser?,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     IconButton(
         onClick = onClick,
@@ -50,7 +50,7 @@ fun UserProfileButton(
                     contentDescription = stringResource(R.string.cd_profile_pic, user.name ?: user.username),
                     modifier = Modifier
                         .size(32.dp)
-                        .clip(MaterialTheme.shapes.small),
+                        .clip(MaterialTheme.shapes.small)
                 )
             }
             else -> {

@@ -32,7 +32,7 @@ data class WatchedViewState(
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
     val sort: SortOption = SortOption.LAST_WATCHED,
-    val message: UiMessage? = null,
+    val message: UiMessage? = null
 ) {
     companion object {
         val Empty = WatchedViewState()
