@@ -26,6 +26,8 @@ kapt {
 }
 
 android {
+    namespace 'app.tivi.tasks'
+
     compileSdkVersion buildConfig.compileSdk
 
     defaultConfig {

@@ -36,7 +36,7 @@ accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pa
 
 snapper = "dev.chrisbanes.snapper:snapper:0.2.2"
 
-android-pluginGradle = "com.android.tools.build:gradle:7.2.1"
+android-pluginGradle = "com.android.tools.build:gradle:7.3.0-beta05"
 
 androidx-activity-compose = "androidx.activity:activity-compose:1.5.0"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
@@ -60,6 +60,8 @@ androidx-paging-runtime = { module = "androidx.paging:paging-runtime-ktx", versi
 androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha15"
 
 androidx-palette = "androidx.palette:palette:1.0.0"
+
+androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.2.0-rc01"
 
 androidx-room-common = { module = "androidx.room:room-common", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }

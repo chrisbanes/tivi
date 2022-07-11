@@ -1,0 +1,43 @@
+plugins {
+    id 'com.android.test'
+}
+
+android {
+    namespace 'app.tivi.benchmark'
+
+    compileSdkVersion buildConfig.compileSdk
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        minSdkVersion buildConfig.minSdk
+        targetSdkVersion buildConfig.targetSdk
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        benchmark {
+            debuggable = true
+            signingConfig = debug.signingConfig
+            matchingFallbacks = ["release"]
+        }
+    }
+
+    targetProjectPath = ':app'
+    experimentalProperties["android.experimental.self-instrumenting"] = true
+}
+
+dependencies {
+    implementation libs.androidx.test.junit
+    implementation 'androidx.benchmark:benchmark-macro-junit4:1.1.0'
+}
+
+androidComponents {
+    beforeVariants(selector().all()) {
+        enabled = buildType == "benchmark"
+    }
+}

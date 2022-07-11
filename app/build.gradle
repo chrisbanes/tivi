@@ -42,6 +42,8 @@ ext {
 }
 
 android {
+    namespace 'app.tivi'
+
     compileSdkVersion buildConfig.compileSdk
 
     defaultConfig {
@@ -135,6 +137,13 @@ android {
             minifyEnabled true
             proguardFiles 'proguard-rules.pro'
         }
+
+        benchmark {
+            initWith buildTypes.release
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['release']
+            debuggable false
+        }
     }
 
     flavorDimensions "mode"
@@ -157,8 +166,9 @@ android {
     variantFilter { variant ->
         // Ignore the standardDebug variant, QA == debug
         def isQa = variant.flavors.any { it.name.contains("qa") }
-        def isDebug = variant.buildType.name == "debug"
-        if (!isQa && isDebug) {
+        if (!isQa && variant.buildType.name == "debug") {
+            setIgnore(true)
+        } else if (isQa && variant.buildType.name == "benchmark") {
             setIgnore(true)
         }
     }
@@ -216,6 +226,8 @@ dependencies {
 
     implementation libs.kotlin.coroutines.core
     implementation libs.kotlin.coroutines.android
+
+    implementation libs.androidx.profileinstaller
 
     implementation libs.okhttp.loggingInterceptor
 
