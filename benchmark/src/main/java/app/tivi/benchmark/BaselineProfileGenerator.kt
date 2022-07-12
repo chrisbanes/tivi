@@ -28,10 +28,8 @@ class BaselineProfileGenerator {
     val rule = BaselineProfileRule()
 
     @Test
-    public fun generateBaselineProfile() = rule.collectBaselineProfile(
-        packageName = "app.tivi",
-        profileBlock = {
-            startActivityAndWait()
-            device.waitForIdle()
-        })
+    fun generateBaselineProfile() = rule.collectBaselineProfile("app.tivi") {
+        startActivityAndWait()
+        device.waitForIdle()
+    }
 }
