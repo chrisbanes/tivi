@@ -16,6 +16,7 @@
 
 package app.tivi.episodedetails
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +32,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -44,6 +47,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.SwipeToDismiss
@@ -103,25 +107,31 @@ import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
 
+@ExperimentalMaterialApi
 @Composable
 fun EpisodeDetails(
+    expandedValue: ModalBottomSheetValue,
     navigateUp: () -> Unit
 ) {
     EpisodeDetails(
         viewModel = hiltViewModel(),
+        expandedValue = expandedValue,
         navigateUp = navigateUp
     )
 }
 
+@ExperimentalMaterialApi
 @Composable
 internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
+    expandedValue: ModalBottomSheetValue,
     navigateUp: () -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
 
     EpisodeDetails(
         viewState = viewState,
+        expandedValue = expandedValue,
         navigateUp = navigateUp,
         refresh = { viewModel.refresh() },
         onRemoveAllWatches = { viewModel.removeAllWatches() },
@@ -131,10 +141,11 @@ internal fun EpisodeDetails(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@ExperimentalMaterialApi
 @Composable
 internal fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
+    expandedValue: ModalBottomSheetValue,
     navigateUp: () -> Unit,
     refresh: () -> Unit,
     onRemoveAllWatches: () -> Unit,
@@ -165,16 +176,26 @@ internal fun EpisodeDetails(
                             .aspectRatio(16 / 9f)
                     )
                 }
-                EpisodeDetailsAppBar(
-                    backgroundColor = Color.Transparent,
-                    isRefreshing = viewState.refreshing,
-                    navigateUp = navigateUp,
-                    refresh = refresh,
-                    elevation = 0.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .statusBarsPadding()
-                )
+
+                Column {
+                    AnimatedVisibility(visible = expandedValue == ModalBottomSheetValue.Expanded) {
+                        Spacer(
+                            Modifier
+                                .background(MaterialTheme.colors.background.copy(alpha = 0.4f))
+                                .windowInsetsTopHeight(WindowInsets.statusBars)
+                                .fillMaxWidth()
+                        )
+                    }
+
+                    EpisodeDetailsAppBar(
+                        backgroundColor = Color.Transparent,
+                        isRefreshing = viewState.refreshing,
+                        navigateUp = navigateUp,
+                        refresh = refresh,
+                        elevation = 0.dp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         },
         snackbarHost = { snackbarHostState ->
@@ -603,6 +624,7 @@ private fun EpisodeDetailsAppBar(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun PreviewEpisodeDetails() {
@@ -628,6 +650,7 @@ fun PreviewEpisodeDetails() {
                 )
             )
         ),
+        expandedValue = ModalBottomSheetValue.HalfExpanded,
         navigateUp = {},
         refresh = {},
         onRemoveAllWatches = {},
