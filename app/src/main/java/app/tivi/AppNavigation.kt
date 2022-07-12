@@ -22,6 +22,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
@@ -46,6 +47,8 @@ import app.tivi.showdetails.details.ShowDetails
 import app.tivi.showdetails.seasons.ShowSeasons
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.navigation
+import com.google.accompanist.navigation.material.BottomSheetNavigator
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 
 internal sealed class Screen(val route: String) {
     object Discover : Screen("discover")
@@ -309,19 +312,23 @@ private fun NavGraphBuilder.addShowDetails(
     }
 }
 
+@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addEpisodeDetails(
     navController: NavController,
     root: Screen
 ) {
-    composable(
+    bottomSheet(
         route = LeafScreen.EpisodeDetails.createRoute(root),
         debugLabel = "EpisodeDetails()",
         arguments = listOf(
             navArgument("episodeId") { type = NavType.LongType }
         )
     ) {
+        val bottomSheetNavigator = navController.navigatorProvider
+            .getNavigator(BottomSheetNavigator::class.java)
         EpisodeDetails(
+            expandedValue = bottomSheetNavigator.navigatorSheetState.currentValue,
             navigateUp = navController::navigateUp
         )
     }

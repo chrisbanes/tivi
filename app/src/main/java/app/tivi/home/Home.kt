@@ -82,14 +82,22 @@ import app.tivi.util.Analytics
 import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.google.accompanist.navigation.material.ModalBottomSheetLayout
+import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalAnimationApi::class,
+    ExperimentalMaterialApi::class,
+    ExperimentalMaterialNavigationApi::class
+)
 @Composable
 internal fun Home(
     analytics: Analytics,
     onOpenSettings: () -> Unit
 ) {
-    val navController = rememberAnimatedNavController()
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val navController = rememberAnimatedNavController(bottomSheetNavigator)
 
     // Launch an effect to track changes to the current back stack entry, and push them
     // as a screen views to analytics
@@ -160,13 +168,15 @@ internal fun Home(
                 )
             }
 
-            AppNavigation(
-                navController = navController,
-                onOpenSettings = onOpenSettings,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-            )
+            ModalBottomSheetLayout(bottomSheetNavigator) {
+                AppNavigation(
+                    navController = navController,
+                    onOpenSettings = onOpenSettings,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                )
+            }
         }
     }
 }
