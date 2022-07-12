@@ -21,6 +21,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NamedNavArgument
@@ -30,6 +31,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.google.accompanist.navigation.material.bottomSheet
 
 /**
  * Copy of Navigation Animation `composable()`, but with a [debugLabel] parameter.
@@ -48,12 +51,7 @@ internal fun NavGraphBuilder.composable(
 ) {
     composable(
         route = route,
-        arguments = when {
-            debugLabel != null -> {
-                arguments + navArgument(DEBUG_LABEL_ARG) { defaultValue = debugLabel }
-            }
-            else -> arguments
-        },
+        arguments = arguments.appendWithDebugLabel(debugLabel),
         deepLinks = deepLinks,
         enterTransition = enterTransition,
         exitTransition = exitTransition,
@@ -76,16 +74,36 @@ internal fun NavGraphBuilder.dialog(
 ) {
     dialog(
         route = route,
-        arguments = when {
-            debugLabel != null -> {
-                arguments + navArgument(DEBUG_LABEL_ARG) { defaultValue = debugLabel }
-            }
-            else -> arguments
-        },
+        arguments = arguments.appendWithDebugLabel(debugLabel),
         deepLinks = deepLinks,
         dialogProperties = dialogProperties,
         content = content
     )
+}
+
+@ExperimentalMaterialNavigationApi
+internal fun NavGraphBuilder.bottomSheet(
+    route: String,
+    debugLabel: String? = null,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit
+) {
+    bottomSheet(
+        route = route,
+        arguments = arguments.appendWithDebugLabel(debugLabel),
+        deepLinks = deepLinks,
+        content = content
+    )
+}
+
+private fun List<NamedNavArgument>.appendWithDebugLabel(
+    label: String? = null
+): List<NamedNavArgument> = when {
+    label != null -> {
+        this + navArgument(DEBUG_LABEL_ARG) { defaultValue = label }
+    }
+    else -> this
 }
 
 private const val DEBUG_LABEL_ARG = "screen_name"

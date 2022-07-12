@@ -160,7 +160,9 @@ internal fun EpisodeDetails(
                     Backdrop(
                         season = viewState.season,
                         episode = viewState.episode,
-                        modifier = Modifier.aspectRatio(16 / 9f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16 / 9f)
                     )
                 }
                 EpisodeDetailsAppBar(
