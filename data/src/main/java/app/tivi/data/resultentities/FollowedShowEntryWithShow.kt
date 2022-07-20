@@ -16,6 +16,7 @@
 
 package app.tivi.data.resultentities
 
+import androidx.paging.PagingSource
 import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
@@ -63,3 +64,8 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
 
     override fun hashCode(): Int = Objects.hash(entry, relations, stats, images)
 }
+
+data class FollowedShowsRawSection(
+    val name: String,
+    val source: PagingSource<Int, FollowedShowEntryWithShow>,
+)

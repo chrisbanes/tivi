@@ -21,8 +21,7 @@ import app.tivi.data.entities.Season
 import org.threeten.bp.OffsetDateTime
 
 @DatabaseView(
-    value =
-    """
+    value = """
 SELECT
   fs.id,
   MIN(datetime(eps.first_aired)) AS next_ep_to_watch_air_date

@@ -75,6 +75,7 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.domain.observers.FollowedShowsSection
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
@@ -121,7 +122,7 @@ internal fun Followed(
 @Composable
 internal fun Followed(
     state: FollowedViewState,
-    list: LazyPagingItems<FollowedShowEntryWithShow>,
+    list: List<FollowedShowsSection>,
     openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
     refresh: () -> Unit,
@@ -203,22 +204,24 @@ internal fun Followed(
                     )
                 }
 
-                items(
-                    items = list,
-                    key = { it.show.id }
-                ) { entry ->
-                    if (entry != null) {
-                        FollowedShowItem(
-                            show = entry.show,
-                            poster = entry.poster,
-                            watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
-                            totalEpisodeCount = entry.stats?.episodeCount ?: 0,
-                            onClick = { openShowDetails(entry.show.id) },
-                            contentPadding = PaddingValues(8.dp),
-                            modifier = Modifier
-                                .animateItemPlacement()
-                                .fillMaxWidth()
-                        )
+                list.forEach { section ->
+                    items(
+                        items = section.source.collectAsLazyPagingItems(),
+                        key = { it.show.id }
+                    ) { entry ->
+                        if (entry != null) {
+                            FollowedShowItem(
+                                show = entry.show,
+                                poster = entry.poster,
+                                watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
+                                totalEpisodeCount = entry.stats?.episodeCount ?: 0,
+                                onClick = { openShowDetails(entry.show.id) },
+                                contentPadding = PaddingValues(8.dp),
+                                modifier = Modifier
+                                    .animateItemPlacement()
+                                    .fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }

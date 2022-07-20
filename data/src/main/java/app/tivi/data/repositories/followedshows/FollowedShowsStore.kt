@@ -16,13 +16,14 @@
 
 package app.tivi.data.repositories.followedshows
 
-import androidx.paging.PagingSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.FollowedShowsRawSection
+import app.tivi.data.resultentities.FollowedShowsSection
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.util.Logger
@@ -63,37 +64,26 @@ class FollowedShowsStore @Inject constructor(
     fun observeForPaging(
         sort: SortOption,
         filter: String?
-    ): PagingSource<Int, FollowedShowEntryWithShow> {
-        val filtered = filter != null && filter.isNotEmpty()
-        return when (sort) {
-            SortOption.SUPER_SORT -> {
-                if (filtered) {
-                    followedShowsDao.pagedListSuperSortFilter("*$filter*")
-                } else {
-                    followedShowsDao.pagedListSuperSort()
-                }
-            }
-            SortOption.LAST_WATCHED -> {
-                if (filtered) {
-                    followedShowsDao.pagedListLastWatchedFilter("*$filter*")
-                } else {
-                    followedShowsDao.pagedListLastWatched()
-                }
-            }
-            SortOption.ALPHABETICAL -> {
-                if (filtered) {
-                    followedShowsDao.pagedListAlphaFilter("*$filter*")
-                } else {
-                    followedShowsDao.pagedListAlpha()
-                }
-            }
-            SortOption.DATE_ADDED -> {
-                if (filtered) {
-                    followedShowsDao.pagedListAddedFilter("*$filter*")
-                } else {
-                    followedShowsDao.pagedListAdded()
-                }
-            }
+    ): List<FollowedShowsRawSection> = when (sort) {
+        SortOption.SUPER_SORT -> {
+            followedShowsDao.pagedListSuperSort(filter)
+                .let { FollowedShowsRawSection("Shows", it) }
+                .let { listOf(it) }
+        }
+        SortOption.LAST_WATCHED -> {
+            followedShowsDao.pagedListLastWatched(filter)
+                .let { FollowedShowsRawSection("Shows", it) }
+                .let { listOf(it) }
+        }
+        SortOption.ALPHABETICAL -> {
+            followedShowsDao.pagedListAlpha(filter)
+                .let { FollowedShowsRawSection("Shows", it) }
+                .let { listOf(it) }
+        }
+        SortOption.DATE_ADDED -> {
+            followedShowsDao.pagedListAdded(filter)
+                .let { FollowedShowsRawSection("Shows", it) }
+                .let { listOf(it) }
         }
     }
 

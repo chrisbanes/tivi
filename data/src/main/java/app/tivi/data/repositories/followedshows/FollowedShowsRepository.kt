@@ -21,6 +21,7 @@ import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.instantInPast
+import app.tivi.data.resultentities.FollowedShowsRawSection
 import app.tivi.data.syncers.ItemSyncerResult
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
@@ -42,7 +43,10 @@ class FollowedShowsRepository @Inject constructor(
     fun observeFollowedShows(
         sort: SortOption,
         filter: String? = null
-    ) = followedShowsStore.observeForPaging(sort, filter)
+    ): List<FollowedShowsRawSection> = followedShowsStore.observeForPaging(
+        sort = sort,
+        filter = filter?.let { "*$it*" }
+    )
 
     fun observeShowViewStats(showId: Long) = followedShowsStore.observeShowViewStats(showId)
 

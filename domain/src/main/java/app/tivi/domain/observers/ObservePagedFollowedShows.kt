@@ -23,22 +23,35 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.domain.PagingInteractor
+import app.tivi.domain.SubjectInteractor
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class ObservePagedFollowedShows @Inject constructor(
-    private val followedShowsRepository: FollowedShowsRepository
-) : PagingInteractor<ObservePagedFollowedShows.Parameters, FollowedShowEntryWithShow>() {
+    private val followedShowsRepository: FollowedShowsRepository,
+) : SubjectInteractor<ObservePagedFollowedShows.Parameters, List<FollowedShowsSection>>() {
 
     override fun createObservable(
-        params: Parameters
-    ): Flow<PagingData<FollowedShowEntryWithShow>> = Pager(config = params.pagingConfig) {
-        followedShowsRepository.observeFollowedShows(params.sort, params.filter)
-    }.flow
+        params: Parameters,
+    ): Flow<List<FollowedShowsSection>> = flow {
+        val result = followedShowsRepository.observeFollowedShows(params.sort, params.filter).map {
+            FollowedShowsSection(
+                name = it.name,
+                source = Pager(config = params.pagingConfig) { it.source }.flow,
+            )
+        }
+        emit(result)
+    }
 
     data class Parameters(
         val filter: String? = null,
         val sort: SortOption,
-        override val pagingConfig: PagingConfig
+        override val pagingConfig: PagingConfig,
     ) : PagingInteractor.Parameters<FollowedShowEntryWithShow>
 }
+
+data class FollowedShowsSection(
+    val name: String,
+    val source: Flow<PagingData<FollowedShowEntryWithShow>>,
+)
