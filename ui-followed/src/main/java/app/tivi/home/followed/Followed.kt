@@ -198,7 +198,7 @@ internal fun Followed(
                         onSortSelected = onSortSelected,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = bodyMargin)
+                            .padding(horizontal = 8.dp)
                     )
                 }
 
