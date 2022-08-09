@@ -22,7 +22,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
-import app.tivi.common.compose.R
 
 @ExperimentalTextApi
 internal fun createSingleGoogleFontFamily(
@@ -44,7 +43,7 @@ internal val GmsFontProvider: GoogleFont.Provider by lazy {
     GoogleFont.Provider(
         providerAuthority = "com.google.android.gms.fonts",
         providerPackage = "com.google.android.gms",
-        certificates = R.array.com_google_android_gms_fonts_certs
+        certificates = app.tivi.common.ui.R.array.com_google_android_gms_fonts_certs
     )
 }
 

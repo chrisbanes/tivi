@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.rememberFlowWithLifecycle
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun TrendingShows(
@@ -45,7 +46,7 @@ internal fun TrendingShows(
 ) {
     EntryGrid(
         lazyPagingItems = rememberFlowWithLifecycle(viewModel.pagedList).collectAsLazyPagingItems(),
-        title = stringResource(R.string.discover_trending_title),
+        title = stringResource(UiR.string.discover_trending_title),
         onOpenShowDetails = openShowDetails,
         onNavigateUp = navigateUp,
         modifier = Modifier.fillMaxSize()

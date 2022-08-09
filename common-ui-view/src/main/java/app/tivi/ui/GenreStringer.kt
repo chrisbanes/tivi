@@ -17,8 +17,8 @@
 package app.tivi.ui
 
 import androidx.annotation.StringRes
-import app.tivi.common.ui.R
 import app.tivi.data.entities.Genre
+import app.tivi.common.ui.resources.R as UiR
 
 object GenreStringer {
     fun getEmoji(genre: Genre): String = when (genre) {
@@ -36,15 +36,15 @@ object GenreStringer {
 
     @StringRes
     fun getLabel(genre: Genre): Int = when (genre) {
-        Genre.DRAMA -> R.string.genre_label_drama
-        Genre.FANTASY -> R.string.genre_label_fantasy
-        Genre.SCIENCE_FICTION -> R.string.genre_label_science_fiction
-        Genre.ACTION -> R.string.genre_label_action
-        Genre.ADVENTURE -> R.string.genre_label_adventure
-        Genre.CRIME -> R.string.genre_label_crime
-        Genre.THRILLER -> R.string.genre_label_thriller
-        Genre.COMEDY -> R.string.genre_label_comedy
-        Genre.HORROR -> R.string.genre_label_horror
-        Genre.MYSTERY -> R.string.genre_label_mystery
+        Genre.DRAMA -> UiR.string.genre_label_drama
+        Genre.FANTASY -> UiR.string.genre_label_fantasy
+        Genre.SCIENCE_FICTION -> UiR.string.genre_label_science_fiction
+        Genre.ACTION -> UiR.string.genre_label_action
+        Genre.ADVENTURE -> UiR.string.genre_label_adventure
+        Genre.CRIME -> UiR.string.genre_label_crime
+        Genre.THRILLER -> UiR.string.genre_label_thriller
+        Genre.COMEDY -> UiR.string.genre_label_comedy
+        Genre.HORROR -> UiR.string.genre_label_horror
+        Genre.MYSTERY -> UiR.string.genre_label_mystery
     }
 }

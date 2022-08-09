@@ -62,6 +62,7 @@ import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun AccountUi(
@@ -132,16 +133,16 @@ internal fun AccountUi(
             ) {
                 if (viewState.authState == TraktAuthState.LOGGED_OUT) {
                     OutlinedButton(onClick = login) {
-                        Text(text = stringResource(R.string.login))
+                        Text(text = stringResource(UiR.string.login))
                     }
                 } else {
                     TextButton(onClick = login) {
-                        Text(text = stringResource(R.string.refresh_credentials))
+                        Text(text = stringResource(UiR.string.refresh_credentials))
                     }
                 }
 
                 OutlinedButton(onClick = logout) {
-                    Text(text = stringResource(R.string.logout))
+                    Text(text = stringResource(UiR.string.logout))
                 }
             }
 
@@ -154,9 +155,9 @@ internal fun AccountUi(
             Divider()
 
             AppAction(
-                label = stringResource(R.string.settings_title),
+                label = stringResource(UiR.string.settings_title),
                 icon = Icons.Default.Settings,
-                contentDescription = stringResource(R.string.settings_title),
+                contentDescription = stringResource(UiR.string.settings_title),
                 onClick = openSettings
             )
 
@@ -183,7 +184,7 @@ private fun UserRow(
             AsyncImage(
                 model = avatarUrl,
                 requestBuilder = { crossfade(true) },
-                contentDescription = stringResource(R.string.cd_profile_pic, user.name ?: user.username),
+                contentDescription = stringResource(UiR.string.cd_profile_pic, user.name ?: user.username),
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(50))
@@ -194,7 +195,7 @@ private fun UserRow(
 
         Column {
             Text(
-                text = user.name ?: stringResource(R.string.account_name_unknown),
+                text = user.name ?: stringResource(UiR.string.account_name_unknown),
                 style = MaterialTheme.typography.subtitle2
             )
 

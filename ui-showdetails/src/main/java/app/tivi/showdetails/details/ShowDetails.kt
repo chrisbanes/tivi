@@ -142,6 +142,7 @@ import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import org.threeten.bp.OffsetDateTime
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun ShowDetails(
@@ -361,7 +362,7 @@ private fun ShowDetailsScrollingContent(
         gutterSpacer()
 
         item {
-            Header(stringResource(R.string.details_about))
+            Header(stringResource(UiR.string.details_about))
         }
 
         if (show.summary != null) {
@@ -385,7 +386,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(id = R.string.details_next_episode_to_watch))
+                Header(stringResource(id = UiR.string.details_next_episode_to_watch))
             }
             item {
                 NextEpisodeToWatch(
@@ -400,7 +401,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(R.string.details_related))
+                Header(stringResource(UiR.string.details_related))
             }
             item {
                 RelatedShows(
@@ -415,7 +416,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(R.string.details_view_stats))
+                Header(stringResource(UiR.string.details_view_stats))
             }
             item {
                 WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
@@ -426,7 +427,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(R.string.show_details_seasons))
+                Header(stringResource(UiR.string.show_details_seasons))
             }
 
             itemsInGrid(
@@ -474,7 +475,7 @@ private fun PosterInfoRow(
         AsyncImage(
             model = posterImage,
             requestBuilder = { crossfade(true) },
-            contentDescription = stringResource(R.string.cd_show_poster, show.title ?: ""),
+            contentDescription = stringResource(UiR.string.cd_show_poster, show.title ?: ""),
             modifier = Modifier
                 .weight(1f)
                 .aspectRatio(2 / 3f)
@@ -503,7 +504,7 @@ private fun BackdropImage(
                 AsyncImage(
                     model = backdropImage,
                     requestBuilder = { crossfade(true) },
-                    contentDescription = stringResource(R.string.cd_show_poster),
+                    contentDescription = stringResource(UiR.string.cd_show_poster),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
@@ -545,7 +546,7 @@ private fun NetworkInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(R.string.network_title),
+            text = stringResource(UiR.string.network_title),
             style = MaterialTheme.typography.subtitle2
         )
 
@@ -562,7 +563,7 @@ private fun NetworkInfoPanel(
                     crossfade(true)
                     transformations(TrimTransparentEdgesTransformation)
                 },
-                contentDescription = stringResource(R.string.cd_network_logo),
+                contentDescription = stringResource(UiR.string.cd_network_logo),
                 modifier = Modifier.sizeIn(maxWidth = 72.dp, maxHeight = 32.dp),
                 alignment = Alignment.TopStart,
                 contentScale = ContentScale.Fit,
@@ -587,14 +588,14 @@ private fun RuntimeInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(R.string.runtime_title),
+            text = stringResource(UiR.string.runtime_title),
             style = MaterialTheme.typography.subtitle2
         )
 
         Spacer(Modifier.height(4.dp))
 
         Text(
-            text = stringResource(R.string.minutes_format, runtime),
+            text = stringResource(UiR.string.minutes_format, runtime),
             style = MaterialTheme.typography.body2
         )
     }
@@ -607,7 +608,7 @@ private fun ShowStatusPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(R.string.status_title),
+            text = stringResource(UiR.string.status_title),
             style = MaterialTheme.typography.subtitle2
         )
 
@@ -628,7 +629,7 @@ private fun AirsInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(R.string.airs_title),
+            text = stringResource(UiR.string.airs_title),
             style = MaterialTheme.typography.subtitle2
         )
 
@@ -649,7 +650,7 @@ private fun CertificateInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(R.string.certificate_title),
+            text = stringResource(UiR.string.certificate_title),
             style = MaterialTheme.typography.subtitle2
         )
 
@@ -677,7 +678,7 @@ private fun TraktRatingInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(R.string.trakt_rating_title),
+            text = stringResource(UiR.string.trakt_rating_title),
             style = MaterialTheme.typography.subtitle2
         )
 
@@ -697,7 +698,7 @@ private fun TraktRatingInfoPanel(
             Column {
                 Text(
                     text = stringResource(
-                        R.string.trakt_rating_text,
+                        UiR.string.trakt_rating_text,
                         rating * 10f
                     ),
                     style = MaterialTheme.typography.body2
@@ -705,7 +706,7 @@ private fun TraktRatingInfoPanel(
 
                 Text(
                     text = stringResource(
-                        R.string.trakt_rating_votes,
+                        UiR.string.trakt_rating_votes,
                         votes / 1000f
                     ),
                     style = MaterialTheme.typography.caption
@@ -808,7 +809,7 @@ private fun NextEpisodeToWatch(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            episode.title ?: stringResource(R.string.episode_title_fallback, episode.number!!),
+            episode.title ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
             style = MaterialTheme.typography.body1
         )
     }
@@ -918,7 +919,7 @@ private fun SeasonRow(
             CompositionLocalProvider(LocalContentAlpha provides contentAlpha) {
                 Text(
                     text = season.title
-                        ?: stringResource(R.string.season_title_fallback, season.number!!),
+                        ?: stringResource(UiR.string.season_title_fallback, season.number!!),
                     style = MaterialTheme.typography.body1
                 )
 
@@ -952,7 +953,7 @@ private fun SeasonRow(
                 IconButton(onClick = { showMenu = true }) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
-                        contentDescription = stringResource(R.string.cd_open_overflow)
+                        contentDescription = stringResource(UiR.string.cd_open_overflow)
                     )
                 }
 
@@ -999,7 +1000,7 @@ private fun SeasonDropdownMenu(
                     onDismissRequest()
                 }
             ) {
-                Text(text = stringResource(id = R.string.popup_season_follow))
+                Text(text = stringResource(id = UiR.string.popup_season_follow))
             }
         } else {
             DropdownMenuItem(
@@ -1008,7 +1009,7 @@ private fun SeasonDropdownMenu(
                     onDismissRequest()
                 }
             ) {
-                Text(text = stringResource(id = R.string.popup_season_ignore))
+                Text(text = stringResource(id = UiR.string.popup_season_ignore))
             }
         }
 
@@ -1020,7 +1021,7 @@ private fun SeasonDropdownMenu(
                     onDismissRequest()
                 }
             ) {
-                Text(text = stringResource(id = R.string.popup_season_ignore_previous))
+                Text(text = stringResource(id = UiR.string.popup_season_ignore_previous))
             }
         }
 
@@ -1031,7 +1032,7 @@ private fun SeasonDropdownMenu(
                     onDismissRequest()
                 }
             ) {
-                Text(text = stringResource(id = R.string.popup_season_mark_all_unwatched))
+                Text(text = stringResource(id = UiR.string.popup_season_mark_all_unwatched))
             }
         }
 
@@ -1044,9 +1045,9 @@ private fun SeasonDropdownMenu(
             ) {
                 Text(
                     text = if (episodesToAir == 0) {
-                        stringResource(id = R.string.popup_season_mark_watched_all)
+                        stringResource(id = UiR.string.popup_season_mark_watched_all)
                     } else {
-                        stringResource(id = R.string.popup_season_mark_watched_aired)
+                        stringResource(id = UiR.string.popup_season_mark_watched_aired)
                     }
                 )
             }
@@ -1097,7 +1098,7 @@ private fun ShowDetailsAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.cd_navigate_up)
+                    contentDescription = stringResource(UiR.string.cd_navigate_up)
                 )
             }
         },
@@ -1116,7 +1117,7 @@ private fun ShowDetailsAppBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(R.string.cd_refresh)
+                        contentDescription = stringResource(UiR.string.cd_refresh)
                     )
                 }
             }
@@ -1145,16 +1146,16 @@ private fun ToggleShowFollowFloatingActionButton(
                     else -> Icons.Default.FavoriteBorder
                 },
                 contentDescription = when {
-                    isFollowed -> stringResource(R.string.cd_follow_show_remove)
-                    else -> stringResource(R.string.cd_follow_show_add)
+                    isFollowed -> stringResource(UiR.string.cd_follow_show_remove)
+                    else -> stringResource(UiR.string.cd_follow_show_add)
                 }
             )
         },
         text = {
             Text(
                 when {
-                    isFollowed -> stringResource(R.string.follow_show_remove)
-                    else -> stringResource(R.string.follow_show_add)
+                    isFollowed -> stringResource(UiR.string.follow_show_remove)
+                    else -> stringResource(UiR.string.follow_show_add)
                 }
             )
         },

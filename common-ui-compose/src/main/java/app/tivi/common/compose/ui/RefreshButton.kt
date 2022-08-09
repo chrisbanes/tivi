@@ -26,7 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.R
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun RefreshButton(
@@ -45,7 +45,7 @@ fun RefreshButton(
             } else {
                 Icon(
                     imageVector = Icons.Default.Refresh,
-                    contentDescription = stringResource(R.string.cd_refresh)
+                    contentDescription = stringResource(UiR.string.cd_refresh)
                 )
             }
         }
@@ -63,7 +63,7 @@ fun RefreshButton(
     ) {
         Icon(
             imageVector = Icons.Default.Refresh,
-            contentDescription = stringResource(R.string.cd_refresh)
+            contentDescription = stringResource(UiR.string.cd_refresh)
         )
     }
 }

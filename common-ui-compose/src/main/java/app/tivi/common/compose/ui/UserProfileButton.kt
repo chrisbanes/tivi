@@ -28,8 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.R
 import app.tivi.data.entities.TraktUser
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun UserProfileButton(
@@ -47,7 +47,10 @@ fun UserProfileButton(
                 AsyncImage(
                     model = user.avatarUrl!!,
                     requestBuilder = { crossfade(true) },
-                    contentDescription = stringResource(R.string.cd_profile_pic, user.name ?: user.username),
+                    contentDescription = stringResource(
+                        UiR.string.cd_profile_pic,
+                        user.name ?: user.username
+                    ),
                     modifier = Modifier
                         .size(32.dp)
                         .clip(MaterialTheme.shapes.small)
@@ -59,7 +62,7 @@ fun UserProfileButton(
                         loggedIn -> Icons.Default.Person
                         else -> Icons.Outlined.Person
                     },
-                    contentDescription = stringResource(R.string.cd_user_profile)
+                    contentDescription = stringResource(UiR.string.cd_user_profile)
                 )
             }
         }

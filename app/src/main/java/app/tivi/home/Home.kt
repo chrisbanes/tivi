@@ -74,7 +74,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import app.tivi.AppNavigation
-import app.tivi.R
 import app.tivi.Screen
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.debugLabel
@@ -85,6 +84,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
+import app.tivi.common.ui.resources.R as UiR
 
 @OptIn(
     ExperimentalAnimationApi::class,
@@ -336,29 +336,29 @@ private sealed class HomeNavigationItem(
 private val HomeNavigationItems = listOf(
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Discover,
-        labelResId = R.string.discover_title,
-        contentDescriptionResId = R.string.cd_discover_title,
+        labelResId = UiR.string.discover_title,
+        contentDescriptionResId = UiR.string.cd_discover_title,
         iconImageVector = Icons.Outlined.Weekend,
         selectedImageVector = Icons.Default.Weekend
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Following,
-        labelResId = R.string.following_shows_title,
-        contentDescriptionResId = R.string.cd_following_shows_title,
+        labelResId = UiR.string.following_shows_title,
+        contentDescriptionResId = UiR.string.cd_following_shows_title,
         iconImageVector = Icons.Default.FavoriteBorder,
         selectedImageVector = Icons.Default.Favorite
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Watched,
-        labelResId = R.string.watched_shows_title,
-        contentDescriptionResId = R.string.cd_watched_shows_title,
+        labelResId = UiR.string.watched_shows_title,
+        contentDescriptionResId = UiR.string.cd_watched_shows_title,
         iconImageVector = Icons.Outlined.Visibility,
         selectedImageVector = Icons.Default.Visibility
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Search,
-        labelResId = R.string.search_navigation_title,
-        contentDescriptionResId = R.string.cd_search_navigation_title,
+        labelResId = UiR.string.search_navigation_title,
+        contentDescriptionResId = UiR.string.cd_search_navigation_title,
         iconImageVector = Icons.Default.Search
     )
 )
