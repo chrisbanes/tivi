@@ -31,7 +31,7 @@ interface TraktAuthManager {
 class LoginTrakt internal constructor(
     private val intentBuilder: () -> Intent
 ) : ActivityResultContract<Unit, LoginTrakt.Result?>() {
-    override fun createIntent(context: Context, input: Unit?): Intent = intentBuilder()
+    override fun createIntent(context: Context, input: Unit): Intent = intentBuilder()
 
     override fun parseResult(
         resultCode: Int,
