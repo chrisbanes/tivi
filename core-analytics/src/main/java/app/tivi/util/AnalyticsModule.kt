@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-package app.tivi.appinitializers
+package app.tivi.util
 
-import android.app.Application
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-interface AppInitializer {
-    fun init(application: Application)
+@InstallIn(SingletonComponent::class)
+@Module
+abstract class AnalyticsModule {
+    @Singleton
+    @Binds
+    internal abstract fun provideAnalytics(bind: TiviAnalytics): Analytics
 }

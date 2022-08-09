@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,15 +40,9 @@ android {
 
 dependencies {
     api project(':base')
-    implementation project(':data')
 
     implementation libs.google.crashlytics
-    implementation libs.google.analytics
-
-    implementation libs.androidx.core
-
     implementation libs.timber
-    implementation libs.threeTenAbp
 
     implementation libs.hilt.library
     kapt libs.hilt.compiler

@@ -41,7 +41,6 @@ android {
 }
 
 dependencies {
-    implementation project(':base-android')
     implementation project(':data')
     api project(':common-imageloading')
 

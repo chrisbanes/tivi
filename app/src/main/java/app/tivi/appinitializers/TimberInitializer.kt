@@ -16,7 +16,6 @@
 
 package app.tivi.appinitializers
 
-import android.app.Application
 import app.tivi.BuildConfig
 import app.tivi.util.Logger
 import javax.inject.Inject
@@ -24,5 +23,5 @@ import javax.inject.Inject
 class TimberInitializer @Inject constructor(
     private val logger: Logger
 ) : AppInitializer {
-    override fun init(application: Application) = logger.setup(BuildConfig.DEBUG)
+    override fun init() = logger.setup(BuildConfig.DEBUG)
 }

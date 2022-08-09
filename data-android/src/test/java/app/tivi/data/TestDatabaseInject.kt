@@ -18,7 +18,6 @@ package app.tivi.data
 
 import android.content.Context
 import androidx.room.Room
-import app.tivi.BaseModule
 import app.tivi.data.repositories.episodes.EpisodeDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
@@ -39,7 +38,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dagger.hilt.testing.TestInstallIn
 import io.mockk.mockk
 import javax.inject.Singleton
 
@@ -92,6 +90,12 @@ object TestDatabaseModule {
 
     @Provides
     fun provideTraktAuthState() = TraktAuthState.LOGGED_IN
+
+    @Provides
+    fun provideLogger(): Logger = mockk(relaxUnitFun = true)
+
+    @Provides
+    fun provideAnalytics(): Analytics = mockk(relaxUnitFun = true)
 }
 
 @InstallIn(SingletonComponent::class)
@@ -108,19 +112,4 @@ object TestRoomDatabaseModule {
     @Singleton
     @Provides
     fun provideDatabaseTransactionRunner(): DatabaseTransactionRunner = TestTransactionRunner
-}
-
-@TestInstallIn(
-    components = [SingletonComponent::class],
-    replaces = [BaseModule::class]
-)
-@Module
-object TestBaseModule {
-    @Singleton
-    @Provides
-    fun provideLogger(): Logger = mockk(relaxUnitFun = true)
-
-    @Singleton
-    @Provides
-    fun provideAnalytics(): Analytics = mockk(relaxUnitFun = true)
 }

@@ -43,7 +43,6 @@ android {
 
 dependencies {
     implementation project(':base')
-    implementation project(':base-android')
     implementation project(':domain')
 
     api libs.androidx.work.runtime

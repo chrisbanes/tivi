@@ -16,7 +16,9 @@
 
 package app.tivi.util
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Build
@@ -26,8 +28,10 @@ import androidx.core.content.getSystemService
 import app.tivi.settings.TiviPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,7 +48,7 @@ internal class AndroidPowerController @Inject constructor(
         return merge(
             context.flowBroadcasts(IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED)),
             context.flowBroadcasts(IntentFilter(ConnectivityManager.ACTION_RESTRICT_BACKGROUND_CHANGED))
-        ).map { _ ->
+        ).map {
             shouldSaveData()
         }.onStart {
             emit(shouldSaveData())
@@ -69,4 +73,17 @@ internal class AndroidPowerController @Inject constructor(
         return connectivityManager.restrictBackgroundStatus ==
             ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED
     }
+}
+
+private fun Context.flowBroadcasts(intentFilter: IntentFilter): Flow<Intent> {
+    val resultChannel = MutableStateFlow(Intent())
+
+    val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            resultChannel.value = intent
+        }
+    }
+
+    return resultChannel.onStart { registerReceiver(receiver, intentFilter) }
+        .onCompletion { unregisterReceiver(receiver) }
 }

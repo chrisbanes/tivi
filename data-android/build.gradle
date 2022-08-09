@@ -62,7 +62,6 @@ android {
 
 dependencies {
     implementation project(':base')
-    implementation project(':base-android')
     api project(':data')
 
     api libs.androidx.room.runtime

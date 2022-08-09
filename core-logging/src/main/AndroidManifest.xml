@@ -16,5 +16,5 @@
   ~
   -->
 
-<manifest package="app.tivi.base">
+<manifest package="app.tivi.core.logging">
 </manifest>

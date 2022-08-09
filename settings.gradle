@@ -27,7 +27,8 @@ gradleEnterprise {
 }
 
 include ':base'
-include ':base-android'
+include ':core-analytics'
+include ':core-logging'
 include ':common-ui-view'
 include ':common-ui-resources'
 include ':common-ui-compose'

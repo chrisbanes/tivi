@@ -176,7 +176,8 @@ android {
 
 dependencies {
     implementation project(':base')
-    implementation project(':base-android')
+    implementation project(':core-analytics')
+    implementation project(':core-logging')
     implementation project(':common-ui-view')
     implementation project(':common-imageloading')
     implementation project(':common-ui-compose')

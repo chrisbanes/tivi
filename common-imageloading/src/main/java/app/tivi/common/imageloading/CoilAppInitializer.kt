@@ -26,11 +26,12 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoilApi::class)
 class CoilAppInitializer @Inject constructor(
+    private val application: Application,
     private val tmdbImageEntityInterceptor: TmdbImageEntityCoilInterceptor,
     private val episodeEntityInterceptor: EpisodeEntityCoilInterceptor,
     private val okHttpClient: OkHttpClient
 ) : AppInitializer {
-    override fun init(application: Application) {
+    override fun init() {
         Coil.setImageLoader {
             ImageLoader.Builder(application)
                 .components {

@@ -49,7 +49,6 @@ android {
 
 dependencies {
     implementation project(':base')
-    implementation project(':base-android')
     implementation project(':domain')
     implementation project(':common-ui-compose')
     implementation project(':common-ui-view')

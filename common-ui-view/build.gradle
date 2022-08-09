@@ -34,7 +34,6 @@ android {
 
 dependencies {
     implementation project(':data')
-    implementation project(':base-android')
     api project(':common-ui-resources')
 
     implementation libs.androidx.lifecycle.viewmodel.ktx

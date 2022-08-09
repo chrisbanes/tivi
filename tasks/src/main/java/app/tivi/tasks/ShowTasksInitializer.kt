@@ -16,7 +16,6 @@
 
 package app.tivi.tasks
 
-import android.app.Application
 import app.tivi.actions.ShowTasks
 import app.tivi.appinitializers.AppInitializer
 import dagger.Lazy
@@ -25,7 +24,7 @@ import javax.inject.Inject
 class ShowTasksInitializer @Inject constructor(
     private val showTasks: Lazy<ShowTasks>
 ) : AppInitializer {
-    override fun init(application: Application) {
+    override fun init() {
         showTasks.get().setupNightSyncs()
     }
 }
