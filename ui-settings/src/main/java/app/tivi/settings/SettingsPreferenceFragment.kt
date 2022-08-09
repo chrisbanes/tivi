@@ -28,6 +28,7 @@ import androidx.core.net.toUri
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.util.SaveData
 import app.tivi.util.SaveDataReason
+import app.tivi.common.ui.resources.R as UiR
 
 internal class SettingsPreferenceFragment : PreferenceFragment() {
     internal var saveData: SaveData? = null
@@ -42,10 +43,10 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
 
             if (pref.isEnabled) {
                 pref.summary = null
-                pref.setSummaryOn(R.string.settings_data_saver_summary_on)
+                pref.setSummaryOn(UiR.string.settings_data_saver_summary_on)
             } else {
                 pref.summaryOn = null
-                pref.setSummary(R.string.settings_data_saver_summary_system)
+                pref.setSummary(UiR.string.settings_data_saver_summary_system)
             }
 
             field = value
@@ -60,7 +61,7 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
             CustomTabsIntent.Builder()
                 .setToolbarColor(context.resolveThemeColor(android.R.attr.colorPrimary))
                 .build()
-                .launchUrl(context, getString(R.string.privacy_policy_url).toUri())
+                .launchUrl(context, getString(UiR.string.privacy_policy_url).toUri())
             true
         }
 
@@ -68,7 +69,7 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
             val pkgManager: PackageManager = context.packageManager
             val pkgInfo = pkgManager.getPackageInfo(context.packageName, 0)
             summary = getString(
-                R.string.settings_app_version_summary,
+                UiR.string.settings_app_version_summary,
                 pkgInfo.versionName,
                 PackageInfoCompat.getLongVersionCode(pkgInfo)
             )

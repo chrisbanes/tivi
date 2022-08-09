@@ -29,8 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import app.tivi.common.compose.R
 import app.tivi.data.entities.SortOption
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun SortMenuPopup(
@@ -62,10 +62,10 @@ fun SortMenuPopup(
                 ) {
                     Text(
                         text = when (sort) {
-                            SortOption.SUPER_SORT -> stringResource(R.string.popup_sort_super)
-                            SortOption.ALPHABETICAL -> stringResource(R.string.popup_sort_alpha)
-                            SortOption.LAST_WATCHED -> stringResource(R.string.popup_sort_last_watched)
-                            SortOption.DATE_ADDED -> stringResource(R.string.popup_sort_date_followed)
+                            SortOption.SUPER_SORT -> stringResource(UiR.string.popup_sort_super)
+                            SortOption.ALPHABETICAL -> stringResource(UiR.string.popup_sort_alpha)
+                            SortOption.LAST_WATCHED -> stringResource(UiR.string.popup_sort_last_watched)
+                            SortOption.DATE_ADDED -> stringResource(UiR.string.popup_sort_date_followed)
                         },
                         fontWeight = if (sort == currentSortOption) FontWeight.Bold else null
                     )

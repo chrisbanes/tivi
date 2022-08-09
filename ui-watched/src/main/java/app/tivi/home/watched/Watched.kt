@@ -82,6 +82,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.threeten.bp.OffsetDateTime
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun Watched(
@@ -192,7 +193,7 @@ internal fun Watched(
             ) {
                 fullSpanItem {
                     FilterSortPanel(
-                        filterHint = stringResource(R.string.filter_shows, list.itemCount),
+                        filterHint = stringResource(UiR.string.filter_shows, list.itemCount),
                         onFilterChanged = onFilterChanged,
                         sortOptions = state.availableSorts,
                         currentSortOption = state.sort,
@@ -262,7 +263,7 @@ private fun WatchedShowItem(
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Text(
                     text = stringResource(
-                        R.string.library_last_watched,
+                        UiR.string.library_last_watched,
                         LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatched)
                     ),
                     style = MaterialTheme.typography.caption
@@ -290,7 +291,7 @@ private fun WatchedAppBar(
             .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
             .asPaddingValues(),
         modifier = modifier,
-        title = { Text(text = stringResource(R.string.watched_shows_title)) },
+        title = { Text(text = stringResource(UiR.string.watched_shows_title)) },
         actions = {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 // This button refresh allows screen-readers, etc to trigger a refresh.

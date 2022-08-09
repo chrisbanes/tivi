@@ -17,7 +17,6 @@
 package app.tivi.common.compose.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.text.KeyboardActions
@@ -32,9 +31,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import app.tivi.common.compose.R
+import app.tivi.common.ui.resources.R as UiR
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SearchTextField(
     value: TextFieldValue,
@@ -58,7 +56,7 @@ fun SearchTextField(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = stringResource(R.string.cd_clear_text)
+                        contentDescription = stringResource(UiR.string.cd_clear_text)
                     )
                 }
             }

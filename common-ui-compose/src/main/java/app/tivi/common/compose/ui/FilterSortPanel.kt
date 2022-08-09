@@ -31,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.R
 import app.tivi.data.entities.SortOption
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun FilterSortPanel(
@@ -66,7 +66,7 @@ fun FilterSortPanel(
         ) {
             Icon(
                 imageVector = Icons.Default.Sort,
-                contentDescription = stringResource(R.string.cd_sort_list)
+                contentDescription = stringResource(UiR.string.cd_sort_list)
             )
         }
     }

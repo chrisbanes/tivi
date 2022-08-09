@@ -64,6 +64,7 @@ import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
 import com.google.accompanist.insets.ui.Scaffold
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun Search(
@@ -128,7 +129,7 @@ internal fun Search(
                             searchQuery = value
                             onSearchQueryChanged(value.text)
                         },
-                        hint = stringResource(R.string.search_hint),
+                        hint = stringResource(UiR.string.search_hint),
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

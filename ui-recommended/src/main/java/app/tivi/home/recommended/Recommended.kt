@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun RecommendedShows(
@@ -44,7 +45,7 @@ internal fun RecommendedShows(
 ) {
     EntryGrid(
         lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
-        title = stringResource(R.string.discover_recommended_title),
+        title = stringResource(UiR.string.discover_recommended_title),
         onOpenShowDetails = openShowDetails,
         onNavigateUp = navigateUp,
         modifier = Modifier.fillMaxSize()

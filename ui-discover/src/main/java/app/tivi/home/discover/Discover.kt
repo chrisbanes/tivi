@@ -89,6 +89,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun Discover(
@@ -196,7 +197,7 @@ internal fun Discover(
 
                 state.nextEpisodeWithShowToWatched?.let { nextEpisodeToWatch ->
                     item {
-                        Header(title = stringResource(R.string.discover_keep_watching_title))
+                        Header(title = stringResource(UiR.string.discover_keep_watching_title))
                     }
                     item {
                         NextEpisodeToWatch(
@@ -224,7 +225,7 @@ internal fun Discover(
                 item {
                     CarouselWithHeader(
                         items = state.trendingItems,
-                        title = stringResource(R.string.discover_trending_title),
+                        title = stringResource(UiR.string.discover_trending_title),
                         refreshing = state.trendingRefreshing,
                         onItemClick = {
                             openShowDetails(it.id, null, null)
@@ -236,7 +237,7 @@ internal fun Discover(
                 item {
                     CarouselWithHeader(
                         items = state.recommendedItems,
-                        title = stringResource(R.string.discover_recommended_title),
+                        title = stringResource(UiR.string.discover_recommended_title),
                         refreshing = state.recommendedRefreshing,
                         onItemClick = {
                             openShowDetails(it.id, null, null)
@@ -248,7 +249,7 @@ internal fun Discover(
                 item {
                     CarouselWithHeader(
                         items = state.popularItems,
-                        title = stringResource(R.string.discover_popular_title),
+                        title = stringResource(UiR.string.discover_popular_title),
                         refreshing = state.popularRefreshing,
                         onItemClick = { openShowDetails(it.id, null, null) },
                         onMoreClick = openPopularShows
@@ -303,7 +304,7 @@ private fun NextEpisodeToWatch(
 
                 Text(
                     text = episode.title
-                        ?: stringResource(R.string.episode_title_fallback, episode.number!!),
+                        ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
                     style = MaterialTheme.typography.body1
                 )
             }
@@ -336,7 +337,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                     ),
                     modifier = Modifier.alignBy(FirstBaseline)
                 ) {
-                    Text(text = stringResource(R.string.header_more))
+                    Text(text = stringResource(UiR.string.header_more))
                 }
             }
         }
@@ -445,7 +446,7 @@ private fun DiscoverAppBar(
             .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
             .asPaddingValues(),
         modifier = modifier,
-        title = { Text(text = stringResource(R.string.discover_title)) },
+        title = { Text(text = stringResource(UiR.string.discover_title)) },
         actions = {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 // This button refresh allows screen-readers, etc to trigger a refresh.

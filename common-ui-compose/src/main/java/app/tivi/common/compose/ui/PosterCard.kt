@@ -31,9 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.R
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun PosterCard(
@@ -62,7 +62,7 @@ fun PosterCard(
                     model = poster,
                     requestBuilder = { crossfade(true) },
                     contentDescription = stringResource(
-                        R.string.cd_show_poster_image,
+                        UiR.string.cd_show_poster_image,
                         show.title ?: "show"
                     ),
                     modifier = Modifier.matchParentSize(),

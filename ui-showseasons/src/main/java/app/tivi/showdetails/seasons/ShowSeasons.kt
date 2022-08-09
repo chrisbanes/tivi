@@ -87,6 +87,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun ShowSeasons(
@@ -169,7 +170,7 @@ internal fun ShowSeasons(
                     IconButton(onClick = navigateUp) {
                         Icon(
                             Icons.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.cd_navigate_up)
+                            contentDescription = stringResource(UiR.string.cd_navigate_up)
                         )
                     }
                 },
@@ -326,7 +327,7 @@ private fun EpisodeWithWatchesRow(
 
             Text(
                 text = episode.title
-                    ?: stringResource(R.string.episode_title_fallback, episode.number!!),
+                    ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
                 style = MaterialTheme.typography.body2
             )
         }
@@ -336,7 +337,7 @@ private fun EpisodeWithWatchesRow(
             if (hasPending) {
                 Icon(
                     imageVector = Icons.Default.CloudUpload,
-                    contentDescription = stringResource(R.string.cd_episode_syncing),
+                    contentDescription = stringResource(UiR.string.cd_episode_syncing),
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 needSpacer = true
@@ -350,8 +351,8 @@ private fun EpisodeWithWatchesRow(
                         else -> Icons.Default.Visibility
                     },
                     contentDescription = when {
-                        onlyPendingDeletes -> stringResource(R.string.cd_episode_deleted)
-                        else -> stringResource(R.string.cd_episode_watched)
+                        onlyPendingDeletes -> stringResource(UiR.string.cd_episode_deleted)
+                        else -> stringResource(UiR.string.cd_episode_watched)
                     },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )

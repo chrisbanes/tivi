@@ -106,6 +106,7 @@ import com.google.accompanist.insets.ui.Scaffold
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
+import app.tivi.common.ui.resources.R as UiR
 
 @ExperimentalMaterialApi
 @Composable
@@ -305,7 +306,7 @@ private fun Backdrop(
                 AsyncImage(
                     model = episode,
                     requestBuilder = { crossfade(true) },
-                    contentDescription = stringResource(R.string.cd_show_poster),
+                    contentDescription = stringResource(UiR.string.cd_show_poster),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -330,7 +331,7 @@ private fun Backdrop(
                             val locale = LocalConfiguration.current.locale
                             Text(
                                 text = stringResource(
-                                    R.string.season_episode_number,
+                                    UiR.string.season_episode_number,
                                     seasonNumber,
                                     epNumber
                                 ).uppercase(locale),
@@ -356,8 +357,8 @@ private fun InfoPanes(episode: Episode) {
         episode.traktRating?.let { rating ->
             InfoPane(
                 imageVector = Icons.Default.Star,
-                label = stringResource(R.string.trakt_rating_text, rating * 10f),
-                contentDescription = stringResource(R.string.cd_trakt_rating, rating * 10f),
+                label = stringResource(UiR.string.trakt_rating_text, rating * 10f),
+                contentDescription = stringResource(UiR.string.cd_trakt_rating, rating * 10f),
                 modifier = Modifier.weight(1f)
             )
         }
@@ -369,7 +370,7 @@ private fun InfoPanes(episode: Episode) {
                 imageVector = Icons.Default.CalendarToday,
                 label = formattedDate,
                 contentDescription = stringResource(
-                    R.string.cd_episode_first_aired,
+                    UiR.string.cd_episode_first_aired,
                     formattedDate
                 ),
                 modifier = Modifier.weight(1f)
@@ -411,7 +412,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .align(Alignment.CenterVertically),
-            text = stringResource(R.string.episode_watches),
+            text = stringResource(UiR.string.episode_watches),
             style = MaterialTheme.typography.subtitle1
         )
 
@@ -424,7 +425,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Default.DeleteSweep,
-                    contentDescription = stringResource(R.string.cd_delete)
+                    contentDescription = stringResource(UiR.string.cd_delete)
                 )
             }
         }
@@ -452,7 +453,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                     Icon(
                         imageVector = Icons.Default.Publish,
-                        contentDescription = stringResource(R.string.cd_episode_syncing),
+                        contentDescription = stringResource(UiR.string.cd_episode_syncing),
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .align(Alignment.CenterVertically)
@@ -462,7 +463,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                 if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
                     Icon(
                         imageVector = Icons.Default.VisibilityOff,
-                        contentDescription = stringResource(R.string.cd_episode_deleted),
+                        contentDescription = stringResource(UiR.string.cd_episode_deleted),
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .align(Alignment.CenterVertically)
@@ -512,7 +513,7 @@ private fun EpisodeWatchSwipeBackground(
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Icon(
                 imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(R.string.cd_delete),
+                contentDescription = stringResource(UiR.string.cd_delete),
                 modifier = Modifier
                     .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
                     .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
@@ -548,7 +549,7 @@ private fun MarkWatchedButton(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(R.string.episode_mark_watched),
+            text = stringResource(UiR.string.episode_mark_watched),
             style = MaterialTheme.typography.button.copy(color = LocalContentColor.current)
         )
     }
@@ -563,7 +564,7 @@ private fun AddWatchButton(
         onClick = onClick,
         modifier = modifier
     ) {
-        Text(text = stringResource(R.string.episode_add_watch))
+        Text(text = stringResource(UiR.string.episode_add_watch))
     }
 }
 
@@ -573,11 +574,11 @@ private fun RemoveAllWatchesDialog(
     onDismiss: () -> Unit
 ) {
     TiviAlertDialog(
-        title = stringResource(R.string.episode_remove_watches_dialog_title),
-        message = stringResource(R.string.episode_remove_watches_dialog_message),
-        confirmText = stringResource(R.string.episode_remove_watches_dialog_confirm),
+        title = stringResource(UiR.string.episode_remove_watches_dialog_title),
+        message = stringResource(UiR.string.episode_remove_watches_dialog_message),
+        confirmText = stringResource(UiR.string.episode_remove_watches_dialog_confirm),
         onConfirm = { onConfirm() },
-        dismissText = stringResource(R.string.dialog_dismiss),
+        dismissText = stringResource(UiR.string.dialog_dismiss),
         onDismissRequest = { onDismiss() }
     )
 }
@@ -597,7 +598,7 @@ private fun EpisodeDetailsAppBar(
             IconButton(onClick = navigateUp) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(R.string.cd_close)
+                    contentDescription = stringResource(UiR.string.cd_close)
                 )
             }
         },
@@ -613,7 +614,7 @@ private fun EpisodeDetailsAppBar(
                 IconButton(onClick = refresh) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(R.string.cd_refresh)
+                        contentDescription = stringResource(UiR.string.cd_refresh)
                     )
                 }
             }
