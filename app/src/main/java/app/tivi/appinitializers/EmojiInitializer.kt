@@ -22,8 +22,10 @@ import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import javax.inject.Inject
 
-class EmojiInitializer @Inject constructor() : AppInitializer {
-    override fun init(application: Application) {
+class EmojiInitializer @Inject constructor(
+    private val application: Application
+) : AppInitializer {
+    override fun init() {
         val fontRequest = FontRequest(
             "com.google.android.gms.fonts",
             "com.google.android.gms",

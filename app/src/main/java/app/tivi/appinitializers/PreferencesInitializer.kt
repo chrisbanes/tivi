@@ -16,14 +16,13 @@
 
 package app.tivi.appinitializers
 
-import android.app.Application
 import app.tivi.settings.TiviPreferences
 import javax.inject.Inject
 
 class PreferencesInitializer @Inject constructor(
     private val prefs: TiviPreferences
 ) : AppInitializer {
-    override fun init(application: Application) {
+    override fun init() {
         prefs.setup()
     }
 }

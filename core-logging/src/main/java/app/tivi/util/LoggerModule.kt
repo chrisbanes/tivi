@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package app.tivi.extensions
+package app.tivi.util
 
-import android.content.Context
-import androidx.core.os.ConfigurationCompat
-import org.threeten.bp.format.DateTimeFormatter
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-fun DateTimeFormatter.withLocale(context: Context): DateTimeFormatter {
-    val locales = ConfigurationCompat.getLocales(context.resources.configuration)
-    return when {
-        locales.isEmpty -> this
-        else -> withLocale(locales[0])
-    }
+@InstallIn(SingletonComponent::class)
+@Module
+abstract class LoggerModule {
+    @Singleton
+    @Binds
+    internal abstract fun provideLogger(bind: TiviLogger): Logger
 }

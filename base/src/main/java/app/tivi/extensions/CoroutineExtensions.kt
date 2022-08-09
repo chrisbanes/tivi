@@ -16,10 +16,8 @@
 
 package app.tivi.extensions
 
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
@@ -29,9 +27,4 @@ fun <T, R> Flow<T?>.flatMapLatestNullable(transform: suspend (value: T) -> Flow<
 
 fun <T, R> Flow<T?>.mapNullable(transform: suspend (value: T) -> R): Flow<R?> {
     return map { if (it != null) transform(it) else null }
-}
-
-fun <T> delayFlow(timeout: Long, value: T): Flow<T> = flow {
-    delay(timeout)
-    emit(value)
 }

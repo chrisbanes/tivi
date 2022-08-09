@@ -31,7 +31,7 @@ class TiviApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        initializers.init(this)
+        initializers.init()
     }
 
     override fun getWorkManagerConfiguration(): Configuration {

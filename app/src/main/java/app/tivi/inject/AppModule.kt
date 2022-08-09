@@ -18,8 +18,8 @@ package app.tivi.inject
 
 import android.app.Application
 import android.content.Context
+import androidx.core.os.ConfigurationCompat
 import app.tivi.BuildConfig
-import app.tivi.extensions.withLocale
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktModule
 import app.tivi.util.AppCoroutineDispatchers
@@ -34,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 import java.io.File
+import java.util.Locale
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -80,36 +81,36 @@ object AppModule {
     @Provides
     @MediumDate
     fun provideMediumDateFormatter(
-        @ApplicationContext context: Context
+        locale: Locale
     ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(context)
+        return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
     }
 
     @Singleton
     @Provides
     @MediumDateTime
     fun provideDateTimeFormatter(
-        @ApplicationContext context: Context
+        locale: Locale
     ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(context)
+        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale)
     }
 
     @Singleton
     @Provides
     @ShortDate
     fun provideShortDateFormatter(
-        @ApplicationContext context: Context
+        locale: Locale
     ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(context)
+        return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale)
     }
 
     @Singleton
     @Provides
     @ShortTime
     fun provideShortTimeFormatter(
-        @ApplicationContext context: Context
+        locale: Locale
     ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(context)
+        return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
     }
 
     @Provides
@@ -121,4 +122,12 @@ object AppModule {
     fun provideFirebaseAnalytics(
         @ApplicationContext context: Context
     ): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+
+    @Provides
+    fun provideAppLocale(
+        @ApplicationContext context: Context
+    ): Locale {
+        return ConfigurationCompat.getLocales(context.resources.configuration)
+            .get(0) ?: Locale.getDefault()
+    }
 }
