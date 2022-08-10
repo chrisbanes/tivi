@@ -38,11 +38,11 @@ import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -60,7 +60,7 @@ class WatchedViewModel @Inject constructor(
 ) : ViewModel() {
     private val uiMessageManager = UiMessageManager()
 
-    private val availableSorts = listOf(SortOption.LAST_WATCHED, SortOption.ALPHABETICAL)
+    private val availableSorts = persistentListOf(SortOption.LAST_WATCHED, SortOption.ALPHABETICAL)
 
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()

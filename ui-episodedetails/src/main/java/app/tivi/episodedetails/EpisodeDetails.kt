@@ -103,6 +103,8 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
 import com.google.accompanist.insets.ui.Scaffold
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
@@ -275,7 +277,7 @@ internal fun EpisodeDetails(
                         SwipeToDismiss(
                             state = dismissState,
                             modifier = Modifier.padding(vertical = 4.dp),
-                            directions = setOf(DismissDirection.EndToStart),
+                            directions = persistentSetOf(DismissDirection.EndToStart),
                             background = {
                                 val fraction = dismissState.progress.fraction
                                 EpisodeWatchSwipeBackground(
@@ -643,7 +645,7 @@ fun PreviewEpisodeDetails() {
                 id = 100,
                 showId = 0
             ),
-            watches = listOf(
+            watches = persistentListOf(
                 EpisodeWatchEntry(
                     id = 10,
                     episodeId = 100,

@@ -39,11 +39,11 @@ import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -66,7 +66,7 @@ internal class FollowedViewModel @Inject constructor(
     val pagedList: Flow<PagingData<FollowedShowEntryWithShow>> =
         observePagedFollowedShows.flow.cachedIn(viewModelScope)
 
-    private val availableSorts = listOf(
+    private val availableSorts = persistentListOf(
         SortOption.SUPER_SORT,
         SortOption.LAST_WATCHED,
         SortOption.ALPHABETICAL,

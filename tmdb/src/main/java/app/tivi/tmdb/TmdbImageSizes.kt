@@ -16,12 +16,13 @@
 
 package app.tivi.tmdb
 
+import kotlinx.collections.immutable.persistentListOf
+
 object TmdbImageSizes {
 
     const val baseImageUrl = "https://image.tmdb.org/t/p/"
 
-    val posterSizes = listOf(
-        "w92",
+    val posterSizes = persistentListOf("w92",
         "w154",
         "w185",
         "w342",
@@ -30,14 +31,14 @@ object TmdbImageSizes {
         "original"
     )
 
-    val backdropSizes = listOf(
+    val backdropSizes = persistentListOf(
         "w300",
         "w780",
         "w1280",
         "original"
     )
 
-    val logoSizes = listOf(
+    val logoSizes = persistentListOf(
         "w45",
         "w92",
         "w154",

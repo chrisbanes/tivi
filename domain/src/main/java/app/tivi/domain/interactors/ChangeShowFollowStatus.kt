@@ -25,6 +25,7 @@ import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -90,7 +91,7 @@ class ChangeShowFollowStatus @Inject constructor(
         val action: Action,
         val deferDataFetch: Boolean = false
     ) {
-        constructor(showId: Long, action: Action) : this(listOf(showId), action)
+        constructor(showId: Long, action: Action) : this(persistentListOf(showId), action)
     }
 
     enum class Action { FOLLOW, UNFOLLOW, TOGGLE }

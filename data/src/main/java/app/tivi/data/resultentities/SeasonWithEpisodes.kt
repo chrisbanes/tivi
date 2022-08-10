@@ -20,6 +20,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
+import kotlinx.collections.immutable.toPersistentList
 import java.util.Objects
 
 class SeasonWithEpisodes {
@@ -27,7 +28,8 @@ class SeasonWithEpisodes {
     var season: Season? = null
 
     @Relation(parentColumn = "id", entityColumn = "season_id")
-    var episodes: List<Episode> = emptyList()
+    internal lateinit var _episodes: List<Episode>
+    val episodes: List<Episode> by lazy { _episodes.toPersistentList() }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

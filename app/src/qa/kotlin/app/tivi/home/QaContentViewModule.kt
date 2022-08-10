@@ -32,6 +32,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
+import kotlinx.collections.immutable.persistentListOf
 import okhttp3.Interceptor
 import retrofit2.mock.NetworkBehavior
 import javax.inject.Singleton
@@ -82,7 +83,7 @@ object QaContentViewModule {
         networkBehavior: NetworkBehavior
     ): DebugRetrofitConfig = DebugRetrofitConfig(
         context = application,
-        endpoints = listOf(Endpoint(name = "Default", url = "blah", isMock = true)),
+        endpoints = persistentListOf(Endpoint(name = "Default", url = "blah", isMock = true)),
         networkBehavior = networkBehavior
     )
 }

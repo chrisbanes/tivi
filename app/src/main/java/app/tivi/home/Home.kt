@@ -84,6 +84,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
+import kotlinx.collections.immutable.persistentListOf
 import app.tivi.common.ui.resources.R as UiR
 
 @OptIn(
@@ -333,7 +334,7 @@ private sealed class HomeNavigationItem(
     ) : HomeNavigationItem(screen, labelResId, contentDescriptionResId)
 }
 
-private val HomeNavigationItems = listOf(
+private val HomeNavigationItems = persistentListOf(
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Discover,
         labelResId = UiR.string.discover_title,

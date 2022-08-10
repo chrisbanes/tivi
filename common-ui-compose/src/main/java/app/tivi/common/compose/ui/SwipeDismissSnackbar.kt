@@ -27,6 +27,7 @@ import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kotlinx.collections.immutable.persistentSetOf
 
 /**
  * Wrapper around [Snackbar] to make it swipe-dismissable,
@@ -51,7 +52,7 @@ fun SwipeDismissSnackbar(
 
     SwipeToDismiss(
         state = dismissState,
-        directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
+        directions = persistentSetOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
         background = {},
         dismissContent = { snackbar(data) }
     )

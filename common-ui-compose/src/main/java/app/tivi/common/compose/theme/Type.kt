@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import kotlinx.collections.immutable.persistentListOf
 
 @ExperimentalTextApi
 internal fun createSingleGoogleFontFamily(
@@ -51,7 +52,7 @@ internal val GmsFontProvider: GoogleFont.Provider by lazy {
 val TiviTypography = Typography(
     defaultFontFamily = createSingleGoogleFontFamily(
         name = "Inter",
-        weights = listOf(
+        weights = persistentListOf(
             FontWeight.Light,
             FontWeight.Normal,
             FontWeight.Medium,

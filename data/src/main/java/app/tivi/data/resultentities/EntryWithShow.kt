@@ -22,9 +22,9 @@ import app.tivi.data.entities.TiviShow
 import java.util.Objects
 
 interface EntryWithShow<ET : Entry> {
-    var entry: ET
-    var relations: List<TiviShow>
-    var images: List<ShowTmdbImage>
+    val entry: ET
+    val relations: List<TiviShow>
+    val images: List<ShowTmdbImage>
 
     val show: TiviShow
         get() {

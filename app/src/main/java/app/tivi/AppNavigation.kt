@@ -49,6 +49,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import kotlinx.collections.immutable.persistentListOf
 
 internal sealed class Screen(val route: String) {
     object Discover : Screen("discover")
@@ -293,7 +294,7 @@ private fun NavGraphBuilder.addShowDetails(
     composable(
         route = LeafScreen.ShowDetails.createRoute(root),
         debugLabel = "ShowDetails()",
-        arguments = listOf(
+        arguments = persistentListOf(
             navArgument("showId") { type = NavType.LongType }
         )
     ) {
@@ -321,7 +322,7 @@ private fun NavGraphBuilder.addEpisodeDetails(
     bottomSheet(
         route = LeafScreen.EpisodeDetails.createRoute(root),
         debugLabel = "EpisodeDetails()",
-        arguments = listOf(
+        arguments = persistentListOf(
             navArgument("episodeId") { type = NavType.LongType }
         )
     ) {
@@ -411,7 +412,7 @@ private fun NavGraphBuilder.addShowSeasons(
     composable(
         route = LeafScreen.ShowSeasons.createRoute(root),
         debugLabel = "ShowSeasons()",
-        arguments = listOf(
+        arguments = persistentListOf(
             navArgument("showId") {
                 type = NavType.LongType
             },

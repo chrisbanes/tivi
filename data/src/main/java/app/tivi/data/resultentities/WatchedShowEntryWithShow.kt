@@ -24,6 +24,7 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.entities.findHighestRatedBackdrop
 import app.tivi.data.entities.findHighestRatedPoster
+import kotlinx.collections.immutable.toPersistentList
 import java.util.Objects
 
 class WatchedShowEntryWithShow : EntryWithShow<WatchedShowEntry> {
@@ -31,10 +32,12 @@ class WatchedShowEntryWithShow : EntryWithShow<WatchedShowEntry> {
     override lateinit var entry: WatchedShowEntry
 
     @Relation(parentColumn = "show_id", entityColumn = "id")
-    override lateinit var relations: List<TiviShow>
+    internal lateinit var _relations: List<TiviShow>
+    override val relations: List<TiviShow> by lazy { _relations.toPersistentList() }
 
     @Relation(parentColumn = "show_id", entityColumn = "show_id")
-    override lateinit var images: List<ShowTmdbImage>
+    internal lateinit var _images: List<ShowTmdbImage>
+    override val images: List<ShowTmdbImage> by lazy { _images.toPersistentList() }
 
     @delegate:Ignore
     val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) {

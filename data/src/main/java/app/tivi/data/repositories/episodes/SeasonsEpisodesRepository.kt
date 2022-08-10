@@ -23,13 +23,16 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.Season
 import app.tivi.data.instantInPast
+import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.extensions.mapToPersistentList
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -48,22 +51,35 @@ class SeasonsEpisodesRepository @Inject constructor(
     private val traktAuthState: Provider<TraktAuthState>
 ) {
     fun observeSeasonsForShow(showId: Long): Flow<List<Season>> {
-        return seasonsEpisodesStore.observeShowSeasons(showId)
+        return seasonsEpisodesStore.observeShowSeasons(showId).mapToPersistentList()
     }
 
-    fun observeSeasonsWithEpisodesWatchedForShow(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
+    fun observeSeasonsWithEpisodesWatchedForShow(
+        showId: Long
+    ): Flow<List<SeasonWithEpisodesAndWatches>> {
         return seasonsEpisodesStore.observeShowSeasonsWithEpisodes(showId)
+            .mapToPersistentList()
     }
 
-    fun observeSeason(seasonId: Long) = seasonsEpisodesStore.observeShowSeasonWithEpisodes(seasonId)
+    fun observeSeason(seasonId: Long): Flow<SeasonWithEpisodesAndWatches> {
+        return seasonsEpisodesStore.observeShowSeasonWithEpisodes(seasonId)
+    }
 
-    fun observeEpisode(episodeId: Long) = seasonsEpisodesStore.observeEpisode(episodeId)
+    fun observeEpisode(episodeId: Long): Flow<EpisodeWithSeason> {
+        return seasonsEpisodesStore.observeEpisode(episodeId)
+    }
 
-    suspend fun getEpisode(episodeId: Long): Episode? = seasonsEpisodesStore.getEpisode(episodeId)
+    suspend fun getEpisode(episodeId: Long): Episode? {
+        return seasonsEpisodesStore.getEpisode(episodeId)
+    }
 
-    fun observeEpisodeWatches(episodeId: Long) = episodeWatchStore.observeEpisodeWatches(episodeId)
+    fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {
+        return episodeWatchStore.observeEpisodeWatches(episodeId).mapToPersistentList()
+    }
 
-    fun observeNextEpisodeToWatch(showId: Long) = seasonsEpisodesStore.observeShowNextEpisodeToWatch(showId)
+    fun observeNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> {
+        return seasonsEpisodesStore.observeShowNextEpisodeToWatch(showId)
+    }
 
     suspend fun needShowSeasonsUpdate(
         showId: Long,

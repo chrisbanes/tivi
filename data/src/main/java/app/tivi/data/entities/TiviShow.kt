@@ -21,6 +21,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import kotlinx.collections.immutable.toPersistentList
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalTime
 import org.threeten.bp.OffsetDateTime
@@ -63,7 +64,9 @@ data class TiviShow(
 
     @delegate:Ignore
     val genres by lazy(LazyThreadSafetyMode.NONE) {
-        _genres?.split(",")?.mapNotNull { Genre.fromTraktValue(it.trim()) } ?: emptyList()
+        (_genres?.split(",") ?: emptyList())
+            .mapNotNull { Genre.fromTraktValue(it.trim()) }
+            .toPersistentList()
     }
 
     companion object {

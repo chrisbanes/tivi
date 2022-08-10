@@ -22,6 +22,7 @@ import androidx.room.Relation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
+import kotlinx.collections.immutable.toPersistentList
 import org.threeten.bp.OffsetDateTime
 import java.util.Objects
 
@@ -30,7 +31,9 @@ class EpisodeWithWatches {
     lateinit var episode: Episode
 
     @Relation(parentColumn = "id", entityColumn = "episode_id")
-    lateinit var watches: List<EpisodeWatchEntry>
+    lateinit var _watches: List<EpisodeWatchEntry>
+
+    val watches: List<EpisodeWatchEntry> by lazy { _watches.toPersistentList() }
 
     @delegate:Ignore
     val hasWatches by lazy { watches.isNotEmpty() }
