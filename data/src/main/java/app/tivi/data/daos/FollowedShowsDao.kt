@@ -105,7 +105,6 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract suspend fun deleteWithIds(ids: List<Long>): Int
 
     companion object {
-
         /**
          * Next to watch (with aired shows)
          * Next to watch (non-aired shows)

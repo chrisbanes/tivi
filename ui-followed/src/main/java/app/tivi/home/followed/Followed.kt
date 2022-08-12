@@ -47,13 +47,16 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
@@ -83,6 +86,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import app.tivi.common.ui.resources.R as UiR
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun Followed(
@@ -103,12 +107,11 @@ internal fun Followed(
     openUser: () -> Unit
 ) {
     val viewState by rememberStateWithLifecycle(viewModel.state)
-    val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList)
-        .collectAsLazyPagingItems()
+    val sections by rememberFlowWithLifecycle(viewModel.pagedList).collectAsState(emptyList())
 
     Followed(
         state = viewState,
-        list = pagingItems,
+        sections = sections,
         openShowDetails = openShowDetails,
         onMessageShown = { viewModel.clearMessage(it) },
         openUser = openUser,
@@ -122,7 +125,7 @@ internal fun Followed(
 @Composable
 internal fun Followed(
     state: FollowedViewState,
-    list: List<FollowedShowsSection>,
+    sections: List<FollowedShowsSection>,
     openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
     refresh: () -> Unit,
@@ -178,6 +181,8 @@ internal fun Followed(
             val bodyMargin = Layout.bodyMargin
             val gutter = Layout.gutter
 
+            val sectionData = sections.associateWith { it.source.collectAsLazyPagingItems() }
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns / 4),
                 contentPadding = paddingValues + PaddingValues(
@@ -193,7 +198,7 @@ internal fun Followed(
             ) {
                 fullSpanItem {
                     FilterSortPanel(
-                        filterHint = stringResource(UiR.string.filter_shows, list.itemCount),
+                        filterHint = stringResource(UiR.string.filter_shows, 0), // FIXME count
                         onFilterChanged = onFilterChanged,
                         sortOptions = state.availableSorts,
                         currentSortOption = state.sort,
@@ -204,9 +209,9 @@ internal fun Followed(
                     )
                 }
 
-                list.forEach { section ->
+                sections.forEach { section ->
                     items(
-                        items = section.source.collectAsLazyPagingItems(),
+                        items = sectionData[section]!!,
                         key = { it.show.id }
                     ) { entry ->
                         if (entry != null) {

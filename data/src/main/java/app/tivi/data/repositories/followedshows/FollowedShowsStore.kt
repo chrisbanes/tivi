@@ -23,7 +23,6 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.resultentities.FollowedShowsRawSection
-import app.tivi.data.resultentities.FollowedShowsSection
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.util.Logger
