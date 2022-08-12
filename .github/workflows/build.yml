@@ -49,7 +49,7 @@ jobs:
         run: ./gradlew spotlessCheck assemble bundle app:lintQaDebug
 
       - name: Check
-        run: ./gradlew testDebug
+        run: ./gradlew testDebugUnitTest testQaDebugUnitTest
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
