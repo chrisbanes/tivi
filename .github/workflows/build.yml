@@ -27,12 +27,15 @@ jobs:
         shell: bash
         run: echo "ORG_GRADLE_PROJECT_TIVI_VERSIONCODE=$(( $GITHUB_RUN_NUMBER + 6000 + (($GITHUB_RUN_NUMBER - 980) * 3) ))" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 11
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2
 
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
@@ -42,24 +45,11 @@ jobs:
       - name: Copy CI gradle.properties
         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
-      - uses: burrunan/gradle-cache-action@v1
-        name: Build
-        with:
-          gradle-dependencies-cache-key: |
-            gradle/libs.versions.toml
-          arguments: |
-            spotlessCheck
-            assemble
-            bundle
-            app:lintQaDebug
+      - name: Build
+        run: ./gradlew spotlessCheck assemble bundle app:lintQaDebug
 
-      - uses: burrunan/gradle-cache-action@v1
-        name: Check
-        with:
-          execution-only-caches: true
-          gradle-dependencies-cache-key: |
-            gradle/libs.versions.toml
-          arguments: testDebug
+      - name: Check
+        run: ./gradlew testDebugUnitTest testQaDebugUnitTest
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
@@ -124,14 +114,14 @@ jobs:
 
       - name: Upload build outputs
         if: always()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: build-outputs
           path: app/build/outputs
 
       - name: Upload build reports
         if: always()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: build-reports
           path: app/build/reports
@@ -143,7 +133,7 @@ jobs:
           find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} junit/ \;
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: junit-results
           path: junit
