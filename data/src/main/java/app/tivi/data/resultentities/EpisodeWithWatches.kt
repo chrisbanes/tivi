@@ -31,8 +31,9 @@ class EpisodeWithWatches {
     lateinit var episode: Episode
 
     @Relation(parentColumn = "id", entityColumn = "episode_id")
-    lateinit var _watches: List<EpisodeWatchEntry>
+    internal lateinit var _watches: List<EpisodeWatchEntry>
 
+    @delegate:Ignore
     val watches: List<EpisodeWatchEntry> by lazy { _watches.toPersistentList() }
 
     @delegate:Ignore

@@ -27,6 +27,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.map
 import org.threeten.bp.Duration
 import javax.inject.Singleton
@@ -52,16 +53,17 @@ internal object PopularShowsModule {
         },
         sourceOfTruth = SourceOfTruth.of(
             reader = { page ->
-                popularShowsDao.entriesObservable(page).map { entries ->
-                    when {
-                        // Store only treats null as 'no value', so convert to null
-                        entries.isEmpty() -> null
-                        // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(Duration.ofHours(3)) -> null
-                        // Otherwise, our data is fresh and valid
-                        else -> entries
+                popularShowsDao.entriesObservable(page)
+                    .map { entries ->
+                        when {
+                            // Store only treats null as 'no value', so convert to null
+                            entries.isEmpty() -> null
+                            // If the request is expired, our data is stale
+                            lastRequestStore.isRequestExpired(Duration.ofHours(3)) -> null
+                            // Otherwise, our data is fresh and valid
+                            else -> entries
+                        }
                     }
-                }
             },
             writer = { page, response ->
                 popularShowsDao.withTransaction {

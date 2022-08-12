@@ -21,9 +21,13 @@ import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.instantInPast
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.ItemSyncerResult
+import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -44,16 +48,24 @@ class FollowedShowsRepository @Inject constructor(
         filter: String? = null
     ) = followedShowsStore.observeForPaging(sort, filter)
 
-    fun observeShowViewStats(showId: Long) = followedShowsStore.observeShowViewStats(showId)
+    fun observeShowViewStats(showId: Long): Flow<FollowedShowsWatchStats?> {
+        return followedShowsStore.observeShowViewStats(showId)
+    }
 
-    fun observeIsShowFollowed(showId: Long) = followedShowsStore.observeIsShowFollowed(showId)
+    fun observeIsShowFollowed(showId: Long): Flow<Boolean> {
+        return followedShowsStore.observeIsShowFollowed(showId)
+    }
 
-    fun observeNextShowToWatch() = followedShowsStore.observeNextShowToWatch()
+    fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?> {
+        return followedShowsStore.observeNextShowToWatch()
+    }
 
-    suspend fun isShowFollowed(showId: Long) = followedShowsStore.isShowFollowed(showId)
+    suspend fun isShowFollowed(showId: Long): Boolean {
+        return followedShowsStore.isShowFollowed(showId)
+    }
 
     suspend fun getFollowedShows(): List<FollowedShowEntry> {
-        return followedShowsStore.getEntries()
+        return followedShowsStore.getEntries().toPersistentList()
     }
 
     suspend fun needFollowedShowsSync(expiry: Instant = instantInPast(hours = 1)): Boolean {

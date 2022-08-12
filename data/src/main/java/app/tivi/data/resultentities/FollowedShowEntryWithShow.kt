@@ -34,10 +34,14 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
 
     @Relation(parentColumn = "show_id", entityColumn = "id")
     internal lateinit var _relations: List<TiviShow>
+
+    @delegate:Ignore
     override val relations: List<TiviShow> by lazy { _relations.toPersistentList() }
 
     @Relation(parentColumn = "show_id", entityColumn = "show_id")
     internal lateinit var _images: List<ShowTmdbImage>
+
+    @delegate:Ignore
     override val images: List<ShowTmdbImage> by lazy { _images.toPersistentList() }
 
     @Relation(parentColumn = "id", entityColumn = "id")

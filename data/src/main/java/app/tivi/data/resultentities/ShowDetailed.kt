@@ -32,6 +32,8 @@ class ShowDetailed {
 
     @Relation(parentColumn = "id", entityColumn = "show_id")
     internal lateinit var _images: List<ShowTmdbImage>
+
+    @delegate:Ignore
     val images: List<ShowTmdbImage> by lazy { _images.toPersistentList() }
 
     @delegate:Ignore

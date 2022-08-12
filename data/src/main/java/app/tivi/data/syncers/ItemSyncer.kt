@@ -19,6 +19,7 @@ package app.tivi.data.syncers
 import app.tivi.data.daos.EntityDao
 import app.tivi.data.entities.TiviEntity
 import app.tivi.util.Logger
+import kotlinx.collections.immutable.toPersistentList
 
 /**
  * @param NetworkType Network type
@@ -91,7 +92,11 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
             insertEntity(it)
         }
 
-        return ItemSyncerResult(added, removed, updated)
+        return ItemSyncerResult(
+            added = added.toPersistentList(),
+            deleted = removed.toPersistentList(),
+            updated = updated.toPersistentList(),
+        )
     }
 }
 

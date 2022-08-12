@@ -17,6 +17,7 @@
 package app.tivi.data.resultentities
 
 import androidx.room.Embedded
+import androidx.room.Ignore
 import androidx.room.Relation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -29,6 +30,8 @@ class SeasonWithEpisodes {
 
     @Relation(parentColumn = "id", entityColumn = "season_id")
     internal lateinit var _episodes: List<Episode>
+
+    @delegate:Ignore
     val episodes: List<Episode> by lazy { _episodes.toPersistentList() }
 
     override fun equals(other: Any?): Boolean = when {
