@@ -6,17 +6,7 @@ plugins {
 android {
     namespace 'app.tivi.benchmark'
 
-    compileSdk libs.versions.compileSdk.get() as int
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-
     defaultConfig {
-        minSdk libs.versions.minSdk.get() as int
-        targetSdk libs.versions.targetSdk.get() as int
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

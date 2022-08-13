@@ -34,12 +34,8 @@ ext {
 android {
     namespace 'app.tivi'
 
-    compileSdk libs.versions.compileSdk.get() as int
-
     defaultConfig {
         applicationId "app.tivi"
-        minSdk libs.versions.minSdk.get() as int
-        targetSdk libs.versions.targetSdk.get() as int
         versionCode appVersionCode
         versionName "0.6.4"
 
@@ -66,11 +62,6 @@ android {
                 keyPassword propOrDef('TIVI_RELEASE_KEY_PWD', "")
             }
         }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
     }
 
     lint {
