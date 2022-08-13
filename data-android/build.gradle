@@ -22,6 +22,8 @@ plugins {
 }
 
 android {
+    namespace 'app.tivi.data'
+
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

@@ -23,6 +23,8 @@ plugins {
 }
 
 android {
+    namespace 'app.tivi.episodedetails'
+
     buildFeatures {
         compose true
     }

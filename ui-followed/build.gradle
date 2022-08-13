@@ -23,6 +23,8 @@ plugins {
 }
 
 android {
+    namespace 'app.tivi.home.followed'
+
     buildFeatures {
         compose true
     }

@@ -23,6 +23,8 @@ plugins {
 }
 
 android {
+    namespace 'app.tivi.home.trending'
+
     buildFeatures {
         compose true
     }

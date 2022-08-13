@@ -22,6 +22,8 @@ plugins {
 }
 
 android {
+    namespace 'app.tivi.home.watched'
+
     buildFeatures {
         compose true
     }
