@@ -176,32 +176,32 @@ android {
 }
 
 dependencies {
-    implementation project(':base')
-    implementation project(':core-analytics')
-    implementation project(':core-logging')
-    implementation project(':common-ui-view')
-    implementation project(':common-imageloading')
-    implementation project(':common-ui-compose')
-    implementation project(':data')
-    implementation project(':data-android')
-    implementation project(':trakt')
-    implementation project(':trakt-auth')
-    implementation project(':tmdb')
-    implementation project(':domain')
-    implementation project(':tasks')
+    implementation projects.base
+    implementation projects.coreAnalytics
+    implementation projects.coreLogging
+    implementation projects.commonUiView
+    implementation projects.commonImageloading
+    implementation projects.commonUiCompose
+    implementation projects.data
+    implementation projects.dataAndroid
+    implementation projects.trakt
+    implementation projects.traktAuth
+    implementation projects.tmdb
+    implementation projects.domain
+    implementation projects.tasks
 
-    implementation project(':ui-account')
-    implementation project(':ui-discover')
-    implementation project(':ui-showdetails')
-    implementation project(':ui-episodedetails')
-    implementation project(':ui-followed')
-    implementation project(':ui-watched')
-    implementation project(':ui-popular')
-    implementation project(':ui-trending')
-    implementation project(':ui-recommended')
-    implementation project(':ui-search')
-    implementation project(':ui-showseasons')
-    implementation project(':ui-settings')
+    implementation projects.uiAccount
+    implementation projects.uiDiscover
+    implementation projects.uiShowdetails
+    implementation projects.uiEpisodedetails
+    implementation projects.uiFollowed
+    implementation projects.uiWatched
+    implementation projects.uiPopular
+    implementation projects.uiTrending
+    implementation projects.uiRecommended
+    implementation projects.uiSearch
+    implementation projects.uiShowseasons
+    implementation projects.uiSettings
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
 

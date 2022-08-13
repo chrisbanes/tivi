@@ -49,9 +49,9 @@ android {
 }
 
 dependencies {
-    implementation project(':base')
-    implementation project(':domain')
-    implementation project(':common-ui-compose')
+    implementation projects.base
+    implementation projects.domain
+    implementation projects.commonUiCompose
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
 

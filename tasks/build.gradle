@@ -42,8 +42,8 @@ android {
 }
 
 dependencies {
-    implementation project(':base')
-    implementation project(':domain')
+    implementation projects.base
+    implementation projects.domain
 
     api libs.androidx.work.runtime
 

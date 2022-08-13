@@ -32,7 +32,7 @@ dependencies {
     }
     api "org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb"
 
-    implementation project(':base')
+    implementation projects.base
 
     implementation libs.okhttp.okhttp
     implementation libs.retrofit.retrofit

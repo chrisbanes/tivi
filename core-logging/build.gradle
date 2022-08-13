@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    api project(':base')
+    api projects.base
 
     implementation libs.google.crashlytics
     implementation libs.timber
