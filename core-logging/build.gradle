@@ -26,10 +26,10 @@ kapt {
 }
 
 android {
-    compileSdk buildConfig.compileSdk
+    compileSdk libs.versions.compileSdk.get() as int
 
     defaultConfig {
-        minSdk buildConfig.minSdk
+        minSdk libs.versions.minSdk.get() as int
     }
 
     compileOptions {
