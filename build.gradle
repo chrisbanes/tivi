@@ -17,32 +17,20 @@
 
 import app.tivi.buildsrc.DependencyUpdates
 import app.tivi.buildsrc.ReleaseType
-
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-
-        // Used for Accompanist snapshots
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    }
-
-    dependencies {
-        classpath libs.android.pluginGradle
-        classpath libs.kotlin.pluginGradle
-
-        classpath libs.kotlin.extensions
-
-        classpath libs.google.gmsGoogleServices
-        classpath libs.google.crashlyticsGradle
-
-        classpath libs.hilt.pluginGradle
-    }
-}
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.android.lint) apply false
+    alias(libs.plugins.android.test) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.gms.googleServices) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.spotless)
-    alias(libs.plugins.gradleDependencyUpdate)
+    alias(libs.plugins.dependencyUpdate)
 }
 
 allprojects {
@@ -75,7 +63,7 @@ subprojects {
         }
     }
 
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    tasks.withType(KotlinCompile).configureEach {
         kotlinOptions {
             // Treat all Kotlin warnings as errors
             allWarningsAsErrors = true
@@ -88,6 +76,13 @@ subprojects {
             // Set JVM target to 11
             jvmTarget = JavaVersion.VERSION_11
         }
+    }
+
+    plugins.withId(rootProject.libs.plugins.hilt.get().pluginId) {
+        hilt.enableAggregatingTask = true
+    }
+    plugins.withId(rootProject.libs.plugins.kotlin.kapt.get().pluginId) {
+        kapt.correctErrorTypes = true
     }
 }
 

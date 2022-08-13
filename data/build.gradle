@@ -17,7 +17,7 @@
 
 plugins {
     id 'kotlin'
-    id 'com.android.lint'
+    alias(libs.plugins.android.lint)
 }
 
 dependencies {
