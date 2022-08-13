@@ -69,7 +69,7 @@ dependencies {
 
     implementation libs.kotlin.stdlib
 
-    implementation libs.androidx.hilt.compose
+    implementation libs.hilt.compose
     implementation libs.hilt.library
     kapt libs.hilt.compiler
 }

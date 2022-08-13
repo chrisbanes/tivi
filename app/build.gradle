@@ -235,11 +235,11 @@ dependencies {
     implementation libs.okhttp.loggingInterceptor
 
     implementation libs.hilt.library
-    implementation libs.androidx.hilt.compose
+    implementation libs.hilt.compose
     kapt libs.hilt.compiler
 
-    implementation libs.androidx.hilt.work
-    kapt libs.androidx.hilt.compiler
+    implementation libs.hilt.work
+    kapt libs.hilt.compiler
 
     implementation libs.google.crashlytics
     implementation libs.google.analytics
