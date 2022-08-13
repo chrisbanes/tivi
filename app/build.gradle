@@ -44,12 +44,12 @@ ext {
 android {
     namespace 'app.tivi'
 
-    compileSdkVersion buildConfig.compileSdk
+    compileSdk buildConfig.compileSdk
 
     defaultConfig {
         applicationId "app.tivi"
-        minSdkVersion buildConfig.minSdk
-        targetSdkVersion buildConfig.targetSdk
+        minSdk buildConfig.minSdk
+        targetSdk buildConfig.targetSdk
         versionCode appVersionCode
         versionName "0.6.4"
 

@@ -27,10 +27,10 @@ kapt {
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
-    compileSdkVersion buildConfig.compileSdk
+    compileSdk buildConfig.compileSdk
 
     defaultConfig {
-        minSdkVersion buildConfig.minSdk
+        minSdk buildConfig.minSdk
     }
 
     compileOptions {
