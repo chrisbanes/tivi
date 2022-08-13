@@ -16,6 +16,8 @@
 
 package app.tivi.buildsrc
 
+import java.util.Locale
+
 enum class ReleaseType(private val level: Int) {
     SNAPSHOT(0),
     DEV(1),
@@ -31,7 +33,7 @@ enum class ReleaseType(private val level: Int) {
 
 object DependencyUpdates {
     private val stableKeywords = arrayOf("RELEASE", "FINAL", "GA")
-    private val releaseRegex = "^[0-9,.v-]+(-r)?$".toRegex(RegexOption.IGNORE_CASE)
+    private val releaseRegex = "^[\\d,.v-]+(-r)?$".toRegex(RegexOption.IGNORE_CASE)
     private val rcRegex = releaseKeywordRegex("rc")
     private val betaRegex = releaseKeywordRegex("beta")
     private val alphaRegex = releaseKeywordRegex("alpha")
@@ -39,7 +41,7 @@ object DependencyUpdates {
 
     @JvmStatic
     fun versionToRelease(version: String): ReleaseType {
-        val stableKeyword = stableKeywords.any { version.toUpperCase().contains(it) }
+        val stableKeyword = stableKeywords.any { version.toUpperCase(Locale.ROOT).contains(it) }
         if (stableKeyword) return ReleaseType.RELEASE
 
         return when {
@@ -53,7 +55,7 @@ object DependencyUpdates {
     }
 
     private fun releaseKeywordRegex(keyword: String): Regex {
-        return "^[0-9,.v-]+(-$keyword[0-9]*)$".toRegex(RegexOption.IGNORE_CASE)
+        return "^[\\d,.v-]+(-$keyword\\d*)$".toRegex(RegexOption.IGNORE_CASE)
     }
 }
 
