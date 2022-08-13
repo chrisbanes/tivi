@@ -19,12 +19,6 @@ import app.tivi.buildsrc.DependencyUpdates
 import app.tivi.buildsrc.ReleaseType
 
 buildscript {
-    ext.buildConfig = [
-            'compileSdk': 33,
-            'minSdk'    : 23,
-            'targetSdk' : 31,
-    ]
-
     repositories {
         google()
         mavenCentral()
