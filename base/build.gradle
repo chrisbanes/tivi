@@ -17,11 +17,10 @@
 
 plugins {
     id 'kotlin'
-    id 'com.android.lint'
+    alias(libs.plugins.android.lint)
 }
 
 dependencies {
-    api libs.kotlin.stdlib
     api libs.kotlin.coroutines.core
 
     api libs.dagger.dagger

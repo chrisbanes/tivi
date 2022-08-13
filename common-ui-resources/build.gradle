@@ -15,8 +15,9 @@
  *
  */
 
-apply plugin: 'com.android.library'
-
+plugins {
+    alias(libs.plugins.android.library)
+}
 
 android {
     compileSdk libs.versions.compileSdk.get() as int

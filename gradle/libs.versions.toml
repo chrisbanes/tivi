@@ -1,5 +1,6 @@
 [versions]
-accompanist = "0.25.0"
+agp = "7.3.0-beta05"
+accompanist = "0.25.1"
 androidxlifecycle = "2.5.1"
 androidxtest = "1.4.0"
 chucker = "3.5.2"
@@ -17,16 +18,23 @@ okhttp = "4.10.0"
 paging = "3.1.1"
 retrofit = "2.9.0"
 room = "2.4.3"
-threetenbp = "1.6.0"
-spotless = "6.9.1"
-gradleDependencyUpdate = "0.42.0"
+threetenbp = "1.6.1"
 compileSdk = "33"
 minSdk = "23"
 targetSdk = "31"
 
 [plugins]
-spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-gradleDependencyUpdate = { id = "com.github.ben-manes.versions", version.ref = "gradleDependencyUpdate" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+android-lint = { id = "com.android.lint", version.ref = "agp" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+gms-googleServices = "com.google.gms.google-services:4.3.13"
+firebase-crashlytics = "com.google.firebase.crashlytics:2.9.1"
+spotless = "com.diffplug.spotless:6.9.1"
+dependencyUpdate = "com.github.ben-manes.versions:0.42.0"
 
 [libraries]
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
@@ -38,8 +46,6 @@ accompanist-pager-pager = { module = "com.google.accompanist:accompanist-pager",
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 
 snapper = "dev.chrisbanes.snapper:snapper:0.2.2"
-
-android-pluginGradle = "com.android.tools.build:gradle:7.3.0-beta05"
 
 androidx-activity-compose = "androidx.activity:activity-compose:1.5.1"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
@@ -56,7 +62,7 @@ androidx-navigation-compose = "androidx.navigation:navigation-compose:2.5.1"
 
 androidx-paging-common = { module = "androidx.paging:paging-common-ktx", version.ref = "paging" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
-androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha15"
+androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha16"
 
 androidx-palette = "androidx.palette:palette:1.0.0"
 
@@ -73,6 +79,8 @@ androidx-test-core = { module = "androidx.test:core", version.ref = "androidxtes
 androidx-test-junit = "androidx.test.ext:junit-ktx:1.1.3"
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidxtest" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxtest" }
+androidx-benchmark-macro = "androidx.benchmark:benchmark-macro-junit4:1.1.0"
+androidx-uiautomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 
 androidx-work-runtime = "androidx.work:work-runtime-ktx:2.7.1"
 
@@ -101,8 +109,6 @@ dagger-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 
 google-analytics = "com.google.firebase:firebase-analytics-ktx:21.1.0"
 google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.2.12"
-google-crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.9.1"
-google-gmsGoogleServices = "com.google.gms:google-services:4.3.13"
 
 debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
 debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retrofit", version.ref = "debugdrawer" }
@@ -110,7 +116,6 @@ debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber
 debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-okhttp-logger", version.ref = "debugdrawer" }
 
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
-hilt-pluginGradle = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0"
 hilt-work = "androidx.hilt:hilt-work:1.0.0"
@@ -122,8 +127,6 @@ kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-extensions = { module = "org.jetbrains.kotlin:kotlin-android-extensions", version.ref = "kotlin" }
-kotlin-pluginGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
 leakCanary = "com.squareup.leakcanary:leakcanary-android:2.9.1"
 

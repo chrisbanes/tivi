@@ -15,9 +15,10 @@
  *
  */
 
-apply plugin: 'com.android.library'
-
-apply plugin: 'kotlin-android'
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+}
 
 android {
     compileSdk libs.versions.compileSdk.get() as int
@@ -61,8 +62,6 @@ dependencies {
     implementation libs.compose.ui.tooling
 
     implementation libs.androidx.paging.compose
-
-    implementation libs.kotlin.stdlib
 
     implementation libs.coil.compose
 

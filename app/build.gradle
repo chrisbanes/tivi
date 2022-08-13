@@ -16,20 +16,10 @@
  */
 
 plugins {
-    id 'com.android.application'
-    id 'dagger.hilt.android.plugin'
-
-    id 'kotlin-android'
-    id 'kotlin-kapt'
-}
-
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
-
-hilt {
-    enableAggregatingTask = true
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.hilt)
 }
 
 def appVersionCode = propOrDef("TIVI_VERSIONCODE", 17) as Integer
@@ -225,9 +215,6 @@ dependencies {
 
     implementation libs.timber
 
-    implementation libs.kotlin.stdlib
-
-    implementation libs.kotlin.coroutines.core
     implementation libs.kotlin.coroutines.android
 
     implementation libs.androidx.profileinstaller
@@ -273,6 +260,6 @@ android.applicationVariants.all { variant ->
 }
 
 if (file("google-services.json").exists()) {
-    apply plugin: 'com.google.gms.google-services'
-    apply plugin: 'com.google.firebase.crashlytics'
+    apply plugin: libs.plugins.gms.googleServices.get().pluginId
+    apply plugin: libs.plugins.firebase.crashlytics.get().pluginId
 }

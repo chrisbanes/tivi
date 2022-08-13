@@ -15,17 +15,12 @@
  *
  */
 
-apply plugin: 'com.android.library'
-
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-kapt'
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.hilt)
 }
-
-apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     compileSdk libs.versions.compileSdk.get() as int
@@ -66,8 +61,6 @@ dependencies {
     implementation libs.coil.compose
 
     implementation libs.accompanist.insetsui
-
-    implementation libs.kotlin.stdlib
 
     implementation libs.hilt.compose
     implementation libs.hilt.library

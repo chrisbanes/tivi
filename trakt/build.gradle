@@ -17,13 +17,8 @@
 
 plugins {
     id 'kotlin'
-    id 'kotlin-kapt'
-    id 'com.android.lint'
-}
-
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.android.lint)
 }
 
 dependencies {
