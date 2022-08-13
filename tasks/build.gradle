@@ -28,10 +28,10 @@ kapt {
 android {
     namespace 'app.tivi.tasks'
 
-    compileSdkVersion buildConfig.compileSdk
+    compileSdk buildConfig.compileSdk
 
     defaultConfig {
-        minSdkVersion buildConfig.minSdk
+        minSdk buildConfig.minSdk
         manifestPlaceholders += ['appAuthRedirectScheme': 'empty']
     }
 
