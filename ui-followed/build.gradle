@@ -72,7 +72,7 @@ dependencies {
 
     implementation libs.accompanist.swiperefresh
 
-    implementation libs.androidx.hilt.compose
+    implementation libs.hilt.compose
     implementation libs.hilt.library
     kapt libs.hilt.compiler
 }

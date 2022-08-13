@@ -1,6 +1,5 @@
 [versions]
 accompanist = "0.25.0"
-androidxhilt = "1.0.0"
 androidxlifecycle = "2.5.1"
 androidxtest = "1.4.0"
 chucker = "3.5.2"
@@ -48,10 +47,6 @@ androidx-browser = "androidx.browser:browser:1.4.0"
 androidx-collection = "androidx.collection:collection-ktx:1.2.0"
 androidx-core = "androidx.core:core-ktx:1.8.0"
 androidx-emoji = "androidx.emoji:emoji:1.1.0"
-
-androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidxhilt" }
-androidx-hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0"
-androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidxhilt" }
 
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxlifecycle" }
@@ -117,6 +112,8 @@ debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-pluginGradle = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0"
+hilt-work = "androidx.hilt:hilt-work:1.0.0"
 hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
 
 junit = "junit:junit:4.13.2"
