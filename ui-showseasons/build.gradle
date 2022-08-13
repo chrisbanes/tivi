@@ -23,6 +23,8 @@ plugins {
 }
 
 android {
+    namespace 'app.tivi.showdetails.seasons'
+
     buildFeatures {
         compose true
     }

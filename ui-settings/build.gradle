@@ -22,6 +22,10 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+android {
+    namespace 'app.tivi.settings'
+}
+
 dependencies {
     implementation projects.base
     implementation projects.commonUiResources

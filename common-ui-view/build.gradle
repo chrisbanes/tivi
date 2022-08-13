@@ -20,6 +20,10 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
+android {
+    namespace 'app.tivi.common.ui'
+}
+
 dependencies {
     implementation projects.data
     api projects.commonUiResources

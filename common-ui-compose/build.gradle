@@ -21,6 +21,8 @@ plugins {
 }
 
 android {
+    namespace 'app.tivi.common.compose'
+
     buildFeatures {
         compose true
     }
