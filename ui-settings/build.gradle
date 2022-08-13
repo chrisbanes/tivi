@@ -22,19 +22,6 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
-android {
-    compileSdk libs.versions.compileSdk.get() as int
-
-    defaultConfig {
-        minSdk libs.versions.minSdk.get() as int
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-}
-
 dependencies {
     implementation projects.base
     implementation projects.commonUiResources
