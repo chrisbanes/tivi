@@ -21,9 +21,9 @@ plugins {
 }
 
 dependencies {
-    api project(':base')
-    api project(':trakt')
-    api project(':tmdb')
+    api projects.base
+    api projects.trakt
+    api projects.tmdb
 
     api libs.androidx.room.common
     api libs.androidx.paging.common

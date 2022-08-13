@@ -27,6 +27,8 @@ gradleEnterprise {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 include ':base'
 include ':core-analytics'
 include ':core-logging'

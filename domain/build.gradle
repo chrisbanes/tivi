@@ -39,11 +39,11 @@ android {
 }
 
 dependencies {
-    implementation project(':base')
-    api project(':data')
-    implementation project(':data-android')
-    implementation project(':trakt-auth')
-    implementation project(':tmdb')
+    implementation projects.base
+    api projects.data
+    implementation projects.dataAndroid
+    implementation projects.traktAuth
+    implementation projects.tmdb
 
     implementation libs.hilt.library
     kapt libs.hilt.compiler

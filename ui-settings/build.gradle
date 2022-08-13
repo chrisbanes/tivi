@@ -41,9 +41,9 @@ android {
 }
 
 dependencies {
-    implementation project(':base')
-    implementation project(':common-ui-resources')
-    implementation project(':common-ui-view')
+    implementation projects.base
+    implementation projects.commonUiResources
+    implementation projects.commonUiView
 
     implementation libs.androidx.browser
     implementation libs.androidx.core

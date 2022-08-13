@@ -39,10 +39,10 @@ android {
 }
 
 dependencies {
-    implementation project(':base')
-    implementation project(':data')
-    implementation project(':common-ui-view')
-    implementation project(':tmdb')
+    implementation projects.base
+    implementation projects.data
+    implementation projects.commonUiView
+    implementation projects.tmdb
 
     implementation libs.androidx.core
 

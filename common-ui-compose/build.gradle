@@ -41,11 +41,11 @@ android {
 }
 
 dependencies {
-    implementation project(':data')
-    api project(':common-imageloading')
+    implementation projects.data
+    api projects.commonImageloading
 
     // TODO: Remove this dependency
-    api project(':common-ui-view')
+    api projects.commonUiView
 
     implementation libs.androidx.core
 

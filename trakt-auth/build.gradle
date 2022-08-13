@@ -40,9 +40,9 @@ android {
 }
 
 dependencies {
-    implementation project(':base')
-    implementation project(':data')
-    api project(':trakt')
+    implementation projects.base
+    implementation projects.data
+    api projects.trakt
 
     implementation libs.hilt.library
     kapt libs.hilt.compiler

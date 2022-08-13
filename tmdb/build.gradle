@@ -27,7 +27,7 @@ kapt {
 }
 
 dependencies {
-    implementation project(':base')
+    implementation projects.base
 
     api(libs.tmdbJava) {
         exclude group: 'org.threeten', module: 'threetenbp'
