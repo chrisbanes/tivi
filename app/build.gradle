@@ -83,7 +83,8 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
 
-    lintOptions {
+    lint {
+        baseline = file("lint-baseline.xml")
         // Disable lintVital. Not needed since lint is run on CI
         checkReleaseBuilds false
         // Ignore any tests
