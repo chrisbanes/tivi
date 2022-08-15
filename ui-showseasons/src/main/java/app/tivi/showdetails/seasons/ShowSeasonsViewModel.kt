@@ -23,6 +23,7 @@ import app.tivi.api.UiMessageManager
 import app.tivi.domain.interactors.UpdateShowSeasons
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
+import app.tivi.extensions.mapToPersistentList
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
@@ -42,13 +43,13 @@ internal class ShowSeasonsViewModel @Inject constructor(
     private val updateShowSeasons: UpdateShowSeasons,
     private val logger: Logger
 ) : ViewModel() {
-    private val showId: Long = savedStateHandle.get("showId")!!
+    private val showId: Long = savedStateHandle["showId"]!!
 
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     val state: StateFlow<ShowSeasonsViewState> = combine(
-        observeShowSeasons.flow,
+        observeShowSeasons.flow.mapToPersistentList(),
         observeShowDetails.flow,
         loadingState.observable,
         uiMessageManager.message

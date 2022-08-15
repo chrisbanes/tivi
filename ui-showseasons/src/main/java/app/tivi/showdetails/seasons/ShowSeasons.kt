@@ -86,6 +86,8 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import app.tivi.common.ui.resources.R as UiR
 
@@ -186,7 +188,9 @@ internal fun ShowSeasons(
                 bottomContent = {
                     SeasonPagerTabs(
                         pagerState = pagerState,
-                        seasons = viewState.seasons.map { it.season },
+                        seasons = viewState.seasons
+                            .map { it.season }
+                            .toPersistentList(),
                         modifier = Modifier.fillMaxWidth(),
                         backgroundColor = Color.Transparent,
                         contentColor = LocalContentColor.current
@@ -218,7 +222,7 @@ internal fun ShowSeasons(
 @Composable
 private fun SeasonPagerTabs(
     pagerState: PagerState,
-    seasons: List<Season>,
+    seasons: PersistentList<Season>,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.primarySurface,
     contentColor: Color = contentColorFor(backgroundColor)
@@ -258,7 +262,7 @@ private fun SeasonPagerTabs(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun SeasonsPager(
-    seasons: List<SeasonWithEpisodesAndWatches>,
+    seasons: PersistentList<SeasonWithEpisodesAndWatches>,
     pagerState: PagerState,
     openEpisodeDetails: (episodeId: Long) -> Unit,
     modifier: Modifier = Modifier
@@ -279,7 +283,7 @@ private fun SeasonsPager(
 
 @Composable
 private fun EpisodesList(
-    episodes: List<EpisodeWithWatches>,
+    episodes: PersistentList<EpisodeWithWatches>,
     onEpisodeClick: (episodeId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {

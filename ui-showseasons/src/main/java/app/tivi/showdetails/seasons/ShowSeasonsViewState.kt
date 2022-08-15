@@ -20,11 +20,13 @@ import androidx.compose.runtime.Immutable
 import app.tivi.api.UiMessage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 internal data class ShowSeasonsViewState(
     val show: TiviShow = TiviShow.EMPTY_SHOW,
-    val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
+    val seasons: PersistentList<SeasonWithEpisodesAndWatches> = persistentListOf(),
     val refreshing: Boolean = false,
     val message: UiMessage? = null
 ) {
