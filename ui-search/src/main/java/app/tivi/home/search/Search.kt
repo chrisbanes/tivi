@@ -16,7 +16,6 @@
 
 package app.tivi.home.search
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -64,6 +63,7 @@ import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
 import com.google.accompanist.insets.ui.Scaffold
+import kotlinx.collections.immutable.PersistentList
 import app.tivi.common.ui.resources.R as UiR
 
 @Composable
@@ -91,7 +91,6 @@ internal fun Search(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 internal fun Search(
     state: SearchViewState,
@@ -156,7 +155,7 @@ internal fun Search(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SearchList(
-    results: List<ShowDetailed>,
+    results: PersistentList<ShowDetailed>,
     onShowClicked: (TiviShow) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)

@@ -22,6 +22,9 @@ import app.tivi.data.repositories.search.SearchRepository
 import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -29,14 +32,14 @@ class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,
     private val showFtsDao: ShowFtsDao,
     private val dispatchers: AppCoroutineDispatchers
-) : SuspendingWorkInteractor<SearchShows.Params, List<ShowDetailed>>() {
-    override suspend fun doWork(params: Params): List<ShowDetailed> = withContext(dispatchers.io) {
+) : SuspendingWorkInteractor<SearchShows.Params, PersistentList<ShowDetailed>>() {
+    override suspend fun doWork(params: Params): PersistentList<ShowDetailed> = withContext(dispatchers.io) {
         val remoteResults = searchRepository.search(params.query)
         when {
             remoteResults.isNotEmpty() -> remoteResults
             params.query.isNotBlank() -> {
                 try {
-                    showFtsDao.search("*$params.query*")
+                    showFtsDao.search("*$params.query*").toPersistentList()
                 } catch (sqe: SQLiteException) {
                     // Re-throw wrapped exception with the query
                     throw SQLiteException(
@@ -45,7 +48,7 @@ class SearchShows @Inject constructor(
                     )
                 }
             }
-            else -> emptyList()
+            else -> persistentListOf()
         }
     }
 

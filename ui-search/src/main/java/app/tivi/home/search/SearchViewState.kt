@@ -18,10 +18,12 @@ package app.tivi.home.search
 
 import app.tivi.api.UiMessage
 import app.tivi.data.resultentities.ShowDetailed
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 internal data class SearchViewState(
     val query: String = "",
-    val searchResults: List<ShowDetailed> = emptyList(),
+    val searchResults: PersistentList<ShowDetailed> = persistentListOf(),
     val refreshing: Boolean = false,
     val message: UiMessage? = null
 ) {

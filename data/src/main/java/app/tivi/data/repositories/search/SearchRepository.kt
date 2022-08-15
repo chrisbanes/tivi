@@ -19,6 +19,9 @@ package app.tivi.data.repositories.search
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.resultentities.ShowDetailed
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,14 +32,15 @@ class SearchRepository @Inject constructor(
     private val showDao: TiviShowDao,
     private val tmdbDataSource: TmdbSearchDataSource
 ) {
-    suspend fun search(query: String): List<ShowDetailed> {
+    suspend fun search(query: String): PersistentList<ShowDetailed> {
         if (query.isBlank()) {
-            return emptyList()
+            return persistentListOf()
         }
 
         val cacheValues = searchStore.getResults(query)
         if (cacheValues != null) {
             return cacheValues.map { showDao.getShowWithIdDetailed(it)!! }
+                .toPersistentList()
         }
 
         // We need to hit TMDb instead
@@ -54,9 +58,9 @@ class SearchRepository @Inject constructor(
             }.mapNotNull {
                 // Finally map back to a TiviShow instance
                 showDao.getShowWithIdDetailed(it)
-            }
+            }.toPersistentList()
         } catch (e: Exception) {
-            emptyList()
+            persistentListOf()
         }
     }
 }
