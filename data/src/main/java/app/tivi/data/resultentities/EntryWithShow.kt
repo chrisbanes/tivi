@@ -19,12 +19,13 @@ package app.tivi.data.resultentities
 import app.tivi.data.Entry
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
+import kotlinx.collections.immutable.PersistentList
 import java.util.Objects
 
 interface EntryWithShow<ET : Entry> {
     val entry: ET
-    val relations: List<TiviShow>
-    val images: List<ShowTmdbImage>
+    val relations: PersistentList<TiviShow>
+    val images: PersistentList<ShowTmdbImage>
 
     val show: TiviShow
         get() {

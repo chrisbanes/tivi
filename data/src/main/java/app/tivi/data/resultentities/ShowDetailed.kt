@@ -23,6 +23,7 @@ import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.findHighestRatedBackdrop
 import app.tivi.data.entities.findHighestRatedPoster
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import java.util.Objects
 
@@ -34,7 +35,7 @@ class ShowDetailed {
     internal lateinit var _images: List<ShowTmdbImage>
 
     @delegate:Ignore
-    val images: List<ShowTmdbImage> by lazy { _images.toPersistentList() }
+    val images: PersistentList<ShowTmdbImage> by lazy { _images.toPersistentList() }
 
     @delegate:Ignore
     val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) {

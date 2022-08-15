@@ -27,7 +27,7 @@ class EpisodeWithSeason {
     var episode: Episode? = null
 
     @Relation(parentColumn = "season_id", entityColumn = "id")
-    var _seasons: List<Season> = emptyList()
+    internal lateinit var _seasons: List<Season>
 
     val season: Season?
         get() = _seasons.getOrNull(0)
