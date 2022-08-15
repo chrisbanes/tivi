@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
+import kotlinx.collections.immutable.PersistentList
 
 inline fun LazyListScope.itemSpacer(height: Dp) {
     item {
@@ -152,7 +153,7 @@ inline fun LazyGridScope.fullSpanItem(
  * column items, with a inner fake row.
  */
 fun <T : Any> LazyListScope.itemsInGrid(
-    items: List<T>,
+    items: PersistentList<T>,
     columns: Int,
     contentPadding: PaddingValues = PaddingValues(),
     horizontalItemPadding: Dp = 0.dp,

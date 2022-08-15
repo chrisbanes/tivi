@@ -30,11 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import app.tivi.data.entities.SortOption
+import kotlinx.collections.immutable.PersistentList
 import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun SortMenuPopup(
-    sortOptions: List<SortOption>,
+    sortOptions: PersistentList<SortOption>,
     onSortSelected: (SortOption) -> Unit,
     modifier: Modifier = Modifier,
     currentSortOption: SortOption? = null,

@@ -95,7 +95,7 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
         return ItemSyncerResult(
             added = added.toPersistentList(),
             deleted = removed.toPersistentList(),
-            updated = updated.toPersistentList(),
+            updated = updated.toPersistentList()
         )
     }
 }

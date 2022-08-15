@@ -22,7 +22,8 @@ object TmdbImageSizes {
 
     const val baseImageUrl = "https://image.tmdb.org/t/p/"
 
-    val posterSizes = persistentListOf("w92",
+    val posterSizes = persistentListOf(
+        "w92",
         "w154",
         "w185",
         "w342",
