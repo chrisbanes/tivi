@@ -20,16 +20,20 @@ import app.tivi.api.UiMessage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 
 internal data class FollowedViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
     val isLoading: Boolean = false,
     val selectionOpen: Boolean = false,
-    val selectedShowIds: Set<Long> = emptySet(),
+    val selectedShowIds: PersistentSet<Long> = persistentSetOf(),
     val filterActive: Boolean = false,
     val filter: String? = null,
-    val availableSorts: List<SortOption> = emptyList(),
+    val availableSorts: PersistentList<SortOption> = persistentListOf(),
     val sort: SortOption = SortOption.SUPER_SORT,
     val message: UiMessage? = null
 ) {

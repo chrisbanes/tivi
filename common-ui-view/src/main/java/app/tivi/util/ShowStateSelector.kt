@@ -17,19 +17,23 @@
 package app.tivi.util
 
 import app.tivi.data.entities.TiviShow
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.minus
+import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.plus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class ShowStateSelector {
-    private val selectedShowIds = MutableStateFlow<Set<Long>>(emptySet())
+    private val selectedShowIds = MutableStateFlow<PersistentSet<Long>>(persistentSetOf())
     private val isSelectionOpen = MutableStateFlow(false)
 
-    fun observeSelectedShowIds(): StateFlow<Set<Long>> = selectedShowIds.asStateFlow()
+    fun observeSelectedShowIds(): StateFlow<PersistentSet<Long>> = selectedShowIds.asStateFlow()
 
     fun observeIsSelectionOpen(): StateFlow<Boolean> = isSelectionOpen.asStateFlow()
 
-    fun getSelectedShowIds(): Set<Long> = selectedShowIds.value
+    fun getSelectedShowIds(): PersistentSet<Long> = selectedShowIds.value
 
     fun onItemClick(show: TiviShow): Boolean {
         if (isSelectionOpen.value) {
@@ -58,7 +62,7 @@ class ShowStateSelector {
     }
 
     fun clearSelection() {
-        selectedShowIds.value = emptySet()
+        selectedShowIds.value = persistentSetOf()
         isSelectionOpen.value = false
     }
 }
