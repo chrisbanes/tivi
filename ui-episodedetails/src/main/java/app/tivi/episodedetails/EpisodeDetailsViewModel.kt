@@ -26,6 +26,7 @@ import app.tivi.domain.interactors.RemoveEpisodeWatches
 import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
+import app.tivi.extensions.mapToPersistentList
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
@@ -49,14 +50,14 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger
 ) : ViewModel() {
-    private val episodeId: Long = savedStateHandle.get("episodeId")!!
+    private val episodeId: Long = savedStateHandle["episodeId"]!!
 
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     val state: StateFlow<EpisodeDetailsViewState> = combine(
         observeEpisodeDetails.flow,
-        observeEpisodeWatches.flow,
+        observeEpisodeWatches.flow.mapToPersistentList(),
         loadingState.observable,
         uiMessageManager.message
     ) { episodeDetails, episodeWatches, refreshing, message ->

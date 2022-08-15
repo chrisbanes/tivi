@@ -265,7 +265,7 @@ internal fun EpisodeDetails(
                     }
                 }
 
-                viewState.watches.forEach { watch ->
+                for (watch in viewState.watches) {
                     key(watch.id) {
                         val dismissState = rememberDismissState {
                             if (it != DismissValue.Default) {

@@ -21,12 +21,14 @@ import app.tivi.api.UiMessage
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.Season
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 internal data class EpisodeDetailsViewState(
     val season: Season? = null,
     val episode: Episode? = null,
-    val watches: List<EpisodeWatchEntry> = emptyList(),
+    val watches: PersistentList<EpisodeWatchEntry> = persistentListOf(),
     val canAddEpisodeWatch: Boolean = false,
     val refreshing: Boolean = false,
     val message: UiMessage? = null
