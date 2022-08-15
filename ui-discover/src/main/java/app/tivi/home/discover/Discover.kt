@@ -89,6 +89,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.collections.immutable.PersistentList
 import app.tivi.common.ui.resources.R as UiR
 
 @Composable
@@ -314,7 +315,7 @@ private fun NextEpisodeToWatch(
 
 @Composable
 private fun <T : EntryWithShow<*>> CarouselWithHeader(
-    items: List<T>,
+    items: PersistentList<T>,
     title: String,
     refreshing: Boolean,
     onItemClick: (TiviShow) -> Unit,
@@ -357,7 +358,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
 @OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun <T : EntryWithShow<*>> EntryShowCarousel(
-    items: List<T>,
+    items: PersistentList<T>,
     onItemClick: (TiviShow) -> Unit,
     modifier: Modifier = Modifier
 ) {

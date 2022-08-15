@@ -22,4 +22,4 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-inline fun <T> Flow<List<T>>.mapToPersistentList(): Flow<List<T>> = map { it.toPersistentList() }
+inline fun <T> Flow<List<T>>.mapToPersistentList() = map { it.toPersistentList() }

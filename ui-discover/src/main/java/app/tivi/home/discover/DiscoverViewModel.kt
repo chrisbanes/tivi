@@ -29,6 +29,7 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.extensions.combine
+import app.tivi.extensions.mapToPersistentList
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
@@ -61,9 +62,9 @@ internal class DiscoverViewModel @Inject constructor(
         trendingLoadingState.observable,
         popularLoadingState.observable,
         recommendedLoadingState.observable,
-        observeTrendingShows.flow,
-        observePopularShows.flow,
-        observeRecommendedShows.flow,
+        observeTrendingShows.flow.mapToPersistentList(),
+        observePopularShows.flow.mapToPersistentList(),
+        observeRecommendedShows.flow.mapToPersistentList(),
         observeNextShowEpisodeToWatch.flow,
         observeTraktAuthState.flow,
         observeUserDetails.flow,

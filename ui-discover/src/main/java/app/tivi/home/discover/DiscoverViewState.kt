@@ -24,16 +24,18 @@ import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.trakt.TraktAuthState
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 internal data class DiscoverViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
-    val trendingItems: List<TrendingEntryWithShow> = emptyList(),
+    val trendingItems: PersistentList<TrendingEntryWithShow> = persistentListOf(),
     val trendingRefreshing: Boolean = false,
-    val popularItems: List<PopularEntryWithShow> = emptyList(),
+    val popularItems: PersistentList<PopularEntryWithShow> = persistentListOf(),
     val popularRefreshing: Boolean = false,
-    val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
+    val recommendedItems: PersistentList<RecommendedEntryWithShow> = persistentListOf(),
     val recommendedRefreshing: Boolean = false,
     val nextEpisodeWithShowToWatched: EpisodeWithSeasonWithShow? = null,
     val message: UiMessage? = null
