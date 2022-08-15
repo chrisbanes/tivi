@@ -39,6 +39,7 @@ import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.extensions.combine
+import app.tivi.extensions.mapToPersistentList
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
@@ -77,9 +78,9 @@ internal class ShowDetailsViewModel @Inject constructor(
         observeShowDetails.flow,
         observeShowImages.flow,
         loadingState.observable,
-        observeRelatedShows.flow,
+        observeRelatedShows.flow.mapToPersistentList(),
         observeNextEpisodeToWatch.flow,
-        observeShowSeasons.flow,
+        observeShowSeasons.flow.mapToPersistentList(),
         observeShowViewStats.flow,
         uiMessageManager.message
     ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons, stats,

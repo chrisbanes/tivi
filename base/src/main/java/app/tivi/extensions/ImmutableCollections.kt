@@ -21,10 +21,8 @@ package app.tivi.extensions
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 inline fun <T> Flow<List<T>>.mapToPersistentList(): Flow<PersistentList<T>> {
-    return distinctUntilChanged()
-        .map { it.toPersistentList() }
+    return map { it.toPersistentList() }
 }

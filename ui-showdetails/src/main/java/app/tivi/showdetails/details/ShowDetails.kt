@@ -141,6 +141,7 @@ import com.google.accompanist.insets.ui.TopAppBar
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.collections.immutable.PersistentList
 import org.threeten.bp.OffsetDateTime
 import app.tivi.common.ui.resources.R as UiR
 
@@ -301,9 +302,9 @@ private fun ShowDetailsScrollingContent(
     show: TiviShow,
     posterImage: TmdbImageEntity?,
     backdropImage: TmdbImageEntity?,
-    relatedShows: List<RelatedShowEntryWithShow>,
+    relatedShows: PersistentList<RelatedShowEntryWithShow>,
     nextEpisodeToWatch: EpisodeWithSeason?,
-    seasons: List<SeasonWithEpisodesAndWatches>,
+    seasons: PersistentList<SeasonWithEpisodesAndWatches>,
     watchStats: FollowedShowsWatchStats?,
     listState: LazyListState,
     openShowDetails: (showId: Long) -> Unit,
@@ -731,7 +732,7 @@ private fun Header(title: String) {
 }
 
 @Composable
-private fun Genres(genres: List<Genre>) {
+private fun Genres(genres: PersistentList<Genre>) {
     Box(
         Modifier
             .fillMaxWidth()
@@ -748,7 +749,7 @@ private fun Genres(genres: List<Genre>) {
 @OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun RelatedShows(
-    related: List<RelatedShowEntryWithShow>,
+    related: PersistentList<RelatedShowEntryWithShow>,
     openShowDetails: (showId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {

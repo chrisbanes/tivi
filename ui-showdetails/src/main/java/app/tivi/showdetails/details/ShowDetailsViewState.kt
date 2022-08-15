@@ -24,6 +24,8 @@ import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 internal data class ShowDetailsViewState(
@@ -31,10 +33,10 @@ internal data class ShowDetailsViewState(
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val posterImage: ShowTmdbImage? = null,
     val backdropImage: ShowTmdbImage? = null,
-    val relatedShows: List<RelatedShowEntryWithShow> = emptyList(),
+    val relatedShows: PersistentList<RelatedShowEntryWithShow> = persistentListOf(),
     val nextEpisodeToWatch: EpisodeWithSeason? = null,
     val watchStats: FollowedShowsWatchStats? = null,
-    val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
+    val seasons: PersistentList<SeasonWithEpisodesAndWatches> = persistentListOf(),
     val refreshing: Boolean = false,
     val message: UiMessage? = null
 ) {
