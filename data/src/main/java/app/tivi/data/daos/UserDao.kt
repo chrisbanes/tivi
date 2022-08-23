@@ -32,16 +32,26 @@ abstract class UserDao : EntityDao<TraktUser>() {
     abstract fun observeTraktUser(username: String): Flow<TraktUser?>
 
     @Query("SELECT * FROM users WHERE username = :username")
-    abstract suspend fun getTraktUser(username: String): TraktUser?
+    internal abstract suspend fun getTraktUser(username: String): TraktUser?
+
+    suspend fun getUser(username: String) = when (username) {
+        "me" -> getMe()
+        else -> getTraktUser(username)
+    }
 
     @Query("SELECT * FROM users WHERE is_me != 0")
     abstract suspend fun getMe(): TraktUser?
 
     @Query("SELECT id FROM users WHERE username = :username")
-    abstract suspend fun getIdForUsername(username: String): Long?
+    internal abstract suspend fun _getIdForUsername(username: String): Long?
 
     @Query("SELECT id FROM users WHERE is_me != 0")
     abstract suspend fun getIdForMe(): Long?
+
+    suspend fun getIdForUsername(username: String) = when (username) {
+        "me" -> getIdForMe()
+        else -> _getIdForUsername(username)
+    }
 
     @Query("DELETE FROM users WHERE username = :username")
     abstract suspend fun deleteWithUsername(username: String)

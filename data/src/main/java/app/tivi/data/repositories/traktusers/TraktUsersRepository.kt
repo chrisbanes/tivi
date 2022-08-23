@@ -16,7 +16,10 @@
 
 package app.tivi.data.repositories.traktusers
 
+import app.tivi.data.daos.UserDao
+import app.tivi.data.entities.TraktUser
 import app.tivi.data.withRetry
+import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.Instant
 import org.threeten.bp.Period
 import javax.inject.Inject
@@ -24,11 +27,14 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktUsersRepository @Inject constructor(
-    private val traktUsersStore: TraktUsersStore,
+    private val userDao: UserDao,
     private val lastRequestStore: TraktUsersLastRequestStore,
     private val traktDataSource: TraktUsersDataSource
 ) {
-    fun observeUser(username: String) = traktUsersStore.observeUser(username)
+    fun observeUser(username: String): Flow<TraktUser?> = when (username) {
+        "me" -> userDao.observeMe()
+        else -> userDao.observeTraktUser(username)
+    }
 
     suspend fun updateUser(username: String) {
         var user = withRetry {
@@ -38,17 +44,17 @@ class TraktUsersRepository @Inject constructor(
             if (username == "me") it.copy(isMe = true) else it
         }
         // Make sure we use the current DB id (if present)
-        val localUser = traktUsersStore.getUser(user.username)
+        val localUser = userDao.getUser(user.username)
         if (localUser != null) {
             user = user.copy(id = localUser.id)
         }
-        val id = traktUsersStore.save(user)
+        val id = userDao.insertOrUpdate(user)
         lastRequestStore.updateLastRequest(id, Instant.now())
     }
 
     suspend fun needUpdate(username: String): Boolean {
-        return traktUsersStore.getIdForUsername(username)?.let {
-            lastRequestStore.isRequestExpired(it, Period.ofDays(7))
+        return userDao.getIdForUsername(username)?.let { userId ->
+            lastRequestStore.isRequestExpired(userId, Period.ofDays(7))
         } ?: true
     }
 }
