@@ -23,11 +23,11 @@ import app.tivi.data.inPast
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.TemporalAmount
 
-open class EntityLastRequestStore(
+abstract class EntityLastRequestStore(
     private val request: Request,
     private val dao: LastRequestDao
 ) {
-    suspend fun getRequestInstant(entityId: Long): Instant? {
+    private suspend fun getRequestInstant(entityId: Long): Instant? {
         return dao.lastRequest(request, entityId)?.timestamp
     }
 
@@ -45,5 +45,5 @@ open class EntityLastRequestStore(
         dao.insert(LastRequest(request = request, entityId = entityId, timestamp = timestamp))
     }
 
-    suspend fun invalidateLastRequest(entityId: Long) = updateLastRequest(entityId, Instant.EPOCH)
+    private suspend fun invalidateLastRequest(entityId: Long) = updateLastRequest(entityId, Instant.EPOCH)
 }

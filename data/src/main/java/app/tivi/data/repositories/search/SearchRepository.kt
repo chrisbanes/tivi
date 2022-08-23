@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.search
 
+import androidx.collection.LruCache
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.resultentities.ShowDetailed
@@ -24,17 +25,18 @@ import javax.inject.Singleton
 
 @Singleton
 class SearchRepository @Inject constructor(
-    private val searchStore: SearchStore,
     private val showTmdbImagesDao: ShowTmdbImagesDao,
     private val showDao: TiviShowDao,
     private val tmdbDataSource: TmdbSearchDataSource
 ) {
+    private val cache by lazy { LruCache<String, LongArray>(32) }
+
     suspend fun search(query: String): List<ShowDetailed> {
         if (query.isBlank()) {
             return emptyList()
         }
 
-        val cacheValues = searchStore.getResults(query)
+        val cacheValues = cache[query]
         if (cacheValues != null) {
             return cacheValues.map { showDao.getShowWithIdDetailed(it)!! }
         }
@@ -50,7 +52,7 @@ class SearchRepository @Inject constructor(
                 showId
             }.also { results ->
                 // We need to save the search results
-                searchStore.setResults(query, results.toLongArray())
+                cache.put(query, results.toLongArray())
             }.mapNotNull {
                 // Finally map back to a TiviShow instance
                 showDao.getShowWithIdDetailed(it)
