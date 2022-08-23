@@ -32,13 +32,13 @@ class RelatedShowEntryWithShow : EntryWithShow<RelatedShowEntry> {
     @Embedded
     override lateinit var entry: RelatedShowEntry
 
-    @Relation(parentColumn = "show_id", entityColumn = "id")
+    @Relation(parentColumn = "other_show_id", entityColumn = "id")
     internal lateinit var _relations: List<TiviShow>
 
     @delegate:Ignore
     override val relations: PersistentList<TiviShow> by lazy { _relations.toPersistentList() }
 
-    @Relation(parentColumn = "show_id", entityColumn = "show_id")
+    @Relation(parentColumn = "other_show_id", entityColumn = "show_id")
     internal lateinit var _images: List<ShowTmdbImage>
 
     @delegate:Ignore
