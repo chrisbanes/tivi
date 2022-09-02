@@ -147,8 +147,8 @@ threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.4.0"
 
 timber = "com.jakewharton.timber:timber:5.0.1"
 
-tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.7.0"
+tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.8.1"
 
-traktJava = "com.uwetrottmann.trakt5:trakt-java:6.10.0"
+traktJava = "com.uwetrottmann.trakt5:trakt-java:6.11.2"
 
 truth = "com.google.truth:truth:1.1.3"
