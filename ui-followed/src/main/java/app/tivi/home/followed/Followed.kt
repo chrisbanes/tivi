@@ -49,15 +49,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.PagingData
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
@@ -68,6 +65,7 @@ import app.tivi.common.compose.rememberFlowWithLifecycle
 import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.FilterSortPanel
+import app.tivi.common.compose.ui.Header
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
@@ -77,7 +75,6 @@ import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.domain.observers.FollowedShowsSection
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.insets.ui.Scaffold
@@ -86,7 +83,6 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import app.tivi.common.ui.resources.R as UiR
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun Followed(
@@ -210,6 +206,9 @@ internal fun Followed(
                 }
 
                 sections.forEach { section ->
+                    fullSpanItem {
+                        Header(section.name)
+                    }
                     items(
                         items = sectionData[section]!!,
                         key = { it.show.id }

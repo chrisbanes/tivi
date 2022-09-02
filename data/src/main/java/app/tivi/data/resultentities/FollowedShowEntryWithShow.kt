@@ -67,5 +67,5 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
 
 data class FollowedShowsRawSection(
     val name: String,
-    val source: PagingSource<Int, FollowedShowEntryWithShow>,
+    val source: PagingSource<Int, FollowedShowEntryWithShow>
 )

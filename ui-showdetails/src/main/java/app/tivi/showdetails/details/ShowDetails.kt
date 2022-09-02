@@ -110,6 +110,7 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.ExpandableFloatingActionButton
 import app.tivi.common.compose.ui.ExpandingText
+import app.tivi.common.compose.ui.Header
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.copy
@@ -711,20 +712,6 @@ private fun TraktRatingInfoPanel(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun Header(title: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.subtitle1
-        )
     }
 }
 
