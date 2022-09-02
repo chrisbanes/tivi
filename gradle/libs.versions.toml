@@ -1,5 +1,5 @@
 [versions]
-agp = "7.3.0-beta05"
+agp = "7.3.0-rc01"
 accompanist = "0.25.1"
 androidxlifecycle = "2.5.1"
 androidxtest = "1.4.0"
@@ -45,7 +45,7 @@ accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiper
 accompanist-pager-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 
-snapper = "dev.chrisbanes.snapper:snapper:0.2.2"
+snapper = "dev.chrisbanes.snapper:snapper:0.3.0"
 
 androidx-activity-compose = "androidx.activity:activity-compose:1.5.1"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"

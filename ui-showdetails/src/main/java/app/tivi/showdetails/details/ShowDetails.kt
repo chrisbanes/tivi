@@ -35,7 +35,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -95,7 +94,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -762,8 +760,7 @@ private fun RelatedShows(
         modifier = modifier,
         flingBehavior = rememberSnapperFlingBehavior(
             lazyListState = lazyListState,
-            snapOffsetForItem = SnapOffsets.Start,
-            endContentPadding = contentPadding.calculateEndPadding(LayoutDirection.Ltr)
+            snapOffsetForItem = SnapOffsets.Start
         ),
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
