@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,25 @@
  */
 
 plugins {
-    id 'kotlin'
-    alias(libs.plugins.android.lint)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.hilt)
+}
+
+android {
+    namespace 'app.tivi.settings'
 }
 
 dependencies {
-    api projects.base
-    api projects.api.trakt
-    api projects.api.tmdb
+    implementation projects.base
+    implementation projects.common.ui.resources
+    implementation projects.common.ui.view
 
-    api libs.androidx.room.common
-    api libs.androidx.paging.common
-    implementation libs.androidx.collection
+    implementation libs.androidx.browser
+    implementation libs.androidx.core
+    implementation libs.androidx.lifecycle.runtime
 
-    implementation libs.retrofit.retrofit
-
-    api libs.store
-
-    api "org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb"
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 }

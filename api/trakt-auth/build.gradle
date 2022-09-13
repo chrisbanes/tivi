@@ -16,22 +16,29 @@
  */
 
 plugins {
-    id 'kotlin'
-    alias(libs.plugins.android.lint)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+}
+
+android {
+    namespace 'app.tivi.trakt.auth'
+
+    defaultConfig {
+        manifestPlaceholders += ['appAuthRedirectScheme': 'empty']
+    }
 }
 
 dependencies {
-    api projects.base
+    implementation projects.base
+    implementation projects.data
     api projects.api.trakt
-    api projects.api.tmdb
 
-    api libs.androidx.room.common
-    api libs.androidx.paging.common
-    implementation libs.androidx.collection
+    implementation libs.hilt.library
+    kapt libs.hilt.compiler
 
-    implementation libs.retrofit.retrofit
+    implementation libs.androidx.browser
+    implementation libs.androidx.core
 
-    api libs.store
-
-    api "org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb"
+    api libs.appauth
 }
