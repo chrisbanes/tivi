@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,37 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.hilt)
 }
 
 android {
-    namespace 'app.tivi.domain'
+    namespace 'app.tivi.home.trending'
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.composecompiler.get()
+    }
 }
 
 dependencies {
     implementation projects.base
-    api projects.data
-    implementation projects.dataAndroid
-    implementation projects.api.traktAuth
-    implementation projects.api.tmdb
+    implementation projects.domain
+    implementation projects.common.ui.compose
 
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+
+    implementation libs.androidx.paging.compose
+
+    implementation libs.compose.foundation.foundation
+    implementation libs.compose.foundation.layout
+    implementation libs.compose.material.material
+    implementation libs.compose.animation.animation
+    implementation libs.compose.ui.tooling
+
+    implementation libs.hilt.compose
     implementation libs.hilt.library
     kapt libs.hilt.compiler
-
-    api libs.androidx.paging.common
-    implementation libs.androidx.paging.runtime
 }
-

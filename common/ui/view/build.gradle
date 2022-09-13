@@ -16,22 +16,24 @@
  */
 
 plugins {
-    id 'kotlin'
-    alias(libs.plugins.android.lint)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+}
+
+android {
+    namespace 'app.tivi.common.ui'
 }
 
 dependencies {
-    api projects.base
-    api projects.api.trakt
-    api projects.api.tmdb
+    implementation projects.data
+    api projects.common.ui.resources
 
-    api libs.androidx.room.common
-    api libs.androidx.paging.common
-    implementation libs.androidx.collection
+    implementation libs.androidx.lifecycle.viewmodel.ktx
 
-    implementation libs.retrofit.retrofit
+    implementation libs.kotlin.coroutines.core
 
-    api libs.store
+    implementation libs.androidx.core
+    implementation libs.androidx.emoji
 
-    api "org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb"
+    implementation libs.hilt.library
 }

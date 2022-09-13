@@ -158,31 +158,31 @@ android {
 
 dependencies {
     implementation projects.base
-    implementation projects.coreAnalytics
-    implementation projects.coreLogging
-    implementation projects.commonUiView
-    implementation projects.commonImageloading
-    implementation projects.commonUiCompose
+    implementation projects.core.analytics
+    implementation projects.core.logging
+    implementation projects.common.ui.view
+    implementation projects.common.imageloading
+    implementation projects.common.ui.compose
     implementation projects.data
     implementation projects.dataAndroid
-    implementation projects.trakt
-    implementation projects.traktAuth
-    implementation projects.tmdb
+    implementation projects.api.trakt
+    implementation projects.api.traktAuth
+    implementation projects.api.tmdb
     implementation projects.domain
     implementation projects.tasks
 
-    implementation projects.uiAccount
-    implementation projects.uiDiscover
-    implementation projects.uiShowdetails
-    implementation projects.uiEpisodedetails
-    implementation projects.uiFollowed
-    implementation projects.uiWatched
-    implementation projects.uiPopular
-    implementation projects.uiTrending
-    implementation projects.uiRecommended
-    implementation projects.uiSearch
-    implementation projects.uiShowseasons
-    implementation projects.uiSettings
+    implementation projects.ui.account
+    implementation projects.ui.discover
+    implementation projects.ui.showdetails
+    implementation projects.ui.episodedetails
+    implementation projects.ui.followed
+    implementation projects.ui.watched
+    implementation projects.ui.popular
+    implementation projects.ui.trending
+    implementation projects.ui.recommended
+    implementation projects.ui.search
+    implementation projects.ui.showseasons
+    implementation projects.ui.settings
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
 
