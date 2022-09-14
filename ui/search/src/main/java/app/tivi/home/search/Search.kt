@@ -16,7 +16,6 @@
 
 package app.tivi.home.search
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -91,7 +90,6 @@ internal fun Search(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 internal fun Search(
     state: SearchViewState,

@@ -42,7 +42,7 @@ internal class ShowSeasonsViewModel @Inject constructor(
     private val updateShowSeasons: UpdateShowSeasons,
     private val logger: Logger
 ) : ViewModel() {
-    private val showId: Long = savedStateHandle.get("showId")!!
+    private val showId: Long = savedStateHandle["showId"]!!
 
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()

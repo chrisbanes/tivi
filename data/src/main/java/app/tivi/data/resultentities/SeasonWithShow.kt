@@ -26,6 +26,7 @@ class SeasonWithShow {
     @Embedded
     lateinit var season: Season
 
+    @Suppress("PropertyName")
     @Relation(parentColumn = "show_id", entityColumn = "id")
     var _shows: List<TiviShow> = emptyList()
 

@@ -67,7 +67,7 @@ internal class ShowDetailsViewModel @Inject constructor(
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
     private val logger: Logger
 ) : ViewModel() {
-    private val showId: Long = savedStateHandle.get("showId")!!
+    private val showId: Long = savedStateHandle["showId"]!!
 
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()

@@ -42,6 +42,7 @@ abstract class UserDao : EntityDao<TraktUser>() {
     @Query("SELECT * FROM users WHERE is_me != 0")
     abstract suspend fun getMe(): TraktUser?
 
+    @Suppress("FunctionName")
     @Query("SELECT id FROM users WHERE username = :username")
     internal abstract suspend fun _getIdForUsername(username: String): Long?
 

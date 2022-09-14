@@ -41,7 +41,7 @@ class TraktFollowedShowsDataSource @Inject constructor(
     listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry
 ) : FollowedShowsDataSource {
     companion object {
-        private val LIST_NAME = "Following"
+        private const val LIST_NAME = "Following"
     }
 
     private val listShowsMapper = pairMapperOf(listEntryToFollowedEntry, listEntryToShowMapper)

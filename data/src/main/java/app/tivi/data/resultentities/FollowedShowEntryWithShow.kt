@@ -37,6 +37,7 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
     @Relation(parentColumn = "show_id", entityColumn = "show_id")
     override lateinit var images: List<ShowTmdbImage>
 
+    @Suppress("PropertyName")
     @Relation(parentColumn = "id", entityColumn = "id")
     lateinit var _stats: List<FollowedShowsWatchStats>
 

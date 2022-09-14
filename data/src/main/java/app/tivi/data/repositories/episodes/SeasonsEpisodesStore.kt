@@ -33,7 +33,7 @@ class SeasonsEpisodesStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
-    private val logger: Logger
+    logger: Logger
 ) {
     private val seasonSyncer = syncerForEntity(
         seasonsDao,
