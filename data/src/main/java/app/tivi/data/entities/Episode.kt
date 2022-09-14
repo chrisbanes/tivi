@@ -41,7 +41,8 @@ import org.threeten.bp.OffsetDateTime
     ]
 )
 data class Episode(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id")
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     override val id: Long = 0,
     @ColumnInfo(name = "season_id") val seasonId: Long,
     @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,

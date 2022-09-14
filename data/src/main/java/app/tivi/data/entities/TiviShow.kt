@@ -34,7 +34,8 @@ import org.threeten.bp.ZoneId
     ]
 )
 data class TiviShow(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id")
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     override val id: Long = 0,
     @ColumnInfo(name = "title") val title: String? = null,
     @ColumnInfo(name = "original_title") val originalTitle: String? = null,

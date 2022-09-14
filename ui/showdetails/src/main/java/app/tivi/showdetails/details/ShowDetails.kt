@@ -339,7 +339,9 @@ private fun ShowDetailsScrollingContent(
                             x = 0,
                             y = if (listState.firstVisibleItemIndex == 0) {
                                 listState.firstVisibleItemScrollOffset / 2
-                            } else 0
+                            } else {
+                                0
+                            }
                         )
                     }
             )
