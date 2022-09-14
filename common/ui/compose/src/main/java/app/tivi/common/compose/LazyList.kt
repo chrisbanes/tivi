@@ -103,12 +103,16 @@ fun <T : Any> LazyGridScope.items(
         contentType = { index ->
             items.peek(index)?.let { contentType(it) }
         },
-        key = if (key == null) null else { index ->
-            val item = items.peek(index)
-            if (item == null) {
-                PagingPlaceholderKey(index)
-            } else {
-                key(item)
+        key = if (key == null) {
+            null
+        } else {
+            { index ->
+                val item = items.peek(index)
+                if (item == null) {
+                    PagingPlaceholderKey(index)
+                } else {
+                    key(item)
+                }
             }
         }
     ) { index ->

@@ -34,5 +34,7 @@ fun Modifier.iconButtonBackgroundScrim(
             color = MaterialTheme.colors.surface.copy(alpha = alpha),
             shape = shape
         )
-    } else this
+    } else {
+        this
+    }
 }

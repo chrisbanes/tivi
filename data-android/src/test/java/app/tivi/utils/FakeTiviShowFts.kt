@@ -28,7 +28,8 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "shows_fts")
 internal data class FakeTiviShowFts(
-    @PrimaryKey @ColumnInfo(name = "id")
+    @PrimaryKey
+    @ColumnInfo(name = "id")
     val id: Long? = null,
     @ColumnInfo(name = "title") val title: String? = null,
     @ColumnInfo(name = "original_title") val originalTitle: String? = null,

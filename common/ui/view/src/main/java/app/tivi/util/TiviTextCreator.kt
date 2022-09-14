@@ -78,7 +78,9 @@ class TiviTextCreator @Inject constructor(
     fun seasonEpisodeTitleText(season: Season?, episode: Episode?): String {
         return if (season != null && episode != null) {
             context.getString(UiR.string.season_episode_number, season.number, episode.number)
-        } else ""
+        } else {
+            ""
+        }
     }
 
     fun seasonTitle(

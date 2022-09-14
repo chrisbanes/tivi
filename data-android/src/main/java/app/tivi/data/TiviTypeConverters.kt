@@ -66,7 +66,9 @@ object TiviTypeConverters {
     fun toDayOfWeek(value: Int?): DayOfWeek? {
         return if (value != null) {
             dayOfWeekValues.firstOrNull { it.value == value }
-        } else null
+        } else {
+            null
+        }
     }
 
     @TypeConverter

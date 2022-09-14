@@ -13,7 +13,7 @@ dagger = "2.43.2"
 debugdrawer = "0.9.8"
 hilt = "2.43.2"
 kotlin = "1.7.10"
-ktlint = "0.46.1"
+ktlint = "0.47.1"
 okhttp = "4.10.0"
 paging = "3.1.1"
 retrofit = "2.9.0"
@@ -33,7 +33,7 @@ kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 gms-googleServices = "com.google.gms.google-services:4.3.13"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.1"
-spotless = "com.diffplug.spotless:6.9.1"
+spotless = "com.diffplug.spotless:6.11.0"
 dependencyUpdate = "com.github.ben-manes.versions:0.42.0"
 
 [libraries]
