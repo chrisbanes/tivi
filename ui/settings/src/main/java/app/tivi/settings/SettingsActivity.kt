@@ -23,7 +23,6 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import app.tivi.util.PowerController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 @AndroidEntryPoint

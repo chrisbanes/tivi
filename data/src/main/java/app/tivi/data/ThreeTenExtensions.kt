@@ -24,7 +24,7 @@ import org.threeten.bp.temporal.TemporalAmount
 
 fun TemporalAmount.inPast(): Instant = Instant.now().minus(this)
 
-fun periodOf(years: Int = 0, months: Int = 0, days: Int = 0) = Period.of(years, months, days)
+fun periodOf(years: Int = 0, months: Int = 0, days: Int = 0): Period = Period.of(years, months, days)
 
 fun instantInPast(days: Int = 0, hours: Int = 0, minutes: Int = 0): Instant {
     var instant = Instant.now()

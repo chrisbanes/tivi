@@ -18,7 +18,6 @@ package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -389,7 +388,6 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun Header(
     title: String,

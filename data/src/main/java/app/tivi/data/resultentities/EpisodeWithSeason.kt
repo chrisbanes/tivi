@@ -26,6 +26,7 @@ class EpisodeWithSeason {
     @Embedded
     var episode: Episode? = null
 
+    @Suppress("PropertyName")
     @Relation(parentColumn = "season_id", entityColumn = "id")
     var _seasons: List<Season> = emptyList()
 

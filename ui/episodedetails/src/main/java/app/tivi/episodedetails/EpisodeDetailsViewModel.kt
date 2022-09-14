@@ -49,7 +49,7 @@ internal class EpisodeDetailsViewModel @Inject constructor(
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger
 ) : ViewModel() {
-    private val episodeId: Long = savedStateHandle.get("episodeId")!!
+    private val episodeId: Long = savedStateHandle["episodeId"]!!
 
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()

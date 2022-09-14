@@ -149,8 +149,8 @@ class TiviTextCreator @Inject constructor(
             }
 
             val emojiCompat = EmojiCompat.get()
-            return when {
-                emojiCompat.loadState == EmojiCompat.LOAD_STATE_SUCCEEDED -> emojiCompat.process(spanned)
+            return when (emojiCompat.loadState) {
+                EmojiCompat.LOAD_STATE_SUCCEEDED -> emojiCompat.process(spanned)
                 else -> spanned
             }
         }
