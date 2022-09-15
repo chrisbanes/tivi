@@ -33,7 +33,7 @@ dependencies {
 
     implementation libs.androidx.browser
     implementation libs.androidx.core
-    implementation libs.androidx.lifecycle.runtime
+    implementation libs.androidx.lifecycle.runtime.ktx
 
     implementation libs.hilt.library
     kapt libs.hilt.compiler

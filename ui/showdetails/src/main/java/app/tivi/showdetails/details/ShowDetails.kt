@@ -97,6 +97,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
@@ -104,7 +106,6 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
-import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
@@ -158,6 +159,7 @@ fun ShowDetails(
     )
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun ShowDetails(
     viewModel: ShowDetailsViewModel,
@@ -166,21 +168,21 @@ internal fun ShowDetails(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     openSeasons: (showId: Long, seasonId: Long) -> Unit
 ) {
-    val viewState by rememberStateWithLifecycle(viewModel.state)
+    val viewState by viewModel.state.collectAsStateWithLifecycle()
     ShowDetails(
         viewState = viewState,
         navigateUp = navigateUp,
         openShowDetails = openShowDetails,
         openEpisodeDetails = openEpisodeDetails,
-        refresh = { viewModel.refresh() },
-        onMessageShown = { viewModel.clearMessage(it) },
+        refresh = viewModel::refresh,
+        onMessageShown = viewModel::clearMessage,
         openSeason = { openSeasons(viewState.show.id, it) },
         onSeasonFollowed = { viewModel.setSeasonFollowed(it, true) },
         onSeasonUnfollowed = { viewModel.setSeasonFollowed(it, false) },
-        unfollowPreviousSeasons = { viewModel.unfollowPreviousSeasons(it) },
+        unfollowPreviousSeasons = viewModel::unfollowPreviousSeasons,
         onMarkSeasonWatched = { viewModel.setSeasonWatched(it, onlyAired = true) },
-        onMarkSeasonUnwatched = { viewModel.setSeasonUnwatched(it) },
-        onToggleShowFollowed = { viewModel.toggleFollowShow() }
+        onMarkSeasonUnwatched = viewModel::setSeasonUnwatched,
+        onToggleShowFollowed = viewModel::toggleFollowShow
     )
 }
 

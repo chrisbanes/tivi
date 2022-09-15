@@ -53,7 +53,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import app.tivi.common.compose.rememberStateWithLifecycle
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.data.entities.TraktUser
@@ -74,12 +75,13 @@ fun AccountUi(
     )
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun AccountUi(
     viewModel: AccountUiViewModel,
     openSettings: () -> Unit
 ) {
-    val viewState by rememberStateWithLifecycle(viewModel.state)
+    val viewState by viewModel.state.collectAsStateWithLifecycle()
 
     val loginLauncher = rememberLauncherForActivityResult(
         viewModel.buildLoginActivityResult()

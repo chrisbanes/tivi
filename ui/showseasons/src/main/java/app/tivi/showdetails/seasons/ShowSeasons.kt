@@ -67,10 +67,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
@@ -103,6 +104,7 @@ fun ShowSeasons(
     )
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun ShowSeasons(
     viewModel: ShowSeasonsViewModel,
@@ -110,14 +112,14 @@ internal fun ShowSeasons(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     initialSeasonId: Long?
 ) {
-    val viewState by rememberStateWithLifecycle(viewModel.state)
+    val viewState by viewModel.state.collectAsStateWithLifecycle()
 
     ShowSeasons(
         viewState = viewState,
         navigateUp = navigateUp,
         openEpisodeDetails = openEpisodeDetails,
-        refresh = { viewModel.refresh() },
-        onMessageShown = { viewModel.clearMessage(it) },
+        refresh = viewModel::refresh,
+        onMessageShown = viewModel::clearMessage,
         initialSeasonId = initialSeasonId
     )
 }
