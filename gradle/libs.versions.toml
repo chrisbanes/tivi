@@ -1,7 +1,7 @@
 [versions]
 agp = "7.3.0-rc01"
 accompanist = "0.25.1"
-androidxlifecycle = "2.5.1"
+androidxlifecycle = "2.6.0-alpha02"
 androidxtest = "1.4.0"
 chucker = "3.5.2"
 coil = "2.1.0"
@@ -54,7 +54,8 @@ androidx-collection = "androidx.collection:collection-ktx:1.2.0"
 androidx-core = "androidx.core:core-ktx:1.8.0"
 androidx-emoji = "androidx.emoji:emoji:1.1.0"
 
-androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxlifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxlifecycle" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxlifecycle" }
 

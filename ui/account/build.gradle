@@ -40,7 +40,8 @@ dependencies {
     implementation projects.common.ui.compose
     implementation projects.api.traktAuth
 
-    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.lifecycle.runtime.compose
+    implementation libs.androidx.lifecycle.viewmodel.compose
 
     // For registerForActivityResult
     implementation libs.androidx.activity.compose

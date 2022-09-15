@@ -52,9 +52,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
@@ -75,18 +76,19 @@ fun Search(
     )
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun Search(
     viewModel: SearchViewModel,
     openShowDetails: (showId: Long) -> Unit
 ) {
-    val viewState by rememberStateWithLifecycle(viewModel.state)
+    val viewState by viewModel.state.collectAsStateWithLifecycle()
 
     Search(
         state = viewState,
         openShowDetails = openShowDetails,
-        onSearchQueryChanged = { viewModel.search(it) },
-        onMessageShown = { viewModel.clearMessage(it) }
+        onSearchQueryChanged = viewModel::search,
+        onMessageShown = viewModel::clearMessage
     )
 }
 

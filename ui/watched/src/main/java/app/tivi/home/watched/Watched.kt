@@ -53,6 +53,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
@@ -61,8 +63,6 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.items
-import app.tivi.common.compose.rememberFlowWithLifecycle
-import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.FilterSortPanel
 import app.tivi.common.compose.ui.PosterCard
@@ -96,25 +96,25 @@ fun Watched(
     )
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun Watched(
     viewModel: WatchedViewModel,
     openShowDetails: (showId: Long) -> Unit,
     openUser: () -> Unit
 ) {
-    val viewState by rememberStateWithLifecycle(viewModel.state)
-    val pagingItems = rememberFlowWithLifecycle(viewModel.pagedList)
-        .collectAsLazyPagingItems()
+    val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
 
     Watched(
         state = viewState,
         list = pagingItems,
         openShowDetails = openShowDetails,
-        onMessageShown = { viewModel.clearMessage(it) },
+        onMessageShown = viewModel::clearMessage,
         openUser = openUser,
-        refresh = { viewModel.refresh() },
-        onFilterChanged = { viewModel.setFilter(it) },
-        onSortSelected = { viewModel.setSort(it) }
+        refresh = viewModel::refresh,
+        onFilterChanged = viewModel::setFilter,
+        onSortSelected = viewModel::setSort
     )
 }
 

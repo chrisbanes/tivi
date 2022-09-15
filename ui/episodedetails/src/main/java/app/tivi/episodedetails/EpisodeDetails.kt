@@ -87,9 +87,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.compose.rememberStateWithLifecycle
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.ExpandingText
@@ -121,6 +122,7 @@ fun EpisodeDetails(
     )
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @ExperimentalMaterialApi
 @Composable
 internal fun EpisodeDetails(
@@ -128,17 +130,17 @@ internal fun EpisodeDetails(
     expandedValue: ModalBottomSheetValue,
     navigateUp: () -> Unit
 ) {
-    val viewState by rememberStateWithLifecycle(viewModel.state)
+    val viewState by viewModel.state.collectAsStateWithLifecycle()
 
     EpisodeDetails(
         viewState = viewState,
         expandedValue = expandedValue,
         navigateUp = navigateUp,
-        refresh = { viewModel.refresh() },
-        onRemoveAllWatches = { viewModel.removeAllWatches() },
-        onRemoveWatch = { viewModel.removeWatchEntry(it) },
-        onAddWatch = { viewModel.addWatch() },
-        onMessageShown = { viewModel.clearMessage(it) }
+        refresh = viewModel::refresh,
+        onRemoveAllWatches = viewModel::removeAllWatches,
+        onRemoveWatch = viewModel::removeWatchEntry,
+        onAddWatch = viewModel::addWatch,
+        onMessageShown = viewModel::clearMessage
     )
 }
 
