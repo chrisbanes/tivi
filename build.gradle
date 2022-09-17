@@ -17,6 +17,7 @@
 
 import app.tivi.buildsrc.DependencyUpdates
 import app.tivi.buildsrc.ReleaseType
+import com.android.build.gradle.BasePlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -98,14 +99,18 @@ subprojects {
     plugins.withId(rootProject.libs.plugins.kotlin.kapt.get().pluginId) {
         kapt.correctErrorTypes = true
     }
-    plugins.withId(rootProject.libs.plugins.android.library.get().pluginId) {
-        setupAndroid(project)
-    }
-    plugins.withId(rootProject.libs.plugins.android.test.get().pluginId) {
-        setupAndroid(project)
-    }
-    plugins.withId(rootProject.libs.plugins.android.application.get().pluginId) {
-        setupAndroid(project)
+    plugins.withType(BasePlugin).configureEach {
+        project.android {
+            compileSdk libs.versions.compileSdk.get() as int
+            defaultConfig {
+                minSdk libs.versions.minSdk.get() as int
+                targetSdk libs.versions.targetSdk.get() as int
+            }
+            compileOptions {
+                sourceCompatibility JavaVersion.VERSION_11
+                targetCompatibility JavaVersion.VERSION_11
+            }
+        }
     }
 }
 
@@ -128,18 +133,4 @@ tasks.named("dependencyUpdates").configure {
 Object propOrDef(String propertyName, Object defaultValue) {
     def propertyValue = project.properties[propertyName]
     return propertyValue != null ? propertyValue : defaultValue
-}
-
-def setupAndroid(Project project) {
-    project.android {
-        compileSdk libs.versions.compileSdk.get() as int
-        defaultConfig {
-            minSdk libs.versions.minSdk.get() as int
-            targetSdk libs.versions.targetSdk.get() as int
-        }
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_11
-            targetCompatibility JavaVersion.VERSION_11
-        }
-    }
 }
