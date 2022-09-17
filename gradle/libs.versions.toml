@@ -1,5 +1,5 @@
 [versions]
-agp = "7.3.0-rc01"
+agp = "7.3.0"
 accompanist = "0.25.1"
 androidxlifecycle = "2.6.0-alpha02"
 androidxtest = "1.4.0"
