@@ -23,6 +23,7 @@ import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.findHighestRatedBackdrop
 import app.tivi.data.entities.findHighestRatedPoster
+import app.tivi.extensions.unsafeLazy
 import java.util.Objects
 
 class ShowDetailed {
@@ -33,14 +34,10 @@ class ShowDetailed {
     lateinit var images: List<ShowTmdbImage>
 
     @delegate:Ignore
-    val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) {
-        images.findHighestRatedBackdrop()
-    }
+    val backdrop: ShowTmdbImage? by unsafeLazy { images.findHighestRatedBackdrop() }
 
     @delegate:Ignore
-    val poster: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) {
-        images.findHighestRatedPoster()
-    }
+    val poster: ShowTmdbImage? by unsafeLazy { images.findHighestRatedPoster() }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

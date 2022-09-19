@@ -21,6 +21,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import app.tivi.extensions.unsafeLazy
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalTime
 import org.threeten.bp.OffsetDateTime
@@ -63,7 +64,7 @@ data class TiviShow(
     constructor() : this(0)
 
     @delegate:Ignore
-    val genres by lazy(LazyThreadSafetyMode.NONE) {
+    val genres by unsafeLazy {
         _genres?.split(",")?.mapNotNull { Genre.fromTraktValue(it.trim()) } ?: emptyList()
     }
 
