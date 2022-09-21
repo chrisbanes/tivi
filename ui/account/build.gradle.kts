@@ -17,7 +17,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.napt)
     alias(libs.plugins.hilt)
 }
 
@@ -61,5 +61,5 @@ dependencies {
 
     implementation(libs.hilt.compose)
     implementation(libs.hilt.library)
-    kapt(libs.hilt.compiler)
+    annotationProcessor(libs.hilt.compiler)
 }

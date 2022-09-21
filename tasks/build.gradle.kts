@@ -18,7 +18,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.napt)
 }
 
 android {
@@ -38,8 +38,6 @@ dependencies {
     api(libs.androidx.work.runtime)
 
     implementation(libs.hilt.library)
-    kapt(libs.hilt.compiler)
-
+    annotationProcessor(libs.hilt.compiler)
     implementation(libs.hilt.work)
-    kapt(libs.hilt.compiler)
 }
