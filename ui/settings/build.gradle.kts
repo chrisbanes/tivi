@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,23 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.hilt)
 }
 
 android {
-    namespace 'app.tivi.common.ui'
+    namespace = "app.tivi.settings"
 }
 
 dependencies {
-    implementation projects.data
-    api projects.common.ui.resources
+    implementation(projects.base)
+    implementation(projects.common.ui.resources)
+    implementation(projects.common.ui.view)
 
-    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation libs.kotlin.coroutines.core
-
-    implementation libs.androidx.core
-    implementation libs.androidx.emoji
-
-    implementation libs.hilt.library
+    implementation(libs.hilt.library)
+    kapt(libs.hilt.compiler)
 }

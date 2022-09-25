@@ -24,44 +24,47 @@ pluginManagement {
 }
 
 plugins {
-    id 'com.gradle.enterprise' version '3.11.1'
+    id("com.gradle.enterprise") version "3.11.1"
 }
 
 gradleEnterprise {
     buildScan {
-        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-        termsOfServiceAgree = 'yes'
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
         publishAlways()
     }
 }
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-include ':base'
-include ':core:analytics'
-include ':core:logging'
-include ':common:ui:view'
-include ':common:ui:resources'
-include ':common:ui:compose'
-include ':common:imageloading'
-include ':data'
-include ':data-android'
-include ':api:trakt'
-include ':api:trakt-auth'
-include ':api:tmdb'
-include ':tasks'
-include ':domain'
-include ':ui:discover'
-include ':ui:showdetails'
-include ':ui:episodedetails'
-include ':ui:followed'
-include ':ui:watched'
-include ':ui:trending'
-include ':ui:popular'
-include ':ui:recommended'
-include ':ui:search'
-include ':ui:showseasons'
-include ':ui:settings'
-include ':ui:account'
-include ':app'
-include ':benchmark'
+include(
+    ":base",
+    ":core:analytics",
+    ":core:logging",
+    ":common:ui:view",
+    ":common:ui:resources",
+    ":common:ui:compose",
+    ":common:imageloading",
+    ":data",
+    ":data-android",
+    ":api:trakt",
+    ":api:trakt-auth",
+    ":api:tmdb",
+    ":tasks",
+    ":domain",
+    ":ui:discover",
+    ":ui:showdetails",
+    ":ui:episodedetails",
+    ":ui:followed",
+    ":ui:watched",
+    ":ui:trending",
+    ":ui:popular",
+    ":ui:recommended",
+    ":ui:search",
+    ":ui:showseasons",
+    ":ui:settings",
+    ":ui:account",
+    ":app",
+    ":benchmark",
+)
+

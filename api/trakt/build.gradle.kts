@@ -16,12 +16,22 @@
  */
 
 plugins {
-    id 'kotlin'
+    id("kotlin")
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.android.lint)
 }
 
 dependencies {
-    api libs.kotlin.coroutines.core
+    api(libs.traktJava) {
+        exclude(group = "org.threeten", module = "threetenbp")
+    }
+    api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
 
-    api libs.dagger.dagger
+    implementation(projects.base)
+
+    implementation(libs.okhttp.okhttp)
+    implementation(libs.retrofit.retrofit)
+    implementation(libs.retrofit.gsonConverter)
+
+    kapt(libs.dagger.compiler)
 }

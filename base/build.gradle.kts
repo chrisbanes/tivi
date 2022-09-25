@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC.
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,12 @@
  */
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
-}
-
-android {
-    namespace 'app.tivi.tasks'
-
-    defaultConfig {
-        manifestPlaceholders += ['appAuthRedirectScheme': 'empty']
-    }
+    id("kotlin")
+    alias(libs.plugins.android.lint)
 }
 
 dependencies {
-    implementation projects.base
-    implementation projects.domain
+    api(libs.kotlin.coroutines.core)
 
-    api libs.androidx.work.runtime
-
-    implementation libs.hilt.library
-    kapt libs.hilt.compiler
-
-    implementation libs.hilt.work
-    kapt libs.hilt.compiler
+    api(libs.dagger.dagger)
 }

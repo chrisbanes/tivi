@@ -17,8 +17,30 @@
 
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
-    namespace 'app.tivi.common.ui.resources'
+    namespace = "app.tivi.trakt.auth"
+
+    defaultConfig {
+        manifestPlaceholders += mapOf(
+            "appAuthRedirectScheme" to "empty"
+        )
+    }
+}
+
+dependencies {
+    implementation(projects.base)
+    implementation(projects.data)
+    api(projects.api.trakt)
+
+    implementation(libs.hilt.library)
+    kapt(libs.hilt.compiler)
+
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.core)
+
+    api(libs.appauth)
 }

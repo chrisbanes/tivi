@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,19 @@ plugins {
 }
 
 android {
-    namespace 'app.tivi.core.analytics'
+    namespace = "app.tivi.common.imageloading"
 }
 
 dependencies {
-    api projects.base
+    implementation(projects.base)
+    implementation(projects.data)
+    implementation(projects.common.ui.view)
+    implementation(projects.api.tmdb)
 
-    implementation libs.google.analytics
+    implementation(libs.androidx.core)
 
-    implementation libs.hilt.library
-    kapt libs.hilt.compiler
+    implementation(libs.hilt.library)
+    kapt(libs.hilt.compiler)
+
+    api(libs.coil.coil)
 }

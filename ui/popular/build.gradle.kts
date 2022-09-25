@@ -23,34 +23,34 @@ plugins {
 }
 
 android {
-    namespace 'app.tivi.home.trending'
+    namespace = "app.tivi.home.popular"
 
     buildFeatures {
-        compose true
+        compose = true
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.composecompiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.composecompiler.get()
     }
 }
 
 dependencies {
-    implementation projects.base
-    implementation projects.domain
-    implementation projects.common.ui.compose
+    implementation(projects.base)
+    implementation(projects.domain)
+    implementation(projects.common.ui.compose)
 
-    implementation libs.androidx.lifecycle.runtime.compose
-    implementation libs.androidx.lifecycle.viewmodel.compose
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
-    implementation libs.androidx.paging.compose
+    implementation(libs.androidx.paging.compose)
 
-    implementation libs.compose.foundation.foundation
-    implementation libs.compose.foundation.layout
-    implementation libs.compose.material.material
-    implementation libs.compose.animation.animation
-    implementation libs.compose.ui.tooling
+    implementation(libs.compose.foundation.foundation)
+    implementation(libs.compose.foundation.layout)
+    implementation(libs.compose.material.material)
+    implementation(libs.compose.animation.animation)
+    implementation(libs.compose.ui.tooling)
 
-    implementation libs.hilt.compose
-    implementation libs.hilt.library
-    kapt libs.hilt.compiler
+    implementation(libs.hilt.compose)
+    implementation(libs.hilt.library)
+    kapt(libs.hilt.compiler)
 }

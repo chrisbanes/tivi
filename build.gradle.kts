@@ -17,7 +17,11 @@
 
 import app.tivi.buildsrc.DependencyUpdates
 import app.tivi.buildsrc.ReleaseType
+import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import dagger.hilt.android.plugin.HiltExtension
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -40,75 +44,76 @@ allprojects {
         mavenCentral()
 
         // Jetpack Compose SNAPSHOTs
-        def composeSnapshot = libs.versions.composesnapshot.get()
-        if (composeSnapshot.length() > 1) {
-            maven { url "https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/" }
+        val composeSnapshot = rootProject.libs.versions.composesnapshot.get()
+        if (composeSnapshot.length > 1) {
+            maven("https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/")
         }
 
         // Used for snapshots
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
 subprojects {
-    apply plugin: 'com.diffplug.spotless'
+    apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
     spotless {
         kotlin {
-            target '**/*.kt'
+            target("**/*.kt")
             targetExclude("$buildDir/**/*.kt")
-            targetExclude('bin/**/*.kt')
+            targetExclude("bin/**/*.kt")
 
             ktlint(libs.versions.ktlint.get())
-                .editorConfigOverride(["disabled_rules": "filename"])
-            licenseHeaderFile rootProject.file('spotless/copyright.kt')
+                .editorConfigOverride(mapOf("disabled_rules" to "filename"))
+            licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
         }
     }
 
-    tasks.withType(KotlinCompile).configureEach {
+    tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             // Treat all Kotlin warnings as errors
             allWarningsAsErrors = true
 
             // Enable experimental coroutines APIs, including Flow
-            freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-            freeCompilerArgs += "-opt-in=kotlinx.coroutines.FlowPreview"
-            freeCompilerArgs += "-opt-in=kotlin.Experimental"
-
+            freeCompilerArgs += listOf(
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=kotlinx.coroutines.FlowPreview",
+                "-opt-in=kotlin.Experimental"
+            )
 
             if (project.hasProperty("tivi.enableComposeCompilerReports")) {
-                freeCompilerArgs += [
+                freeCompilerArgs += listOf(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
                         project.buildDir.absolutePath + "/compose_metrics"
-                ]
-                freeCompilerArgs += [
+                )
+                freeCompilerArgs += listOf(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
                         project.buildDir.absolutePath + "/compose_metrics"
-                ]
+                )
             }
 
             // Set JVM target to 11
-            jvmTarget = JavaVersion.VERSION_11
+            jvmTarget = JavaVersion.VERSION_11.toString()
         }
     }
 
     plugins.withId(rootProject.libs.plugins.hilt.get().pluginId) {
-        hilt.enableAggregatingTask = true
+        extensions.getByType<HiltExtension>().enableAggregatingTask = true
     }
     plugins.withId(rootProject.libs.plugins.kotlin.kapt.get().pluginId) {
-        kapt.correctErrorTypes = true
+        extensions.getByType<KaptExtension>().correctErrorTypes = true
     }
-    plugins.withType(BasePlugin).configureEach {
-        project.android {
-            compileSdk libs.versions.compileSdk.get() as int
+    plugins.withType<BasePlugin>().configureEach {
+        extensions.configure<BaseExtension> {
+            compileSdkVersion(libs.versions.compileSdk.get().toInt())
             defaultConfig {
-                minSdk libs.versions.minSdk.get() as int
-                targetSdk libs.versions.targetSdk.get() as int
+                minSdk = libs.versions.minSdk.get().toInt()
+                targetSdk = libs.versions.targetSdk.get().toInt()
             }
             compileOptions {
-                sourceCompatibility JavaVersion.VERSION_11
-                targetCompatibility JavaVersion.VERSION_11
+                sourceCompatibility = JavaVersion.VERSION_11
+                targetCompatibility = JavaVersion.VERSION_11
             }
         }
     }
@@ -118,19 +123,14 @@ subprojects {
  * Update dependencyUpdates task to reject versions which are more 'unstable' than our
  * current version.
  */
-tasks.named("dependencyUpdates").configure {
+tasks.withType<DependencyUpdatesTask>().configureEach {
     rejectVersionIf {
-        def current = DependencyUpdates.versionToRelease(it.currentVersion)
+        val current = DependencyUpdates.versionToRelease(currentVersion)
         // If we're using a SNAPSHOT, ignore since we must be doing so for a reason.
-        if (current == ReleaseType.SNAPSHOT) return true
+        if (current == ReleaseType.SNAPSHOT) return@rejectVersionIf true
 
         // Otherwise we reject if the candidate is more 'unstable' than our version
-        def candidate = DependencyUpdates.versionToRelease(it.candidate.version)
-        return candidate.isLessStableThan(current)
+        val candidate = DependencyUpdates.versionToRelease(candidate.version)
+        return@rejectVersionIf candidate.isLessStableThan(current)
     }
-}
-
-Object propOrDef(String propertyName, Object defaultValue) {
-    def propertyValue = project.properties[propertyName]
-    return propertyValue != null ? propertyValue : defaultValue
 }

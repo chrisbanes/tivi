@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google, Inc.
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,14 @@ plugins {
 }
 
 android {
-    namespace 'app.tivi.domain'
+    namespace = "app.tivi.core.analytics"
 }
 
 dependencies {
-    implementation projects.base
-    api projects.data
-    implementation projects.dataAndroid
-    implementation projects.api.traktAuth
-    implementation projects.api.tmdb
+    api(projects.base)
 
-    implementation libs.hilt.library
-    kapt libs.hilt.compiler
+    implementation(libs.google.analytics)
 
-    api libs.androidx.paging.common
-    implementation libs.androidx.paging.runtime
+    implementation(libs.hilt.library)
+    kapt(libs.hilt.compiler)
 }
-

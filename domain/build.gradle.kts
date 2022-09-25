@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,26 @@
  */
 
 plugins {
-    id 'kotlin'
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.android.lint)
+}
+
+android {
+    namespace = "app.tivi.domain"
 }
 
 dependencies {
-    api(libs.traktJava) {
-        exclude group: 'org.threeten', module: 'threetenbp'
-    }
-    api "org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb"
+    implementation(projects.base)
+    api(projects.data)
+    implementation(projects.dataAndroid)
+    implementation(projects.api.traktAuth)
+    implementation(projects.api.tmdb)
 
-    implementation projects.base
+    implementation(libs.hilt.library)
+    kapt(libs.hilt.compiler)
 
-    implementation libs.okhttp.okhttp
-    implementation libs.retrofit.retrofit
-    implementation libs.retrofit.gsonConverter
-
-    kapt libs.dagger.compiler
+    api(libs.androidx.paging.common)
+    implementation(libs.androidx.paging.runtime)
 }
+
