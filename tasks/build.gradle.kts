@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,23 +22,24 @@ plugins {
 }
 
 android {
-    namespace 'app.tivi.trakt.auth'
+    namespace = "app.tivi.tasks"
 
     defaultConfig {
-        manifestPlaceholders += ['appAuthRedirectScheme': 'empty']
+        manifestPlaceholders += mapOf(
+            "appAuthRedirectScheme" to "empty"
+        )
     }
 }
 
 dependencies {
-    implementation projects.base
-    implementation projects.data
-    api projects.api.trakt
+    implementation(projects.base)
+    implementation(projects.domain)
 
-    implementation libs.hilt.library
-    kapt libs.hilt.compiler
+    api(libs.androidx.work.runtime)
 
-    implementation libs.androidx.browser
-    implementation libs.androidx.core
+    implementation(libs.hilt.library)
+    kapt(libs.hilt.compiler)
 
-    api libs.appauth
+    implementation(libs.hilt.work)
+    kapt(libs.hilt.compiler)
 }

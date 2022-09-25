@@ -22,15 +22,15 @@ plugins {
 }
 
 android {
-    namespace 'app.tivi.core.logging'
+    namespace = "app.tivi.core.logging"
 }
 
 dependencies {
-    api projects.base
+    api(projects.base)
 
-    implementation libs.google.crashlytics
-    implementation libs.timber
+    implementation(libs.google.crashlytics)
+    implementation(libs.timber)
 
-    implementation libs.hilt.library
-    kapt libs.hilt.compiler
+    implementation(libs.hilt.library)
+    kapt(libs.hilt.compiler)
 }

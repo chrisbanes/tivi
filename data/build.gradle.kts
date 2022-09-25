@@ -16,25 +16,22 @@
  */
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
-}
-
-android {
-    namespace 'app.tivi.common.imageloading'
+    id("kotlin")
+    alias(libs.plugins.android.lint)
 }
 
 dependencies {
-    implementation projects.base
-    implementation projects.data
-    implementation projects.common.ui.view
-    implementation projects.api.tmdb
+    api(projects.base)
+    api(projects.api.trakt)
+    api(projects.api.tmdb)
 
-    implementation libs.androidx.core
+    api(libs.androidx.room.common)
+    api(libs.androidx.paging.common)
+    implementation(libs.androidx.collection)
 
-    implementation libs.hilt.library
-    kapt libs.hilt.compiler
+    implementation(libs.retrofit.retrofit)
 
-    api libs.coil.coil
+    api(libs.store)
+
+    api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
 }

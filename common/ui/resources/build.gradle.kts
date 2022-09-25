@@ -16,22 +16,9 @@
  */
 
 plugins {
-    id 'kotlin'
-    alias(libs.plugins.android.lint)
+    alias(libs.plugins.android.library)
 }
 
-dependencies {
-    api projects.base
-    api projects.api.trakt
-    api projects.api.tmdb
-
-    api libs.androidx.room.common
-    api libs.androidx.paging.common
-    implementation libs.androidx.collection
-
-    implementation libs.retrofit.retrofit
-
-    api libs.store
-
-    api "org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb"
+android {
+    namespace = "app.tivi.common.ui.resources"
 }
