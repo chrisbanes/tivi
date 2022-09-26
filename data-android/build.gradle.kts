@@ -19,6 +19,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -26,15 +27,6 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += mapOf(
-                    "room.schemaLocation" to "$projectDir/schemas".toString(),
-                    "room.incremental" to "true"
-                )
-            }
-        }
     }
 
     testOptions {
@@ -49,6 +41,11 @@ android {
     }
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg( "room.incremental", "true")
+}
+
 dependencies {
     implementation(projects.base)
     api(projects.data)
@@ -56,7 +53,7 @@ dependencies {
     api(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.paging)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.paging.runtime)
 
@@ -75,7 +72,7 @@ dependencies {
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.hilt.testing)
 
-    kaptTest(libs.androidx.room.compiler)
+    kspTest(libs.androidx.room.compiler)
     kaptTest(libs.hilt.compiler)
 
     // Needed for Tzdb
