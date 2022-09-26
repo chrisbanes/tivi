@@ -18,7 +18,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.napt)
     alias(libs.plugins.hilt)
 }
 
@@ -212,10 +212,10 @@ dependencies {
 
     implementation(libs.hilt.library)
     implementation(libs.hilt.compose)
-    kapt(libs.hilt.compiler)
+    annotationProcessor(libs.hilt.compiler)
 
     implementation(libs.hilt.work)
-    kapt(libs.hilt.compiler)
+    annotationProcessor(libs.hilt.compiler)
 
     implementation(libs.google.crashlytics)
     implementation(libs.google.analytics)
