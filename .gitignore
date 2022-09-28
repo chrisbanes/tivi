@@ -38,7 +38,3 @@ org.eclipse.buildship.core.prefs
 .classpath
 .project
 bin/
-
-# napt triggers
-# https://github.com/sergei-lapin/napt
-NaptTrigger.java

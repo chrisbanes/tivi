@@ -29,7 +29,7 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-napt = "com.sergei-lapin.napt:1.16"
+kotlin-napt = "com.sergei-lapin.napt:1.17"
 ksp = "com.google.devtools.ksp:1.7.10-1.0.6"
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 gms-googleServices = "com.google.gms.google-services:4.3.13"
