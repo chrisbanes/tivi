@@ -24,6 +24,7 @@ android {
     namespace = "app.tivi.common.compose"
 
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 
