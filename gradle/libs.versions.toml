@@ -9,9 +9,8 @@ compose = "1.2.1"
 composecompiler = "1.3.0"
 composesnapshot = "-" # a single character = no snapshot
 coroutines = "1.6.4"
-dagger = "2.43.2"
+dagger = "2.44"
 debugdrawer = "0.9.8"
-hilt = "2.43.2"
 kotlin = "1.7.10"
 ktlint = "0.47.1"
 okhttp = "4.10.0"
@@ -31,7 +30,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-napt = "com.sergei-lapin.napt:1.17"
 ksp = "com.google.devtools.ksp:1.7.10-1.0.6"
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 gms-googleServices = "com.google.gms.google-services:4.3.13"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.1"
 spotless = "com.diffplug.spotless:6.11.0"
@@ -117,11 +116,11 @@ debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retr
 debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber", version.ref = "debugdrawer" }
 debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-okhttp-logger", version.ref = "debugdrawer" }
 
-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
-hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
+hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
 hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0"
 hilt-work = "androidx.hilt:hilt-work:1.0.0"
-hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "dagger" }
 
 junit = "junit:junit:4.13.2"
 
