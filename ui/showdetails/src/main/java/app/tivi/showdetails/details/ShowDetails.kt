@@ -84,15 +84,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
@@ -106,16 +102,17 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.itemsInGrid
+import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandableFloatingActionButton
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
+import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.copy
-import app.tivi.common.compose.ui.drawForegroundGradientScrim
-import app.tivi.common.compose.ui.iconButtonBackgroundScrim
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -500,43 +497,13 @@ private fun BackdropImage(
     showTitle: String,
     modifier: Modifier = Modifier
 ) {
-    Surface(modifier = modifier) {
-        Box {
-            if (backdropImage != null) {
-                AsyncImage(
-                    model = backdropImage,
-                    requestBuilder = { crossfade(true) },
-                    contentDescription = stringResource(UiR.string.cd_show_poster),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .drawForegroundGradientScrim(Color.Black.copy(alpha = 0.7f))
-                )
-            }
-
-            val originalTextStyle = MaterialTheme.typography.h4
-
-            val shadowSize = with(LocalDensity.current) {
-                originalTextStyle.fontSize.toPx() / 16
-            }
-
-            Text(
-                text = showTitle,
-                style = originalTextStyle.copy(
-                    color = Color.White,
-                    shadow = Shadow(
-                        color = Color.Black,
-                        offset = Offset(shadowSize, shadowSize),
-                        blurRadius = 0.1f
-                    )
-                ),
-                fontWeight = FontWeight.Thin,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(Layout.gutter * 2)
-            )
+    TiviTheme(useDarkColors = true) {
+        Backdrop(
+            imageModel = backdropImage,
+            modifier = modifier
+        ) {
+            Text(text = showTitle)
         }
-        // TODO show a placeholder if null
     }
 }
 
@@ -1093,9 +1060,9 @@ private fun ShowDetailsAppBar(
             .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
             .asPaddingValues(),
         navigationIcon = {
-            IconButton(
-                onClick = navigateUp,
-                modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground)
+            ScrimmedIconButton(
+                showScrim = !showAppBarBackground,
+                onClick = navigateUp
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
@@ -1112,9 +1079,9 @@ private fun ShowDetailsAppBar(
                         .padding(16.dp)
                 )
             } else {
-                IconButton(
-                    onClick = refresh,
-                    modifier = Modifier.iconButtonBackgroundScrim(enabled = !showAppBarBackground)
+                ScrimmedIconButton(
+                    showScrim = !showAppBarBackground,
+                    onClick = refresh
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,

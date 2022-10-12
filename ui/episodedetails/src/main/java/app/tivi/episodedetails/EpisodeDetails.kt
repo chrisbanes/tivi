@@ -35,7 +35,6 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ContentAlpha
@@ -80,7 +79,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -91,9 +89,11 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.compose.ui.AsyncImage
+import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
+import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.TiviAlertDialog
 import app.tivi.common.compose.ui.boundsInParent
@@ -171,7 +171,7 @@ internal fun EpisodeDetails(
         topBar = {
             Surface {
                 if (viewState.episode != null && viewState.season != null) {
-                    Backdrop(
+                    EpisodeDetailsBackdrop(
                         season = viewState.season,
                         episode = viewState.episode,
                         modifier = Modifier
@@ -297,59 +297,31 @@ internal fun EpisodeDetails(
 }
 
 @Composable
-private fun Backdrop(
+private fun EpisodeDetailsBackdrop(
     season: Season,
     episode: Episode,
     modifier: Modifier = Modifier
 ) {
-    Surface(modifier = modifier) {
-        Box(Modifier.fillMaxSize()) {
-            if (episode.tmdbBackdropPath != null) {
-                AsyncImage(
-                    model = episode,
-                    requestBuilder = { crossfade(true) },
-                    contentDescription = stringResource(UiR.string.cd_show_poster),
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .background(
-                        color = Color.Black.copy(alpha = 0.65f),
-                        shape = RoundedCornerShape(topEnd = 8.dp)
-                    )
-                    .padding(all = 16.dp)
-            ) {
+    TiviTheme(useDarkColors = true) {
+        Backdrop(
+            imageModel = if (episode.tmdbBackdropPath != null) episode else null,
+            overline = {
                 val epNumber = episode.number
                 val seasonNumber = season.number
-
-                CompositionLocalProvider(LocalContentColor provides Color.White) {
-                    if (seasonNumber != null && epNumber != null) {
-                        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                            @Suppress("DEPRECATION")
-                            val locale = LocalConfiguration.current.locale
-                            Text(
-                                text = stringResource(
-                                    UiR.string.season_episode_number,
-                                    seasonNumber,
-                                    epNumber
-                                ).uppercase(locale),
-                                style = MaterialTheme.typography.overline
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
-                    }
-
+                if (seasonNumber != null && epNumber != null) {
+                    @Suppress("DEPRECATION")
                     Text(
-                        text = episode.title ?: "No title",
-                        style = MaterialTheme.typography.h6
+                        text = stringResource(
+                            UiR.string.season_episode_number,
+                            seasonNumber,
+                            epNumber
+                        ).uppercase(LocalConfiguration.current.locale)
                     )
                 }
-            }
-        }
+            },
+            title = { Text(text = episode.title ?: "No title") },
+            modifier = modifier
+        )
     }
 }
 
@@ -597,7 +569,7 @@ private fun EpisodeDetailsAppBar(
     TopAppBar(
         title = {},
         navigationIcon = {
-            IconButton(onClick = navigateUp) {
+            ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(UiR.string.cd_close)
@@ -613,7 +585,7 @@ private fun EpisodeDetailsAppBar(
                         .padding(14.dp)
                 )
             } else {
-                IconButton(onClick = refresh) {
+                ScrimmedIconButton(showScrim = true, onClick = refresh) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = stringResource(UiR.string.cd_refresh)
