@@ -143,7 +143,7 @@ robolectric = "org.robolectric:robolectric:4.9"
 
 store = "com.dropbox.mobile.store:store4:4.0.5"
 
-threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.4.1"
+threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.4.2"
 
 timber = "com.jakewharton.timber:timber:5.0.1"
 
