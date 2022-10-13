@@ -15,11 +15,8 @@
  *
  */
 
-import app.tivi.buildsrc.DependencyUpdates
-import app.tivi.buildsrc.ReleaseType
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import dagger.hilt.android.plugin.HiltExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -35,7 +32,6 @@ plugins {
     alias(libs.plugins.gms.googleServices) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.spotless)
-    alias(libs.plugins.dependencyUpdate)
 }
 
 allprojects {
@@ -111,21 +107,5 @@ subprojects {
                 targetCompatibility = JavaVersion.VERSION_11
             }
         }
-    }
-}
-
-/**
- * Update dependencyUpdates task to reject versions which are more 'unstable' than our
- * current version.
- */
-tasks.withType<DependencyUpdatesTask>().configureEach {
-    rejectVersionIf {
-        val current = DependencyUpdates.versionToRelease(currentVersion)
-        // If we're using a SNAPSHOT, ignore since we must be doing so for a reason.
-        if (current == ReleaseType.SNAPSHOT) return@rejectVersionIf true
-
-        // Otherwise we reject if the candidate is more 'unstable' than our version
-        val candidate = DependencyUpdates.versionToRelease(candidate.version)
-        return@rejectVersionIf candidate.isLessStableThan(current)
     }
 }
