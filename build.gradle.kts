@@ -43,14 +43,11 @@ allprojects {
         google()
         mavenCentral()
 
-        // Jetpack Compose SNAPSHOTs
-        val composeSnapshot = rootProject.libs.versions.composesnapshot.get()
-        if (composeSnapshot.length > 1) {
-            maven("https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/")
-        }
+        // Jetpack Compose SNAPSHOTs if needed
+        // maven("https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/")
 
-        // Used for snapshots
-        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        // Used for snapshots if needed
+        // maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
