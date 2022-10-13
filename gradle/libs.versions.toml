@@ -107,8 +107,8 @@ compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding", versio
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 dagger-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 
-google-analytics = "com.google.firebase:firebase-analytics-ktx:21.1.1"
-google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.2.13"
+google-analytics = "com.google.firebase:firebase-analytics-ktx:21.2.0"
+google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.3.0"
 
 debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
 debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retrofit", version.ref = "debugdrawer" }
