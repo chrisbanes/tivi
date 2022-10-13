@@ -84,7 +84,7 @@ androidx-uiautomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 
 androidx-work-runtime = "androidx.work:work-runtime-ktx:2.7.1"
 
-appauth = "net.openid:appauth:0.8.1"
+appauth = "net.openid:appauth:0.11.1"
 
 chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 
