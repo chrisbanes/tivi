@@ -28,7 +28,7 @@ android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-napt = "com.sergei-lapin.napt:1.17"
-ksp = "com.google.devtools.ksp:1.7.20-1.0.6"
+ksp = "com.google.devtools.ksp:1.7.20-1.0.7"
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 gms-googleServices = "com.google.gms.google-services:4.3.14"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.2"
