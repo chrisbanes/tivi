@@ -21,6 +21,7 @@ import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Request
 import app.tivi.data.entities.ShowStatus
+import app.tivi.extensions.unsafeLazy
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalTime
@@ -31,11 +32,11 @@ import org.threeten.bp.format.DateTimeFormatter
 object TiviTypeConverters {
     private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 
-    private val requestValues by lazy(LazyThreadSafetyMode.NONE) { Request.values() }
-    private val imageTypeValues by lazy(LazyThreadSafetyMode.NONE) { ImageType.values() }
-    private val pendingActionValues by lazy(LazyThreadSafetyMode.NONE) { PendingAction.values() }
-    private val showStatusValues by lazy(LazyThreadSafetyMode.NONE) { ShowStatus.values() }
-    private val dayOfWeekValues by lazy(LazyThreadSafetyMode.NONE) { DayOfWeek.values() }
+    private val requestValues by unsafeLazy { Request.values() }
+    private val imageTypeValues by unsafeLazy { ImageType.values() }
+    private val pendingActionValues by unsafeLazy { PendingAction.values() }
+    private val showStatusValues by unsafeLazy { ShowStatus.values() }
+    private val dayOfWeekValues by unsafeLazy { DayOfWeek.values() }
 
     @TypeConverter
     @JvmStatic
@@ -66,7 +67,9 @@ object TiviTypeConverters {
     fun toDayOfWeek(value: Int?): DayOfWeek? {
         return if (value != null) {
             dayOfWeekValues.firstOrNull { it.value == value }
-        } else null
+        } else {
+            null
+        }
     }
 
     @TypeConverter

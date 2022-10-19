@@ -26,6 +26,7 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.findHighestRatedBackdrop
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.views.FollowedShowsWatchStats
+import app.tivi.extensions.unsafeLazy
 import java.util.Objects
 
 class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
@@ -38,6 +39,7 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
     @Relation(parentColumn = "show_id", entityColumn = "show_id")
     override lateinit var images: List<ShowTmdbImage>
 
+    @Suppress("PropertyName")
     @Relation(parentColumn = "id", entityColumn = "id")
     lateinit var _stats: List<FollowedShowsWatchStats>
 
@@ -45,14 +47,10 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
         get() = _stats.firstOrNull()
 
     @delegate:Ignore
-    val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) {
-        images.findHighestRatedBackdrop()
-    }
+    val backdrop: ShowTmdbImage? by unsafeLazy { images.findHighestRatedBackdrop() }
 
     @delegate:Ignore
-    override val poster: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) {
-        images.findHighestRatedPoster()
-    }
+    override val poster: ShowTmdbImage? by unsafeLazy { images.findHighestRatedPoster() }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

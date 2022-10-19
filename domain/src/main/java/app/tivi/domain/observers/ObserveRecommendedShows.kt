@@ -27,7 +27,7 @@ class ObserveRecommendedShows @Inject constructor(
 ) : SubjectInteractor<ObserveRecommendedShows.Params, List<RecommendedEntryWithShow>>() {
 
     override fun createObservable(
-        params: ObserveRecommendedShows.Params
+        params: Params
     ): Flow<List<RecommendedEntryWithShow>> {
         return recommendedDao.entriesObservable(params.count, 0)
     }

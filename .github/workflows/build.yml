@@ -61,8 +61,7 @@ jobs:
 
       - name: Publish QA build to internal track
         if: github.ref == 'refs/heads/main'
-        # Pinned version due to https://github.com/r0adkll/upload-google-play/issues/80
-        uses: r0adkll/upload-google-play@v1.0.15
+        uses: r0adkll/upload-google-play@v1.0.18
         with:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
@@ -72,8 +71,7 @@ jobs:
 
       - name: Publish build to alpha track
         if: github.ref == 'refs/heads/main'
-        # Pinned version due to https://github.com/r0adkll/upload-google-play/issues/80
-        uses: r0adkll/upload-google-play@v1.0.15
+        uses: r0adkll/upload-google-play@v1.0.18
         with:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
@@ -84,7 +82,7 @@ jobs:
       - name: Build changelog for beta release
         id: build_changelog
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: mikepenz/release-changelog-builder-action@v2
+        uses: mikepenz/release-changelog-builder-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -98,8 +96,7 @@ jobs:
 
       - name: Publish tagged release to beta track
         if: startsWith(github.ref, 'refs/tags/v')
-        # Pinned version due to https://github.com/r0adkll/upload-google-play/issues/80
-        uses: r0adkll/upload-google-play@v1.0.15
+        uses: r0adkll/upload-google-play@v1.0.18
         with:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi

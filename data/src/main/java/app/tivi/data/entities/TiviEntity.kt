@@ -39,7 +39,7 @@ interface TmdbImageEntity : TiviEntity {
 enum class ImageType(val storageKey: String) {
     BACKDROP("backdrop"),
     POSTER("poster"),
-    LOGO("logo"),
+    LOGO("logo")
 }
 
 internal fun <T : TmdbImageEntity> Collection<T>.findHighestRatedPoster(): T? {

@@ -15,7 +15,7 @@
     native <methods>;
 }
 
-# We only need to keep ComposeView + FragmentContainerView
+# We only need to keep ComposeView
 -keep public class androidx.compose.ui.platform.ComposeView {
     public <init>(android.content.Context, android.util.AttributeSet);
 }
@@ -50,21 +50,7 @@
 # Dagger
 -dontwarn com.google.errorprone.annotations.*
 
-# Keep trakt-java and tmdb-java entity names (for GSON)
--keep class com.uwetrottmann.*.entities.** {
-    <fields>;
-    <init>(...);
-}
--keep class com.uwetrottmann.*.enums.** {
-    <fields>;
-    <init>(...);
-}
-
 # Retain the generic signature of retrofit2.Call until added to Retrofit.
 # Issue: https://github.com/square/retrofit/issues/3580.
 # Pull request: https://github.com/square/retrofit/pull/3579.
 -keep,allowobfuscation,allowshrinking class retrofit2.Call
-
-# Retain annotation default values for all annotations.
-# Required until R8 version >= 3.1.12+ (in AGP 7.1.0+).
--keep,allowobfuscation,allowshrinking @interface *

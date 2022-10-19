@@ -16,15 +16,13 @@
 
 package app.tivi.data.entities
 
+import app.tivi.extensions.unsafeLazy
+
 data class ShowImages(val images: List<ShowTmdbImage>) {
 
-    val backdrop by lazy(LazyThreadSafetyMode.NONE) {
-        findHighestRatedForType(ImageType.BACKDROP)
-    }
+    val backdrop by unsafeLazy { findHighestRatedForType(ImageType.BACKDROP) }
 
-    val poster by lazy(LazyThreadSafetyMode.NONE) {
-        findHighestRatedForType(ImageType.POSTER)
-    }
+    val poster by unsafeLazy { findHighestRatedForType(ImageType.POSTER) }
 
     private fun findHighestRatedForType(type: ImageType): ShowTmdbImage? {
         @Suppress("DEPRECATION") // Can't use maxByOrNull until we're API version 1.4

@@ -28,7 +28,7 @@ import javax.inject.Inject
 class EpisodeWatchStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
-    private val logger: Logger
+    logger: Logger
 ) {
     private val episodeWatchSyncer = syncerForEntity(
         episodeWatchEntryDao,
