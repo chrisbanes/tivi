@@ -205,7 +205,11 @@ internal fun Followed(
                     )
                 }
 
-                sections.forEach { section ->
+                for (section in sections) {
+                    if (sectionData[section]!!.itemCount == 0) {
+                        continue
+                    }
+
                     if (section.type != FollowedShowsSection.Type.UNDEFINED) {
                         fullSpanItem {
                             Header(

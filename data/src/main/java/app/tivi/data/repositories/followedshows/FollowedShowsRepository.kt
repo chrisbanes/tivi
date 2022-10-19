@@ -66,44 +66,40 @@ class FollowedShowsRepository @Inject constructor(
         val filterQuery = filter?.let { "*$it*" }
         return when (sort) {
             SortOption.SUPER_SORT -> {
-                followedShowsDao.pagedListSuperSort(filterQuery)
-                    .let {
-                        FollowedShowsSection(
-                            FollowedShowsSection.Type.UNDEFINED,
-                            pagingSourceFactory(it)
-                        )
-                    }
-                    .let(::listOf)
+                listOf(
+                    FollowedShowsSection(
+                        FollowedShowsSection.Type.UNWATCHED,
+                        pagingSourceFactory(followedShowsDao.pagedListSuperSortUnwatched(filterQuery))
+                    ),
+                    FollowedShowsSection(
+                        FollowedShowsSection.Type.WATCHED,
+                        pagingSourceFactory(followedShowsDao.pagedListSuperSortWatched(filterQuery))
+                    )
+                )
             }
             SortOption.LAST_WATCHED -> {
-                followedShowsDao.pagedListLastWatched(filterQuery)
-                    .let {
-                        FollowedShowsSection(
-                            FollowedShowsSection.Type.UNDEFINED,
-                            pagingSourceFactory(it)
-                        )
-                    }
-                    .let(::listOf)
+                listOf(
+                    FollowedShowsSection(
+                        FollowedShowsSection.Type.UNDEFINED,
+                        pagingSourceFactory(followedShowsDao.pagedListLastWatched(filterQuery))
+                    )
+                )
             }
             SortOption.ALPHABETICAL -> {
-                followedShowsDao.pagedListAlpha(filterQuery)
-                    .let {
-                        FollowedShowsSection(
-                            FollowedShowsSection.Type.UNDEFINED,
-                            pagingSourceFactory(it)
-                        )
-                    }
-                    .let(::listOf)
+                listOf(
+                    FollowedShowsSection(
+                        FollowedShowsSection.Type.UNDEFINED,
+                        pagingSourceFactory(followedShowsDao.pagedListAlpha(filterQuery))
+                    )
+                )
             }
             SortOption.DATE_ADDED -> {
-                followedShowsDao.pagedListAdded(filterQuery)
-                    .let {
-                        FollowedShowsSection(
-                            FollowedShowsSection.Type.UNDEFINED,
-                            pagingSourceFactory(it)
-                        )
-                    }
-                    .let(::listOf)
+                listOf(
+                    FollowedShowsSection(
+                        FollowedShowsSection.Type.UNDEFINED,
+                        pagingSourceFactory(followedShowsDao.pagedListAdded(filterQuery))
+                    )
+                )
             }
         }
     }

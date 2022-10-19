@@ -37,6 +37,14 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     internal abstract fun pagedListSuperSort(filter: String? = null): PagingSource<Int, FollowedShowEntryWithShow>
 
     @Transaction
+    @Query(ENTRY_QUERY_SUPER_SORT_WATCHED)
+    internal abstract fun pagedListSuperSortWatched(filter: String? = null): PagingSource<Int, FollowedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_SUPER_SORT_UNWATCHED)
+    internal abstract fun pagedListSuperSortUnwatched(filter: String? = null): PagingSource<Int, FollowedShowEntryWithShow>
+
+    @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
     internal abstract fun pagedListLastWatched(filter: String? = null): PagingSource<Int, FollowedShowEntryWithShow>
 
@@ -112,7 +120,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
          * Fully watched (ended)
          */
 
-        private const val ENTRY_QUERY_SUPER_SORT = """
+        private const val ENTRY_QUERY_SUPER_SORT_START = """
             SELECT fs.* FROM myshows_entries as fs
             INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
             LEFT JOIN seasons AS s ON fs.show_id = s.show_id
@@ -123,6 +131,9 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 AND s.ignored = 0
                 AND (:filter IS NULL OR s_fts.title MATCH :filter)
             GROUP BY fs.id
+        """
+
+        private const val ENTRY_QUERY_SUPER_SORT_ORDER = """
             ORDER BY
                 /* shows with aired episodes to watch first */
                 SUM(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE 0 END) = COUNT(watched_at) ASC,
@@ -132,6 +143,23 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                     MAX(datetime(coalesce(watched_at, 0))), /* last watch */
                     MAX(datetime(coalesce(followed_at, 0))) /* when followed */
                 ) DESC
+        """
+
+        private const val ENTRY_QUERY_SUPER_SORT = """
+            $ENTRY_QUERY_SUPER_SORT_START
+            $ENTRY_QUERY_SUPER_SORT_ORDER
+        """
+
+        private const val ENTRY_QUERY_SUPER_SORT_WATCHED = """
+            $ENTRY_QUERY_SUPER_SORT_START
+            HAVING COUNT(watched_at) >= COUNT(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE NULL END)
+            $ENTRY_QUERY_SUPER_SORT_ORDER
+        """
+
+        private const val ENTRY_QUERY_SUPER_SORT_UNWATCHED = """
+            $ENTRY_QUERY_SUPER_SORT_START
+            HAVING COUNT(watched_at) < COUNT(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE NULL END)
+            $ENTRY_QUERY_SUPER_SORT_ORDER
         """
 
         private const val ENTRY_QUERY_ORDER_LAST_WATCHED = """
