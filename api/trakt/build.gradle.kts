@@ -17,7 +17,7 @@
 
 plugins {
     id("kotlin")
-    alias(libs.plugins.kotlin.napt)
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.android.lint)
 }
 
@@ -33,5 +33,5 @@ dependencies {
     implementation(libs.retrofit.retrofit)
     implementation(libs.retrofit.gsonConverter)
 
-    annotationProcessor(libs.dagger.compiler)
+    kapt(libs.dagger.compiler)
 }

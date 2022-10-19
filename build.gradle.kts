@@ -18,6 +18,7 @@
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import dagger.hilt.android.plugin.HiltExtension
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -26,7 +27,7 @@ plugins {
     alias(libs.plugins.android.lint) apply false
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.kotlin.napt) apply false
+    alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.gms.googleServices) apply false
@@ -92,8 +93,10 @@ subprojects {
     }
 
     plugins.withId(rootProject.libs.plugins.hilt.get().pluginId) {
-        // Had to turn this off for napt to work
-        extensions.getByType<HiltExtension>().enableAggregatingTask = false
+        extensions.getByType<HiltExtension>().enableAggregatingTask = true
+    }
+    plugins.withId(rootProject.libs.plugins.kotlin.kapt.get().pluginId) {
+        extensions.getByType<KaptExtension>().correctErrorTypes = true
     }
     plugins.withType<BasePlugin>().configureEach {
         extensions.configure<BaseExtension> {

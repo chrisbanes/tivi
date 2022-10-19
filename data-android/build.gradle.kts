@@ -18,7 +18,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.napt)
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
 }
 
@@ -58,7 +58,7 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
 
     implementation(libs.hilt.library)
-    annotationProcessor(libs.hilt.compiler)
+    kapt(libs.hilt.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
@@ -73,7 +73,7 @@ dependencies {
     testImplementation(libs.hilt.testing)
 
     kspTest(libs.androidx.room.compiler)
-    testAnnotationProcessor(libs.hilt.compiler)
+    kaptTest(libs.hilt.compiler)
 
     // Needed for Tzdb
     testImplementation("org.threeten:threetenbp:${libs.versions.threetenbp.get()}")

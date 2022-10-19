@@ -18,7 +18,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.napt)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -33,7 +33,7 @@ dependencies {
     implementation(projects.api.tmdb)
 
     implementation(libs.hilt.library)
-    annotationProcessor(libs.hilt.compiler)
+    kapt(libs.hilt.compiler)
 
     api(libs.androidx.paging.common)
     implementation(libs.androidx.paging.runtime)
