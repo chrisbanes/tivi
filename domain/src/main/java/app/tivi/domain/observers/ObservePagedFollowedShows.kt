@@ -18,7 +18,7 @@ package app.tivi.domain.observers
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import app.tivi.data.entities.FollowedShowsSection
 import app.tivi.data.entities.SortOption
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
@@ -35,10 +35,13 @@ class ObservePagedFollowedShows @Inject constructor(
     override fun createObservable(
         params: Parameters
     ): Flow<List<FollowedShowsSection>> = flow {
-        val result = followedShowsRepository.observeFollowedShows(params.sort, params.filter).map {
-            FollowedShowsSection(
-                name = it.name,
-                source = Pager(config = params.pagingConfig) { it.source }.flow
+        val result = followedShowsRepository.observeFollowedShows(
+            sort = params.sort,
+            filter = params.filter
+        ) {
+            Pager(
+                config = params.pagingConfig,
+                pagingSourceFactory = { it }
             )
         }
         emit(result)
@@ -50,8 +53,3 @@ class ObservePagedFollowedShows @Inject constructor(
         override val pagingConfig: PagingConfig
     ) : PagingInteractor.Parameters<FollowedShowEntryWithShow>
 }
-
-data class FollowedShowsSection(
-    val name: String,
-    val source: Flow<PagingData<FollowedShowEntryWithShow>>
-)

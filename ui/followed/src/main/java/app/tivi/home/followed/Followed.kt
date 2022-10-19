@@ -70,11 +70,11 @@ import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.common.compose.ui.plus
+import app.tivi.data.entities.FollowedShowsSection
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
-import app.tivi.domain.observers.FollowedShowsSection
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
@@ -177,7 +177,7 @@ internal fun Followed(
             val bodyMargin = Layout.bodyMargin
             val gutter = Layout.gutter
 
-            val sectionData = sections.associateWith { it.source.collectAsLazyPagingItems() }
+            val sectionData = sections.associateWith { it.pager.flow.collectAsLazyPagingItems() }
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns / 4),
@@ -206,8 +206,16 @@ internal fun Followed(
                 }
 
                 sections.forEach { section ->
-                    fullSpanItem {
-                        Header(title = section.name)
+                    if (section.type != FollowedShowsSection.Type.UNDEFINED) {
+                        fullSpanItem {
+                            Header(
+                                title = when (section.type) {
+                                    FollowedShowsSection.Type.WATCHED -> "Watched"
+                                    FollowedShowsSection.Type.UNWATCHED -> "Unwatched"
+                                    else -> ""
+                                }
+                            )
+                        }
                     }
                     items(
                         items = sectionData[section]!!,

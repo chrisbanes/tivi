@@ -16,14 +16,16 @@
 
 package app.tivi.data.repositories.followedshows
 
+import androidx.paging.Pager
+import androidx.paging.PagingSource
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
+import app.tivi.data.entities.FollowedShowsSection
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.instantInPast
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.data.resultentities.FollowedShowsRawSection
 import app.tivi.data.syncers.ItemSyncerResult
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.data.views.FollowedShowsWatchStats
@@ -58,29 +60,50 @@ class FollowedShowsRepository @Inject constructor(
 
     fun observeFollowedShows(
         sort: SortOption,
-        filter: String? = null
-    ): List<FollowedShowsRawSection> {
+        filter: String? = null,
+        pagingSourceFactory: (PagingSource<Int, FollowedShowEntryWithShow>) -> Pager<Int, FollowedShowEntryWithShow>
+    ): List<FollowedShowsSection> {
         val filterQuery = filter?.let { "*$it*" }
         return when (sort) {
             SortOption.SUPER_SORT -> {
                 followedShowsDao.pagedListSuperSort(filterQuery)
-                    .let { FollowedShowsRawSection("Shows", it) }
-                    .let { listOf(it) }
+                    .let {
+                        FollowedShowsSection(
+                            FollowedShowsSection.Type.UNDEFINED,
+                            pagingSourceFactory(it)
+                        )
+                    }
+                    .let(::listOf)
             }
             SortOption.LAST_WATCHED -> {
                 followedShowsDao.pagedListLastWatched(filterQuery)
-                    .let { FollowedShowsRawSection("Shows", it) }
-                    .let { listOf(it) }
+                    .let {
+                        FollowedShowsSection(
+                            FollowedShowsSection.Type.UNDEFINED,
+                            pagingSourceFactory(it)
+                        )
+                    }
+                    .let(::listOf)
             }
             SortOption.ALPHABETICAL -> {
                 followedShowsDao.pagedListAlpha(filterQuery)
-                    .let { FollowedShowsRawSection("Shows", it) }
-                    .let { listOf(it) }
+                    .let {
+                        FollowedShowsSection(
+                            FollowedShowsSection.Type.UNDEFINED,
+                            pagingSourceFactory(it)
+                        )
+                    }
+                    .let(::listOf)
             }
             SortOption.DATE_ADDED -> {
                 followedShowsDao.pagedListAdded(filterQuery)
-                    .let { FollowedShowsRawSection("Shows", it) }
-                    .let { listOf(it) }
+                    .let {
+                        FollowedShowsSection(
+                            FollowedShowsSection.Type.UNDEFINED,
+                            pagingSourceFactory(it)
+                        )
+                    }
+                    .let(::listOf)
             }
         }
     }

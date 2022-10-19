@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import app.tivi.api.UiMessageManager
+import app.tivi.data.entities.FollowedShowsSection
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
@@ -36,6 +37,7 @@ import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
@@ -58,7 +60,7 @@ internal class FollowedViewModel @Inject constructor(
     private val uiMessageManager = UiMessageManager()
     private val showSelection = ShowStateSelector()
 
-    val pagedList = observePagedFollowedShows.flow
+    val pagedList: Flow<List<FollowedShowsSection>> = observePagedFollowedShows.flow
 
     private val availableSorts = listOf(
         SortOption.SUPER_SORT,
