@@ -17,7 +17,7 @@
 
 plugins {
     id("kotlin")
-    alias(libs.plugins.kotlin.napt)
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.android.lint)
 }
 
@@ -31,5 +31,5 @@ dependencies {
 
     implementation(libs.okhttp.okhttp)
 
-    annotationProcessor(libs.dagger.compiler)
+    kapt(libs.dagger.compiler)
 }
