@@ -28,7 +28,11 @@ fun TiviTheme(
     MaterialTheme(
         colors = if (useDarkColors) TiviDarkColors else TiviLightColors,
         typography = TiviTypography,
-        shapes = TiviShapes,
-        content = content
-    )
+        shapes = TiviShapes
+    ) {
+        app.tivi.common.compose.theme3.TiviTheme(
+            useDarkColors = useDarkColors,
+            content = content,
+        )
+    }
 }

@@ -30,12 +30,12 @@ fun Colors.compositedOnSurface(alpha: Float): Color {
     return onSurface.copy(alpha = alpha).compositeOver(surface)
 }
 
-private val Slate200 = Color(0xFF81A9B3)
-private val Slate600 = Color(0xFF4A6572)
-private val Slate800 = Color(0xFF232F34)
+internal val Slate200 = Color(0xFF81A9B3)
+internal val Slate600 = Color(0xFF4A6572)
+internal val Slate800 = Color(0xFF232F34)
 
-private val Orange500 = Color(0xFFF9AA33)
-private val Orange700 = Color(0xFFC78522)
+internal val Orange500 = Color(0xFFF9AA33)
+internal val Orange700 = Color(0xFFC78522)
 
 val TiviLightColors = lightColors(
     primary = Slate800,
