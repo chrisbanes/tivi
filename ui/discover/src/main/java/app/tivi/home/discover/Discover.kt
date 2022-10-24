@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
@@ -26,35 +28,31 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.FirstBaseline
@@ -66,12 +64,11 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.UserProfileButton
+import app.tivi.common.compose.ui3.SwipeDismissSnackbarHost
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -79,8 +76,6 @@ import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.insets.ui.Scaffold
-import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -142,18 +137,16 @@ internal fun Discover(
     openPopularShows: () -> Unit,
     onMessageShown: (id: Long) -> Unit
 ) {
-    val scaffoldState = rememberScaffoldState()
-
+    val snackbarHostState = remember { SnackbarHostState() }
     state.message?.let { message ->
         LaunchedEffect(message) {
-            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
             onMessageShown(message.id)
         }
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
             DiscoverAppBar(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
@@ -164,7 +157,7 @@ internal fun Discover(
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        snackbarHost = { snackbarHostState ->
+        snackbarHost = {
             SwipeDismissSnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier
@@ -292,19 +285,17 @@ private fun NextEpisodeToWatch(
 
             Column(Modifier.align(Alignment.CenterVertically)) {
                 val textCreator = LocalTiviTextCreator.current
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
-                    Text(
-                        text = textCreator.seasonEpisodeTitleText(season, episode),
-                        style = MaterialTheme.typography.caption
-                    )
-                }
+                Text(
+                    text = textCreator.seasonEpisodeTitleText(season, episode),
+                    style = MaterialTheme.typography.labelMedium
+                )
 
                 Spacer(Modifier.height(4.dp))
 
                 Text(
                     text = episode.title
                         ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
-                    style = MaterialTheme.typography.body1
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }
@@ -332,7 +323,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                 TextButton(
                     onClick = onMoreClick,
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colors.secondary
+                        contentColor = MaterialTheme.colorScheme.secondary
                     ),
                     modifier = Modifier.alignBy(FirstBaseline)
                 ) {
@@ -402,7 +393,7 @@ private fun Header(
 
         Text(
             text = title,
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(vertical = 8.dp)
@@ -412,7 +403,7 @@ private fun Header(
 
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(
-                color = MaterialTheme.colors.secondary,
+                color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier
                     .padding(8.dp)
                     .size(16.dp)
@@ -435,30 +426,23 @@ private fun DiscoverAppBar(
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        backgroundColor = MaterialTheme.colors.surface.copy(
-            alpha = AppBarAlphas.translucentBarAlpha()
-        ),
-        contentColor = MaterialTheme.colors.onSurface,
-        contentPadding = WindowInsets.systemBars
-            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
-            .asPaddingValues(),
         modifier = modifier,
         title = { Text(text = stringResource(UiR.string.discover_title)) },
         actions = {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                // This button refresh allows screen-readers, etc to trigger a refresh.
-                // We only show the button to trigger a refresh, not to indicate that
-                // we're currently refreshing, otherwise we have 4 indicators showing the
-                // same thing.
-                Crossfade(
-                    targetState = refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                ) { isRefreshing ->
-                    if (!isRefreshing) {
-                        RefreshButton(onClick = onRefreshActionClick)
-                    }
+            // CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+            // This button refresh allows screen-readers, etc to trigger a refresh.
+            // We only show the button to trigger a refresh, not to indicate that
+            // we're currently refreshing, otherwise we have 4 indicators showing the
+            // same thing.
+            Crossfade(
+                targetState = refreshing,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            ) { isRefreshing ->
+                if (!isRefreshing) {
+                    RefreshButton(onClick = onRefreshActionClick)
                 }
             }
+            // }
 
             UserProfileButton(
                 loggedIn = loggedIn,
