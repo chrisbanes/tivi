@@ -1,7 +1,7 @@
 [versions]
 agp = "7.3.1"
 accompanist = "0.26.5-rc"
-androidxlifecycle = "2.6.0-alpha02"
+androidxlifecycle = "2.6.0-alpha03"
 androidxtest = "1.4.0"
 chucker = "3.5.2"
 coil = "2.2.2"
