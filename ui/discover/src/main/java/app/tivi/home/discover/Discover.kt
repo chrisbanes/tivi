@@ -21,7 +21,6 @@ package app.tivi.home.discover
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,6 +43,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -210,23 +210,21 @@ internal fun Discover(
 
                 state.nextEpisodeWithShowToWatched?.let { nextEpisodeToWatch ->
                     item {
-                        Header(title = stringResource(UiR.string.discover_keep_watching_title))
-                    }
-                    item {
                         NextEpisodeToWatch(
                             show = nextEpisodeToWatch.show,
                             poster = nextEpisodeToWatch.poster,
                             season = nextEpisodeToWatch.season,
                             episode = nextEpisodeToWatch.episode,
+                            onClick = {
+                                openShowDetails(
+                                    nextEpisodeToWatch.show.id,
+                                    nextEpisodeToWatch.episode.seasonId,
+                                    nextEpisodeToWatch.episode.id
+                                )
+                            },
                             modifier = Modifier
+                                .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
                                 .fillMaxWidth()
-                                .clickable {
-                                    openShowDetails(
-                                        nextEpisodeToWatch.show.id,
-                                        nextEpisodeToWatch.episode.seasonId,
-                                        nextEpisodeToWatch.episode.id
-                                    )
-                                }
                         )
                     }
 
@@ -283,41 +281,46 @@ private fun NextEpisodeToWatch(
     poster: TmdbImageEntity?,
     season: Season,
     episode: Episode,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
-    Surface(modifier) {
-        Row(
-            Modifier.padding(
-                horizontal = Layout.bodyMargin,
-                vertical = Layout.gutter
+    Card(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Column(Modifier.padding(Layout.bodyMargin)) {
+            Header(
+                title = stringResource(UiR.string.discover_keep_watching_title),
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-        ) {
-            if (poster != null) {
-                PosterCard(
-                    show = show,
-                    poster = poster,
-                    modifier = Modifier
-                        .width(64.dp)
-                        .aspectRatio(2 / 3f)
-                )
 
-                Spacer(Modifier.width(Layout.gutter))
-            }
+            Row(Modifier.fillMaxWidth()) {
+                if (poster != null) {
+                    PosterCard(
+                        show = show,
+                        poster = poster,
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .width(64.dp)
+                            .aspectRatio(2 / 3f)
+                    )
+                }
 
-            Column(Modifier.align(Alignment.CenterVertically)) {
-                val textCreator = LocalTiviTextCreator.current
-                Text(
-                    text = textCreator.seasonEpisodeTitleText(season, episode),
-                    style = MaterialTheme.typography.labelMedium
-                )
+                Column(Modifier.align(Alignment.CenterVertically)) {
+                    val textCreator = LocalTiviTextCreator.current
+                    Text(
+                        text = textCreator.seasonEpisodeTitleText(season, episode),
+                        style = MaterialTheme.typography.labelMedium
+                    )
 
-                Spacer(Modifier.height(4.dp))
+                    Spacer(Modifier.height(4.dp))
 
-                Text(
-                    text = episode.title
-                        ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                    Text(
+                        text = episode.title
+                            ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
         }
     }
@@ -339,7 +342,9 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
             Header(
                 title = title,
                 loading = refreshing,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth()
             ) {
                 TextButton(
                     onClick = onMoreClick,
@@ -410,14 +415,11 @@ private fun Header(
     content: @Composable RowScope.() -> Unit = {}
 ) {
     Row(modifier) {
-        Spacer(Modifier.width(Layout.bodyMargin))
-
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .padding(vertical = 8.dp)
         )
 
         Spacer(Modifier.weight(1f))
@@ -425,15 +427,11 @@ private fun Header(
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(
                 color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(16.dp)
+                modifier = Modifier.size(16.dp)
             )
         }
 
         content()
-
-        Spacer(Modifier.width(Layout.bodyMargin))
     }
 }
 
