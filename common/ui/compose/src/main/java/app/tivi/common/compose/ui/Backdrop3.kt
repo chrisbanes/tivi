@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import app.tivi.common.ui.resources.R
 
 @Composable
@@ -31,8 +32,8 @@ fun Backdrop3(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.primaryContainer,
         shape = MaterialTheme.shapes.large,
+        tonalElevation = 2.dp,
         modifier = modifier
     ) {
         if (imageModel != null) {
