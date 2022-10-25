@@ -104,7 +104,6 @@ import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
-import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
@@ -308,7 +307,6 @@ private fun ShowDetailsScrollingContent(
 ) {
     LogCompositions("ShowDetailsScrollingContent")
 
-    val columns = Layout.columns
     val gutter = Layout.gutter
     val bodyMargin = Layout.bodyMargin
 
@@ -410,17 +408,7 @@ private fun ShowDetailsScrollingContent(
                 Header(stringResource(UiR.string.show_details_seasons))
             }
 
-            itemsInGrid(
-                items = seasons,
-                columns = columns / 4,
-                // We minus 8.dp off the grid padding, as we use content padding on the items below
-                contentPadding = PaddingValues(
-                    horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp)
-                ),
-                verticalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp),
-                horizontalItemPadding = (gutter - 8.dp).coerceAtLeast(0.dp)
-            ) { season ->
+            items(items = seasons) { season ->
                 SeasonRow(
                     season = season.season,
                     episodesAired = season.episodes.numberAired,
@@ -428,7 +416,7 @@ private fun ShowDetailsScrollingContent(
                     episodesToWatch = season.episodes.numberAiredToWatch,
                     episodesToAir = season.episodes.numberToAir,
                     nextToAirDate = season.episodes.nextToAir?.firstAired,
-                    contentPadding = PaddingValues(8.dp),
+                    contentPadding = PaddingValues(horizontal = bodyMargin, vertical = gutter),
                     openSeason = openSeason,
                     onSeasonFollowed = onSeasonFollowed,
                     onSeasonUnfollowed = onSeasonUnfollowed,
