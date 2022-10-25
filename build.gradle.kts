@@ -57,7 +57,6 @@ subprojects {
             targetExclude("bin/**/*.kt")
 
             ktlint(libs.versions.ktlint.get())
-                .editorConfigOverride(mapOf("disabled_rules" to "filename"))
             licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
         }
     }
