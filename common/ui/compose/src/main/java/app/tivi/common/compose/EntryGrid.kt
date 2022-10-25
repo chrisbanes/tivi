@@ -32,13 +32,19 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -53,7 +59,6 @@ import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.PlaceholderPosterCard
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
@@ -64,7 +69,7 @@ import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import app.tivi.common.ui.resources.R as UiR
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun <E : Entry> EntryGrid(
     lazyPagingItems: LazyPagingItems<out EntryWithShow<E>>,
@@ -74,6 +79,16 @@ fun <E : Entry> EntryGrid(
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberScaffoldState()
+
+    val dismissSnackbarState = rememberDismissState { value ->
+        when {
+            value != DismissValue.Default -> {
+                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                true
+            }
+            else -> false
+        }
+    }
 
     lazyPagingItems.loadState.prependErrorOrNull()?.let { message ->
         LaunchedEffect(message) {
@@ -102,13 +117,17 @@ fun <E : Entry> EntryGrid(
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        snackbarHost = { snackbarHostState ->
-            SwipeDismissSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
-            )
+        snackbarHost = { hostState ->
+            SnackbarHost(hostState = hostState) { data ->
+                SwipeToDismiss(
+                    state = dismissSnackbarState,
+                    background = {},
+                    dismissContent = { Snackbar(snackbarData = data) },
+                    modifier = Modifier
+                        .padding(horizontal = Layout.bodyMargin)
+                        .fillMaxWidth()
+                )
+            }
         },
         modifier = modifier
     ) { paddingValues ->

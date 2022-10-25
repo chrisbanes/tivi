@@ -36,12 +36,17 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScrollableTabRow
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
@@ -52,6 +57,7 @@ import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.primarySurface
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -74,7 +80,6 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.TopAppBarWithBottomContent
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -124,7 +129,7 @@ internal fun ShowSeasons(
     )
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun ShowSeasons(
     viewState: ShowSeasonsViewState,
@@ -135,6 +140,16 @@ internal fun ShowSeasons(
     initialSeasonId: Long?
 ) {
     val scaffoldState = rememberScaffoldState()
+
+    val dismissSnackbarState = rememberDismissState { value ->
+        when {
+            value != DismissValue.Default -> {
+                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                true
+            }
+            else -> false
+        }
+    }
 
     viewState.message?.let { message ->
         LaunchedEffect(message) {
@@ -196,13 +211,17 @@ internal fun ShowSeasons(
                 }
             )
         },
-        snackbarHost = { snackbarHostState ->
-            SwipeDismissSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
-            )
+        snackbarHost = { hostState ->
+            SnackbarHost(hostState = hostState) { data ->
+                SwipeToDismiss(
+                    state = dismissSnackbarState,
+                    background = {},
+                    dismissContent = { Snackbar(snackbarData = data) },
+                    modifier = Modifier
+                        .padding(horizontal = Layout.bodyMargin)
+                        .fillMaxWidth()
+                )
+            }
         }
     ) {
         SeasonsPager(

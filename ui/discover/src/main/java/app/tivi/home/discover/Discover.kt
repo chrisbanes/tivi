@@ -39,10 +39,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -68,7 +74,6 @@ import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.UserProfileButton
-import app.tivi.common.compose.ui3.SwipeDismissSnackbarHost
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -126,6 +131,7 @@ internal fun Discover(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun Discover(
     state: DiscoverViewState,
@@ -138,6 +144,17 @@ internal fun Discover(
     onMessageShown: (id: Long) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val dismissSnackbarState = rememberDismissState { value ->
+        when {
+            value != DismissValue.Default -> {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                true
+            }
+            else -> false
+        }
+    }
+
     state.message?.let { message ->
         LaunchedEffect(message) {
             snackbarHostState.showSnackbar(message.message)
@@ -158,12 +175,16 @@ internal fun Discover(
             )
         },
         snackbarHost = {
-            SwipeDismissSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
-            )
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                SwipeToDismiss(
+                    state = dismissSnackbarState,
+                    background = {},
+                    dismissContent = { Snackbar(snackbarData = data) },
+                    modifier = Modifier
+                        .padding(horizontal = Layout.bodyMargin)
+                        .fillMaxWidth()
+                )
+            }
         },
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->

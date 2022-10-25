@@ -33,10 +33,16 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Surface
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -58,7 +64,6 @@ import app.tivi.common.compose.Layout
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
-import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
@@ -92,6 +97,7 @@ internal fun Search(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun Search(
     state: SearchViewState,
@@ -100,6 +106,16 @@ internal fun Search(
     onMessageShown: (id: Long) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
+
+    val dismissSnackbarState = rememberDismissState { value ->
+        when {
+            value != DismissValue.Default -> {
+                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                true
+            }
+            else -> false
+        }
+    }
 
     state.message?.let { message ->
         LaunchedEffect(message) {
@@ -135,13 +151,17 @@ internal fun Search(
                 }
             }
         },
-        snackbarHost = { snackbarHostState ->
-            SwipeDismissSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
-            )
+        snackbarHost = { hostState ->
+            SnackbarHost(hostState = hostState) { data ->
+                SwipeToDismiss(
+                    state = dismissSnackbarState,
+                    background = {},
+                    dismissContent = { Snackbar(snackbarData = data) },
+                    modifier = Modifier
+                        .padding(horizontal = Layout.bodyMargin)
+                        .fillMaxWidth()
+                )
+            }
         }
     ) { padding ->
         SearchList(

@@ -55,14 +55,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.DismissValue
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Surface
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -71,6 +76,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -111,7 +117,6 @@ import app.tivi.common.compose.ui.ExpandableFloatingActionButton
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.ScrimmedIconButton
-import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.copy
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
@@ -183,6 +188,7 @@ internal fun ShowDetails(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ShowDetails(
     viewState: ShowDetailsViewState,
@@ -201,6 +207,16 @@ internal fun ShowDetails(
 ) {
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
+
+    val dismissSnackbarState = rememberDismissState { value ->
+        when {
+            value != DismissValue.Default -> {
+                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                true
+            }
+            else -> false
+        }
+    }
 
     viewState.message?.let { message ->
         LaunchedEffect(message) {
@@ -257,13 +273,17 @@ internal fun ShowDetails(
                 onClick = onToggleShowFollowed
             )
         },
-        snackbarHost = { snackBarHostState ->
-            SwipeDismissSnackbarHost(
-                hostState = snackBarHostState,
-                modifier = Modifier
-                    .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
-            )
+        snackbarHost = { hostState ->
+            SnackbarHost(hostState = hostState) { data ->
+                SwipeToDismiss(
+                    state = dismissSnackbarState,
+                    background = {},
+                    dismissContent = { Snackbar(snackbarData = data) },
+                    modifier = Modifier
+                        .padding(horizontal = Layout.bodyMargin)
+                        .fillMaxWidth()
+                )
+            }
         }
     ) { contentPadding ->
         LogCompositions("ShowDetails")

@@ -48,6 +48,8 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Surface
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
@@ -94,7 +96,6 @@ import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.ScrimmedIconButton
-import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.TiviAlertDialog
 import app.tivi.common.compose.ui.boundsInParent
 import app.tivi.common.compose.ui.onPositionInParentChanged
@@ -158,6 +159,16 @@ internal fun EpisodeDetails(
 ) {
     val scaffoldState = rememberScaffoldState()
 
+    val dismissSnackbarState = rememberDismissState { value ->
+        when {
+            value != DismissValue.Default -> {
+                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                true
+            }
+            else -> false
+        }
+    }
+
     viewState.message?.let { message ->
         LaunchedEffect(message) {
             scaffoldState.snackbarHostState.showSnackbar(message.message)
@@ -201,13 +212,17 @@ internal fun EpisodeDetails(
                 }
             }
         },
-        snackbarHost = { snackbarHostState ->
-            SwipeDismissSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
-            )
+        snackbarHost = { hostState ->
+            SnackbarHost(hostState = hostState) { data ->
+                SwipeToDismiss(
+                    state = dismissSnackbarState,
+                    background = {},
+                    dismissContent = { Snackbar(snackbarData = data) },
+                    modifier = Modifier
+                        .padding(horizontal = Layout.bodyMargin)
+                        .fillMaxWidth()
+                )
+            }
         }
     ) { contentPadding ->
         Surface(
