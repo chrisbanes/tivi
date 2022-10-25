@@ -5,7 +5,7 @@ androidxlifecycle = "2.6.0-alpha03"
 androidxtest = "1.4.0"
 chucker = "3.5.2"
 coil = "2.2.2"
-compose = "1.3.0"
+compose-bom = "2022.10.00"
 composecompiler = "1.3.2"
 coroutines = "1.6.4"
 dagger = "2.44"
@@ -91,17 +91,18 @@ coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
 
-compose-animation-animation = { module = "androidx.compose.animation:animation", version.ref = "compose" }
-compose-foundation-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "compose" }
-compose-material-iconsext = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
-compose-material-material = { module = "androidx.compose.material:material", version.ref = "compose" }
-compose-ui-test = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-ui-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-compose-ui-uitextfonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "compose" }
-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "compose" }
-compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding", version.ref = "compose" }
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+compose-animation-animation = { module = "androidx.compose.animation:animation" }
+compose-foundation-foundation = { module = "androidx.compose.foundation:foundation" }
+compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout" }
+compose-material-iconsext = { module = "androidx.compose.material:material-icons-extended" }
+compose-material-material = { module = "androidx.compose.material:material" }
+compose-ui-test = { module = "androidx.compose.ui:ui-test-junit4" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-uitextfonts = { module = "androidx.compose.ui:ui-text-google-fonts" }
+compose-ui-util = { module = "androidx.compose.ui:ui-util" }
+compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding" }
 
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 dagger-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }

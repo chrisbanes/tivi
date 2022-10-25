@@ -42,6 +42,7 @@ dependencies {
 
     implementation(libs.androidx.core)
 
+    api(platform(libs.compose.bom))
     implementation(libs.compose.ui.ui)
     implementation(libs.compose.ui.uitextfonts)
     implementation(libs.compose.foundation.foundation)
