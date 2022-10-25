@@ -40,7 +40,7 @@ fun TiviTheme(
             useDarkColors -> TiviDarkColors
             else -> TiviLightColors
         },
-        // typography = TiviTypography,
+        typography = TiviTypography,
         shapes = TiviShapes,
         content = content
     )

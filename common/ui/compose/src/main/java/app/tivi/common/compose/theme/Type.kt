@@ -19,24 +19,40 @@ package app.tivi.common.compose.theme
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 
 @ExperimentalTextApi
-internal fun createSingleGoogleFontFamily(
+private fun createSingleGoogleFontFamily(
     name: String,
     provider: GoogleFont.Provider = GmsFontProvider,
-    weights: List<FontWeight>
+    variants: List<Pair<FontWeight, FontStyle>>
 ): FontFamily = FontFamily(
-    weights.map { weight ->
+    variants.map { (weight, style) ->
         Font(
             googleFont = GoogleFont(name),
             fontProvider = provider,
-            weight = weight
+            weight = weight,
+            style = style
         )
     }
 )
+
+@ExperimentalTextApi
+internal val InterFontFamily: FontFamily by lazy {
+    createSingleGoogleFontFamily(
+        name = "Inter",
+        variants = listOf(
+            FontWeight.Light to FontStyle.Normal,
+            FontWeight.Normal to FontStyle.Normal,
+            FontWeight.Normal to FontStyle.Italic,
+            FontWeight.Medium to FontStyle.Normal,
+            FontWeight.Bold to FontStyle.Normal
+        )
+    )
+}
 
 @ExperimentalTextApi
 internal val GmsFontProvider: GoogleFont.Provider by lazy {
@@ -48,14 +64,4 @@ internal val GmsFontProvider: GoogleFont.Provider by lazy {
 }
 
 @OptIn(ExperimentalTextApi::class)
-val TiviTypography = Typography(
-    defaultFontFamily = createSingleGoogleFontFamily(
-        name = "Inter",
-        weights = listOf(
-            FontWeight.Light,
-            FontWeight.Normal,
-            FontWeight.Medium,
-            FontWeight.Bold
-        )
-    )
-)
+val TiviTypography = Typography(defaultFontFamily = InterFontFamily)
