@@ -32,7 +32,7 @@ fun TiviTheme(
     ) {
         app.tivi.common.compose.theme3.TiviTheme(
             useDarkColors = useDarkColors,
-            content = content,
+            content = content
         )
     }
 }

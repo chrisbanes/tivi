@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun TiviTheme(
     useDarkColors: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     MaterialTheme(
         colorScheme = when {

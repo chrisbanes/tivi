@@ -16,6 +16,4 @@
 
 package app.tivi.common.compose.theme3
 
-val TiviShapes = androidx.compose.material3.Shapes(
-
-)
+val TiviShapes = androidx.compose.material3.Shapes()
