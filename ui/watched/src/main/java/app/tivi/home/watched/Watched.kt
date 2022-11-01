@@ -46,6 +46,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +55,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
@@ -103,7 +103,7 @@ internal fun Watched(
     openShowDetails: (showId: Long) -> Unit,
     openUser: () -> Unit
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val viewState by viewModel.state.collectAsState()
     val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
 
     Watched(

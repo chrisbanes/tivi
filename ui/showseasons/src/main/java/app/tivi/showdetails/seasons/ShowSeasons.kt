@@ -56,6 +56,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,7 +69,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
@@ -112,7 +112,7 @@ internal fun ShowSeasons(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     initialSeasonId: Long?
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val viewState by viewModel.state.collectAsState()
 
     ShowSeasons(
         viewState = viewState,
