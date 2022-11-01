@@ -99,7 +99,7 @@ internal class FollowedViewModel @Inject constructor(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = WhileSubscribed(5000),
+        started = WhileSubscribed(),
         initialValue = FollowedViewState.Empty
     )
 

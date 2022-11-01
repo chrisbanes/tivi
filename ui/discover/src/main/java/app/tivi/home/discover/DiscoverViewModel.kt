@@ -85,7 +85,7 @@ internal class DiscoverViewModel @Inject constructor(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(),
         initialValue = DiscoverViewState.Empty
     )
 
