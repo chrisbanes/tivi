@@ -51,7 +51,7 @@ internal class AccountUiViewModel @Inject constructor(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(),
         initialValue = AccountUiViewState.Empty
     )
 

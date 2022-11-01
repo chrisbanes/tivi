@@ -51,7 +51,7 @@ internal class SearchViewModel @Inject constructor(
         ::SearchViewState
     ).stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(),
         initialValue = SearchViewState.Empty
     )
 

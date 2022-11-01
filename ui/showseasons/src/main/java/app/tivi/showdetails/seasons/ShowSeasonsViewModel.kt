@@ -61,7 +61,7 @@ internal class ShowSeasonsViewModel @Inject constructor(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(),
         initialValue = ShowSeasonsViewState.Empty
     )
 
