@@ -66,6 +66,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -86,7 +87,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.theme.TiviTheme
@@ -130,7 +130,7 @@ internal fun EpisodeDetails(
     expandedValue: ModalBottomSheetValue,
     navigateUp: () -> Unit
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val viewState by viewModel.state.collectAsState()
 
     EpisodeDetails(
         viewState = viewState,

@@ -43,6 +43,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +55,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.data.entities.TraktUser
@@ -81,7 +81,7 @@ internal fun AccountUi(
     viewModel: AccountUiViewModel,
     openSettings: () -> Unit
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val viewState by viewModel.state.collectAsState()
 
     val loginLauncher = rememberLauncherForActivityResult(
         viewModel.buildLoginActivityResult()

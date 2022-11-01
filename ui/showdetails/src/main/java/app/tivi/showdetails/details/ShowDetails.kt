@@ -75,6 +75,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -94,7 +95,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
@@ -165,7 +165,7 @@ internal fun ShowDetails(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     openSeasons: (showId: Long, seasonId: Long) -> Unit
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val viewState by viewModel.state.collectAsState()
     ShowDetails(
         viewState = viewState,
         navigateUp = navigateUp,
