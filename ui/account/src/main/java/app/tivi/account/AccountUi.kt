@@ -24,25 +24,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Divider
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -54,7 +50,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.data.entities.TraktUser
@@ -75,7 +70,6 @@ fun AccountUi(
     )
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun AccountUi(
     viewModel: AccountUiViewModel,
@@ -107,11 +101,8 @@ internal fun AccountUi(
     logout: () -> Unit
 ) {
     Surface(
-        shape = MaterialTheme.shapes.medium,
-        elevation = 2.dp,
-        // FIXME: Force the dialog to wrap the content. Need to work out why
-        // this doesn't work automatically
-        modifier = Modifier.heightIn(min = 200.dp)
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = MaterialTheme.shapes.medium
     ) {
         Column {
             Spacer(modifier = Modifier.height(16.dp))
@@ -186,7 +177,11 @@ private fun UserRow(
             AsyncImage(
                 model = avatarUrl,
                 requestBuilder = { crossfade(true) },
-                contentDescription = stringResource(UiR.string.cd_profile_pic, user.name ?: user.username),
+                contentDescription = stringResource(
+                    UiR.string.cd_profile_pic,
+                    user.name
+                        ?: user.username
+                ),
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(50))
@@ -198,15 +193,13 @@ private fun UserRow(
         Column {
             Text(
                 text = user.name ?: stringResource(UiR.string.account_name_unknown),
-                style = MaterialTheme.typography.subtitle2
+                style = MaterialTheme.typography.titleSmall
             )
 
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                Text(
-                    text = user.username,
-                    style = MaterialTheme.typography.caption
-                )
-            }
+            Text(
+                text = user.username,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }
@@ -239,7 +232,7 @@ private fun AppAction(
 
         Text(
             text = label,
-            style = MaterialTheme.typography.body2
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
