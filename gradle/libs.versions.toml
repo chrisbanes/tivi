@@ -78,7 +78,7 @@ androidx-test-core = { module = "androidx.test:core", version.ref = "androidxtes
 androidx-test-junit = "androidx.test.ext:junit-ktx:1.1.4"
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidxtest" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxtest" }
-androidx-benchmark-macro = "androidx.benchmark:benchmark-macro-junit4:1.1.0"
+androidx-benchmark-macro = "androidx.benchmark:benchmark-macro-junit4:1.1.1"
 androidx-uiautomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 
 androidx-work-runtime = "androidx.work:work-runtime-ktx:2.7.1"
