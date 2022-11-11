@@ -128,7 +128,7 @@ kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-co
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-extensions = { module = "org.jetbrains.kotlin:kotlin-android-extensions", version.ref = "kotlin" }
 
-leakCanary = "com.squareup.leakcanary:leakcanary-android:2.9.1"
+leakCanary = "com.squareup.leakcanary:leakcanary-android:2.10"
 
 mockK = "io.mockk:mockk:1.13.2"
 
