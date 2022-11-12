@@ -36,6 +36,8 @@ jobs:
           java-version: 17
 
       - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
 
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
