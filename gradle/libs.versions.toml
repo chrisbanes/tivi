@@ -108,7 +108,7 @@ dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = 
 dagger-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 
 google-analytics = "com.google.firebase:firebase-analytics-ktx:21.2.0"
-google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.3.1"
+google-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.3.2"
 
 debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
 debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retrofit", version.ref = "debugdrawer" }
