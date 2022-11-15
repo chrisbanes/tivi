@@ -1,26 +1,19 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-        "config:base"
-    ],
-    "packageRules": [
-        {
-          "matchPackagePatterns": [
-            "androidx.compose.compiler:compiler"
-          ],
-          "groupName": "Compose Compiler"
-        },
-        {
-          "matchPackagePatterns": [
-            "org.jetbrains.kotlin.*"
-          ],
-          "groupName": "Kotlin"
-        },
-        {
-          "matchPackagePatterns": [
-            "com.google.devtools.ksp"
-          ],
-          "groupName": "KSP"
-        }
-    ]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "groupName": "Kotlin, KSP and Compose Compiler",
+      "groupSlug": "kotlin",
+      "matchPackagePrefixes": [
+        "com.google.devtools.ksp",
+        "androidx.compose.compiler"
+      ],
+      "matchPackagePatterns": [
+        "org.jetbrains.kotlin.*"
+      ]
+    }
+  ]
 }
