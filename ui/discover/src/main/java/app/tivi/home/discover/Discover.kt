@@ -19,7 +19,6 @@
 package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,7 +52,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -66,19 +64,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
-import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.compose.ui.UserProfileButton
+import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
-import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -107,7 +102,6 @@ fun Discover(
     )
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun Discover(
     viewModel: DiscoverViewModel,
@@ -165,7 +159,8 @@ internal fun Discover(
 
     Scaffold(
         topBar = {
-            DiscoverAppBar(
+            TiviStandardAppBar(
+                title = stringResource(UiR.string.discover_title),
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.refreshing,
@@ -433,56 +428,6 @@ private fun Header(
 
         content()
     }
-}
-
-@Composable
-private fun DiscoverAppBar(
-    loggedIn: Boolean,
-    user: TraktUser?,
-    refreshing: Boolean,
-    onRefreshActionClick: () -> Unit,
-    onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TopAppBar(
-        modifier = modifier,
-        title = { Text(text = stringResource(UiR.string.discover_title)) },
-        actions = {
-            // CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            // This button refresh allows screen-readers, etc to trigger a refresh.
-            // We only show the button to trigger a refresh, not to indicate that
-            // we're currently refreshing, otherwise we have 4 indicators showing the
-            // same thing.
-            Crossfade(
-                targetState = refreshing,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            ) { isRefreshing ->
-                if (!isRefreshing) {
-                    RefreshButton(onClick = onRefreshActionClick)
-                }
-            }
-            // }
-
-            UserProfileButton(
-                loggedIn = loggedIn,
-                user = user,
-                onClick = onUserActionClick,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-        }
-    )
-}
-
-@Preview
-@Composable
-private fun PreviewDiscoverAppBar() {
-    DiscoverAppBar(
-        loggedIn = false,
-        user = null,
-        refreshing = false,
-        onUserActionClick = {},
-        onRefreshActionClick = {}
-    )
 }
 
 @Preview
