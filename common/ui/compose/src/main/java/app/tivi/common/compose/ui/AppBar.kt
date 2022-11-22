@@ -30,6 +30,7 @@ import androidx.compose.material.contentColorFor
 import androidx.compose.material.primarySurface
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,12 +83,14 @@ fun TiviStandardAppBar(
     loggedIn: Boolean,
     user: TraktUser?,
     refreshing: Boolean,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     androidx.compose.material3.TopAppBar(
         modifier = modifier,
+        scrollBehavior = scrollBehavior,
         title = { Text(text = title) },
         actions = {
             // This button refresh allows screen-readers, etc to trigger a refresh.
