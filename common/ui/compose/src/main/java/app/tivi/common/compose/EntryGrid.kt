@@ -32,6 +32,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
@@ -39,6 +40,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -59,12 +63,9 @@ import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import app.tivi.common.ui.resources.R as UiR
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun <E : Entry> EntryGrid(
     lazyPagingItems: LazyPagingItems<out EntryWithShow<E>>,
@@ -112,20 +113,12 @@ fun <E : Entry> EntryGrid(
         },
         modifier = modifier
     ) { paddingValues ->
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(
-                isRefreshing = lazyPagingItems.loadState.refresh == LoadState.Loading
-            ),
-            onRefresh = { lazyPagingItems.refresh() },
-            indicatorPadding = paddingValues,
-            indicator = { state, trigger ->
-                SwipeRefreshIndicator(
-                    state = state,
-                    refreshTriggerDistance = trigger,
-                    scale = true
-                )
-            }
-        ) {
+        val refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading
+        val refreshState = rememberPullRefreshState(
+            refreshing = refreshing,
+            onRefresh = lazyPagingItems::refresh
+        )
+        Box(modifier = Modifier.pullRefresh(state = refreshState)) {
             val columns = Layout.columns
             val bodyMargin = Layout.bodyMargin
             val gutter = Layout.gutter
@@ -172,6 +165,13 @@ fun <E : Entry> EntryGrid(
                     }
                 }
             }
+
+            PullRefreshIndicator(
+                refreshing = refreshing,
+                state = refreshState,
+                modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
+                scale = true
+            )
         }
     }
 }

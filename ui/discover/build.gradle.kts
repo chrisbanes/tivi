@@ -49,8 +49,6 @@ dependencies {
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
 
-    implementation(libs.accompanist.swiperefresh)
-
     implementation(libs.snapper)
 
     implementation(libs.hilt.compose)
