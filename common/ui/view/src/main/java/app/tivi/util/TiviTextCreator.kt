@@ -22,6 +22,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.parseAsHtml
 import androidx.emoji.text.EmojiCompat
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.Season
@@ -29,13 +30,12 @@ import app.tivi.data.entities.ShowStatus
 import app.tivi.data.entities.TiviShow
 import app.tivi.ui.GenreStringer
 import dagger.hilt.android.qualifiers.ActivityContext
+import java.util.Locale
+import javax.inject.Inject
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.TextStyle
-import java.util.Locale
-import javax.inject.Inject
-import app.tivi.common.ui.resources.R as UiR
 
 class TiviTextCreator @Inject constructor(
     @ActivityContext private val context: Context,

@@ -98,16 +98,16 @@ import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.TiviAlertDialog
 import app.tivi.common.compose.ui.boundsInParent
 import app.tivi.common.compose.ui.onPositionInParentChanged
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
 import com.google.accompanist.insets.ui.Scaffold
-import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
-import app.tivi.common.ui.resources.R as UiR
+import org.threeten.bp.OffsetDateTime
 
 @ExperimentalMaterialApi
 @Composable

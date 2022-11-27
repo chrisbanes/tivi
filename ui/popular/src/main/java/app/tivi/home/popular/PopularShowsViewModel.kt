@@ -24,8 +24,8 @@ import androidx.paging.cachedIn
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.domain.observers.ObservePagedPopularShows
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 internal class PopularShowsViewModel @Inject constructor(

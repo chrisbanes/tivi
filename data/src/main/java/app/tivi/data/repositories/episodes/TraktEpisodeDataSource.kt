@@ -23,9 +23,9 @@ import app.tivi.data.mappers.TraktEpisodeToEpisode
 import app.tivi.data.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Episodes
-import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
+import retrofit2.awaitResponse
 
 class TraktEpisodeDataSource @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,

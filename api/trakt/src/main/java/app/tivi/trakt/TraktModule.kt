@@ -26,9 +26,9 @@ import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
 import dagger.Module
 import dagger.Provides
-import okhttp3.OkHttpClient
 import javax.inject.Named
 import javax.inject.Singleton
+import okhttp3.OkHttpClient
 
 @Module(includes = [TraktServiceModule::class])
 object TraktModule {

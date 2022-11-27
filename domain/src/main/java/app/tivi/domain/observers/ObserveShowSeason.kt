@@ -19,8 +19,8 @@ package app.tivi.domain.observers
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.domain.SubjectInteractor
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class ObserveShowSeason @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository

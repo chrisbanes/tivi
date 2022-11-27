@@ -25,8 +25,8 @@ import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.RefreshOnlyRemoteMediator
 import app.tivi.domain.interactors.UpdateRecommendedShows
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalPagingApi::class)
 class ObservePagedRecommendedShows @Inject constructor(

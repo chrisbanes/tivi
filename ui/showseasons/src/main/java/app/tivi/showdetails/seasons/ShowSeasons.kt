@@ -76,6 +76,7 @@ import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.TopAppBarWithBottomContent
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.EpisodeWithWatches
@@ -88,7 +89,6 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
-import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun ShowSeasons(

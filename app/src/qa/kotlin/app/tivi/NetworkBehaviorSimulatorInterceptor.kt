@@ -16,12 +16,12 @@
 
 package app.tivi
 
+import java.util.concurrent.TimeUnit
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.mock.NetworkBehavior
-import java.util.concurrent.TimeUnit
 
 /**
  * An OkHttp [Interceptor] which simulates network conditions using a

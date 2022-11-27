@@ -24,9 +24,9 @@ import com.uwetrottmann.trakt5.enums.IdType
 import com.uwetrottmann.trakt5.enums.Type
 import com.uwetrottmann.trakt5.services.Search
 import com.uwetrottmann.trakt5.services.Shows
-import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
+import retrofit2.awaitResponse
 
 class TraktShowDataSource @Inject constructor(
     private val showService: Provider<Shows>,

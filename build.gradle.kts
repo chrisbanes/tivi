@@ -56,7 +56,11 @@ subprojects {
             targetExclude("$buildDir/**/*.kt")
             targetExclude("bin/**/*.kt")
 
-            ktlint(libs.versions.ktlint.get())
+            ktlint(libs.versions.ktlint.get()).editorConfigOverride(
+                mapOf(
+                    "ij_kotlin_imports_layout" to "*"
+                ),
+            )
             licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
         }
     }

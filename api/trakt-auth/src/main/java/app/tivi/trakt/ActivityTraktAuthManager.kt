@@ -21,11 +21,11 @@ import android.content.Intent
 import app.tivi.util.Logger
 import dagger.Lazy
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
-import javax.inject.Inject
 
 internal class ActivityTraktAuthManager @Inject constructor(
     @ApplicationContext private val context: Context,

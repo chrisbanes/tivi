@@ -18,9 +18,9 @@ package app.tivi.data.mappers
 
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
+import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 
 @Singleton
 class TraktSeasonToSeasonWithEpisodes @Inject constructor(

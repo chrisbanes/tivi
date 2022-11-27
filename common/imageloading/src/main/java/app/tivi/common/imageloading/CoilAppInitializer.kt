@@ -21,8 +21,8 @@ import app.tivi.appinitializers.AppInitializer
 import coil.Coil
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
-import okhttp3.OkHttpClient
 import javax.inject.Inject
+import okhttp3.OkHttpClient
 
 @OptIn(ExperimentalCoilApi::class)
 class CoilAppInitializer @Inject constructor(

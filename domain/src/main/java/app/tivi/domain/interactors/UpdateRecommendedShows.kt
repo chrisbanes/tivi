@@ -26,8 +26,8 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class UpdateRecommendedShows @Inject constructor(
     private val recommendedShowsStore: RecommendedShowsStore,

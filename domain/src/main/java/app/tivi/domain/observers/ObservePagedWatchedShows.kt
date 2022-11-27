@@ -23,8 +23,8 @@ import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.domain.PagingInteractor
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class ObservePagedWatchedShows @Inject constructor(
     private val watchedShowDao: WatchedShowDao

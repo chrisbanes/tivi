@@ -19,8 +19,8 @@ package app.tivi.domain.observers
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.domain.SubjectInteractor
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class ObserveRelatedShows @Inject constructor(
     private val relatedShowsDao: RelatedShowsDao

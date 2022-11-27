@@ -57,13 +57,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AsyncImage
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
-import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun AccountUi(
