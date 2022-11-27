@@ -21,8 +21,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,7 +51,7 @@ fun FilterSortPanel(
     modifier: Modifier = Modifier,
     sortOptions: List<SortOption>,
     currentSortOption: SortOption,
-    onSortSelected: (SortOption) -> Unit
+    onSortSelected: (SortOption) -> Unit,
 ) {
     Column(modifier.padding(vertical = 8.dp)) {
         var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -70,8 +75,25 @@ fun FilterSortPanel(
             Spacer(modifier = Modifier.weight(1f))
 
             var expanded by remember { mutableStateOf(false) }
-            Surface(onClick = { expanded = true }) {
-                Text(text = stringResource(currentSortOption.labelResId))
+            Surface(
+                onClick = { expanded = true },
+                shape = MaterialTheme.shapes.small,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Sort,
+                        contentDescription = "",
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Text(
+                        text = stringResource(currentSortOption.labelResId),
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(6.dp),
+                    )
+                }
 
                 DropdownMenu(
                     expanded = expanded,
