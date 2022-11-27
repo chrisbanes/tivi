@@ -57,5 +57,4 @@ dependencies {
     implementation(libs.coil.compose)
 
     api(libs.accompanist.insetsui)
-    implementation(libs.accompanist.swiperefresh)
 }

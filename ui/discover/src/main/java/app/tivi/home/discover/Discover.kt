@@ -21,6 +21,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -44,11 +45,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -81,9 +86,6 @@ import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -131,6 +133,7 @@ internal fun Discover(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun Discover(
     state: DiscoverViewState,
@@ -174,18 +177,8 @@ internal fun Discover(
         },
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(false),
-            onRefresh = refresh,
-            indicatorPadding = paddingValues,
-            indicator = { state, trigger ->
-                SwipeRefreshIndicator(
-                    state = state,
-                    refreshTriggerDistance = trigger,
-                    scale = true
-                )
-            }
-        ) {
+        val refreshState = rememberPullRefreshState(refreshing = false, onRefresh = refresh)
+        Box(modifier = Modifier.pullRefresh(state = refreshState)) {
             LazyColumn(
                 contentPadding = paddingValues,
                 modifier = Modifier.bodyWidth()
@@ -259,6 +252,13 @@ internal fun Discover(
                     Spacer(Modifier.height(Layout.gutter))
                 }
             }
+
+            PullRefreshIndicator(
+                refreshing = state.refreshing,
+                state = refreshState,
+                modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
+                scale = true
+            )
         }
     }
 }
