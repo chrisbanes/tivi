@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
 
 class UpdateTmdbConfig @Inject constructor(
     private val tmdbManager: TmdbManager,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Unit>() {
     override suspend fun doWork(params: Unit) {
         withContext(dispatchers.io) {

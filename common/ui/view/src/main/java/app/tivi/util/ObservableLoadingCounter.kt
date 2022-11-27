@@ -47,7 +47,7 @@ class ObservableLoadingCounter {
 suspend fun Flow<InvokeStatus>.collectStatus(
     counter: ObservableLoadingCounter,
     logger: Logger? = null,
-    uiMessageManager: UiMessageManager? = null
+    uiMessageManager: UiMessageManager? = null,
 ) = collect { status ->
     when (status) {
         InvokeStarted -> counter.addLoader()

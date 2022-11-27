@@ -34,7 +34,7 @@ import retrofit2.awaitResponse
 internal class TraktRelatedShowsDataSource @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val showService: Provider<Shows>,
-    showMapper: TraktShowToTiviShow
+    showMapper: TraktShowToTiviShow,
 ) {
     private val entryMapper = IndexedMapper<Show, RelatedShowEntry> { index, _ ->
         RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)

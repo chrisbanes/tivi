@@ -22,7 +22,7 @@ import javax.inject.Singleton
 
 @Singleton
 class EpisodeIdToTraktIdMapper @Inject constructor(
-    private val dao: EpisodesDao
+    private val dao: EpisodesDao,
 ) : Mapper<Long, Int> {
     override suspend fun map(from: Long): Int {
         return dao.episodeTraktIdForId(from)

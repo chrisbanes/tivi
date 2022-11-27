@@ -3,11 +3,14 @@ root = true
 [*]
 charset = utf-8
 indent_size = 4
+indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
 [*.{kt,kts}]
 ij_kotlin_imports_layout = *
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
 
 [*.{yml,yaml}]
 indent_size = 2

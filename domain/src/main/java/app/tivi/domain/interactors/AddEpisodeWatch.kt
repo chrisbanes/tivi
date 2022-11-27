@@ -25,7 +25,7 @@ import org.threeten.bp.OffsetDateTime
 
 class AddEpisodeWatch @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 
 ) : Interactor<AddEpisodeWatch.Params>() {
     override suspend fun doWork(params: Params) {

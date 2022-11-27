@@ -25,7 +25,7 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "show_images",
     indices = [
-        Index(value = ["show_id"])
+        Index(value = ["show_id"]),
     ],
     foreignKeys = [
         ForeignKey(
@@ -33,9 +33,9 @@ import androidx.room.PrimaryKey
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("show_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class ShowTmdbImage(
     @PrimaryKey(autoGenerate = true)
@@ -46,5 +46,5 @@ data class ShowTmdbImage(
     @ColumnInfo(name = "type") override val type: ImageType,
     @ColumnInfo(name = "lang") override val language: String? = null,
     @ColumnInfo(name = "rating") override val rating: Float = 0f,
-    @ColumnInfo(name = "is_primary") override val isPrimary: Boolean = false
+    @ColumnInfo(name = "is_primary") override val isPrimary: Boolean = false,
 ) : TiviEntity, TmdbImageEntity

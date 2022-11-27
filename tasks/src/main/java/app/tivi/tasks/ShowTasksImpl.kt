@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ShowTasksImpl @Inject constructor(
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
 ) : ShowTasks {
     override fun syncShowWatchedEpisodes(showId: Long) {
         val request = OneTimeWorkRequestBuilder<SyncShowWatchedProgress>()
@@ -50,7 +50,7 @@ class ShowTasksImpl @Inject constructor(
             .setConstraints(
                 Constraints.Builder()
                     .setRequiresDeviceIdle(true)
-                    .build()
+                    .build(),
             )
             .build()
         workManager.enqueue(request)
@@ -59,18 +59,18 @@ class ShowTasksImpl @Inject constructor(
     override fun setupNightSyncs() {
         val request = PeriodicWorkRequestBuilder<SyncAllFollowedShows>(
             repeatInterval = 24,
-            repeatIntervalTimeUnit = TimeUnit.HOURS
+            repeatIntervalTimeUnit = TimeUnit.HOURS,
         ).setConstraints(
             Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.UNMETERED)
                 .setRequiresCharging(true)
-                .build()
+                .build(),
         ).build()
 
         workManager.enqueueUniquePeriodicWork(
             SyncAllFollowedShows.NIGHTLY_SYNC_TAG,
             ExistingPeriodicWorkPolicy.KEEP,
-            request
+            request,
         )
     }
 }

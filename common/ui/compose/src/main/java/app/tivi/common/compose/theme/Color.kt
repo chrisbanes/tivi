@@ -43,16 +43,16 @@ val TiviLightColors = lightColors(
     primaryVariant = Slate600,
     secondary = Orange700,
     secondaryVariant = Orange500,
-    onSecondary = Color.Black
+    onSecondary = Color.Black,
 )
 
 val TiviDarkColors = darkColors(
     primary = Slate200,
     onPrimary = Color.Black,
     secondary = Orange500,
-    onSecondary = Color.Black
+    onSecondary = Color.Black,
 ).withBrandedSurface()
 
 fun Colors.withBrandedSurface() = copy(
-    surface = primary.copy(alpha = 0.08f).compositeOver(this.surface)
+    surface = primary.copy(alpha = 0.08f).compositeOver(this.surface),
 )

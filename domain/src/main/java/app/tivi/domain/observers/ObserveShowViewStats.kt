@@ -23,7 +23,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class ObserveShowViewStats @Inject constructor(
-    private val repository: FollowedShowsRepository
+    private val repository: FollowedShowsRepository,
 ) : SubjectInteractor<ObserveShowViewStats.Params, FollowedShowsWatchStats?>() {
 
     override fun createObservable(params: Params): Flow<FollowedShowsWatchStats?> {

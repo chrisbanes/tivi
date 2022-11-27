@@ -35,7 +35,7 @@ class UpdateRecommendedShows @Inject constructor(
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
     private val traktManager: TraktManager,
-    private val logger: Logger
+    private val logger: Logger,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         // If we're not logged in, we can't load the recommended shows

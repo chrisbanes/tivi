@@ -29,7 +29,7 @@ import org.threeten.bp.Period
 class TraktUsersRepository @Inject constructor(
     private val userDao: UserDao,
     private val lastRequestStore: TraktUsersLastRequestStore,
-    private val traktDataSource: TraktUsersDataSource
+    private val traktDataSource: TraktUsersDataSource,
 ) {
     fun observeUser(username: String): Flow<TraktUser?> = when (username) {
         "me" -> userDao.observeMe()

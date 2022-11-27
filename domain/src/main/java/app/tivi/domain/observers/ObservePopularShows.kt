@@ -23,11 +23,11 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class ObservePopularShows @Inject constructor(
-    private val popularShowsRepository: PopularDao
+    private val popularShowsRepository: PopularDao,
 ) : SubjectInteractor<ObservePopularShows.Params, List<PopularEntryWithShow>>() {
 
     override fun createObservable(
-        params: Params
+        params: Params,
     ): Flow<List<PopularEntryWithShow>> {
         return popularShowsRepository.entriesObservable(params.count, 0)
     }

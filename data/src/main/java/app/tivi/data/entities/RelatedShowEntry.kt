@@ -27,7 +27,7 @@ import app.tivi.data.MultipleEntry
     tableName = "related_shows",
     indices = [
         Index(value = ["show_id"]),
-        Index(value = ["other_show_id"])
+        Index(value = ["other_show_id"]),
     ],
     foreignKeys = [
         ForeignKey(
@@ -35,20 +35,20 @@ import app.tivi.data.MultipleEntry
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("show_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = TiviShow::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("other_show_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class RelatedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
     @ColumnInfo(name = "other_show_id") override val otherShowId: Long,
-    @ColumnInfo(name = "order_index") val orderIndex: Int
+    @ColumnInfo(name = "order_index") val orderIndex: Int,
 ) : MultipleEntry

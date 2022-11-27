@@ -21,7 +21,7 @@ import app.tivi.util.Logger
 import javax.inject.Inject
 
 class TimberInitializer @Inject constructor(
-    private val logger: Logger
+    private val logger: Logger,
 ) : AppInitializer {
     override fun init() = logger.setup(BuildConfig.DEBUG)
 }

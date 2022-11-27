@@ -38,7 +38,7 @@ object NetworkModule {
     @Provides
     fun provideOkHttpClient(
         @ApplicationContext context: Context,
-        interceptors: Set<@JvmSuppressWildcards Interceptor>
+        interceptors: Set<@JvmSuppressWildcards Interceptor>,
     ): OkHttpClient = OkHttpClient.Builder()
         .apply { interceptors.forEach(::addInterceptor) }
         // Around 4¢ worth of storage in 2020
@@ -50,7 +50,7 @@ object NetworkModule {
             Dispatcher().apply {
                 // Allow for increased number of concurrent image fetches on same host
                 maxRequestsPerHost = 10
-            }
+            },
         )
         // Increase timeouts
         .connectTimeout(20, TimeUnit.SECONDS)

@@ -24,5 +24,5 @@ import androidx.room.Fts4
 @Entity(tableName = "shows_fts")
 data class TiviShowFts(
     @ColumnInfo(name = "title") val title: String? = null,
-    @ColumnInfo(name = "original_title") val originalTitle: String? = null
+    @ColumnInfo(name = "original_title") val originalTitle: String? = null,
 )

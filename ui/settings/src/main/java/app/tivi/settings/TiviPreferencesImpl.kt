@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.onStart
 
 class TiviPreferencesImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    @Named("app") private val sharedPreferences: SharedPreferences
+    @Named("app") private val sharedPreferences: SharedPreferences,
 ) : TiviPreferences {
     private val defaultThemeValue = context.getString(R.string.pref_theme_default_value)
 

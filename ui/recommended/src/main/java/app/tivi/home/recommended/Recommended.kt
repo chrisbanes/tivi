@@ -28,12 +28,12 @@ import app.tivi.common.ui.resources.R as UiR
 @Composable
 fun RecommendedShows(
     openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
 ) {
     RecommendedShows(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
-        navigateUp = navigateUp
+        navigateUp = navigateUp,
     )
 }
 
@@ -41,13 +41,13 @@ fun RecommendedShows(
 internal fun RecommendedShows(
     viewModel: RecommendedShowsViewModel,
     openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
 ) {
     EntryGrid(
         lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
         title = stringResource(UiR.string.discover_recommended_title),
         onOpenShowDetails = openShowDetails,
         onNavigateUp = navigateUp,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     )
 }

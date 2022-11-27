@@ -47,7 +47,7 @@ internal fun NavGraphBuilder.composable(
     exitTransition: (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?)? = null,
     popEnterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?)? = enterTransition,
     popExitTransition: (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?)? = exitTransition,
-    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
+    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit,
 ) {
     composable(
         route = route,
@@ -57,7 +57,7 @@ internal fun NavGraphBuilder.composable(
         exitTransition = exitTransition,
         popEnterTransition = popEnterTransition,
         popExitTransition = popExitTransition,
-        content = content
+        content = content,
     )
 }
 
@@ -70,14 +70,14 @@ internal fun NavGraphBuilder.dialog(
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
     dialogProperties: DialogProperties = DialogProperties(),
-    content: @Composable (NavBackStackEntry) -> Unit
+    content: @Composable (NavBackStackEntry) -> Unit,
 ) {
     dialog(
         route = route,
         arguments = arguments.appendWithDebugLabel(debugLabel),
         deepLinks = deepLinks,
         dialogProperties = dialogProperties,
-        content = content
+        content = content,
     )
 }
 
@@ -87,18 +87,18 @@ internal fun NavGraphBuilder.bottomSheet(
     debugLabel: String? = null,
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
-    content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit
+    content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit,
 ) {
     bottomSheet(
         route = route,
         arguments = arguments.appendWithDebugLabel(debugLabel),
         deepLinks = deepLinks,
-        content = content
+        content = content,
     )
 }
 
 private fun List<NamedNavArgument>.appendWithDebugLabel(
-    label: String? = null
+    label: String? = null,
 ): List<NamedNavArgument> = when {
     label != null -> {
         this + navArgument(DEBUG_LABEL_ARG) { defaultValue = label }

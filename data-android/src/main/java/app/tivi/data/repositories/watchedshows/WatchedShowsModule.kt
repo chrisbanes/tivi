@@ -42,7 +42,7 @@ internal object WatchedShowsModule {
         traktWatchedShows: TraktWatchedShowsDataSource,
         watchedShowsDao: WatchedShowDao,
         showDao: TiviShowDao,
-        lastRequestStore: WatchedShowsLastRequestStore
+        lastRequestStore: WatchedShowsLastRequestStore,
     ): WatchedShowsStore = StoreBuilder.from(
         fetcher = Fetcher.of {
             traktWatchedShows()
@@ -76,7 +76,7 @@ internal object WatchedShowsModule {
                 // Delete of an entity here means the entire list
                 watchedShowsDao.deleteAll()
             },
-            deleteAll = watchedShowsDao::deleteAll
-        )
+            deleteAll = watchedShowsDao::deleteAll,
+        ),
     ).build()
 }

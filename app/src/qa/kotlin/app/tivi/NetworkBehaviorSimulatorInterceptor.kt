@@ -29,7 +29,7 @@ import retrofit2.mock.NetworkBehavior
  * network endpoint.
  */
 internal class NetworkBehaviorSimulatorInterceptor(
-    private val networkBehavior: NetworkBehavior
+    private val networkBehavior: NetworkBehavior,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         networkBehavior.delaySleep()

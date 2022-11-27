@@ -42,7 +42,7 @@ object TrendingShowsModule {
         traktTrendingShows: TraktTrendingShowsDataSource,
         trendingShowsDao: TrendingDao,
         showDao: TiviShowDao,
-        lastRequestStore: TrendingShowsLastRequestStore
+        lastRequestStore: TrendingShowsLastRequestStore,
     ): TrendingShowsStore = StoreBuilder.from(
         fetcher = Fetcher.of { page: Int ->
             traktTrendingShows(page, 20)
@@ -80,7 +80,7 @@ object TrendingShowsModule {
                 }
             },
             delete = trendingShowsDao::deletePage,
-            deleteAll = trendingShowsDao::deleteAll
-        )
+            deleteAll = trendingShowsDao::deleteAll,
+        ),
     ).build()
 }

@@ -35,7 +35,7 @@ inline val LayoutCoordinates.boundsInParent: Rect
     get() = Rect(positionInParent, size.toSize())
 
 fun Modifier.onPositionInParentChanged(
-    onChange: (LayoutCoordinates) -> Unit
+    onChange: (LayoutCoordinates) -> Unit,
 ) = composed {
     var lastPosition by remember { mutableStateOf(Offset.Zero) }
     Modifier.onGloballyPositioned { coordinates ->

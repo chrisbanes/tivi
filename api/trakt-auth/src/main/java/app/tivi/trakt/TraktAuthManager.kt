@@ -29,22 +29,22 @@ interface TraktAuthManager {
 }
 
 class LoginTrakt internal constructor(
-    private val intentBuilder: () -> Intent
+    private val intentBuilder: () -> Intent,
 ) : ActivityResultContract<Unit, LoginTrakt.Result?>() {
     override fun createIntent(context: Context, input: Unit): Intent = intentBuilder()
 
     override fun parseResult(
         resultCode: Int,
-        intent: Intent?
+        intent: Intent?,
     ): Result? = intent?.let {
         Result(
             AuthorizationResponse.fromIntent(it),
-            AuthorizationException.fromIntent(it)
+            AuthorizationException.fromIntent(it),
         )
     }
 
     data class Result(
         val response: AuthorizationResponse?,
-        val exception: AuthorizationException?
+        val exception: AuthorizationException?,
     )
 }

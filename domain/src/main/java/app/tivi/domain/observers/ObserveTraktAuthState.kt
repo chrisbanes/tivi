@@ -23,7 +23,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class ObserveTraktAuthState @Inject constructor(
-    private val traktManager: TraktManager
+    private val traktManager: TraktManager,
 ) : SubjectInteractor<Unit, TraktAuthState>() {
     override fun createObservable(params: Unit): Flow<TraktAuthState> {
         return traktManager.state

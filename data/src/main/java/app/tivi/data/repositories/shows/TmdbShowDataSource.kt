@@ -26,7 +26,7 @@ import retrofit2.awaitResponse
 
 class TmdbShowDataSource @Inject constructor(
     private val tmdb: Tmdb,
-    private val mapper: TmdbShowToTiviShow
+    private val mapper: TmdbShowToTiviShow,
 ) : ShowDataSource {
     override suspend fun getShow(show: TiviShow): TiviShow {
         val tmdbId = show.tmdbId

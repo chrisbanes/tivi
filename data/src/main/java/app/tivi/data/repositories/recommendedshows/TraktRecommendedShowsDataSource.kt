@@ -28,7 +28,7 @@ import retrofit2.awaitResponse
 
 class TraktRecommendedShowsDataSource @Inject constructor(
     private val recommendationsService: Provider<Recommendations>,
-    private val showMapper: TraktShowToTiviShow
+    private val showMapper: TraktShowToTiviShow,
 ) {
     suspend operator fun invoke(page: Int, pageSize: Int): List<TiviShow> = withRetry {
         recommendationsService.get()

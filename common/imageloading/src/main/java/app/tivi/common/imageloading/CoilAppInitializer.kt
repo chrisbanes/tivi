@@ -29,7 +29,7 @@ class CoilAppInitializer @Inject constructor(
     private val application: Application,
     private val tmdbImageEntityInterceptor: TmdbImageEntityCoilInterceptor,
     private val episodeEntityInterceptor: EpisodeEntityCoilInterceptor,
-    private val okHttpClient: OkHttpClient
+    private val okHttpClient: OkHttpClient,
 ) : AppInitializer {
     override fun init() {
         Coil.setImageLoader {

@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
 
 class ClearUserDetails @Inject constructor(
     private val userDao: UserDao,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ClearUserDetails.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

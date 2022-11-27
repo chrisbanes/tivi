@@ -45,7 +45,7 @@ internal object SettingsModule {
     @Provides
     @Singleton
     fun provideAppPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(context)
     }

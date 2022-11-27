@@ -27,7 +27,7 @@ import org.threeten.bp.OffsetDateTime
 @Entity(
     tableName = "watched_entries",
     indices = [
-        Index(value = ["show_id"], unique = true)
+        Index(value = ["show_id"], unique = true),
     ],
     foreignKeys = [
         ForeignKey(
@@ -35,12 +35,12 @@ import org.threeten.bp.OffsetDateTime
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("show_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class WatchedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
-    @ColumnInfo(name = "last_watched") val lastWatched: OffsetDateTime
+    @ColumnInfo(name = "last_watched") val lastWatched: OffsetDateTime,
 ) : Entry

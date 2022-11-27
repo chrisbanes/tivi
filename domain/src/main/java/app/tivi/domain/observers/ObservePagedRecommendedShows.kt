@@ -31,23 +31,23 @@ import kotlinx.coroutines.flow.Flow
 @OptIn(ExperimentalPagingApi::class)
 class ObservePagedRecommendedShows @Inject constructor(
     private val RecommendedShowsDao: RecommendedDao,
-    private val updateRecommendedShows: UpdateRecommendedShows
+    private val updateRecommendedShows: UpdateRecommendedShows,
 ) : PagingInteractor<ObservePagedRecommendedShows.Params, RecommendedEntryWithShow>() {
     override fun createObservable(
-        params: Params
+        params: Params,
     ): Flow<PagingData<RecommendedEntryWithShow>> {
         return Pager(
             config = params.pagingConfig,
             remoteMediator = RefreshOnlyRemoteMediator {
                 updateRecommendedShows.executeSync(
-                    UpdateRecommendedShows.Params(forceRefresh = true)
+                    UpdateRecommendedShows.Params(forceRefresh = true),
                 )
             },
-            pagingSourceFactory = RecommendedShowsDao::entriesPagingSource
+            pagingSourceFactory = RecommendedShowsDao::entriesPagingSource,
         ).flow
     }
 
     data class Params(
-        override val pagingConfig: PagingConfig
+        override val pagingConfig: PagingConfig,
     ) : Parameters<RecommendedEntryWithShow>
 }

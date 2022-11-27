@@ -23,7 +23,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktHistoryEntryToEpisode @Inject constructor(
-    private val mapper: TraktEpisodeToEpisode
+    private val mapper: TraktEpisodeToEpisode,
 ) : Mapper<HistoryEntry, Episode> {
     override suspend fun map(from: HistoryEntry) = mapper.map(from.episode)
 }

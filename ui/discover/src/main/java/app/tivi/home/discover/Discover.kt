@@ -97,7 +97,7 @@ fun Discover(
     openPopularShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openUser: () -> Unit
+    openUser: () -> Unit,
 ) {
     Discover(
         viewModel = hiltViewModel(),
@@ -105,7 +105,7 @@ fun Discover(
         openPopularShows = openPopularShows,
         openRecommendedShows = openRecommendedShows,
         openShowDetails = openShowDetails,
-        openUser = openUser
+        openUser = openUser,
     )
 }
 
@@ -117,7 +117,7 @@ internal fun Discover(
     openPopularShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openUser: () -> Unit
+    openUser: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -129,7 +129,7 @@ internal fun Discover(
         openTrendingShows = openTrendingShows,
         openRecommendedShows = openRecommendedShows,
         openPopularShows = openPopularShows,
-        onMessageShown = viewModel::clearMessage
+        onMessageShown = viewModel::clearMessage,
     )
 }
 
@@ -143,7 +143,7 @@ internal fun Discover(
     openTrendingShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openPopularShows: () -> Unit,
-    onMessageShown: (id: Long) -> Unit
+    onMessageShown: (id: Long) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -164,7 +164,7 @@ internal fun Discover(
                 refreshing = state.refreshing,
                 onRefreshActionClick = refresh,
                 onUserActionClick = openUser,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         },
         snackbarHost = { snackbarHostState ->
@@ -172,16 +172,16 @@ internal fun Discover(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
         val refreshState = rememberPullRefreshState(refreshing = false, onRefresh = refresh)
         Box(modifier = Modifier.pullRefresh(state = refreshState)) {
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.bodyWidth()
+                modifier = Modifier.bodyWidth(),
             ) {
                 item {
                     Spacer(Modifier.height(Layout.gutter))
@@ -203,9 +203,9 @@ internal fun Discover(
                                     openShowDetails(
                                         nextEpisodeToWatch.show.id,
                                         nextEpisodeToWatch.episode.seasonId,
-                                        nextEpisodeToWatch.episode.id
+                                        nextEpisodeToWatch.episode.id,
                                     )
-                                }
+                                },
                         )
                     }
 
@@ -222,7 +222,7 @@ internal fun Discover(
                         onItemClick = {
                             openShowDetails(it.id, null, null)
                         },
-                        onMoreClick = openTrendingShows
+                        onMoreClick = openTrendingShows,
                     )
                 }
 
@@ -234,7 +234,7 @@ internal fun Discover(
                         onItemClick = {
                             openShowDetails(it.id, null, null)
                         },
-                        onMoreClick = openRecommendedShows
+                        onMoreClick = openRecommendedShows,
                     )
                 }
 
@@ -244,7 +244,7 @@ internal fun Discover(
                         title = stringResource(UiR.string.discover_popular_title),
                         refreshing = state.popularRefreshing,
                         onItemClick = { openShowDetails(it.id, null, null) },
-                        onMoreClick = openPopularShows
+                        onMoreClick = openPopularShows,
                     )
                 }
 
@@ -257,7 +257,7 @@ internal fun Discover(
                 refreshing = state.refreshing,
                 state = refreshState,
                 modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
-                scale = true
+                scale = true,
             )
         }
     }
@@ -269,14 +269,14 @@ private fun NextEpisodeToWatch(
     poster: TmdbImageEntity?,
     season: Season,
     episode: Episode,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(modifier) {
         Row(
             Modifier.padding(
                 horizontal = Layout.bodyMargin,
-                vertical = Layout.gutter
-            )
+                vertical = Layout.gutter,
+            ),
         ) {
             if (poster != null) {
                 PosterCard(
@@ -284,7 +284,7 @@ private fun NextEpisodeToWatch(
                     poster = poster,
                     modifier = Modifier
                         .width(64.dp)
-                        .aspectRatio(2 / 3f)
+                        .aspectRatio(2 / 3f),
                 )
 
                 Spacer(Modifier.width(Layout.gutter))
@@ -295,7 +295,7 @@ private fun NextEpisodeToWatch(
                 CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
                     Text(
                         text = textCreator.seasonEpisodeTitleText(season, episode),
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.caption,
                     )
                 }
 
@@ -304,7 +304,7 @@ private fun NextEpisodeToWatch(
                 Text(
                     text = episode.title
                         ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
-                    style = MaterialTheme.typography.body1
+                    style = MaterialTheme.typography.body1,
                 )
             }
         }
@@ -318,7 +318,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
     refreshing: Boolean,
     onItemClick: (TiviShow) -> Unit,
     onMoreClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         if (refreshing || items.isNotEmpty()) {
@@ -327,14 +327,14 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
             Header(
                 title = title,
                 loading = refreshing,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 TextButton(
                     onClick = onMoreClick,
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colors.secondary
+                        contentColor = MaterialTheme.colors.secondary,
                     ),
-                    modifier = Modifier.alignBy(FirstBaseline)
+                    modifier = Modifier.alignBy(FirstBaseline),
                 ) {
                     Text(text = stringResource(UiR.string.header_more))
                 }
@@ -346,7 +346,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                 onItemClick = onItemClick,
                 modifier = Modifier
                     .height(192.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         }
         // TODO empty state
@@ -358,7 +358,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
 private fun <T : EntryWithShow<*>> EntryShowCarousel(
     items: List<T>,
     onItemClick: (TiviShow) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val lazyListState = rememberLazyListState()
     val contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
@@ -368,14 +368,14 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
         modifier = modifier,
         flingBehavior = rememberSnapperFlingBehavior(
             lazyListState = lazyListState,
-            snapOffsetForItem = SnapOffsets.Start
+            snapOffsetForItem = SnapOffsets.Start,
         ),
         contentPadding = contentPadding,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(
             items = items,
-            key = { it.show.id }
+            key = { it.show.id },
         ) { item ->
             PosterCard(
                 show = item.show,
@@ -384,7 +384,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
                 modifier = Modifier
                     .animateItemPlacement()
                     .fillParentMaxHeight()
-                    .aspectRatio(2 / 3f)
+                    .aspectRatio(2 / 3f),
             )
         }
     }
@@ -395,7 +395,7 @@ private fun Header(
     title: String,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
-    content: @Composable RowScope.() -> Unit = {}
+    content: @Composable RowScope.() -> Unit = {},
 ) {
     Row(modifier) {
         Spacer(Modifier.width(Layout.bodyMargin))
@@ -405,7 +405,7 @@ private fun Header(
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .padding(vertical = 8.dp)
+                .padding(vertical = 8.dp),
         )
 
         Spacer(Modifier.weight(1f))
@@ -415,7 +415,7 @@ private fun Header(
                 color = MaterialTheme.colors.secondary,
                 modifier = Modifier
                     .padding(8.dp)
-                    .size(16.dp)
+                    .size(16.dp),
             )
         }
 
@@ -432,11 +432,11 @@ private fun DiscoverAppBar(
     refreshing: Boolean,
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.surface.copy(
-            alpha = AppBarAlphas.translucentBarAlpha()
+            alpha = AppBarAlphas.translucentBarAlpha(),
         ),
         contentColor = MaterialTheme.colors.onSurface,
         contentPadding = WindowInsets.systemBars
@@ -452,7 +452,7 @@ private fun DiscoverAppBar(
                 // same thing.
                 Crossfade(
                     targetState = refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 ) { isRefreshing ->
                     if (!isRefreshing) {
                         RefreshButton(onClick = onRefreshActionClick)
@@ -464,9 +464,9 @@ private fun DiscoverAppBar(
                 loggedIn = loggedIn,
                 user = user,
                 onClick = onUserActionClick,
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier.align(Alignment.CenterVertically),
             )
-        }
+        },
     )
 }
 
@@ -478,7 +478,7 @@ private fun PreviewDiscoverAppBar() {
         user = null,
         refreshing = false,
         onUserActionClick = {},
-        onRefreshActionClick = {}
+        onRefreshActionClick = {},
     )
 }
 
@@ -488,7 +488,7 @@ private fun PreviewHeader() {
     Surface(Modifier.fillMaxWidth()) {
         Header(
             title = "Being watched now",
-            loading = true
+            loading = true,
         )
     }
 }

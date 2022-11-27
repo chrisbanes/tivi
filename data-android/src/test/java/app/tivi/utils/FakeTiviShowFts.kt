@@ -33,5 +33,5 @@ internal data class FakeTiviShowFts(
     val id: Long? = null,
     @ColumnInfo(name = "title") val title: String? = null,
     @ColumnInfo(name = "original_title") val originalTitle: String? = null,
-    @ColumnInfo(name = "docid") val docId: Long? = null
+    @ColumnInfo(name = "docid") val docId: Long? = null,
 )

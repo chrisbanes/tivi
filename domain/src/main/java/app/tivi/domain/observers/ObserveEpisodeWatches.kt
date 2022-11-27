@@ -23,7 +23,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class ObserveEpisodeWatches @Inject constructor(
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
 ) : SubjectInteractor<ObserveEpisodeWatches.Params, List<EpisodeWatchEntry>>() {
     override fun createObservable(params: Params): Flow<List<EpisodeWatchEntry>> {
         return seasonsEpisodesRepository.observeEpisodeWatches(params.episodeId)

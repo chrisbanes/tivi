@@ -40,11 +40,11 @@ fun PosterCard(
     show: TiviShow,
     modifier: Modifier = Modifier,
     poster: TmdbImageEntity? = null,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
 ) {
     Card(modifier = modifier) {
         Box(
-            modifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
+            modifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
         ) {
             // TODO: remove text if the image has loaded (and animated in).
             // https://github.com/chrisbanes/accompanist/issues/76
@@ -54,7 +54,7 @@ fun PosterCard(
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier
                         .padding(4.dp)
-                        .align(Alignment.CenterStart)
+                        .align(Alignment.CenterStart),
                 )
             }
             if (poster != null) {
@@ -63,10 +63,10 @@ fun PosterCard(
                     requestBuilder = { crossfade(true) },
                     contentDescription = stringResource(
                         UiR.string.cd_show_poster_image,
-                        show.title ?: "show"
+                        show.title ?: "show",
                     ),
                     modifier = Modifier.matchParentSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
                 )
             }
         }
@@ -75,7 +75,7 @@ fun PosterCard(
 
 @Composable
 fun PlaceholderPosterCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(modifier = modifier) {
         Box {

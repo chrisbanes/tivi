@@ -25,10 +25,10 @@ import javax.inject.Singleton
 @Singleton
 class TraktSeasonToSeasonWithEpisodes @Inject constructor(
     private val seasonMapper: TraktSeasonToSeason,
-    private val episoderMapper: TraktEpisodeToEpisode
+    private val episoderMapper: TraktEpisodeToEpisode,
 ) : Mapper<TraktSeason, Pair<Season, List<Episode>>> {
     override suspend fun map(from: TraktSeason): Pair<Season, List<Episode>> = Pair(
         seasonMapper.map(from),
-        from.episodes?.map { episoderMapper.map(it) } ?: emptyList()
+        from.episodes?.map { episoderMapper.map(it) } ?: emptyList(),
     )
 }

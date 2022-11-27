@@ -26,12 +26,12 @@ import app.tivi.common.ui.resources.R as UiR
 @Composable
 fun PopularShows(
     openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
 ) {
     PopularShows(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
-        navigateUp = navigateUp
+        navigateUp = navigateUp,
     )
 }
 
@@ -39,12 +39,12 @@ fun PopularShows(
 internal fun PopularShows(
     viewModel: PopularShowsViewModel,
     openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
 ) {
     EntryGrid(
         lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
         title = stringResource(UiR.string.discover_popular_title),
         onOpenShowDetails = openShowDetails,
-        onNavigateUp = navigateUp
+        onNavigateUp = navigateUp,
     )
 }

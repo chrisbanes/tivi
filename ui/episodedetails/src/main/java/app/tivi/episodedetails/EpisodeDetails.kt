@@ -113,12 +113,12 @@ import org.threeten.bp.OffsetDateTime
 @Composable
 fun EpisodeDetails(
     expandedValue: ModalBottomSheetValue,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
 ) {
     EpisodeDetails(
         viewModel = hiltViewModel(),
         expandedValue = expandedValue,
-        navigateUp = navigateUp
+        navigateUp = navigateUp,
     )
 }
 
@@ -128,7 +128,7 @@ fun EpisodeDetails(
 internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
     expandedValue: ModalBottomSheetValue,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -140,7 +140,7 @@ internal fun EpisodeDetails(
         onRemoveAllWatches = viewModel::removeAllWatches,
         onRemoveWatch = viewModel::removeWatchEntry,
         onAddWatch = viewModel::addWatch,
-        onMessageShown = viewModel::clearMessage
+        onMessageShown = viewModel::clearMessage,
     )
 }
 
@@ -154,7 +154,7 @@ internal fun EpisodeDetails(
     onRemoveAllWatches: () -> Unit,
     onRemoveWatch: (id: Long) -> Unit,
     onAddWatch: () -> Unit,
-    onMessageShown: (id: Long) -> Unit
+    onMessageShown: (id: Long) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -176,7 +176,7 @@ internal fun EpisodeDetails(
                         episode = viewState.episode,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(16 / 9f)
+                            .aspectRatio(16 / 9f),
                     )
                 }
 
@@ -186,7 +186,7 @@ internal fun EpisodeDetails(
                             Modifier
                                 .background(MaterialTheme.colors.background.copy(alpha = 0.4f))
                                 .windowInsetsTopHeight(WindowInsets.statusBars)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
                         )
                     }
 
@@ -196,7 +196,7 @@ internal fun EpisodeDetails(
                         navigateUp = navigateUp,
                         refresh = refresh,
                         elevation = 0.dp,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -206,18 +206,18 @@ internal fun EpisodeDetails(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
-        }
+        },
     ) { contentPadding ->
         Surface(
             elevation = 2.dp,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             Column(
                 Modifier
                     .verticalScroll(rememberScrollState())
-                    .padding(contentPadding)
+                    .padding(contentPadding),
             ) {
                 val episode = viewState.episode
                 if (episode != null) {
@@ -225,7 +225,7 @@ internal fun EpisodeDetails(
 
                     ExpandingText(
                         text = episode.summary ?: "No summary",
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
                     )
                 }
 
@@ -235,12 +235,12 @@ internal fun EpisodeDetails(
                     if (viewState.watches.isEmpty()) {
                         MarkWatchedButton(
                             onClick = onAddWatch,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
                         )
                     } else {
                         AddWatchButton(
                             onClick = onAddWatch,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
                         )
                     }
                 }
@@ -251,7 +251,7 @@ internal fun EpisodeDetails(
                     var openDialog by remember { mutableStateOf(false) }
 
                     EpisodeWatchesHeader(
-                        onSweepWatchesClick = { openDialog = true }
+                        onSweepWatchesClick = { openDialog = true },
                     )
 
                     if (openDialog) {
@@ -260,7 +260,7 @@ internal fun EpisodeDetails(
                                 onRemoveAllWatches()
                                 openDialog = false
                             },
-                            onDismiss = { openDialog = false }
+                            onDismiss = { openDialog = false },
                         )
                     }
                 }
@@ -282,10 +282,10 @@ internal fun EpisodeDetails(
                                 val fraction = dismissState.progress.fraction
                                 EpisodeWatchSwipeBackground(
                                     swipeProgress = fraction,
-                                    wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f
+                                    wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f,
                                 )
                             },
-                            dismissContent = { EpisodeWatch(episodeWatchEntry = watch) }
+                            dismissContent = { EpisodeWatch(episodeWatchEntry = watch) },
                         )
                     }
                 }
@@ -300,7 +300,7 @@ internal fun EpisodeDetails(
 private fun EpisodeDetailsBackdrop(
     season: Season,
     episode: Episode,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TiviTheme(useDarkColors = true) {
         Backdrop(
@@ -314,13 +314,13 @@ private fun EpisodeDetailsBackdrop(
                         text = stringResource(
                             UiR.string.season_episode_number,
                             seasonNumber,
-                            epNumber
-                        ).uppercase(LocalConfiguration.current.locale)
+                            epNumber,
+                        ).uppercase(LocalConfiguration.current.locale),
                     )
                 }
             },
             title = { Text(text = episode.title ?: "No title") },
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }
@@ -333,7 +333,7 @@ private fun InfoPanes(episode: Episode) {
                 imageVector = Icons.Default.Star,
                 label = stringResource(UiR.string.trakt_rating_text, rating * 10f),
                 contentDescription = stringResource(UiR.string.cd_trakt_rating, rating * 10f),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
 
@@ -345,9 +345,9 @@ private fun InfoPanes(episode: Episode) {
                 label = formattedDate,
                 contentDescription = stringResource(
                     UiR.string.cd_episode_first_aired,
-                    formattedDate
+                    formattedDate,
                 ),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
     }
@@ -358,14 +358,14 @@ private fun InfoPane(
     imageVector: ImageVector,
     contentDescription: String?,
     label: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.padding(16.dp)) {
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Icon(
                 imageVector = imageVector,
                 contentDescription = contentDescription,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
             )
         }
 
@@ -374,7 +374,7 @@ private fun InfoPane(
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             text = label,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.body1,
         )
     }
 }
@@ -387,7 +387,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .align(Alignment.CenterVertically),
             text = stringResource(UiR.string.episode_watches),
-            style = MaterialTheme.typography.subtitle1
+            style = MaterialTheme.typography.subtitle1,
         )
 
         Spacer(Modifier.weight(1f))
@@ -395,11 +395,11 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
             IconButton(
                 modifier = Modifier.padding(end = 4.dp),
-                onClick = { onSweepWatchesClick() }
+                onClick = { onSweepWatchesClick() },
             ) {
                 Icon(
                     imageVector = Icons.Default.DeleteSweep,
-                    contentDescription = stringResource(UiR.string.cd_delete)
+                    contentDescription = stringResource(UiR.string.cd_delete),
                 )
             }
         }
@@ -412,13 +412,13 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .sizeIn(minWidth = 40.dp, minHeight = 40.dp)
+                .sizeIn(minWidth = 40.dp, minHeight = 40.dp),
         ) {
             val formatter = LocalTiviDateFormatter.current
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.body2,
             )
 
             Spacer(Modifier.weight(1f))
@@ -430,7 +430,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                         contentDescription = stringResource(UiR.string.cd_episode_syncing),
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .align(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically),
                     )
                 }
 
@@ -440,7 +440,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                         contentDescription = stringResource(UiR.string.cd_episode_deleted),
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .align(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically),
                     )
                 }
             }
@@ -451,7 +451,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 @Composable
 private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
-    wouldCompleteOnRelease: Boolean = false
+    wouldCompleteOnRelease: Boolean = false,
 ) {
     var iconCenter by remember { mutableStateOf(Offset(0f, 0f)) }
     val maxRadius = hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
@@ -462,7 +462,7 @@ private fun EpisodeWatchSwipeBackground(
     Box(
         Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape)
+            .background(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape),
     ) {
         // A simple box to draw the growing circle, which emanates from behind the icon
         Spacer(
@@ -473,15 +473,15 @@ private fun EpisodeWatchSwipeBackground(
                         targetValue = when (wouldCompleteOnRelease) {
                             true -> secondary
                             false -> default
-                        }
+                        },
                     ).value,
                     center = iconCenter,
                     radius = lerp(
                         startValue = 0f,
                         endValue = maxRadius.toFloat(),
-                        fraction = FastOutLinearInEasing.transform(swipeProgress)
-                    )
-                )
+                        fraction = FastOutLinearInEasing.transform(swipeProgress),
+                    ),
+                ),
         )
 
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
@@ -491,7 +491,7 @@ private fun EpisodeWatchSwipeBackground(
                 modifier = Modifier
                     .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
                     .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                    .align(Alignment.CenterEnd)
+                    .align(Alignment.CenterEnd),
             )
         }
     }
@@ -500,7 +500,7 @@ private fun EpisodeWatchSwipeBackground(
 private fun Modifier.drawGrowingCircle(
     color: Color,
     center: Offset,
-    radius: Float
+    radius: Float,
 ) = drawWithContent {
     drawContent()
 
@@ -508,7 +508,7 @@ private fun Modifier.drawGrowingCircle(
         drawCircle(
             color = color,
             radius = radius,
-            center = center
+            center = center,
         )
     }
 }
@@ -516,15 +516,15 @@ private fun Modifier.drawGrowingCircle(
 @Composable
 private fun MarkWatchedButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Text(
             text = stringResource(UiR.string.episode_mark_watched),
-            style = MaterialTheme.typography.button.copy(color = LocalContentColor.current)
+            style = MaterialTheme.typography.button.copy(color = LocalContentColor.current),
         )
     }
 }
@@ -532,11 +532,11 @@ private fun MarkWatchedButton(
 @Composable
 private fun AddWatchButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Text(text = stringResource(UiR.string.episode_add_watch))
     }
@@ -545,7 +545,7 @@ private fun AddWatchButton(
 @Composable
 private fun RemoveAllWatchesDialog(
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     TiviAlertDialog(
         title = stringResource(UiR.string.episode_remove_watches_dialog_title),
@@ -553,7 +553,7 @@ private fun RemoveAllWatchesDialog(
         confirmText = stringResource(UiR.string.episode_remove_watches_dialog_confirm),
         onConfirm = { onConfirm() },
         dismissText = stringResource(UiR.string.dialog_dismiss),
-        onDismissRequest = { onDismiss() }
+        onDismissRequest = { onDismiss() },
     )
 }
 
@@ -564,7 +564,7 @@ private fun EpisodeDetailsAppBar(
     navigateUp: () -> Unit,
     refresh: () -> Unit,
     elevation: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         title = {},
@@ -572,7 +572,7 @@ private fun EpisodeDetailsAppBar(
             ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(UiR.string.cd_close)
+                    contentDescription = stringResource(UiR.string.cd_close),
                 )
             }
         },
@@ -582,20 +582,20 @@ private fun EpisodeDetailsAppBar(
                     modifier = Modifier
                         .aspectRatio(1f)
                         .fillMaxHeight()
-                        .padding(14.dp)
+                        .padding(14.dp),
                 )
             } else {
                 ScrimmedIconButton(showScrim = true, onClick = refresh) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(UiR.string.cd_refresh)
+                        contentDescription = stringResource(UiR.string.cd_refresh),
                     )
                 }
             }
         },
         elevation = elevation,
         backgroundColor = backgroundColor,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -611,19 +611,19 @@ fun PreviewEpisodeDetails() {
                 summary = "A long description of a episode",
                 traktRating = 0.5f,
                 traktRatingVotes = 84,
-                firstAired = OffsetDateTime.now()
+                firstAired = OffsetDateTime.now(),
             ),
             season = Season(
                 id = 100,
-                showId = 0
+                showId = 0,
             ),
             watches = listOf(
                 EpisodeWatchEntry(
                     id = 10,
                     episodeId = 100,
-                    watchedAt = OffsetDateTime.now()
-                )
-            )
+                    watchedAt = OffsetDateTime.now(),
+                ),
+            ),
         ),
         expandedValue = ModalBottomSheetValue.HalfExpanded,
         navigateUp = {},
@@ -631,6 +631,6 @@ fun PreviewEpisodeDetails() {
         onRemoveAllWatches = {},
         onRemoveWatch = {},
         onAddWatch = {},
-        onMessageShown = {}
+        onMessageShown = {},
     )
 }

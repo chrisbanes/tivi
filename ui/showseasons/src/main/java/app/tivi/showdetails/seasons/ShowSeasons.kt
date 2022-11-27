@@ -94,13 +94,13 @@ import kotlinx.coroutines.launch
 fun ShowSeasons(
     navigateUp: () -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
-    initialSeasonId: Long? = null
+    initialSeasonId: Long? = null,
 ) {
     ShowSeasons(
         viewModel = hiltViewModel(),
         navigateUp = navigateUp,
         openEpisodeDetails = openEpisodeDetails,
-        initialSeasonId = initialSeasonId
+        initialSeasonId = initialSeasonId,
     )
 }
 
@@ -110,7 +110,7 @@ internal fun ShowSeasons(
     viewModel: ShowSeasonsViewModel,
     navigateUp: () -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
-    initialSeasonId: Long?
+    initialSeasonId: Long?,
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -120,7 +120,7 @@ internal fun ShowSeasons(
         openEpisodeDetails = openEpisodeDetails,
         refresh = viewModel::refresh,
         onMessageShown = viewModel::clearMessage,
-        initialSeasonId = initialSeasonId
+        initialSeasonId = initialSeasonId,
     )
 }
 
@@ -132,7 +132,7 @@ internal fun ShowSeasons(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     refresh: () -> Unit,
     onMessageShown: (id: Long) -> Unit,
-    initialSeasonId: Long?
+    initialSeasonId: Long?,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -172,18 +172,18 @@ internal fun ShowSeasons(
                     IconButton(onClick = navigateUp) {
                         Icon(
                             Icons.Default.ArrowBack,
-                            contentDescription = stringResource(UiR.string.cd_navigate_up)
+                            contentDescription = stringResource(UiR.string.cd_navigate_up),
                         )
                     }
                 },
                 actions = {
                     RefreshButton(
                         refreshing = viewState.refreshing,
-                        onClick = refresh
+                        onClick = refresh,
                     )
                 },
                 backgroundColor = MaterialTheme.colors.surface.copy(
-                    alpha = AppBarAlphas.translucentBarAlpha()
+                    alpha = AppBarAlphas.translucentBarAlpha(),
                 ),
                 bottomContent = {
                     SeasonPagerTabs(
@@ -191,9 +191,9 @@ internal fun ShowSeasons(
                         seasons = viewState.seasons.map { it.season },
                         modifier = Modifier.fillMaxWidth(),
                         backgroundColor = Color.Transparent,
-                        contentColor = LocalContentColor.current
+                        contentColor = LocalContentColor.current,
                     )
-                }
+                },
             )
         },
         snackbarHost = { snackbarHostState ->
@@ -201,9 +201,9 @@ internal fun ShowSeasons(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
-        }
+        },
     ) {
         SeasonsPager(
             seasons = viewState.seasons,
@@ -211,7 +211,7 @@ internal fun ShowSeasons(
             openEpisodeDetails = openEpisodeDetails,
             modifier = Modifier
                 .fillMaxHeight()
-                .bodyWidth()
+                .bodyWidth(),
         )
     }
 }
@@ -223,7 +223,7 @@ private fun SeasonPagerTabs(
     seasons: List<Season>,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.primarySurface,
-    contentColor: Color = contentColorFor(backgroundColor)
+    contentColor: Color = contentColorFor(backgroundColor),
 ) {
     if (pagerState.pageCount == 0) return
 
@@ -236,10 +236,10 @@ private fun SeasonPagerTabs(
         contentColor = contentColor,
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
-                Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+                Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
             )
         },
-        modifier = modifier
+        modifier = modifier,
     ) {
         // Add tabs for all of our pages
         seasons.forEachIndexed { index, season ->
@@ -251,7 +251,7 @@ private fun SeasonPagerTabs(
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(index)
                     }
-                }
+                },
             )
         }
     }
@@ -263,18 +263,18 @@ private fun SeasonsPager(
     seasons: List<SeasonWithEpisodesAndWatches>,
     pagerState: PagerState,
     openEpisodeDetails: (episodeId: Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HorizontalPager(
         count = seasons.size,
         state = pagerState,
-        modifier = modifier
+        modifier = modifier,
     ) { page ->
         val season = seasons[page]
         EpisodesList(
             episodes = season.episodes,
             onEpisodeClick = openEpisodeDetails,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -283,11 +283,11 @@ private fun SeasonsPager(
 private fun EpisodesList(
     episodes: List<EpisodeWithWatches>,
     onEpisodeClick: (episodeId: Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = LocalScaffoldPadding.current
+        contentPadding = LocalScaffoldPadding.current,
     ) {
         items(episodes, key = { it.episode.id }) { item ->
             EpisodeWithWatchesRow(
@@ -297,7 +297,7 @@ private fun EpisodesList(
                 onlyPendingDeletes = item.onlyPendingDeletes,
                 modifier = Modifier
                     .fillParentMaxWidth()
-                    .clickable { onEpisodeClick(item.episode.id) }
+                    .clickable { onEpisodeClick(item.episode.id) },
             )
         }
     }
@@ -309,20 +309,20 @@ private fun EpisodeWithWatchesRow(
     isWatched: Boolean,
     hasPending: Boolean,
     onlyPendingDeletes: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .heightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
     ) {
         Column(modifier = Modifier.weight(1f)) {
             val textCreator = LocalTiviTextCreator.current
 
             Text(
                 text = textCreator.episodeNumberText(episode).toString(),
-                style = MaterialTheme.typography.caption
+                style = MaterialTheme.typography.caption,
             )
 
             Spacer(Modifier.height(2.dp))
@@ -330,7 +330,7 @@ private fun EpisodeWithWatchesRow(
             Text(
                 text = episode.title
                     ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.body2,
             )
         }
 
@@ -340,7 +340,7 @@ private fun EpisodeWithWatchesRow(
                 Icon(
                     imageVector = Icons.Default.CloudUpload,
                     contentDescription = stringResource(UiR.string.cd_episode_syncing),
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 )
                 needSpacer = true
             }
@@ -356,7 +356,7 @@ private fun EpisodeWithWatchesRow(
                         onlyPendingDeletes -> stringResource(UiR.string.cd_episode_deleted)
                         else -> stringResource(UiR.string.cd_episode_watched)
                     },
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 )
             }
         }

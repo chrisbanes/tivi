@@ -23,12 +23,12 @@ import androidx.compose.runtime.Composable
 @Composable
 fun TiviTheme(
     useDarkColors: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     MaterialTheme(
         colors = if (useDarkColors) TiviDarkColors else TiviLightColors,
         typography = TiviTypography,
         shapes = TiviShapes,
-        content = content
+        content = content,
     )
 }

@@ -22,7 +22,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ShowIdToTmdbIdMapper @Inject constructor(
-    private val showDao: TiviShowDao
+    private val showDao: TiviShowDao,
 ) : Mapper<Long, Int> {
     override suspend fun map(from: Long) = showDao.getTmdbIdForShowId(from)
         ?: throw IllegalArgumentException("Show with id $from does not exist")

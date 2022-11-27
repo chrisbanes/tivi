@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.map
 
 class ObserveShowDetails @Inject constructor(
     private val showStore: ShowStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<ObserveShowDetails.Params, TiviShow>() {
 
     override fun createObservable(params: Params): Flow<TiviShow> {

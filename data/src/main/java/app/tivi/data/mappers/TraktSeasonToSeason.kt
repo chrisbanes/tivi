@@ -34,6 +34,6 @@ class TraktSeasonToSeason @Inject constructor() : Mapper<TraktSeason, Season> {
         traktRatingVotes = from.votes ?: 0,
         episodeCount = from.episode_count,
         episodesAired = from.aired_episodes,
-        network = from.network
+        network = from.network,
     )
 }

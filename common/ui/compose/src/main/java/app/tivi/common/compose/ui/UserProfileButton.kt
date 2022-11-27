@@ -36,11 +36,11 @@ fun UserProfileButton(
     loggedIn: Boolean,
     user: TraktUser?,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     IconButton(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
     ) {
         when {
             loggedIn && user?.avatarUrl != null -> {
@@ -49,11 +49,11 @@ fun UserProfileButton(
                     requestBuilder = { crossfade(true) },
                     contentDescription = stringResource(
                         UiR.string.cd_profile_pic,
-                        user.name ?: user.username
+                        user.name ?: user.username,
                     ),
                     modifier = Modifier
                         .size(32.dp)
-                        .clip(MaterialTheme.shapes.small)
+                        .clip(MaterialTheme.shapes.small),
                 )
             }
             else -> {
@@ -62,7 +62,7 @@ fun UserProfileButton(
                         loggedIn -> Icons.Default.Person
                         else -> Icons.Outlined.Person
                     },
-                    contentDescription = stringResource(UiR.string.cd_user_profile)
+                    contentDescription = stringResource(UiR.string.cd_user_profile),
                 )
             }
         }

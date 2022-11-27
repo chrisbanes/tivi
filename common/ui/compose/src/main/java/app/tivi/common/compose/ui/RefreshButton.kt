@@ -32,12 +32,12 @@ import app.tivi.common.ui.resources.R as UiR
 fun RefreshButton(
     refreshing: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     IconButton(
         onClick = onClick,
         enabled = !refreshing,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Crossfade(refreshing) { targetRefreshing ->
             if (targetRefreshing) {
@@ -45,7 +45,7 @@ fun RefreshButton(
             } else {
                 Icon(
                     imageVector = Icons.Default.Refresh,
-                    contentDescription = stringResource(UiR.string.cd_refresh)
+                    contentDescription = stringResource(UiR.string.cd_refresh),
                 )
             }
         }
@@ -55,15 +55,15 @@ fun RefreshButton(
 @Composable
 fun RefreshButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     IconButton(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Icon(
             imageVector = Icons.Default.Refresh,
-            contentDescription = stringResource(UiR.string.cd_refresh)
+            contentDescription = stringResource(UiR.string.cd_refresh),
         )
     }
 }

@@ -23,7 +23,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class ObserveRelatedShows @Inject constructor(
-    private val relatedShowsDao: RelatedShowsDao
+    private val relatedShowsDao: RelatedShowsDao,
 ) : SubjectInteractor<ObserveRelatedShows.Params, List<RelatedShowEntryWithShow>>() {
 
     override fun createObservable(params: Params): Flow<List<RelatedShowEntryWithShow>> {

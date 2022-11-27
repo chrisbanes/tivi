@@ -23,12 +23,12 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 internal class TiviAnalytics @Inject constructor(
-    private val firebaseAnalytics: Provider<FirebaseAnalytics>
+    private val firebaseAnalytics: Provider<FirebaseAnalytics>,
 ) : Analytics {
     override fun trackScreenView(
         label: String,
         route: String?,
-        arguments: Any?
+        arguments: Any?,
     ) {
         try {
             firebaseAnalytics.get().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {

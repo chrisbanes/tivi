@@ -85,7 +85,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingSend)
         assertThat(
             episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
-            `is`(listOf(episodeWatch2PendingSend))
+            `is`(listOf(episodeWatch2PendingSend)),
         )
     }
 
@@ -94,7 +94,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingDelete)
         assertThat(
             episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
-            `is`(listOf(episodeWatch2PendingDelete))
+            `is`(listOf(episodeWatch2PendingDelete)),
         )
     }
 

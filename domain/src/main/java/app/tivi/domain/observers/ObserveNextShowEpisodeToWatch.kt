@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.Flow
 
 class ObserveNextShowEpisodeToWatch @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository,
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
 ) : SubjectInteractor<Unit, EpisodeWithSeasonWithShow?>() {
 
     override fun createObservable(params: Unit): Flow<EpisodeWithSeasonWithShow?> {

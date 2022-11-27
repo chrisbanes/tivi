@@ -44,7 +44,7 @@ val s1 = Season(
     showId = showId,
     title = "Season 1",
     number = 1,
-    traktId = 5443
+    traktId = 5443,
 )
 
 const val s2_id = 2L
@@ -53,7 +53,7 @@ val s2 = Season(
     showId = showId,
     title = "Season 2",
     number = 2,
-    traktId = 5434
+    traktId = 5434,
 )
 
 const val s0_id = 3L
@@ -62,7 +62,7 @@ val s0 = Season(
     showId = showId,
     title = "Specials",
     number = Season.NUMBER_SPECIALS,
-    traktId = 7042
+    traktId = 7042,
 )
 
 private val s1e1AirDate = OffsetDateTime.of(2000, 7, 1, 18, 0, 0, 0, ZoneOffset.UTC)
@@ -82,7 +82,7 @@ val s1e1w = EpisodeWatchEntry(
     id = s1e1w_id,
     watchedAt = OffsetDateTime.now(),
     episodeId = s1e1.id,
-    traktId = 435214
+    traktId = 435214,
 )
 
 const val s1e1w2_id = 2L

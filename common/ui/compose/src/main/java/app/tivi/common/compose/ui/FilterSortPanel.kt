@@ -41,7 +41,7 @@ fun FilterSortPanel(
     modifier: Modifier = Modifier,
     sortOptions: List<SortOption>,
     currentSortOption: SortOption,
-    onSortSelected: (SortOption) -> Unit
+    onSortSelected: (SortOption) -> Unit,
 ) {
     Row(modifier.padding(vertical = 8.dp)) {
         var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -55,18 +55,18 @@ fun FilterSortPanel(
                 onFilterChanged(value.text)
             },
             hint = filterHint,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
 
         SortMenuPopup(
             sortOptions = sortOptions,
             currentSortOption = currentSortOption,
             onSortSelected = onSortSelected,
-            modifier = Modifier.align(Alignment.CenterVertically)
+            modifier = Modifier.align(Alignment.CenterVertically),
         ) {
             Icon(
                 imageVector = Icons.Default.Sort,
-                contentDescription = stringResource(UiR.string.cd_sort_list)
+                contentDescription = stringResource(UiR.string.cd_sort_list),
             )
         }
     }

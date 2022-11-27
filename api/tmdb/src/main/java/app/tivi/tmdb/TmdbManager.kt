@@ -28,7 +28,7 @@ import retrofit2.awaitResponse
 @Singleton
 class TmdbManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val tmdbClient: Tmdb
+    private val tmdbClient: Tmdb,
 ) {
     private val imageProvider = MutableStateFlow(TmdbImageUrlProvider())
 
@@ -51,7 +51,7 @@ class TmdbManager @Inject constructor(
                 images.secure_base_url!!,
                 images.poster_sizes ?: emptyList(),
                 images.backdrop_sizes ?: emptyList(),
-                images.logo_sizes ?: emptyList()
+                images.logo_sizes ?: emptyList(),
             )
             imageProvider.value = newProvider
         }

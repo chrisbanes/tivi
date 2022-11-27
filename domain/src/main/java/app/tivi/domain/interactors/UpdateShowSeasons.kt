@@ -28,7 +28,7 @@ import kotlinx.coroutines.withContext
 class UpdateShowSeasons @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val followedShowsRepository: FollowedShowsRepository,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

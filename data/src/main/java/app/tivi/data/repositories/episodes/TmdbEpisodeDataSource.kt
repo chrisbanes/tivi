@@ -28,12 +28,12 @@ import retrofit2.awaitResponse
 class TmdbEpisodeDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
-    private val episodeMapper: TmdbEpisodeToEpisode
+    private val episodeMapper: TmdbEpisodeToEpisode,
 ) : EpisodeDataSource {
     override suspend fun getEpisode(
         showId: Long,
         seasonNumber: Int,
-        episodeNumber: Int
+        episodeNumber: Int,
     ): Episode = withRetry {
         tmdb.tvEpisodesService()
             .episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber, null)

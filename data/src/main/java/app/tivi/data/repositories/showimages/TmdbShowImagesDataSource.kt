@@ -27,7 +27,7 @@ import retrofit2.awaitResponse
 
 class TmdbShowImagesDataSource @Inject constructor(
     private val tmdb: Tmdb,
-    private val mapper: TmdbImagesToShowImages
+    private val mapper: TmdbImagesToShowImages,
 ) : ShowImagesDataSource {
     override suspend fun getShowImages(show: TiviShow): List<ShowTmdbImage> {
         val tmdbId = show.tmdbId

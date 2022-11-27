@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.onStart
 @Singleton
 internal class AndroidPowerController @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val preferences: TiviPreferences
+    private val preferences: TiviPreferences,
 ) : PowerController {
     private val powerManager: PowerManager = context.getSystemService()!!
     private val connectivityManager: ConnectivityManager = context.getSystemService()!!
@@ -47,7 +47,7 @@ internal class AndroidPowerController @Inject constructor(
     override fun observeShouldSaveData(ignorePreference: Boolean): Flow<SaveData> {
         return merge(
             context.flowBroadcasts(IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED)),
-            context.flowBroadcasts(IntentFilter(ConnectivityManager.ACTION_RESTRICT_BACKGROUND_CHANGED))
+            context.flowBroadcasts(IntentFilter(ConnectivityManager.ACTION_RESTRICT_BACKGROUND_CHANGED)),
         ).map {
             shouldSaveData()
         }.onStart {

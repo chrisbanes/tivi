@@ -19,5 +19,5 @@ package app.tivi.data.entities
 enum class PendingAction(val value: String) {
     NOTHING("nothing"),
     UPLOAD("upload"),
-    DELETE("delete")
+    DELETE("delete"),
 }

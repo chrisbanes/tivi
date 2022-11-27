@@ -53,19 +53,19 @@ import app.tivi.data.views.FollowedShowsWatchStats
         EpisodeWatchEntry::class,
         LastRequest::class,
         ShowTmdbImage::class,
-        RecommendedShowEntry::class
+        RecommendedShowEntry::class,
     ],
     views = [
         FollowedShowsWatchStats::class,
         FollowedShowsLastWatched::class,
-        FollowedShowsNextToWatch::class
+        FollowedShowsNextToWatch::class,
     ],
     version = 27,
     autoMigrations = [
         AutoMigration(from = 24, to = 25),
         AutoMigration(from = 25, to = 26),
-        AutoMigration(from = 26, to = 27)
-    ]
+        AutoMigration(from = 26, to = 27),
+    ],
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviRoomDatabase : RoomDatabase(), TiviDatabase

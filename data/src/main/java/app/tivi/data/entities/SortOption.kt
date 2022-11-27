@@ -20,5 +20,5 @@ enum class SortOption {
     SUPER_SORT,
     LAST_WATCHED,
     ALPHABETICAL,
-    DATE_ADDED
+    DATE_ADDED,
 }

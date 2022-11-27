@@ -38,21 +38,21 @@ internal class AccountUiViewModel @Inject constructor(
     private val traktAuthManager: TraktAuthManager,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
-    private val clearUserDetails: ClearUserDetails
+    private val clearUserDetails: ClearUserDetails,
 ) : ViewModel(), TraktAuthManager by traktAuthManager {
 
     val state: StateFlow<AccountUiViewState> = combine(
         observeTraktAuthState.flow,
-        observeUserDetails.flow
+        observeUserDetails.flow,
     ) { authState, user ->
         AccountUiViewState(
             user = user,
-            authState = authState
+            authState = authState,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = AccountUiViewState.Empty
+        initialValue = AccountUiViewState.Empty,
     )
 
     init {

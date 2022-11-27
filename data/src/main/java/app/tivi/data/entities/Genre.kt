@@ -26,7 +26,8 @@ enum class Genre(val traktValue: String) {
     THRILLER("thriller"),
     COMEDY("comedy"),
     HORROR("horror"),
-    MYSTERY("mystery");
+    MYSTERY("mystery"),
+    ;
 
     companion object {
         private val values by lazy { values() }

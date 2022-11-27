@@ -26,7 +26,7 @@ import androidx.room.PrimaryKey
     tableName = "seasons",
     indices = [
         Index(value = ["trakt_id"], unique = true),
-        Index(value = ["show_id"])
+        Index(value = ["show_id"]),
     ],
     foreignKeys = [
         ForeignKey(
@@ -34,9 +34,9 @@ import androidx.room.PrimaryKey
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("show_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class Season(
     @PrimaryKey(autoGenerate = true)
@@ -55,7 +55,7 @@ data class Season(
     @ColumnInfo(name = "trakt_votes") val traktRatingVotes: Int? = null,
     @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
-    @ColumnInfo(name = "ignored") val ignored: Boolean = false
+    @ColumnInfo(name = "ignored") val ignored: Boolean = false,
 ) : TiviEntity, TmdbIdEntity, TraktIdEntity {
     companion object {
         const val NUMBER_SPECIALS = 0

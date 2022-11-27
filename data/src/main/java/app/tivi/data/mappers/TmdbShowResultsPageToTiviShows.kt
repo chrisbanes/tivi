@@ -25,7 +25,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TmdbShowResultsPageToTiviShows @Inject constructor(
-    private val tmdbShowMapper: TmdbBaseShowToTiviShow
+    private val tmdbShowMapper: TmdbBaseShowToTiviShow,
 ) : Mapper<TvShowResultsPage, List<Pair<TiviShow, List<ShowTmdbImage>>>> {
     override suspend fun map(from: TvShowResultsPage): List<Pair<TiviShow, List<ShowTmdbImage>>> {
         return from.results.map {
@@ -37,7 +37,7 @@ class TmdbShowResultsPageToTiviShows @Inject constructor(
                     showId = 0,
                     path = it.poster_path,
                     isPrimary = true,
-                    type = ImageType.POSTER
+                    type = ImageType.POSTER,
                 )
             }
             if (it.backdrop_path != null) {
@@ -45,7 +45,7 @@ class TmdbShowResultsPageToTiviShows @Inject constructor(
                     showId = 0,
                     path = it.backdrop_path,
                     isPrimary = true,
-                    type = ImageType.BACKDROP
+                    type = ImageType.BACKDROP,
                 )
             }
             show to images

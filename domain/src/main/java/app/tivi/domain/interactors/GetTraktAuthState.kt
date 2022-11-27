@@ -22,7 +22,7 @@ import app.tivi.trakt.TraktManager
 import javax.inject.Inject
 
 class GetTraktAuthState @Inject constructor(
-    private val traktManager: TraktManager
+    private val traktManager: TraktManager,
 ) : ResultInteractor<Unit, TraktAuthState>() {
     override suspend fun doWork(params: Unit): TraktAuthState {
         return traktManager.state.value

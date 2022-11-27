@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.map
 
 class ObserveShowImages @Inject constructor(
     private val store: ShowImagesStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<ObserveShowImages.Params, ShowImages>() {
 
     override fun createObservable(params: Params): Flow<ShowImages> {

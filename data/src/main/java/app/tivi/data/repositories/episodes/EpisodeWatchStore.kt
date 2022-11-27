@@ -28,13 +28,13 @@ import kotlinx.coroutines.flow.Flow
 class EpisodeWatchStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
-    logger: Logger
+    logger: Logger,
 ) {
     private val episodeWatchSyncer = syncerForEntity(
         episodeWatchEntryDao,
         { it.traktId },
         { entity, id -> entity.copy(id = id ?: 0) },
-        logger
+        logger,
     )
 
     fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {
@@ -65,7 +65,7 @@ class EpisodeWatchStore @Inject constructor(
 
     suspend fun addNewShowWatchEntries(
         showId: Long,
-        watches: List<EpisodeWatchEntry>
+        watches: List<EpisodeWatchEntry>,
     ) = transactionRunner {
         val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
         episodeWatchSyncer.sync(currentWatches, watches, removeNotMatched = false)
@@ -73,7 +73,7 @@ class EpisodeWatchStore @Inject constructor(
 
     suspend fun syncShowWatchEntries(
         showId: Long,
-        watches: List<EpisodeWatchEntry>
+        watches: List<EpisodeWatchEntry>,
     ) = transactionRunner {
         val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
         episodeWatchSyncer.sync(currentWatches, watches)
@@ -81,7 +81,7 @@ class EpisodeWatchStore @Inject constructor(
 
     suspend fun syncEpisodeWatchEntries(
         episodeId: Long,
-        watches: List<EpisodeWatchEntry>
+        watches: List<EpisodeWatchEntry>,
     ) = transactionRunner {
         val currentWatches = episodeWatchEntryDao.watchesForEpisode(episodeId)
         episodeWatchSyncer.sync(currentWatches, watches)

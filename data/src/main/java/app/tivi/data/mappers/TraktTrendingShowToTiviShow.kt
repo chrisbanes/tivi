@@ -23,7 +23,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktTrendingShowToTiviShow @Inject constructor(
-    private val showMapper: TraktShowToTiviShow
+    private val showMapper: TraktShowToTiviShow,
 ) : Mapper<TrendingShow, TiviShow> {
     override suspend fun map(from: TrendingShow) = showMapper.map(from.show!!)
 }

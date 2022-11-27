@@ -27,7 +27,7 @@ import org.threeten.bp.OffsetDateTime
     tableName = "episode_watch_entries",
     indices = [
         Index(value = ["episode_id"]),
-        Index(value = ["trakt_id"], unique = true)
+        Index(value = ["trakt_id"], unique = true),
     ],
     foreignKeys = [
         ForeignKey(
@@ -35,14 +35,14 @@ import org.threeten.bp.OffsetDateTime
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("episode_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class EpisodeWatchEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "episode_id") val episodeId: Long,
     @ColumnInfo(name = "trakt_id") val traktId: Long? = null,
     @ColumnInfo(name = "watched_at") val watchedAt: OffsetDateTime,
-    @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING
+    @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING,
 ) : TiviEntity

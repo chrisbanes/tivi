@@ -37,7 +37,7 @@ class UpdateFollowedShows @Inject constructor(
     private val showDao: TiviShowDao,
     private val showImagesStore: ShowImagesStore,
     private val logger: Logger,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateFollowedShows.Params>() {
 
     override suspend fun doWork(params: Params) {
@@ -73,7 +73,7 @@ class UpdateFollowedShows @Inject constructor(
                         showId = entry.showId,
                         refreshType = params.type,
                         forceRefresh = params.forceRefresh,
-                        lastUpdated = showDao.getShowWithId(entry.showId)?.traktDataUpdate
+                        lastUpdated = showDao.getShowWithId(entry.showId)?.traktDataUpdate,
                     )
                 } catch (t: Throwable) {
                     logger.e(t, "Error while updating show episode watches: ${entry.showId}")

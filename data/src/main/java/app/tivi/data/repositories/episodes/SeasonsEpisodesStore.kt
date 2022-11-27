@@ -33,20 +33,20 @@ class SeasonsEpisodesStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
-    logger: Logger
+    logger: Logger,
 ) {
     private val seasonSyncer = syncerForEntity(
         seasonsDao,
         { it.traktId },
         { entity, id -> entity.copy(id = id ?: 0) },
-        logger
+        logger,
     )
 
     private val episodeSyncer = syncerForEntity(
         episodesDao,
         { it.traktId },
         { entity, id -> entity.copy(id = id ?: 0) },
-        logger
+        logger,
     )
 
     fun observeEpisode(episodeId: Long): Flow<EpisodeWithSeason> {
@@ -70,7 +70,7 @@ class SeasonsEpisodesStore @Inject constructor(
             episodesDao.observeNextAiredEpisodeForShowAfter(
                 showId,
                 it?.season?.number ?: 0,
-                it?.episode?.number ?: 0
+                it?.episode?.number ?: 0,
             )
         }
     }
@@ -99,7 +99,7 @@ class SeasonsEpisodesStore @Inject constructor(
 
     suspend fun updatePreviousSeasonFollowed(
         seasonId: Long,
-        followed: Boolean
+        followed: Boolean,
     ) = transactionRunner {
         for (id in seasonsDao.showPreviousSeasonIds(seasonId)) {
             seasonsDao.updateSeasonIgnoreFlag(id, !followed)

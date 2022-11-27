@@ -23,5 +23,5 @@ import androidx.compose.material.Shapes
  * We intentionally use the defaults for now.
  */
 val TiviShapes = Shapes(
-    small = RoundedCornerShape(50)
+    small = RoundedCornerShape(50),
 )

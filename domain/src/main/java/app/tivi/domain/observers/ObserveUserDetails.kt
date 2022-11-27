@@ -23,7 +23,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class ObserveUserDetails @Inject constructor(
-    private val repository: TraktUsersRepository
+    private val repository: TraktUsersRepository,
 ) : SubjectInteractor<ObserveUserDetails.Params, TraktUser?>() {
 
     override fun createObservable(params: Params): Flow<TraktUser?> {

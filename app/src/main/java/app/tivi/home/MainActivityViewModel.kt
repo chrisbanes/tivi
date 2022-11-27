@@ -35,7 +35,7 @@ class MainActivityViewModel @Inject constructor(
     private val updateUserDetails: UpdateUserDetails,
     observeUserDetails: ObserveUserDetails,
     private val clearTraktAuthState: ClearTraktAuthState,
-    private val logger: Logger
+    private val logger: Logger,
 ) : ViewModel() {
     init {
         viewModelScope.launch {
