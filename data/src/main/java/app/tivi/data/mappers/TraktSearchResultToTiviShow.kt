@@ -23,7 +23,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktSearchResultToTiviShow @Inject constructor(
-    private val showMapper: TraktShowToTiviShow
+    private val showMapper: TraktShowToTiviShow,
 ) : Mapper<SearchResult, TiviShow> {
     override suspend fun map(from: SearchResult) = showMapper.map(from.show)
 }

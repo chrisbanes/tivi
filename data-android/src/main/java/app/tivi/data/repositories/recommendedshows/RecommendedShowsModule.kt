@@ -42,7 +42,7 @@ internal object RecommendedShowsModule {
         traktRecommendedShows: TraktRecommendedShowsDataSource,
         recommendedDao: RecommendedDao,
         showDao: TiviShowDao,
-        lastRequestStore: RecommendedShowsLastRequestStore
+        lastRequestStore: RecommendedShowsLastRequestStore,
     ): RecommendedShowsStore = StoreBuilder.from(
         fetcher = Fetcher.of { page: Int ->
             traktRecommendedShows(page, 20)
@@ -81,7 +81,7 @@ internal object RecommendedShowsModule {
                 }
             },
             delete = recommendedDao::deletePage,
-            deleteAll = recommendedDao::deleteAll
-        )
+            deleteAll = recommendedDao::deleteAll,
+        ),
     ).build()
 }

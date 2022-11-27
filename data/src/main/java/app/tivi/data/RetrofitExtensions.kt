@@ -29,7 +29,7 @@ suspend fun <T> withRetry(
     defaultDelay: Long = 100,
     maxAttempts: Int = 3,
     shouldRetry: (Throwable) -> Boolean = ::defaultShouldRetry,
-    block: suspend () -> T
+    block: suspend () -> T,
 ): T {
     repeat(maxAttempts) { attempt ->
         val response = runCatching { block() }

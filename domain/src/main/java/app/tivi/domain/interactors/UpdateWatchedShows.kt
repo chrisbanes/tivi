@@ -32,7 +32,7 @@ class UpdateWatchedShows @Inject constructor(
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
-    private val logger: Logger
+    private val logger: Logger,
 ) : Interactor<UpdateWatchedShows.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

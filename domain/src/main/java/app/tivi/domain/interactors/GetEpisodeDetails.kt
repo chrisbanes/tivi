@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 
 class GetEpisodeDetails @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : ResultInteractor<GetEpisodeDetails.Params, Episode?>() {
     override suspend fun doWork(params: Params): Episode? = withContext(dispatchers.io) {
         seasonsEpisodesRepository.getEpisode(params.episodeId)

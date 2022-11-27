@@ -27,7 +27,7 @@ import javax.inject.Singleton
 class SearchRepository @Inject constructor(
     private val showTmdbImagesDao: ShowTmdbImagesDao,
     private val showDao: TiviShowDao,
-    private val tmdbDataSource: TmdbSearchDataSource
+    private val tmdbDataSource: TmdbSearchDataSource,
 ) {
     private val cache by lazy { LruCache<String, LongArray>(32) }
 

@@ -89,12 +89,12 @@ import org.threeten.bp.OffsetDateTime
 @Composable
 fun Watched(
     openShowDetails: (showId: Long) -> Unit,
-    openUser: () -> Unit
+    openUser: () -> Unit,
 ) {
     Watched(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
-        openUser = openUser
+        openUser = openUser,
     )
 }
 
@@ -103,7 +103,7 @@ fun Watched(
 internal fun Watched(
     viewModel: WatchedViewModel,
     openShowDetails: (showId: Long) -> Unit,
-    openUser: () -> Unit
+    openUser: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
     val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
@@ -116,7 +116,7 @@ internal fun Watched(
         openUser = openUser,
         refresh = viewModel::refresh,
         onFilterChanged = viewModel::setFilter,
-        onSortSelected = viewModel::setSort
+        onSortSelected = viewModel::setSort,
     )
 }
 
@@ -130,7 +130,7 @@ internal fun Watched(
     refresh: () -> Unit,
     openUser: () -> Unit,
     onFilterChanged: (String) -> Unit,
-    onSortSelected: (SortOption) -> Unit
+    onSortSelected: (SortOption) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -151,7 +151,7 @@ internal fun Watched(
                 refreshing = state.isLoading,
                 onRefreshActionClick = refresh,
                 onUserActionClick = openUser,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         },
         snackbarHost = { snackbarHostState ->
@@ -159,14 +159,14 @@ internal fun Watched(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
         val refreshState = rememberPullRefreshState(
             refreshing = state.isLoading,
-            onRefresh = refresh
+            onRefresh = refresh,
         )
         Box(modifier = Modifier.pullRefresh(state = refreshState)) {
             val columns = Layout.columns
@@ -177,14 +177,14 @@ internal fun Watched(
                 columns = GridCells.Fixed(columns / 4),
                 contentPadding = paddingValues + PaddingValues(
                     horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp)
+                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
                 ),
                 // We minus 8.dp off the grid padding, as we use content padding on the items below
                 horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
                 verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
                 modifier = Modifier
                     .bodyWidth()
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
             ) {
                 fullSpanItem {
                     FilterSortPanel(
@@ -195,13 +195,13 @@ internal fun Watched(
                         onSortSelected = onSortSelected,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
+                            .padding(horizontal = 8.dp),
                     )
                 }
 
                 items(
                     items = list,
-                    key = { it.show.id }
+                    key = { it.show.id },
                 ) { entry ->
                     if (entry != null) {
                         WatchedShowItem(
@@ -212,7 +212,7 @@ internal fun Watched(
                             contentPadding = PaddingValues(8.dp),
                             modifier = Modifier
                                 .animateItemPlacement()
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
                         )
                     }
                 }
@@ -222,7 +222,7 @@ internal fun Watched(
                 refreshing = state.isLoading,
                 state = refreshState,
                 modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
-                scale = true
+                scale = true,
             )
         }
     }
@@ -235,21 +235,21 @@ private fun WatchedShowItem(
     lastWatched: OffsetDateTime,
     onClick: () -> Unit,
     contentPadding: PaddingValues,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val textCreator = LocalTiviTextCreator.current
     Row(
         modifier
             .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
-            .padding(contentPadding)
+            .padding(contentPadding),
     ) {
         PosterCard(
             show = show,
             poster = poster,
             modifier = Modifier
                 .fillMaxWidth(0.2f) // 20% of the width
-                .aspectRatio(2 / 3f)
+                .aspectRatio(2 / 3f),
         )
 
         Spacer(Modifier.width(16.dp))
@@ -257,7 +257,7 @@ private fun WatchedShowItem(
         Column {
             Text(
                 text = textCreator.showTitle(show = show).toString(),
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.subtitle1,
             )
 
             Spacer(Modifier.height(2.dp))
@@ -266,9 +266,9 @@ private fun WatchedShowItem(
                 Text(
                     text = stringResource(
                         UiR.string.library_last_watched,
-                        LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatched)
+                        LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatched),
                     ),
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.caption,
                 )
             }
         }
@@ -282,11 +282,11 @@ private fun WatchedAppBar(
     refreshing: Boolean,
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.surface.copy(
-            alpha = AppBarAlphas.translucentBarAlpha()
+            alpha = AppBarAlphas.translucentBarAlpha(),
         ),
         contentColor = MaterialTheme.colors.onSurface,
         contentPadding = WindowInsets.systemBars
@@ -302,7 +302,7 @@ private fun WatchedAppBar(
                 // same thing.
                 Crossfade(
                     targetState = refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 ) { isRefreshing ->
                     if (!isRefreshing) {
                         RefreshButton(onClick = onRefreshActionClick)
@@ -314,8 +314,8 @@ private fun WatchedAppBar(
                 loggedIn = loggedIn,
                 user = user,
                 onClick = onUserActionClick,
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier.align(Alignment.CenterVertically),
             )
-        }
+        },
     )
 }

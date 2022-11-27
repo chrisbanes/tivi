@@ -55,15 +55,15 @@ import app.tivi.data.views.FollowedShowsWatchStats
         LastRequest::class,
         ShowTmdbImage::class,
         RecommendedShowEntry::class,
-        FakeTiviShowFts::class
+        FakeTiviShowFts::class,
     ],
     views = [
         FollowedShowsWatchStats::class,
         FollowedShowsLastWatched::class,
-        FollowedShowsNextToWatch::class
+        FollowedShowsNextToWatch::class,
     ],
     version = 1,
-    exportSchema = false
+    exportSchema = false,
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviTestDatabase : RoomDatabase(), TiviDatabase {

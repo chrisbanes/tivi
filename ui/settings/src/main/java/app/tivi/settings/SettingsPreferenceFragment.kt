@@ -71,7 +71,7 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
             summary = getString(
                 UiR.string.settings_app_version_summary,
                 pkgInfo.versionName,
-                PackageInfoCompat.getLongVersionCode(pkgInfo)
+                PackageInfoCompat.getLongVersionCode(pkgInfo),
             )
         }
     }

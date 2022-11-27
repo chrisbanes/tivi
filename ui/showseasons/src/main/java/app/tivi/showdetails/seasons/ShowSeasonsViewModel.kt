@@ -40,7 +40,7 @@ internal class ShowSeasonsViewModel @Inject constructor(
     observeShowDetails: ObserveShowDetails,
     observeShowSeasons: ObserveShowSeasonsEpisodesWatches,
     private val updateShowSeasons: UpdateShowSeasons,
-    private val logger: Logger
+    private val logger: Logger,
 ) : ViewModel() {
     private val showId: Long = savedStateHandle["showId"]!!
 
@@ -51,18 +51,18 @@ internal class ShowSeasonsViewModel @Inject constructor(
         observeShowSeasons.flow,
         observeShowDetails.flow,
         loadingState.observable,
-        uiMessageManager.message
+        uiMessageManager.message,
     ) { seasons, show, refreshing, message ->
         ShowSeasonsViewState(
             show = show,
             seasons = seasons,
             refreshing = refreshing,
-            message = message
+            message = message,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = ShowSeasonsViewState.Empty
+        initialValue = ShowSeasonsViewState.Empty,
     )
 
     init {
@@ -75,7 +75,7 @@ internal class ShowSeasonsViewModel @Inject constructor(
     fun refresh(fromUser: Boolean = true) {
         viewModelScope.launch {
             updateShowSeasons(
-                UpdateShowSeasons.Params(showId, fromUser)
+                UpdateShowSeasons.Params(showId, fromUser),
             ).collectStatus(loadingState, logger, uiMessageManager)
         }
     }

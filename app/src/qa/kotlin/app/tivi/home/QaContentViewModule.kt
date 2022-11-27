@@ -42,7 +42,7 @@ object QaContentViewModule {
     @Provides
     fun provideContentViewSetter(
         httpLogger: HttpLogger,
-        debugRetrofitConfig: DebugRetrofitConfig
+        debugRetrofitConfig: DebugRetrofitConfig,
     ): ContentViewSetter = ContentViewSetter { activity, view ->
         DebugDrawer.with(activity)
             .addSectionTitle("Network")
@@ -79,10 +79,10 @@ object QaContentViewModule {
     @Singleton
     fun provideDebugRetrofitConfig(
         application: Application,
-        networkBehavior: NetworkBehavior
+        networkBehavior: NetworkBehavior,
     ): DebugRetrofitConfig = DebugRetrofitConfig(
         context = application,
         endpoints = listOf(Endpoint(name = "Default", url = "blah", isMock = true)),
-        networkBehavior = networkBehavior
+        networkBehavior = networkBehavior,
     )
 }

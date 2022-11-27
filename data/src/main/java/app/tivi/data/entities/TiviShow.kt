@@ -31,8 +31,8 @@ import org.threeten.bp.ZoneId
     tableName = "shows",
     indices = [
         Index(value = ["trakt_id"], unique = true),
-        Index(value = ["tmdb_id"])
-    ]
+        Index(value = ["tmdb_id"]),
+    ],
 )
 data class TiviShow(
     @PrimaryKey(autoGenerate = true)
@@ -58,7 +58,7 @@ data class TiviShow(
     @ColumnInfo(name = "status") val status: ShowStatus? = null,
     @ColumnInfo(name = "airs_day") val airsDay: DayOfWeek? = null,
     @ColumnInfo(name = "airs_time") val airsTime: LocalTime? = null,
-    @ColumnInfo(name = "airs_tz") val airsTimeZone: ZoneId? = null
+    @ColumnInfo(name = "airs_tz") val airsTimeZone: ZoneId? = null,
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
     @Ignore
     constructor() : this(0)

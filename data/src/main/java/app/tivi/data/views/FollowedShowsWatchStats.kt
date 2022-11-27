@@ -31,10 +31,10 @@ import app.tivi.data.entities.Season
         AND s.number != ${Season.NUMBER_SPECIALS}
         AND s.ignored = 0
     GROUP BY fs.id
-"""
+""",
 )
 data class FollowedShowsWatchStats(
     val id: Long,
     val episodeCount: Int,
-    val watchedEpisodeCount: Int
+    val watchedEpisodeCount: Int,
 )

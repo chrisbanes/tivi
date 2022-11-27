@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 internal class PopularShowsViewModel @Inject constructor(
-    pagingInteractor: ObservePagedPopularShows
+    pagingInteractor: ObservePagedPopularShows,
 ) : ViewModel() {
 
     val pagedList: Flow<PagingData<PopularEntryWithShow>> =
@@ -42,7 +42,7 @@ internal class PopularShowsViewModel @Inject constructor(
     companion object {
         val PAGING_CONFIG = PagingConfig(
             pageSize = 60,
-            initialLoadSize = 60
+            initialLoadSize = 60,
         )
     }
 }

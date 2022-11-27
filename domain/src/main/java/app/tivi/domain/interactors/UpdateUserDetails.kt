@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 
 class UpdateUserDetails @Inject constructor(
     private val repository: TraktUsersRepository,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

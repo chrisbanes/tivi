@@ -37,7 +37,7 @@ import androidx.compose.ui.Modifier
 fun SwipeDismissSnackbar(
     data: SnackbarData,
     onDismiss: (() -> Unit)? = null,
-    snackbar: @Composable (SnackbarData) -> Unit = { Snackbar(it) }
+    snackbar: @Composable (SnackbarData) -> Unit = { Snackbar(it) },
 ) {
     val dismissState = rememberDismissState {
         if (it != DismissValue.Default) {
@@ -53,7 +53,7 @@ fun SwipeDismissSnackbar(
         state = dismissState,
         directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
         background = {},
-        dismissContent = { snackbar(data) }
+        dismissContent = { snackbar(data) },
     )
 }
 
@@ -65,13 +65,13 @@ fun SwipeDismissSnackbarHost(
     snackbar: @Composable (SnackbarData) -> Unit = { data ->
         SwipeDismissSnackbar(
             data = data,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
-    }
+    },
 ) {
     SnackbarHost(
         hostState = hostState,
         snackbar = snackbar,
-        modifier = modifier
+        modifier = modifier,
     )
 }

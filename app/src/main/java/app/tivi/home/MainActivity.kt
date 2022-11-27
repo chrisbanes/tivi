@@ -79,16 +79,16 @@ class MainActivity : TiviActivity() {
     private fun TiviContent() {
         CompositionLocalProvider(
             LocalTiviDateFormatter provides tiviDateFormatter,
-            LocalTiviTextCreator provides textCreator
+            LocalTiviTextCreator provides textCreator,
         ) {
             TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                 Home(
                     analytics = analytics,
                     onOpenSettings = {
                         startActivity(
-                            Intent(this@MainActivity, SettingsActivity::class.java)
+                            Intent(this@MainActivity, SettingsActivity::class.java),
                         )
-                    }
+                    },
                 )
             }
         }

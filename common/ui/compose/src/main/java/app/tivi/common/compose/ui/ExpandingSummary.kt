@@ -37,7 +37,7 @@ fun ExpandingText(
     textStyle: TextStyle = MaterialTheme.typography.body2,
     expandable: Boolean = true,
     collapsedMaxLines: Int = 4,
-    expandedMaxLines: Int = Int.MAX_VALUE
+    expandedMaxLines: Int = Int.MAX_VALUE,
 ) {
     var canTextExpand by remember(text) { mutableStateOf(true) }
     var expanded by remember { mutableStateOf(false) }
@@ -50,7 +50,7 @@ fun ExpandingText(
         modifier = Modifier
             .clickable(
                 enabled = expandable && canTextExpand,
-                onClick = { expanded = !expanded }
+                onClick = { expanded = !expanded },
             )
             .animateContentSize(animationSpec = spring())
             .then(modifier),
@@ -58,6 +58,6 @@ fun ExpandingText(
             if (!expanded) {
                 canTextExpand = it.hasVisualOverflow
             }
-        }
+        },
     )
 }

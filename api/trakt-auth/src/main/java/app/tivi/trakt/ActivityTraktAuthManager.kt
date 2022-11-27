@@ -32,7 +32,7 @@ internal class ActivityTraktAuthManager @Inject constructor(
     private val traktManager: TraktManager,
     private val requestProvider: Lazy<AuthorizationRequest>,
     private val clientAuth: Lazy<ClientAuthentication>,
-    private val logger: Logger
+    private val logger: Logger,
 ) : TraktAuthManager {
     private val authService = AuthorizationService(context)
 
@@ -46,7 +46,7 @@ internal class ActivityTraktAuthManager @Inject constructor(
             response != null -> {
                 authService.performTokenRequest(
                     response.createTokenExchangeRequest(),
-                    clientAuth.get()
+                    clientAuth.get(),
                 ) { tokenResponse, ex ->
                     val state = AuthState().apply {
                         update(tokenResponse, ex)

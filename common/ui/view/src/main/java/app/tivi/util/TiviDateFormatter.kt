@@ -33,7 +33,7 @@ class TiviDateFormatter @Inject constructor(
     @ShortTime private val shortTimeFormatter: DateTimeFormatter,
     @ShortDate private val shortDateFormatter: DateTimeFormatter,
     @MediumDate private val mediumDateFormatter: DateTimeFormatter,
-    @MediumDateTime private val mediumDateTimeFormatter: DateTimeFormatter
+    @MediumDateTime private val mediumDateTimeFormatter: DateTimeFormatter,
 ) {
     fun formatShortDate(temporalAmount: Temporal): String = shortDateFormatter.format(temporalAmount)
 
@@ -53,7 +53,7 @@ class TiviDateFormatter @Inject constructor(
                     dateTime.toInstant().toEpochMilli(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.FORMAT_SHOW_DATE
+                    DateUtils.FORMAT_SHOW_DATE,
                 ).toString()
             } else {
                 // More than 7 days ago
@@ -66,7 +66,7 @@ class TiviDateFormatter @Inject constructor(
                     dateTime.toInstant().toEpochMilli(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.FORMAT_SHOW_DATE
+                    DateUtils.FORMAT_SHOW_DATE,
                 ).toString()
             } else {
                 // In the far future

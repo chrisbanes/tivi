@@ -30,7 +30,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @ExperimentalCoilApi
 class EpisodeEntityCoilInterceptor @Inject constructor(
-    private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>
+    private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>,
 ) : Interceptor {
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
         val data = chain.request.data
@@ -50,7 +50,7 @@ class EpisodeEntityCoilInterceptor @Inject constructor(
     private fun map(data: Episode, size: Size): HttpUrl {
         return tmdbImageUrlProvider.get().getBackdropUrl(
             path = data.tmdbBackdropPath!!,
-            imageWidth = size.width.pxOrElse { 0 }
+            imageWidth = size.width.pxOrElse { 0 },
         ).toHttpUrl()
     }
 }

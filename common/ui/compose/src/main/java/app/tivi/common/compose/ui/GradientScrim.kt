@@ -40,7 +40,7 @@ fun Modifier.drawForegroundGradientScrim(
     decay: Float = 1.5f,
     numStops: Int = 16,
     @FloatRange(from = 0.0, to = 1.0) startY: Float = 0f,
-    @FloatRange(from = 0.0, to = 1.0) endY: Float = 1f
+    @FloatRange(from = 0.0, to = 1.0) endY: Float = 1f,
 ): Modifier = composed {
     val colors = remember(color, numStops) {
         val baseAlpha = color.alpha
@@ -56,7 +56,7 @@ fun Modifier.drawForegroundGradientScrim(
         drawRect(
             topLeft = Offset(x = 0f, y = startY * size.height),
             size = size.copy(height = (endY - startY) * size.height),
-            brush = Brush.verticalGradient(colors = colors)
+            brush = Brush.verticalGradient(colors = colors),
         )
     }
 }

@@ -103,25 +103,25 @@ class EpisodesTest : DatabaseTest() {
         assertThat(
             episodeDao.observeNextEpisodeForShowAfter(showId, 0, 0)
                 .first()?.episode,
-            `is`(s1e1)
+            `is`(s1e1),
         )
 
         assertThat(
             episodeDao.observeNextEpisodeForShowAfter(showId, 1, 0)
                 .first()?.episode,
-            `is`(s1e2)
+            `is`(s1e2),
         )
 
         assertThat(
             episodeDao.observeNextEpisodeForShowAfter(showId, 1, 1)
                 .first()?.episode,
-            `is`(s1e3)
+            `is`(s1e3),
         )
 
         assertThat(
             episodeDao.observeNextEpisodeForShowAfter(showId, 1, 2)
                 .first()?.episode,
-            nullValue()
+            nullValue(),
         )
     }
 }

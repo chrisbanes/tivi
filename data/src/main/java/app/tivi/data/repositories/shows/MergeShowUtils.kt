@@ -21,7 +21,7 @@ import app.tivi.data.entities.TiviShow
 fun mergeShows(
     local: TiviShow = TiviShow.EMPTY_SHOW,
     trakt: TiviShow = TiviShow.EMPTY_SHOW,
-    tmdb: TiviShow = TiviShow.EMPTY_SHOW
+    tmdb: TiviShow = TiviShow.EMPTY_SHOW,
 ) = local.copy(
     title = trakt.title ?: local.title,
     summary = trakt.summary ?: local.summary,
@@ -45,5 +45,5 @@ fun mergeShows(
     // TMDb specific stuff
     tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
     network = tmdb.network ?: trakt.network ?: local.network,
-    networkLogoPath = tmdb.networkLogoPath ?: local.networkLogoPath
+    networkLogoPath = tmdb.networkLogoPath ?: local.networkLogoPath,
 )

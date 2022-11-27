@@ -26,7 +26,7 @@ internal data class ShowSeasonsViewState(
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val refreshing: Boolean = false,
-    val message: UiMessage? = null
+    val message: UiMessage? = null,
 ) {
     companion object {
         val Empty = ShowSeasonsViewState()

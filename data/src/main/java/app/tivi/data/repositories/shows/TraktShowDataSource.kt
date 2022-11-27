@@ -31,7 +31,7 @@ import retrofit2.awaitResponse
 class TraktShowDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     private val searchService: Provider<Search>,
-    private val mapper: TraktShowToTiviShow
+    private val mapper: TraktShowToTiviShow,
 ) : ShowDataSource {
     override suspend fun getShow(show: TiviShow): TiviShow {
         var traktId = show.traktId
@@ -45,7 +45,7 @@ class TraktShowDataSource @Inject constructor(
                     Type.SHOW,
                     Extended.NOSEASONS,
                     1,
-                    1
+                    1,
                 )
                 .awaitResponse()
                 .let { it.body()?.getOrNull(0)?.show?.ids?.trakt }
@@ -57,7 +57,7 @@ class TraktShowDataSource @Inject constructor(
                     show.title, null /* years */, null /* genres */,
                     null /* lang */, show.country /* countries */, null /* runtime */, null /* ratings */,
                     null /* certs */, show.network /* networks */, null /* status */,
-                    Extended.NOSEASONS, 1, 1
+                    Extended.NOSEASONS, 1, 1,
                 )
                 .awaitResponse()
                 .let { it.body()?.firstOrNull()?.show?.ids?.trakt }

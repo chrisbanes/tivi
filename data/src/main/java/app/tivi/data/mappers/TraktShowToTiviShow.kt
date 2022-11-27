@@ -28,7 +28,7 @@ import org.threeten.bp.format.TextStyle
 
 @Singleton
 class TraktShowToTiviShow @Inject constructor(
-    private val statusMapper: TraktStatusToShowStatus
+    private val statusMapper: TraktStatusToShowStatus,
 ) : Mapper<Show, TiviShow> {
     override suspend fun map(from: Show) = TiviShow(
         traktId = from.ids?.trakt,
@@ -67,6 +67,6 @@ class TraktShowToTiviShow @Inject constructor(
             } catch (e: Exception) {
                 null
             }
-        }
+        },
     )
 }

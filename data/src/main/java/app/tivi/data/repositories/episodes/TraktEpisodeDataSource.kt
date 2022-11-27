@@ -30,12 +30,12 @@ import retrofit2.awaitResponse
 class TraktEpisodeDataSource @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val service: Provider<Episodes>,
-    private val episodeMapper: TraktEpisodeToEpisode
+    private val episodeMapper: TraktEpisodeToEpisode,
 ) : EpisodeDataSource {
     override suspend fun getEpisode(
         showId: Long,
         seasonNumber: Int,
-        episodeNumber: Int
+        episodeNumber: Int,
     ): Episode {
         val traktId = traktIdMapper.map(showId)
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")

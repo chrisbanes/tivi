@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 
 class UpdateShowImages @Inject constructor(
     private val showImagesStore: ShowImagesStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateShowImages.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

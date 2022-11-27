@@ -24,5 +24,5 @@ import javax.inject.Singleton
 
 @Singleton
 class ShowLastRequestStore @Inject constructor(
-    dao: LastRequestDao
+    dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.SHOW_DETAILS, dao)

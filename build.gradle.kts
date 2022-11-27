@@ -58,7 +58,9 @@ subprojects {
 
             ktlint(libs.versions.ktlint.get()).editorConfigOverride(
                 mapOf(
-                    "ij_kotlin_imports_layout" to "*"
+                    "ij_kotlin_imports_layout" to "*",
+                    "ij_kotlin_allow_trailing_comma" to "true",
+                    "ij_kotlin_allow_trailing_comma_on_call_site" to "true",
                 ),
             )
             licenseHeaderFile(rootProject.file("spotless/copyright.kt"))

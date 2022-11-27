@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
 
 class RemoveEpisodeWatch @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<RemoveEpisodeWatch.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

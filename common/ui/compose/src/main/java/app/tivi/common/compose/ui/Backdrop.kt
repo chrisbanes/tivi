@@ -40,22 +40,22 @@ fun Backdrop(
     imageModel: Any?,
     modifier: Modifier = Modifier,
     overline: (@Composable () -> Unit)? = null,
-    title: (@Composable () -> Unit)? = null
+    title: (@Composable () -> Unit)? = null,
 ) {
     Surface(
         color = MaterialTheme.colors.onSurface
             .copy(alpha = 0.2f)
             .compositeOver(MaterialTheme.colors.surface),
         contentColor = MaterialTheme.colors.onSurface,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Box {
             Box(
                 Modifier
                     .fillMaxSize()
                     .drawForegroundGradientScrim(
-                        MaterialTheme.colors.background.copy(alpha = 0.9f)
-                    )
+                        MaterialTheme.colors.background.copy(alpha = 0.9f),
+                    ),
             ) {
                 if (imageModel != null) {
                     AsyncImage(
@@ -63,7 +63,7 @@ fun Backdrop(
                         requestBuilder = { crossfade(true) },
                         contentDescription = stringResource(R.string.cd_show_poster),
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     )
                 }
             }
@@ -71,19 +71,19 @@ fun Backdrop(
             Column(
                 Modifier
                     .align(Alignment.BottomStart)
-                    .padding(Layout.gutter * 2)
+                    .padding(Layout.gutter * 2),
             ) {
                 if (overline != null) {
                     CompositionLocalProvider(
                         LocalTextStyle provides MaterialTheme.typography.overline,
-                        LocalContentAlpha provides ContentAlpha.medium
+                        LocalContentAlpha provides ContentAlpha.medium,
                     ) {
                         overline()
                     }
                 }
                 if (title != null) {
                     CompositionLocalProvider(
-                        LocalTextStyle provides MaterialTheme.typography.h5
+                        LocalTextStyle provides MaterialTheme.typography.h5,
                     ) {
                         title()
                     }

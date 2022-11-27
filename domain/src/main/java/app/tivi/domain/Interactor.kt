@@ -36,7 +36,7 @@ import kotlinx.coroutines.withTimeout
 abstract class Interactor<in P> {
     operator fun invoke(
         params: P,
-        timeoutMs: Long = defaultTimeoutMs
+        timeoutMs: Long = defaultTimeoutMs,
     ): Flow<InvokeStatus> = flow {
         try {
             withTimeout(timeoutMs) {
@@ -90,7 +90,7 @@ abstract class SubjectInteractor<P : Any, T> {
     private val paramState = MutableSharedFlow<P>(
         replay = 1,
         extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
     val flow: Flow<T> = paramState

@@ -31,7 +31,7 @@ class SyncAllFollowedShows @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val updateFollowedShows: UpdateFollowedShows,
-    private val logger: Logger
+    private val logger: Logger,
 ) : CoroutineWorker(context, params) {
     companion object {
         const val TAG = "sync-all-followed-shows"

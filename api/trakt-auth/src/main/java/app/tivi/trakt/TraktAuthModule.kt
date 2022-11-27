@@ -44,7 +44,7 @@ object TraktAuthModule {
     fun provideAuthConfig(): AuthorizationServiceConfiguration {
         return AuthorizationServiceConfiguration(
             Uri.parse("https://trakt.tv/oauth/authorize"),
-            Uri.parse("https://trakt.tv/oauth/token")
+            Uri.parse("https://trakt.tv/oauth/token"),
         )
     }
 
@@ -57,13 +57,13 @@ object TraktAuthModule {
     fun provideAuthRequest(
         serviceConfig: AuthorizationServiceConfiguration,
         @Named("trakt-client-id") clientId: String,
-        @Named("trakt-auth-redirect-uri") redirectUri: String
+        @Named("trakt-auth-redirect-uri") redirectUri: String,
     ): AuthorizationRequest {
         return AuthorizationRequest.Builder(
             serviceConfig,
             clientId,
             ResponseTypeValues.CODE,
-            redirectUri.toUri()
+            redirectUri.toUri(),
         ).apply {
             // Disable PKCE since Trakt does not support it
             setCodeVerifier(null)
@@ -74,13 +74,13 @@ object TraktAuthModule {
     @Named("trakt-auth-redirect-uri")
     @Provides
     fun provideAuthRedirectUri(
-        @ApplicationId applicationId: String
+        @ApplicationId applicationId: String,
     ): String = "$applicationId://${TraktConstants.URI_AUTH_CALLBACK_PATH}"
 
     @Singleton
     @Provides
     fun provideClientAuth(
-        @Named("trakt-client-secret") clientSecret: String
+        @Named("trakt-client-secret") clientSecret: String,
     ): ClientAuthentication {
         return ClientSecretBasic(clientSecret)
     }
@@ -89,7 +89,7 @@ object TraktAuthModule {
     @Provides
     @Named("auth")
     fun provideAuthSharedPrefs(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): SharedPreferences {
         return context.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
     }

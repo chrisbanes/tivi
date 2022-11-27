@@ -68,11 +68,11 @@ import com.google.accompanist.insets.ui.Scaffold
 
 @Composable
 fun Search(
-    openShowDetails: (showId: Long) -> Unit
+    openShowDetails: (showId: Long) -> Unit,
 ) {
     Search(
         viewModel = hiltViewModel(),
-        openShowDetails = openShowDetails
+        openShowDetails = openShowDetails,
     )
 }
 
@@ -80,7 +80,7 @@ fun Search(
 @Composable
 internal fun Search(
     viewModel: SearchViewModel,
-    openShowDetails: (showId: Long) -> Unit
+    openShowDetails: (showId: Long) -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -88,7 +88,7 @@ internal fun Search(
         state = viewState,
         openShowDetails = openShowDetails,
         onSearchQueryChanged = viewModel::search,
-        onMessageShown = viewModel::clearMessage
+        onMessageShown = viewModel::clearMessage,
     )
 }
 
@@ -97,7 +97,7 @@ internal fun Search(
     state: SearchViewState,
     openShowDetails: (showId: Long) -> Unit,
     onSearchQueryChanged: (query: String) -> Unit,
-    onMessageShown: (id: Long) -> Unit
+    onMessageShown: (id: Long) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -114,13 +114,13 @@ internal fun Search(
             Surface(
                 color = MaterialTheme.colors.surface.copy(alpha = 0.95f),
                 contentColor = MaterialTheme.colors.onSurface,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Box(
                     Modifier
                         .padding(horizontal = Layout.bodyMargin, vertical = 8.dp)
                         .statusBarsPadding()
-                        .bodyWidth()
+                        .bodyWidth(),
                 ) {
                     var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
                     SearchTextField(
@@ -130,7 +130,7 @@ internal fun Search(
                             onSearchQueryChanged(value.text)
                         },
                         hint = stringResource(UiR.string.search_hint),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -140,15 +140,15 @@ internal fun Search(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
-        }
+        },
     ) { padding ->
         SearchList(
             results = state.searchResults,
             contentPadding = padding + PaddingValues(horizontal = Layout.bodyMargin),
             onShowClicked = { openShowDetails(it.id) },
-            modifier = Modifier.bodyWidth()
+            modifier = Modifier.bodyWidth(),
         )
     }
 }
@@ -159,7 +159,7 @@ private fun SearchList(
     results: List<ShowDetailed>,
     onShowClicked: (TiviShow) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val arrangement = Arrangement.spacedBy(Layout.gutter)
 
@@ -168,11 +168,11 @@ private fun SearchList(
         contentPadding = contentPadding,
         verticalArrangement = arrangement,
         horizontalArrangement = arrangement,
-        modifier = modifier
+        modifier = modifier,
     ) {
         items(
             items = results,
-            key = { it.show.id }
+            key = { it.show.id },
         ) { item ->
             SearchRow(
                 show = item.show,
@@ -180,7 +180,7 @@ private fun SearchList(
                 modifier = Modifier
                     .animateItemPlacement()
                     .fillMaxWidth()
-                    .clickable { onShowClicked(item.show) }
+                    .clickable { onShowClicked(item.show) },
             )
         }
     }
@@ -190,7 +190,7 @@ private fun SearchList(
 private fun SearchRow(
     show: TiviShow,
     posterImage: ShowTmdbImage?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(modifier.padding(vertical = 8.dp)) {
         PosterCard(
@@ -198,7 +198,7 @@ private fun SearchRow(
             poster = posterImage,
             modifier = Modifier
                 .fillMaxWidth(0.2f) // 20% of width
-                .aspectRatio(2 / 3f)
+                .aspectRatio(2 / 3f),
         )
 
         Spacer(Modifier.width(16.dp))
@@ -206,11 +206,11 @@ private fun SearchRow(
         Column(
             Modifier
                 .weight(1f)
-                .align(Alignment.CenterVertically)
+                .align(Alignment.CenterVertically),
         ) {
             Text(
                 text = show.title ?: "No title",
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.subtitle1,
             )
 
             if (show.summary?.isNotEmpty() == true) {
@@ -219,7 +219,7 @@ private fun SearchRow(
                         text = show.summary!!,
                         style = MaterialTheme.typography.caption,
                         overflow = TextOverflow.Ellipsis,
-                        maxLines = 2
+                        maxLines = 2,
                     )
                 }
             }

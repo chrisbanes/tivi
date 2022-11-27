@@ -72,7 +72,7 @@ fun <E : Entry> EntryGrid(
     title: String,
     onNavigateUp: () -> Unit,
     onOpenShowDetails: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -100,7 +100,7 @@ fun <E : Entry> EntryGrid(
                 onNavigateUp = onNavigateUp,
                 refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading,
                 onRefreshActionClick = { lazyPagingItems.refresh() },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         },
         snackbarHost = { snackbarHostState ->
@@ -108,15 +108,15 @@ fun <E : Entry> EntryGrid(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         },
-        modifier = modifier
+        modifier = modifier,
     ) { paddingValues ->
         val refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading
         val refreshState = rememberPullRefreshState(
             refreshing = refreshing,
-            onRefresh = lazyPagingItems::refresh
+            onRefresh = lazyPagingItems::refresh,
         )
         Box(modifier = Modifier.pullRefresh(state = refreshState)) {
             val columns = Layout.columns
@@ -131,11 +131,11 @@ fun <E : Entry> EntryGrid(
                 verticalArrangement = Arrangement.spacedBy(gutter),
                 modifier = Modifier
                     .bodyWidth()
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
             ) {
                 items(
                     items = lazyPagingItems,
-                    key = { it.show.id }
+                    key = { it.show.id },
                 ) { entry ->
                     val mod = Modifier
                         .animateItemPlacement()
@@ -146,7 +146,7 @@ fun <E : Entry> EntryGrid(
                             show = entry.show,
                             poster = entry.poster,
                             onClick = { onOpenShowDetails(entry.show.id) },
-                            modifier = mod
+                            modifier = mod,
                         )
                     } else {
                         PlaceholderPosterCard(mod)
@@ -158,7 +158,7 @@ fun <E : Entry> EntryGrid(
                         Box(
                             Modifier
                                 .fillMaxWidth()
-                                .padding(24.dp)
+                                .padding(24.dp),
                         ) {
                             CircularProgressIndicator(Modifier.align(Alignment.Center))
                         }
@@ -170,7 +170,7 @@ fun <E : Entry> EntryGrid(
                 refreshing = refreshing,
                 state = refreshState,
                 modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
-                scale = true
+                scale = true,
             )
         }
     }
@@ -182,19 +182,19 @@ private fun EntryGridAppBar(
     refreshing: Boolean,
     onNavigateUp: () -> Unit,
     onRefreshActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = onNavigateUp) {
                 Icon(
                     Icons.Default.ArrowBack,
-                    contentDescription = stringResource(UiR.string.cd_navigate_up)
+                    contentDescription = stringResource(UiR.string.cd_navigate_up),
                 )
             }
         },
         backgroundColor = MaterialTheme.colors.surface.copy(
-            alpha = AppBarAlphas.translucentBarAlpha()
+            alpha = AppBarAlphas.translucentBarAlpha(),
         ),
         contentColor = MaterialTheme.colors.onSurface,
         contentPadding = WindowInsets.statusBars.asPaddingValues(),
@@ -208,13 +208,13 @@ private fun EntryGridAppBar(
                 // same thing.
                 Crossfade(
                     targetState = refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 ) { isRefreshing ->
                     if (!isRefreshing) {
                         RefreshButton(onClick = onRefreshActionClick)
                     }
                 }
             }
-        }
+        },
     )
 }

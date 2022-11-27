@@ -89,7 +89,7 @@ object TrimTransparentEdgesTransformation : Transformation {
         val output = createBitmap(
             width = 1 + lastX - firstX,
             height = 1 + lastY - firstY,
-            config = Bitmap.Config.ARGB_8888
+            config = Bitmap.Config.ARGB_8888,
         )
         val canvas = Canvas(output)
 

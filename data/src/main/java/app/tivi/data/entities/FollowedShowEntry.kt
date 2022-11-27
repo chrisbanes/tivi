@@ -27,7 +27,7 @@ import org.threeten.bp.OffsetDateTime
 @Entity(
     tableName = "myshows_entries",
     indices = [
-        Index(value = ["show_id"], unique = true)
+        Index(value = ["show_id"], unique = true),
     ],
     foreignKeys = [
         ForeignKey(
@@ -35,14 +35,14 @@ import org.threeten.bp.OffsetDateTime
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("show_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class FollowedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
     @ColumnInfo(name = "followed_at") val followedAt: OffsetDateTime? = null,
     @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING,
-    @ColumnInfo(name = "trakt_id") val traktId: Long? = null
+    @ColumnInfo(name = "trakt_id") val traktId: Long? = null,
 ) : Entry

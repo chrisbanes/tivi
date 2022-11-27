@@ -26,6 +26,6 @@ class TraktListEntryToFollowedShowEntry @Inject constructor() : Mapper<ListEntry
     override suspend fun map(from: ListEntry) = FollowedShowEntry(
         showId = 0,
         followedAt = from.listed_at,
-        traktId = from.id
+        traktId = from.id,
     )
 }

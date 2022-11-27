@@ -24,5 +24,5 @@ import javax.inject.Singleton
 
 @Singleton
 class TrendingShowsLastRequestStore @Inject constructor(
-    dao: LastRequestDao
+    dao: LastRequestDao,
 ) : GroupLastRequestStore(Request.TRENDING_SHOWS, dao)

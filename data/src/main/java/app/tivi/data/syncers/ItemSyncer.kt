@@ -32,12 +32,12 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
     private val localEntityToKey: suspend (LocalType) -> Key?,
     private val networkEntityToKey: suspend (NetworkType) -> Key,
     private val networkEntityToLocalEntity: suspend (NetworkType, Long?) -> LocalType,
-    private val logger: Logger
+    private val logger: Logger,
 ) {
     suspend fun sync(
         currentValues: Collection<LocalType>,
         networkValues: Collection<NetworkType>,
-        removeNotMatched: Boolean = true
+        removeNotMatched: Boolean = true,
     ): ItemSyncerResult<LocalType> {
         val currentDbEntities = ArrayList(currentValues)
 
@@ -98,7 +98,7 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
 data class ItemSyncerResult<ET : TiviEntity>(
     val added: List<ET> = emptyList(),
     val deleted: List<ET> = emptyList(),
-    val updated: List<ET> = emptyList()
+    val updated: List<ET> = emptyList(),
 )
 
 fun <LocalType : TiviEntity, NetworkType, Key> syncerForEntity(
@@ -106,7 +106,7 @@ fun <LocalType : TiviEntity, NetworkType, Key> syncerForEntity(
     localEntityToKey: suspend (LocalType) -> Key?,
     networkEntityToKey: suspend (NetworkType) -> Key,
     networkEntityToLocalEntity: suspend (NetworkType, Long?) -> LocalType,
-    logger: Logger
+    logger: Logger,
 ) = ItemSyncer(
     entityDao::insert,
     entityDao::update,
@@ -114,14 +114,14 @@ fun <LocalType : TiviEntity, NetworkType, Key> syncerForEntity(
     localEntityToKey,
     networkEntityToKey,
     networkEntityToLocalEntity,
-    logger
+    logger,
 )
 
 fun <Type : TiviEntity, Key> syncerForEntity(
     entityDao: EntityDao<Type>,
     entityToKey: suspend (Type) -> Key?,
     mapper: suspend (Type, Long?) -> Type,
-    logger: Logger
+    logger: Logger,
 ) = ItemSyncer(
     entityDao::insert,
     entityDao::update,
@@ -129,5 +129,5 @@ fun <Type : TiviEntity, Key> syncerForEntity(
     entityToKey,
     entityToKey,
     mapper,
-    logger
+    logger,
 )

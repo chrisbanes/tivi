@@ -30,6 +30,6 @@ class TmdbShowToTiviShow @Inject constructor() : Mapper<TvShow, TiviShow> {
         summary = from.overview,
         homepage = from.homepage,
         network = from.networks?.firstOrNull()?.name,
-        networkLogoPath = from.networks?.firstOrNull()?.logo_path
+        networkLogoPath = from.networks?.firstOrNull()?.logo_path,
     )
 }

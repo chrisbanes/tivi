@@ -22,5 +22,5 @@ import app.tivi.data.repositories.lastrequests.EntityLastRequestStore
 import javax.inject.Inject
 
 class TraktUsersLastRequestStore @Inject constructor(
-    dao: LastRequestDao
+    dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.USER_PROFILE, dao)

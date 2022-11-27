@@ -28,7 +28,7 @@ import kotlinx.coroutines.withContext
 class UpdateShowDetails @Inject constructor(
     private val showStore: ShowStore,
     private val lastRequestStore: ShowLastRequestStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

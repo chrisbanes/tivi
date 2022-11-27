@@ -32,6 +32,6 @@ class TraktEpisodeToEpisode @Inject constructor() : Mapper<TraktEpisode, Episode
         summary = from.overview,
         firstAired = from.first_aired,
         traktRating = from.rating?.toFloat() ?: 0f,
-        traktRatingVotes = from.votes
+        traktRatingVotes = from.votes,
     )
 }

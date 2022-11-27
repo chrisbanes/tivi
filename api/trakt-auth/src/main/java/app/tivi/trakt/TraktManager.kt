@@ -40,7 +40,7 @@ class TraktManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     @Named("auth") private val authPrefs: SharedPreferences,
     private val showTasks: ShowTasks,
-    private val traktClient: Lazy<TraktV2>
+    private val traktClient: Lazy<TraktV2>,
 ) {
     private val authState = MutableStateFlow(EmptyAuthState)
 

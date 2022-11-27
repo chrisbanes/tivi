@@ -41,9 +41,9 @@ WHERE
 GROUP BY
   fs.id
 """,
-    viewName = "followed_next_to_watch"
+    viewName = "followed_next_to_watch",
 )
 data class FollowedShowsNextToWatch(
     val id: Long,
-    val nextEpisodeToWatchAirDate: OffsetDateTime?
+    val nextEpisodeToWatchAirDate: OffsetDateTime?,
 )

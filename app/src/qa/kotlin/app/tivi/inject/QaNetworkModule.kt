@@ -42,11 +42,11 @@ object QaNetworkModule {
     @Singleton
     @IntoSet
     fun provideChuckerInterceptor(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): Interceptor = ChuckerInterceptor.Builder(context)
         .redactHeaders(
             "trakt-api-key",
-            "Authorization"
+            "Authorization",
         )
         .build()
 }

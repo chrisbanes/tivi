@@ -19,7 +19,7 @@ package app.tivi.appinitializers
 import javax.inject.Inject
 
 class AppInitializers @Inject constructor(
-    private val initializers: Set<@JvmSuppressWildcards AppInitializer>
+    private val initializers: Set<@JvmSuppressWildcards AppInitializer>,
 ) {
     fun init() {
         initializers.forEach {

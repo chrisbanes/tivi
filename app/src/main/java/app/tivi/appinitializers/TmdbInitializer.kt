@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 
 class TmdbInitializer @Inject constructor(
     private val updateTmdbConfig: UpdateTmdbConfig,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : AppInitializer {
     override fun init() {
         @OptIn(DelicateCoroutinesApi::class)

@@ -33,7 +33,7 @@ object RoomDatabaseModule {
     @Singleton
     @Provides
     fun provideDatabase(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): TiviRoomDatabase {
         val builder = Room.databaseBuilder(context, TiviRoomDatabase::class.java, "shows.db")
             .fallbackToDestructiveMigration()

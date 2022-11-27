@@ -38,19 +38,19 @@ fun SortMenuPopup(
     onSortSelected: (SortOption) -> Unit,
     modifier: Modifier = Modifier,
     currentSortOption: SortOption? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Box(modifier) {
         var sortPopupOpen by remember { mutableStateOf(false) }
 
         IconButton(
             onClick = { sortPopupOpen = true },
-            content = content
+            content = content,
         )
 
         DropdownMenu(
             expanded = sortPopupOpen,
-            onDismissRequest = { sortPopupOpen = false }
+            onDismissRequest = { sortPopupOpen = false },
         ) {
             for (sort in sortOptions) {
                 DropdownMenuItem(
@@ -58,7 +58,7 @@ fun SortMenuPopup(
                         onSortSelected(sort)
                         // Dismiss the popup
                         sortPopupOpen = false
-                    }
+                    },
                 ) {
                     Text(
                         text = when (sort) {
@@ -67,7 +67,7 @@ fun SortMenuPopup(
                             SortOption.LAST_WATCHED -> stringResource(UiR.string.popup_sort_last_watched)
                             SortOption.DATE_ADDED -> stringResource(UiR.string.popup_sort_date_followed)
                         },
-                        fontWeight = if (sort == currentSortOption) FontWeight.Bold else null
+                        fontWeight = if (sort == currentSortOption) FontWeight.Bold else null,
                     )
                 }
             }

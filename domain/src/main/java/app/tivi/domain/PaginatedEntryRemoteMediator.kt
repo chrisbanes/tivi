@@ -29,11 +29,11 @@ import app.tivi.data.resultentities.EntryWithShow
  */
 @OptIn(ExperimentalPagingApi::class)
 internal class PaginatedEntryRemoteMediator<LI, ET>(
-    private val fetch: suspend (page: Int) -> Unit
+    private val fetch: suspend (page: Int) -> Unit,
 ) : RemoteMediator<Int, LI>() where ET : PaginatedEntry, LI : EntryWithShow<ET> {
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, LI>
+        state: PagingState<Int, LI>,
     ): MediatorResult {
         val nextPage = when (loadType) {
             LoadType.REFRESH -> 0

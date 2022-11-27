@@ -29,6 +29,6 @@ class TmdbEpisodeToEpisode @Inject constructor() : Mapper<TvEpisode, Episode> {
         title = from.name,
         number = from.episode_number,
         summary = from.overview,
-        tmdbBackdropPath = from.still_path
+        tmdbBackdropPath = from.still_path,
     )
 }

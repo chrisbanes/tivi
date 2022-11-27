@@ -82,7 +82,7 @@ class SeasonsTest : DatabaseTest() {
         // Specials should always be last
         assertThat(
             seasonsDao.seasonsForShowId(showId),
-            `is`(listOf(s1, s2, s0))
+            `is`(listOf(s1, s2, s0)),
         )
     }
 

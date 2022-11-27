@@ -23,7 +23,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.withContext
 
 class DeleteFolder @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<DeleteFolder.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

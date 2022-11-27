@@ -27,10 +27,10 @@ import retrofit2.awaitResponse
 
 class TmdbSearchDataSource @Inject constructor(
     private val tmdb: Tmdb,
-    private val mapper: TmdbShowResultsPageToTiviShows
+    private val mapper: TmdbShowResultsPageToTiviShows,
 ) : SearchDataSource {
     override suspend fun search(
-        query: String
+        query: String,
     ): List<Pair<TiviShow, List<ShowTmdbImage>>> = withRetry {
         tmdb.searchService()
             .tv(query, 1, null, null, false)

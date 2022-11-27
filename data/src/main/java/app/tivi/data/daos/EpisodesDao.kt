@@ -56,7 +56,7 @@ abstract class EpisodesDao : EntityDao<Episode>() {
         "SELECT shows.id FROM shows" +
             " INNER JOIN seasons AS s ON s.show_id = shows.id" +
             " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
-            " WHERE eps.id = :episodeId"
+            " WHERE eps.id = :episodeId",
     )
     abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
 
@@ -71,7 +71,7 @@ abstract class EpisodesDao : EntityDao<Episode>() {
     abstract fun observeNextEpisodeForShowAfter(
         showId: Long,
         seasonNumber: Int,
-        episodeNumber: Int
+        episodeNumber: Int,
     ): Flow<EpisodeWithSeason?>
 
     @Transaction
@@ -80,7 +80,7 @@ abstract class EpisodesDao : EntityDao<Episode>() {
     abstract fun observeNextAiredEpisodeForShowAfter(
         showId: Long,
         seasonNumber: Int,
-        episodeNumber: Int
+        episodeNumber: Int,
     ): Flow<EpisodeWithSeason?>
 
     companion object {

@@ -25,7 +25,7 @@ import org.threeten.bp.temporal.TemporalAmount
 
 open class GroupLastRequestStore(
     private val request: Request,
-    private val dao: LastRequestDao
+    private val dao: LastRequestDao,
 ) {
     suspend fun getRequestInstant(): Instant? {
         return dao.lastRequest(request, DEFAULT_ID)?.timestamp

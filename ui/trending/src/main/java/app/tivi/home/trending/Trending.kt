@@ -28,12 +28,12 @@ import app.tivi.common.ui.resources.R as UiR
 @Composable
 fun TrendingShows(
     openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
 ) {
     TrendingShows(
         viewModel = hiltViewModel(),
         openShowDetails = openShowDetails,
-        navigateUp = navigateUp
+        navigateUp = navigateUp,
     )
 }
 
@@ -41,13 +41,13 @@ fun TrendingShows(
 internal fun TrendingShows(
     viewModel: TrendingShowsViewModel,
     openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
 ) {
     EntryGrid(
         lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
         title = stringResource(UiR.string.discover_trending_title),
         onOpenShowDetails = openShowDetails,
         onNavigateUp = navigateUp,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     )
 }

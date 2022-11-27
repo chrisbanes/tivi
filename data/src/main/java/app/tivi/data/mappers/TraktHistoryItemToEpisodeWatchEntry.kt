@@ -26,6 +26,6 @@ class TraktHistoryItemToEpisodeWatchEntry @Inject constructor() : Mapper<History
     override suspend fun map(from: HistoryEntry) = EpisodeWatchEntry(
         episodeId = 0,
         traktId = from.id,
-        watchedAt = from.watched_at
+        watchedAt = from.watched_at,
     )
 }

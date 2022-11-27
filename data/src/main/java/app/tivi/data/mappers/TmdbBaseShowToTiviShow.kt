@@ -26,6 +26,6 @@ class TmdbBaseShowToTiviShow @Inject constructor() : Mapper<BaseTvShow, TiviShow
     override suspend fun map(from: BaseTvShow) = TiviShow(
         tmdbId = from.id,
         title = from.name,
-        summary = from.overview
+        summary = from.overview,
     )
 }

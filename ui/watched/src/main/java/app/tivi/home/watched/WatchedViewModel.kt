@@ -55,7 +55,7 @@ class WatchedViewModel @Inject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     private val getTraktAuthState: GetTraktAuthState,
     observeUserDetails: ObserveUserDetails,
-    private val logger: Logger
+    private val logger: Logger,
 ) : ViewModel() {
     private val uiMessageManager = UiMessageManager()
 
@@ -78,7 +78,7 @@ class WatchedViewModel @Inject constructor(
         observeUserDetails.flow,
         filter,
         sort,
-        uiMessageManager.message
+        uiMessageManager.message,
     ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort, message ->
         WatchedViewState(
             user = user,
@@ -90,12 +90,12 @@ class WatchedViewModel @Inject constructor(
             filterActive = !filter.isNullOrEmpty(),
             availableSorts = availableSorts,
             sort = sort,
-            message = message
+            message = message,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = WatchedViewState.Empty
+        initialValue = WatchedViewState.Empty,
     )
 
     init {
@@ -123,8 +123,8 @@ class WatchedViewModel @Inject constructor(
             ObservePagedWatchedShows.Params(
                 sort = sort.value,
                 filter = filter.value,
-                pagingConfig = PAGING_CONFIG
-            )
+                pagingConfig = PAGING_CONFIG,
+            ),
         )
     }
 
@@ -166,8 +166,8 @@ class WatchedViewModel @Inject constructor(
                 ChangeShowFollowStatus.Params(
                     showSelection.getSelectedShowIds(),
                     ChangeShowFollowStatus.Action.FOLLOW,
-                    deferDataFetch = true
-                )
+                    deferDataFetch = true,
+                ),
             )
         }
         showSelection.clearSelection()
@@ -176,7 +176,7 @@ class WatchedViewModel @Inject constructor(
     private fun refreshWatched(fromUser: Boolean) {
         viewModelScope.launch {
             updateWatchedShows(
-                UpdateWatchedShows.Params(forceRefresh = fromUser)
+                UpdateWatchedShows.Params(forceRefresh = fromUser),
             ).collectStatus(loadingState, logger, uiMessageManager)
         }
     }
@@ -190,7 +190,7 @@ class WatchedViewModel @Inject constructor(
     companion object {
         private val PAGING_CONFIG = PagingConfig(
             pageSize = 16,
-            initialLoadSize = 32
+            initialLoadSize = 32,
         )
     }
 }

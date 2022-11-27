@@ -41,7 +41,7 @@ abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithS
 
     fun observePagedList(
         filter: String?,
-        sort: SortOption
+        sort: SortOption,
     ): PagingSource<Int, WatchedShowEntryWithShow> {
         val filtered = filter != null && filter.isNotEmpty()
         return when (sort) {

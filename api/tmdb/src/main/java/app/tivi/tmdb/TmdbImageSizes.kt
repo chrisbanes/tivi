@@ -27,14 +27,14 @@ object TmdbImageSizes {
         "w342",
         "w500",
         "w780",
-        "original"
+        "original",
     )
 
     val backdropSizes = listOf(
         "w300",
         "w780",
         "w1280",
-        "original"
+        "original",
     )
 
     val logoSizes = listOf(
@@ -44,6 +44,6 @@ object TmdbImageSizes {
         "w185",
         "w300",
         "w500",
-        "original"
+        "original",
     )
 }

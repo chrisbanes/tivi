@@ -30,6 +30,6 @@ class UserToTraktUser @Inject constructor() : Mapper<User, TraktUser> {
         about = from.about,
         avatarUrl = from.images?.avatar?.full,
         joined = from.joined_at,
-        vip = from.vip
+        vip = from.vip,
     )
 }

@@ -27,11 +27,11 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class ObservePagedWatchedShows @Inject constructor(
-    private val watchedShowDao: WatchedShowDao
+    private val watchedShowDao: WatchedShowDao,
 ) : PagingInteractor<ObservePagedWatchedShows.Params, WatchedShowEntryWithShow>() {
 
     override fun createObservable(
-        params: Params
+        params: Params,
     ): Flow<PagingData<WatchedShowEntryWithShow>> = Pager(config = params.pagingConfig) {
         watchedShowDao.observePagedList(params.filter, params.sort)
     }.flow
@@ -39,6 +39,6 @@ class ObservePagedWatchedShows @Inject constructor(
     data class Params(
         val filter: String? = null,
         val sort: SortOption,
-        override val pagingConfig: PagingConfig
+        override val pagingConfig: PagingConfig,
     ) : Parameters<WatchedShowEntryWithShow>
 }

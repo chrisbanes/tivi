@@ -67,11 +67,11 @@ import org.threeten.bp.ZoneOffset
 
 @Composable
 fun AccountUi(
-    openSettings: () -> Unit
+    openSettings: () -> Unit,
 ) {
     AccountUi(
         viewModel = hiltViewModel(),
-        openSettings = openSettings
+        openSettings = openSettings,
     )
 }
 
@@ -79,12 +79,12 @@ fun AccountUi(
 @Composable
 internal fun AccountUi(
     viewModel: AccountUiViewModel,
-    openSettings: () -> Unit
+    openSettings: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
 
     val loginLauncher = rememberLauncherForActivityResult(
-        viewModel.buildLoginActivityResult()
+        viewModel.buildLoginActivityResult(),
     ) { result ->
         if (result != null) {
             viewModel.onLoginResult(result)
@@ -95,7 +95,7 @@ internal fun AccountUi(
         viewState = viewState,
         openSettings = openSettings,
         login = { loginLauncher.launch(Unit) },
-        logout = { viewModel.logout() }
+        logout = { viewModel.logout() },
     )
 }
 
@@ -104,14 +104,14 @@ internal fun AccountUi(
     viewState: AccountUiViewState,
     openSettings: () -> Unit,
     login: () -> Unit,
-    logout: () -> Unit
+    logout: () -> Unit,
 ) {
     Surface(
         shape = MaterialTheme.shapes.medium,
         elevation = 2.dp,
         // FIXME: Force the dialog to wrap the content. Need to work out why
         // this doesn't work automatically
-        modifier = Modifier.heightIn(min = 200.dp)
+        modifier = Modifier.heightIn(min = 200.dp),
     ) {
         Column {
             Spacer(modifier = Modifier.height(16.dp))
@@ -119,7 +119,7 @@ internal fun AccountUi(
             if (viewState.user != null) {
                 UserRow(
                     user = viewState.user,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -131,7 +131,7 @@ internal fun AccountUi(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .wrapContentSize(Alignment.CenterEnd)
-                    .align(Alignment.End)
+                    .align(Alignment.End),
             ) {
                 if (viewState.authState == TraktAuthState.LOGGED_OUT) {
                     OutlinedButton(onClick = login) {
@@ -151,7 +151,7 @@ internal fun AccountUi(
             Spacer(
                 modifier = Modifier
                     .height(16.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
 
             Divider()
@@ -160,13 +160,13 @@ internal fun AccountUi(
                 label = stringResource(UiR.string.settings_title),
                 icon = Icons.Default.Settings,
                 contentDescription = stringResource(UiR.string.settings_title),
-                onClick = openSettings
+                onClick = openSettings,
             )
 
             Spacer(
                 modifier = Modifier
                     .height(8.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         }
     }
@@ -175,11 +175,11 @@ internal fun AccountUi(
 @Composable
 private fun UserRow(
     user: TraktUser,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         val avatarUrl = user.avatarUrl
         if (avatarUrl != null) {
@@ -189,7 +189,7 @@ private fun UserRow(
                 contentDescription = stringResource(UiR.string.cd_profile_pic, user.name ?: user.username),
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(RoundedCornerShape(50))
+                    .clip(RoundedCornerShape(50)),
             )
         }
 
@@ -198,13 +198,13 @@ private fun UserRow(
         Column {
             Text(
                 text = user.name ?: stringResource(UiR.string.account_name_unknown),
-                style = MaterialTheme.typography.subtitle2
+                style = MaterialTheme.typography.subtitle2,
             )
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Text(
                     text = user.username,
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.caption,
                 )
             }
         }
@@ -217,7 +217,7 @@ private fun AppAction(
     icon: ImageVector,
     contentDescription: String?,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -225,21 +225,21 @@ private fun AppAction(
             .fillMaxWidth()
             .sizeIn(minHeight = 48.dp)
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         Spacer(modifier = Modifier.width(8.dp))
 
         Image(
             imageVector = icon,
             contentDescription = contentDescription,
-            colorFilter = ColorFilter.tint(foregroundColor())
+            colorFilter = ColorFilter.tint(foregroundColor()),
         )
 
         Spacer(modifier = Modifier.width(16.dp))
 
         Text(
             text = label,
-            style = MaterialTheme.typography.body2
+            style = MaterialTheme.typography.body2,
         )
     }
 }
@@ -253,7 +253,7 @@ fun PreviewUserRow() {
             username = "sammendes",
             name = "Sam Mendes",
             location = "London, UK",
-            joined = OffsetDateTime.of(2019, 5, 4, 11, 12, 33, 0, ZoneOffset.UTC)
-        )
+            joined = OffsetDateTime.of(2019, 5, 4, 11, 12, 33, 0, ZoneOffset.UTC),
+        ),
     )
 }
