@@ -44,6 +44,9 @@ import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -64,9 +67,6 @@ import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import app.tivi.common.ui.resources.R as UiR
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
@@ -131,20 +131,12 @@ fun <E : Entry> EntryGrid(
         },
         modifier = modifier
     ) { paddingValues ->
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(
-                isRefreshing = lazyPagingItems.loadState.refresh == LoadState.Loading
-            ),
-            onRefresh = { lazyPagingItems.refresh() },
-            indicatorPadding = paddingValues,
-            indicator = { state, trigger ->
-                SwipeRefreshIndicator(
-                    state = state,
-                    refreshTriggerDistance = trigger,
-                    scale = true
-                )
-            }
-        ) {
+        val refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading
+        val refreshState = rememberPullRefreshState(
+            refreshing = refreshing,
+            onRefresh = lazyPagingItems::refresh
+        )
+        Box(modifier = Modifier.pullRefresh(state = refreshState)) {
             val columns = Layout.columns
             val bodyMargin = Layout.bodyMargin
             val gutter = Layout.gutter
@@ -191,6 +183,13 @@ fun <E : Entry> EntryGrid(
                     }
                 }
             }
+
+            PullRefreshIndicator(
+                refreshing = refreshing,
+                state = refreshState,
+                modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
+                scale = true
+            )
         }
     }
 }

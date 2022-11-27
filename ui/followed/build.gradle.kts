@@ -58,8 +58,6 @@ dependencies {
 
     implementation(libs.coil.compose)
 
-    implementation(libs.accompanist.swiperefresh)
-
     implementation(libs.hilt.compose)
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)

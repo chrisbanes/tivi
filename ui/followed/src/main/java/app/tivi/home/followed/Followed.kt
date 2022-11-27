@@ -21,6 +21,7 @@ package app.tivi.home.followed
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
@@ -52,6 +56,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -74,9 +79,6 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import app.tivi.common.ui.resources.R as UiR
 
 @Composable
@@ -175,18 +177,11 @@ internal fun Followed(
         },
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(state.isLoading),
-            onRefresh = refresh,
-            indicatorPadding = paddingValues,
-            indicator = { state, trigger ->
-                SwipeRefreshIndicator(
-                    state = state,
-                    refreshTriggerDistance = trigger,
-                    scale = true
-                )
-            }
-        ) {
+        val refreshState = rememberPullRefreshState(
+            refreshing = state.isLoading,
+            onRefresh = refresh
+        )
+        Box(modifier = Modifier.pullRefresh(state = refreshState)) {
             val columns = Layout.columns
             val bodyMargin = Layout.bodyMargin
             val gutter = Layout.gutter
@@ -237,6 +232,13 @@ internal fun Followed(
                     }
                 }
             }
+
+            PullRefreshIndicator(
+                refreshing = state.isLoading,
+                state = refreshState,
+                modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
+                scale = true
+            )
         }
     }
 }

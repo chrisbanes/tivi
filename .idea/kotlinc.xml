@@ -4,4 +4,7 @@
     <option name="sourceMapEmbedSources" />
     <option name="sourceMapPrefix" />
   </component>
+  <component name="KotlinJpsPluginSettings">
+    <option name="version" value="1.7.21" />
+  </component>
 </project>
