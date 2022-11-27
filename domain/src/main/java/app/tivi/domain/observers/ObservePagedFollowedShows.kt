@@ -23,8 +23,8 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.domain.PagingInteractor
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class ObservePagedFollowedShows @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository

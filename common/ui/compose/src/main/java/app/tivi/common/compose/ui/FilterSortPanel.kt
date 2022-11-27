@@ -31,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import app.tivi.data.entities.SortOption
 import app.tivi.common.ui.resources.R as UiR
+import app.tivi.data.entities.SortOption
 
 @Composable
 fun FilterSortPanel(

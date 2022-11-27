@@ -76,6 +76,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import app.tivi.AppNavigation
 import app.tivi.Screen
 import app.tivi.common.compose.theme.AppBarAlphas
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.debugLabel
 import app.tivi.util.Analytics
 import com.google.accompanist.insets.ui.BottomNavigation
@@ -84,7 +85,6 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
-import app.tivi.common.ui.resources.R as UiR
 
 @OptIn(
     ExperimentalAnimationApi::class,

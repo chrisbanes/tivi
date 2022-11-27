@@ -19,11 +19,11 @@ package app.tivi.tmdb
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import retrofit2.awaitResponse
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class TmdbManager @Inject constructor(

@@ -19,10 +19,10 @@ package app.tivi.util
 import android.os.Build
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import timber.log.Timber
 import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Provider
+import timber.log.Timber
 
 internal class TiviLogger @Inject constructor(
     private val firebaseCrashlytics: Provider<FirebaseCrashlytics>

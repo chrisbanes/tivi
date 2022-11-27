@@ -24,9 +24,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
+import javax.inject.Singleton
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module

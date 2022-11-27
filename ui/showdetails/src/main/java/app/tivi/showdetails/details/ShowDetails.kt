@@ -114,6 +114,7 @@ import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.copy
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.ImageType
@@ -138,7 +139,6 @@ import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import org.threeten.bp.OffsetDateTime
-import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun ShowDetails(

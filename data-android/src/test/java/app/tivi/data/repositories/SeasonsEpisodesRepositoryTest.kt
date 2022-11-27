@@ -43,6 +43,7 @@ import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import io.mockk.coEvery
+import javax.inject.Inject
 import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -51,7 +52,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.threeten.bp.OffsetDateTime
-import javax.inject.Inject
 
 @UninstallModules(DatabaseModuleBinds::class, EpisodeDataSourceBinds::class)
 @HiltAndroidTest

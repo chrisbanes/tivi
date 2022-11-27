@@ -75,6 +75,7 @@ import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.UserProfileButton
 import app.tivi.common.compose.ui.plus
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
@@ -83,7 +84,6 @@ import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
-import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun Followed(

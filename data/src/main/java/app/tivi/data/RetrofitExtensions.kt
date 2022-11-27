@@ -18,10 +18,10 @@
 
 package app.tivi.data
 
+import java.io.IOException
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import retrofit2.Response
-import java.io.IOException
 
 inline fun <T> Response<T>.bodyOrThrow(): T = if (isSuccessful) body()!! else throw HttpException(this)
 

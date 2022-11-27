@@ -32,9 +32,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
+import javax.inject.Singleton
 import okhttp3.Interceptor
 import retrofit2.mock.NetworkBehavior
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module

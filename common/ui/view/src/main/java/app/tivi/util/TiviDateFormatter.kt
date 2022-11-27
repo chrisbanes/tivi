@@ -21,12 +21,12 @@ import app.tivi.inject.MediumDate
 import app.tivi.inject.MediumDateTime
 import app.tivi.inject.ShortDate
 import app.tivi.inject.ShortTime
+import javax.inject.Inject
+import javax.inject.Singleton
 import org.threeten.bp.LocalTime
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.Temporal
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class TiviDateFormatter @Inject constructor(

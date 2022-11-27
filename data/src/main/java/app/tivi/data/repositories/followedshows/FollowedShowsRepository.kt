@@ -24,11 +24,11 @@ import app.tivi.data.instantInPast
 import app.tivi.data.syncers.ItemSyncerResult
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
-import org.threeten.bp.Instant
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
+import org.threeten.bp.Instant
+import org.threeten.bp.OffsetDateTime
 
 @Singleton
 class FollowedShowsRepository @Inject constructor(

@@ -22,8 +22,8 @@ import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.domain.SubjectInteractor
 import app.tivi.extensions.flatMapLatestNullable
 import app.tivi.extensions.mapNullable
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class ObserveNextShowEpisodeToWatch @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository,

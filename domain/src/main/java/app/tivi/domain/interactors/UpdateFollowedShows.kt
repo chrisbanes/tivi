@@ -26,9 +26,9 @@ import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import javax.inject.Inject
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class UpdateFollowedShows @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository,

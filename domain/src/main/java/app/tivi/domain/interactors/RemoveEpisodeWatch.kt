@@ -19,8 +19,8 @@ package app.tivi.domain.interactors
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class RemoveEpisodeWatch @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,

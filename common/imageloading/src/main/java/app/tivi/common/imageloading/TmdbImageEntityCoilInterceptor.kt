@@ -26,10 +26,10 @@ import coil.intercept.Interceptor
 import coil.request.ImageResult
 import coil.size.Size
 import coil.size.pxOrElse
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import javax.inject.Inject
 import javax.inject.Provider
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @ExperimentalCoilApi
 class TmdbImageEntityCoilInterceptor @Inject constructor(

@@ -22,6 +22,9 @@ import app.tivi.actions.ShowTasks
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,9 +33,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthState
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
 
 @OptIn(DelicateCoroutinesApi::class)
 @Singleton

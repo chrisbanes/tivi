@@ -31,9 +31,9 @@ import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.ListPrivacy
 import com.uwetrottmann.trakt5.services.Users
-import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
+import retrofit2.awaitResponse
 
 class TraktFollowedShowsDataSource @Inject constructor(
     private val usersService: Provider<Users>,

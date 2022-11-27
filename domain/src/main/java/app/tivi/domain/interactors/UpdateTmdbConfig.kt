@@ -19,8 +19,8 @@ package app.tivi.domain.interactors
 import app.tivi.domain.Interactor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class UpdateTmdbConfig @Inject constructor(
     private val tmdbManager: TmdbManager,

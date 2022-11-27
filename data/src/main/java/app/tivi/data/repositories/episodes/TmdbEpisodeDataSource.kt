@@ -22,8 +22,8 @@ import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbEpisodeToEpisode
 import app.tivi.data.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
-import retrofit2.awaitResponse
 import javax.inject.Inject
+import retrofit2.awaitResponse
 
 class TmdbEpisodeDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,

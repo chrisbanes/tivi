@@ -19,9 +19,9 @@ package app.tivi.domain.interactors
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
+import javax.inject.Inject
 import kotlinx.coroutines.withContext
 import org.threeten.bp.OffsetDateTime
-import javax.inject.Inject
 
 class AddEpisodeWatch @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,

@@ -59,11 +59,11 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.plus
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
-import app.tivi.common.ui.resources.R as UiR
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
