@@ -1,0 +1,85 @@
+name: Baseline profile generation
+
+on:
+  # every day at 00:43
+  schedule:
+    - cron: '43 0 * * *'
+  push: # remove this once verified that it runs!
+
+jobs:
+  baseline-profile:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    env:
+      TERM: dumb
+      ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Decrypt secrets
+        run: ./release/decrypt-secrets.sh
+        env:
+          ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
+
+      - name: Copy CI gradle.properties
+        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+
+      # This allows us to build most of what we need without the emulator running
+      # and using resources
+      - name: Build app and benchmark
+        run: ./gradlew :benchmark:assembleBenchmark :app:assembleStandardBenchmark
+
+      # Now use reactivecircus/android-emulator-runner to spin up an emulator and run our
+      # baseline profile generator. We need to manually pull the baseline profiles off the
+      # emulator when using the GA runner
+      - name: Run benchmark
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          target: google_apis
+          arch: x86_64
+          profile: Galaxy Nexus
+          script: |
+            # Run our benchmark, enabling only tests using BaselineProfile
+            ./gradlew connectedBenchmarkAndroidTest -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
+            # Need to manually pull the generated profiles from the emulator
+            adb pull /sdcard/Android/media/app.tivi.benchmark benchmark/build/outputs/baseline-prof/
+
+      # If we're on main branch, copy over the baseline profile and
+      # commit it to the repository (if changed)
+      - name: Commit baseline profile into main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cp benchmark/build/outputs/baseline-prof/BaselineProfileGenerator_generateBaselineProfile-baseline-prof.txt app/src/main/baseline-prof.txt
+          # If the baseline profile has changed, commit it
+          if [[ $(git diff --stat app/src/main/baseline-prof.txt) != '' ]]; then
+            git config --global user.name 'Baseline Profile - GitHub Actions'
+            git config --global user.email 'github@actions'
+            git add app/src/main/baseline-prof.txt
+            git commit -m "Update app baseline profile" && git push
+          fi
+
+      # Upload the entire generated folder and attach it to the CI run
+      - name: Attach baseline profile
+        uses: actions/upload-artifact@v3
+        with:
+          name: Baseline profile output
+          path: benchmark/build/outputs/baseline-prof
+
+      - name: Clean secrets
+        if: always()
+        run: ./release/clean-secrets.sh
