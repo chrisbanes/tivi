@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package app.tivi.trakt
 
 import com.uwetrottmann.trakt5.TraktV2

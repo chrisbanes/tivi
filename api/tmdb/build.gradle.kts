@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 plugins {
     id("kotlin")
     alias(libs.plugins.kotlin.kapt)
