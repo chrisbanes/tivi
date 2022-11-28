@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.diffplug.gradle.spotless.SpotlessExtension
@@ -62,7 +61,7 @@ allprojects {
                     "ij_kotlin_allow_trailing_comma_on_call_site" to "true",
                 ),
             )
-            licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
+            licenseHeaderFile(rootProject.file("spotless/copyright.txt"))
         }
         kotlinGradle {
             target("**/*.kts")
@@ -75,7 +74,7 @@ allprojects {
                     "ij_kotlin_allow_trailing_comma_on_call_site" to "true",
                 ),
             )
-            licenseHeaderFile(rootProject.file("spotless/copyright.kt"), "(^(?![\\/ ]\\*).*$)")
+            licenseHeaderFile(rootProject.file("spotless/copyright.txt"), "(^(?![\\/ ]\\*).*$)")
         }
     }
 
