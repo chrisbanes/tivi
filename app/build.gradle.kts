@@ -107,12 +107,7 @@ android {
         }
 
         release {
-            signingConfig = if (useReleaseKeystore) {
-                signingConfigs["release"]
-            } else {
-                // Otherwise just use the debug keystore (this is mainly for PR CI builds)
-                signingConfigs["debug"]
-            }
+            signingConfig = signingConfigs[if (useReleaseKeystore) "release" else "debug"]
             isShrinkResources = true
             isMinifyEnabled = true
             proguardFiles("proguard-rules.pro")
@@ -122,7 +117,7 @@ android {
             initWith(buildTypes["release"])
             signingConfig = signingConfigs["debug"]
             matchingFallbacks += "release"
-            isDebuggable = false
+            proguardFiles("benchmark-rules.pro")
         }
     }
 
