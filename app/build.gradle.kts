@@ -246,6 +246,13 @@ android.applicationVariants.forEach { variant ->
 if (file("google-services.json").exists()) {
     apply(plugin = libs.plugins.gms.googleServices.get().pluginId)
     apply(plugin = libs.plugins.firebase.crashlytics.get().pluginId)
+
+    // Disable uploading mapping files for the benchmark build type
+    android.buildTypes.getByName("benchmark") {
+        configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+            mappingFileUploadEnabled = false
+        }
+    }
 }
 
 fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
