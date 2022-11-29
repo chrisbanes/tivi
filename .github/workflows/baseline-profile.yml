@@ -4,7 +4,6 @@ on:
   # every day at 00:43
   schedule:
     - cron: '43 0 * * *'
-  push: # remove this once verified that it runs!
 
 jobs:
   baseline-profile:
