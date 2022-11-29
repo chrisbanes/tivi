@@ -71,8 +71,9 @@ jobs:
           cp benchmark/build/outputs/baseline-prof/BaselineProfileGenerator_generateBaselineProfile-baseline-prof.txt app/src/main/baseline-prof.txt
           # If the baseline profile has changed, commit it
           if [[ $(git diff --stat app/src/main/baseline-prof.txt) != '' ]]; then
-            git config --global user.name 'Baseline Profile - GitHub Actions'
-            git config --global user.email 'github@actions'
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git pull
             git add app/src/main/baseline-prof.txt
             git commit -m "Update app baseline profile" && git push
           fi
