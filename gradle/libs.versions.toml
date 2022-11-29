@@ -128,7 +128,7 @@ kotlin-extensions = { module = "org.jetbrains.kotlin:kotlin-android-extensions",
 
 leakCanary = "com.squareup.leakcanary:leakcanary-android:2.10"
 
-mockK = "io.mockk:mockk:1.13.2"
+mockK = "io.mockk:mockk:1.13.3"
 
 okhttp-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
