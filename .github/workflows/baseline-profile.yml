@@ -4,6 +4,7 @@ on:
   # every day at 00:43
   schedule:
     - cron: '43 0 * * *'
+  workflow_dispatch:
 
 jobs:
   baseline-profile:
