@@ -70,8 +70,8 @@ jobs:
         run: |
           # Pull down any changes which may have been committed while this workflow has been running
           git pull
-          # Copy over the baseline profile
-          cp benchmark/build/outputs/baseline-prof/BaselineProfileGenerator_generateBaselineProfile-baseline-prof.txt app/src/main/baseline-prof.txt
+          # Sort the baseline profile, saving it to app/
+          sort -o app/src/main/baseline-prof.txt benchmark/build/outputs/baseline-prof/BaselineProfileGenerator_generateBaselineProfile-baseline-prof.txt
           # If the baseline profile has changed, commit it
           if [[ $(git diff --stat app/src/main/baseline-prof.txt) != '' ]]; then
             git config user.name github-actions
