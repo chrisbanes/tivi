@@ -32,7 +32,7 @@ android {
     defaultConfig {
         applicationId = "app.tivi"
         versionCode = appVersionCode
-        versionName = "0.6.4"
+        versionName = "0.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
