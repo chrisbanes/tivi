@@ -16,7 +16,6 @@
 
 package app.tivi.home.watched
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,42 +24,39 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -73,20 +69,15 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.items
-import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.FilterSortPanel
 import app.tivi.common.compose.ui.PosterCard
-import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.compose.ui.UserProfileButton
+import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.insets.ui.Scaffold
-import com.google.accompanist.insets.ui.TopAppBar
 import org.threeten.bp.OffsetDateTime
 import app.tivi.common.ui.resources.R as UiR
 
@@ -124,7 +115,7 @@ internal fun Watched(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun Watched(
     state: WatchedViewState,
@@ -136,12 +127,13 @@ internal fun Watched(
     onFilterChanged: (String) -> Unit,
     onSortSelected: (SortOption) -> Unit
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val dismissSnackbarState = rememberDismissState { value ->
         when {
             value != DismissValue.Default -> {
-                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                snackbarHostState.currentSnackbarData?.dismiss()
                 true
             }
             else -> false
@@ -150,26 +142,27 @@ internal fun Watched(
 
     state.message?.let { message ->
         LaunchedEffect(message) {
-            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
             onMessageShown(message.id)
         }
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
-            WatchedAppBar(
+            TiviStandardAppBar(
+                title = stringResource(UiR.string.watched_shows_title),
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
+                scrollBehavior = scrollBehavior,
                 refreshing = state.isLoading,
                 onRefreshActionClick = refresh,
                 onUserActionClick = openUser,
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        snackbarHost = { hostState ->
-            SnackbarHost(hostState = hostState) { data ->
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
                 SwipeToDismiss(
                     state = dismissSnackbarState,
                     background = {},
@@ -201,6 +194,7 @@ internal fun Watched(
                 horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
                 verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
                 modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
                     .bodyWidth()
                     .fillMaxHeight()
             ) {
@@ -275,65 +269,18 @@ private fun WatchedShowItem(
         Column {
             Text(
                 text = textCreator.showTitle(show = show).toString(),
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.titleMedium
             )
 
             Spacer(Modifier.height(2.dp))
 
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                Text(
-                    text = stringResource(
-                        UiR.string.library_last_watched,
-                        LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatched)
-                    ),
-                    style = MaterialTheme.typography.caption
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun WatchedAppBar(
-    loggedIn: Boolean,
-    user: TraktUser?,
-    refreshing: Boolean,
-    onRefreshActionClick: () -> Unit,
-    onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TopAppBar(
-        backgroundColor = MaterialTheme.colors.surface.copy(
-            alpha = AppBarAlphas.translucentBarAlpha()
-        ),
-        contentColor = MaterialTheme.colors.onSurface,
-        contentPadding = WindowInsets.systemBars
-            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
-            .asPaddingValues(),
-        modifier = modifier,
-        title = { Text(text = stringResource(UiR.string.watched_shows_title)) },
-        actions = {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                // This button refresh allows screen-readers, etc to trigger a refresh.
-                // We only show the button to trigger a refresh, not to indicate that
-                // we're currently refreshing, otherwise we have 4 indicators showing the
-                // same thing.
-                Crossfade(
-                    targetState = refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                ) { isRefreshing ->
-                    if (!isRefreshing) {
-                        RefreshButton(onClick = onRefreshActionClick)
-                    }
-                }
-            }
-
-            UserProfileButton(
-                loggedIn = loggedIn,
-                user = user,
-                onClick = onUserActionClick,
-                modifier = Modifier.align(Alignment.CenterVertically)
+            Text(
+                text = stringResource(
+                    UiR.string.library_last_watched,
+                    LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatched)
+                ),
+                style = MaterialTheme.typography.bodySmall
             )
         }
-    )
+    }
 }
