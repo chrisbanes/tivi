@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package app.tivi.data.daos
 
 import androidx.room.Dao

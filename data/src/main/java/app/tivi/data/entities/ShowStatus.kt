@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package app.tivi.data.entities
 
 enum class ShowStatus(val storageKey: String) {
@@ -20,5 +21,4 @@ enum class ShowStatus(val storageKey: String) {
     RETURNING("returning"),
     CANCELED("canceled"),
     IN_PRODUCTION("inproduction"),
-    ;
 }

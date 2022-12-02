@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package app.tivi.data.entities
 
+/* ktlint-disable trailing-comma-on-declaration-site */
 enum class Genre(val traktValue: String) {
     DRAMA("drama"),
     FANTASY("fantasy"),
@@ -25,8 +27,7 @@ enum class Genre(val traktValue: String) {
     THRILLER("thriller"),
     COMEDY("comedy"),
     HORROR("horror"),
-    MYSTERY("mystery"),
-    ;
+    MYSTERY("mystery");
 
     companion object {
         private val values by lazy { values() }

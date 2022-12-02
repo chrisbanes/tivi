@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 plugins {
     id("kotlin")
     alias(libs.plugins.android.lint)
