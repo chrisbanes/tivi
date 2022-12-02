@@ -33,7 +33,7 @@ android {
     defaultConfig {
         applicationId = "app.tivi"
         versionCode = appVersionCode
-        versionName = "0.6.4"
+        versionName = "0.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -108,12 +108,7 @@ android {
         }
 
         release {
-            signingConfig = if (useReleaseKeystore) {
-                signingConfigs["release"]
-            } else {
-                // Otherwise just use the debug keystore (this is mainly for PR CI builds)
-                signingConfigs["debug"]
-            }
+            signingConfig = signingConfigs[if (useReleaseKeystore) "release" else "debug"]
             isShrinkResources = true
             isMinifyEnabled = true
             proguardFiles("proguard-rules.pro")
@@ -123,7 +118,7 @@ android {
             initWith(buildTypes["release"])
             signingConfig = signingConfigs["debug"]
             matchingFallbacks += "release"
-            isDebuggable = false
+            proguardFiles("benchmark-rules.pro")
         }
     }
 
@@ -253,6 +248,13 @@ android.applicationVariants.forEach { variant ->
 if (file("google-services.json").exists()) {
     apply(plugin = libs.plugins.gms.googleServices.get().pluginId)
     apply(plugin = libs.plugins.firebase.crashlytics.get().pluginId)
+
+    // Disable uploading mapping files for the benchmark build type
+    android.buildTypes.getByName("benchmark") {
+        configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+            mappingFileUploadEnabled = false
+        }
+    }
 }
 
 fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {

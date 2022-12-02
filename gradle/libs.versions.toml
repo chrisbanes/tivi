@@ -1,8 +1,7 @@
 [versions]
 agp = "7.3.1"
-accompanist = "0.27.1"
+accompanist = "0.28.0"
 androidxlifecycle = "2.6.0-alpha03"
-androidxtest = "1.5.0"
 chucker = "3.5.2"
 coil = "2.2.2"
 compose-bom = "2022.11.00"
@@ -73,10 +72,10 @@ androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "ro
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 
-androidx-test-core = { module = "androidx.test:core", version.ref = "androidxtest" }
+androidx-test-core = "androidx.test:core-ktx:1.5.0"
 androidx-test-junit = "androidx.test.ext:junit-ktx:1.1.4"
-androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidxtest" }
-androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxtest" }
+androidx-test-rules = "androidx.test:rules:1.5.0"
+androidx-test-runner = "androidx.test:runner:1.5.1"
 androidx-benchmark-macro = "androidx.benchmark:benchmark-macro-junit4:1.1.1"
 androidx-uiautomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 
@@ -130,7 +129,7 @@ kotlin-extensions = { module = "org.jetbrains.kotlin:kotlin-android-extensions",
 
 leakCanary = "com.squareup.leakcanary:leakcanary-android:2.10"
 
-mockK = "io.mockk:mockk:1.13.2"
+mockK = "io.mockk:mockk:1.13.3"
 
 okhttp-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }

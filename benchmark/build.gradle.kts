@@ -13,10 +13,8 @@ android {
     buildTypes {
         create("benchmark") {
             isDebuggable = true
-            signingConfig = buildTypes["debug"].signingConfig
+            signingConfig = signingConfigs["debug"]
             matchingFallbacks += "release"
-            isMinifyEnabled = true
-            proguardFiles("benchmark-rules.pro")
         }
     }
 
