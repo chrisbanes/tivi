@@ -43,7 +43,7 @@ fun SearchTextField(
     hint: String,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions(),
+    keyboardActions: KeyboardActions = KeyboardActions()
 ) {
     OutlinedTextField(
         value = value,
@@ -51,7 +51,7 @@ fun SearchTextField(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = null, // decorative
+                contentDescription = null // decorative
             )
         },
         trailingIcon = {

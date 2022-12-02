@@ -51,7 +51,7 @@ fun FilterSortPanel(
     modifier: Modifier = Modifier,
     sortOptions: List<SortOption>,
     currentSortOption: SortOption,
-    onSortSelected: (SortOption) -> Unit,
+    onSortSelected: (SortOption) -> Unit
 ) {
     Column(modifier.padding(vertical = 8.dp)) {
         var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -77,11 +77,11 @@ fun FilterSortPanel(
             var expanded by remember { mutableStateOf(false) }
             Surface(
                 onClick = { expanded = true },
-                shape = MaterialTheme.shapes.small,
+                shape = MaterialTheme.shapes.small
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Sort,
@@ -91,7 +91,7 @@ fun FilterSortPanel(
                     Text(
                         text = stringResource(currentSortOption.labelResId),
                         style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(6.dp),
+                        modifier = Modifier.padding(6.dp)
                     )
                 }
 

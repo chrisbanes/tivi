@@ -18,19 +18,16 @@ package app.tivi.common.compose.ui
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AppBarDefaults
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.contentColorFor
-import androidx.compose.material.primarySurface
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,32 +40,34 @@ import app.tivi.data.entities.TraktUser
  * A wrapper around [TopAppBar] which allows some [bottomContent] below the bar, but within the same
  * surface. This is useful for tabs.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarWithBottomContent(
     title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    navigationIcon: @Composable (() -> Unit)? = null,
+    navigationIcon: @Composable () -> Unit,
     bottomContent: @Composable (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
-    backgroundColor: Color = MaterialTheme.colors.primarySurface,
-    contentColor: Color = contentColorFor(backgroundColor),
-    elevation: Dp = AppBarDefaults.TopAppBarElevation,
-    contentPadding: PaddingValues? = null
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+    contentColor: Color = contentColorFor(containerColor),
+    elevation: Dp = 0.dp
 ) {
     Surface(
-        color = backgroundColor,
-        elevation = elevation,
+        color = containerColor,
+        tonalElevation = elevation,
         contentColor = contentColor,
         modifier = modifier
     ) {
-        Column(contentPadding?.let { Modifier.padding(it) } ?: Modifier) {
+        Column {
             TopAppBar(
                 title = title,
                 navigationIcon = navigationIcon,
                 actions = actions,
-                backgroundColor = Color.Transparent,
-                contentColor = LocalContentColor.current,
-                elevation = 0.dp
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = LocalContentColor.current,
+                    actionIconContentColor = LocalContentColor.current
+                )
             )
 
             bottomContent?.invoke()
@@ -83,12 +82,12 @@ fun TiviStandardAppBar(
     loggedIn: Boolean,
     user: TraktUser?,
     refreshing: Boolean,
-    scrollBehavior: TopAppBarScrollBehavior? = null,
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
-    androidx.compose.material3.TopAppBar(
+    TopAppBar(
         modifier = modifier,
         scrollBehavior = scrollBehavior,
         title = { Text(text = title) },

@@ -36,24 +36,12 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.Surface
 import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Close
@@ -64,9 +52,21 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -85,10 +85,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.theme.TiviTheme
@@ -98,13 +96,13 @@ import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.TiviAlertDialog
 import app.tivi.common.compose.ui.boundsInParent
+import app.tivi.common.compose.ui.none
 import app.tivi.common.compose.ui.onPositionInParentChanged
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
-import com.google.accompanist.insets.ui.Scaffold
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
@@ -123,7 +121,6 @@ fun EpisodeDetails(
     )
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @ExperimentalMaterialApi
 @Composable
 internal fun EpisodeDetails(
@@ -145,6 +142,7 @@ internal fun EpisodeDetails(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalMaterialApi
 @Composable
 internal fun EpisodeDetails(
@@ -157,12 +155,12 @@ internal fun EpisodeDetails(
     onAddWatch: () -> Unit,
     onMessageShown: (id: Long) -> Unit
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val dismissSnackbarState = rememberDismissState { value ->
         when {
             value != DismissValue.Default -> {
-                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                snackbarHostState.currentSnackbarData?.dismiss()
                 true
             }
             else -> false
@@ -171,14 +169,13 @@ internal fun EpisodeDetails(
 
     viewState.message?.let { message ->
         LaunchedEffect(message) {
-            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
             onMessageShown(message.id)
         }
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
             Surface {
                 if (viewState.episode != null && viewState.season != null) {
@@ -195,25 +192,24 @@ internal fun EpisodeDetails(
                     AnimatedVisibility(visible = expandedValue == ModalBottomSheetValue.Expanded) {
                         Spacer(
                             Modifier
-                                .background(MaterialTheme.colors.background.copy(alpha = 0.4f))
+                                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.4f))
                                 .windowInsetsTopHeight(WindowInsets.statusBars)
                                 .fillMaxWidth()
                         )
                     }
 
                     EpisodeDetailsAppBar(
-                        backgroundColor = Color.Transparent,
+                        // backgroundColor = Color.Transparent,
                         isRefreshing = viewState.refreshing,
                         navigateUp = navigateUp,
                         refresh = refresh,
-                        elevation = 0.dp,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
         },
-        snackbarHost = { hostState ->
-            SnackbarHost(hostState = hostState) { data ->
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
                 SwipeToDismiss(
                     state = dismissSnackbarState,
                     background = {},
@@ -226,7 +222,7 @@ internal fun EpisodeDetails(
         }
     ) { contentPadding ->
         Surface(
-            elevation = 2.dp,
+            shadowElevation = 2.dp,
             modifier = Modifier.fillMaxSize()
         ) {
             Column(
@@ -376,20 +372,18 @@ private fun InfoPane(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(16.dp)) {
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = contentDescription,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-        }
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
 
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             text = label,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }
@@ -402,21 +396,18 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .align(Alignment.CenterVertically),
             text = stringResource(UiR.string.episode_watches),
-            style = MaterialTheme.typography.subtitle1
+            style = MaterialTheme.typography.titleMedium
         )
 
         Spacer(Modifier.weight(1f))
-
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
-            IconButton(
-                modifier = Modifier.padding(end = 4.dp),
-                onClick = { onSweepWatchesClick() }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.DeleteSweep,
-                    contentDescription = stringResource(UiR.string.cd_delete)
-                )
-            }
+        IconButton(
+            modifier = Modifier.padding(end = 4.dp),
+            onClick = { onSweepWatchesClick() }
+        ) {
+            Icon(
+                imageVector = Icons.Default.DeleteSweep,
+                contentDescription = stringResource(UiR.string.cd_delete)
+            )
         }
     }
 }
@@ -433,31 +424,29 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Spacer(Modifier.weight(1f))
 
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
-                    Icon(
-                        imageVector = Icons.Default.Publish,
-                        contentDescription = stringResource(UiR.string.cd_episode_syncing),
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .align(Alignment.CenterVertically)
-                    )
-                }
+            if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
+                Icon(
+                    imageVector = Icons.Default.Publish,
+                    contentDescription = stringResource(UiR.string.cd_episode_syncing),
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .align(Alignment.CenterVertically)
+                )
+            }
 
-                if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
-                    Icon(
-                        imageVector = Icons.Default.VisibilityOff,
-                        contentDescription = stringResource(UiR.string.cd_episode_deleted),
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .align(Alignment.CenterVertically)
-                    )
-                }
+            if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
+                Icon(
+                    imageVector = Icons.Default.VisibilityOff,
+                    contentDescription = stringResource(UiR.string.cd_episode_deleted),
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .align(Alignment.CenterVertically)
+                )
             }
         }
     }
@@ -471,13 +460,13 @@ private fun EpisodeWatchSwipeBackground(
     var iconCenter by remember { mutableStateOf(Offset(0f, 0f)) }
     val maxRadius = hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
 
-    val secondary = MaterialTheme.colors.error.copy(alpha = 0.5f)
-    val default = MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
+    val secondary = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
+    val default = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
 
     Box(
         Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape)
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), RectangleShape)
     ) {
         // A simple box to draw the growing circle, which emanates from behind the icon
         Spacer(
@@ -499,16 +488,14 @@ private fun EpisodeWatchSwipeBackground(
                 )
         )
 
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(UiR.string.cd_delete),
-                modifier = Modifier
-                    .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
-                    .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                    .align(Alignment.CenterEnd)
-            )
-        }
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = stringResource(UiR.string.cd_delete),
+            modifier = Modifier
+                .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
+                .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
+                .align(Alignment.CenterEnd)
+        )
     }
 }
 
@@ -537,10 +524,7 @@ private fun MarkWatchedButton(
         onClick = onClick,
         modifier = modifier
     ) {
-        Text(
-            text = stringResource(UiR.string.episode_mark_watched),
-            style = MaterialTheme.typography.button.copy(color = LocalContentColor.current)
-        )
+        Text(text = stringResource(UiR.string.episode_mark_watched))
     }
 }
 
@@ -572,16 +556,19 @@ private fun RemoveAllWatchesDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EpisodeDetailsAppBar(
-    backgroundColor: Color,
     isRefreshing: Boolean,
     navigateUp: () -> Unit,
     refresh: () -> Unit,
-    elevation: Dp,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = Color.Transparent,
+            actionIconContentColor = LocalContentColor.current
+        ),
         title = {},
         navigationIcon = {
             ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
@@ -608,8 +595,7 @@ private fun EpisodeDetailsAppBar(
                 }
             }
         },
-        elevation = elevation,
-        backgroundColor = backgroundColor,
+        windowInsets = WindowInsets.none,
         modifier = modifier
     )
 }

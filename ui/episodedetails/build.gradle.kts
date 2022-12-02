@@ -46,13 +46,12 @@ dependencies {
     implementation(libs.compose.foundation.foundation)
     implementation(libs.compose.foundation.layout)
     implementation(libs.compose.material.material)
+    implementation(libs.compose.material3)
     implementation(libs.compose.material.iconsext)
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
 
     implementation(libs.coil.compose)
-
-    implementation(libs.accompanist.insetsui)
 
     implementation(libs.hilt.compose)
     implementation(libs.hilt.library)

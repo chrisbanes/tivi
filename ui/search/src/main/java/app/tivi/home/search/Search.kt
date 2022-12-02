@@ -36,7 +36,9 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -64,12 +66,11 @@ import app.tivi.common.compose.ui.plus
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
-import com.google.accompanist.insets.ui.Scaffold
 import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun Search(
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Long) -> Unit
 ) {
     Search(
         viewModel = hiltViewModel(),
@@ -80,7 +81,7 @@ fun Search(
 @Composable
 internal fun Search(
     viewModel: SearchViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Long) -> Unit
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -92,13 +93,13 @@ internal fun Search(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun Search(
     state: SearchViewState,
     openShowDetails: (showId: Long) -> Unit,
     onSearchQueryChanged: (query: String) -> Unit,
-    onMessageShown: (id: Long) -> Unit,
+    onMessageShown: (id: Long) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -174,7 +175,7 @@ private fun SearchList(
     results: List<ShowDetailed>,
     onShowClicked: (TiviShow) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val arrangement = Arrangement.spacedBy(Layout.gutter)
 
@@ -205,7 +206,7 @@ private fun SearchList(
 private fun SearchRow(
     show: TiviShow,
     posterImage: ShowTmdbImage?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(modifier.padding(vertical = 8.dp)) {
         PosterCard(

@@ -20,11 +20,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -43,10 +41,10 @@ fun Backdrop(
     title: (@Composable () -> Unit)? = null
 ) {
     Surface(
-        color = MaterialTheme.colors.onSurface
+        color = MaterialTheme.colorScheme.onSurface
             .copy(alpha = 0.2f)
-            .compositeOver(MaterialTheme.colors.surface),
-        contentColor = MaterialTheme.colors.onSurface,
+            .compositeOver(MaterialTheme.colorScheme.surface),
+        contentColor = MaterialTheme.colorScheme.onSurface,
         modifier = modifier
     ) {
         Box {
@@ -54,7 +52,7 @@ fun Backdrop(
                 Modifier
                     .fillMaxSize()
                     .drawForegroundGradientScrim(
-                        MaterialTheme.colors.background.copy(alpha = 0.9f)
+                        MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
                     )
             ) {
                 if (imageModel != null) {
@@ -75,15 +73,14 @@ fun Backdrop(
             ) {
                 if (overline != null) {
                     CompositionLocalProvider(
-                        LocalTextStyle provides MaterialTheme.typography.overline,
-                        LocalContentAlpha provides ContentAlpha.medium
+                        LocalTextStyle provides MaterialTheme.typography.labelSmall
                     ) {
                         overline()
                     }
                 }
                 if (title != null) {
                     CompositionLocalProvider(
-                        LocalTextStyle provides MaterialTheme.typography.h5
+                        LocalTextStyle provides MaterialTheme.typography.headlineSmall
                     ) {
                         title()
                     }

@@ -112,7 +112,7 @@ fun <E : Entry> EntryGrid(
                 refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading,
                 onRefreshActionClick = { lazyPagingItems.refresh() },
                 modifier = Modifier.fillMaxWidth(),
-                scrollBehavior = scrollBehavior,
+                scrollBehavior = scrollBehavior
             )
         },
         snackbarHost = {
@@ -218,18 +218,18 @@ private fun EntryGridAppBar(
         scrollBehavior = scrollBehavior,
         title = { Text(text = title) },
         actions = {
-                // This button refresh allows screen-readers, etc to trigger a refresh.
-                // We only show the button to trigger a refresh, not to indicate that
-                // we're currently refreshing, otherwise we have 4 indicators showing the
-                // same thing.
-                Crossfade(
-                    targetState = refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                ) { isRefreshing ->
-                    if (!isRefreshing) {
-                        RefreshButton(onClick = onRefreshActionClick)
-                    }
+            // This button refresh allows screen-readers, etc to trigger a refresh.
+            // We only show the button to trigger a refresh, not to indicate that
+            // we're currently refreshing, otherwise we have 4 indicators showing the
+            // same thing.
+            Crossfade(
+                targetState = refreshing,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            ) { isRefreshing ->
+                if (!isRefreshing) {
+                    RefreshButton(onClick = onRefreshActionClick)
                 }
+            }
         }
     )
 }

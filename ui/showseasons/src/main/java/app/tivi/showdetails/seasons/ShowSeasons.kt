@@ -20,17 +20,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,27 +33,29 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScrollableTabRow
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRowDefaults
-import androidx.compose.material.Text
-import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabPosition
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -71,10 +68,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
@@ -85,12 +84,9 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
-import com.google.accompanist.insets.ui.LocalScaffoldPadding
-import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import app.tivi.common.ui.resources.R as UiR
@@ -109,7 +105,6 @@ fun ShowSeasons(
     )
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun ShowSeasons(
     viewModel: ShowSeasonsViewModel,
@@ -129,7 +124,7 @@ internal fun ShowSeasons(
     )
 }
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun ShowSeasons(
     viewState: ShowSeasonsViewState,
@@ -139,12 +134,12 @@ internal fun ShowSeasons(
     onMessageShown: (id: Long) -> Unit,
     initialSeasonId: Long?
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val dismissSnackbarState = rememberDismissState { value ->
         when {
             value != DismissValue.Default -> {
-                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                snackbarHostState.currentSnackbarData?.dismiss()
                 true
             }
             else -> false
@@ -153,7 +148,7 @@ internal fun ShowSeasons(
 
     viewState.message?.let { message ->
         LaunchedEffect(message) {
-            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
             onMessageShown(message.id)
         }
@@ -180,9 +175,6 @@ internal fun ShowSeasons(
         topBar = {
             TopAppBarWithBottomContent(
                 title = { Text(text = viewState.show.title ?: "") },
-                contentPadding = WindowInsets.systemBars
-                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
-                    .asPaddingValues(),
                 navigationIcon = {
                     IconButton(onClick = navigateUp) {
                         Icon(
@@ -197,7 +189,7 @@ internal fun ShowSeasons(
                         onClick = refresh
                     )
                 },
-                backgroundColor = MaterialTheme.colors.surface.copy(
+                containerColor = MaterialTheme.colorScheme.surface.copy(
                     alpha = AppBarAlphas.translucentBarAlpha()
                 ),
                 bottomContent = {
@@ -205,14 +197,14 @@ internal fun ShowSeasons(
                         pagerState = pagerState,
                         seasons = viewState.seasons.map { it.season },
                         modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = Color.Transparent,
+                        containerColor = Color.Transparent,
                         contentColor = LocalContentColor.current
                     )
                 }
             )
         },
-        snackbarHost = { hostState ->
-            SnackbarHost(hostState = hostState) { data ->
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
                 SwipeToDismiss(
                     state = dismissSnackbarState,
                     background = {},
@@ -223,12 +215,13 @@ internal fun ShowSeasons(
                 )
             }
         }
-    ) {
+    ) { contentPadding ->
         SeasonsPager(
             seasons = viewState.seasons,
             pagerState = pagerState,
             openEpisodeDetails = openEpisodeDetails,
             modifier = Modifier
+                .padding(contentPadding)
                 .fillMaxHeight()
                 .bodyWidth()
         )
@@ -241,8 +234,8 @@ private fun SeasonPagerTabs(
     pagerState: PagerState,
     seasons: List<Season>,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colors.primarySurface,
-    contentColor: Color = contentColorFor(backgroundColor)
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+    contentColor: Color = contentColorFor(containerColor)
 ) {
     if (pagerState.pageCount == 0) return
 
@@ -251,7 +244,7 @@ private fun SeasonPagerTabs(
     ScrollableTabRow(
         // Our selected tab is our current page
         selectedTabIndex = pagerState.currentPage,
-        backgroundColor = backgroundColor,
+        containerColor = containerColor,
         contentColor = contentColor,
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
@@ -305,8 +298,8 @@ private fun EpisodesList(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = modifier,
-        contentPadding = LocalScaffoldPadding.current
+        modifier = modifier
+        // contentPadding = LocalScaffoldPadding.current
     ) {
         items(episodes, key = { it.episode.id }) { item ->
             EpisodeWithWatchesRow(
@@ -341,7 +334,7 @@ private fun EpisodeWithWatchesRow(
 
             Text(
                 text = textCreator.episodeNumberText(episode).toString(),
-                style = MaterialTheme.typography.caption
+                style = MaterialTheme.typography.bodySmall
             )
 
             Spacer(Modifier.height(2.dp))
@@ -349,7 +342,7 @@ private fun EpisodeWithWatchesRow(
             Text(
                 text = episode.title
                     ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.bodyMedium
             )
         }
 
@@ -378,6 +371,52 @@ private fun EpisodeWithWatchesRow(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+private fun Modifier.pagerTabIndicatorOffset(
+    pagerState: PagerState,
+    tabPositions: List<TabPosition>,
+    pageIndexMapping: (Int) -> Int = { it }
+): Modifier = layout { measurable, constraints ->
+    if (tabPositions.isEmpty()) {
+        // If there are no pages, nothing to show
+        layout(constraints.maxWidth, 0) {}
+    } else {
+        val currentPage = minOf(tabPositions.lastIndex, pageIndexMapping(pagerState.currentPage))
+        val currentTab = tabPositions[currentPage]
+        val previousTab = tabPositions.getOrNull(currentPage - 1)
+        val nextTab = tabPositions.getOrNull(currentPage + 1)
+        val fraction = pagerState.currentPageOffset
+        val indicatorWidth = if (fraction > 0 && nextTab != null) {
+            lerp(currentTab.width, nextTab.width, fraction).roundToPx()
+        } else if (fraction < 0 && previousTab != null) {
+            lerp(currentTab.width, previousTab.width, -fraction).roundToPx()
+        } else {
+            currentTab.width.roundToPx()
+        }
+        val indicatorOffset = if (fraction > 0 && nextTab != null) {
+            lerp(currentTab.left, nextTab.left, fraction).roundToPx()
+        } else if (fraction < 0 && previousTab != null) {
+            lerp(currentTab.left, previousTab.left, -fraction).roundToPx()
+        } else {
+            currentTab.left.roundToPx()
+        }
+        val placeable = measurable.measure(
+            Constraints(
+                minWidth = indicatorWidth,
+                maxWidth = indicatorWidth,
+                minHeight = 0,
+                maxHeight = constraints.maxHeight
+            )
+        )
+        layout(constraints.maxWidth, maxOf(placeable.height, constraints.minHeight)) {
+            placeable.placeRelative(
+                indicatorOffset,
+                maxOf(constraints.minHeight - placeable.height, 0)
+            )
         }
     }
 }
