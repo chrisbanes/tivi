@@ -32,20 +32,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.Surface
 import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.Text
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,7 +56,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.ui.PosterCard
@@ -73,7 +69,7 @@ import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun Search(
-    openShowDetails: (showId: Long) -> Unit
+    openShowDetails: (showId: Long) -> Unit,
 ) {
     Search(
         viewModel = hiltViewModel(),
@@ -81,11 +77,10 @@ fun Search(
     )
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun Search(
     viewModel: SearchViewModel,
-    openShowDetails: (showId: Long) -> Unit
+    openShowDetails: (showId: Long) -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -103,33 +98,33 @@ internal fun Search(
     state: SearchViewState,
     openShowDetails: (showId: Long) -> Unit,
     onSearchQueryChanged: (query: String) -> Unit,
-    onMessageShown: (id: Long) -> Unit
+    onMessageShown: (id: Long) -> Unit,
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val dismissSnackbarState = rememberDismissState { value ->
         when {
             value != DismissValue.Default -> {
-                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                snackbarHostState.currentSnackbarData?.dismiss()
                 true
             }
+
             else -> false
         }
     }
 
     state.message?.let { message ->
         LaunchedEffect(message) {
-            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            snackbarHostState.showSnackbar(message.message)
             onMessageShown(message.id)
         }
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
             Surface(
-                color = MaterialTheme.colors.surface.copy(alpha = 0.95f),
-                contentColor = MaterialTheme.colors.onSurface,
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
@@ -151,8 +146,8 @@ internal fun Search(
                 }
             }
         },
-        snackbarHost = { hostState ->
-            SnackbarHost(hostState = hostState) { data ->
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
                 SwipeToDismiss(
                     state = dismissSnackbarState,
                     background = {},
@@ -179,7 +174,7 @@ private fun SearchList(
     results: List<ShowDetailed>,
     onShowClicked: (TiviShow) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val arrangement = Arrangement.spacedBy(Layout.gutter)
 
@@ -210,7 +205,7 @@ private fun SearchList(
 private fun SearchRow(
     show: TiviShow,
     posterImage: ShowTmdbImage?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(modifier.padding(vertical = 8.dp)) {
         PosterCard(
@@ -230,18 +225,16 @@ private fun SearchRow(
         ) {
             Text(
                 text = show.title ?: "No title",
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.titleMedium
             )
 
-            if (show.summary?.isNotEmpty() == true) {
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = show.summary!!,
-                        style = MaterialTheme.typography.caption,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 2
-                    )
-                }
+            if (!show.summary.isNullOrEmpty()) {
+                Text(
+                    text = show.summary!!,
+                    style = MaterialTheme.typography.bodySmall,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2
+                )
             }
         }
     }
