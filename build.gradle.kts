@@ -7,16 +7,17 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
+import com.diffplug.gradle.spotless.SpotlessExtension
 import dagger.hilt.android.plugin.HiltExtension
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -32,7 +33,7 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.gms.googleServices) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
-    alias(libs.plugins.spotless)
+    alias(libs.plugins.spotless) apply false
 }
 
 allprojects {
@@ -46,18 +47,35 @@ allprojects {
         // Used for snapshots if needed
         // maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
-}
 
-subprojects {
     apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
-    spotless {
+    configure<SpotlessExtension> {
         kotlin {
             target("**/*.kt")
             targetExclude("$buildDir/**/*.kt")
             targetExclude("bin/**/*.kt")
 
-            ktlint(libs.versions.ktlint.get())
-            licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
+            ktlint(libs.versions.ktlint.get()).editorConfigOverride(
+                mapOf(
+                    "ij_kotlin_imports_layout" to "*",
+                    "ij_kotlin_allow_trailing_comma" to "true",
+                    "ij_kotlin_allow_trailing_comma_on_call_site" to "true",
+                ),
+            )
+            licenseHeaderFile(rootProject.file("spotless/copyright.txt"))
+        }
+        kotlinGradle {
+            target("**/*.kts")
+            targetExclude("$buildDir/**/*.kts")
+
+            ktlint(libs.versions.ktlint.get()).editorConfigOverride(
+                mapOf(
+                    "ij_kotlin_imports_layout" to "*",
+                    "ij_kotlin_allow_trailing_comma" to "true",
+                    "ij_kotlin_allow_trailing_comma_on_call_site" to "true",
+                ),
+            )
+            licenseHeaderFile(rootProject.file("spotless/copyright.txt"), "(^(?![\\/ ]\\*).*$)")
         }
     }
 
@@ -70,19 +88,19 @@ subprojects {
             freeCompilerArgs += listOf(
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=kotlinx.coroutines.FlowPreview",
-                "-opt-in=kotlin.Experimental"
+                "-opt-in=kotlin.Experimental",
             )
 
             if (project.hasProperty("tivi.enableComposeCompilerReports")) {
                 freeCompilerArgs += listOf(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
-                        project.buildDir.absolutePath + "/compose_metrics"
+                        project.buildDir.absolutePath + "/compose_metrics",
                 )
                 freeCompilerArgs += listOf(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
-                        project.buildDir.absolutePath + "/compose_metrics"
+                        project.buildDir.absolutePath + "/compose_metrics",
                 )
             }
 

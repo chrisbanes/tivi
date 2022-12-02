@@ -75,7 +75,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             WHERE s.number != ${Season.NUMBER_SPECIALS} AND s.ignored = 0
 			ORDER BY datetime(ew.watched_at) DESC
 			LIMIT 1
-    """
+    """,
     )
     abstract fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?>
 
@@ -101,7 +101,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
         SELECT stats.* FROM FollowedShowsWatchStats as stats
         INNER JOIN myshows_entries ON stats.id = myshows_entries.id
         WHERE show_id = :showId
-    """
+    """,
     )
     abstract fun entryShowViewStats(showId: Long): Flow<FollowedShowsWatchStats>
 

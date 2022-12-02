@@ -25,7 +25,7 @@ import org.threeten.bp.temporal.TemporalAmount
 
 abstract class EntityLastRequestStore(
     private val request: Request,
-    private val dao: LastRequestDao
+    private val dao: LastRequestDao,
 ) {
     private suspend fun getRequestInstant(entityId: Long): Instant? {
         return dao.lastRequest(request, entityId)?.timestamp

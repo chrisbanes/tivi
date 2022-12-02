@@ -27,14 +27,14 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
+import javax.inject.Inject
+import javax.inject.Provider
+import javax.inject.Singleton
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
 
 @Singleton
 class SeasonsEpisodesRepository @Inject constructor(
@@ -45,7 +45,7 @@ class SeasonsEpisodesRepository @Inject constructor(
     private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
     @Trakt private val traktEpisodeDataSource: EpisodeDataSource,
     @Tmdb private val tmdbEpisodeDataSource: EpisodeDataSource,
-    private val traktAuthState: Provider<TraktAuthState>
+    private val traktAuthState: Provider<TraktAuthState>,
 ) {
     fun observeSeasonsForShow(showId: Long): Flow<List<Season>> {
         return seasonsEpisodesStore.observeShowSeasons(showId)
@@ -67,7 +67,7 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     suspend fun needShowSeasonsUpdate(
         showId: Long,
-        expiry: Instant = instantInPast(days = 7)
+        expiry: Instant = instantInPast(days = 7),
     ): Boolean {
         return seasonsLastRequestStore.isRequestBefore(showId, expiry)
     }
@@ -117,7 +117,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         check(trakt != null || tmdb != null)
 
         seasonsEpisodesStore.save(
-            mergeEpisode(local, trakt ?: Episode.EMPTY, tmdb ?: Episode.EMPTY)
+            mergeEpisode(local, trakt ?: Episode.EMPTY, tmdb ?: Episode.EMPTY),
         )
     }
 
@@ -125,7 +125,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         showId: Long,
         refreshType: RefreshType = RefreshType.QUICK,
         forceRefresh: Boolean = false,
-        lastUpdated: OffsetDateTime? = null
+        lastUpdated: OffsetDateTime? = null,
     ) {
         if (refreshType == RefreshType.QUICK) {
             // If we have a lastUpdated time and we've already fetched the watched episodes, we can try
@@ -173,7 +173,7 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     suspend fun needShowEpisodeWatchesSync(
         showId: Long,
-        expiry: Instant = instantInPast(hours = 1)
+        expiry: Instant = instantInPast(hours = 1),
     ): Boolean {
         return episodeWatchLastLastRequestStore.isRequestBefore(showId, expiry)
     }
@@ -189,7 +189,7 @@ class SeasonsEpisodesRepository @Inject constructor(
                     return@mapNotNull EpisodeWatchEntry(
                         episodeId = episode.id,
                         watchedAt = timestamp,
-                        pendingAction = PendingAction.UPLOAD
+                        pendingAction = PendingAction.UPLOAD,
                     )
                 }
             }
@@ -236,7 +236,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         val entry = EpisodeWatchEntry(
             episodeId = episodeId,
             watchedAt = timestamp,
-            pendingAction = PendingAction.UPLOAD
+            pendingAction = PendingAction.UPLOAD,
         )
         episodeWatchStore.save(entry)
 
@@ -257,7 +257,7 @@ class SeasonsEpisodesRepository @Inject constructor(
             // First mark them as pending deletion
             episodeWatchStore.updateEntriesWithAction(
                 watchesForEpisode.map { it.id },
-                PendingAction.DELETE
+                PendingAction.DELETE,
             )
             syncEpisodeWatches(episodeId)
         }
@@ -371,7 +371,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         // TMDb specific stuff
         tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
         tmdbPosterPath = tmdb.tmdbPosterPath ?: local.tmdbPosterPath,
-        tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath
+        tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath,
     )
 
     private fun mergeEpisode(local: Episode, trakt: Episode, tmdb: Episode) = local.copy(
@@ -387,6 +387,6 @@ class SeasonsEpisodesRepository @Inject constructor(
 
         // TMDb specific stuff
         tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
-        tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath
+        tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath,
     )
 }

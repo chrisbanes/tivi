@@ -19,15 +19,15 @@ package app.tivi.domain.observers
 import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.SubjectInteractor
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class ObserveRecommendedShows @Inject constructor(
-    private val recommendedDao: RecommendedDao
+    private val recommendedDao: RecommendedDao,
 ) : SubjectInteractor<ObserveRecommendedShows.Params, List<RecommendedEntryWithShow>>() {
 
     override fun createObservable(
-        params: Params
+        params: Params,
     ): Flow<List<RecommendedEntryWithShow>> {
         return recommendedDao.entriesObservable(params.count, 0)
     }

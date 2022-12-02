@@ -22,18 +22,18 @@ import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbEpisodeToEpisode
 import app.tivi.data.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
-import retrofit2.awaitResponse
 import javax.inject.Inject
+import retrofit2.awaitResponse
 
 class TmdbEpisodeDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
-    private val episodeMapper: TmdbEpisodeToEpisode
+    private val episodeMapper: TmdbEpisodeToEpisode,
 ) : EpisodeDataSource {
     override suspend fun getEpisode(
         showId: Long,
         seasonNumber: Int,
-        episodeNumber: Int
+        episodeNumber: Int,
     ): Episode = withRetry {
         tmdb.tvEpisodesService()
             .episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber, null)

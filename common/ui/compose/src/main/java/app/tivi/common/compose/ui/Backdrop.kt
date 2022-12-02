@@ -38,7 +38,7 @@ fun Backdrop(
     imageModel: Any?,
     modifier: Modifier = Modifier,
     overline: (@Composable () -> Unit)? = null,
-    title: (@Composable () -> Unit)? = null
+    title: (@Composable () -> Unit)? = null,
 ) {
     Surface(
         color = MaterialTheme.colorScheme.onSurface
@@ -46,7 +46,7 @@ fun Backdrop(
             .compositeOver(MaterialTheme.colorScheme.surface),
         contentColor = MaterialTheme.colorScheme.onSurface,
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Box {
             if (imageModel != null) {
@@ -60,30 +60,30 @@ fun Backdrop(
                         .let { mod ->
                             if (title != null) {
                                 mod.drawForegroundGradientScrim(
-                                    MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
+                                    MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
                                 )
                             } else {
                                 mod
                             }
-                        }
+                        },
                 )
             }
 
             Column(
                 Modifier
                     .align(Alignment.BottomStart)
-                    .padding(Layout.gutter * 2)
+                    .padding(Layout.gutter * 2),
             ) {
                 if (overline != null) {
                     CompositionLocalProvider(
-                        LocalTextStyle provides MaterialTheme.typography.labelSmall
+                        LocalTextStyle provides MaterialTheme.typography.labelSmall,
                     ) {
                         overline()
                     }
                 }
                 if (title != null) {
                     CompositionLocalProvider(
-                        LocalTextStyle provides MaterialTheme.typography.headlineSmall
+                        LocalTextStyle provides MaterialTheme.typography.headlineSmall,
                     ) {
                         title()
                     }

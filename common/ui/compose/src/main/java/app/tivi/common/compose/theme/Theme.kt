@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun TiviTheme(
     useDarkColors: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     MaterialTheme(
         colorScheme = when {
@@ -42,6 +42,6 @@ fun TiviTheme(
         },
         typography = TiviTypography,
         shapes = TiviShapes,
-        content = content
+        content = content,
     )
 }

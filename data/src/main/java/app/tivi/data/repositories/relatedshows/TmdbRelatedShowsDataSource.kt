@@ -27,13 +27,13 @@ import app.tivi.data.mappers.unwrapTmdbShowResults
 import app.tivi.data.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.BaseTvShow
-import retrofit2.awaitResponse
 import javax.inject.Inject
+import retrofit2.awaitResponse
 
 class TmdbRelatedShowsDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
-    showMapper: TmdbBaseShowToTiviShow
+    showMapper: TmdbBaseShowToTiviShow,
 ) {
     private val entryMapper = IndexedMapper<BaseTvShow, RelatedShowEntry> { index, _ ->
         RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
@@ -41,7 +41,7 @@ class TmdbRelatedShowsDataSource @Inject constructor(
     private val resultMapper = unwrapTmdbShowResults(pairMapperOf(showMapper, entryMapper))
 
     suspend operator fun invoke(
-        showId: Long
+        showId: Long,
     ): List<Pair<TiviShow, RelatedShowEntry>> = withRetry {
         tmdb.tvService()
             .recommendations(tmdbIdMapper.map(showId), 1, null)

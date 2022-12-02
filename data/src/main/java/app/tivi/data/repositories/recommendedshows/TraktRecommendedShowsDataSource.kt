@@ -22,13 +22,13 @@ import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.forLists
 import app.tivi.data.withRetry
 import com.uwetrottmann.trakt5.services.Recommendations
-import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
+import retrofit2.awaitResponse
 
 class TraktRecommendedShowsDataSource @Inject constructor(
     private val recommendationsService: Provider<Recommendations>,
-    private val showMapper: TraktShowToTiviShow
+    private val showMapper: TraktShowToTiviShow,
 ) {
     suspend operator fun invoke(page: Int, pageSize: Int): List<TiviShow> = withRetry {
         recommendationsService.get()

@@ -26,16 +26,16 @@ import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.util.Logger
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
 class FollowedShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val followedShowsDao: FollowedShowsDao,
-    logger: Logger
+    logger: Logger,
 ) {
     var traktListId: Int? = null
 
@@ -43,7 +43,7 @@ class FollowedShowsStore @Inject constructor(
         entityDao = followedShowsDao,
         entityToKey = { it.traktId },
         mapper = { entity, id -> entity.copy(id = id ?: 0) },
-        logger = logger
+        logger = logger,
     )
 
     suspend fun getEntryForShowId(showId: Long): FollowedShowEntry? = followedShowsDao.entryWithShowId(showId)
@@ -62,7 +62,7 @@ class FollowedShowsStore @Inject constructor(
 
     fun observeForPaging(
         sort: SortOption,
-        filter: String?
+        filter: String?,
     ): PagingSource<Int, FollowedShowEntryWithShow> {
         val filtered = filter != null && filter.isNotEmpty()
         return when (sort) {

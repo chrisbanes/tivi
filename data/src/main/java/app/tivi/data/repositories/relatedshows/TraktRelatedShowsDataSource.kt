@@ -27,14 +27,14 @@ import app.tivi.data.withRetry
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
-import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
+import retrofit2.awaitResponse
 
 internal class TraktRelatedShowsDataSource @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val showService: Provider<Shows>,
-    showMapper: TraktShowToTiviShow
+    showMapper: TraktShowToTiviShow,
 ) {
     private val entryMapper = IndexedMapper<Show, RelatedShowEntry> { index, _ ->
         RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)

@@ -26,15 +26,15 @@ import coil.intercept.Interceptor
 import coil.request.ImageResult
 import coil.size.Size
 import coil.size.pxOrElse
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import javax.inject.Inject
 import javax.inject.Provider
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @ExperimentalCoilApi
 class TmdbImageEntityCoilInterceptor @Inject constructor(
     private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>,
-    private val powerController: PowerController
+    private val powerController: PowerController,
 ) : Interceptor {
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
         val request = when (val data = chain.request.data) {

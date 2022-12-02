@@ -24,13 +24,13 @@ import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Sync
-import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
+import retrofit2.awaitResponse
 
 class TraktWatchedShowsDataSource @Inject constructor(
     private val syncService: Provider<Sync>,
-    showMapper: TraktBaseShowToTiviShow
+    showMapper: TraktBaseShowToTiviShow,
 ) {
     private val responseMapper = pairMapperOf(showMapper) { from ->
         WatchedShowEntry(showId = 0, lastWatched = from.last_watched_at!!)

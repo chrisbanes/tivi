@@ -24,11 +24,11 @@ import app.tivi.data.instantInPast
 import app.tivi.data.syncers.ItemSyncerResult
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
-import org.threeten.bp.Instant
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
+import org.threeten.bp.Instant
+import org.threeten.bp.OffsetDateTime
 
 @Singleton
 class FollowedShowsRepository @Inject constructor(
@@ -37,11 +37,11 @@ class FollowedShowsRepository @Inject constructor(
     private val dataSource: TraktFollowedShowsDataSource,
     private val traktAuthState: Provider<TraktAuthState>,
     private val logger: Logger,
-    private val showDao: TiviShowDao
+    private val showDao: TiviShowDao,
 ) {
     fun observeFollowedShows(
         sort: SortOption,
-        filter: String? = null
+        filter: String? = null,
     ) = followedShowsStore.observeForPaging(sort, filter)
 
     fun observeShowViewStats(showId: Long) = followedShowsStore.observeShowViewStats(showId)
@@ -71,7 +71,7 @@ class FollowedShowsRepository @Inject constructor(
                 id = entry?.id ?: 0,
                 showId = showId,
                 followedAt = entry?.followedAt ?: OffsetDateTime.now(),
-                pendingAction = PendingAction.UPLOAD
+                pendingAction = PendingAction.UPLOAD,
             )
             val newEntryId = followedShowsStore.save(newEntry)
 
@@ -106,7 +106,7 @@ class FollowedShowsRepository @Inject constructor(
     }
 
     private suspend fun pullDownTraktFollowedList(
-        listId: Int
+        listId: Int,
     ): ItemSyncerResult<FollowedShowEntry> {
         val response = dataSource.getListShows(listId)
         logger.d("pullDownTraktFollowedList. Response: %s", response)

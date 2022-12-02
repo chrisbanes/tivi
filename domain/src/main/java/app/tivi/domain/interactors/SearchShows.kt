@@ -22,13 +22,13 @@ import app.tivi.data.repositories.search.SearchRepository
 import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,
     private val showFtsDao: ShowFtsDao,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : SuspendingWorkInteractor<SearchShows.Params, List<ShowDetailed>>() {
     override suspend fun doWork(params: Params): List<ShowDetailed> = withContext(dispatchers.io) {
         val remoteResults = searchRepository.search(params.query)
@@ -41,7 +41,7 @@ class SearchShows @Inject constructor(
                     // Re-throw wrapped exception with the query
                     throw SQLiteException(
                         "Error while searching database with query: ${params.query}",
-                        sqe
+                        sqe,
                     )
                 }
             }

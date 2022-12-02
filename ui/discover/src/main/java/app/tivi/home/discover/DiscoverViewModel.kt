@@ -33,11 +33,11 @@ import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class DiscoverViewModel @Inject constructor(
@@ -50,7 +50,7 @@ internal class DiscoverViewModel @Inject constructor(
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
-    private val logger: Logger
+    private val logger: Logger,
 ) : ViewModel() {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
@@ -67,9 +67,9 @@ internal class DiscoverViewModel @Inject constructor(
         observeNextShowEpisodeToWatch.flow,
         observeTraktAuthState.flow,
         observeUserDetails.flow,
-        uiMessageManager.message
+        uiMessageManager.message,
     ) { trendingLoad, popularLoad, recommendLoad, trending, popular, recommended, nextShow,
-            authState, user, message
+            authState, user, message,
         ->
         DiscoverViewState(
             user = user,
@@ -81,12 +81,12 @@ internal class DiscoverViewModel @Inject constructor(
             recommendedItems = recommended,
             recommendedRefreshing = recommendLoad,
             nextEpisodeWithShowToWatched = nextShow,
-            message = message
+            message = message,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = DiscoverViewState.Empty
+        initialValue = DiscoverViewState.Empty,
     )
 
     init {
@@ -106,17 +106,17 @@ internal class DiscoverViewModel @Inject constructor(
     fun refresh(fromUser: Boolean = true) {
         viewModelScope.launch {
             updatePopularShows(
-                UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser)
+                UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser),
             ).collectStatus(popularLoadingState, logger, uiMessageManager)
         }
         viewModelScope.launch {
             updateTrendingShows(
-                UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH, fromUser)
+                UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH, fromUser),
             ).collectStatus(trendingLoadingState, logger, uiMessageManager)
         }
         viewModelScope.launch {
             updateRecommendedShows(
-                UpdateRecommendedShows.Params(forceRefresh = fromUser)
+                UpdateRecommendedShows.Params(forceRefresh = fromUser),
             ).collectStatus(recommendedLoadingState, logger, uiMessageManager)
         }
     }

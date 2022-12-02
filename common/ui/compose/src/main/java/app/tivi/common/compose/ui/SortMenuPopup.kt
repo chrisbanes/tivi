@@ -24,26 +24,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import app.tivi.data.entities.SortOption
 import app.tivi.common.ui.resources.R as UiR
+import app.tivi.data.entities.SortOption
 
 @Composable
 internal fun ColumnScope.SortDropdownMenuContent(
     sortOptions: List<SortOption>,
     onItemClick: (SortOption) -> Unit,
     modifier: Modifier = Modifier,
-    currentSortOption: SortOption? = null
+    currentSortOption: SortOption? = null,
 ) {
     for (sort in sortOptions) {
         DropdownMenuItem(
             text = {
                 Text(
                     text = stringResource(sort.labelResId),
-                    fontWeight = if (sort == currentSortOption) FontWeight.Bold else null
+                    fontWeight = if (sort == currentSortOption) FontWeight.Bold else null,
                 )
             },
             onClick = { onItemClick(sort) },
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }

@@ -19,12 +19,12 @@ package app.tivi.domain.interactors
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class ChangeSeasonFollowStatus @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ChangeSeasonFollowStatus.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
@@ -44,7 +44,7 @@ class ChangeSeasonFollowStatus @Inject constructor(
 
     data class Params(
         val seasonId: Long,
-        val action: Action
+        val action: Action,
     )
 
     enum class Action { FOLLOW, IGNORE, IGNORE_PREVIOUS }

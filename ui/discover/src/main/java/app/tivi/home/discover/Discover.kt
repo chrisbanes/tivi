@@ -74,6 +74,7 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviStandardAppBar
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -83,7 +84,6 @@ import app.tivi.trakt.TraktAuthState
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun Discover(
@@ -91,7 +91,7 @@ fun Discover(
     openPopularShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openUser: () -> Unit
+    openUser: () -> Unit,
 ) {
     Discover(
         viewModel = hiltViewModel(),
@@ -99,7 +99,7 @@ fun Discover(
         openPopularShows = openPopularShows,
         openRecommendedShows = openRecommendedShows,
         openShowDetails = openShowDetails,
-        openUser = openUser
+        openUser = openUser,
     )
 }
 
@@ -110,7 +110,7 @@ internal fun Discover(
     openPopularShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openUser: () -> Unit
+    openUser: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -122,7 +122,7 @@ internal fun Discover(
         openTrendingShows = openTrendingShows,
         openRecommendedShows = openRecommendedShows,
         openPopularShows = openPopularShows,
-        onMessageShown = viewModel::clearMessage
+        onMessageShown = viewModel::clearMessage,
     )
 }
 
@@ -136,7 +136,7 @@ internal fun Discover(
     openTrendingShows: () -> Unit,
     openRecommendedShows: () -> Unit,
     openPopularShows: () -> Unit,
-    onMessageShown: (id: Long) -> Unit
+    onMessageShown: (id: Long) -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -167,7 +167,7 @@ internal fun Discover(
                 refreshing = state.refreshing,
                 onRefreshActionClick = refresh,
                 onUserActionClick = openUser,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         },
         snackbarHost = {
@@ -178,17 +178,17 @@ internal fun Discover(
                     dismissContent = { Snackbar(snackbarData = data) },
                     modifier = Modifier
                         .padding(horizontal = Layout.bodyMargin)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 )
             }
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
         val refreshState = rememberPullRefreshState(refreshing = false, onRefresh = refresh)
         Box(modifier = Modifier.pullRefresh(state = refreshState)) {
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.bodyWidth()
+                modifier = Modifier.bodyWidth(),
             ) {
                 item {
                     Spacer(Modifier.height(Layout.gutter))
@@ -205,12 +205,12 @@ internal fun Discover(
                                 openShowDetails(
                                     nextEpisodeToWatch.show.id,
                                     nextEpisodeToWatch.episode.seasonId,
-                                    nextEpisodeToWatch.episode.id
+                                    nextEpisodeToWatch.episode.id,
                                 )
                             },
                             modifier = Modifier
                                 .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
                         )
                     }
 
@@ -227,7 +227,7 @@ internal fun Discover(
                         onItemClick = {
                             openShowDetails(it.id, null, null)
                         },
-                        onMoreClick = openTrendingShows
+                        onMoreClick = openTrendingShows,
                     )
                 }
 
@@ -239,7 +239,7 @@ internal fun Discover(
                         onItemClick = {
                             openShowDetails(it.id, null, null)
                         },
-                        onMoreClick = openRecommendedShows
+                        onMoreClick = openRecommendedShows,
                     )
                 }
 
@@ -249,7 +249,7 @@ internal fun Discover(
                         title = stringResource(UiR.string.discover_popular_title),
                         refreshing = state.popularRefreshing,
                         onItemClick = { openShowDetails(it.id, null, null) },
-                        onMoreClick = openPopularShows
+                        onMoreClick = openPopularShows,
                     )
                 }
 
@@ -262,7 +262,7 @@ internal fun Discover(
                 refreshing = state.refreshing,
                 state = refreshState,
                 modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
-                scale = true
+                scale = true,
             )
         }
     }
@@ -275,16 +275,16 @@ private fun NextEpisodeToWatch(
     season: Season,
     episode: Episode,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(Modifier.padding(Layout.bodyMargin)) {
             Header(
                 title = stringResource(UiR.string.discover_keep_watching_title),
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 16.dp),
             )
 
             Row(Modifier.fillMaxWidth()) {
@@ -295,7 +295,7 @@ private fun NextEpisodeToWatch(
                         modifier = Modifier
                             .padding(end = 16.dp)
                             .width(64.dp)
-                            .aspectRatio(2 / 3f)
+                            .aspectRatio(2 / 3f),
                     )
                 }
 
@@ -303,7 +303,7 @@ private fun NextEpisodeToWatch(
                     val textCreator = LocalTiviTextCreator.current
                     Text(
                         text = textCreator.seasonEpisodeTitleText(season, episode),
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium,
                     )
 
                     Spacer(Modifier.height(4.dp))
@@ -311,7 +311,7 @@ private fun NextEpisodeToWatch(
                     Text(
                         text = episode.title
                             ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 }
             }
@@ -326,7 +326,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
     refreshing: Boolean,
     onItemClick: (TiviShow) -> Unit,
     onMoreClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         if (refreshing || items.isNotEmpty()) {
@@ -337,14 +337,14 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                 loading = refreshing,
                 modifier = Modifier
                     .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) {
                 TextButton(
                     onClick = onMoreClick,
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.secondary
+                        contentColor = MaterialTheme.colorScheme.secondary,
                     ),
-                    modifier = Modifier.alignBy(FirstBaseline)
+                    modifier = Modifier.alignBy(FirstBaseline),
                 ) {
                     Text(text = stringResource(UiR.string.header_more))
                 }
@@ -356,7 +356,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                 onItemClick = onItemClick,
                 modifier = Modifier
                     .height(192.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         }
         // TODO empty state
@@ -368,7 +368,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
 private fun <T : EntryWithShow<*>> EntryShowCarousel(
     items: List<T>,
     onItemClick: (TiviShow) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val lazyListState = rememberLazyListState()
     val contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
@@ -378,14 +378,14 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
         modifier = modifier,
         flingBehavior = rememberSnapperFlingBehavior(
             lazyListState = lazyListState,
-            snapOffsetForItem = SnapOffsets.Start
+            snapOffsetForItem = SnapOffsets.Start,
         ),
         contentPadding = contentPadding,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(
             items = items,
-            key = { it.show.id }
+            key = { it.show.id },
         ) { item ->
             PosterCard(
                 show = item.show,
@@ -394,7 +394,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
                 modifier = Modifier
                     .animateItemPlacement()
                     .fillParentMaxHeight()
-                    .aspectRatio(2 / 3f)
+                    .aspectRatio(2 / 3f),
             )
         }
     }
@@ -405,14 +405,14 @@ private fun Header(
     title: String,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
-    content: @Composable RowScope.() -> Unit = {}
+    content: @Composable RowScope.() -> Unit = {},
 ) {
     Row(modifier) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
-                .align(Alignment.CenterVertically)
+                .align(Alignment.CenterVertically),
         )
 
         Spacer(Modifier.weight(1f))
@@ -420,7 +420,7 @@ private fun Header(
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(
                 color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(16.dp),
             )
         }
 
@@ -434,7 +434,7 @@ private fun PreviewHeader() {
     Surface(Modifier.fillMaxWidth()) {
         Header(
             title = "Being watched now",
-            loading = true
+            loading = true,
         )
     }
 }

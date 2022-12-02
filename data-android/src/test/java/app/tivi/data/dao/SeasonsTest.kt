@@ -30,6 +30,7 @@ import app.tivi.utils.s2
 import app.tivi.utils.showId
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
+import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
@@ -37,7 +38,6 @@ import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
-import javax.inject.Inject
 
 @UninstallModules(DatabaseModuleBinds::class)
 @HiltAndroidTest
@@ -82,7 +82,7 @@ class SeasonsTest : DatabaseTest() {
         // Specials should always be last
         assertThat(
             seasonsDao.seasonsForShowId(showId),
-            `is`(listOf(s1, s2, s0))
+            `is`(listOf(s1, s2, s0)),
         )
     }
 

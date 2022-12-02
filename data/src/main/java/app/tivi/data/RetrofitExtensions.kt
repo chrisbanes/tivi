@@ -18,10 +18,10 @@
 
 package app.tivi.data
 
+import java.io.IOException
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import retrofit2.Response
-import java.io.IOException
 
 inline fun <T> Response<T>.bodyOrThrow(): T = if (isSuccessful) body()!! else throw HttpException(this)
 
@@ -29,7 +29,7 @@ suspend fun <T> withRetry(
     defaultDelay: Long = 100,
     maxAttempts: Int = 3,
     shouldRetry: (Throwable) -> Boolean = ::defaultShouldRetry,
-    block: suspend () -> T
+    block: suspend () -> T,
 ): T {
     repeat(maxAttempts) { attempt ->
         val response = runCatching { block() }

@@ -26,9 +26,9 @@ import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
 import dagger.Module
 import dagger.Provides
-import okhttp3.OkHttpClient
 import javax.inject.Named
 import javax.inject.Singleton
+import okhttp3.OkHttpClient
 
 @Module(includes = [TraktServiceModule::class])
 object TraktModule {
@@ -38,7 +38,7 @@ object TraktModule {
         client: OkHttpClient,
         @Named("trakt-client-id") clientId: String,
         @Named("trakt-client-secret") clientSecret: String,
-        @Named("trakt-auth-redirect-uri") redirectUri: String
+        @Named("trakt-auth-redirect-uri") redirectUri: String,
     ): TraktV2 = object : TraktV2(clientId, clientSecret, redirectUri) {
         override fun okHttpClient(): OkHttpClient = client.newBuilder()
             .apply { setOkHttpClientDefaults(this) }

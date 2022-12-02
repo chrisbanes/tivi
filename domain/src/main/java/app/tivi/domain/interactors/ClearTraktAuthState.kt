@@ -21,7 +21,7 @@ import app.tivi.trakt.TraktManager
 import javax.inject.Inject
 
 class ClearTraktAuthState @Inject constructor(
-    private val traktManager: TraktManager
+    private val traktManager: TraktManager,
 ) : ResultInteractor<Unit, Unit>() {
     override suspend fun doWork(params: Unit) {
         traktManager.clearAuth()

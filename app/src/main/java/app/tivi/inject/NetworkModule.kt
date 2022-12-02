@@ -22,14 +22,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import java.io.File
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import java.io.File
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -38,7 +38,7 @@ object NetworkModule {
     @Provides
     fun provideOkHttpClient(
         @ApplicationContext context: Context,
-        interceptors: Set<@JvmSuppressWildcards Interceptor>
+        interceptors: Set<@JvmSuppressWildcards Interceptor>,
     ): OkHttpClient = OkHttpClient.Builder()
         .apply { interceptors.forEach(::addInterceptor) }
         // Around 4¢ worth of storage in 2020
@@ -50,7 +50,7 @@ object NetworkModule {
             Dispatcher().apply {
                 // Allow for increased number of concurrent image fetches on same host
                 maxRequestsPerHost = 10
-            }
+            },
         )
         // Increase timeouts
         .connectTimeout(20, TimeUnit.SECONDS)

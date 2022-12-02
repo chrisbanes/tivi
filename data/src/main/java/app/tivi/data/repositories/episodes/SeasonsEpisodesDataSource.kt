@@ -25,17 +25,17 @@ interface SeasonsEpisodesDataSource {
     suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>>
     suspend fun getShowEpisodeWatches(
         showId: Long,
-        since: OffsetDateTime? = null
+        since: OffsetDateTime? = null,
     ): List<Pair<Episode, EpisodeWatchEntry>>
 
     suspend fun getEpisodeWatches(
         episodeId: Long,
-        since: OffsetDateTime? = null
+        since: OffsetDateTime? = null,
     ): List<EpisodeWatchEntry>
 
     suspend fun getSeasonWatches(
         seasonId: Long,
-        since: OffsetDateTime? = null
+        since: OffsetDateTime? = null,
     ): List<Pair<Episode, EpisodeWatchEntry>>
 
     suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>)

@@ -28,7 +28,7 @@ import org.threeten.bp.OffsetDateTime
     tableName = "episodes",
     indices = [
         Index(value = ["trakt_id"], unique = true),
-        Index(value = ["season_id"])
+        Index(value = ["season_id"]),
     ],
     foreignKeys = [
         ForeignKey(
@@ -36,9 +36,9 @@ import org.threeten.bp.OffsetDateTime
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("season_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class Episode(
     @PrimaryKey(autoGenerate = true)
@@ -53,7 +53,7 @@ data class Episode(
     @ColumnInfo(name = "first_aired") val firstAired: OffsetDateTime? = null,
     @ColumnInfo(name = "trakt_rating") val traktRating: Float? = null,
     @ColumnInfo(name = "trakt_rating_votes") val traktRatingVotes: Int? = null,
-    @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null
+    @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
     companion object {
         val EMPTY = Episode(seasonId = 0)

@@ -16,25 +16,25 @@
 
 package app.tivi.api
 
+import java.util.UUID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.util.UUID
 
 data class UiMessage(
     val message: String,
-    val id: Long = UUID.randomUUID().mostSignificantBits
+    val id: Long = UUID.randomUUID().mostSignificantBits,
 )
 
 fun UiMessage(
     t: Throwable,
-    id: Long = UUID.randomUUID().mostSignificantBits
+    id: Long = UUID.randomUUID().mostSignificantBits,
 ): UiMessage = UiMessage(
     message = t.message ?: "Error occurred: $t",
-    id = id
+    id = id,
 )
 
 class UiMessageManager {

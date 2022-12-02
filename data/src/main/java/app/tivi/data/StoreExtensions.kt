@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.filterNot
 
 suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     key: Key,
-    forceFresh: Boolean = false
+    forceFresh: Boolean = false,
 ): Output = when {
     // If we're forcing a fresh fetch, do it now
     forceFresh -> fresh(key)

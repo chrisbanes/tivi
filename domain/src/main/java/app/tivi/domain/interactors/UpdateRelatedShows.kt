@@ -24,15 +24,15 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class UpdateRelatedShows @Inject constructor(
     private val relatedShowsStore: RelatedShowsStore,
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
-    private val logger: Logger
+    private val logger: Logger,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
         relatedShowsStore.fetch(params.showId, params.forceLoad).forEach {

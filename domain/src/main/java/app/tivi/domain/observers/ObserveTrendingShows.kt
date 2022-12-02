@@ -19,11 +19,11 @@ package app.tivi.domain.observers
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.SubjectInteractor
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class ObserveTrendingShows @Inject constructor(
-    private val trendingShowsDao: TrendingDao
+    private val trendingShowsDao: TrendingDao,
 ) : SubjectInteractor<ObserveTrendingShows.Params, List<TrendingEntryWithShow>>() {
 
     override fun createObservable(params: Params): Flow<List<TrendingEntryWithShow>> {

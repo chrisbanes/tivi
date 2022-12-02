@@ -18,17 +18,17 @@ package app.tivi.data.mappers
 
 import app.tivi.data.entities.TiviShow
 import com.uwetrottmann.trakt5.entities.Show
+import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.TextStyle
-import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class TraktShowToTiviShow @Inject constructor(
-    private val statusMapper: TraktStatusToShowStatus
+    private val statusMapper: TraktStatusToShowStatus,
 ) : Mapper<Show, TiviShow> {
     override suspend fun map(from: Show) = TiviShow(
         traktId = from.ids?.trakt,
@@ -67,6 +67,6 @@ class TraktShowToTiviShow @Inject constructor(
             } catch (e: Exception) {
                 null
             }
-        }
+        },
     )
 }

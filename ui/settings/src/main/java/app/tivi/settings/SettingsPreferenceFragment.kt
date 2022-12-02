@@ -25,10 +25,10 @@ import android.preference.SwitchPreference
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.net.toUri
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.util.SaveData
 import app.tivi.util.SaveDataReason
-import app.tivi.common.ui.resources.R as UiR
 
 internal class SettingsPreferenceFragment : PreferenceFragment() {
     internal var saveData: SaveData? = null
@@ -71,7 +71,7 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
             summary = getString(
                 UiR.string.settings_app_version_summary,
                 pkgInfo.versionName,
-                PackageInfoCompat.getLongVersionCode(pkgInfo)
+                PackageInfoCompat.getLongVersionCode(pkgInfo),
             )
         }
     }

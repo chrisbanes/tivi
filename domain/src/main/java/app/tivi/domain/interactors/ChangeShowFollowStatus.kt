@@ -25,8 +25,8 @@ import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class ChangeShowFollowStatus @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository,
@@ -35,7 +35,7 @@ class ChangeShowFollowStatus @Inject constructor(
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
     private val showTasks: ShowTasks,
-    private val logger: Logger
+    private val logger: Logger,
 ) : Interactor<ChangeShowFollowStatus.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
@@ -88,7 +88,7 @@ class ChangeShowFollowStatus @Inject constructor(
     data class Params(
         val showIds: Collection<Long>,
         val action: Action,
-        val deferDataFetch: Boolean = false
+        val deferDataFetch: Boolean = false,
     ) {
         constructor(showId: Long, action: Action) : this(listOf(showId), action)
     }

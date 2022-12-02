@@ -49,7 +49,7 @@ inline fun LazyListScope.itemSpacer(height: Dp) {
         Spacer(
             Modifier
                 .height(height)
-                .fillParentMaxWidth()
+                .fillParentMaxWidth(),
         )
     }
 }
@@ -59,7 +59,7 @@ inline fun LazyListScope.gutterSpacer() {
         Spacer(
             Modifier
                 .height(Layout.gutter)
-                .fillParentMaxWidth()
+                .fillParentMaxWidth(),
         )
     }
 }
@@ -69,7 +69,7 @@ inline fun LazyGridScope.gutterSpacer() {
         Spacer(
             Modifier
                 .height(Layout.gutter)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         )
     }
 }
@@ -79,7 +79,7 @@ inline fun LazyGridScope.itemSpacer(height: Dp) {
         Spacer(
             Modifier
                 .height(height)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         )
     }
 }
@@ -89,7 +89,7 @@ fun <T : Any> LazyGridScope.items(
     key: ((item: T) -> Any)? = null,
     span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     contentType: (item: T) -> Any? = { null },
-    itemContent: @Composable LazyGridItemScope.(item: T?) -> Unit
+    itemContent: @Composable LazyGridItemScope.(item: T?) -> Unit,
 ) {
     items(
         count = items.itemCount,
@@ -114,7 +114,7 @@ fun <T : Any> LazyGridScope.items(
                     key(item)
                 }
             }
-        }
+        },
     ) { index ->
         itemContent(items[index])
     }
@@ -141,13 +141,13 @@ internal data class PagingPlaceholderKey(private val index: Int) : Parcelable {
 inline fun LazyGridScope.fullSpanItem(
     key: Any? = null,
     contentType: Any? = null,
-    noinline content: @Composable LazyGridItemScope.() -> Unit
+    noinline content: @Composable LazyGridItemScope.() -> Unit,
 ) {
     item(
         key = key,
         span = { GridItemSpan(maxLineSpan) },
         contentType = contentType,
-        content = content
+        content = content,
     )
 }
 
@@ -161,7 +161,7 @@ fun <T : Any> LazyListScope.itemsInGrid(
     contentPadding: PaddingValues = PaddingValues(),
     horizontalItemPadding: Dp = 0.dp,
     verticalItemPadding: Dp = 0.dp,
-    itemContent: @Composable LazyItemScope.(T) -> Unit
+    itemContent: @Composable LazyItemScope.(T) -> Unit,
 ) {
     val rows = when {
         items.size % columns == 0 -> items.size / columns
@@ -178,8 +178,8 @@ fun <T : Any> LazyListScope.itemsInGrid(
                     .fillMaxWidth()
                     .padding(
                         start = contentPadding.calculateStartPadding(layoutDirection),
-                        end = contentPadding.calculateEndPadding(layoutDirection)
-                    )
+                        end = contentPadding.calculateEndPadding(layoutDirection),
+                    ),
             ) {
                 for (column in 0 until columns) {
                     Box(modifier = Modifier.weight(1f)) {

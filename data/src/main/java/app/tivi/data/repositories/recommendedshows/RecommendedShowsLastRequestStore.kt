@@ -22,5 +22,5 @@ import app.tivi.data.repositories.lastrequests.GroupLastRequestStore
 import javax.inject.Inject
 
 class RecommendedShowsLastRequestStore @Inject constructor(
-    dao: LastRequestDao
+    dao: LastRequestDao,
 ) : GroupLastRequestStore(Request.RECOMMENDED_SHOWS, dao)

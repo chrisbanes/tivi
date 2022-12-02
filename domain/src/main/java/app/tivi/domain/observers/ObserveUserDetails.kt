@@ -19,11 +19,11 @@ package app.tivi.domain.observers
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.repositories.traktusers.TraktUsersRepository
 import app.tivi.domain.SubjectInteractor
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class ObserveUserDetails @Inject constructor(
-    private val repository: TraktUsersRepository
+    private val repository: TraktUsersRepository,
 ) : SubjectInteractor<ObserveUserDetails.Params, TraktUser?>() {
 
     override fun createObservable(params: Params): Flow<TraktUser?> {

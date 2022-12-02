@@ -29,7 +29,7 @@ abstract class ShowFtsDao {
         SELECT s.* FROM shows as s
         INNER JOIN shows_fts AS fts ON s.id = fts.docid
         WHERE fts.title MATCH :filter
-        """
+        """,
     )
     abstract suspend fun search(filter: String): List<ShowDetailed>
 }

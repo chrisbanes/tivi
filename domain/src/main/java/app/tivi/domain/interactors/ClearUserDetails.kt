@@ -19,12 +19,12 @@ package app.tivi.domain.interactors
 import app.tivi.data.daos.UserDao
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class ClearUserDetails @Inject constructor(
     private val userDao: UserDao,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ClearUserDetails.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

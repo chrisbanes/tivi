@@ -22,5 +22,5 @@ import app.tivi.data.repositories.lastrequests.EntityLastRequestStore
 import javax.inject.Inject
 
 class EpisodeWatchLastRequestStore @Inject constructor(
-    dao: LastRequestDao
+    dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.SHOW_EPISODE_WATCHES, dao)

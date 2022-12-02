@@ -51,7 +51,7 @@ fun FilterSortPanel(
     modifier: Modifier = Modifier,
     sortOptions: List<SortOption>,
     currentSortOption: SortOption,
-    onSortSelected: (SortOption) -> Unit
+    onSortSelected: (SortOption) -> Unit,
 ) {
     Column(modifier.padding(vertical = 8.dp)) {
         var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -65,39 +65,39 @@ fun FilterSortPanel(
                 onFilterChanged(value.text)
             },
             hint = filterHint,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Spacer(modifier = Modifier.weight(1f))
 
             var expanded by remember { mutableStateOf(false) }
             Surface(
                 onClick = { expanded = true },
-                shape = MaterialTheme.shapes.small
+                shape = MaterialTheme.shapes.small,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Sort,
                         contentDescription = "",
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(14.dp),
                     )
                     Text(
                         text = stringResource(currentSortOption.labelResId),
                         style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(6.dp)
+                        modifier = Modifier.padding(6.dp),
                     )
                 }
 
                 DropdownMenu(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onDismissRequest = { expanded = false },
                 ) {
                     SortDropdownMenuContent(
                         sortOptions = sortOptions,
@@ -105,7 +105,7 @@ fun FilterSortPanel(
                         onItemClick = {
                             onSortSelected(it)
                             expanded = false
-                        }
+                        },
                     )
                 }
             }

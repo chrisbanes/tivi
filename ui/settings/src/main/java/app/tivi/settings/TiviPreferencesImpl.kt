@@ -21,18 +21,18 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import app.tivi.settings.TiviPreferences.Theme
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Named
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
-import javax.inject.Named
 
 class TiviPreferencesImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    @Named("app") private val sharedPreferences: SharedPreferences
+    @Named("app") private val sharedPreferences: SharedPreferences,
 ) : TiviPreferences {
     private val defaultThemeValue = context.getString(R.string.pref_theme_default_value)
 

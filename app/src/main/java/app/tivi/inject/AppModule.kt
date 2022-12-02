@@ -30,20 +30,20 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.Dispatchers
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
 import java.io.File
 import java.util.Locale
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.format.FormatStyle
 
 @InstallIn(SingletonComponent::class)
 @Module(
     includes = [
         TraktModule::class,
-        TmdbModule::class
-    ]
+        TmdbModule::class,
+    ],
 )
 object AppModule {
     @ApplicationId
@@ -55,14 +55,14 @@ object AppModule {
     fun provideCoroutineDispatchers() = AppCoroutineDispatchers(
         io = Dispatchers.IO,
         computation = Dispatchers.Default,
-        main = Dispatchers.Main
+        main = Dispatchers.Main,
     )
 
     @Provides
     @Singleton
     @Named("cache")
     fun provideCacheDir(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): File = context.cacheDir
 
     @Provides
@@ -81,7 +81,7 @@ object AppModule {
     @Provides
     @MediumDate
     fun provideMediumDateFormatter(
-        locale: Locale
+        locale: Locale,
     ): DateTimeFormatter {
         return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
     }
@@ -90,7 +90,7 @@ object AppModule {
     @Provides
     @MediumDateTime
     fun provideDateTimeFormatter(
-        locale: Locale
+        locale: Locale,
     ): DateTimeFormatter {
         return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale)
     }
@@ -99,7 +99,7 @@ object AppModule {
     @Provides
     @ShortDate
     fun provideShortDateFormatter(
-        locale: Locale
+        locale: Locale,
     ): DateTimeFormatter {
         return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale)
     }
@@ -108,7 +108,7 @@ object AppModule {
     @Provides
     @ShortTime
     fun provideShortTimeFormatter(
-        locale: Locale
+        locale: Locale,
     ): DateTimeFormatter {
         return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
     }
@@ -120,12 +120,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFirebaseAnalytics(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
     @Provides
     fun provideAppLocale(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): Locale {
         return ConfigurationCompat.getLocales(context.resources.configuration)
             .get(0) ?: Locale.getDefault()

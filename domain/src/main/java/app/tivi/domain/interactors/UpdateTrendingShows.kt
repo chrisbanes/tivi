@@ -25,8 +25,8 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class UpdateTrendingShows @Inject constructor(
     private val trendingShowsStore: TrendingShowsStore,
@@ -34,7 +34,7 @@ class UpdateTrendingShows @Inject constructor(
     private val showStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
-    private val logger: Logger
+    private val logger: Logger,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

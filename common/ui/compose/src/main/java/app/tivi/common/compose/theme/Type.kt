@@ -28,16 +28,16 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 private fun createSingleGoogleFontFamily(
     name: String,
     provider: GoogleFont.Provider = GmsFontProvider,
-    variants: List<Pair<FontWeight, FontStyle>>
+    variants: List<Pair<FontWeight, FontStyle>>,
 ): FontFamily = FontFamily(
     variants.map { (weight, style) ->
         Font(
             googleFont = GoogleFont(name),
             fontProvider = provider,
             weight = weight,
-            style = style
+            style = style,
         )
-    }
+    },
 )
 
 @ExperimentalTextApi
@@ -49,8 +49,8 @@ internal val InterFontFamily: FontFamily by lazy {
             FontWeight.Normal to FontStyle.Normal,
             FontWeight.Normal to FontStyle.Italic,
             FontWeight.Medium to FontStyle.Normal,
-            FontWeight.Bold to FontStyle.Normal
-        )
+            FontWeight.Bold to FontStyle.Normal,
+        ),
     )
 }
 
@@ -59,7 +59,7 @@ internal val GmsFontProvider: GoogleFont.Provider by lazy {
     GoogleFont.Provider(
         providerAuthority = "com.google.android.gms.fonts",
         providerPackage = "com.google.android.gms",
-        certificates = app.tivi.common.ui.R.array.com_google_android_gms_fonts_certs
+        certificates = app.tivi.common.ui.R.array.com_google_android_gms_fonts_certs,
     )
 }
 
@@ -82,6 +82,6 @@ val TiviTypography by lazy {
         bodySmall = default.bodySmall.copy(fontFamily = InterFontFamily),
         labelLarge = default.labelLarge.copy(fontFamily = InterFontFamily),
         labelMedium = default.labelMedium.copy(fontFamily = InterFontFamily),
-        labelSmall = default.labelSmall.copy(fontFamily = InterFontFamily)
+        labelSmall = default.labelSmall.copy(fontFamily = InterFontFamily),
     )
 }

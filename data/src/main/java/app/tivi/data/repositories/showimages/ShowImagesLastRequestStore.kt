@@ -24,5 +24,5 @@ import javax.inject.Singleton
 
 @Singleton
 class ShowImagesLastRequestStore @Inject constructor(
-    dao: LastRequestDao
+    dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.SHOW_IMAGES, dao)

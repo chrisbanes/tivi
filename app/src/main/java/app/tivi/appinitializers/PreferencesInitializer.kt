@@ -20,7 +20,7 @@ import app.tivi.settings.TiviPreferences
 import javax.inject.Inject
 
 class PreferencesInitializer @Inject constructor(
-    private val prefs: TiviPreferences
+    private val prefs: TiviPreferences,
 ) : AppInitializer {
     override fun init() {
         prefs.setup()

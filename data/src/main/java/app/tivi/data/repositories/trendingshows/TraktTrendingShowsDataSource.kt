@@ -25,20 +25,20 @@ import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
-import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
+import retrofit2.awaitResponse
 
 class TraktTrendingShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     showMapper: TraktTrendingShowToTiviShow,
-    entryMapper: TraktTrendingShowToTrendingShowEntry
+    entryMapper: TraktTrendingShowToTrendingShowEntry,
 ) {
     private val responseMapper = pairMapperOf(showMapper, entryMapper)
 
     suspend operator fun invoke(
         page: Int,
-        pageSize: Int
+        pageSize: Int,
     ): List<Pair<TiviShow, TrendingShowEntry>> = withRetry {
         showService.get()
             // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index

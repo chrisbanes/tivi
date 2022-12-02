@@ -21,15 +21,15 @@ import app.tivi.appinitializers.AppInitializer
 import coil.Coil
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
-import okhttp3.OkHttpClient
 import javax.inject.Inject
+import okhttp3.OkHttpClient
 
 @OptIn(ExperimentalCoilApi::class)
 class CoilAppInitializer @Inject constructor(
     private val application: Application,
     private val tmdbImageEntityInterceptor: TmdbImageEntityCoilInterceptor,
     private val episodeEntityInterceptor: EpisodeEntityCoilInterceptor,
-    private val okHttpClient: OkHttpClient
+    private val okHttpClient: OkHttpClient,
 ) : AppInitializer {
     override fun init() {
         Coil.setImageLoader {

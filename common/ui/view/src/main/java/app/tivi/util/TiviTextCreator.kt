@@ -22,6 +22,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.parseAsHtml
 import androidx.emoji.text.EmojiCompat
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.Season
@@ -29,20 +30,19 @@ import app.tivi.data.entities.ShowStatus
 import app.tivi.data.entities.TiviShow
 import app.tivi.ui.GenreStringer
 import dagger.hilt.android.qualifiers.ActivityContext
+import java.util.Locale
+import javax.inject.Inject
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.TextStyle
-import java.util.Locale
-import javax.inject.Inject
-import app.tivi.common.ui.resources.R as UiR
 
 class TiviTextCreator @Inject constructor(
     @ActivityContext private val context: Context,
-    private val tiviDateFormatter: TiviDateFormatter
+    private val tiviDateFormatter: TiviDateFormatter,
 ) {
     fun showTitle(
-        show: TiviShow
+        show: TiviShow,
     ): CharSequence = StringBuilder()
         .append(show.title)
         .apply {
@@ -61,12 +61,12 @@ class TiviTextCreator @Inject constructor(
 
     fun followedShowEpisodeWatchStatus(
         episodeCount: Int,
-        watchedEpisodeCount: Int
+        watchedEpisodeCount: Int,
     ): CharSequence = when {
         watchedEpisodeCount < episodeCount -> {
             context.getString(
                 UiR.string.followed_watch_stats_to_watch,
-                episodeCount - watchedEpisodeCount
+                episodeCount - watchedEpisodeCount,
             ).parseAsHtml()
         }
         watchedEpisodeCount > 0 -> {
@@ -84,7 +84,7 @@ class TiviTextCreator @Inject constructor(
     }
 
     fun seasonTitle(
-        season: Season
+        season: Season,
     ): String = when {
         season.title != null -> season.title!!
         season.number != null -> {
@@ -97,7 +97,7 @@ class TiviTextCreator @Inject constructor(
         watched: Int,
         toWatch: Int,
         toAir: Int,
-        nextToAirDate: OffsetDateTime? = null
+        nextToAirDate: OffsetDateTime? = null,
     ): CharSequence {
         val text = StringBuilder()
         if (watched > 0) {
@@ -116,8 +116,8 @@ class TiviTextCreator @Inject constructor(
                 text.append(
                     context.getString(
                         UiR.string.next_prefix,
-                        tiviDateFormatter.formatShortRelativeTime(nextToAirDate)
-                    )
+                        tiviDateFormatter.formatShortRelativeTime(nextToAirDate),
+                    ),
                 )
             }
         }
@@ -182,7 +182,7 @@ class TiviTextCreator @Inject constructor(
         return context.getString(
             UiR.string.airs_text,
             local.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-            tiviDateFormatter.formatShortTime(local.toLocalTime())
+            tiviDateFormatter.formatShortTime(local.toLocalTime()),
         )
     }
 

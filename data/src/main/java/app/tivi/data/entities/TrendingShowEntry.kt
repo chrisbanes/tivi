@@ -26,7 +26,7 @@ import app.tivi.data.PaginatedEntry
 @Entity(
     tableName = "trending_shows",
     indices = [
-        Index(value = ["show_id"], unique = true)
+        Index(value = ["show_id"], unique = true),
     ],
     foreignKeys = [
         ForeignKey(
@@ -34,13 +34,13 @@ import app.tivi.data.PaginatedEntry
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("show_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
 )
 data class TrendingShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
     @ColumnInfo(name = "page") override val page: Int,
-    @ColumnInfo(name = "watchers") val watchers: Int
+    @ColumnInfo(name = "watchers") val watchers: Int,
 ) : PaginatedEntry

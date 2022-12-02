@@ -24,12 +24,12 @@ import androidx.paging.cachedIn
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.observers.ObservePagedTrendingShows
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 internal class TrendingShowsViewModel @Inject constructor(
-    pagingInteractor: ObservePagedTrendingShows
+    pagingInteractor: ObservePagedTrendingShows,
 ) : ViewModel() {
 
     val pagedList: Flow<PagingData<TrendingEntryWithShow>> =
@@ -42,7 +42,7 @@ internal class TrendingShowsViewModel @Inject constructor(
     companion object {
         val PAGING_CONFIG = PagingConfig(
             pageSize = 60,
-            initialLoadSize = 60
+            initialLoadSize = 60,
         )
     }
 }

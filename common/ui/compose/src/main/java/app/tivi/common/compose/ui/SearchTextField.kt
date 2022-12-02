@@ -43,7 +43,7 @@ fun SearchTextField(
     hint: String,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions()
+    keyboardActions: KeyboardActions = KeyboardActions(),
 ) {
     OutlinedTextField(
         value = value,
@@ -51,19 +51,19 @@ fun SearchTextField(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = null // decorative
+                contentDescription = null, // decorative
             )
         },
         trailingIcon = {
             AnimatedVisibility(
                 visible = value.text.isNotEmpty(),
                 enter = fadeIn(),
-                exit = fadeOut()
+                exit = fadeOut(),
             ) {
                 IconButton(onClick = { onValueChange(TextFieldValue()) }) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = stringResource(UiR.string.cd_clear_text)
+                        contentDescription = stringResource(UiR.string.cd_clear_text),
                     )
                 }
             }
@@ -73,6 +73,6 @@ fun SearchTextField(
         keyboardActions = keyboardActions,
         maxLines = 1,
         singleLine = true,
-        modifier = modifier
+        modifier = modifier,
     )
 }

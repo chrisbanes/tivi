@@ -42,7 +42,7 @@ class TmdbImagesToShowImages @Inject constructor() : Mapper<TvShow, List<ShowTmd
                     showId = 0,
                     path = path,
                     type = ImageType.POSTER,
-                    isPrimary = true
+                    isPrimary = true,
                 )
             }
             from.backdrop_path?.also { path ->
@@ -50,7 +50,7 @@ class TmdbImagesToShowImages @Inject constructor() : Mapper<TvShow, List<ShowTmd
                     showId = 0,
                     path = path,
                     type = ImageType.BACKDROP,
-                    isPrimary = true
+                    isPrimary = true,
                 )
             }
         }
@@ -68,6 +68,6 @@ class TmdbImagesToShowImages @Inject constructor() : Mapper<TvShow, List<ShowTmd
             ImageType.BACKDROP -> image.file_path == backdrop_path
             ImageType.POSTER -> image.file_path == poster_path
             else -> false
-        }
+        },
     )
 }

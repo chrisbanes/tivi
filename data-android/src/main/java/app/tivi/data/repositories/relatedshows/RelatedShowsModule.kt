@@ -27,9 +27,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.threeten.bp.Duration
-import javax.inject.Singleton
 
 typealias RelatedShowsStore = Store<Long, List<RelatedShowEntry>>
 
@@ -42,7 +42,7 @@ internal object RelatedShowsModule {
         tmdbRelatedShows: TmdbRelatedShowsDataSource,
         relatedShowsDao: RelatedShowsDao,
         showDao: TiviShowDao,
-        lastRequestStore: RelatedShowsLastRequestStore
+        lastRequestStore: RelatedShowsLastRequestStore,
     ): RelatedShowsStore = StoreBuilder.from(
         fetcher = Fetcher.of { showId: Long ->
             tmdbRelatedShows(showId)
@@ -66,7 +66,7 @@ internal object RelatedShowsModule {
                     val entries = response.map { (show, entry) ->
                         entry.copy(
                             showId = showId,
-                            otherShowId = showDao.getIdOrSavePlaceholder(show)
+                            otherShowId = showDao.getIdOrSavePlaceholder(show),
                         )
                     }
                     relatedShowsDao.deleteWithShowId(showId)
@@ -74,7 +74,7 @@ internal object RelatedShowsModule {
                 }
             },
             delete = relatedShowsDao::deleteWithShowId,
-            deleteAll = relatedShowsDao::deleteAll
-        )
+            deleteAll = relatedShowsDao::deleteAll,
+        ),
     ).build()
 }

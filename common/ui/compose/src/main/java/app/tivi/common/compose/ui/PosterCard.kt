@@ -29,27 +29,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
-import app.tivi.common.ui.resources.R as UiR
 
 @Composable
 fun PosterCard(
     show: TiviShow,
     modifier: Modifier = Modifier,
     poster: TmdbImageEntity? = null,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
 ) {
     Card(modifier = modifier) {
         Box(
-            modifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
+            modifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
         ) {
             Text(
                 text = show.title ?: "No title",
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier
                     .padding(4.dp)
-                    .align(Alignment.CenterStart)
+                    .align(Alignment.CenterStart),
             )
             if (poster != null) {
                 AsyncImage(
@@ -57,10 +57,10 @@ fun PosterCard(
                     requestBuilder = { crossfade(true) },
                     contentDescription = stringResource(
                         UiR.string.cd_show_poster_image,
-                        show.title ?: "show"
+                        show.title ?: "show",
                     ),
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
                 )
             }
         }
@@ -69,7 +69,7 @@ fun PosterCard(
 
 @Composable
 fun PlaceholderPosterCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(modifier = modifier) {
         Box {

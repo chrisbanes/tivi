@@ -34,6 +34,7 @@ import app.tivi.utils.s1e1w_id
 import app.tivi.utils.showId
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
+import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
@@ -41,7 +42,6 @@ import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
-import javax.inject.Inject
 
 @UninstallModules(DatabaseModuleBinds::class)
 @HiltAndroidTest
@@ -85,7 +85,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingSend)
         assertThat(
             episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
-            `is`(listOf(episodeWatch2PendingSend))
+            `is`(listOf(episodeWatch2PendingSend)),
         )
     }
 
@@ -94,7 +94,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingDelete)
         assertThat(
             episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
-            `is`(listOf(episodeWatch2PendingDelete))
+            `is`(listOf(episodeWatch2PendingDelete)),
         )
     }
 

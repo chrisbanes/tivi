@@ -31,12 +31,12 @@ val TiviLightColors = lightColorScheme(
     primary = Slate800,
     onPrimary = Color.White,
     secondary = Orange700,
-    onSecondary = Color.Black
+    onSecondary = Color.Black,
 )
 
 val TiviDarkColors = darkColorScheme(
     primary = Slate200,
     onPrimary = Color.Black,
     secondary = Orange500,
-    onSecondary = Color.Black
+    onSecondary = Color.Black,
 )

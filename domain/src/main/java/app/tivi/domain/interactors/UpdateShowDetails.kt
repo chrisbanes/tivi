@@ -22,13 +22,13 @@ import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class UpdateShowDetails @Inject constructor(
     private val showStore: ShowStore,
     private val lastRequestStore: ShowLastRequestStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

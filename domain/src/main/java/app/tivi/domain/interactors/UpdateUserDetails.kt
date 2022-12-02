@@ -20,12 +20,12 @@ import app.tivi.data.repositories.traktusers.TraktUsersRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateUserDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class UpdateUserDetails @Inject constructor(
     private val repository: TraktUsersRepository,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

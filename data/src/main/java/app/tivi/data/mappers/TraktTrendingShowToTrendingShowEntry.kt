@@ -27,7 +27,7 @@ class TraktTrendingShowToTrendingShowEntry @Inject constructor() : Mapper<Trendi
         return TrendingShowEntry(
             showId = 0,
             watchers = from.watchers ?: 0,
-            page = 0
+            page = 0,
         )
     }
 }

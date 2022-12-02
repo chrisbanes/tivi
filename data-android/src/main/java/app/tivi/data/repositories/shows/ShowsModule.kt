@@ -26,9 +26,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.threeten.bp.Duration
-import javax.inject.Singleton
 
 typealias ShowStore = Store<Long, TiviShow>
 
@@ -41,7 +41,7 @@ object ShowStoreModule {
         showDao: TiviShowDao,
         lastRequestStore: ShowLastRequestStore,
         traktShowDataSource: TraktShowDataSource,
-        tmdbShowDataSource: TmdbShowDataSource
+        tmdbShowDataSource: TmdbShowDataSource,
     ): ShowStore = StoreBuilder.from(
         fetcher = Fetcher.of { id: Long ->
             val savedShow = showDao.getShowWithIdOrThrow(id)
@@ -75,12 +75,12 @@ object ShowStoreModule {
             writer = { id, response ->
                 showDao.withTransaction {
                     showDao.insertOrUpdate(
-                        mergeShows(local = showDao.getShowWithIdOrThrow(id), trakt = response)
+                        mergeShows(local = showDao.getShowWithIdOrThrow(id), trakt = response),
                     )
                 }
             },
             delete = showDao::delete,
-            deleteAll = showDao::deleteAll
-        )
+            deleteAll = showDao::deleteAll,
+        ),
     ).build()
 }

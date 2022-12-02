@@ -24,7 +24,7 @@ import org.threeten.bp.OffsetDateTime
 
 @Entity(
     tableName = "users",
-    indices = [Index(value = ["username"], unique = true)]
+    indices = [Index(value = ["username"], unique = true)],
 )
 data class TraktUser(
     @PrimaryKey(autoGenerate = true)
@@ -37,5 +37,5 @@ data class TraktUser(
     @ColumnInfo(name = "about") val about: String? = null,
     @ColumnInfo(name = "avatar_url") val avatarUrl: String? = null,
     @ColumnInfo(name = "vip") val vip: Boolean? = null,
-    @ColumnInfo(name = "is_me") val isMe: Boolean = false
+    @ColumnInfo(name = "is_me") val isMe: Boolean = false,
 ) : TiviEntity

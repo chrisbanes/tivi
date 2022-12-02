@@ -39,6 +39,7 @@ import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -46,7 +47,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class FollowedViewModel @Inject constructor(
@@ -56,7 +56,7 @@ internal class FollowedViewModel @Inject constructor(
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
-    private val logger: Logger
+    private val logger: Logger,
 ) : ViewModel() {
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
@@ -69,7 +69,7 @@ internal class FollowedViewModel @Inject constructor(
         SortOption.SUPER_SORT,
         SortOption.LAST_WATCHED,
         SortOption.ALPHABETICAL,
-        SortOption.DATE_ADDED
+        SortOption.DATE_ADDED,
     )
 
     private val filter = MutableStateFlow<String?>(null)
@@ -83,7 +83,7 @@ internal class FollowedViewModel @Inject constructor(
         observeUserDetails.flow,
         filter,
         sort,
-        uiMessageManager.message
+        uiMessageManager.message,
     ) { loading, selectedShowIds, isSelectionOpen, authState, user, filter, sort, message ->
         FollowedViewState(
             user = user,
@@ -95,12 +95,12 @@ internal class FollowedViewModel @Inject constructor(
             filterActive = !filter.isNullOrEmpty(),
             availableSorts = availableSorts,
             sort = sort,
-            message = message
+            message = message,
         )
     }.stateIn(
         scope = viewModelScope,
         started = WhileSubscribed(),
-        initialValue = FollowedViewState.Empty
+        initialValue = FollowedViewState.Empty,
     )
 
     init {
@@ -128,8 +128,8 @@ internal class FollowedViewModel @Inject constructor(
             ObservePagedFollowedShows.Parameters(
                 sort = sort.value,
                 filter = filter.value,
-                pagingConfig = PAGING_CONFIG
-            )
+                pagingConfig = PAGING_CONFIG,
+            ),
         )
     }
 
@@ -170,8 +170,8 @@ internal class FollowedViewModel @Inject constructor(
             changeShowFollowStatus.executeSync(
                 ChangeShowFollowStatus.Params(
                     showSelection.getSelectedShowIds(),
-                    ChangeShowFollowStatus.Action.UNFOLLOW
-                )
+                    ChangeShowFollowStatus.Action.UNFOLLOW,
+                ),
             )
         }
         showSelection.clearSelection()
@@ -180,7 +180,7 @@ internal class FollowedViewModel @Inject constructor(
     private fun refreshFollowed(fromInteraction: Boolean) {
         viewModelScope.launch {
             updateFollowedShows(
-                UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK)
+                UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK),
             ).collectStatus(loadingState, logger, uiMessageManager)
         }
     }
@@ -194,7 +194,7 @@ internal class FollowedViewModel @Inject constructor(
     companion object {
         private val PAGING_CONFIG = PagingConfig(
             pageSize = 16,
-            initialLoadSize = 32
+            initialLoadSize = 32,
         )
     }
 }

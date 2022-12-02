@@ -29,9 +29,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.threeten.bp.Duration
-import javax.inject.Singleton
 
 typealias ShowImagesStore = Store<Long, List<ShowTmdbImage>>
 
@@ -52,7 +52,7 @@ object ShowImagesStoreModule {
         showTmdbImagesDao: ShowTmdbImagesDao,
         showDao: TiviShowDao,
         lastRequestStore: ShowImagesLastRequestStore,
-        @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource
+        @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource,
     ): ShowImagesStore = StoreBuilder.from(
         fetcher = Fetcher.of { showId: Long ->
             val show = showDao.getShowWithId(showId)
@@ -77,7 +77,7 @@ object ShowImagesStoreModule {
             },
             writer = showTmdbImagesDao::saveImages,
             delete = showTmdbImagesDao::deleteForShowId,
-            deleteAll = showTmdbImagesDao::deleteAll
-        )
+            deleteAll = showTmdbImagesDao::deleteAll,
+        ),
     ).build()
 }

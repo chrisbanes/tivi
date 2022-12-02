@@ -27,9 +27,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.threeten.bp.Duration
-import javax.inject.Singleton
 
 typealias TrendingShowsStore = Store<Int, List<TrendingShowEntry>>
 
@@ -42,7 +42,7 @@ object TrendingShowsModule {
         traktTrendingShows: TraktTrendingShowsDataSource,
         trendingShowsDao: TrendingDao,
         showDao: TiviShowDao,
-        lastRequestStore: TrendingShowsLastRequestStore
+        lastRequestStore: TrendingShowsLastRequestStore,
     ): TrendingShowsStore = StoreBuilder.from(
         fetcher = Fetcher.of { page: Int ->
             traktTrendingShows(page, 20)
@@ -80,7 +80,7 @@ object TrendingShowsModule {
                 }
             },
             delete = trendingShowsDao::deletePage,
-            deleteAll = trendingShowsDao::deleteAll
-        )
+            deleteAll = trendingShowsDao::deleteAll,
+        ),
     ).build()
 }

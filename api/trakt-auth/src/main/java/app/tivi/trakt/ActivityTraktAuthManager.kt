@@ -21,18 +21,18 @@ import android.content.Intent
 import app.tivi.util.Logger
 import dagger.Lazy
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
-import javax.inject.Inject
 
 internal class ActivityTraktAuthManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val traktManager: TraktManager,
     private val requestProvider: Lazy<AuthorizationRequest>,
     private val clientAuth: Lazy<ClientAuthentication>,
-    private val logger: Logger
+    private val logger: Logger,
 ) : TraktAuthManager {
     private val authService = AuthorizationService(context)
 
@@ -46,7 +46,7 @@ internal class ActivityTraktAuthManager @Inject constructor(
             response != null -> {
                 authService.performTokenRequest(
                     response.createTokenExchangeRequest(),
-                    clientAuth.get()
+                    clientAuth.get(),
                 ) { tokenResponse, ex ->
                     val state = AuthState().apply {
                         update(tokenResponse, ex)

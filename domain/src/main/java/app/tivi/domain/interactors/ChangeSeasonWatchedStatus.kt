@@ -20,12 +20,12 @@ import app.tivi.data.entities.ActionDate
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 class ChangeSeasonWatchedStatus @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ChangeSeasonWatchedStatus.Params>() {
 
     override suspend fun doWork(params: Params) {
@@ -35,7 +35,7 @@ class ChangeSeasonWatchedStatus @Inject constructor(
                     seasonsEpisodesRepository.markSeasonWatched(
                         params.seasonId,
                         params.onlyAired,
-                        params.actionDate
+                        params.actionDate,
                     )
                 }
                 Action.UNWATCH -> {
@@ -49,7 +49,7 @@ class ChangeSeasonWatchedStatus @Inject constructor(
         val seasonId: Long,
         val action: Action,
         val onlyAired: Boolean = true,
-        val actionDate: ActionDate = ActionDate.NOW
+        val actionDate: ActionDate = ActionDate.NOW,
     )
 
     enum class Action { WATCHED, UNWATCH }

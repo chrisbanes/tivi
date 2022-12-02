@@ -19,15 +19,15 @@ package app.tivi.appinitializers
 import android.app.Application
 import app.tivi.util.AppCoroutineDispatchers
 import com.jakewharton.threetenabp.AndroidThreeTen
+import javax.inject.Inject
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.threeten.bp.zone.ZoneRulesProvider
-import javax.inject.Inject
 
 class ThreeTenBpInitializer @Inject constructor(
     private val application: Application,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : AppInitializer {
     override fun init() {
         // Init ThreeTenABP

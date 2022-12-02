@@ -26,13 +26,13 @@ import app.tivi.data.withRetry
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
-import retrofit2.awaitResponse
 import javax.inject.Inject
 import javax.inject.Provider
+import retrofit2.awaitResponse
 
 class TraktPopularShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
-    showMapper: TraktShowToTiviShow
+    showMapper: TraktShowToTiviShow,
 ) {
     private val entryMapper = IndexedMapper<Show, PopularShowEntry> { index, _ ->
         PopularShowEntry(showId = 0, pageOrder = index, page = 0)
@@ -42,7 +42,7 @@ class TraktPopularShowsDataSource @Inject constructor(
 
     suspend operator fun invoke(
         page: Int,
-        pageSize: Int
+        pageSize: Int,
     ): List<Pair<TiviShow, PopularShowEntry>> = withRetry {
         showService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
             .awaitResponse()

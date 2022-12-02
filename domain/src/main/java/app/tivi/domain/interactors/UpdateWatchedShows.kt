@@ -23,16 +23,16 @@ import app.tivi.data.repositories.watchedshows.WatchedShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import javax.inject.Inject
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class UpdateWatchedShows @Inject constructor(
     private val watchedShowsStore: WatchedShowsStore,
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
-    private val logger: Logger
+    private val logger: Logger,
 ) : Interactor<UpdateWatchedShows.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

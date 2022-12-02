@@ -17,9 +17,9 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.entities.Episode
+import com.uwetrottmann.trakt5.entities.Episode as TraktEpisode
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.uwetrottmann.trakt5.entities.Episode as TraktEpisode
 
 @Singleton
 class TraktEpisodeToEpisode @Inject constructor() : Mapper<TraktEpisode, Episode> {
@@ -32,6 +32,6 @@ class TraktEpisodeToEpisode @Inject constructor() : Mapper<TraktEpisode, Episode
         summary = from.overview,
         firstAired = from.first_aired,
         traktRating = from.rating?.toFloat() ?: 0f,
-        traktRatingVotes = from.votes
+        traktRatingVotes = from.votes,
     )
 }

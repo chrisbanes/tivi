@@ -50,13 +50,13 @@ fun TopAppBarWithBottomContent(
     actions: @Composable RowScope.() -> Unit = {},
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
-    elevation: Dp = 0.dp
+    elevation: Dp = 0.dp,
 ) {
     Surface(
         color = containerColor,
         tonalElevation = elevation,
         contentColor = contentColor,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column {
             TopAppBar(
@@ -66,8 +66,8 @@ fun TopAppBarWithBottomContent(
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = Color.Transparent,
                     titleContentColor = LocalContentColor.current,
-                    actionIconContentColor = LocalContentColor.current
-                )
+                    actionIconContentColor = LocalContentColor.current,
+                ),
             )
 
             bottomContent?.invoke()
@@ -85,7 +85,7 @@ fun TiviStandardAppBar(
     onRefreshActionClick: () -> Unit,
     onUserActionClick: () -> Unit,
     modifier: Modifier = Modifier,
-    scrollBehavior: TopAppBarScrollBehavior? = null
+    scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     TopAppBar(
         modifier = modifier,
@@ -98,7 +98,7 @@ fun TiviStandardAppBar(
             // same thing.
             Crossfade(
                 targetState = refreshing,
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier.align(Alignment.CenterVertically),
             ) { isRefreshing ->
                 if (!isRefreshing) {
                     RefreshButton(onClick = onRefreshActionClick)
@@ -109,8 +109,8 @@ fun TiviStandardAppBar(
                 loggedIn = loggedIn,
                 user = user,
                 onClick = onUserActionClick,
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier.align(Alignment.CenterVertically),
             )
-        }
+        },
     )
 }

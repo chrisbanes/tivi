@@ -19,16 +19,16 @@ package app.tivi.tmdb
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import retrofit2.awaitResponse
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class TmdbManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val tmdbClient: Tmdb
+    private val tmdbClient: Tmdb,
 ) {
     private val imageProvider = MutableStateFlow(TmdbImageUrlProvider())
 
@@ -51,7 +51,7 @@ class TmdbManager @Inject constructor(
                 images.secure_base_url!!,
                 images.poster_sizes ?: emptyList(),
                 images.backdrop_sizes ?: emptyList(),
-                images.logo_sizes ?: emptyList()
+                images.logo_sizes ?: emptyList(),
             )
             imageProvider.value = newProvider
         }

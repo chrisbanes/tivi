@@ -23,7 +23,7 @@ import app.tivi.trakt.TraktAuthState
 @Immutable
 internal data class AccountUiViewState(
     val user: TraktUser? = null,
-    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
+    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
 ) {
     companion object {
         val Empty = AccountUiViewState()
