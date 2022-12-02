@@ -16,7 +16,7 @@
 
 package app.tivi.common.compose.theme
 
-import androidx.compose.material.Typography
+import androidx.compose.material3.Typography
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -64,4 +64,24 @@ internal val GmsFontProvider: GoogleFont.Provider by lazy {
 }
 
 @OptIn(ExperimentalTextApi::class)
-val TiviTypography = Typography(defaultFontFamily = InterFontFamily)
+val TiviTypography by lazy {
+    // Eugh, this is gross but there is no defaultFontFamily property in M3
+    val default = Typography()
+    Typography(
+        displayLarge = default.displayLarge.copy(fontFamily = InterFontFamily),
+        displayMedium = default.displayMedium.copy(fontFamily = InterFontFamily),
+        displaySmall = default.displaySmall.copy(fontFamily = InterFontFamily),
+        headlineLarge = default.headlineLarge.copy(fontFamily = InterFontFamily),
+        headlineMedium = default.headlineMedium.copy(fontFamily = InterFontFamily),
+        headlineSmall = default.headlineSmall.copy(fontFamily = InterFontFamily),
+        titleLarge = default.titleLarge.copy(fontFamily = InterFontFamily),
+        titleMedium = default.titleMedium.copy(fontFamily = InterFontFamily),
+        titleSmall = default.titleSmall.copy(fontFamily = InterFontFamily),
+        bodyLarge = default.bodyLarge.copy(fontFamily = InterFontFamily),
+        bodyMedium = default.bodyMedium.copy(fontFamily = InterFontFamily),
+        bodySmall = default.bodySmall.copy(fontFamily = InterFontFamily),
+        labelLarge = default.labelLarge.copy(fontFamily = InterFontFamily),
+        labelMedium = default.labelMedium.copy(fontFamily = InterFontFamily),
+        labelSmall = default.labelSmall.copy(fontFamily = InterFontFamily)
+    )
+}

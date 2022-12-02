@@ -16,12 +16,6 @@
 
 package app.tivi.common.compose.theme
 
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Shapes
+import androidx.compose.material3.Shapes
 
-/**
- * We intentionally use the defaults for now.
- */
-val TiviShapes = Shapes(
-    small = RoundedCornerShape(50)
-)
+val TiviShapes = Shapes()

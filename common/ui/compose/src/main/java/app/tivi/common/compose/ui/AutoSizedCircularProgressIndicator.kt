@@ -19,9 +19,9 @@ package app.tivi.common.compose.ui
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.min
 @Composable
 fun AutoSizedCircularProgressIndicator(
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colors.primary
+    color: Color = MaterialTheme.colorScheme.primary
 ) {
     BoxWithConstraints(modifier) {
         val diameter = with(LocalDensity.current) {

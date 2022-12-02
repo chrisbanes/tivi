@@ -77,7 +77,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.TopAppBarWithBottomContent
 import app.tivi.data.entities.Episode
@@ -189,9 +188,6 @@ internal fun ShowSeasons(
                         onClick = refresh
                     )
                 },
-                containerColor = MaterialTheme.colorScheme.surface.copy(
-                    alpha = AppBarAlphas.translucentBarAlpha()
-                ),
                 bottomContent = {
                     SeasonPagerTabs(
                         pagerState = pagerState,

@@ -16,9 +16,13 @@
 
 package app.tivi.common.compose.theme
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun TiviTheme(
@@ -26,13 +30,18 @@ fun TiviTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colors = if (useDarkColors) TiviDarkColors else TiviLightColors,
+        colorScheme = when {
+            Build.VERSION.SDK_INT >= 31 && useDarkColors -> {
+                dynamicDarkColorScheme(LocalContext.current)
+            }
+            Build.VERSION.SDK_INT >= 31 && !useDarkColors -> {
+                dynamicLightColorScheme(LocalContext.current)
+            }
+            useDarkColors -> TiviDarkColors
+            else -> TiviLightColors
+        },
         typography = TiviTypography,
-        shapes = TiviShapes
-    ) {
-        app.tivi.common.compose.theme3.TiviTheme(
-            useDarkColors = useDarkColors,
-            content = content
-        )
-    }
+        shapes = TiviShapes,
+        content = content
+    )
 }

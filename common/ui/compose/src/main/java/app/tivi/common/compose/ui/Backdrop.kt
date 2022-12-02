@@ -45,25 +45,28 @@ fun Backdrop(
             .copy(alpha = 0.2f)
             .compositeOver(MaterialTheme.colorScheme.surface),
         contentColor = MaterialTheme.colorScheme.onSurface,
+        shape = MaterialTheme.shapes.medium,
         modifier = modifier
     ) {
         Box {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .drawForegroundGradientScrim(
-                        MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
-                    )
-            ) {
-                if (imageModel != null) {
-                    AsyncImage(
-                        model = imageModel,
-                        requestBuilder = { crossfade(true) },
-                        contentDescription = stringResource(R.string.cd_show_poster),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+            if (imageModel != null) {
+                AsyncImage(
+                    model = imageModel,
+                    requestBuilder = { crossfade(true) },
+                    contentDescription = stringResource(R.string.cd_show_poster),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .let { mod ->
+                            if (title != null) {
+                                mod.drawForegroundGradientScrim(
+                                    MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
+                                )
+                            } else {
+                                mod
+                            }
+                        }
+                )
             }
 
             Column(

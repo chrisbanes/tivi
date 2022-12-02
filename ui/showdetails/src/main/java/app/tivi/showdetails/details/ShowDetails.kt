@@ -68,6 +68,7 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
@@ -104,10 +105,9 @@ import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
-import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
-import app.tivi.common.compose.ui.Backdrop3
+import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
@@ -316,7 +316,7 @@ private fun ShowDetailsScrollingContent(
         modifier = modifier
     ) {
         item {
-            Backdrop3(
+            Backdrop(
                 imageModel = backdropImage,
                 modifier = Modifier
                     .padding(horizontal = bodyMargin, vertical = gutter)
@@ -490,7 +490,7 @@ private fun NetworkInfoPanel(
                 alignment = Alignment.TopStart,
                 contentScale = ContentScale.Fit,
                 colorFilter = when {
-                    isSystemInDarkTheme() -> ColorFilter.tint(foregroundColor())
+                    isSystemInDarkTheme() -> ColorFilter.tint(LocalContentColor.current)
                     else -> null
                 }
             )
