@@ -25,7 +25,6 @@ data class ShowImages(val images: List<ShowTmdbImage>) {
     val poster by unsafeLazy { findHighestRatedForType(ImageType.POSTER) }
 
     private fun findHighestRatedForType(type: ImageType): ShowTmdbImage? {
-        @Suppress("DEPRECATION") // Can't use maxByOrNull until we're API version 1.4
         return images.filter { it.type == type }
             .maxByOrNull { it.rating + (if (it.isPrimary) 10f else 0f) }
     }
