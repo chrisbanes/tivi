@@ -86,7 +86,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.theme.TiviTheme
@@ -122,7 +121,6 @@ fun EpisodeDetails(
     )
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @ExperimentalMaterialApi
 @Composable
 internal fun EpisodeDetails(

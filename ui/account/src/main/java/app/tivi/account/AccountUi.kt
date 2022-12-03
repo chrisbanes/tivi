@@ -54,7 +54,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import app.tivi.common.compose.theme.foregroundColor
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.ui.resources.R as UiR
@@ -75,7 +74,6 @@ fun AccountUi(
     )
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun AccountUi(
     viewModel: AccountUiViewModel,
