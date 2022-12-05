@@ -45,6 +45,7 @@ import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
@@ -165,7 +166,13 @@ internal fun Home(
                 )
             }
 
-            ModalBottomSheetLayout(bottomSheetNavigator) {
+            ModalBottomSheetLayout(
+                bottomSheetNavigator = bottomSheetNavigator,
+                sheetShape = MaterialTheme.shapes.large,
+                sheetBackgroundColor = MaterialTheme.colorScheme.surface,
+                sheetContentColor = MaterialTheme.colorScheme.onSurface,
+                scrimColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.33f),
+            ) {
                 AppNavigation(
                     navController = navController,
                     onOpenSettings = onOpenSettings,
