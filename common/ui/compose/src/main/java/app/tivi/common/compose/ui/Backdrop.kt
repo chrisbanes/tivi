@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -37,6 +38,7 @@ import app.tivi.common.ui.resources.R
 fun Backdrop(
     imageModel: Any?,
     modifier: Modifier = Modifier,
+    shape: Shape = MaterialTheme.shapes.medium,
     overline: (@Composable () -> Unit)? = null,
     title: (@Composable () -> Unit)? = null,
 ) {
@@ -45,7 +47,7 @@ fun Backdrop(
             .copy(alpha = 0.2f)
             .compositeOver(MaterialTheme.colorScheme.surface),
         contentColor = MaterialTheme.colorScheme.onSurface,
-        shape = MaterialTheme.shapes.medium,
+        shape = shape,
         modifier = modifier,
     ) {
         Box {

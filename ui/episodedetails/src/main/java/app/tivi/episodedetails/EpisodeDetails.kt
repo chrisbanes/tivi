@@ -316,6 +316,7 @@ private fun EpisodeDetailsBackdrop(
     TiviTheme(useDarkColors = true) {
         Backdrop(
             imageModel = if (episode.tmdbBackdropPath != null) episode else null,
+            shape = RectangleShape,
             overline = {
                 val epNumber = episode.number
                 val seasonNumber = season.number
