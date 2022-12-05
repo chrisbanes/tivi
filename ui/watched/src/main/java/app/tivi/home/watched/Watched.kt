@@ -60,7 +60,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
@@ -93,7 +92,6 @@ fun Watched(
     )
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun Watched(
     viewModel: WatchedViewModel,
