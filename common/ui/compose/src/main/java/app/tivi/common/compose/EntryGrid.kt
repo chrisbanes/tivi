@@ -65,6 +65,7 @@ import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -140,7 +141,7 @@ fun <E : Entry> EntryGrid(
             val gutter = Layout.gutter
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(columns / 2),
+                columns = GridCells.Fixed((columns / 1.5).roundToInt()),
                 contentPadding = paddingValues +
                     PaddingValues(horizontal = bodyMargin, vertical = gutter),
                 horizontalArrangement = Arrangement.spacedBy(gutter),
