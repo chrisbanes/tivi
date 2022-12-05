@@ -21,51 +21,53 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ContentAlpha
+import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.PlaceholderPosterCard
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import com.google.accompanist.insets.ui.Scaffold
-import com.google.accompanist.insets.ui.TopAppBar
+import kotlin.math.roundToInt
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun <E : Entry> EntryGrid(
     lazyPagingItems: LazyPagingItems<out EntryWithShow<E>>,
@@ -74,26 +76,36 @@ fun <E : Entry> EntryGrid(
     onOpenShowDetails: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val dismissSnackbarState = rememberDismissState { value ->
+        when {
+            value != DismissValue.Default -> {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                true
+            }
+            else -> false
+        }
+    }
 
     lazyPagingItems.loadState.prependErrorOrNull()?.let { message ->
         LaunchedEffect(message) {
-            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            snackbarHostState.showSnackbar(message.message)
         }
     }
     lazyPagingItems.loadState.appendErrorOrNull()?.let { message ->
         LaunchedEffect(message) {
-            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            snackbarHostState.showSnackbar(message.message)
         }
     }
     lazyPagingItems.loadState.refreshErrorOrNull()?.let { message ->
         LaunchedEffect(message) {
-            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            snackbarHostState.showSnackbar(message.message)
         }
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
             EntryGridAppBar(
                 title = title,
@@ -101,15 +113,20 @@ fun <E : Entry> EntryGrid(
                 refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading,
                 onRefreshActionClick = { lazyPagingItems.refresh() },
                 modifier = Modifier.fillMaxWidth(),
+                scrollBehavior = scrollBehavior,
             )
         },
-        snackbarHost = { snackbarHostState ->
-            SwipeDismissSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth(),
-            )
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                SwipeToDismiss(
+                    state = dismissSnackbarState,
+                    background = {},
+                    dismissContent = { Snackbar(snackbarData = data) },
+                    modifier = Modifier
+                        .padding(horizontal = Layout.bodyMargin)
+                        .fillMaxWidth(),
+                )
+            }
         },
         modifier = modifier,
     ) { paddingValues ->
@@ -124,12 +141,13 @@ fun <E : Entry> EntryGrid(
             val gutter = Layout.gutter
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(columns / 2),
+                columns = GridCells.Fixed((columns / 1.5).roundToInt()),
                 contentPadding = paddingValues +
                     PaddingValues(horizontal = bodyMargin, vertical = gutter),
                 horizontalArrangement = Arrangement.spacedBy(gutter),
                 verticalArrangement = Arrangement.spacedBy(gutter),
                 modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
                     .bodyWidth()
                     .fillMaxHeight(),
             ) {
@@ -169,19 +187,23 @@ fun <E : Entry> EntryGrid(
             PullRefreshIndicator(
                 refreshing = refreshing,
                 state = refreshState,
-                modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(paddingValues),
                 scale = true,
             )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EntryGridAppBar(
     title: String,
     refreshing: Boolean,
     onNavigateUp: () -> Unit,
     onRefreshActionClick: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
@@ -193,26 +215,20 @@ private fun EntryGridAppBar(
                 )
             }
         },
-        backgroundColor = MaterialTheme.colors.surface.copy(
-            alpha = AppBarAlphas.translucentBarAlpha(),
-        ),
-        contentColor = MaterialTheme.colors.onSurface,
-        contentPadding = WindowInsets.statusBars.asPaddingValues(),
         modifier = modifier,
+        scrollBehavior = scrollBehavior,
         title = { Text(text = title) },
         actions = {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                // This button refresh allows screen-readers, etc to trigger a refresh.
-                // We only show the button to trigger a refresh, not to indicate that
-                // we're currently refreshing, otherwise we have 4 indicators showing the
-                // same thing.
-                Crossfade(
-                    targetState = refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                ) { isRefreshing ->
-                    if (!isRefreshing) {
-                        RefreshButton(onClick = onRefreshActionClick)
-                    }
+            // This button refresh allows screen-readers, etc to trigger a refresh.
+            // We only show the button to trigger a refresh, not to indicate that
+            // we're currently refreshing, otherwise we have 4 indicators showing the
+            // same thing.
+            Crossfade(
+                targetState = refreshing,
+                modifier = Modifier.align(Alignment.CenterVertically),
+            ) { isRefreshing ->
+                if (!isRefreshing) {
+                    RefreshButton(onClick = onRefreshActionClick)
                 }
             }
         },

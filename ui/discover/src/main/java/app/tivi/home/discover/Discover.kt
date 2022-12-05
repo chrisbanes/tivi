@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,39 +27,40 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.ContentAlpha
+import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.FirstBaseline
@@ -70,22 +71,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
-import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.compose.ui.SwipeDismissSnackbarHost
-import app.tivi.common.compose.ui.UserProfileButton
+import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
-import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.insets.ui.Scaffold
-import com.google.accompanist.insets.ui.TopAppBar
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -143,20 +138,30 @@ internal fun Discover(
     openPopularShows: () -> Unit,
     onMessageShown: (id: Long) -> Unit,
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val dismissSnackbarState = rememberDismissState { value ->
+        when {
+            value != DismissValue.Default -> {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                true
+            }
+            else -> false
+        }
+    }
 
     state.message?.let { message ->
         LaunchedEffect(message) {
-            scaffoldState.snackbarHostState.showSnackbar(message.message)
+            snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
             onMessageShown(message.id)
         }
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
-            DiscoverAppBar(
+            TiviStandardAppBar(
+                title = stringResource(UiR.string.discover_title),
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.refreshing,
@@ -165,13 +170,17 @@ internal fun Discover(
                 modifier = Modifier.fillMaxWidth(),
             )
         },
-        snackbarHost = { snackbarHostState ->
-            SwipeDismissSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth(),
-            )
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                SwipeToDismiss(
+                    state = dismissSnackbarState,
+                    background = {},
+                    dismissContent = { Snackbar(snackbarData = data) },
+                    modifier = Modifier
+                        .padding(horizontal = Layout.bodyMargin)
+                        .fillMaxWidth(),
+                )
+            }
         },
         modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
@@ -187,23 +196,21 @@ internal fun Discover(
 
                 state.nextEpisodeWithShowToWatched?.let { nextEpisodeToWatch ->
                     item {
-                        Header(title = stringResource(UiR.string.discover_keep_watching_title))
-                    }
-                    item {
                         NextEpisodeToWatch(
                             show = nextEpisodeToWatch.show,
                             poster = nextEpisodeToWatch.poster,
                             season = nextEpisodeToWatch.season,
                             episode = nextEpisodeToWatch.episode,
+                            onClick = {
+                                openShowDetails(
+                                    nextEpisodeToWatch.show.id,
+                                    nextEpisodeToWatch.episode.seasonId,
+                                    nextEpisodeToWatch.episode.id,
+                                )
+                            },
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    openShowDetails(
-                                        nextEpisodeToWatch.show.id,
-                                        nextEpisodeToWatch.episode.seasonId,
-                                        nextEpisodeToWatch.episode.id,
-                                    )
-                                },
+                                .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+                                .fillMaxWidth(),
                         )
                     }
 
@@ -268,42 +275,45 @@ private fun NextEpisodeToWatch(
     season: Season,
     episode: Episode,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
-    Surface(modifier) {
-        Row(
-            Modifier.padding(
-                horizontal = Layout.bodyMargin,
-                vertical = Layout.gutter,
-            ),
-        ) {
-            if (poster != null) {
-                PosterCard(
-                    show = show,
-                    poster = poster,
-                    modifier = Modifier
-                        .width(64.dp)
-                        .aspectRatio(2 / 3f),
-                )
+    Card(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        Column(Modifier.padding(Layout.bodyMargin)) {
+            Header(
+                title = stringResource(UiR.string.discover_keep_watching_title),
+                modifier = Modifier.padding(bottom = 16.dp),
+            )
 
-                Spacer(Modifier.width(Layout.gutter))
-            }
-
-            Column(Modifier.align(Alignment.CenterVertically)) {
-                val textCreator = LocalTiviTextCreator.current
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
-                    Text(
-                        text = textCreator.seasonEpisodeTitleText(season, episode),
-                        style = MaterialTheme.typography.caption,
+            Row(Modifier.fillMaxWidth()) {
+                if (poster != null) {
+                    PosterCard(
+                        show = show,
+                        poster = poster,
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .width(64.dp)
+                            .aspectRatio(2 / 3f),
                     )
                 }
 
-                Spacer(Modifier.height(4.dp))
+                Column(Modifier.align(Alignment.CenterVertically)) {
+                    val textCreator = LocalTiviTextCreator.current
+                    Text(
+                        text = textCreator.seasonEpisodeTitleText(season, episode),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
 
-                Text(
-                    text = episode.title
-                        ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
-                    style = MaterialTheme.typography.body1,
-                )
+                    Spacer(Modifier.height(4.dp))
+
+                    Text(
+                        text = episode.title
+                            ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
             }
         }
     }
@@ -325,12 +335,14 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
             Header(
                 title = title,
                 loading = refreshing,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth(),
             ) {
                 TextButton(
                     onClick = onMoreClick,
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colorScheme.secondary,
                     ),
                     modifier = Modifier.alignBy(FirstBaseline),
                 ) {
@@ -396,88 +408,24 @@ private fun Header(
     content: @Composable RowScope.() -> Unit = {},
 ) {
     Row(modifier) {
-        Spacer(Modifier.width(Layout.bodyMargin))
-
         Text(
             text = title,
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(vertical = 8.dp),
+                .align(Alignment.CenterVertically),
         )
 
         Spacer(Modifier.weight(1f))
 
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(
-                color = MaterialTheme.colors.secondary,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(16.dp),
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(16.dp),
             )
         }
 
         content()
-
-        Spacer(Modifier.width(Layout.bodyMargin))
     }
-}
-
-@Composable
-private fun DiscoverAppBar(
-    loggedIn: Boolean,
-    user: TraktUser?,
-    refreshing: Boolean,
-    onRefreshActionClick: () -> Unit,
-    onUserActionClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    TopAppBar(
-        backgroundColor = MaterialTheme.colors.surface.copy(
-            alpha = AppBarAlphas.translucentBarAlpha(),
-        ),
-        contentColor = MaterialTheme.colors.onSurface,
-        contentPadding = WindowInsets.systemBars
-            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
-            .asPaddingValues(),
-        modifier = modifier,
-        title = { Text(text = stringResource(UiR.string.discover_title)) },
-        actions = {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                // This button refresh allows screen-readers, etc to trigger a refresh.
-                // We only show the button to trigger a refresh, not to indicate that
-                // we're currently refreshing, otherwise we have 4 indicators showing the
-                // same thing.
-                Crossfade(
-                    targetState = refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                ) { isRefreshing ->
-                    if (!isRefreshing) {
-                        RefreshButton(onClick = onRefreshActionClick)
-                    }
-                }
-            }
-
-            UserProfileButton(
-                loggedIn = loggedIn,
-                user = user,
-                onClick = onUserActionClick,
-                modifier = Modifier.align(Alignment.CenterVertically),
-            )
-        },
-    )
-}
-
-@Preview
-@Composable
-private fun PreviewDiscoverAppBar() {
-    DiscoverAppBar(
-        loggedIn = false,
-        user = null,
-        refreshing = false,
-        onUserActionClick = {},
-        onRefreshActionClick = {},
-    )
 }
 
 @Preview

@@ -16,16 +16,11 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,44 +28,30 @@ import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.SortOption
 
 @Composable
-fun SortMenuPopup(
+internal fun ColumnScope.SortDropdownMenuContent(
     sortOptions: List<SortOption>,
-    onSortSelected: (SortOption) -> Unit,
+    onItemClick: (SortOption) -> Unit,
     modifier: Modifier = Modifier,
     currentSortOption: SortOption? = null,
-    content: @Composable () -> Unit,
 ) {
-    Box(modifier) {
-        var sortPopupOpen by remember { mutableStateOf(false) }
-
-        IconButton(
-            onClick = { sortPopupOpen = true },
-            content = content,
+    for (sort in sortOptions) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = stringResource(sort.labelResId),
+                    fontWeight = if (sort == currentSortOption) FontWeight.Bold else null,
+                )
+            },
+            onClick = { onItemClick(sort) },
+            modifier = modifier,
         )
-
-        DropdownMenu(
-            expanded = sortPopupOpen,
-            onDismissRequest = { sortPopupOpen = false },
-        ) {
-            for (sort in sortOptions) {
-                DropdownMenuItem(
-                    onClick = {
-                        onSortSelected(sort)
-                        // Dismiss the popup
-                        sortPopupOpen = false
-                    },
-                ) {
-                    Text(
-                        text = when (sort) {
-                            SortOption.SUPER_SORT -> stringResource(UiR.string.popup_sort_super)
-                            SortOption.ALPHABETICAL -> stringResource(UiR.string.popup_sort_alpha)
-                            SortOption.LAST_WATCHED -> stringResource(UiR.string.popup_sort_last_watched)
-                            SortOption.DATE_ADDED -> stringResource(UiR.string.popup_sort_date_followed)
-                        },
-                        fontWeight = if (sort == currentSortOption) FontWeight.Bold else null,
-                    )
-                }
-            }
-        }
     }
 }
+
+internal val SortOption.labelResId: Int
+    @StringRes get() = when (this) {
+        SortOption.SUPER_SORT -> UiR.string.popup_sort_super
+        SortOption.ALPHABETICAL -> UiR.string.popup_sort_alpha
+        SortOption.LAST_WATCHED -> UiR.string.popup_sort_last_watched
+        SortOption.DATE_ADDED -> UiR.string.popup_sort_date_followed
+    }

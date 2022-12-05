@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package app.tivi.home
 
 import androidx.annotation.DrawableRes
@@ -23,28 +25,15 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.NavigationRail
-import androidx.compose.material.NavigationRailDefaults
-import androidx.compose.material.NavigationRailItem
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -53,17 +42,26 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.Weekend
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.Weekend
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
@@ -75,12 +73,9 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import app.tivi.AppNavigation
 import app.tivi.Screen
-import app.tivi.common.compose.theme.AppBarAlphas
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.debugLabel
 import app.tivi.util.Analytics
-import com.google.accompanist.insets.ui.BottomNavigation
-import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
@@ -88,7 +83,6 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 
 @OptIn(
     ExperimentalAnimationApi::class,
-    ExperimentalMaterialApi::class,
     ExperimentalMaterialNavigationApi::class,
 )
 @Composable
@@ -112,15 +106,13 @@ internal fun Home(
     }
 
     val configuration = LocalConfiguration.current
-    val useBottomNavigation by remember {
-        derivedStateOf { configuration.smallestScreenWidthDp < 600 }
-    }
+    val useBottomNavigation = configuration.smallestScreenWidthDp < 600
 
     Scaffold(
         bottomBar = {
             if (useBottomNavigation) {
                 val currentSelectedItem by navController.currentScreenAsState()
-                HomeBottomNavigation(
+                HomeNavigationBar(
                     selectedNavigation = currentSelectedItem,
                     onNavigationSelected = { selected ->
                         navController.navigate(selected.route) {
@@ -142,8 +134,14 @@ internal fun Home(
                 )
             }
         },
-    ) {
-        Row(Modifier.fillMaxSize()) {
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets
+            .exclude(WindowInsets.statusBars), // We let content handle the status bar
+    ) { paddingValues ->
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
             if (!useBottomNavigation) {
                 val currentSelectedItem by navController.currentScreenAsState()
                 HomeNavigationRail(
@@ -168,7 +166,13 @@ internal fun Home(
                 )
             }
 
-            ModalBottomSheetLayout(bottomSheetNavigator) {
+            ModalBottomSheetLayout(
+                bottomSheetNavigator = bottomSheetNavigator,
+                sheetShape = MaterialTheme.shapes.large,
+                sheetBackgroundColor = MaterialTheme.colorScheme.surface,
+                sheetContentColor = MaterialTheme.colorScheme.onSurface,
+                scrimColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.33f),
+            ) {
                 AppNavigation(
                     navController = navController,
                     onOpenSettings = onOpenSettings,
@@ -218,19 +222,14 @@ private fun NavController.currentScreenAsState(): State<Screen> {
 }
 
 @Composable
-internal fun HomeBottomNavigation(
+internal fun HomeNavigationBar(
     selectedNavigation: Screen,
     onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BottomNavigation(
-        backgroundColor = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
-        contentColor = contentColorFor(MaterialTheme.colors.surface),
-        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
-        modifier = modifier,
-    ) {
-        HomeNavigationItems.forEach { item ->
-            BottomNavigationItem(
+    NavigationBar(modifier = modifier) {
+        for (item in HomeNavigationItems) {
+            NavigationBarItem(
                 icon = {
                     HomeNavigationItemIcon(
                         item = item,
@@ -245,42 +244,26 @@ internal fun HomeBottomNavigation(
     }
 }
 
-@ExperimentalMaterialApi
 @Composable
 internal fun HomeNavigationRail(
     selectedNavigation: Screen,
     onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        color = MaterialTheme.colors.surface,
-        elevation = NavigationRailDefaults.Elevation,
-        modifier = modifier,
-    ) {
-        NavigationRail(
-            backgroundColor = Color.Transparent,
-            contentColor = MaterialTheme.colors.onSurface,
-            elevation = 0.dp,
-            modifier = Modifier.padding(
-                WindowInsets.systemBars
-                    .only(WindowInsetsSides.Start + WindowInsetsSides.Vertical)
-                    .asPaddingValues(),
-            ),
-        ) {
-            HomeNavigationItems.forEach { item ->
-                NavigationRailItem(
-                    icon = {
-                        HomeNavigationItemIcon(
-                            item = item,
-                            selected = selectedNavigation == item.screen,
-                        )
-                    },
-                    alwaysShowLabel = false,
-                    label = { Text(text = stringResource(item.labelResId)) },
-                    selected = selectedNavigation == item.screen,
-                    onClick = { onNavigationSelected(item.screen) },
-                )
-            }
+    NavigationRail(modifier = modifier) {
+        for (item in HomeNavigationItems) {
+            NavigationRailItem(
+                icon = {
+                    HomeNavigationItemIcon(
+                        item = item,
+                        selected = selectedNavigation == item.screen,
+                    )
+                },
+                alwaysShowLabel = false,
+                label = { Text(text = stringResource(item.labelResId)) },
+                selected = selectedNavigation == item.screen,
+                onClick = { onNavigationSelected(item.screen) },
+            )
         }
     }
 }

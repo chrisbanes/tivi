@@ -20,12 +20,13 @@ import androidx.annotation.FloatRange
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.theme.TiviTheme
 
@@ -38,7 +39,7 @@ fun ScrimmedIconButton(
 ) {
     IconButton(onClick = onClick) {
         if (invertThemeOnScrim) {
-            val isLight = MaterialTheme.colors.isLight
+            val isLight = MaterialTheme.colorScheme.surface.luminance() > 0.5
 
             Crossfade(targetState = showScrim) { show ->
                 TiviTheme(useDarkColors = if (show) isLight else !isLight) {
@@ -60,10 +61,10 @@ private fun ScrimSurface(
 ) {
     Surface(
         color = when {
-            showScrim -> MaterialTheme.colors.surface.copy(alpha = alpha)
+            showScrim -> MaterialTheme.colorScheme.surface.copy(alpha = alpha)
             else -> Color.Transparent
         },
-        contentColor = MaterialTheme.colors.onSurface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         shape = MaterialTheme.shapes.small,
         modifier = modifier,
         content = {
