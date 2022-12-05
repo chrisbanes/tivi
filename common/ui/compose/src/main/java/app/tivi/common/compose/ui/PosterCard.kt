@@ -16,11 +16,11 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,31 +38,49 @@ fun PosterCard(
     show: TiviShow,
     modifier: Modifier = Modifier,
     poster: TmdbImageEntity? = null,
-    onClick: (() -> Unit)? = null,
 ) {
     Card(modifier = modifier) {
-        Box(
-            modifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
-        ) {
-            Text(
-                text = show.title ?: "No title",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.CenterStart),
+        PosterCardContent(show = show, poster = poster)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PosterCard(
+    show: TiviShow,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    poster: TmdbImageEntity? = null,
+) {
+    Card(onClick = onClick, modifier = modifier) {
+        PosterCardContent(show = show, poster = poster)
+    }
+}
+
+@Composable
+private fun PosterCardContent(
+    show: TiviShow,
+    poster: TmdbImageEntity?,
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = show.title ?: "No title",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier
+                .padding(4.dp)
+                .align(Alignment.CenterStart),
+        )
+        if (poster != null) {
+            AsyncImage(
+                model = poster,
+                requestBuilder = { crossfade(true) },
+                contentDescription = stringResource(
+                    UiR.string.cd_show_poster_image,
+                    show.title ?: "show",
+                ),
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
             )
-            if (poster != null) {
-                AsyncImage(
-                    model = poster,
-                    requestBuilder = { crossfade(true) },
-                    contentDescription = stringResource(
-                        UiR.string.cd_show_poster_image,
-                        show.title ?: "show",
-                    ),
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
-            }
         }
     }
 }
