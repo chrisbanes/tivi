@@ -9,7 +9,7 @@ composecompiler = "1.4.0-alpha02"
 coroutines = "1.6.4"
 dagger = "2.44.2"
 debugdrawer = "0.9.8"
-kotlin = "1.7.21"
+kotlin = "1.7.22"
 ktlint = "0.47.1"
 okhttp = "4.10.0"
 paging = "3.1.1"
@@ -27,7 +27,7 @@ android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:1.7.21-1.0.8"
+ksp = "com.google.devtools.ksp:1.7.22-1.0.8"
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 gms-googleServices = "com.google.gms.google-services:4.3.14"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.2"
