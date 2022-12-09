@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -168,7 +169,10 @@ internal fun Home(
 
             ModalBottomSheetLayout(
                 bottomSheetNavigator = bottomSheetNavigator,
-                sheetShape = MaterialTheme.shapes.large,
+                sheetShape = MaterialTheme.shapes.large.copy(
+                    bottomStart = CornerSize(0.dp),
+                    bottomEnd = CornerSize(0.dp),
+                ),
                 sheetBackgroundColor = MaterialTheme.colorScheme.surface,
                 sheetContentColor = MaterialTheme.colorScheme.onSurface,
                 scrimColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.33f),
