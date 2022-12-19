@@ -137,7 +137,7 @@ retrofit-gsonConverter = { module = "com.squareup.retrofit2:converter-gson", ver
 retrofit-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofit" }
 
-robolectric = "org.robolectric:robolectric:4.9"
+robolectric = "org.robolectric:robolectric:4.9.1"
 
 store = "com.dropbox.mobile.store:store4:4.0.5"
 
