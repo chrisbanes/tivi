@@ -18,6 +18,7 @@ package app.tivi.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ClearTraktAuthState
 import app.tivi.domain.interactors.UpdateUserDetails
 import app.tivi.domain.observers.ObserveTraktAuthState
@@ -60,7 +61,7 @@ class MainActivityViewModel @Inject constructor(
             } catch (e: HttpException) {
                 if (e.code() == 401) {
                     // If we got a 401 back from Trakt, we should clear out the auth state
-                    clearTraktAuthState.executeSync(Unit)
+                    clearTraktAuthState.executeSync()
                 }
             } catch (t: Throwable) {
                 // no-op

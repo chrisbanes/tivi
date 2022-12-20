@@ -58,6 +58,8 @@ abstract class Interactor<in P> {
     }
 }
 
+suspend inline fun Interactor<Unit>.executeSync() = executeSync(Unit)
+
 abstract class ResultInteractor<in P, R> {
     operator fun invoke(params: P): Flow<R> = flow {
         emit(doWork(params))
@@ -67,6 +69,8 @@ abstract class ResultInteractor<in P, R> {
 
     protected abstract suspend fun doWork(params: P): R
 }
+
+suspend inline fun <R> ResultInteractor<Unit, R>.executeSync(): R = executeSync(Unit)
 
 abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T : Any> : SubjectInteractor<P, PagingData<T>>() {
     interface Parameters<T : Any> {

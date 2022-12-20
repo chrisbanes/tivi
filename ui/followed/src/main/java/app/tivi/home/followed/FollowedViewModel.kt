@@ -26,6 +26,7 @@ import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.interactors.UpdateFollowedShows
@@ -135,7 +136,7 @@ internal class FollowedViewModel @Inject constructor(
 
     fun refresh(fromUser: Boolean = true) {
         viewModelScope.launch {
-            if (getTraktAuthState.executeSync(Unit) == TraktAuthState.LOGGED_IN) {
+            if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
                 refreshFollowed(fromUser)
             }
         }

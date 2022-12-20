@@ -16,6 +16,7 @@
 
 package app.tivi.appinitializers
 
+import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.UpdateTmdbConfig
 import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
@@ -30,7 +31,7 @@ class TmdbInitializer @Inject constructor(
     override fun init() {
         @OptIn(DelicateCoroutinesApi::class)
         GlobalScope.launch(dispatchers.main) {
-            updateTmdbConfig.executeSync(Unit)
+            updateTmdbConfig.executeSync()
         }
     }
 }
