@@ -447,11 +447,11 @@ private fun PosterInfoRow(
             alignment = Alignment.TopStart,
         )
 
+        Spacer(modifier = Modifier.width(Layout.gutter * 2))
+
         InfoPanels(
             show = show,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = Layout.gutter),
+            modifier = Modifier.weight(1f),
         )
     }
 }
@@ -602,7 +602,7 @@ private fun TraktRatingInfoPanel(
 
         Spacer(Modifier.height(4.dp))
 
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 imageVector = Icons.Default.Star,
                 contentDescription = null,
@@ -738,8 +738,8 @@ private fun InfoPanels(
     modifier: Modifier = Modifier,
 ) {
     FlowRow(
-        mainAxisSpacing = Layout.gutter,
-        crossAxisSpacing = Layout.gutter,
+        mainAxisSpacing = Layout.gutter * 2,
+        crossAxisSpacing = Layout.gutter * 2,
         modifier = modifier,
     ) {
         if (show.traktRating != null) {
