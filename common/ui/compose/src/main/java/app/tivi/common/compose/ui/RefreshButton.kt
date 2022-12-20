@@ -17,6 +17,7 @@
 package app.tivi.common.compose.ui
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -41,7 +42,11 @@ fun RefreshButton(
     ) {
         Crossfade(refreshing) { targetRefreshing ->
             if (targetRefreshing) {
-                AutoSizedCircularProgressIndicator(Modifier.size(20.dp))
+                AutoSizedCircularProgressIndicator(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(2.dp),
+                )
             } else {
                 Icon(
                     imageVector = Icons.Default.Refresh,

@@ -407,12 +407,13 @@ private fun Header(
     loading: Boolean = false,
     content: @Composable RowScope.() -> Unit = {},
 ) {
-    Row(modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
+    ) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .align(Alignment.CenterVertically),
         )
 
         Spacer(Modifier.weight(1f))

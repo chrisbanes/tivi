@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.exclude
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -57,7 +56,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.DropdownMenu
@@ -105,10 +103,10 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.ui.AsyncImage
-import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
+import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.Episode
@@ -985,21 +983,10 @@ private fun ShowDetailsAppBar(
             }
         },
         actions = {
-            if (isRefreshing) {
-                AutoSizedCircularProgressIndicator(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .fillMaxHeight()
-                        .padding(16.dp),
-                )
-            } else {
-                IconButton(onClick = onRefresh) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(UiR.string.cd_refresh),
-                    )
-                }
-            }
+            RefreshButton(
+                onClick = onRefresh,
+                refreshing = !isRefreshing,
+            )
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(),
         scrollBehavior = scrollBehavior,
