@@ -18,7 +18,6 @@ package app.tivi.inject
 
 import android.app.Application
 import android.content.Context
-import androidx.core.os.ConfigurationCompat
 import app.tivi.BuildConfig
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktModule
@@ -31,12 +30,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import java.io.File
-import java.util.Locale
 import javax.inject.Named
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
 
 @InstallIn(SingletonComponent::class)
 @Module(
@@ -77,42 +73,6 @@ object AppModule {
     @Named("trakt-client-secret")
     fun provideTraktClientSecret(): String = BuildConfig.TRAKT_CLIENT_SECRET
 
-    @Singleton
-    @Provides
-    @MediumDate
-    fun provideMediumDateFormatter(
-        locale: Locale,
-    ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
-    }
-
-    @Singleton
-    @Provides
-    @MediumDateTime
-    fun provideDateTimeFormatter(
-        locale: Locale,
-    ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale)
-    }
-
-    @Singleton
-    @Provides
-    @ShortDate
-    fun provideShortDateFormatter(
-        locale: Locale,
-    ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale)
-    }
-
-    @Singleton
-    @Provides
-    @ShortTime
-    fun provideShortTimeFormatter(
-        locale: Locale,
-    ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
-    }
-
     @Provides
     @Singleton
     fun provideFirebaseCrashlytics(): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
@@ -122,12 +82,4 @@ object AppModule {
     fun provideFirebaseAnalytics(
         @ApplicationContext context: Context,
     ): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
-
-    @Provides
-    fun provideAppLocale(
-        @ApplicationContext context: Context,
-    ): Locale {
-        return ConfigurationCompat.getLocales(context.resources.configuration)
-            .get(0) ?: Locale.getDefault()
-    }
 }

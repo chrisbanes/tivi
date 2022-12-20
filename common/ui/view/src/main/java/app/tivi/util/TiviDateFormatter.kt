@@ -21,27 +21,34 @@ import app.tivi.inject.MediumDate
 import app.tivi.inject.MediumDateTime
 import app.tivi.inject.ShortDate
 import app.tivi.inject.ShortTime
+import dagger.Lazy
 import javax.inject.Inject
-import javax.inject.Singleton
 import org.threeten.bp.LocalTime
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.Temporal
 
-@Singleton
 class TiviDateFormatter @Inject constructor(
-    @ShortTime private val shortTimeFormatter: DateTimeFormatter,
-    @ShortDate private val shortDateFormatter: DateTimeFormatter,
-    @MediumDate private val mediumDateFormatter: DateTimeFormatter,
-    @MediumDateTime private val mediumDateTimeFormatter: DateTimeFormatter,
+    @ShortTime private val shortTimeFormatter: Lazy<DateTimeFormatter>,
+    @ShortDate private val shortDateFormatter: Lazy<DateTimeFormatter>,
+    @MediumDate private val mediumDateFormatter: Lazy<DateTimeFormatter>,
+    @MediumDateTime private val mediumDateTimeFormatter: Lazy<DateTimeFormatter>,
 ) {
-    fun formatShortDate(temporalAmount: Temporal): String = shortDateFormatter.format(temporalAmount)
+    fun formatShortDate(temporalAmount: Temporal): String {
+        return shortDateFormatter.get().format(temporalAmount)
+    }
 
-    fun formatMediumDate(temporalAmount: Temporal): String = mediumDateFormatter.format(temporalAmount)
+    fun formatMediumDate(temporalAmount: Temporal): String {
+        return mediumDateFormatter.get().format(temporalAmount)
+    }
 
-    fun formatMediumDateTime(temporalAmount: Temporal): String = mediumDateTimeFormatter.format(temporalAmount)
+    fun formatMediumDateTime(temporalAmount: Temporal): String {
+        return mediumDateTimeFormatter.get().format(temporalAmount)
+    }
 
-    fun formatShortTime(localTime: LocalTime): String = shortTimeFormatter.format(localTime)
+    fun formatShortTime(localTime: LocalTime): String {
+        return shortTimeFormatter.get().format(localTime)
+    }
 
     fun formatShortRelativeTime(dateTime: OffsetDateTime): String {
         val now = OffsetDateTime.now()
@@ -50,8 +57,8 @@ class TiviDateFormatter @Inject constructor(
             if (dateTime.year == now.year || dateTime.isAfter(now.minusDays(7))) {
                 // Within the past week
                 DateUtils.getRelativeTimeSpanString(
-                    dateTime.toInstant().toEpochMilli(),
-                    System.currentTimeMillis(),
+                    dateTime.toEpochSecond() * 1000,
+                    now.toEpochSecond() * 1000,
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_SHOW_DATE,
                 ).toString()
@@ -63,8 +70,8 @@ class TiviDateFormatter @Inject constructor(
             if (dateTime.year == now.year || dateTime.isBefore(now.plusDays(14))) {
                 // In the near future (next 2 weeks)
                 DateUtils.getRelativeTimeSpanString(
-                    dateTime.toInstant().toEpochMilli(),
-                    System.currentTimeMillis(),
+                    dateTime.toEpochSecond() * 1000,
+                    now.toEpochSecond() * 1000,
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_SHOW_DATE,
                 ).toString()
