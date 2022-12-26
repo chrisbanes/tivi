@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <include
+        domain="sharedpref"
+        path="app.tivi.debug_preferences.xml" />
+    <include
+        domain="sharedpref"
+        path="app.tivi_preferences.xml" />
+</full-backup-content>
