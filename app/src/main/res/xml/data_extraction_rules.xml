@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <include
+            domain="sharedpref"
+            path="app.tivi.debug_preferences.xml" />
+        <include
+            domain="sharedpref"
+            path="app.tivi_preferences.xml" />
+    </cloud-backup>
+
+    <device-transfer>
+        <include
+            domain="sharedpref"
+            path="app.tivi.debug_preferences.xml" />
+        <include
+            domain="sharedpref"
+            path="app.tivi_preferences.xml" />
+    </device-transfer>
+</data-extraction-rules>
