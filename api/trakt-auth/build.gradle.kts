@@ -42,5 +42,8 @@ dependencies {
     implementation(libs.androidx.browser)
     implementation(libs.androidx.core)
 
+    implementation(libs.playservices.blockstore)
+    implementation(libs.kotlinx.coroutines.playservices)
+
     api(libs.appauth)
 }
