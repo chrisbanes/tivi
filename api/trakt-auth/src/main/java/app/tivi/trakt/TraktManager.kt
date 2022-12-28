@@ -16,14 +16,12 @@
 
 package app.tivi.trakt
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import app.tivi.actions.ShowTasks
+import app.tivi.trakt.store.TiviAuthStore
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -38,9 +36,9 @@ import net.openid.appauth.AuthState
 @Singleton
 class TraktManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    @Named("auth") private val authPrefs: SharedPreferences,
     private val showTasks: ShowTasks,
     private val traktClient: Lazy<TraktV2>,
+    private val authStore: TiviAuthStore,
 ) {
     private val authState = MutableStateFlow(EmptyAuthState)
 
@@ -63,8 +61,8 @@ class TraktManager @Inject constructor(
 
         // Read the auth state from prefs
         GlobalScope.launch(dispatchers.main) {
-            val state = withContext(dispatchers.io) { readAuthState() }
-            authState.value = state
+            val state = withContext(dispatchers.io) { authStore.get() }
+            authState.value = state ?: EmptyAuthState
         }
     }
 
@@ -78,7 +76,7 @@ class TraktManager @Inject constructor(
 
     fun clearAuth() {
         authState.value = EmptyAuthState
-        clearPersistedAuthState()
+        GlobalScope.launch(dispatchers.io) { authStore.clear() }
     }
 
     fun onNewAuthState(newState: AuthState) {
@@ -88,34 +86,13 @@ class TraktManager @Inject constructor(
         }
         GlobalScope.launch(dispatchers.io) {
             // Persist auth state
-            persistAuthState(newState)
+            authStore.save(newState)
         }
         // Now trigger a sync of all shows
         showTasks.syncFollowedShowsWhenIdle()
     }
 
-    private fun readAuthState(): AuthState {
-        val stateJson = authPrefs.getString(PreferenceAuthKey, null)
-        return when {
-            stateJson != null -> AuthState.jsonDeserialize(stateJson)
-            else -> AuthState()
-        }
-    }
-
-    private fun persistAuthState(state: AuthState) {
-        authPrefs.edit(commit = true) {
-            putString(PreferenceAuthKey, state.jsonSerializeString())
-        }
-    }
-
-    private fun clearPersistedAuthState() {
-        authPrefs.edit(commit = true) {
-            remove(PreferenceAuthKey)
-        }
-    }
-
     companion object {
         private val EmptyAuthState = AuthState()
-        private const val PreferenceAuthKey = "stateJson"
     }
 }
