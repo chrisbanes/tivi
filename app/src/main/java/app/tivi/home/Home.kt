@@ -36,14 +36,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.VideoLibrary
-import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.Weekend
 import androidx.compose.material.icons.outlined.VideoLibrary
-import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -75,7 +71,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import app.tivi.AppNavigation
-import app.tivi.Screen
+import app.tivi.RootScreen
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.debugLabel
 import app.tivi.util.Analytics
@@ -197,26 +193,20 @@ internal fun Home(
  */
 @Stable
 @Composable
-private fun NavController.currentScreenAsState(): State<Screen> {
-    val selectedItem = remember { mutableStateOf<Screen>(Screen.Discover) }
+private fun NavController.currentScreenAsState(): State<RootScreen> {
+    val selectedItem = remember { mutableStateOf<RootScreen>(RootScreen.Discover) }
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             when {
-                destination.hierarchy.any { it.route == Screen.Discover.route } -> {
-                    selectedItem.value = Screen.Discover
+                destination.hierarchy.any { it.route == RootScreen.Discover.route } -> {
+                    selectedItem.value = RootScreen.Discover
                 }
-                destination.hierarchy.any { it.route == Screen.Library.route } -> {
-                    selectedItem.value = Screen.Library
+                destination.hierarchy.any { it.route == RootScreen.Library.route } -> {
+                    selectedItem.value = RootScreen.Library
                 }
-                destination.hierarchy.any { it.route == Screen.Watched.route } -> {
-                    selectedItem.value = Screen.Watched
-                }
-                destination.hierarchy.any { it.route == Screen.Following.route } -> {
-                    selectedItem.value = Screen.Following
-                }
-                destination.hierarchy.any { it.route == Screen.Search.route } -> {
-                    selectedItem.value = Screen.Search
+                destination.hierarchy.any { it.route == RootScreen.Search.route } -> {
+                    selectedItem.value = RootScreen.Search
                 }
             }
         }
@@ -232,8 +222,8 @@ private fun NavController.currentScreenAsState(): State<Screen> {
 
 @Composable
 internal fun HomeNavigationBar(
-    selectedNavigation: Screen,
-    onNavigationSelected: (Screen) -> Unit,
+    selectedNavigation: RootScreen,
+    onNavigationSelected: (RootScreen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavigationBar(modifier = modifier) {
@@ -255,8 +245,8 @@ internal fun HomeNavigationBar(
 
 @Composable
 internal fun HomeNavigationRail(
-    selectedNavigation: Screen,
-    onNavigationSelected: (Screen) -> Unit,
+    selectedNavigation: RootScreen,
+    onNavigationSelected: (RootScreen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavigationRail(modifier = modifier) {
@@ -304,12 +294,12 @@ private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) 
 }
 
 private sealed class HomeNavigationItem(
-    val screen: Screen,
+    val screen: RootScreen,
     @StringRes val labelResId: Int,
     @StringRes val contentDescriptionResId: Int,
 ) {
     class ResourceIcon(
-        screen: Screen,
+        screen: RootScreen,
         @StringRes labelResId: Int,
         @StringRes contentDescriptionResId: Int,
         @DrawableRes val iconResId: Int,
@@ -317,7 +307,7 @@ private sealed class HomeNavigationItem(
     ) : HomeNavigationItem(screen, labelResId, contentDescriptionResId)
 
     class ImageVectorIcon(
-        screen: Screen,
+        screen: RootScreen,
         @StringRes labelResId: Int,
         @StringRes contentDescriptionResId: Int,
         val iconImageVector: ImageVector,
@@ -327,35 +317,21 @@ private sealed class HomeNavigationItem(
 
 private val HomeNavigationItems = listOf(
     HomeNavigationItem.ImageVectorIcon(
-        screen = Screen.Discover,
+        screen = RootScreen.Discover,
         labelResId = UiR.string.discover_title,
         contentDescriptionResId = UiR.string.cd_discover_title,
         iconImageVector = Icons.Outlined.Weekend,
         selectedImageVector = Icons.Default.Weekend,
     ),
     HomeNavigationItem.ImageVectorIcon(
-        screen = Screen.Library,
+        screen = RootScreen.Library,
         labelResId = UiR.string.library_title,
         contentDescriptionResId = UiR.string.cd_library_title,
         iconImageVector = Icons.Outlined.VideoLibrary,
         selectedImageVector = Icons.Default.VideoLibrary,
     ),
     HomeNavigationItem.ImageVectorIcon(
-        screen = Screen.Following,
-        labelResId = UiR.string.following_shows_title,
-        contentDescriptionResId = UiR.string.cd_following_shows_title,
-        iconImageVector = Icons.Default.FavoriteBorder,
-        selectedImageVector = Icons.Default.Favorite,
-    ),
-    HomeNavigationItem.ImageVectorIcon(
-        screen = Screen.Watched,
-        labelResId = UiR.string.watched_shows_title,
-        contentDescriptionResId = UiR.string.cd_watched_shows_title,
-        iconImageVector = Icons.Outlined.Visibility,
-        selectedImageVector = Icons.Default.Visibility,
-    ),
-    HomeNavigationItem.ImageVectorIcon(
-        screen = Screen.Search,
+        screen = RootScreen.Search,
         labelResId = UiR.string.search_navigation_title,
         contentDescriptionResId = UiR.string.cd_search_navigation_title,
         iconImageVector = Icons.Default.Search,

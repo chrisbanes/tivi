@@ -37,13 +37,11 @@ import androidx.navigation.navArgument
 import app.tivi.account.AccountUi
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.home.discover.Discover
-import app.tivi.home.followed.Followed
 import app.tivi.home.library.Library
 import app.tivi.home.popular.PopularShows
 import app.tivi.home.recommended.RecommendedShows
 import app.tivi.home.search.Search
 import app.tivi.home.trending.TrendingShows
-import app.tivi.home.watched.Watched
 import app.tivi.showdetails.details.ShowDetails
 import app.tivi.showdetails.seasons.ShowSeasons
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -51,40 +49,37 @@ import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 
-internal sealed class Screen(val route: String) {
-    object Discover : Screen("discover")
-    object Following : Screen("following")
-    object Watched : Screen("watched")
-    object Library : Screen("library")
-    object Search : Screen("search")
+internal sealed class RootScreen(val route: String) {
+    object Discover : RootScreen("discover")
+    object Library : RootScreen("library")
+    object Search : RootScreen("search")
 }
 
-private sealed class LeafScreen(
+private sealed class Screen(
     private val route: String,
 ) {
-    fun createRoute(root: Screen) = "${root.route}/$route"
+    fun createRoute(root: RootScreen) = "${root.route}/$route"
 
-    object Discover : LeafScreen("discover")
-    object Following : LeafScreen("following")
-    object Trending : LeafScreen("trending")
-    object Library : LeafScreen("library")
-    object Popular : LeafScreen("popular")
+    object Discover : Screen("discover")
+    object Trending : Screen("trending")
+    object Library : Screen("library")
+    object Popular : Screen("popular")
 
-    object ShowDetails : LeafScreen("show/{showId}") {
-        fun createRoute(root: Screen, showId: Long): String {
+    object ShowDetails : Screen("show/{showId}") {
+        fun createRoute(root: RootScreen, showId: Long): String {
             return "${root.route}/show/$showId"
         }
     }
 
-    object EpisodeDetails : LeafScreen("episode/{episodeId}") {
-        fun createRoute(root: Screen, episodeId: Long): String {
+    object EpisodeDetails : Screen("episode/{episodeId}") {
+        fun createRoute(root: RootScreen, episodeId: Long): String {
             return "${root.route}/episode/$episodeId"
         }
     }
 
-    object ShowSeasons : LeafScreen("show/{showId}/seasons?seasonId={seasonId}") {
+    object ShowSeasons : Screen("show/{showId}/seasons?seasonId={seasonId}") {
         fun createRoute(
-            root: Screen,
+            root: RootScreen,
             showId: Long,
             seasonId: Long? = null,
         ): String {
@@ -94,10 +89,9 @@ private sealed class LeafScreen(
         }
     }
 
-    object RecommendedShows : LeafScreen("recommendedshows")
-    object Watched : LeafScreen("watched")
-    object Search : LeafScreen("search")
-    object Account : LeafScreen("account")
+    object RecommendedShows : Screen("recommendedshows")
+    object Search : Screen("search")
+    object Account : Screen("account")
 }
 
 @ExperimentalAnimationApi
@@ -109,7 +103,7 @@ internal fun AppNavigation(
 ) {
     AnimatedNavHost(
         navController = navController,
-        startDestination = Screen.Discover.route,
+        startDestination = RootScreen.Discover.route,
         enterTransition = { defaultTiviEnterTransition(initialState, targetState) },
         exitTransition = { defaultTiviExitTransition(initialState, targetState) },
         popEnterTransition = { defaultTiviPopEnterTransition() },
@@ -118,8 +112,6 @@ internal fun AppNavigation(
     ) {
         addDiscoverTopLevel(navController, onOpenSettings)
         addLibraryTopLevel(navController, onOpenSettings)
-        addFollowingTopLevel(navController, onOpenSettings)
-        addWatchedTopLevel(navController, onOpenSettings)
         addSearchTopLevel(navController, onOpenSettings)
     }
 }
@@ -130,34 +122,17 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
     openSettings: () -> Unit,
 ) {
     navigation(
-        route = Screen.Discover.route,
-        startDestination = LeafScreen.Discover.createRoute(Screen.Discover),
+        route = RootScreen.Discover.route,
+        startDestination = Screen.Discover.createRoute(RootScreen.Discover),
     ) {
-        addDiscover(navController, Screen.Discover)
-        addAccount(Screen.Discover, openSettings)
-        addShowDetails(navController, Screen.Discover)
-        addShowSeasons(navController, Screen.Discover)
-        addEpisodeDetails(navController, Screen.Discover)
-        addRecommendedShows(navController, Screen.Discover)
-        addTrendingShows(navController, Screen.Discover)
-        addPopularShows(navController, Screen.Discover)
-    }
-}
-
-@ExperimentalAnimationApi
-private fun NavGraphBuilder.addFollowingTopLevel(
-    navController: NavController,
-    openSettings: () -> Unit,
-) {
-    navigation(
-        route = Screen.Following.route,
-        startDestination = LeafScreen.Following.createRoute(Screen.Following),
-    ) {
-        addFollowedShows(navController, Screen.Following)
-        addAccount(Screen.Following, openSettings)
-        addShowDetails(navController, Screen.Following)
-        addShowSeasons(navController, Screen.Following)
-        addEpisodeDetails(navController, Screen.Following)
+        addDiscover(navController, RootScreen.Discover)
+        addAccount(RootScreen.Discover, openSettings)
+        addShowDetails(navController, RootScreen.Discover)
+        addShowSeasons(navController, RootScreen.Discover)
+        addEpisodeDetails(navController, RootScreen.Discover)
+        addRecommendedShows(navController, RootScreen.Discover)
+        addTrendingShows(navController, RootScreen.Discover)
+        addPopularShows(navController, RootScreen.Discover)
     }
 }
 
@@ -167,31 +142,14 @@ private fun NavGraphBuilder.addLibraryTopLevel(
     openSettings: () -> Unit,
 ) {
     navigation(
-        route = Screen.Library.route,
-        startDestination = LeafScreen.Library.createRoute(Screen.Library),
+        route = RootScreen.Library.route,
+        startDestination = Screen.Library.createRoute(RootScreen.Library),
     ) {
-        addLibrary(navController, Screen.Library)
-        addAccount(Screen.Library, openSettings)
-        addShowDetails(navController, Screen.Library)
-        addShowSeasons(navController, Screen.Library)
-        addEpisodeDetails(navController, Screen.Library)
-    }
-}
-
-@ExperimentalAnimationApi
-private fun NavGraphBuilder.addWatchedTopLevel(
-    navController: NavController,
-    openSettings: () -> Unit,
-) {
-    navigation(
-        route = Screen.Watched.route,
-        startDestination = LeafScreen.Watched.createRoute(Screen.Watched),
-    ) {
-        addWatchedShows(navController, Screen.Watched)
-        addAccount(Screen.Watched, openSettings)
-        addShowDetails(navController, Screen.Watched)
-        addShowSeasons(navController, Screen.Watched)
-        addEpisodeDetails(navController, Screen.Watched)
+        addLibrary(navController, RootScreen.Library)
+        addAccount(RootScreen.Library, openSettings)
+        addShowDetails(navController, RootScreen.Library)
+        addShowSeasons(navController, RootScreen.Library)
+        addEpisodeDetails(navController, RootScreen.Library)
     }
 }
 
@@ -201,72 +159,52 @@ private fun NavGraphBuilder.addSearchTopLevel(
     openSettings: () -> Unit,
 ) {
     navigation(
-        route = Screen.Search.route,
-        startDestination = LeafScreen.Search.createRoute(Screen.Search),
+        route = RootScreen.Search.route,
+        startDestination = Screen.Search.createRoute(RootScreen.Search),
     ) {
-        addSearch(navController, Screen.Search)
-        addAccount(Screen.Search, openSettings)
-        addShowDetails(navController, Screen.Search)
-        addShowSeasons(navController, Screen.Search)
-        addEpisodeDetails(navController, Screen.Search)
+        addSearch(navController, RootScreen.Search)
+        addAccount(RootScreen.Search, openSettings)
+        addShowDetails(navController, RootScreen.Search)
+        addShowSeasons(navController, RootScreen.Search)
+        addEpisodeDetails(navController, RootScreen.Search)
     }
 }
 
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addDiscover(
     navController: NavController,
-    root: Screen,
+    root: RootScreen,
 ) {
     composable(
-        route = LeafScreen.Discover.createRoute(root),
+        route = Screen.Discover.createRoute(root),
         debugLabel = "Discover()",
     ) {
         Discover(
             openTrendingShows = {
-                navController.navigate(LeafScreen.Trending.createRoute(root))
+                navController.navigate(Screen.Trending.createRoute(root))
             },
             openPopularShows = {
-                navController.navigate(LeafScreen.Popular.createRoute(root))
+                navController.navigate(Screen.Popular.createRoute(root))
             },
             openRecommendedShows = {
-                navController.navigate(LeafScreen.RecommendedShows.createRoute(root))
+                navController.navigate(Screen.RecommendedShows.createRoute(root))
             },
             openShowDetails = { showId, seasonId, episodeId ->
-                navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
+                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
 
                 // If we have an season id, we also open that
                 if (seasonId != null) {
                     navController.navigate(
-                        LeafScreen.ShowSeasons.createRoute(root, showId, seasonId),
+                        Screen.ShowSeasons.createRoute(root, showId, seasonId),
                     )
                 }
                 // If we have an episodeId, we also open that
                 if (episodeId != null) {
-                    navController.navigate(LeafScreen.EpisodeDetails.createRoute(root, episodeId))
+                    navController.navigate(Screen.EpisodeDetails.createRoute(root, episodeId))
                 }
             },
             openUser = {
-                navController.navigate(LeafScreen.Account.createRoute(root))
-            },
-        )
-    }
-}
-
-@ExperimentalAnimationApi
-private fun NavGraphBuilder.addFollowedShows(
-    navController: NavController,
-    root: Screen,
-) {
-    composable(
-        route = LeafScreen.Following.createRoute(root),
-        debugLabel = "Followed()",
-    ) {
-        Followed(
-            openShowDetails = { showId ->
-                navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
-            },
-            openUser = {
-                navController.navigate(LeafScreen.Account.createRoute(root))
+                navController.navigate(Screen.Account.createRoute(root))
             },
         )
     }
@@ -275,38 +213,18 @@ private fun NavGraphBuilder.addFollowedShows(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addLibrary(
     navController: NavController,
-    root: Screen,
+    root: RootScreen,
 ) {
     composable(
-        route = LeafScreen.Library.createRoute(root),
+        route = Screen.Library.createRoute(root),
         debugLabel = "Library()",
     ) {
         Library(
             openShowDetails = { showId ->
-                navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
+                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
             },
             openUser = {
-                navController.navigate(LeafScreen.Account.createRoute(root))
-            },
-        )
-    }
-}
-
-@ExperimentalAnimationApi
-private fun NavGraphBuilder.addWatchedShows(
-    navController: NavController,
-    root: Screen,
-) {
-    composable(
-        route = LeafScreen.Watched.createRoute(root),
-        debugLabel = "Watched()",
-    ) {
-        Watched(
-            openShowDetails = { showId ->
-                navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
-            },
-            openUser = {
-                navController.navigate(LeafScreen.Account.createRoute(root))
+                navController.navigate(Screen.Account.createRoute(root))
             },
         )
     }
@@ -315,12 +233,12 @@ private fun NavGraphBuilder.addWatchedShows(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addSearch(
     navController: NavController,
-    root: Screen,
+    root: RootScreen,
 ) {
-    composable(LeafScreen.Search.createRoute(root)) {
+    composable(Screen.Search.createRoute(root)) {
         Search(
             openShowDetails = { showId ->
-                navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
+                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
             },
         )
     }
@@ -329,10 +247,10 @@ private fun NavGraphBuilder.addSearch(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addShowDetails(
     navController: NavController,
-    root: Screen,
+    root: RootScreen,
 ) {
     composable(
-        route = LeafScreen.ShowDetails.createRoute(root),
+        route = Screen.ShowDetails.createRoute(root),
         debugLabel = "ShowDetails()",
         arguments = listOf(
             navArgument("showId") { type = NavType.LongType },
@@ -341,13 +259,13 @@ private fun NavGraphBuilder.addShowDetails(
         ShowDetails(
             navigateUp = navController::navigateUp,
             openShowDetails = { showId ->
-                navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
+                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
             },
             openEpisodeDetails = { episodeId ->
-                navController.navigate(LeafScreen.EpisodeDetails.createRoute(root, episodeId))
+                navController.navigate(Screen.EpisodeDetails.createRoute(root, episodeId))
             },
             openSeasons = { showId, seasonId ->
-                navController.navigate(LeafScreen.ShowSeasons.createRoute(root, showId, seasonId))
+                navController.navigate(Screen.ShowSeasons.createRoute(root, showId, seasonId))
             },
         )
     }
@@ -357,10 +275,10 @@ private fun NavGraphBuilder.addShowDetails(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addEpisodeDetails(
     navController: NavController,
-    root: Screen,
+    root: RootScreen,
 ) {
     bottomSheet(
-        route = LeafScreen.EpisodeDetails.createRoute(root),
+        route = Screen.EpisodeDetails.createRoute(root),
         debugLabel = "EpisodeDetails()",
         arguments = listOf(
             navArgument("episodeId") { type = NavType.LongType },
@@ -378,15 +296,15 @@ private fun NavGraphBuilder.addEpisodeDetails(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addRecommendedShows(
     navController: NavController,
-    root: Screen,
+    root: RootScreen,
 ) {
     composable(
-        route = LeafScreen.RecommendedShows.createRoute(root),
+        route = Screen.RecommendedShows.createRoute(root),
         debugLabel = "RecommendedShows()",
     ) {
         RecommendedShows(
             openShowDetails = { showId ->
-                navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
+                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
             },
             navigateUp = navController::navigateUp,
         )
@@ -396,15 +314,15 @@ private fun NavGraphBuilder.addRecommendedShows(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addTrendingShows(
     navController: NavController,
-    root: Screen,
+    root: RootScreen,
 ) {
     composable(
-        route = LeafScreen.Trending.createRoute(root),
+        route = Screen.Trending.createRoute(root),
         debugLabel = "TrendingShows()",
     ) {
         TrendingShows(
             openShowDetails = { showId ->
-                navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
+                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
             },
             navigateUp = navController::navigateUp,
         )
@@ -414,15 +332,15 @@ private fun NavGraphBuilder.addTrendingShows(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addPopularShows(
     navController: NavController,
-    root: Screen,
+    root: RootScreen,
 ) {
     composable(
-        route = LeafScreen.Popular.createRoute(root),
+        route = Screen.Popular.createRoute(root),
         debugLabel = "PopularShows()",
     ) {
         PopularShows(
             openShowDetails = { showId ->
-                navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
+                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
             },
             navigateUp = navController::navigateUp,
         )
@@ -431,11 +349,11 @@ private fun NavGraphBuilder.addPopularShows(
 
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addAccount(
-    root: Screen,
+    root: RootScreen,
     onOpenSettings: () -> Unit,
 ) {
     dialog(
-        route = LeafScreen.Account.createRoute(root),
+        route = Screen.Account.createRoute(root),
         debugLabel = "AccountUi()",
     ) {
         AccountUi(
@@ -447,10 +365,10 @@ private fun NavGraphBuilder.addAccount(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addShowSeasons(
     navController: NavController,
-    root: Screen,
+    root: RootScreen,
 ) {
     composable(
-        route = LeafScreen.ShowSeasons.createRoute(root),
+        route = Screen.ShowSeasons.createRoute(root),
         debugLabel = "ShowSeasons()",
         arguments = listOf(
             navArgument("showId") {
@@ -465,7 +383,7 @@ private fun NavGraphBuilder.addShowSeasons(
         ShowSeasons(
             navigateUp = navController::navigateUp,
             openEpisodeDetails = { episodeId ->
-                navController.navigate(LeafScreen.EpisodeDetails.createRoute(root, episodeId))
+                navController.navigate(Screen.EpisodeDetails.createRoute(root, episodeId))
             },
             initialSeasonId = it.arguments?.getString("seasonId")?.toLong(),
         )
