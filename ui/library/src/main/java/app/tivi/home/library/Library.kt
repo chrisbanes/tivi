@@ -43,6 +43,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -107,6 +108,8 @@ internal fun Library(
         list = pagingItems,
         openShowDetails = openShowDetails,
         onMessageShown = viewModel::clearMessage,
+        onToggleIncludeFollowedShows = viewModel::toggleFollowedShowsIncluded,
+        onToggleIncludeWatchedShows = viewModel::toggleWatchedShowsIncluded,
         openUser = openUser,
         refresh = viewModel::refresh,
         onFilterChanged = viewModel::setFilter,
@@ -121,6 +124,8 @@ internal fun Library(
     list: LazyPagingItems<LibraryShow>,
     openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
+    onToggleIncludeFollowedShows: () -> Unit,
+    onToggleIncludeWatchedShows: () -> Unit,
     refresh: () -> Unit,
     openUser: () -> Unit,
     onFilterChanged: (String) -> Unit,
@@ -201,16 +206,34 @@ internal fun Library(
                     .fillMaxHeight(),
             ) {
                 fullSpanItem {
-                    FilterSortPanel(
-                        filterHint = stringResource(UiR.string.filter_shows, list.itemCount),
-                        onFilterChanged = onFilterChanged,
-                        sortOptions = state.availableSorts,
-                        currentSortOption = state.sort,
-                        onSortSelected = onSortSelected,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                    )
+                    Column {
+                        FilterSortPanel(
+                            filterHint = stringResource(UiR.string.filter_shows, list.itemCount),
+                            onFilterChanged = onFilterChanged,
+                            sortOptions = state.availableSorts,
+                            currentSortOption = state.sort,
+                            onSortSelected = onSortSelected,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
+                        )
+
+                        Row {
+                            FilterChip(
+                                selected = state.followedShowsIncluded,
+                                onClick = onToggleIncludeFollowedShows,
+                                label = { Text(text = "Followed") },
+                            )
+
+                            Spacer(Modifier.width(4.dp))
+
+                            FilterChip(
+                                selected = state.watchedShowsIncluded,
+                                onClick = onToggleIncludeWatchedShows,
+                                label = { Text(text = "Watched") },
+                            )
+                        }
+                    }
                 }
 
                 items(
@@ -236,7 +259,9 @@ internal fun Library(
             PullRefreshIndicator(
                 refreshing = state.isLoading,
                 state = refreshState,
-                modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(paddingValues),
                 scale = true,
             )
         }
