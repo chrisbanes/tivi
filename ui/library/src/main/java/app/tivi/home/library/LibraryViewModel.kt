@@ -24,7 +24,7 @@ import androidx.paging.cachedIn
 import app.tivi.api.UiMessageManager
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.LibraryShow
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.GetTraktAuthState
@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
 internal class LibraryViewModel @Inject constructor(
     private val updateFollowedShows: UpdateFollowedShows,
     private val observePagedLibraryShows: ObservePagedLibraryShows,
-    private val observeTraktAuthState: ObserveTraktAuthState,
+    observeTraktAuthState: ObserveTraktAuthState,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
@@ -62,7 +62,7 @@ internal class LibraryViewModel @Inject constructor(
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
-    val pagedList: Flow<PagingData<FollowedShowEntryWithShow>> =
+    val pagedList: Flow<PagingData<LibraryShow>> =
         observePagedLibraryShows.flow.cachedIn(viewModelScope)
 
     private val availableSorts = listOf(

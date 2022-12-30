@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,26 +19,26 @@ package app.tivi.domain.observers
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import app.tivi.data.daos.LibraryShowsDao
 import app.tivi.data.entities.SortOption
-import app.tivi.data.repositories.followedshows.FollowedShowsRepository
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.LibraryShow
 import app.tivi.domain.PagingInteractor
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class ObservePagedLibraryShows @Inject constructor(
-    private val followedShowsRepository: FollowedShowsRepository,
-) : PagingInteractor<ObservePagedLibraryShows.Parameters, FollowedShowEntryWithShow>() {
+    private val libraryShowsDao: LibraryShowsDao,
+) : PagingInteractor<ObservePagedLibraryShows.Parameters, LibraryShow>() {
 
     override fun createObservable(
         params: Parameters,
-    ): Flow<PagingData<FollowedShowEntryWithShow>> = Pager(config = params.pagingConfig) {
-        followedShowsRepository.observeFollowedShows(params.sort, params.filter)
+    ): Flow<PagingData<LibraryShow>> = Pager(config = params.pagingConfig) {
+        libraryShowsDao.observeForPaging(params.sort, params.filter)
     }.flow
 
     data class Parameters(
         val filter: String? = null,
         val sort: SortOption,
         override val pagingConfig: PagingConfig,
-    ) : PagingInteractor.Parameters<FollowedShowEntryWithShow>
+    ) : PagingInteractor.Parameters<LibraryShow>
 }
