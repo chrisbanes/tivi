@@ -55,8 +55,6 @@ include(
     ":ui:discover",
     ":ui:showdetails",
     ":ui:episodedetails",
-    ":ui:followed",
-    ":ui:watched",
     ":ui:trending",
     ":ui:popular",
     ":ui:recommended",
