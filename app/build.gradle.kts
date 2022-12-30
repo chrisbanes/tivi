@@ -170,8 +170,6 @@ dependencies {
     implementation(projects.ui.showdetails)
     implementation(projects.ui.episodedetails)
     implementation(projects.ui.library)
-    implementation(projects.ui.followed)
-    implementation(projects.ui.watched)
     implementation(projects.ui.popular)
     implementation(projects.ui.trending)
     implementation(projects.ui.recommended)
