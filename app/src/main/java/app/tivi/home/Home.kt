@@ -39,8 +39,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.Weekend
+import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.material3.Divider
@@ -204,6 +206,9 @@ private fun NavController.currentScreenAsState(): State<Screen> {
                 destination.hierarchy.any { it.route == Screen.Discover.route } -> {
                     selectedItem.value = Screen.Discover
                 }
+                destination.hierarchy.any { it.route == Screen.Library.route } -> {
+                    selectedItem.value = Screen.Library
+                }
                 destination.hierarchy.any { it.route == Screen.Watched.route } -> {
                     selectedItem.value = Screen.Watched
                 }
@@ -327,6 +332,13 @@ private val HomeNavigationItems = listOf(
         contentDescriptionResId = UiR.string.cd_discover_title,
         iconImageVector = Icons.Outlined.Weekend,
         selectedImageVector = Icons.Default.Weekend,
+    ),
+    HomeNavigationItem.ImageVectorIcon(
+        screen = Screen.Library,
+        labelResId = UiR.string.library_title,
+        contentDescriptionResId = UiR.string.cd_library_title,
+        iconImageVector = Icons.Outlined.VideoLibrary,
+        selectedImageVector = Icons.Default.VideoLibrary,
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = Screen.Following,

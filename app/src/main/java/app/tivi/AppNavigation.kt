@@ -38,6 +38,7 @@ import app.tivi.account.AccountUi
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.home.discover.Discover
 import app.tivi.home.followed.Followed
+import app.tivi.home.library.Library
 import app.tivi.home.popular.PopularShows
 import app.tivi.home.recommended.RecommendedShows
 import app.tivi.home.search.Search
@@ -54,6 +55,7 @@ internal sealed class Screen(val route: String) {
     object Discover : Screen("discover")
     object Following : Screen("following")
     object Watched : Screen("watched")
+    object Library : Screen("library")
     object Search : Screen("search")
 }
 
@@ -65,6 +67,7 @@ private sealed class LeafScreen(
     object Discover : LeafScreen("discover")
     object Following : LeafScreen("following")
     object Trending : LeafScreen("trending")
+    object Library : LeafScreen("library")
     object Popular : LeafScreen("popular")
 
     object ShowDetails : LeafScreen("show/{showId}") {
@@ -114,6 +117,7 @@ internal fun AppNavigation(
         modifier = modifier,
     ) {
         addDiscoverTopLevel(navController, onOpenSettings)
+        addLibraryTopLevel(navController, onOpenSettings)
         addFollowingTopLevel(navController, onOpenSettings)
         addWatchedTopLevel(navController, onOpenSettings)
         addSearchTopLevel(navController, onOpenSettings)
@@ -150,6 +154,23 @@ private fun NavGraphBuilder.addFollowingTopLevel(
         startDestination = LeafScreen.Following.createRoute(Screen.Following),
     ) {
         addFollowedShows(navController, Screen.Following)
+        addAccount(Screen.Following, openSettings)
+        addShowDetails(navController, Screen.Following)
+        addShowSeasons(navController, Screen.Following)
+        addEpisodeDetails(navController, Screen.Following)
+    }
+}
+
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.addLibraryTopLevel(
+    navController: NavController,
+    openSettings: () -> Unit,
+) {
+    navigation(
+        route = Screen.Library.route,
+        startDestination = LeafScreen.Library.createRoute(Screen.Library),
+    ) {
+        addLibrary(navController, Screen.Library)
         addAccount(Screen.Following, openSettings)
         addShowDetails(navController, Screen.Following)
         addShowSeasons(navController, Screen.Following)
@@ -241,6 +262,26 @@ private fun NavGraphBuilder.addFollowedShows(
         debugLabel = "Followed()",
     ) {
         Followed(
+            openShowDetails = { showId ->
+                navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
+            },
+            openUser = {
+                navController.navigate(LeafScreen.Account.createRoute(root))
+            },
+        )
+    }
+}
+
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.addLibrary(
+    navController: NavController,
+    root: Screen,
+) {
+    composable(
+        route = LeafScreen.Library.createRoute(root),
+        debugLabel = "Library()",
+    ) {
+        Library(
             openShowDetails = { showId ->
                 navController.navigate(LeafScreen.ShowDetails.createRoute(root, showId))
             },

@@ -63,6 +63,7 @@ include(
     ":ui:search",
     ":ui:showseasons",
     ":ui:settings",
+    ":ui:library",
     ":ui:account",
     ":app",
     ":benchmark",
