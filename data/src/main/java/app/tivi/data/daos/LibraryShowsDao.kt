@@ -20,6 +20,7 @@ import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import app.tivi.data.entities.Season
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.LibraryShow
@@ -27,18 +28,33 @@ import app.tivi.data.resultentities.LibraryShow
 @Dao
 abstract class LibraryShowsDao : EntityDao<TiviShow>() {
 
-    @Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
     fun observeForPaging(
         sort: SortOption,
         filter: String?,
-    ): PagingSource<Int, LibraryShow> {
-        val filtered = !filter.isNullOrEmpty()
-        return pagedListLastWatched()
+        includeWatched: Boolean,
+        includeFollowed: Boolean,
+    ): PagingSource<Int, LibraryShow> = if (filter.isNullOrEmpty()) {
+        pagedListLastWatched(sort, includeWatched, includeFollowed)
+    } else {
+        pagedListLastWatchedFilter(sort, "*$filter*", includeWatched, includeFollowed)
     }
 
     @Transaction
     @Query(QUERY_LAST_WATCHED)
-    internal abstract fun pagedListLastWatched(): PagingSource<Int, LibraryShow>
+    internal abstract fun pagedListLastWatched(
+        sort: SortOption,
+        includeWatched: Boolean,
+        includeFollowed: Boolean,
+    ): PagingSource<Int, LibraryShow>
+
+    @Transaction
+    @Query(QUERY_LAST_WATCHED_FILTER)
+    internal abstract fun pagedListLastWatchedFilter(
+        sort: SortOption,
+        filter: String,
+        includeWatched: Boolean,
+        includeFollowed: Boolean,
+    ): PagingSource<Int, LibraryShow>
 
     companion object {
         private const val QUERY_LAST_WATCHED = """
@@ -48,13 +64,47 @@ abstract class LibraryShowsDao : EntityDao<TiviShow>() {
             LEFT JOIN seasons AS s ON shows.id = s.show_id
             LEFT JOIN episodes AS eps ON eps.season_id = s.id
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-            WHERE watched_entries.id IS NOT NULL OR myshows_entries.id IS NOT NULL
+            WHERE
+                (s.number IS NULL OR s.number != ${Season.NUMBER_SPECIALS})
+                AND (
+                    (:includeWatched = 1 AND watched_entries.id IS NOT NULL) OR
+                    (:includeFollowed = 1 AND myshows_entries.id IS NOT NULL)
+                )
             GROUP BY shows.id
-            ORDER BY
-              CASE WHEN MAX(datetime(watched_entries.last_watched)) IS NULL
-              OR MAX(datetime(ew.watched_at)) > MAX(datetime(watched_entries.last_watched))
-              THEN MAX(datetime(ew.watched_at)) ELSE MAX(datetime(watched_entries.last_watched)) END
-              DESC
+            ORDER BY CASE
+                WHEN :sort = 'last_watched' THEN
+                    (CASE WHEN MAX(datetime(watched_entries.last_watched)) IS NULL
+                    OR MAX(datetime(ew.watched_at)) > MAX(datetime(watched_entries.last_watched))
+                    THEN MAX(datetime(ew.watched_at))
+                    ELSE MAX(datetime(watched_entries.last_watched)) END)
+                END DESC,
+                shows.title ASC
+        """
+
+        private const val QUERY_LAST_WATCHED_FILTER = """
+            SELECT shows.* FROM shows
+            INNER JOIN shows_fts ON shows.id = shows_fts.docid
+            LEFT JOIN myshows_entries ON shows.id = myshows_entries.show_id
+            LEFT JOIN watched_entries ON shows.id = watched_entries.show_id
+            LEFT JOIN seasons AS s ON shows.id = s.show_id
+            LEFT JOIN episodes AS eps ON eps.season_id = s.id
+            LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+            WHERE
+                (s.number IS NULL OR s.number != ${Season.NUMBER_SPECIALS})
+                AND (
+                    (:includeWatched = 1 AND watched_entries.id IS NOT NULL) OR
+                    (:includeFollowed = 1 AND myshows_entries.id IS NOT NULL)
+                )
+                AND shows_fts.title MATCH :filter
+            GROUP BY shows.id
+            ORDER BY CASE
+                WHEN :sort = 'last_watched' THEN
+                    (CASE WHEN MAX(datetime(watched_entries.last_watched)) IS NULL
+                    OR MAX(datetime(ew.watched_at)) > MAX(datetime(watched_entries.last_watched))
+                    THEN MAX(datetime(ew.watched_at))
+                    ELSE MAX(datetime(watched_entries.last_watched)) END)
+                END DESC,
+                shows.title ASC
         """
     }
 }

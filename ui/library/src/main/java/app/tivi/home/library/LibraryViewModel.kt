@@ -66,10 +66,8 @@ internal class LibraryViewModel @Inject constructor(
         observePagedLibraryShows.flow.cachedIn(viewModelScope)
 
     private val availableSorts = listOf(
-        // SortOption.SUPER_SORT,
         SortOption.LAST_WATCHED,
         SortOption.ALPHABETICAL,
-        SortOption.DATE_ADDED,
     )
 
     private val filter = MutableStateFlow<String?>(null)
@@ -139,6 +137,8 @@ internal class LibraryViewModel @Inject constructor(
             ObservePagedLibraryShows.Parameters(
                 sort = sort.value,
                 filter = filter.value,
+                includeFollowed = includeFollowedShows.value,
+                includeWatched = includeWatchedShows.value,
                 pagingConfig = PAGING_CONFIG,
             ),
         )
