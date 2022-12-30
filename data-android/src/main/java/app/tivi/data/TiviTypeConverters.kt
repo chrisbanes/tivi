@@ -21,6 +21,7 @@ import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Request
 import app.tivi.data.entities.ShowStatus
+import app.tivi.data.entities.SortOption
 import app.tivi.extensions.unsafeLazy
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Instant
@@ -115,4 +116,8 @@ object TiviTypeConverters {
     @TypeConverter
     @JvmStatic
     fun toShowStatus(value: String?) = showStatusValues.firstOrNull { it.storageKey == value }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromSortOption(sortOption: SortOption): String = sortOption.sqlValue
 }

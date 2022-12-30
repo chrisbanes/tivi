@@ -33,12 +33,19 @@ class ObservePagedLibraryShows @Inject constructor(
     override fun createObservable(
         params: Parameters,
     ): Flow<PagingData<LibraryShow>> = Pager(config = params.pagingConfig) {
-        libraryShowsDao.observeForPaging(params.sort, params.filter)
+        libraryShowsDao.observeForPaging(
+            sort = params.sort,
+            filter = params.filter,
+            includeWatched = params.includeWatched,
+            includeFollowed = params.includeFollowed,
+        )
     }.flow
 
     data class Parameters(
-        val filter: String? = null,
         val sort: SortOption,
+        val filter: String? = null,
+        val includeWatched: Boolean = true,
+        val includeFollowed: Boolean = true,
         override val pagingConfig: PagingConfig,
     ) : PagingInteractor.Parameters<LibraryShow>
 }
