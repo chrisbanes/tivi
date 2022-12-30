@@ -29,6 +29,7 @@ import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.interactors.UpdateFollowedShows
+import app.tivi.domain.interactors.UpdateWatchedShows
 import app.tivi.domain.observers.ObservePagedLibraryShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
@@ -52,6 +53,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 internal class LibraryViewModel @Inject constructor(
     private val updateFollowedShows: UpdateFollowedShows,
+    private val updateWatchedShows: UpdateWatchedShows,
     private val observePagedLibraryShows: ObservePagedLibraryShows,
     observeTraktAuthState: ObserveTraktAuthState,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
@@ -59,7 +61,8 @@ internal class LibraryViewModel @Inject constructor(
     private val getTraktAuthState: GetTraktAuthState,
     private val logger: Logger,
 ) : ViewModel() {
-    private val loadingState = ObservableLoadingCounter()
+    private val followedLoadingState = ObservableLoadingCounter()
+    private val watchedLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     val pagedList: Flow<PagingData<LibraryShow>> =
@@ -77,7 +80,8 @@ internal class LibraryViewModel @Inject constructor(
     private val includeFollowedShows = MutableStateFlow(true)
 
     val state: StateFlow<LibraryViewState> = combine(
-        loadingState.observable,
+        followedLoadingState.observable,
+        watchedLoadingState.observable,
         observeTraktAuthState.flow,
         observeUserDetails.flow,
         filter,
@@ -85,11 +89,11 @@ internal class LibraryViewModel @Inject constructor(
         uiMessageManager.message,
         includeWatchedShows,
         includeFollowedShows,
-    ) { loading, authState, user, filter, sort, message, includeWatchedShows, includeFollowedShows ->
+    ) { followedLoading, watchedLoading, authState, user, filter, sort, message, includeWatchedShows, includeFollowedShows ->
         LibraryViewState(
             user = user,
             authState = authState,
-            isLoading = loading,
+            isLoading = followedLoading || watchedLoading,
             filter = filter,
             filterActive = !filter.isNullOrEmpty(),
             availableSorts = availableSorts,
@@ -147,7 +151,12 @@ internal class LibraryViewModel @Inject constructor(
     fun refresh(fromUser: Boolean = true) {
         viewModelScope.launch {
             if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
-                refreshFollowed(fromUser)
+                refreshWatched(fromUser)
+            }
+        }
+        viewModelScope.launch {
+            if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
+                refreshWatched(fromUser)
             }
         }
     }
@@ -180,7 +189,15 @@ internal class LibraryViewModel @Inject constructor(
         viewModelScope.launch {
             updateFollowedShows(
                 UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK),
-            ).collectStatus(loadingState, logger, uiMessageManager)
+            ).collectStatus(followedLoadingState, logger, uiMessageManager)
+        }
+    }
+
+    private fun refreshWatched(fromUser: Boolean) {
+        viewModelScope.launch {
+            updateWatchedShows(
+                UpdateWatchedShows.Params(forceRefresh = fromUser),
+            ).collectStatus(watchedLoadingState, logger, uiMessageManager)
         }
     }
 
