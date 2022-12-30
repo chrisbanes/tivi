@@ -164,6 +164,18 @@ internal class LibraryViewModel @Inject constructor(
         }
     }
 
+    fun toggleFollowedShowsIncluded() {
+        viewModelScope.launch {
+            includeFollowedShows.emit(!includeFollowedShows.value)
+        }
+    }
+
+    fun toggleWatchedShowsIncluded() {
+        viewModelScope.launch {
+            includeWatchedShows.emit(!includeWatchedShows.value)
+        }
+    }
+
     private fun refreshFollowed(fromInteraction: Boolean) {
         viewModelScope.launch {
             updateFollowedShows(
