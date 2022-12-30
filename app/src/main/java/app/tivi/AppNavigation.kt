@@ -171,10 +171,10 @@ private fun NavGraphBuilder.addLibraryTopLevel(
         startDestination = LeafScreen.Library.createRoute(Screen.Library),
     ) {
         addLibrary(navController, Screen.Library)
-        addAccount(Screen.Following, openSettings)
-        addShowDetails(navController, Screen.Following)
-        addShowSeasons(navController, Screen.Following)
-        addEpisodeDetails(navController, Screen.Following)
+        addAccount(Screen.Library, openSettings)
+        addShowDetails(navController, Screen.Library)
+        addShowSeasons(navController, Screen.Library)
+        addEpisodeDetails(navController, Screen.Library)
     }
 }
 

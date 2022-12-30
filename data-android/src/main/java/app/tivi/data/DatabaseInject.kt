@@ -88,6 +88,9 @@ object DatabaseDaoModule {
 
     @Provides
     fun provideRecommendedShowsDao(db: TiviDatabase) = db.recommendedShowsDao()
+
+    @Provides
+    fun provideLibraryShowsDao(db: TiviDatabase) = db.libraryShowsDao()
 }
 
 @InstallIn(SingletonComponent::class)

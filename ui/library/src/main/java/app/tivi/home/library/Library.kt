@@ -78,7 +78,7 @@ import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.LibraryShow
 import app.tivi.trakt.TraktAuthState
 
 @Composable
@@ -118,7 +118,7 @@ internal fun Library(
 @Composable
 internal fun Library(
     state: LibraryViewState,
-    list: LazyPagingItems<FollowedShowEntryWithShow>,
+    list: LazyPagingItems<LibraryShow>,
     openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
     refresh: () -> Unit,
