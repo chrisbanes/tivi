@@ -42,7 +42,7 @@ class LibraryShow {
     @Relation(parentColumn = "id", entityColumn = "show_id")
     lateinit var images: List<ShowTmdbImage>
 
-    @Relation(parentColumn = "id", entityColumn = "id")
+    @Relation(parentColumn = "id", entityColumn = "show_id")
     lateinit var _stats: List<FollowedShowsWatchStats>
 
     @get:Ignore

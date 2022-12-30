@@ -16,25 +16,28 @@
 
 package app.tivi.data.views
 
+import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
 import app.tivi.data.entities.Season
 
 @DatabaseView(
-    """
-    SELECT fs.id, COUNT(*) as episodeCount, COUNT(ew.watched_at) as watchedEpisodeCount
-    FROM myshows_entries as fs
-    INNER JOIN seasons AS s ON fs.show_id = s.show_id
-    INNER JOIN episodes AS eps ON eps.season_id = s.id
-    LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-    WHERE eps.first_aired IS NOT NULL
-        AND datetime(eps.first_aired) < datetime('now')
-        AND s.number != ${Season.NUMBER_SPECIALS}
-        AND s.ignored = 0
-    GROUP BY fs.id
-""",
+    viewName = "myshows_view_watch_stats",
+    value = """
+        SELECT fs.id AS id, fs.show_id AS show_id, COUNT(*) AS episode_count, COUNT(ew.watched_at) AS watched_episode_count
+        FROM myshows_entries as fs
+        INNER JOIN seasons AS s ON fs.show_id = s.show_id
+        INNER JOIN episodes AS eps ON eps.season_id = s.id
+        LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+        WHERE eps.first_aired IS NOT NULL
+            AND datetime(eps.first_aired) < datetime('now')
+            AND s.number != ${Season.NUMBER_SPECIALS}
+            AND s.ignored = 0
+        GROUP BY fs.id
+    """,
 )
 data class FollowedShowsWatchStats(
     val id: Long,
-    val episodeCount: Int,
-    val watchedEpisodeCount: Int,
+    @ColumnInfo(name = "show_id") val showId: Long,
+    @ColumnInfo(name = "episode_count") val episodeCount: Int,
+    @ColumnInfo(name = "watched_episode_count") val watchedEpisodeCount: Int,
 )

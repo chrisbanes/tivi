@@ -98,9 +98,9 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     @Transaction
     @Query(
         """
-        SELECT stats.* FROM FollowedShowsWatchStats as stats
+        SELECT stats.* FROM myshows_view_watch_stats as stats
         INNER JOIN myshows_entries ON stats.id = myshows_entries.id
-        WHERE show_id = :showId
+        WHERE stats.show_id = :showId
     """,
     )
     abstract fun entryShowViewStats(showId: Long): Flow<FollowedShowsWatchStats>
