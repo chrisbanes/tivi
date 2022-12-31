@@ -18,7 +18,10 @@
 
 package app.tivi.home.library
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,12 +35,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -46,6 +52,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -123,7 +130,7 @@ internal fun Library(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 internal fun Library(
     state: LibraryViewState,
@@ -217,19 +224,41 @@ internal fun Library(
                         crossAxisSpacing = 4.dp,
                         modifier = Modifier.padding(vertical = 8.dp),
                     ) {
+                        var filterExpanded by remember { mutableStateOf(false) }
+
                         var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
                             mutableStateOf(TextFieldValue())
                         }
 
-                        SearchTextField(
-                            value = filter,
-                            onValueChange = { value ->
-                                filter = value
-                                onFilterChanged(value.text)
-                            },
-                            hint = stringResource(UiR.string.filter_shows, list.itemCount),
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                        AnimatedContent(
+                            targetState = filterExpanded,
+                        ) { state ->
+                            if (state) {
+                                SearchTextField(
+                                    value = filter,
+                                    onValueChange = { value ->
+                                        filter = value
+                                        onFilterChanged(value.text)
+                                    },
+                                    hint = stringResource(UiR.string.filter_shows, list.itemCount),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    showClearButton = true,
+                                    onCleared = {
+                                        filter = TextFieldValue()
+                                        onFilterChanged("")
+                                        filterExpanded = false
+                                    },
+                                )
+                            } else {
+                                OutlinedButton(onClick = { filterExpanded = true }) {
+                                    Image(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(14.dp),
+                                    )
+                                }
+                            }
+                        }
 
                         FilterChip(
                             selected = state.followedShowsIncluded,
