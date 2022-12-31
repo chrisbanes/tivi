@@ -44,6 +44,8 @@ fun SearchTextField(
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions(),
+    showClearButton: Boolean = value.text.isNotEmpty(),
+    onCleared: (() -> Unit) = { onValueChange(TextFieldValue()) },
 ) {
     OutlinedTextField(
         value = value,
@@ -56,11 +58,11 @@ fun SearchTextField(
         },
         trailingIcon = {
             AnimatedVisibility(
-                visible = value.text.isNotEmpty(),
+                visible = showClearButton,
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
-                IconButton(onClick = { onValueChange(TextFieldValue()) }) {
+                IconButton(onClick = onCleared) {
                     Icon(
                         imageVector = Icons.Default.Clear,
                         contentDescription = stringResource(UiR.string.cd_clear_text),
