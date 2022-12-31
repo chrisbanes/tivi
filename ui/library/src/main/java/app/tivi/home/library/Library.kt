@@ -56,12 +56,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
@@ -71,8 +75,9 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.items
-import app.tivi.common.compose.ui.FilterSortPanel
 import app.tivi.common.compose.ui.PosterCard
+import app.tivi.common.compose.ui.SearchTextField
+import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.R as UiR
@@ -81,6 +86,7 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.LibraryShow
 import app.tivi.trakt.TraktAuthState
+import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
 fun Library(
@@ -206,33 +212,42 @@ internal fun Library(
                     .fillMaxHeight(),
             ) {
                 fullSpanItem {
-                    Column {
-                        FilterSortPanel(
-                            filterHint = stringResource(UiR.string.filter_shows, list.itemCount),
-                            onFilterChanged = onFilterChanged,
+                    FlowRow(
+                        mainAxisSpacing = 4.dp,
+                        crossAxisSpacing = 4.dp,
+                        modifier = Modifier.padding(vertical = 8.dp),
+                    ) {
+                        var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+                            mutableStateOf(TextFieldValue())
+                        }
+
+                        SearchTextField(
+                            value = filter,
+                            onValueChange = { value ->
+                                filter = value
+                                onFilterChanged(value.text)
+                            },
+                            hint = stringResource(UiR.string.filter_shows, list.itemCount),
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+
+                        FilterChip(
+                            selected = state.followedShowsIncluded,
+                            onClick = onToggleIncludeFollowedShows,
+                            label = { Text(text = "Followed") },
+                        )
+
+                        FilterChip(
+                            selected = state.watchedShowsIncluded,
+                            onClick = onToggleIncludeWatchedShows,
+                            label = { Text(text = "Watched") },
+                        )
+
+                        SortChip(
                             sortOptions = state.availableSorts,
                             currentSortOption = state.sort,
                             onSortSelected = onSortSelected,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
                         )
-
-                        Row {
-                            FilterChip(
-                                selected = state.followedShowsIncluded,
-                                onClick = onToggleIncludeFollowedShows,
-                                label = { Text(text = "Followed") },
-                            )
-
-                            Spacer(Modifier.width(4.dp))
-
-                            FilterChip(
-                                selected = state.watchedShowsIncluded,
-                                onClick = onToggleIncludeWatchedShows,
-                                label = { Text(text = "Watched") },
-                            )
-                        }
                     }
                 }
 
