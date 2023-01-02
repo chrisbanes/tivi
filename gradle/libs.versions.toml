@@ -31,7 +31,7 @@ ksp = "com.google.devtools.ksp:1.7.21-1.0.8"
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 gms-googleServices = "com.google.gms.google-services:4.3.14"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.2"
-spotless = "com.diffplug.spotless:6.11.0"
+spotless = "com.diffplug.spotless:6.12.1"
 
 [libraries]
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
