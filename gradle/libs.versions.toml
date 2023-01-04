@@ -72,7 +72,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 
 androidx-test-core = "androidx.test:core-ktx:1.5.0"
-androidx-test-junit = "androidx.test.ext:junit-ktx:1.1.4"
+androidx-test-junit = "androidx.test.ext:junit-ktx:1.1.5"
 androidx-test-rules = "androidx.test:rules:1.5.0"
 androidx-test-runner = "androidx.test:runner:1.5.2"
 androidx-benchmark-macro = "androidx.benchmark:benchmark-macro-junit4:1.1.1"
