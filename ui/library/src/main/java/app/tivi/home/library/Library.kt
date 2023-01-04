@@ -80,6 +80,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
+import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
@@ -95,6 +96,7 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.LibraryShow
 import app.tivi.trakt.TraktAuthState
+import org.threeten.bp.OffsetDateTime
 
 @Composable
 fun Library(
@@ -280,11 +282,12 @@ internal fun Library(
                     key = { it.show.id },
                 ) { entry ->
                     if (entry != null) {
-                        FollowedShowItem(
+                        LibraryItem(
                             show = entry.show,
                             poster = entry.poster,
-                            watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
-                            totalEpisodeCount = entry.stats?.episodeCount ?: 0,
+                            watchedEpisodeCount = entry.stats?.watchedEpisodeCount,
+                            totalEpisodeCount = entry.stats?.episodeCount,
+                            lastWatchedDate = entry.watchedEntry?.lastWatched,
                             onClick = { openShowDetails(entry.show.id) },
                             contentPadding = PaddingValues(8.dp),
                             modifier = Modifier
@@ -335,11 +338,12 @@ private fun FilterSortPanel(
 }
 
 @Composable
-private fun FollowedShowItem(
+private fun LibraryItem(
     show: TiviShow,
     poster: ShowTmdbImage?,
-    watchedEpisodeCount: Int,
-    totalEpisodeCount: Int,
+    watchedEpisodeCount: Int?,
+    totalEpisodeCount: Int?,
+    lastWatchedDate: OffsetDateTime?,
     onClick: () -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -370,23 +374,33 @@ private fun FollowedShowItem(
 
             Spacer(Modifier.height(4.dp))
 
-            LinearProgressIndicator(
-                progress = when {
-                    totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
-                    else -> 0f
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
+            if (watchedEpisodeCount != null && totalEpisodeCount != null) {
+                LinearProgressIndicator(
+                    progress = when {
+                        totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
+                        else -> 0f
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
 
-            Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(4.dp))
 
-            Text(
-                text = textCreator.followedShowEpisodeWatchStatus(
-                    episodeCount = totalEpisodeCount,
-                    watchedEpisodeCount = watchedEpisodeCount,
-                ).toString(),
-                style = MaterialTheme.typography.bodySmall,
-            )
+                Text(
+                    text = textCreator.followedShowEpisodeWatchStatus(
+                        episodeCount = totalEpisodeCount,
+                        watchedEpisodeCount = watchedEpisodeCount,
+                    ).toString(),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            } else if (lastWatchedDate != null) {
+                Text(
+                    text = stringResource(
+                        UiR.string.library_last_watched,
+                        LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatchedDate),
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
 
             Spacer(Modifier.height(8.dp))
         }
