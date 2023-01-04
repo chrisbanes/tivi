@@ -45,6 +45,8 @@ class TiviPreferencesImpl @Inject constructor(
     companion object {
         const val KEY_THEME = "pref_theme"
         const val KEY_DATA_SAVER = "pref_data_saver"
+        const val KEY_LIBRARY_FOLLOWED_ACTIVE = "pref_library_followed_active"
+        const val KEY_LIBRARY_WATCHED_ACTIVE = "pref_library_watched_active"
     }
 
     override fun setup() {
@@ -63,23 +65,45 @@ class TiviPreferencesImpl @Inject constructor(
             putBoolean(KEY_DATA_SAVER, value)
         }
 
-    override fun observeUseLessData(): Flow<Boolean> {
-        return preferenceKeyChangedFlow
-            // Emit on start so that we always send the initial value
-            .onStart { emit(KEY_DATA_SAVER) }
-            .filter { it == KEY_DATA_SAVER }
-            .map { useLessData }
-            .distinctUntilChanged()
+    override fun observeUseLessData(): Flow<Boolean> = createPreferenceFlow(KEY_DATA_SAVER) {
+        useLessData
     }
 
-    override fun observeTheme(): Flow<Theme> {
-        return preferenceKeyChangedFlow
-            // Emit on start so that we always send the initial value
-            .onStart { emit(KEY_THEME) }
-            .filter { it == KEY_THEME }
-            .map { theme }
-            .distinctUntilChanged()
+    override fun observeTheme(): Flow<Theme> = createPreferenceFlow(KEY_THEME) { theme }
+
+    override var libraryFollowedActive: Boolean
+        get() = sharedPreferences.getBoolean(KEY_LIBRARY_FOLLOWED_ACTIVE, true)
+        set(value) = sharedPreferences.edit {
+            putBoolean(KEY_LIBRARY_FOLLOWED_ACTIVE, value)
+        }
+
+    override fun observeLibraryFollowedActive(): Flow<Boolean> {
+        return createPreferenceFlow(KEY_LIBRARY_FOLLOWED_ACTIVE) {
+            libraryFollowedActive
+        }
     }
+
+    override var libraryWatchedActive: Boolean
+        get() = sharedPreferences.getBoolean(KEY_LIBRARY_WATCHED_ACTIVE, true)
+        set(value) = sharedPreferences.edit {
+            putBoolean(KEY_LIBRARY_WATCHED_ACTIVE, value)
+        }
+
+    override fun observeLibraryWatchedActive(): Flow<Boolean> {
+        return createPreferenceFlow(KEY_LIBRARY_WATCHED_ACTIVE) {
+            libraryWatchedActive
+        }
+    }
+
+    private inline fun <T> createPreferenceFlow(
+        key: String,
+        crossinline getValue: () -> T,
+    ): Flow<T> = preferenceKeyChangedFlow
+        // Emit on start so that we always send the initial value
+        .onStart { emit(key) }
+        .filter { it == key }
+        .map { getValue() }
+        .distinctUntilChanged()
 
     private val Theme.storageKey: String
         get() = when (this) {
