@@ -16,9 +16,11 @@
 
 package app.tivi.common.compose.ui
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,18 +49,26 @@ fun SortChip(
         var expanded by remember { mutableStateOf(false) }
 
         FilterChip(
-            selected = false,
+            selected = true,
             onClick = { expanded = true },
             label = {
                 Text(
                     text = stringResource(currentSortOption.labelResId),
+                    modifier = Modifier.animateContentSize(),
                 )
             },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Sort,
                     contentDescription = "",
-                    modifier = Modifier.size(14.dp),
+                    modifier = Modifier.size(16.dp),
+                )
+            },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null, // decorative
+                    modifier = Modifier.size(16.dp),
                 )
             },
         )

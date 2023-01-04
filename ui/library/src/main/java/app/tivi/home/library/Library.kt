@@ -18,16 +18,17 @@
 
 package app.tivi.home.library
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -35,10 +36,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
@@ -50,9 +51,10 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -93,7 +95,6 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.LibraryShow
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
 fun Library(
@@ -204,6 +205,8 @@ internal fun Library(
             val bodyMargin = Layout.bodyMargin
             val gutter = Layout.gutter
 
+            var filterExpanded by remember { mutableStateOf(false) }
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns / 4),
                 contentPadding = paddingValues + PaddingValues(
@@ -219,47 +222,39 @@ internal fun Library(
                     .fillMaxHeight(),
             ) {
                 fullSpanItem {
-                    FlowRow(
-                        mainAxisSpacing = 4.dp,
-                        crossAxisSpacing = 4.dp,
+                    var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+                        mutableStateOf(TextFieldValue(state.filter ?: ""))
+                    }
+
+                    FilterSortPanel(
+                        filterIcon = {
+                            IconButton(onClick = { filterExpanded = true }) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = null, // FIXME
+                                )
+                            }
+                        },
+                        filterTextField = {
+                            SearchTextField(
+                                value = filter,
+                                onValueChange = { value ->
+                                    filter = value
+                                    onFilterChanged(value.text)
+                                },
+                                hint = stringResource(UiR.string.filter_shows, list.itemCount),
+                                modifier = Modifier.fillMaxWidth(),
+                                showClearButton = true,
+                                onCleared = {
+                                    filter = TextFieldValue()
+                                    onFilterChanged("")
+                                    filterExpanded = false
+                                },
+                            )
+                        },
+                        filterExpanded = filterExpanded,
                         modifier = Modifier.padding(vertical = 8.dp),
                     ) {
-                        var filterExpanded by remember { mutableStateOf(false) }
-
-                        var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-                            mutableStateOf(TextFieldValue())
-                        }
-
-                        AnimatedContent(
-                            targetState = filterExpanded,
-                        ) { state ->
-                            if (state) {
-                                SearchTextField(
-                                    value = filter,
-                                    onValueChange = { value ->
-                                        filter = value
-                                        onFilterChanged(value.text)
-                                    },
-                                    hint = stringResource(UiR.string.filter_shows, list.itemCount),
-                                    modifier = Modifier.fillMaxWidth(),
-                                    showClearButton = true,
-                                    onCleared = {
-                                        filter = TextFieldValue()
-                                        onFilterChanged("")
-                                        filterExpanded = false
-                                    },
-                                )
-                            } else {
-                                OutlinedButton(onClick = { filterExpanded = true }) {
-                                    Image(
-                                        imageVector = Icons.Default.Search,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(14.dp),
-                                    )
-                                }
-                            }
-                        }
-
                         FilterChip(
                             selected = state.followedShowsIncluded,
                             onClick = onToggleIncludeFollowedShows,
@@ -308,6 +303,33 @@ internal fun Library(
                     .padding(paddingValues),
                 scale = true,
             )
+        }
+    }
+}
+
+@Composable
+private fun FilterSortPanel(
+    filterExpanded: Boolean,
+    filterIcon: @Composable () -> Unit,
+    filterTextField: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit,
+) {
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            AnimatedVisibility(!filterExpanded) {
+                filterIcon()
+            }
+
+            content()
+        }
+
+        AnimatedVisibility(visible = filterExpanded) {
+            filterTextField()
         }
     }
 }
