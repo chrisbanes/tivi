@@ -34,6 +34,7 @@ import app.tivi.domain.observers.ObservePagedLibraryShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.extensions.combine
+import app.tivi.settings.TiviPreferences
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
@@ -59,6 +60,7 @@ internal class LibraryViewModel @Inject constructor(
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
+    private val preferences: TiviPreferences,
     private val logger: Logger,
 ) : ViewModel() {
     private val followedLoadingState = ObservableLoadingCounter()
@@ -76,9 +78,6 @@ internal class LibraryViewModel @Inject constructor(
     private val filter = MutableStateFlow<String?>(null)
     private val sort = MutableStateFlow(SortOption.LAST_WATCHED)
 
-    private val includeWatchedShows = MutableStateFlow(true)
-    private val includeFollowedShows = MutableStateFlow(true)
-
     val state: StateFlow<LibraryViewState> = combine(
         followedLoadingState.observable,
         watchedLoadingState.observable,
@@ -87,8 +86,8 @@ internal class LibraryViewModel @Inject constructor(
         filter,
         sort,
         uiMessageManager.message,
-        includeWatchedShows,
-        includeFollowedShows,
+        preferences.observeLibraryWatchedActive(),
+        preferences.observeLibraryFollowedActive(),
     ) { followedLoading, watchedLoading, authState, user, filter, sort, message, includeWatchedShows, includeFollowedShows ->
         LibraryViewState(
             user = user,
@@ -121,11 +120,11 @@ internal class LibraryViewModel @Inject constructor(
             .onEach { updateDataSource() }
             .launchIn(viewModelScope)
 
-        includeFollowedShows
+        preferences.observeLibraryWatchedActive()
             .onEach { updateDataSource() }
             .launchIn(viewModelScope)
 
-        includeWatchedShows
+        preferences.observeLibraryFollowedActive()
             .onEach { updateDataSource() }
             .launchIn(viewModelScope)
 
@@ -141,8 +140,8 @@ internal class LibraryViewModel @Inject constructor(
             ObservePagedLibraryShows.Parameters(
                 sort = sort.value,
                 filter = filter.value,
-                includeFollowed = includeFollowedShows.value,
-                includeWatched = includeWatchedShows.value,
+                includeFollowed = preferences.libraryFollowedActive,
+                includeWatched = preferences.libraryWatchedActive,
                 pagingConfig = PAGING_CONFIG,
             ),
         )
@@ -174,15 +173,11 @@ internal class LibraryViewModel @Inject constructor(
     }
 
     fun toggleFollowedShowsIncluded() {
-        viewModelScope.launch {
-            includeFollowedShows.emit(!includeFollowedShows.value)
-        }
+        preferences.libraryFollowedActive = !preferences.libraryFollowedActive
     }
 
     fun toggleWatchedShowsIncluded() {
-        viewModelScope.launch {
-            includeWatchedShows.emit(!includeWatchedShows.value)
-        }
+        preferences.libraryWatchedActive = !preferences.libraryWatchedActive
     }
 
     private fun refreshFollowed(fromInteraction: Boolean) {

@@ -28,6 +28,12 @@ interface TiviPreferences {
     var useLessData: Boolean
     fun observeUseLessData(): Flow<Boolean>
 
+    var libraryFollowedActive: Boolean
+    fun observeLibraryFollowedActive(): Flow<Boolean>
+
+    var libraryWatchedActive: Boolean
+    fun observeLibraryWatchedActive(): Flow<Boolean>
+
     enum class Theme {
         LIGHT,
         DARK,
