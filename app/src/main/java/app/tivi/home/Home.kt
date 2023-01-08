@@ -37,10 +37,13 @@ import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.Weekend
+import androidx.compose.material.icons.outlined.Subscriptions
 import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material.icons.outlined.Weekend
+import androidx.compose.material.icons.rounded.Subscriptions
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -205,6 +208,9 @@ private fun NavController.currentScreenAsState(): State<RootScreen> {
                 destination.hierarchy.any { it.route == RootScreen.Library.route } -> {
                     selectedItem.value = RootScreen.Library
                 }
+                destination.hierarchy.any { it.route == RootScreen.UpNext.route } -> {
+                    selectedItem.value = RootScreen.UpNext
+                }
                 destination.hierarchy.any { it.route == RootScreen.Search.route } -> {
                     selectedItem.value = RootScreen.Search
                 }
@@ -322,6 +328,12 @@ private val HomeNavigationItems = listOf(
         contentDescriptionResId = UiR.string.cd_discover_title,
         iconImageVector = Icons.Outlined.Weekend,
         selectedImageVector = Icons.Default.Weekend,
+    ),
+    HomeNavigationItem.ImageVectorIcon(
+        screen = RootScreen.UpNext,
+        labelResId = UiR.string.upnext_title,
+        contentDescriptionResId = UiR.string.cd_upnext_title,
+        iconImageVector = Icons.Default.Subscriptions,
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = RootScreen.Library,

@@ -42,6 +42,7 @@ import app.tivi.home.popular.PopularShows
 import app.tivi.home.recommended.RecommendedShows
 import app.tivi.home.search.Search
 import app.tivi.home.trending.TrendingShows
+import app.tivi.home.upnext.UpNext
 import app.tivi.showdetails.details.ShowDetails
 import app.tivi.showdetails.seasons.ShowSeasons
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -52,6 +53,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 internal sealed class RootScreen(val route: String) {
     object Discover : RootScreen("discover")
     object Library : RootScreen("library")
+    object UpNext : RootScreen("upnext")
     object Search : RootScreen("search")
 }
 
@@ -63,6 +65,7 @@ private sealed class Screen(
     object Discover : Screen("discover")
     object Trending : Screen("trending")
     object Library : Screen("library")
+    object UpNext : Screen("upnext")
     object Popular : Screen("popular")
 
     object ShowDetails : Screen("show/{showId}") {
@@ -112,6 +115,7 @@ internal fun AppNavigation(
     ) {
         addDiscoverTopLevel(navController, onOpenSettings)
         addLibraryTopLevel(navController, onOpenSettings)
+        addUpNextTopLevel(navController, onOpenSettings)
         addSearchTopLevel(navController, onOpenSettings)
     }
 }
@@ -150,6 +154,23 @@ private fun NavGraphBuilder.addLibraryTopLevel(
         addShowDetails(navController, RootScreen.Library)
         addShowSeasons(navController, RootScreen.Library)
         addEpisodeDetails(navController, RootScreen.Library)
+    }
+}
+
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.addUpNextTopLevel(
+    navController: NavController,
+    openSettings: () -> Unit,
+) {
+    navigation(
+        route = RootScreen.UpNext.route,
+        startDestination = Screen.UpNext.createRoute(RootScreen.UpNext),
+    ) {
+        addUpNext(navController, RootScreen.UpNext)
+        addAccount(RootScreen.UpNext, openSettings)
+        addShowDetails(navController, RootScreen.UpNext)
+        addShowSeasons(navController, RootScreen.UpNext)
+        addEpisodeDetails(navController, RootScreen.UpNext)
     }
 }
 
@@ -220,6 +241,26 @@ private fun NavGraphBuilder.addLibrary(
         debugLabel = "Library()",
     ) {
         Library(
+            openShowDetails = { showId ->
+                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
+            },
+            openUser = {
+                navController.navigate(Screen.Account.createRoute(root))
+            },
+        )
+    }
+}
+
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.addUpNext(
+    navController: NavController,
+    root: RootScreen,
+) {
+    composable(
+        route = Screen.UpNext.createRoute(root),
+        debugLabel = "UpNext()",
+    ) {
+        UpNext(
             openShowDetails = { showId ->
                 navController.navigate(Screen.ShowDetails.createRoute(root, showId))
             },

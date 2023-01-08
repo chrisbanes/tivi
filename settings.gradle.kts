@@ -63,6 +63,7 @@ include(
     ":ui:settings",
     ":ui:library",
     ":ui:account",
+    ":ui:upnext",
     ":app",
     ":benchmark",
 )

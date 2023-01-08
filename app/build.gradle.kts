@@ -175,6 +175,7 @@ dependencies {
     implementation(projects.ui.search)
     implementation(projects.ui.showseasons)
     implementation(projects.ui.settings)
+    implementation(projects.ui.upnext)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 

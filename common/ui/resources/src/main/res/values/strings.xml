@@ -49,6 +49,8 @@
     <string name="cd_watched_shows_title">@string/watched_shows_title</string>
     <string name="library_title">Library</string>
     <string name="cd_library_title">@string/library_title</string>
+    <string name="upnext_title">Up Next</string>
+    <string name="cd_upnext_title">@string/library_title</string>
 
     <string name="login">Login</string>
     <string name="refresh_credentials">Refresh credentials</string>
