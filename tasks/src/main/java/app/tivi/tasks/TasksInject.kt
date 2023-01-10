@@ -48,5 +48,5 @@ abstract class TasksModuleBinds {
 
     @Binds
     @Singleton
-    abstract fun provideTiviActions(bind: ShowTasksImpl): ShowTasks
+    abstract fun provideShowTasks(bind: ShowTasksImpl): ShowTasks
 }
