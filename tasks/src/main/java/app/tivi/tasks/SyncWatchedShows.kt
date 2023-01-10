@@ -19,35 +19,27 @@ package app.tivi.tasks
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
-import androidx.work.Data
 import androidx.work.WorkerParameters
-import app.tivi.domain.interactors.UpdateShowSeasons
+import app.tivi.domain.interactors.UpdateWatchedShows
 import app.tivi.util.Logger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-class SyncShowWatchedProgress @AssistedInject constructor(
+class SyncWatchedShows @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val updateShowSeasons: UpdateShowSeasons,
+    private val updateWatchedShows: UpdateWatchedShows,
     private val logger: Logger,
 ) : CoroutineWorker(context, params) {
     companion object {
-        const val TAG = "sync-show-watched-episodes"
-        private const val PARAM_SHOW_ID = "show-id"
-
-        fun buildData(showId: Long) = Data.Builder()
-            .putLong(PARAM_SHOW_ID, showId)
-            .build()
+        internal const val TAG = "sync-watched-shows"
+        internal const val NIGHTLY_SYNC_TAG = "night-sync-watched-shows"
     }
 
     override suspend fun doWork(): Result {
-        val showId = inputData.getLong(PARAM_SHOW_ID, -1)
-        logger.d("$TAG worker running for show id: $showId")
-
-        updateShowSeasons.executeSync(UpdateShowSeasons.Params(showId, true))
-
+        logger.d("$tags worker running")
+        updateWatchedShows.executeSync(UpdateWatchedShows.Params(true))
         return Result.success()
     }
 }

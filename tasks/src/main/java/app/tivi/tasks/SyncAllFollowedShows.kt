@@ -34,8 +34,8 @@ class SyncAllFollowedShows @AssistedInject constructor(
     private val logger: Logger,
 ) : CoroutineWorker(context, params) {
     companion object {
-        const val TAG = "sync-all-followed-shows"
-        const val NIGHTLY_SYNC_TAG = "night-sync-all-followed-shows"
+        internal const val TAG = "sync-all-followed-shows"
+        internal const val NIGHTLY_SYNC_TAG = "night-sync-all-followed-shows"
     }
 
     override suspend fun doWork(): Result {

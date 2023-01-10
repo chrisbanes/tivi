@@ -89,7 +89,8 @@ class TraktManager @Inject constructor(
             authStore.save(newState)
         }
         // Now trigger a sync of all shows
-        showTasks.syncFollowedShowsWhenIdle()
+        showTasks.syncWatchedShows()
+        showTasks.syncFollowedShows()
     }
 
     companion object {

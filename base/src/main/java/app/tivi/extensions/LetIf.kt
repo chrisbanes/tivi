@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package app.tivi.actions
+package app.tivi.extensions
 
-interface ShowTasks {
-    fun syncFollowedShows(deferUntilIdle: Boolean = false)
-    fun syncWatchedShows(deferUntilIdle: Boolean = false)
-    fun setupNightSyncs()
+inline fun <T> T.fluentIf(condition: Boolean, block: T.() -> T): T {
+    return if (condition) block() else this
 }

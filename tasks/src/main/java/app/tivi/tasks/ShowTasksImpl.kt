@@ -23,54 +23,61 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import app.tivi.actions.ShowTasks
+import app.tivi.extensions.fluentIf
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ShowTasksImpl @Inject constructor(
     private val workManager: WorkManager,
 ) : ShowTasks {
-    override fun syncShowWatchedEpisodes(showId: Long) {
-        val request = OneTimeWorkRequestBuilder<SyncShowWatchedProgress>()
-            .addTag(SyncShowWatchedProgress.TAG)
-            .setInputData(SyncShowWatchedProgress.buildData(showId))
+    override fun syncFollowedShows(deferUntilIdle: Boolean) {
+        val request = OneTimeWorkRequestBuilder<SyncAllFollowedShows>()
+            .addTag(SyncAllFollowedShows.TAG)
+            .fluentIf(deferUntilIdle) {
+                setConstraints(
+                    Constraints.Builder()
+                        .setRequiresDeviceIdle(true)
+                        .build(),
+                )
+            }
             .build()
         workManager.enqueue(request)
     }
 
-    override fun syncFollowedShows() {
-        val request = OneTimeWorkRequestBuilder<SyncAllFollowedShows>()
-            .addTag(SyncAllFollowedShows.TAG)
-            .build()
-        workManager.enqueue(request)
-    }
-
-    override fun syncFollowedShowsWhenIdle() {
-        val request = OneTimeWorkRequestBuilder<SyncAllFollowedShows>()
-            .addTag(SyncAllFollowedShows.TAG)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiresDeviceIdle(true)
-                    .build(),
-            )
+    override fun syncWatchedShows(deferUntilIdle: Boolean) {
+        val request = OneTimeWorkRequestBuilder<SyncWatchedShows>()
+            .addTag(SyncWatchedShows.TAG)
+            .fluentIf(deferUntilIdle) {
+                setConstraints(
+                    Constraints.Builder()
+                        .setRequiresDeviceIdle(true)
+                        .build(),
+                )
+            }
             .build()
         workManager.enqueue(request)
     }
 
     override fun setupNightSyncs() {
-        val request = PeriodicWorkRequestBuilder<SyncAllFollowedShows>(
-            repeatInterval = 24,
-            repeatIntervalTimeUnit = TimeUnit.HOURS,
-        ).setConstraints(
-            Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.UNMETERED)
-                .setRequiresCharging(true)
-                .build(),
-        ).build()
+        val nightlyConstraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.UNMETERED)
+            .setRequiresCharging(true)
+            .build()
 
         workManager.enqueueUniquePeriodicWork(
             SyncAllFollowedShows.NIGHTLY_SYNC_TAG,
             ExistingPeriodicWorkPolicy.KEEP,
-            request,
+            PeriodicWorkRequestBuilder<SyncAllFollowedShows>(24, TimeUnit.HOURS)
+                .setConstraints(nightlyConstraints)
+                .build(),
+        )
+
+        workManager.enqueueUniquePeriodicWork(
+            SyncWatchedShows.NIGHTLY_SYNC_TAG,
+            ExistingPeriodicWorkPolicy.KEEP,
+            PeriodicWorkRequestBuilder<SyncWatchedShows>(24, TimeUnit.HOURS)
+                .setConstraints(nightlyConstraints)
+                .build(),
         )
     }
 }
