@@ -39,11 +39,13 @@ internal class TiviAnalytics @Inject constructor(
                 when {
                     arguments is Bundle -> {
                         for (key in arguments.keySet()) {
-                            val value = arguments.getString(key)
-                            // We don't want to include the label or route twice
-                            if (value == label || value == route) continue
+                            @Suppress("DEPRECATION")
+                            val value = arguments.get(key)
 
-                            param("screen_arg_$key", value ?: "")
+                            // We don't want to include the label or route twice
+                            if (value != label || value != route) {
+                                param("screen_arg_$key", value.toString())
+                            }
                         }
                     }
                     arguments != null -> param("screen_arg", arguments.toString())
