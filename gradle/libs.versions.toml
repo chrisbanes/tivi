@@ -115,9 +115,11 @@ debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-
 
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
 hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
-hilt-compose = "androidx.hilt:hilt-navigation-compose:1.0.0"
-hilt-work = "androidx.hilt:hilt-work:1.0.0"
 hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "dagger" }
+
+androidx-hilt-compiler = "androidx.hilt:hilt-compiler:1.0.0"
+androidx-hilt-navigationcompose = "androidx.hilt:hilt-navigation-compose:1.0.0"
+androidx-hilt-work = "androidx.hilt:hilt-work:1.0.0"
 
 junit = "junit:junit:4.13.2"
 

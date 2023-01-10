@@ -40,6 +40,6 @@ dependencies {
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.hilt.work)
-    kapt(libs.hilt.compiler)
+    api(libs.androidx.hilt.work)
+    kapt(libs.androidx.hilt.compiler)
 }
