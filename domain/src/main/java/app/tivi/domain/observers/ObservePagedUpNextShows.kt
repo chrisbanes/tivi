@@ -52,7 +52,7 @@ class ObservePagedUpNextShows @Inject constructor(
                                 episode = seasonEpisode.episode!!,
                                 season = seasonEpisode.season!!,
                                 show = entry.show,
-                                images = entry.images
+                                images = entry.images,
                             )
                         }
                 }
