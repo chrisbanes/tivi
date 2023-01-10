@@ -18,6 +18,7 @@
 
 package app.tivi.home.upnext
 
+import app.tivi.common.ui.resources.R as UiR
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -53,7 +54,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -80,7 +80,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
-import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
@@ -90,13 +89,11 @@ import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.resultentities.LibraryShow
+import app.tivi.data.entities.TmdbImageEntity
+import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.trakt.TraktAuthState
-import org.threeten.bp.OffsetDateTime
 
 @Composable
 fun UpNext(
@@ -137,7 +134,7 @@ internal fun UpNext(
 @Composable
 internal fun UpNext(
     state: UpNextViewState,
-    list: LazyPagingItems<LibraryShow>,
+    list: LazyPagingItems<EpisodeWithSeasonWithShow>,
     openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
     onToggleIncludeFollowedShows: () -> Unit,
@@ -285,9 +282,6 @@ internal fun UpNext(
                         UpNextItem(
                             show = entry.show,
                             poster = entry.poster,
-                            watchedEpisodeCount = entry.stats?.watchedEpisodeCount,
-                            totalEpisodeCount = entry.stats?.episodeCount,
-                            lastWatchedDate = entry.watchedEntry?.lastWatched,
                             onClick = { openShowDetails(entry.show.id) },
                             contentPadding = PaddingValues(8.dp),
                             modifier = Modifier
@@ -340,10 +334,7 @@ private fun FilterSortPanel(
 @Composable
 private fun UpNextItem(
     show: TiviShow,
-    poster: ShowTmdbImage?,
-    watchedEpisodeCount: Int?,
-    totalEpisodeCount: Int?,
-    lastWatchedDate: OffsetDateTime?,
+    poster: TmdbImageEntity?,
     onClick: () -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -371,36 +362,6 @@ private fun UpNextItem(
                 text = textCreator.showTitle(show = show).toString(),
                 style = MaterialTheme.typography.titleMedium,
             )
-
-            Spacer(Modifier.height(4.dp))
-
-            if (watchedEpisodeCount != null && totalEpisodeCount != null) {
-                LinearProgressIndicator(
-                    progress = when {
-                        totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
-                        else -> 0f
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                Spacer(Modifier.height(4.dp))
-
-                Text(
-                    text = textCreator.followedShowEpisodeWatchStatus(
-                        episodeCount = totalEpisodeCount,
-                        watchedEpisodeCount = watchedEpisodeCount,
-                    ).toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            } else if (lastWatchedDate != null) {
-                Text(
-                    text = stringResource(
-                        UiR.string.library_last_watched,
-                        LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatchedDate),
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
 
             Spacer(Modifier.height(8.dp))
         }

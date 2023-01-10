@@ -22,15 +22,12 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import app.tivi.api.UiMessageManager
-import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
-import app.tivi.data.resultentities.LibraryShow
+import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.GetTraktAuthState
-import app.tivi.domain.interactors.UpdateFollowedShows
-import app.tivi.domain.interactors.UpdateWatchedShows
-import app.tivi.domain.observers.ObservePagedLibraryShows
+import app.tivi.domain.observers.ObservePagedUpNextShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.extensions.combine
@@ -38,7 +35,6 @@ import app.tivi.settings.TiviPreferences
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -53,9 +49,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 internal class UpNextViewModel @Inject constructor(
-    private val updateFollowedShows: UpdateFollowedShows,
-    private val updateWatchedShows: UpdateWatchedShows,
-    private val observePagedLibraryShows: ObservePagedLibraryShows,
+    private val observePagedUpNextShows: ObservePagedUpNextShows,
     observeTraktAuthState: ObserveTraktAuthState,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     observeUserDetails: ObserveUserDetails,
@@ -67,8 +61,8 @@ internal class UpNextViewModel @Inject constructor(
     private val watchedLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
-    val pagedList: Flow<PagingData<LibraryShow>> =
-        observePagedLibraryShows.flow.cachedIn(viewModelScope)
+    val pagedList: Flow<PagingData<EpisodeWithSeasonWithShow>> =
+        observePagedUpNextShows.flow.cachedIn(viewModelScope)
 
     private val availableSorts = listOf(
         SortOption.LAST_WATCHED,
@@ -136,26 +130,19 @@ internal class UpNextViewModel @Inject constructor(
     }
 
     private fun updateDataSource() {
-        observePagedLibraryShows(
-            ObservePagedLibraryShows.Parameters(
+        observePagedUpNextShows(
+            ObservePagedUpNextShows.Parameters(
                 sort = sort.value,
                 filter = filter.value,
-                includeFollowed = preferences.libraryFollowedActive,
-                includeWatched = preferences.libraryWatchedActive,
                 pagingConfig = PAGING_CONFIG,
-            ),
+            )
         )
     }
 
-    fun refresh(fromUser: Boolean = true) {
+    fun refresh(@Suppress("UNUSED_PARAMETER") fromUser: Boolean = true) {
         viewModelScope.launch {
             if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
-                refreshWatched(fromUser)
-            }
-        }
-        viewModelScope.launch {
-            if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
-                refreshWatched(fromUser)
+                //refreshWatched(fromUser)
             }
         }
     }
@@ -180,19 +167,11 @@ internal class UpNextViewModel @Inject constructor(
         preferences.libraryWatchedActive = !preferences.libraryWatchedActive
     }
 
-    private fun refreshFollowed(fromInteraction: Boolean) {
+    private fun refreshFollowed(@Suppress("UNUSED_PARAMETER") fromInteraction: Boolean) {
         viewModelScope.launch {
-            updateFollowedShows(
-                UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK),
-            ).collectStatus(followedLoadingState, logger, uiMessageManager)
-        }
-    }
-
-    private fun refreshWatched(fromUser: Boolean) {
-        viewModelScope.launch {
-            updateWatchedShows(
-                UpdateWatchedShows.Params(forceRefresh = fromUser),
-            ).collectStatus(watchedLoadingState, logger, uiMessageManager)
+//            updateFollowedShows(
+//                UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK),
+//            ).collectStatus(followedLoadingState, logger, uiMessageManager)
         }
     }
 
