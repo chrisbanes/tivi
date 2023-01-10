@@ -207,10 +207,7 @@ dependencies {
     implementation(libs.okhttp.loggingInterceptor)
 
     implementation(libs.hilt.library)
-    implementation(libs.hilt.compose)
-    kapt(libs.hilt.compiler)
-
-    implementation(libs.hilt.work)
+    implementation(libs.androidx.hilt.navigationcompose)
     kapt(libs.hilt.compiler)
 
     implementation(libs.google.crashlytics)

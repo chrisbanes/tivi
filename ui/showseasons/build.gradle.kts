@@ -57,7 +57,7 @@ dependencies {
     implementation(libs.accompanist.pager.pager)
     implementation(libs.accompanist.pager.indicators)
 
-    implementation(libs.hilt.compose)
+    implementation(libs.androidx.hilt.navigationcompose)
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
 }
