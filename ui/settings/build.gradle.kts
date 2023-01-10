@@ -17,6 +17,7 @@
 
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
