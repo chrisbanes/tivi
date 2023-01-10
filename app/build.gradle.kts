@@ -20,6 +20,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.cacheFixPlugin)
 }
 
 val appVersionCode = propOrDef("TIVI_VERSIONCODE", "17").toInt()
