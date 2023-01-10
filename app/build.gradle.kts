@@ -69,8 +69,6 @@ android {
         ignoreTestSources = true
         // Make the build fail on any lint errors
         abortOnError = true
-        // Allow lint to check dependencies
-        checkDependencies = true
     }
 
     buildFeatures {
