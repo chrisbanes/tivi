@@ -150,7 +150,7 @@ internal class LibraryViewModel @Inject constructor(
     fun refresh(fromUser: Boolean = true) {
         viewModelScope.launch {
             if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
-                refreshWatched(fromUser)
+                refreshFollowed(fromUser)
             }
         }
         viewModelScope.launch {
