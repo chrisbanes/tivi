@@ -41,6 +41,9 @@ allprojects {
         google()
         mavenCentral()
 
+        // Need to use the 'dev' Compose Compiler for Kotlin 1.8.0 support
+        maven("https://androidx.dev/storage/compose-compiler/repository/")
+
         // Jetpack Compose SNAPSHOTs if needed
         // maven("https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/")
 
@@ -88,7 +91,6 @@ allprojects {
             freeCompilerArgs += listOf(
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=kotlinx.coroutines.FlowPreview",
-                "-opt-in=kotlin.Experimental",
             )
 
             if (project.hasProperty("tivi.enableComposeCompilerReports")) {
