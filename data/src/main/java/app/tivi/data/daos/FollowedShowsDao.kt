@@ -80,7 +80,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?>
 
     @Transaction
-    @Query("""
+    @Query(
+        """
         SELECT myshows_entries.* FROM myshows_entries
             INNER JOIN seasons AS s ON s.show_id = myshows_entries.show_id
 			INNER JOIN followed_next_to_watch AS next ON next.id = myshows_entries.id
@@ -89,7 +90,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             WHERE s.number != ${Season.NUMBER_SPECIALS} AND s.ignored = 0
             GROUP BY myshows_entries.id
 			ORDER BY datetime(ew.watched_at) DESC
-    """)
+    """,
+    )
     abstract fun pagedToWatchShows(): PagingSource<Int, FollowedShowEntryWithShow>
 
     @Query("DELETE FROM myshows_entries")
@@ -148,7 +150,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 SUM(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE 0 END) = COUNT(watched_at) ASC,
                 /* latest event */
                 MAX(
-                    MAX(datetime(coalesce(next_ep_to_watch_air_date, 0))), /* next episode to watch */
+                    MAX(next_ep_to_watch_abs_number), /* next episode to watch */
                     MAX(datetime(coalesce(watched_at, 0))), /* last watch */
                     MAX(datetime(coalesce(followed_at, 0))) /* when followed */
                 ) DESC
@@ -170,7 +172,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 SUM(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE 0 END) = COUNT(watched_at) ASC,
                 /* latest event */
                 MAX(
-                    MAX(datetime(coalesce(next_ep_to_watch_air_date, 0))), /* next episode to watch */
+                    MAX(next_ep_to_watch_abs_number), /* next episode to watch */
                     MAX(datetime(coalesce(watched_at, 0))), /* last watch */
                     MAX(datetime(coalesce(followed_at, 0))) /* when followed */
                 ) DESC

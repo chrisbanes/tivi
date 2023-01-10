@@ -135,14 +135,14 @@ internal class UpNextViewModel @Inject constructor(
                 sort = sort.value,
                 filter = filter.value,
                 pagingConfig = PAGING_CONFIG,
-            )
+            ),
         )
     }
 
     fun refresh(@Suppress("UNUSED_PARAMETER") fromUser: Boolean = true) {
         viewModelScope.launch {
             if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
-                //refreshWatched(fromUser)
+                // refreshWatched(fromUser)
             }
         }
     }

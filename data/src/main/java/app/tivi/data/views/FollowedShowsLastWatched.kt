@@ -18,28 +18,28 @@ package app.tivi.data.views
 
 import androidx.room.DatabaseView
 import app.tivi.data.entities.Season
-import org.threeten.bp.OffsetDateTime
 
 @DatabaseView(
-    value =
-    """
-SELECT
-  fs.id,
-  MAX(datetime(eps.first_aired)) as last_watched_air_date
-FROM
-  myshows_entries as fs
-  INNER JOIN seasons AS s ON fs.show_id = s.show_id
-  INNER JOIN episodes AS eps ON eps.season_id = s.id
-  INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-WHERE
-  s.number != ${Season.NUMBER_SPECIALS}
-  AND s.ignored = 0
-GROUP BY
-  fs.id
-""",
-    viewName = "followed_last_watched_airdate",
+    viewName = "followed_last_watched",
+    value = """
+        SELECT
+          fs.id,
+          s.id AS season_id,
+          eps.id AS episode_id,
+          MAX((1000 * s.number) + eps.number) AS last_watched_abs_number
+        FROM myshows_entries as fs
+        INNER JOIN seasons AS s ON fs.show_id = s.show_id
+        INNER JOIN episodes AS eps ON eps.season_id = s.id
+        INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+        WHERE
+          s.number != ${Season.NUMBER_SPECIALS}
+          AND s.ignored = 0
+        GROUP BY fs.id
+        ORDER BY ew.watched_at DESC
+    """,
 )
 data class FollowedShowsLastWatched(
     val id: Long,
-    val lastWatchedEpisodeAirDate: OffsetDateTime?,
+    val seasonId: Long,
+    val episodeId: Long,
 )

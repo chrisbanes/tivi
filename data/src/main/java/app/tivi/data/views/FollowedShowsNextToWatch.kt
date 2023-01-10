@@ -18,32 +18,32 @@ package app.tivi.data.views
 
 import androidx.room.DatabaseView
 import app.tivi.data.entities.Season
-import org.threeten.bp.OffsetDateTime
 
 @DatabaseView(
-    value =
-    """
-SELECT
-  fs.id,
-  MIN(datetime(eps.first_aired)) AS next_ep_to_watch_air_date
-FROM
-  myshows_entries as fs
-  INNER JOIN seasons AS s ON fs.show_id = s.show_id
-  INNER JOIN episodes AS eps ON eps.season_id = s.id
-  LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-  INNER JOIN followed_last_watched_airdate AS lw ON lw.id = fs.id
-WHERE
-  s.number != ${Season.NUMBER_SPECIALS}
-  AND s.ignored = 0
-  AND watched_at IS NULL
-  AND datetime(first_aired) < datetime('now')
-  AND datetime(first_aired) > datetime(last_watched_air_date)
-GROUP BY
-  fs.id
-""",
     viewName = "followed_next_to_watch",
+    value = """
+        SELECT
+          fs.id,
+          s.id AS season_id,
+          eps.id AS episode_id,
+          MIN((1000 * s.number) + eps.number) AS next_ep_to_watch_abs_number
+        FROM
+          myshows_entries as fs
+          INNER JOIN seasons AS s ON fs.show_id = s.show_id
+          INNER JOIN episodes AS eps ON eps.season_id = s.id
+          LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+          LEFT JOIN followed_last_watched AS lw ON lw.id = fs.id
+        WHERE
+          s.number != ${Season.NUMBER_SPECIALS}
+          AND s.ignored = 0
+          AND watched_at IS NULL
+          AND datetime(first_aired) < datetime('now')
+          AND ((1000 * s.number) + eps.number) > coalesce(last_watched_abs_number, 0)
+        GROUP BY fs.id
+    """,
 )
 data class FollowedShowsNextToWatch(
     val id: Long,
-    val nextEpisodeToWatchAirDate: OffsetDateTime?,
+    val seasonId: Long,
+    val episodeId: Long,
 )
