@@ -81,12 +81,12 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?>
 
     @Transaction
-    @Query(
-        """
-        SELECT * FROM followed_next_to_watch
-        """,
-    )
+    @Query("SELECT * FROM followed_next_to_watch")
     abstract fun pagedUpNextShows(): PagingSource<Int, UpNextEntry>
+
+    @Transaction
+    @Query("SELECT * FROM followed_next_to_watch")
+    abstract suspend fun getUpNextShows(): List<UpNextEntry>
 
     @Query("DELETE FROM myshows_entries")
     abstract override suspend fun deleteAll()

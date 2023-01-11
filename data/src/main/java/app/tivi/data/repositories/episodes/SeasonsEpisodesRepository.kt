@@ -40,6 +40,7 @@ import org.threeten.bp.OffsetDateTime
 class SeasonsEpisodesRepository @Inject constructor(
     private val episodeWatchStore: EpisodeWatchStore,
     private val episodeWatchLastLastRequestStore: EpisodeWatchLastRequestStore,
+    private val episodeLastRequestStore: EpisodeLastRequestStore,
     private val seasonsEpisodesStore: SeasonsEpisodesStore,
     private val seasonsLastRequestStore: SeasonsLastRequestStore,
     private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
@@ -92,6 +93,13 @@ class SeasonsEpisodesRepository @Inject constructor(
         }.also { seasonsEpisodesStore.save(showId, it) }
 
         seasonsLastRequestStore.updateLastRequest(showId)
+    }
+
+    suspend fun needEpisodeUpdate(
+        episodeId: Long,
+        expiry: Instant = instantInPast(days = 28),
+    ): Boolean {
+        return episodeLastRequestStore.isRequestBefore(episodeId, expiry)
     }
 
     suspend fun updateEpisode(episodeId: Long) = coroutineScope {

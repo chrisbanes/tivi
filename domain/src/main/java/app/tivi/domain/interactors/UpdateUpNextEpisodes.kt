@@ -16,24 +16,39 @@
 
 package app.tivi.domain.interactors
 
+import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.entities.RefreshType
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import kotlinx.coroutines.withContext
 
-class UpdateEpisodeDetails @Inject constructor(
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+class UpdateUpNextEpisodes @Inject constructor(
+    private val followedShowsDao: FollowedShowsDao,
+    private val seasonEpisodeRepository: SeasonsEpisodesRepository,
+    private val updateFollowedShows: UpdateFollowedShows,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<UpdateEpisodeDetails.Params>() {
+) : Interactor<UpdateUpNextEpisodes.Params>() {
 
     override suspend fun doWork(params: Params) {
+        updateFollowedShows.executeSync(
+            UpdateFollowedShows.Params(
+                forceRefresh = params.forceRefresh,
+                type = RefreshType.QUICK,
+            ),
+        )
+
         withContext(dispatchers.io) {
-            if (params.forceLoad || seasonsEpisodesRepository.needEpisodeUpdate(params.episodeId)) {
-                seasonsEpisodesRepository.updateEpisode(params.episodeId)
+            for (entry in followedShowsDao.getUpNextShows()) {
+                if (params.forceRefresh ||
+                    seasonEpisodeRepository.needEpisodeUpdate(entry.episode.id)
+                ) {
+                    seasonEpisodeRepository.updateEpisode(entry.episode.id)
+                }
             }
         }
     }
 
-    data class Params(val episodeId: Long, val forceLoad: Boolean)
+    data class Params(val forceRefresh: Boolean)
 }
