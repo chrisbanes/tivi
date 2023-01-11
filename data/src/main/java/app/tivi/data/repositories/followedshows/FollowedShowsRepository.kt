@@ -16,38 +16,62 @@
 
 package app.tivi.data.repositories.followedshows
 
+import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.instantInPast
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.ItemSyncerResult
+import app.tivi.data.syncers.syncerForEntity
+import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 
 @Singleton
 class FollowedShowsRepository @Inject constructor(
-    private val followedShowsStore: FollowedShowsStore,
+    private val followedShowsDao: FollowedShowsDao,
     private val followedShowsLastRequestStore: FollowedShowsLastRequestStore,
     private val dataSource: TraktFollowedShowsDataSource,
     private val traktAuthState: Provider<TraktAuthState>,
     private val logger: Logger,
     private val showDao: TiviShowDao,
 ) {
-    fun observeShowViewStats(showId: Long) = followedShowsStore.observeShowViewStats(showId)
+    private var traktListId: Int? = null
 
-    fun observeIsShowFollowed(showId: Long) = followedShowsStore.observeIsShowFollowed(showId)
+    private val syncer = syncerForEntity(
+        entityDao = followedShowsDao,
+        entityToKey = { it.traktId },
+        mapper = { entity, id -> entity.copy(id = id ?: 0) },
+        logger = logger,
+    )
 
-    fun observeNextShowToWatch() = followedShowsStore.observeNextShowToWatch()
+    fun observeShowViewStats(showId: Long): Flow<FollowedShowsWatchStats?> {
+        return followedShowsDao.entryShowViewStats(showId)
+    }
 
-    suspend fun isShowFollowed(showId: Long) = followedShowsStore.isShowFollowed(showId)
+    fun observeIsShowFollowed(showId: Long): Flow<Boolean> {
+        return followedShowsDao.entryCountWithShowIdNotPendingDeleteObservable(showId)
+            .map { it > 0 }
+    }
+
+    fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?> {
+        return followedShowsDao.observeNextShowToWatch()
+    }
+
+    suspend fun isShowFollowed(showId: Long): Boolean {
+        return followedShowsDao.entryCountWithShowId(showId) > 0
+    }
 
     suspend fun getFollowedShows(): List<FollowedShowEntry> {
-        return followedShowsStore.getEntries()
+        return followedShowsDao.entries()
     }
 
     suspend fun needFollowedShowsSync(expiry: Instant = instantInPast(hours = 1)): Boolean {
@@ -55,7 +79,7 @@ class FollowedShowsRepository @Inject constructor(
     }
 
     suspend fun addFollowedShow(showId: Long) {
-        val entry = followedShowsStore.getEntryForShowId(showId)
+        val entry = followedShowsDao.entryWithShowId(showId)
 
         logger.d("addFollowedShow. Current entry: %s", entry)
 
@@ -67,7 +91,7 @@ class FollowedShowsRepository @Inject constructor(
                 followedAt = entry?.followedAt ?: OffsetDateTime.now(),
                 pendingAction = PendingAction.UPLOAD,
             )
-            val newEntryId = followedShowsStore.save(newEntry)
+            val newEntryId = followedShowsDao.insertOrUpdate(newEntry)
 
             logger.v("addFollowedShow. Entry saved with ID: %s - %s", newEntryId, newEntry)
         }
@@ -75,10 +99,9 @@ class FollowedShowsRepository @Inject constructor(
 
     suspend fun removeFollowedShow(showId: Long) {
         // Update the followed show to be deleted
-        val entry = followedShowsStore.getEntryForShowId(showId)
-        if (entry != null) {
+        followedShowsDao.entryWithShowId(showId)?.also {
             // Mark the show as pending deletion
-            followedShowsStore.save(entry.copy(pendingAction = PendingAction.DELETE))
+            followedShowsDao.insertOrUpdate(it.copy(pendingAction = PendingAction.DELETE))
         }
     }
 
@@ -111,12 +134,12 @@ class FollowedShowsRepository @Inject constructor(
             entry.copy(showId = showId)
         }.let { entries ->
             // Save the show entries
-            followedShowsStore.sync(entries)
+            syncer.sync(followedShowsDao.entries(), entries)
         }
     }
 
     private suspend fun processPendingAdditions(listId: Int?) {
-        val pending = followedShowsStore.getEntriesWithAddAction()
+        val pending = followedShowsDao.entriesWithSendPendingActions()
         logger.d("processPendingAdditions. listId: %s, Entries: %s", listId, pending)
 
         if (pending.isEmpty()) {
@@ -131,15 +154,21 @@ class FollowedShowsRepository @Inject constructor(
             logger.v("processPendingAdditions. Trakt response: %s", response)
 
             // Now update the database
-            followedShowsStore.updateEntriesWithAction(pending.map { it.id }, PendingAction.NOTHING)
+            followedShowsDao.updateEntriesToPendingAction(
+                pending.map { it.id },
+                PendingAction.NOTHING,
+            )
         } else {
             // We're not logged in, so just update the database
-            followedShowsStore.updateEntriesWithAction(pending.map { it.id }, PendingAction.NOTHING)
+            followedShowsDao.updateEntriesToPendingAction(
+                pending.map { it.id },
+                PendingAction.NOTHING,
+            )
         }
     }
 
     private suspend fun processPendingDelete(listId: Int?) {
-        val pending = followedShowsStore.getEntriesWithDeleteAction()
+        val pending = followedShowsDao.entriesWithDeletePendingActions()
         logger.d("processPendingDelete. listId: %s, Entries: %s", listId, pending)
 
         if (pending.isEmpty()) {
@@ -154,21 +183,21 @@ class FollowedShowsRepository @Inject constructor(
             logger.v("processPendingDelete. Trakt response: %s", response)
 
             // Now update the database
-            followedShowsStore.deleteEntriesInIds(pending.map { it.id })
+            followedShowsDao.deleteWithIds(pending.map { it.id })
         } else {
             // We're not logged in, so just update the database
-            followedShowsStore.deleteEntriesInIds(pending.map { it.id })
+            followedShowsDao.deleteWithIds(pending.map { it.id })
         }
     }
 
     private suspend fun getFollowedTraktListId(): Int? {
-        if (followedShowsStore.traktListId == null) {
-            followedShowsStore.traktListId = try {
+        if (traktListId == null) {
+            traktListId = try {
                 dataSource.getFollowedListId().ids?.trakt
             } catch (e: Exception) {
                 null
             }
         }
-        return followedShowsStore.traktListId
+        return traktListId
     }
 }
