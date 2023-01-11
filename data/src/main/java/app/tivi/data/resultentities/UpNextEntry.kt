@@ -21,10 +21,7 @@ import androidx.room.Ignore
 import androidx.room.Relation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
-import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.findHighestRatedBackdrop
-import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.views.FollowedShowsNextToWatch
 import app.tivi.extensions.unsafeLazy
 
@@ -50,15 +47,6 @@ class UpNextEntry {
     @delegate:Ignore
     val episode: Episode by unsafeLazy { _episode.first() }
 
-    @Relation(parentColumn = "show_id", entityColumn = "show_id")
-    lateinit var _images: List<ShowTmdbImage>
-
-    @delegate:Ignore
-    val backdrop: ShowTmdbImage? by unsafeLazy { _images.findHighestRatedBackdrop() }
-
-    @delegate:Ignore
-    val poster: ShowTmdbImage? by unsafeLazy { _images.findHighestRatedPoster() }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -69,7 +57,6 @@ class UpNextEntry {
         if (_show != other._show) return false
         if (_season != other._season) return false
         if (_episode != other._episode) return false
-        if (_images != other._images) return false
 
         return true
     }
@@ -79,7 +66,6 @@ class UpNextEntry {
         result = 31 * result + _show.hashCode()
         result = 31 * result + _season.hashCode()
         result = 31 * result + _episode.hashCode()
-        result = 31 * result + _images.hashCode()
         return result
     }
 }

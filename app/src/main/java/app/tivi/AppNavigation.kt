@@ -211,23 +211,29 @@ private fun NavGraphBuilder.addDiscover(
                 navController.navigate(Screen.RecommendedShows.createRoute(root))
             },
             openShowDetails = { showId, seasonId, episodeId ->
-                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
-
-                // If we have an season id, we also open that
-                if (seasonId != null) {
-                    navController.navigate(
-                        Screen.ShowSeasons.createRoute(root, showId, seasonId),
-                    )
-                }
-                // If we have an episodeId, we also open that
-                if (episodeId != null) {
-                    navController.navigate(Screen.EpisodeDetails.createRoute(root, episodeId))
-                }
+                navController.navigateToShow(root, showId, seasonId, episodeId)
             },
             openUser = {
                 navController.navigate(Screen.Account.createRoute(root))
             },
         )
+    }
+}
+
+private fun NavController.navigateToShow(
+    root: RootScreen,
+    showId: Long,
+    seasonId: Long? = null,
+    episodeId: Long? = null,
+) {
+    navigate(Screen.ShowDetails.createRoute(root, showId))
+    // If we have an season id, we also open that
+    if (seasonId != null) {
+        navigate(Screen.ShowSeasons.createRoute(root, showId, seasonId))
+    }
+    // If we have an episodeId, we also open that
+    if (episodeId != null) {
+        navigate(Screen.EpisodeDetails.createRoute(root, episodeId))
     }
 }
 
@@ -242,7 +248,7 @@ private fun NavGraphBuilder.addLibrary(
     ) {
         Library(
             openShowDetails = { showId ->
-                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
+                navController.navigateToShow(root, showId)
             },
             openUser = {
                 navController.navigate(Screen.Account.createRoute(root))
@@ -261,8 +267,8 @@ private fun NavGraphBuilder.addUpNext(
         debugLabel = "UpNext()",
     ) {
         UpNext(
-            openShowDetails = { showId ->
-                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
+            openShowDetails = { showId, seasonId, episodeId ->
+                navController.navigateToShow(root, showId, seasonId, episodeId)
             },
             openUser = {
                 navController.navigate(Screen.Account.createRoute(root))
@@ -279,7 +285,7 @@ private fun NavGraphBuilder.addSearch(
     composable(Screen.Search.createRoute(root)) {
         Search(
             openShowDetails = { showId ->
-                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
+                navController.navigateToShow(root, showId)
             },
         )
     }
@@ -300,7 +306,7 @@ private fun NavGraphBuilder.addShowDetails(
         ShowDetails(
             navigateUp = navController::navigateUp,
             openShowDetails = { showId ->
-                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
+                navController.navigateToShow(root, showId)
             },
             openEpisodeDetails = { episodeId ->
                 navController.navigate(Screen.EpisodeDetails.createRoute(root, episodeId))
@@ -345,7 +351,7 @@ private fun NavGraphBuilder.addRecommendedShows(
     ) {
         RecommendedShows(
             openShowDetails = { showId ->
-                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
+                navController.navigateToShow(root, showId)
             },
             navigateUp = navController::navigateUp,
         )
@@ -363,7 +369,7 @@ private fun NavGraphBuilder.addTrendingShows(
     ) {
         TrendingShows(
             openShowDetails = { showId ->
-                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
+                navController.navigateToShow(root, showId)
             },
             navigateUp = navController::navigateUp,
         )
@@ -381,7 +387,7 @@ private fun NavGraphBuilder.addPopularShows(
     ) {
         PopularShows(
             openShowDetails = { showId ->
-                navController.navigate(Screen.ShowDetails.createRoute(root, showId))
+                navController.navigateToShow(root, showId)
             },
             navigateUp = navController::navigateUp,
         )

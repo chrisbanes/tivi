@@ -83,13 +83,12 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.data.resultentities.UpNextEntry
 import app.tivi.trakt.TraktAuthState
 
 @Composable
 fun UpNext(
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
     openUser: () -> Unit,
 ) {
     UpNext(
@@ -102,7 +101,7 @@ fun UpNext(
 @Composable
 internal fun UpNext(
     viewModel: UpNextViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
     openUser: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
@@ -124,7 +123,7 @@ internal fun UpNext(
 internal fun UpNext(
     state: UpNextViewState,
     list: LazyPagingItems<UpNextEntry>,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
     refresh: () -> Unit,
     openUser: () -> Unit,
@@ -225,10 +224,11 @@ internal fun UpNext(
                     if (entry != null) {
                         UpNextItem(
                             show = entry.show,
-                            poster = entry.poster,
                             season = entry.season,
                             episode = entry.episode,
-                            onClick = { openShowDetails(entry.show.id) },
+                            onClick = {
+                                openShowDetails(entry.show.id, entry.season.id, entry.episode.id)
+                            },
                             contentPadding = PaddingValues(8.dp),
                             modifier = Modifier
                                 .animateItemPlacement()
@@ -253,7 +253,6 @@ internal fun UpNext(
 @Composable
 private fun UpNextItem(
     show: TiviShow,
-    @Suppress("UNUSED_PARAMETER") poster: TmdbImageEntity?,
     episode: Episode,
     season: Season,
     onClick: () -> Unit,
