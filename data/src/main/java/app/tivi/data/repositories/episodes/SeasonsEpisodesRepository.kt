@@ -16,6 +16,9 @@
 
 package app.tivi.data.repositories.episodes
 
+import app.tivi.data.DatabaseTransactionRunner
+import app.tivi.data.daos.EpisodesDao
+import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
@@ -23,16 +26,20 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.Season
 import app.tivi.data.instantInPast
+import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.data.syncers.syncerForEntity
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
+import app.tivi.util.Logger
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 
@@ -41,30 +48,63 @@ class SeasonsEpisodesRepository @Inject constructor(
     private val episodeWatchStore: EpisodeWatchStore,
     private val episodeWatchLastLastRequestStore: EpisodeWatchLastRequestStore,
     private val episodeLastRequestStore: EpisodeLastRequestStore,
-    private val seasonsEpisodesStore: SeasonsEpisodesStore,
+    private val transactionRunner: DatabaseTransactionRunner,
+    private val seasonsDao: SeasonsDao,
+    private val episodesDao: EpisodesDao,
     private val seasonsLastRequestStore: SeasonsLastRequestStore,
     private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
     @Trakt private val traktEpisodeDataSource: EpisodeDataSource,
     @Tmdb private val tmdbEpisodeDataSource: EpisodeDataSource,
     private val traktAuthState: Provider<TraktAuthState>,
+    logger: Logger,
 ) {
+    private val seasonSyncer = syncerForEntity(
+        entityDao = seasonsDao,
+        entityToKey = { it.traktId },
+        mapper = { entity, id -> entity.copy(id = id ?: 0) },
+        logger = logger,
+    )
+
+    private val episodeSyncer = syncerForEntity(
+        entityDao = episodesDao,
+        entityToKey = { it.traktId },
+        mapper = { entity, id -> entity.copy(id = id ?: 0) },
+        logger = logger,
+    )
+
     fun observeSeasonsForShow(showId: Long): Flow<List<Season>> {
-        return seasonsEpisodesStore.observeShowSeasons(showId)
+        return seasonsDao.observeSeasonsForShowId(showId)
     }
 
     fun observeSeasonsWithEpisodesWatchedForShow(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
-        return seasonsEpisodesStore.observeShowSeasonsWithEpisodes(showId)
+        return seasonsDao.seasonsWithEpisodesForShowId(showId)
     }
 
-    fun observeSeason(seasonId: Long) = seasonsEpisodesStore.observeShowSeasonWithEpisodes(seasonId)
+    fun observeSeason(seasonId: Long): Flow<SeasonWithEpisodesAndWatches> {
+        return seasonsDao.seasonWithEpisodes(seasonId)
+    }
 
-    fun observeEpisode(episodeId: Long) = seasonsEpisodesStore.observeEpisode(episodeId)
+    fun observeEpisode(episodeId: Long): Flow<EpisodeWithSeason> {
+        return episodesDao.episodeWithIdObservable(episodeId)
+    }
 
-    suspend fun getEpisode(episodeId: Long): Episode? = seasonsEpisodesStore.getEpisode(episodeId)
+    suspend fun getEpisode(episodeId: Long): Episode? {
+        return episodesDao.episodeWithId(episodeId)
+    }
 
-    fun observeEpisodeWatches(episodeId: Long) = episodeWatchStore.observeEpisodeWatches(episodeId)
+    fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {
+        return episodeWatchStore.observeEpisodeWatches(episodeId)
+    }
 
-    fun observeNextEpisodeToWatch(showId: Long) = seasonsEpisodesStore.observeShowNextEpisodeToWatch(showId)
+    fun observeNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> {
+        return episodesDao.observeLatestWatchedEpisodeForShowId(showId).flatMapLatest {
+            episodesDao.observeNextAiredEpisodeForShowAfter(
+                showId,
+                it?.season?.number ?: 0,
+                it?.episode?.number ?: 0,
+            )
+        }
+    }
 
     suspend fun needShowSeasonsUpdate(
         showId: Long,
@@ -74,23 +114,34 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     suspend fun removeShowSeasonData(showId: Long) {
-        seasonsEpisodesStore.deleteShowSeasonData(showId)
+        seasonsDao.deleteSeasonsForShowId(showId)
     }
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
         val response = traktSeasonsDataSource.getSeasonsEpisodes(showId)
         response.distinctBy { it.first.number }.associate { (season, episodes) ->
-            val localSeason = seasonsEpisodesStore.getSeasonWithTraktId(season.traktId!!)
+            val localSeason = seasonsDao.seasonWithTraktId(season.traktId!!)
                 ?: Season(showId = showId)
             val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
 
             val mergedEpisodes = episodes.distinctBy(Episode::number).map {
-                val localEpisode = seasonsEpisodesStore.getEpisodeWithTraktId(it.traktId!!)
+                val localEpisode = episodesDao.episodeWithTraktId(it.traktId!!)
                     ?: Episode(seasonId = mergedSeason.id)
                 mergeEpisode(localEpisode, it, Episode.EMPTY)
             }
             mergedSeason to mergedEpisodes
-        }.also { seasonsEpisodesStore.save(showId, it) }
+        }.also { season ->
+            transactionRunner {
+                seasonSyncer.sync(seasonsDao.seasonsForShowId(showId), season.keys)
+                season.forEach { (season, episodes) ->
+                    val seasonId = seasonsDao.seasonWithTraktId(season.traktId!!)!!.id
+                    val updatedEpisodes = episodes.map {
+                        if (it.seasonId != seasonId) it.copy(seasonId = seasonId) else it
+                    }
+                    episodeSyncer.sync(episodesDao.episodesWithSeasonId(seasonId), updatedEpisodes)
+                }
+            }
+        }
 
         seasonsLastRequestStore.updateLastRequest(showId)
     }
@@ -103,8 +154,8 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     suspend fun updateEpisode(episodeId: Long) = coroutineScope {
-        val local = seasonsEpisodesStore.getEpisode(episodeId)!!
-        val season = seasonsEpisodesStore.getSeason(local.seasonId)!!
+        val local = episodesDao.episodeWithId(episodeId)!!
+        val season = seasonsDao.seasonWithId(local.seasonId)!!
         val traktDeferred = async {
             traktEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
         }
@@ -124,7 +175,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
         check(trakt != null || tmdb != null)
 
-        seasonsEpisodesStore.save(
+        episodesDao.insertOrUpdate(
             mergeEpisode(local, trakt ?: Episode.EMPTY, tmdb ?: Episode.EMPTY),
         )
     }
@@ -187,7 +238,7 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean, date: ActionDate) {
-        val watchesToSave = seasonsEpisodesStore.getEpisodesInSeason(seasonId).mapNotNull { episode ->
+        val watchesToSave = episodesDao.episodesWithSeasonId(seasonId).mapNotNull { episode ->
             if (!onlyAired || episode.firstAired?.isBefore(OffsetDateTime.now()) == true) {
                 if (!episodeWatchStore.hasEpisodeBeenWatched(episode.id)) {
                     val timestamp = when (date) {
@@ -209,15 +260,15 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
 
         // Should probably make this more granular
-        val season = seasonsEpisodesStore.getSeason(seasonId)!!
+        val season = seasonsDao.seasonWithId(seasonId)!!
         syncEpisodeWatchesForShow(season.showId)
     }
 
     suspend fun markSeasonUnwatched(seasonId: Long) {
-        val season = seasonsEpisodesStore.getSeason(seasonId)!!
+        val season = seasonsDao.seasonWithId(seasonId)!!
 
         val watches = ArrayList<EpisodeWatchEntry>()
-        seasonsEpisodesStore.getEpisodesInSeason(seasonId).forEach { episode ->
+        episodesDao.episodesWithSeasonId(seasonId).forEach { episode ->
             watches += episodeWatchStore.getWatchesForEpisode(episode.id)
         }
         if (watches.isNotEmpty()) {
@@ -229,15 +280,19 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     suspend fun markSeasonFollowed(seasonId: Long) {
-        seasonsEpisodesStore.updateSeasonFollowed(seasonId, true)
+        seasonsDao.updateSeasonIgnoreFlag(seasonId, false)
     }
 
     suspend fun markSeasonIgnored(seasonId: Long) {
-        seasonsEpisodesStore.updateSeasonFollowed(seasonId, false)
+        seasonsDao.updateSeasonIgnoreFlag(seasonId, true)
     }
 
     suspend fun markPreviousSeasonsIgnored(seasonId: Long) {
-        seasonsEpisodesStore.updatePreviousSeasonFollowed(seasonId, false)
+        transactionRunner {
+            for (id in seasonsDao.showPreviousSeasonIds(seasonId)) {
+                seasonsDao.updateSeasonIgnoreFlag(id, true)
+            }
+        }
     }
 
     suspend fun addEpisodeWatch(episodeId: Long, timestamp: OffsetDateTime) {
@@ -296,7 +351,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         val response = traktSeasonsDataSource.getShowEpisodeWatches(showId, since)
 
         val watches = response.mapNotNull { (episode, watchEntry) ->
-            val epId = seasonsEpisodesStore.getEpisodeIdForTraktId(episode.traktId!!)
+            val epId = episodesDao.episodeIdWithTraktId(episode.traktId!!)
                 ?: return@mapNotNull null // We don't have the episode, skip
             watchEntry.copy(episodeId = epId)
         }
