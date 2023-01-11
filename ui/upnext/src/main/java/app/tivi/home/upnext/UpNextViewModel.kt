@@ -23,7 +23,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import app.tivi.api.UiMessageManager
 import app.tivi.data.entities.SortOption
-import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
+import app.tivi.data.resultentities.UpNextEntry
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.observers.ObservePagedUpNextShows
@@ -56,7 +56,7 @@ internal class UpNextViewModel @Inject constructor(
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
-    val pagedList: Flow<PagingData<EpisodeWithSeasonWithShow>> =
+    val pagedList: Flow<PagingData<UpNextEntry>> =
         observePagedUpNextShows.flow.cachedIn(viewModelScope)
 
     private val availableSorts = listOf(
