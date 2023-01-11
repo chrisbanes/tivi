@@ -45,6 +45,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -62,6 +63,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -72,7 +74,7 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.items
-import app.tivi.common.compose.ui.PosterCard
+import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
@@ -251,7 +253,7 @@ internal fun UpNext(
 @Composable
 private fun UpNextItem(
     show: TiviShow,
-    poster: TmdbImageEntity?,
+    @Suppress("UNUSED_PARAMETER") poster: TmdbImageEntity?,
     episode: Episode,
     season: Season,
     onClick: () -> Unit,
@@ -264,13 +266,19 @@ private fun UpNextItem(
             .clickable(onClick = onClick)
             .padding(contentPadding),
     ) {
-        PosterCard(
-            show = show,
-            poster = poster,
+        Card(
             modifier = Modifier
-                .fillMaxWidth(0.2f) // 20% of the width
-                .aspectRatio(2 / 3f),
-        )
+                .fillMaxWidth(0.3f) // 20% of the width
+                .aspectRatio(16 / 11f),
+        ) {
+            AsyncImage(
+                model = episode,
+                requestBuilder = { crossfade(true) },
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+        }
 
         Spacer(Modifier.width(16.dp))
 
