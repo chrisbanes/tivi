@@ -21,7 +21,6 @@ package app.tivi.home.upnext
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +36,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
@@ -137,6 +135,7 @@ internal fun UpNext(
                 snackbarHostState.currentSnackbarData?.dismiss()
                 true
             }
+
             else -> false
         }
     }
@@ -204,9 +203,9 @@ internal fun UpNext(
             ) {
                 fullSpanItem {
                     Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                         modifier = Modifier
-                            .horizontalScroll(rememberScrollState())
-                            .padding(vertical = 8.dp)
+                            .padding(vertical = 8.dp, horizontal = 8.dp)
                             .fillMaxWidth(),
                     ) {
                         SortChip(
