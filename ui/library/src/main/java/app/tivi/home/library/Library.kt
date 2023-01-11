@@ -44,6 +44,7 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -259,14 +260,34 @@ internal fun Library(
                     ) {
                         FilterChip(
                             selected = state.followedShowsIncluded,
+                            leadingIcon = {
+                                AnimatedVisibility(visible = state.followedShowsIncluded) {
+                                    Icon(
+                                        imageVector = Icons.Default.Done,
+                                        contentDescription = null,
+                                    )
+                                }
+                            },
                             onClick = onToggleIncludeFollowedShows,
-                            label = { Text(text = "Followed") },
+                            label = {
+                                Text(text = stringResource(UiR.string.following_shows_title))
+                            },
                         )
 
                         FilterChip(
                             selected = state.watchedShowsIncluded,
+                            leadingIcon = {
+                                AnimatedVisibility(visible = state.watchedShowsIncluded) {
+                                    Icon(
+                                        imageVector = Icons.Default.Done,
+                                        contentDescription = null,
+                                    )
+                                }
+                            },
                             onClick = onToggleIncludeWatchedShows,
-                            label = { Text(text = "Watched") },
+                            label = {
+                                Text(text = stringResource(UiR.string.watched_shows_title))
+                            },
                         )
 
                         SortChip(
