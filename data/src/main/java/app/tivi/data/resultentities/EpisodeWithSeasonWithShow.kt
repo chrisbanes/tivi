@@ -28,9 +28,9 @@ data class EpisodeWithSeasonWithShow(
     val episode: Episode,
     val season: Season,
     val show: TiviShow,
-    private val images: List<TmdbImageEntity>,
+    private val showImages: List<TmdbImageEntity>,
 ) {
-    val backdrop by unsafeLazy { images.findHighestRatedBackdrop() }
+    val backdrop by unsafeLazy { showImages.findHighestRatedBackdrop() }
 
-    val poster by unsafeLazy { images.findHighestRatedPoster() }
+    val poster by unsafeLazy { showImages.findHighestRatedPoster() }
 }
