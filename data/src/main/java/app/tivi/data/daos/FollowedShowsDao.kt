@@ -113,17 +113,17 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     )
     abstract fun entryShowViewStats(showId: Long): Flow<FollowedShowsWatchStats>
 
-    suspend fun entriesWithNoPendingAction() = entriesWithPendingAction(PendingAction.NOTHING.value)
+    suspend fun entriesWithNoPendingAction() = entriesWithPendingAction(PendingAction.NOTHING)
 
-    suspend fun entriesWithSendPendingActions() = entriesWithPendingAction(PendingAction.UPLOAD.value)
+    suspend fun entriesWithSendPendingActions() = entriesWithPendingAction(PendingAction.UPLOAD)
 
-    suspend fun entriesWithDeletePendingActions() = entriesWithPendingAction(PendingAction.DELETE.value)
+    suspend fun entriesWithDeletePendingActions() = entriesWithPendingAction(PendingAction.DELETE)
 
     @Query("SELECT * FROM myshows_entries WHERE pending_action = :pendingAction")
-    internal abstract suspend fun entriesWithPendingAction(pendingAction: String): List<FollowedShowEntry>
+    internal abstract suspend fun entriesWithPendingAction(pendingAction: PendingAction): List<FollowedShowEntry>
 
     @Query("UPDATE myshows_entries SET pending_action = :pendingAction WHERE id IN (:ids)")
-    abstract suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: String): Int
+    abstract suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction): Int
 
     @Query("DELETE FROM myshows_entries WHERE id IN (:ids)")
     abstract suspend fun deleteWithIds(ids: List<Long>): Int
