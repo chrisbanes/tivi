@@ -63,7 +63,7 @@ androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha17"
 
 androidx-palette = "androidx.palette:palette:1.0.0"
 
-androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.2.1"
+androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.2.2"
 
 androidx-room-common = { module = "androidx.room:room-common", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
