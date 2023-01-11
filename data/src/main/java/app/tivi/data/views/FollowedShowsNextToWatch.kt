@@ -16,6 +16,7 @@
 
 package app.tivi.data.views
 
+import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
 import app.tivi.data.entities.Season
 
@@ -43,7 +44,7 @@ import app.tivi.data.entities.Season
     """,
 )
 data class FollowedShowsNextToWatch(
-    val showId: Long,
-    val seasonId: Long,
-    val episodeId: Long,
+    @ColumnInfo(name = "show_id") val showId: Long,
+    @ColumnInfo(name = "season_id") val seasonId: Long,
+    @ColumnInfo(name = "episode_id") val episodeId: Long,
 )

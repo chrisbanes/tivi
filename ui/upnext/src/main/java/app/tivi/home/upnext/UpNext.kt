@@ -58,7 +58,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -78,10 +77,12 @@ import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.R as UiR
+import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Season
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
-import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
+import app.tivi.data.resultentities.UpNextEntry
 import app.tivi.trakt.TraktAuthState
 
 @Composable
@@ -120,7 +121,7 @@ internal fun UpNext(
 @Composable
 internal fun UpNext(
     state: UpNextViewState,
-    list: LazyPagingItems<EpisodeWithSeasonWithShow>,
+    list: LazyPagingItems<UpNextEntry>,
     openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
     refresh: () -> Unit,
@@ -223,6 +224,8 @@ internal fun UpNext(
                         UpNextItem(
                             show = entry.show,
                             poster = entry.poster,
+                            season = entry.season,
+                            episode = entry.episode,
                             onClick = { openShowDetails(entry.show.id) },
                             contentPadding = PaddingValues(8.dp),
                             modifier = Modifier
@@ -249,6 +252,8 @@ internal fun UpNext(
 private fun UpNextItem(
     show: TiviShow,
     poster: TmdbImageEntity?,
+    episode: Episode,
+    season: Season,
     onClick: () -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -275,6 +280,16 @@ private fun UpNextItem(
             Text(
                 text = textCreator.showTitle(show = show).toString(),
                 style = MaterialTheme.typography.titleMedium,
+            )
+
+            Text(
+                text = textCreator.seasonEpisodeTitleText(season, episode),
+                style = MaterialTheme.typography.bodySmall,
+            )
+
+            Text(
+                text = episode.title ?: "",
+                style = MaterialTheme.typography.bodySmall,
             )
 
             Spacer(Modifier.height(8.dp))

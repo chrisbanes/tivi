@@ -24,6 +24,7 @@ import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.UpNextEntry
 import app.tivi.data.views.FollowedShowsWatchStats
 import kotlinx.coroutines.flow.Flow
 
@@ -82,17 +83,10 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     @Transaction
     @Query(
         """
-        SELECT myshows_entries.* FROM myshows_entries
-            INNER JOIN seasons AS s ON s.show_id = myshows_entries.show_id
-			INNER JOIN followed_next_to_watch AS next ON next.show_id = myshows_entries.show_id
-			INNER JOIN episodes AS eps ON eps.season_id = s.id
-            INNER JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
-            WHERE s.number != ${Season.NUMBER_SPECIALS} AND s.ignored = 0
-            GROUP BY myshows_entries.show_id
-			ORDER BY datetime(ew.watched_at) DESC
+        SELECT * FROM followed_next_to_watch
         """,
     )
-    abstract fun pagedToWatchShows(): PagingSource<Int, FollowedShowEntryWithShow>
+    abstract fun pagedUpNextShows(): PagingSource<Int, UpNextEntry>
 
     @Query("DELETE FROM myshows_entries")
     abstract override suspend fun deleteAll()
