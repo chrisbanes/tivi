@@ -33,7 +33,11 @@ class ObservePagedUpNextShows @Inject constructor(
     override fun createObservable(
         params: Parameters,
     ): Flow<PagingData<UpNextEntry>> = Pager(config = params.pagingConfig) {
-        followedShowsDao.pagedUpNextShows()
+        when (params.sort) {
+            SortOption.AIR_DATE -> followedShowsDao.pagedUpNextShowsDateAired()
+            SortOption.DATE_ADDED -> followedShowsDao.pagedUpNextShowsDateAdded()
+            else -> followedShowsDao.pagedUpNextShowsLastWatched()
+        }
     }.flow
 
     data class Parameters(

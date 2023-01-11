@@ -34,38 +34,6 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract suspend fun entries(): List<FollowedShowEntry>
 
     @Transaction
-    @Query(ENTRY_QUERY_SUPER_SORT)
-    internal abstract fun pagedListSuperSort(): PagingSource<Int, FollowedShowEntryWithShow>
-
-    @Transaction
-    @Query(ENTRY_QUERY_SUPER_SORT_FILTER)
-    internal abstract fun pagedListSuperSortFilter(filter: String): PagingSource<Int, FollowedShowEntryWithShow>
-
-    @Transaction
-    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
-    internal abstract fun pagedListLastWatched(): PagingSource<Int, FollowedShowEntryWithShow>
-
-    @Transaction
-    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER)
-    internal abstract fun pagedListLastWatchedFilter(filter: String): PagingSource<Int, FollowedShowEntryWithShow>
-
-    @Transaction
-    @Query(ENTRY_QUERY_ORDER_ALPHA)
-    internal abstract fun pagedListAlpha(): PagingSource<Int, FollowedShowEntryWithShow>
-
-    @Transaction
-    @Query(ENTRY_QUERY_ORDER_ALPHA_FILTER)
-    internal abstract fun pagedListAlphaFilter(filter: String): PagingSource<Int, FollowedShowEntryWithShow>
-
-    @Transaction
-    @Query(ENTRY_QUERY_ORDER_ADDED)
-    internal abstract fun pagedListAdded(): PagingSource<Int, FollowedShowEntryWithShow>
-
-    @Transaction
-    @Query(ENTRY_QUERY_ORDER_ADDED_FILTER)
-    internal abstract fun pagedListAddedFilter(filter: String): PagingSource<Int, FollowedShowEntryWithShow>
-
-    @Transaction
     @Query(
         """
         SELECT myshows_entries.* FROM myshows_entries
@@ -76,13 +44,44 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             WHERE s.number != ${Season.NUMBER_SPECIALS} AND s.ignored = 0
 			ORDER BY datetime(ew.watched_at) DESC
 			LIMIT 1
-    """,
+        """,
     )
     abstract fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?>
 
     @Transaction
-    @Query("SELECT * FROM followed_next_to_watch")
-    abstract fun pagedUpNextShows(): PagingSource<Int, UpNextEntry>
+    @Query(
+        """
+        SELECT followed_next_to_watch.* FROM followed_next_to_watch
+        INNER JOIN myshows_entries ON myshows_entries.show_id = followed_next_to_watch.show_id
+        LEFT JOIN followed_last_watched ON followed_last_watched.id = myshows_entries.id
+        LEFT JOIN episode_watch_entries ON episode_watch_entries.episode_id = followed_last_watched.episode_id
+        GROUP BY followed_next_to_watch.show_id
+        ORDER BY datetime(episode_watch_entries.watched_at) DESC
+        """,
+    )
+    abstract fun pagedUpNextShowsLastWatched(): PagingSource<Int, UpNextEntry>
+
+    @Transaction
+    @Query(
+        """
+        SELECT followed_next_to_watch.* FROM followed_next_to_watch
+        INNER JOIN episodes ON episodes.id = followed_next_to_watch.episode_id
+        GROUP BY followed_next_to_watch.show_id
+        ORDER BY datetime(episodes.first_aired) DESC
+        """,
+    )
+    abstract fun pagedUpNextShowsDateAired(): PagingSource<Int, UpNextEntry>
+
+    @Transaction
+    @Query(
+        """
+        SELECT followed_next_to_watch.* FROM followed_next_to_watch
+        INNER JOIN myshows_entries ON myshows_entries.show_id = followed_next_to_watch.show_id
+        GROUP BY followed_next_to_watch.show_id
+        ORDER BY datetime(myshows_entries.followed_at) DESC
+        """,
+    )
+    abstract fun pagedUpNextShowsDateAdded(): PagingSource<Int, UpNextEntry>
 
     @Transaction
     @Query("SELECT * FROM followed_next_to_watch")
@@ -110,7 +109,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
         SELECT stats.* FROM myshows_view_watch_stats as stats
         INNER JOIN myshows_entries ON stats.id = myshows_entries.id
         WHERE stats.show_id = :showId
-    """,
+        """,
     )
     abstract fun entryShowViewStats(showId: Long): Flow<FollowedShowsWatchStats>
 
@@ -130,64 +129,11 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract suspend fun deleteWithIds(ids: List<Long>): Int
 
     companion object {
-        private const val ENTRY_QUERY_SUPER_SORT = """
-            SELECT fs.* FROM myshows_entries as fs
-            LEFT JOIN seasons AS s ON fs.show_id = s.show_id
-            LEFT JOIN episodes AS eps ON eps.season_id = s.id
-            LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-            LEFT JOIN followed_next_to_watch as nw ON nw.show_id = fs.show_id
-            WHERE s.number != ${Season.NUMBER_SPECIALS}
-                AND s.ignored = 0
-            GROUP BY fs.id
-            ORDER BY
-                /* shows with aired episodes to watch first */
-                SUM(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE 0 END) = COUNT(watched_at) ASC,
-                /* latest event */
-                MAX(
-                    MAX(next_ep_to_watch_abs_number), /* next episode to watch */
-                    MAX(datetime(coalesce(watched_at, 0))), /* last watch */
-                    MAX(datetime(coalesce(followed_at, 0))) /* when followed */
-                ) DESC
-        """
-
-        private const val ENTRY_QUERY_SUPER_SORT_FILTER = """
-            SELECT fs.* FROM myshows_entries as fs
-            INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
-            LEFT JOIN seasons AS s ON fs.show_id = s.show_id
-            LEFT JOIN episodes AS eps ON eps.season_id = s.id
-            LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-            LEFT JOIN followed_next_to_watch as nw ON nw.show_id = fs.show_id
-            WHERE s.number != ${Season.NUMBER_SPECIALS}
-                AND s.ignored = 0
-                AND s_fts.title MATCH :filter
-            GROUP BY fs.id
-            ORDER BY
-                /* shows with aired episodes to watch first */
-                SUM(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE 0 END) = COUNT(watched_at) ASC,
-                /* latest event */
-                MAX(
-                    MAX(next_ep_to_watch_abs_number), /* next episode to watch */
-                    MAX(datetime(coalesce(watched_at, 0))), /* last watch */
-                    MAX(datetime(coalesce(followed_at, 0))) /* when followed */
-                ) DESC
-        """
-
         private const val ENTRY_QUERY_ORDER_LAST_WATCHED = """
             SELECT fs.* FROM myshows_entries as fs
             LEFT JOIN seasons AS s ON fs.show_id = s.show_id
             LEFT JOIN episodes AS eps ON eps.season_id = s.id
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-            GROUP BY fs.id
-            ORDER BY MAX(datetime(ew.watched_at)) DESC
-        """
-
-        private const val ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER = """
-            SELECT fs.* FROM myshows_entries as fs
-            INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
-            LEFT JOIN seasons AS s ON fs.show_id = s.show_id
-            LEFT JOIN episodes AS eps ON eps.season_id = s.id
-            LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-            WHERE s_fts.title MATCH :filter
             GROUP BY fs.id
             ORDER BY MAX(datetime(ew.watched_at)) DESC
         """
@@ -198,22 +144,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             ORDER BY title ASC
         """
 
-        private const val ENTRY_QUERY_ORDER_ALPHA_FILTER = """
-            SELECT fs.* FROM myshows_entries as fs
-            INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
-            WHERE s_fts.title MATCH :filter
-            ORDER BY title ASC
-        """
-
         private const val ENTRY_QUERY_ORDER_ADDED = """
             SELECT * FROM myshows_entries
-            ORDER BY datetime(followed_at) DESC
-        """
-
-        private const val ENTRY_QUERY_ORDER_ADDED_FILTER = """
-            SELECT fs.* FROM myshows_entries as fs
-            INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
-            WHERE s_fts.title MATCH :filter
             ORDER BY datetime(followed_at) DESC
         """
     }

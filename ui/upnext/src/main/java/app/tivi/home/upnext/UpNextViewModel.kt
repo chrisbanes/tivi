@@ -64,7 +64,8 @@ internal class UpNextViewModel @Inject constructor(
 
     private val availableSorts = listOf(
         SortOption.LAST_WATCHED,
-        SortOption.ALPHABETICAL,
+        SortOption.AIR_DATE,
+        SortOption.DATE_ADDED,
     )
 
     private val sort = MutableStateFlow(SortOption.LAST_WATCHED)

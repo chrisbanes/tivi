@@ -20,10 +20,10 @@
 
     <string name="header_more">More</string>
 
-    <string name="popup_sort_super">Supersort</string>
     <string name="popup_sort_last_watched">Last watched</string>
     <string name="popup_sort_date_followed">Date followed</string>
     <string name="popup_sort_alpha">A-Z</string>
+    <string name="popup_sort_air_date">Air date</string>
 
     <string name="genre_label_drama">Drama</string>
     <string name="genre_label_fantasy">Fantasy</string>
