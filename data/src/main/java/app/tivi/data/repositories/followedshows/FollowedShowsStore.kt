@@ -16,12 +16,10 @@
 
 package app.tivi.data.repositories.followedshows
 
-import androidx.paging.PagingSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
-import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.data.views.FollowedShowsWatchStats
@@ -59,43 +57,6 @@ class FollowedShowsStore @Inject constructor(
     }
 
     suspend fun deleteEntriesInIds(ids: List<Long>) = followedShowsDao.deleteWithIds(ids)
-
-    fun observeForPaging(
-        sort: SortOption,
-        filter: String?,
-    ): PagingSource<Int, FollowedShowEntryWithShow> {
-        val filtered = filter != null && filter.isNotEmpty()
-        return when (sort) {
-            SortOption.SUPER_SORT -> {
-                if (filtered) {
-                    followedShowsDao.pagedListSuperSortFilter("*$filter*")
-                } else {
-                    followedShowsDao.pagedListSuperSort()
-                }
-            }
-            SortOption.LAST_WATCHED -> {
-                if (filtered) {
-                    followedShowsDao.pagedListLastWatchedFilter("*$filter*")
-                } else {
-                    followedShowsDao.pagedListLastWatched()
-                }
-            }
-            SortOption.ALPHABETICAL -> {
-                if (filtered) {
-                    followedShowsDao.pagedListAlphaFilter("*$filter*")
-                } else {
-                    followedShowsDao.pagedListAlpha()
-                }
-            }
-            SortOption.DATE_ADDED -> {
-                if (filtered) {
-                    followedShowsDao.pagedListAddedFilter("*$filter*")
-                } else {
-                    followedShowsDao.pagedListAdded()
-                }
-            }
-        }
-    }
 
     fun observeIsShowFollowed(showId: Long): Flow<Boolean> {
         return followedShowsDao.entryCountWithShowIdNotPendingDeleteObservable(showId)

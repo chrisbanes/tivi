@@ -50,8 +50,8 @@ internal fun ColumnScope.SortDropdownMenuContent(
 
 internal val SortOption.labelResId: Int
     @StringRes get() = when (this) {
-        SortOption.SUPER_SORT -> UiR.string.popup_sort_super
         SortOption.ALPHABETICAL -> UiR.string.popup_sort_alpha
         SortOption.LAST_WATCHED -> UiR.string.popup_sort_last_watched
         SortOption.DATE_ADDED -> UiR.string.popup_sort_date_followed
+        SortOption.AIR_DATE -> UiR.string.popup_sort_air_date
     }

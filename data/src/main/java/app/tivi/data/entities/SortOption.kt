@@ -17,8 +17,8 @@
 package app.tivi.data.entities
 
 enum class SortOption(val sqlValue: String) {
-    SUPER_SORT("super"),
     LAST_WATCHED("last_watched"),
+    AIR_DATE("recently_aired"),
     ALPHABETICAL("alpha"),
     DATE_ADDED("added"),
 }
