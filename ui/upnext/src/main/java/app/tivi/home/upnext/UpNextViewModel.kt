@@ -25,13 +25,10 @@ import app.tivi.api.UiMessageManager
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.domain.executeSync
-import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.observers.ObservePagedUpNextShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
-import app.tivi.extensions.combine
-import app.tivi.settings.TiviPreferences
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
@@ -41,6 +38,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -51,14 +49,11 @@ import kotlinx.coroutines.launch
 internal class UpNextViewModel @Inject constructor(
     private val observePagedUpNextShows: ObservePagedUpNextShows,
     observeTraktAuthState: ObserveTraktAuthState,
-    private val changeShowFollowStatus: ChangeShowFollowStatus,
     observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
-    private val preferences: TiviPreferences,
     private val logger: Logger,
 ) : ViewModel() {
-    private val followedLoadingState = ObservableLoadingCounter()
-    private val watchedLoadingState = ObservableLoadingCounter()
+    private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     val pagedList: Flow<PagingData<EpisodeWithSeasonWithShow>> =
@@ -69,31 +64,22 @@ internal class UpNextViewModel @Inject constructor(
         SortOption.ALPHABETICAL,
     )
 
-    private val filter = MutableStateFlow<String?>(null)
     private val sort = MutableStateFlow(SortOption.LAST_WATCHED)
 
     val state: StateFlow<UpNextViewState> = combine(
-        followedLoadingState.observable,
-        watchedLoadingState.observable,
+        loadingState.observable,
         observeTraktAuthState.flow,
         observeUserDetails.flow,
-        filter,
         sort,
         uiMessageManager.message,
-        preferences.observeLibraryWatchedActive(),
-        preferences.observeLibraryFollowedActive(),
-    ) { followedLoading, watchedLoading, authState, user, filter, sort, message, includeWatchedShows, includeFollowedShows ->
+    ) { loading, authState, user, sort, message ->
         UpNextViewState(
             user = user,
             authState = authState,
-            isLoading = followedLoading || watchedLoading,
-            filter = filter,
-            filterActive = !filter.isNullOrEmpty(),
+            isLoading = loading,
             availableSorts = availableSorts,
             sort = sort,
             message = message,
-            watchedShowsIncluded = includeWatchedShows,
-            followedShowsIncluded = includeFollowedShows,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -105,20 +91,8 @@ internal class UpNextViewModel @Inject constructor(
         observeTraktAuthState(Unit)
         observeUserDetails(ObserveUserDetails.Params("me"))
 
-        // When the filter and sort options change, update the data source
-        filter
-            .onEach { updateDataSource() }
-            .launchIn(viewModelScope)
-
+        // When the sort options change, update the data source
         sort
-            .onEach { updateDataSource() }
-            .launchIn(viewModelScope)
-
-        preferences.observeLibraryWatchedActive()
-            .onEach { updateDataSource() }
-            .launchIn(viewModelScope)
-
-        preferences.observeLibraryFollowedActive()
             .onEach { updateDataSource() }
             .launchIn(viewModelScope)
 
@@ -133,7 +107,6 @@ internal class UpNextViewModel @Inject constructor(
         observePagedUpNextShows(
             ObservePagedUpNextShows.Parameters(
                 sort = sort.value,
-                filter = filter.value,
                 pagingConfig = PAGING_CONFIG,
             ),
         )
@@ -147,24 +120,10 @@ internal class UpNextViewModel @Inject constructor(
         }
     }
 
-    fun setFilter(filter: String?) {
-        viewModelScope.launch {
-            this@UpNextViewModel.filter.emit(filter)
-        }
-    }
-
     fun setSort(sort: SortOption) {
         viewModelScope.launch {
             this@UpNextViewModel.sort.emit(sort)
         }
-    }
-
-    fun toggleFollowedShowsIncluded() {
-        preferences.libraryFollowedActive = !preferences.libraryFollowedActive
-    }
-
-    fun toggleWatchedShowsIncluded() {
-        preferences.libraryWatchedActive = !preferences.libraryWatchedActive
     }
 
     private fun refreshFollowed(@Suppress("UNUSED_PARAMETER") fromInteraction: Boolean) {

@@ -18,7 +18,6 @@
 
 package app.tivi.home.upnext
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -28,7 +27,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -43,16 +41,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -64,16 +57,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
@@ -84,7 +74,6 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.items
 import app.tivi.common.compose.ui.PosterCard
-import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
@@ -121,11 +110,8 @@ internal fun UpNext(
         list = pagingItems,
         openShowDetails = openShowDetails,
         onMessageShown = viewModel::clearMessage,
-        onToggleIncludeFollowedShows = viewModel::toggleFollowedShowsIncluded,
-        onToggleIncludeWatchedShows = viewModel::toggleWatchedShowsIncluded,
         openUser = openUser,
         refresh = viewModel::refresh,
-        onFilterChanged = viewModel::setFilter,
         onSortSelected = viewModel::setSort,
     )
 }
@@ -137,11 +123,8 @@ internal fun UpNext(
     list: LazyPagingItems<EpisodeWithSeasonWithShow>,
     openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
-    onToggleIncludeFollowedShows: () -> Unit,
-    onToggleIncludeWatchedShows: () -> Unit,
     refresh: () -> Unit,
     openUser: () -> Unit,
-    onFilterChanged: (String) -> Unit,
     onSortSelected: (SortOption) -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -152,7 +135,6 @@ internal fun UpNext(
                 snackbarHostState.currentSnackbarData?.dismiss()
                 true
             }
-
             else -> false
         }
     }
@@ -204,8 +186,6 @@ internal fun UpNext(
             val bodyMargin = Layout.bodyMargin
             val gutter = Layout.gutter
 
-            var filterExpanded by remember { mutableStateOf(false) }
-
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns / 4),
                 contentPadding = paddingValues + PaddingValues(
@@ -221,51 +201,12 @@ internal fun UpNext(
                     .fillMaxHeight(),
             ) {
                 fullSpanItem {
-                    var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-                        mutableStateOf(TextFieldValue(state.filter ?: ""))
-                    }
-
-                    FilterSortPanel(
-                        filterIcon = {
-                            IconButton(onClick = { filterExpanded = true }) {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = null, // FIXME
-                                )
-                            }
-                        },
-                        filterTextField = {
-                            SearchTextField(
-                                value = filter,
-                                onValueChange = { value ->
-                                    filter = value
-                                    onFilterChanged(value.text)
-                                },
-                                hint = stringResource(UiR.string.filter_shows, list.itemCount),
-                                modifier = Modifier.fillMaxWidth(),
-                                showClearButton = true,
-                                onCleared = {
-                                    filter = TextFieldValue()
-                                    onFilterChanged("")
-                                    filterExpanded = false
-                                },
-                            )
-                        },
-                        filterExpanded = filterExpanded,
-                        modifier = Modifier.padding(vertical = 8.dp),
+                    Row(
+                        modifier = Modifier
+                            .horizontalScroll(rememberScrollState())
+                            .padding(vertical = 8.dp)
+                            .fillMaxWidth(),
                     ) {
-                        FilterChip(
-                            selected = state.followedShowsIncluded,
-                            onClick = onToggleIncludeFollowedShows,
-                            label = { Text(text = "Followed") },
-                        )
-
-                        FilterChip(
-                            selected = state.watchedShowsIncluded,
-                            onClick = onToggleIncludeWatchedShows,
-                            label = { Text(text = "Watched") },
-                        )
-
                         SortChip(
                             sortOptions = state.availableSorts,
                             currentSortOption = state.sort,
@@ -300,33 +241,6 @@ internal fun UpNext(
                     .padding(paddingValues),
                 scale = true,
             )
-        }
-    }
-}
-
-@Composable
-private fun FilterSortPanel(
-    filterExpanded: Boolean,
-    filterIcon: @Composable () -> Unit,
-    filterTextField: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit,
-) {
-    Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            AnimatedVisibility(!filterExpanded) {
-                filterIcon()
-            }
-
-            content()
-        }
-
-        AnimatedVisibility(visible = filterExpanded) {
-            filterTextField()
         }
     }
 }

@@ -25,13 +25,9 @@ internal data class UpNextViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
     val isLoading: Boolean = false,
-    val filterActive: Boolean = false,
-    val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
     val sort: SortOption = SortOption.LAST_WATCHED,
     val message: UiMessage? = null,
-    val followedShowsIncluded: Boolean = false,
-    val watchedShowsIncluded: Boolean = false,
 ) {
     companion object {
         val Empty = UpNextViewState()

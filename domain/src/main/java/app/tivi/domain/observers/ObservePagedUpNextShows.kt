@@ -60,7 +60,6 @@ class ObservePagedUpNextShows @Inject constructor(
     }
 
     data class Parameters(
-        val filter: String? = null,
         val sort: SortOption,
         override val pagingConfig: PagingConfig,
     ) : PagingInteractor.Parameters<EpisodeWithSeasonWithShow>
