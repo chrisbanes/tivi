@@ -23,7 +23,7 @@ import app.tivi.data.entities.Season
     viewName = "followed_next_to_watch",
     value = """
         SELECT
-          fs.id,
+          fs.show_id AS show_id,
           s.id AS season_id,
           eps.id AS episode_id,
           MIN((1000 * s.number) + eps.number) AS next_ep_to_watch_abs_number
@@ -43,7 +43,7 @@ import app.tivi.data.entities.Season
     """,
 )
 data class FollowedShowsNextToWatch(
-    val id: Long,
+    val showId: Long,
     val seasonId: Long,
     val episodeId: Long,
 )
