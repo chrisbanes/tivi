@@ -26,12 +26,14 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.UpNextEntry
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.GetTraktAuthState
+import app.tivi.domain.interactors.UpdateUpNextEpisodes
 import app.tivi.domain.observers.ObservePagedUpNextShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -48,6 +50,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 internal class UpNextViewModel @Inject constructor(
     private val observePagedUpNextShows: ObservePagedUpNextShows,
+    private val updateUpNextEpisodes: UpdateUpNextEpisodes,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
@@ -112,10 +115,12 @@ internal class UpNextViewModel @Inject constructor(
         )
     }
 
-    fun refresh(@Suppress("UNUSED_PARAMETER") fromUser: Boolean = true) {
+    fun refresh(fromUser: Boolean = true) {
         viewModelScope.launch {
             if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
-                // refreshWatched(fromUser)
+                updateUpNextEpisodes(
+                    UpdateUpNextEpisodes.Params(forceRefresh = fromUser),
+                ).collectStatus(loadingState, logger, uiMessageManager)
             }
         }
     }
@@ -123,14 +128,6 @@ internal class UpNextViewModel @Inject constructor(
     fun setSort(sort: SortOption) {
         viewModelScope.launch {
             this@UpNextViewModel.sort.emit(sort)
-        }
-    }
-
-    private fun refreshFollowed(@Suppress("UNUSED_PARAMETER") fromInteraction: Boolean) {
-        viewModelScope.launch {
-//            updateFollowedShows(
-//                UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK),
-//            ).collectStatus(followedLoadingState, logger, uiMessageManager)
         }
     }
 
