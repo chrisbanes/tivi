@@ -60,13 +60,14 @@ import app.tivi.data.views.FollowedShowsWatchStats
         FollowedShowsLastWatched::class,
         FollowedShowsNextToWatch::class,
     ],
-    version = 29,
+    version = 30,
     autoMigrations = [
         AutoMigration(from = 24, to = 25),
         AutoMigration(from = 25, to = 26),
         AutoMigration(from = 26, to = 27),
         AutoMigration(from = 27, to = 28),
         AutoMigration(from = 28, to = 29),
+        AutoMigration(from = 29, to = 30),
     ],
 )
 @TypeConverters(TiviTypeConverters::class)

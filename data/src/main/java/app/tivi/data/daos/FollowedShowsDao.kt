@@ -69,7 +69,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
         """
         SELECT myshows_entries.* FROM myshows_entries
             INNER JOIN seasons AS s ON s.show_id = myshows_entries.show_id
-			INNER JOIN followed_next_to_watch AS next ON next.id = myshows_entries.id
+			INNER JOIN followed_next_to_watch AS next ON next.show_id = myshows_entries.show_id
 			INNER JOIN episodes AS eps ON eps.season_id = s.id
             INNER JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
             WHERE s.number != ${Season.NUMBER_SPECIALS} AND s.ignored = 0
@@ -84,13 +84,13 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
         """
         SELECT myshows_entries.* FROM myshows_entries
             INNER JOIN seasons AS s ON s.show_id = myshows_entries.show_id
-			INNER JOIN followed_next_to_watch AS next ON next.id = myshows_entries.id
+			INNER JOIN followed_next_to_watch AS next ON next.show_id = myshows_entries.show_id
 			INNER JOIN episodes AS eps ON eps.season_id = s.id
             INNER JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
             WHERE s.number != ${Season.NUMBER_SPECIALS} AND s.ignored = 0
-            GROUP BY myshows_entries.id
+            GROUP BY myshows_entries.show_id
 			ORDER BY datetime(ew.watched_at) DESC
-    """,
+        """,
     )
     abstract fun pagedToWatchShows(): PagingSource<Int, FollowedShowEntryWithShow>
 
@@ -141,7 +141,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             LEFT JOIN seasons AS s ON fs.show_id = s.show_id
             LEFT JOIN episodes AS eps ON eps.season_id = s.id
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-            LEFT JOIN followed_next_to_watch as nw ON nw.id = fs.id
+            LEFT JOIN followed_next_to_watch as nw ON nw.show_id = fs.show_id
             WHERE s.number != ${Season.NUMBER_SPECIALS}
                 AND s.ignored = 0
             GROUP BY fs.id
@@ -162,7 +162,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             LEFT JOIN seasons AS s ON fs.show_id = s.show_id
             LEFT JOIN episodes AS eps ON eps.season_id = s.id
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-            LEFT JOIN followed_next_to_watch as nw ON nw.id = fs.id
+            LEFT JOIN followed_next_to_watch as nw ON nw.show_id = fs.show_id
             WHERE s.number != ${Season.NUMBER_SPECIALS}
                 AND s.ignored = 0
                 AND s_fts.title MATCH :filter
