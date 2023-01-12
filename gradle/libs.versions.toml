@@ -1,7 +1,7 @@
 [versions]
 agp = "8.0.0-alpha11"
 accompanist = "0.28.0"
-androidxlifecycle = "2.6.0-alpha03"
+androidxlifecycle = "2.6.0-alpha04"
 chucker = "3.5.2"
 coil = "2.2.2"
 compose-bom = "2023.01.00"
