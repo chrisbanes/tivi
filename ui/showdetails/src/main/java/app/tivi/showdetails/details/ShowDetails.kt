@@ -26,6 +26,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -126,7 +128,6 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import com.google.accompanist.flowlayout.FlowRow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -200,6 +201,7 @@ internal fun ShowDetails(
                 snackbarHostState.currentSnackbarData?.dismiss()
                 true
             }
+
             else -> false
         }
     }
@@ -732,35 +734,45 @@ private fun NextEpisodeToWatch(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun InfoPanels(
     show: TiviShow,
     modifier: Modifier = Modifier,
 ) {
     FlowRow(
-        mainAxisSpacing = Layout.gutter * 2,
-        crossAxisSpacing = Layout.gutter * 2,
+        horizontalArrangement = Arrangement.spacedBy(Layout.gutter * 2),
         modifier = modifier,
     ) {
+        val itemMod = Modifier.padding(bottom = Layout.gutter * 2)
+
         if (show.traktRating != null) {
-            TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
+            TraktRatingInfoPanel(
+                rating = show.traktRating!!,
+                votes = show.traktVotes ?: 0,
+                modifier = itemMod,
+            )
         }
         if (show.network != null) {
-            NetworkInfoPanel(networkName = show.network!!, networkLogoPath = show.networkLogoPath)
+            NetworkInfoPanel(
+                networkName = show.network!!,
+                networkLogoPath = show.networkLogoPath,
+                modifier = itemMod,
+            )
         }
         if (show.status != null) {
-            ShowStatusPanel(show.status!!)
+            ShowStatusPanel(showStatus = show.status!!, modifier = itemMod)
         }
         if (show.certification != null) {
-            CertificateInfoPanel(show.certification!!)
+            CertificateInfoPanel(certification = show.certification!!, modifier = itemMod)
         }
         if (show.runtime != null) {
-            RuntimeInfoPanel(show.runtime!!)
+            RuntimeInfoPanel(runtime = show.runtime!!, modifier = itemMod)
         }
         if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null &&
             show.status == ShowStatus.IN_PRODUCTION
         ) {
-            AirsInfoPanel(show)
+            AirsInfoPanel(show = show, modifier = itemMod)
         }
     }
 }
