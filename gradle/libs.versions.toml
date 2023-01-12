@@ -1,6 +1,6 @@
 [versions]
 agp = "8.0.0-alpha11"
-accompanist = "0.28.0"
+accompanist = "0.29.0-alpha"
 androidxlifecycle = "2.6.0-alpha04"
 chucker = "3.5.2"
 coil = "2.2.2"
@@ -35,7 +35,6 @@ firebase-crashlytics = "com.google.firebase.crashlytics:2.9.2"
 spotless = "com.diffplug.spotless:6.13.0"
 
 [libraries]
-accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
 accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-pager-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
