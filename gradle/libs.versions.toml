@@ -4,7 +4,7 @@ accompanist = "0.28.0"
 androidxlifecycle = "2.6.0-alpha04"
 chucker = "3.5.2"
 coil = "2.2.2"
-compose-bom = "2023.01.00"
+compose-bom = "2023.02.00-alpha01"
 composecompiler = "1.4.0-dev-k1.8.0-33c0ad36f83"
 coroutines = "1.6.4"
 dagger = "2.44.2"
@@ -89,7 +89,7 @@ coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
 
-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+compose-bom = { module = "dev.chrisbanes.compose:compose-bom", version.ref = "compose-bom" }
 compose-animation-animation = { module = "androidx.compose.animation:animation" }
 compose-foundation-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout" }

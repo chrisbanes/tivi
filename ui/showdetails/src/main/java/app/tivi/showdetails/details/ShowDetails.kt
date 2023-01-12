@@ -988,7 +988,7 @@ private fun ShowDetailsAppBar(
                 refreshing = !isRefreshing,
             )
         },
-        colors = TopAppBarDefaults.smallTopAppBarColors(),
+        colors = TopAppBarDefaults.topAppBarColors(),
         scrollBehavior = scrollBehavior,
         modifier = modifier,
     )
