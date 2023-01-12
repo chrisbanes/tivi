@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.seasons
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +33,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
@@ -86,10 +90,6 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -125,7 +125,7 @@ internal fun ShowSeasons(
     )
 }
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun ShowSeasons(
     viewState: ShowSeasonsViewState,
@@ -162,12 +162,10 @@ internal fun ShowSeasons(
         if (pagerState.isScrollInProgress) pagerBeenScrolled = true
     }
 
-    if (initialSeasonId != null && !pagerBeenScrolled && pagerState.pageCount > 0) {
+    if (initialSeasonId != null && !pagerBeenScrolled && pagerState.canScrollForward) {
         val initialIndex = viewState.seasons.indexOfFirst { it.season.id == initialSeasonId }
-        LaunchedEffect(initialIndex, pagerState.pageCount) {
-            if (initialIndex in 0 until pagerState.pageCount) {
-                pagerState.scrollToPage(initialIndex)
-            }
+        LaunchedEffect(initialIndex) {
+            pagerState.scrollToPage(initialIndex)
         }
     }
 
@@ -227,7 +225,7 @@ internal fun ShowSeasons(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SeasonPagerTabs(
     pagerState: PagerState,
@@ -236,7 +234,7 @@ private fun SeasonPagerTabs(
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
 ) {
-    if (pagerState.pageCount == 0) return
+    if (seasons.isEmpty()) return
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -268,7 +266,7 @@ private fun SeasonPagerTabs(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SeasonsPager(
     seasons: List<SeasonWithEpisodesAndWatches>,
@@ -277,13 +275,12 @@ private fun SeasonsPager(
     modifier: Modifier = Modifier,
 ) {
     HorizontalPager(
-        count = seasons.size,
+        pageCount = seasons.size,
         state = pagerState,
         modifier = modifier,
     ) { page ->
-        val season = seasons[page]
         EpisodesList(
-            episodes = season.episodes,
+            episodes = seasons[page].episodes,
             onEpisodeClick = openEpisodeDetails,
             modifier = Modifier.fillMaxSize(),
         )
@@ -371,7 +368,7 @@ private fun EpisodeWithWatchesRow(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 private fun Modifier.pagerTabIndicatorOffset(
     pagerState: PagerState,
     tabPositions: List<TabPosition>,
@@ -385,7 +382,7 @@ private fun Modifier.pagerTabIndicatorOffset(
         val currentTab = tabPositions[currentPage]
         val previousTab = tabPositions.getOrNull(currentPage - 1)
         val nextTab = tabPositions.getOrNull(currentPage + 1)
-        val fraction = pagerState.currentPageOffset
+        val fraction = pagerState.currentPageOffsetFraction
         val indicatorWidth = if (fraction > 0 && nextTab != null) {
             lerp(currentTab.width, nextTab.width, fraction).roundToPx()
         } else if (fraction < 0 && previousTab != null) {
