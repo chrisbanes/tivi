@@ -54,8 +54,6 @@ dependencies {
 
     implementation(libs.coil.compose)
 
-    implementation(libs.snapper)
-
     implementation(libs.androidx.hilt.navigationcompose)
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)

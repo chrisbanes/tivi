@@ -20,6 +20,8 @@ package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -81,9 +83,6 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
-import dev.chrisbanes.snapper.ExperimentalSnapperApi
-import dev.chrisbanes.snapper.SnapOffsets
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
 @Composable
 fun Discover(
@@ -363,7 +362,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
     }
 }
 
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun <T : EntryWithShow<*>> EntryShowCarousel(
     items: List<T>,
@@ -376,9 +375,13 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
     LazyRow(
         state = lazyListState,
         modifier = modifier,
-        flingBehavior = rememberSnapperFlingBehavior(
-            lazyListState = lazyListState,
-            snapOffsetForItem = SnapOffsets.Start,
+        flingBehavior = rememberSnapFlingBehavior(
+            snapLayoutInfoProvider = remember(lazyListState) {
+                SnapLayoutInfoProvider(
+                    lazyListState = lazyListState,
+                    positionInLayout = { _, _ -> 0f }, // start
+                )
+            },
         ),
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
