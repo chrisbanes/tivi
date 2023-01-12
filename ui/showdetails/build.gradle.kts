@@ -54,8 +54,6 @@ dependencies {
 
     implementation(libs.coil.compose)
 
-    implementation(libs.accompanist.flowlayout)
-
     implementation(libs.snapper)
 
     implementation(libs.androidx.hilt.navigationcompose)

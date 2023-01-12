@@ -57,8 +57,6 @@ dependencies {
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
 
-    implementation(libs.accompanist.flowlayout)
-
     implementation(libs.coil.compose)
 
     implementation(libs.androidx.hilt.navigationcompose)

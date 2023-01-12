@@ -18,7 +18,10 @@ package app.tivi.account
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -54,8 +57,6 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import com.google.accompanist.flowlayout.FlowMainAxisAlignment
-import com.google.accompanist.flowlayout.FlowRow
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
@@ -92,6 +93,7 @@ internal fun AccountUi(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun AccountUi(
     viewState: AccountUiViewState,
@@ -116,9 +118,7 @@ internal fun AccountUi(
             }
 
             FlowRow(
-                mainAxisAlignment = FlowMainAxisAlignment.End,
-                mainAxisSpacing = 8.dp,
-                crossAxisSpacing = 4.dp,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .wrapContentSize(Alignment.CenterEnd)
