@@ -63,7 +63,7 @@ fun TopAppBarWithBottomContent(
                 title = title,
                 navigationIcon = navigationIcon,
                 actions = actions,
-                colors = TopAppBarDefaults.smallTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     titleContentColor = LocalContentColor.current,
                     actionIconContentColor = LocalContentColor.current,
