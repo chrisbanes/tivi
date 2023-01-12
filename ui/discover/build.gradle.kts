@@ -51,8 +51,6 @@ dependencies {
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
 
-    implementation(libs.snapper)
-
     implementation(libs.androidx.hilt.navigationcompose)
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)

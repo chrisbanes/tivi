@@ -22,6 +22,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -128,9 +130,6 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import dev.chrisbanes.snapper.ExperimentalSnapperApi
-import dev.chrisbanes.snapper.SnapOffsets
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import org.threeten.bp.OffsetDateTime
 
 @Composable
@@ -665,7 +664,7 @@ private fun Genres(genres: List<Genre>) {
     }
 }
 
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun RelatedShows(
     related: List<RelatedShowEntryWithShow>,
@@ -680,9 +679,13 @@ private fun RelatedShows(
     LazyRow(
         state = lazyListState,
         modifier = modifier,
-        flingBehavior = rememberSnapperFlingBehavior(
-            lazyListState = lazyListState,
-            snapOffsetForItem = SnapOffsets.Start,
+        flingBehavior = rememberSnapFlingBehavior(
+            snapLayoutInfoProvider = remember(lazyListState) {
+                SnapLayoutInfoProvider(
+                    lazyListState = lazyListState,
+                    positionInLayout = { _, _ -> 0f }, // start
+                )
+            },
         ),
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
