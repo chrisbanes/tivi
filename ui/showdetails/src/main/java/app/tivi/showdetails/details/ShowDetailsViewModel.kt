@@ -82,8 +82,7 @@ internal class ShowDetailsViewModel @Inject constructor(
         observeShowSeasons.flow,
         observeShowViewStats.flow,
         uiMessageManager.message,
-    ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons, stats,
-        message, ->
+    ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons, stats, message ->
         ShowDetailsViewState(
             isFollowed = isFollowed,
             show = show,

@@ -58,27 +58,13 @@ allprojects {
             target("**/*.kt")
             targetExclude("$buildDir/**/*.kt")
             targetExclude("bin/**/*.kt")
-
-            ktlint(libs.versions.ktlint.get()).editorConfigOverride(
-                mapOf(
-                    "ij_kotlin_imports_layout" to "*",
-                    "ij_kotlin_allow_trailing_comma" to "true",
-                    "ij_kotlin_allow_trailing_comma_on_call_site" to "true",
-                ),
-            )
+            ktlint(libs.versions.ktlint.get())
             licenseHeaderFile(rootProject.file("spotless/copyright.txt"))
         }
         kotlinGradle {
             target("**/*.kts")
             targetExclude("$buildDir/**/*.kts")
-
-            ktlint(libs.versions.ktlint.get()).editorConfigOverride(
-                mapOf(
-                    "ij_kotlin_imports_layout" to "*",
-                    "ij_kotlin_allow_trailing_comma" to "true",
-                    "ij_kotlin_allow_trailing_comma_on_call_site" to "true",
-                ),
-            )
+            ktlint(libs.versions.ktlint.get())
             licenseHeaderFile(rootProject.file("spotless/copyright.txt"), "(^(?![\\/ ]\\*).*$)")
         }
     }
