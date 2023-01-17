@@ -1,5 +1,5 @@
 [versions]
-agp = "8.0.0-alpha11"
+agp = "8.0.0-beta01"
 accompanist = "0.29.0-alpha"
 androidxlifecycle = "2.6.0-alpha04"
 chucker = "3.5.2"
