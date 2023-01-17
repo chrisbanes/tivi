@@ -21,6 +21,7 @@ import com.diffplug.gradle.spotless.SpotlessExtension
 import dagger.hilt.android.plugin.HiltExtension
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.tasks.compile.JavaCompile
 
 plugins {
     alias(libs.plugins.android.application) apply false
@@ -96,6 +97,10 @@ allprojects {
             // Set JVM target to 11
             jvmTarget = JavaVersion.VERSION_11.toString()
         }
+    }
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = JavaVersion.VERSION_11.toString()
+        targetCompatibility = JavaVersion.VERSION_11.toString()
     }
 
     plugins.withId(rootProject.libs.plugins.hilt.get().pluginId) {
