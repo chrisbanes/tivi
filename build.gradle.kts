@@ -44,7 +44,7 @@ allprojects {
         mavenCentral()
 
         // Need to use the 'dev' Compose Compiler for Kotlin 1.8.0 support
-        maven("https://androidx.dev/storage/compose-compiler/repository/")
+        // maven("https://androidx.dev/storage/compose-compiler/repository/")
 
         // Jetpack Compose SNAPSHOTs if needed
         // maven("https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/")
