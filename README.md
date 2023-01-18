@@ -26,7 +26,7 @@ Tivi is an app that attempts to use the latest libraries and tools. As a summary
 
 ## Development setup
 
-First off, you require the latest [Android Studio Dolphin](https://developer.android.com/studio) (or newer) to be able to build the app.
+First off, you require the latest [Android Studio Flamingo](https://developer.android.com/studio/preview) (or newer) to be able to build the app.
 
 ### Code style
 
