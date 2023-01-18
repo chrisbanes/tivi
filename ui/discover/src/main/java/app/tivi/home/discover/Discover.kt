@@ -77,6 +77,7 @@ import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.ui.resources.R as UiR
+import androidx.activity.compose.ReportDrawnWhen
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -155,6 +156,13 @@ internal fun Discover(
             // Notify the view model that the message has been dismissed
             onMessageShown(message.id)
         }
+    }
+
+    ReportDrawnWhen {
+        !state.popularRefreshing &&
+            !state.trendingRefreshing &&
+            state.popularItems.isNotEmpty() &&
+            state.trendingItems.isNotEmpty()
     }
 
     Scaffold(
