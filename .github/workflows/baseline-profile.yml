@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '43 0 * * *'
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'benchmark/**'
 
 jobs:
   baseline-profile:
@@ -20,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          # We need to use a Personal Access Token from an admin to be able to commit to main, 
+          # We need to use a Personal Access Token from an admin to be able to commit to main,
           # as it is a protected branch.
           # https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-fine-grained-personal-access-token
           token: ${{ secrets.TIVI_OWNER_PAT }}
