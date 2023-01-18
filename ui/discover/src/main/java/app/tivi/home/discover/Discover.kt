@@ -18,6 +18,7 @@
 
 package app.tivi.home.discover
 
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
@@ -66,6 +67,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -77,8 +79,6 @@ import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.ui.resources.R as UiR
-import androidx.activity.compose.ReportDrawnWhen
-import androidx.compose.ui.platform.testTag
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -336,7 +336,10 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
+    Column(
+        modifier = modifier
+            .testTag("discover_carousel"),
+    ) {
         if (refreshing || items.isNotEmpty()) {
             Spacer(Modifier.height(Layout.gutter))
 
@@ -404,7 +407,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
                 poster = item.poster,
                 onClick = { onItemClick(item.show) },
                 modifier = Modifier
-                    .testTag("carousel_item")
+                    .testTag("discover_carousel_item")
                     .animateItemPlacement()
                     .fillParentMaxHeight()
                     .aspectRatio(2 / 3f),

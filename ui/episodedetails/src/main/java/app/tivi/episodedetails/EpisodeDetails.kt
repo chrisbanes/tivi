@@ -83,6 +83,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -220,6 +221,8 @@ internal fun EpisodeDetails(
                 )
             }
         },
+        modifier = Modifier
+            .testTag("episode_details"),
     ) { contentPadding ->
         Surface(
             shadowElevation = 2.dp,
