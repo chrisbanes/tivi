@@ -65,9 +65,10 @@ import app.tivi.data.views.FollowedShowsWatchStats
         AutoMigration(from = 24, to = 25),
         AutoMigration(from = 25, to = 26),
         AutoMigration(from = 26, to = 27),
-        AutoMigration(from = 27, to = 28),
-        AutoMigration(from = 28, to = 29),
-        AutoMigration(from = 29, to = 30),
+        AutoMigration(from = 27, to = 28), // can remove this later
+        AutoMigration(from = 28, to = 29), // can remove this later
+        AutoMigration(from = 29, to = 30), // can remove this later
+        AutoMigration(from = 27, to = 30),
     ],
 )
 @TypeConverters(TiviTypeConverters::class)
