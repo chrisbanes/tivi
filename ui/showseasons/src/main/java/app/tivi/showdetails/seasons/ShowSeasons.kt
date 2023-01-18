@@ -75,6 +75,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
@@ -170,7 +171,6 @@ internal fun ShowSeasons(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.statusBars,
         topBar = {
             TopAppBarWithBottomContent(
@@ -212,6 +212,9 @@ internal fun ShowSeasons(
                 )
             }
         },
+        modifier = Modifier
+            .testTag("show_seasons")
+            .fillMaxSize(),
     ) { contentPadding ->
         SeasonsPager(
             seasons = viewState.seasons,
@@ -301,6 +304,7 @@ private fun EpisodesList(
                 hasPending = item.hasPending,
                 onlyPendingDeletes = item.onlyPendingDeletes,
                 modifier = Modifier
+                    .testTag("show_seasons_episode_item")
                     .fillParentMaxWidth()
                     .clickable { onEpisodeClick(item.episode.id) },
             )

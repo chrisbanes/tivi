@@ -96,6 +96,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
@@ -235,6 +236,8 @@ internal fun ShowDetails(
                 isFollowed = viewState.isFollowed,
                 expanded = expanded,
                 onClick = onToggleShowFollowed,
+                modifier = Modifier
+                    .testTag("show_details_follow_button"),
             )
         },
         snackbarHost = {
@@ -420,7 +423,9 @@ private fun ShowDetailsScrollingContent(
                     unfollowPreviousSeasons = unfollowPreviousSeasons,
                     onMarkSeasonWatched = onMarkSeasonWatched,
                     onMarkSeasonUnwatched = onMarkSeasonUnwatched,
-                    modifier = Modifier.fillParentMaxWidth(),
+                    modifier = Modifier
+                        .testTag("show_details_season_item")
+                        .fillParentMaxWidth(),
                 )
             }
         }
