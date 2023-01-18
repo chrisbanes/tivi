@@ -76,6 +76,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import app.tivi.AppNavigation
 import app.tivi.RootScreen
 import app.tivi.common.ui.resources.R as UiR
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import app.tivi.debugLabel
 import app.tivi.util.Analytics
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -85,7 +88,7 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 
 @OptIn(
     ExperimentalAnimationApi::class,
-    ExperimentalMaterialNavigationApi::class,
+    ExperimentalMaterialNavigationApi::class, ExperimentalComposeUiApi::class,
 )
 @Composable
 internal fun Home(
@@ -138,6 +141,11 @@ internal fun Home(
         },
         contentWindowInsets = ScaffoldDefaults.contentWindowInsets
             .exclude(WindowInsets.statusBars), // We let content handle the status bar
+        modifier = Modifier.semantics {
+            // Enables testTag -> UiAutomator resource id
+            // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
+            testTagsAsResourceId = true
+        }
     ) { paddingValues ->
         Row(
             modifier = Modifier

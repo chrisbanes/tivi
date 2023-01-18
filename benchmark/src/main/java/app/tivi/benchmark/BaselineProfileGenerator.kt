@@ -18,6 +18,10 @@ package app.tivi.benchmark
 
 import androidx.benchmark.macro.ExperimentalBaselineProfilesApi
 import androidx.benchmark.macro.junit4.BaselineProfileRule
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.Until
+import org.junit.Assert.fail
 import org.junit.Rule
 import org.junit.Test
 
@@ -30,6 +34,19 @@ class BaselineProfileGenerator {
     @Test
     fun generateBaselineProfile() = rule.collectBaselineProfile("app.tivi") {
         startActivityAndWait()
+
+        device.waitForIdle()
+
+        // Fling the discover list
+//        device.wait(Until.hasObject(By.scrollable(true)), 5_000)
+//        device.findObject(By.scrollable(true))?.also {
+//            it.fling(Direction.DOWN)
+//            it.fling(Direction.UP)
+//        }
+
+        device.findObjects(By.res("carousel_item")).first().click()
+
+
         device.waitForIdle()
     }
 }
