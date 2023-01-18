@@ -20,8 +20,7 @@ import com.android.build.gradle.BasePlugin
 import com.diffplug.gradle.spotless.SpotlessExtension
 import dagger.hilt.android.plugin.HiltExtension
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.android.application) apply false
@@ -70,45 +69,51 @@ allprojects {
         }
     }
 
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
+    // Configure Java to use our chosen language level. Kotlin will automatically
+    // pick this up
+    plugins.withType<JavaBasePlugin>().configureEach {
+        extensions.configure<JavaPluginExtension> {
+            toolchain {
+                languageVersion.set(JavaLanguageVersion.of(11))
+            }
+        }
+    }
+
+    tasks.withType<KotlinCompilationTask<*>>().configureEach {
+        compilerOptions {
             // Treat all Kotlin warnings as errors
-            allWarningsAsErrors = true
+            allWarningsAsErrors.set(true)
 
             // Enable experimental coroutines APIs, including Flow
-            freeCompilerArgs += listOf(
+            freeCompilerArgs.addAll(
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=kotlinx.coroutines.FlowPreview",
             )
 
             if (project.hasProperty("tivi.enableComposeCompilerReports")) {
-                freeCompilerArgs += listOf(
+                freeCompilerArgs.addAll(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
                         project.buildDir.absolutePath + "/compose_metrics",
                 )
-                freeCompilerArgs += listOf(
+                freeCompilerArgs.addAll(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
                         project.buildDir.absolutePath + "/compose_metrics",
                 )
             }
-
-            // Set JVM target to 11
-            jvmTarget = JavaVersion.VERSION_11.toString()
         }
     }
-    tasks.withType<JavaCompile>().configureEach {
-        sourceCompatibility = JavaVersion.VERSION_11.toString()
-        targetCompatibility = JavaVersion.VERSION_11.toString()
-    }
 
+    // Configure Hilt + Dagger
     plugins.withId(rootProject.libs.plugins.hilt.get().pluginId) {
         extensions.getByType<HiltExtension>().enableAggregatingTask = true
     }
     plugins.withId(rootProject.libs.plugins.kotlin.kapt.get().pluginId) {
         extensions.getByType<KaptExtension>().correctErrorTypes = true
     }
+
+    // Configure Android projects
     plugins.withType<BasePlugin>().configureEach {
         extensions.configure<BaseExtension> {
             compileSdkVersion(libs.versions.compileSdk.get().toInt())
@@ -116,6 +121,9 @@ allprojects {
                 minSdk = libs.versions.minSdk.get().toInt()
                 targetSdk = libs.versions.targetSdk.get().toInt()
             }
+
+            // Can remove this once https://issuetracker.google.com/issues/260059413 is fixed.
+            // See https://kotlinlang.org/docs/gradle-configure-project.html#gradle-java-toolchains-support
             compileOptions {
                 sourceCompatibility = JavaVersion.VERSION_11
                 targetCompatibility = JavaVersion.VERSION_11
