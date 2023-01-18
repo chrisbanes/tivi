@@ -78,6 +78,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.ui.resources.R as UiR
 import androidx.activity.compose.ReportDrawnWhen
+import androidx.compose.ui.platform.testTag
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -403,6 +404,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
                 poster = item.poster,
                 onClick = { onItemClick(item.show) },
                 modifier = Modifier
+                    .testTag("carousel_item")
                     .animateItemPlacement()
                     .fillParentMaxHeight()
                     .aspectRatio(2 / 3f),
