@@ -15,6 +15,8 @@
  */
 
 
+import com.android.build.api.dsl.ManagedVirtualDevice
+
 plugins {
     alias(libs.plugins.android.test)
     alias(libs.plugins.kotlin.android)
@@ -32,6 +34,18 @@ android {
             isDebuggable = true
             signingConfig = signingConfigs["debug"]
             matchingFallbacks += "release"
+        }
+    }
+
+    testOptions {
+        managedDevices {
+            devices {
+                create<ManagedVirtualDevice>("api31") {
+                    device = "Pixel 6"
+                    apiLevel = 31
+                    systemImageSource = "aosp"
+                }
+            }
         }
     }
 
