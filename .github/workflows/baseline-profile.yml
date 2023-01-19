@@ -28,7 +28,17 @@ jobs:
           # https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-fine-grained-personal-access-token
           token: ${{ secrets.TIVI_OWNER_PAT }}
 
-      - name: Setup JDK
+      # Android sdkmanager requires JRE 8 🤷‍
+      - name: Setup JDK for sdkmanager
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 8
+
+      - name: Accept Android SDK licenses
+        run: yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+
+      - name: Setup JDK for build
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
