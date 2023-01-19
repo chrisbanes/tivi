@@ -62,10 +62,10 @@ class BaselineProfileGenerator {
 
     private fun UiDevice.testDiscover(): Boolean {
         // Scroll one of the Discover Carousels
-        findObject(By.res("discover_carousel")).apply {
-            scroll(Direction.RIGHT, 1f)
-            scroll(Direction.LEFT, 1f)
-        }
+        findObject(By.res("discover_carousel"))
+            .scroll(Direction.RIGHT, 1f)
+        findObject(By.res("discover_carousel"))
+            .scroll(Direction.LEFT, 1f)
 
         return findObject(By.res("discover_carousel_item")) != null
     }
@@ -122,15 +122,16 @@ class BaselineProfileGenerator {
     private fun UiDevice.testEpisodeDetails(): Boolean {
         wait(Until.hasObject(By.res("episode_details")), 3_000)
 
-        with(findObject(By.res("episode_details"))) {
-            // Need to 'inset' the gesture so that we don't swipe
-            // the notification tray down
-            setGestureMargin(displayWidth / 10)
+        // Need to 'inset' the gesture so that we don't swipe
+        // the notification tray down
+        findObject(By.res("episode_details"))
+            .setGestureMargin(displayWidth / 10)
 
-            // Swipe the bottom sheet 'up', then 'down'
-            scroll(Direction.DOWN, 0.8f)
-            scroll(Direction.UP, 0.8f)
-        }
+        // Swipe the bottom sheet 'up', then 'down'
+        findObject(By.res("episode_details"))
+            .scroll(Direction.DOWN, 0.8f)
+        findObject(By.res("episode_details"))
+            .scroll(Direction.UP, 0.8f)
 
         return true
     }
