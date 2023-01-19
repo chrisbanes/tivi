@@ -18,6 +18,8 @@
 
 package app.tivi.home.discover
 
+import app.tivi.common.ui.resources.R as UiR
+import android.os.Build
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -78,7 +80,6 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviStandardAppBar
-import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -159,11 +160,15 @@ internal fun Discover(
         }
     }
 
-    ReportDrawnWhen {
-        !state.popularRefreshing &&
-            !state.trendingRefreshing &&
-            state.popularItems.isNotEmpty() &&
-            state.trendingItems.isNotEmpty()
+    if (Build.VERSION.SDK_INT >= 24) {
+        // ReportDrawnWhen routinely causes crashes on API 23:
+        // https://issuetracker.google.com/issues/260506820
+        ReportDrawnWhen {
+            !state.popularRefreshing &&
+                !state.trendingRefreshing &&
+                state.popularItems.isNotEmpty() &&
+                state.trendingItems.isNotEmpty()
+        }
     }
 
     Scaffold(
@@ -269,7 +274,9 @@ internal fun Discover(
             PullRefreshIndicator(
                 refreshing = state.refreshing,
                 state = refreshState,
-                modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(paddingValues),
                 scale = true,
             )
         }
