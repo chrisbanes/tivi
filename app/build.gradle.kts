@@ -210,8 +210,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigationcompose)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.google.crashlytics)
-    implementation(libs.google.analytics)
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.crashlytics)
 
     "qaImplementation"(libs.chucker.library)
 

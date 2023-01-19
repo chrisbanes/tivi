@@ -27,5 +27,5 @@ import javax.inject.Singleton
 abstract class AnalyticsModule {
     @Singleton
     @Binds
-    internal abstract fun provideAnalytics(bind: TiviAnalytics): Analytics
+    internal abstract fun provideAnalytics(bind: TiviFirebaseAnalytics): Analytics
 }

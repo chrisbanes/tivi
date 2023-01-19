@@ -21,18 +21,15 @@ import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.util.regex.Pattern
 import javax.inject.Inject
-import javax.inject.Provider
 import timber.log.Timber
 
-internal class TiviLogger @Inject constructor(
-    private val firebaseCrashlytics: Provider<FirebaseCrashlytics>,
-) : Logger {
+internal class TiviLogger @Inject constructor() : Logger {
     override fun setup(debugMode: Boolean) {
         if (debugMode) {
             Timber.plant(TiviDebugTree())
         }
         try {
-            Timber.plant(CrashlyticsTree(firebaseCrashlytics.get()))
+            Timber.plant(CrashlyticsTree(FirebaseCrashlytics.getInstance()))
         } catch (e: IllegalStateException) {
             // Firebase is likely not setup in this project. Ignore the exception
         }
@@ -40,7 +37,7 @@ internal class TiviLogger @Inject constructor(
 
     override fun setUserId(id: String) {
         try {
-            firebaseCrashlytics.get().setUserId(id)
+            FirebaseCrashlytics.getInstance().setUserId(id)
         } catch (e: IllegalStateException) {
             // Firebase is likely not setup in this project. Ignore the exception
         }
