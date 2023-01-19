@@ -85,11 +85,20 @@ jobs:
           fi
 
       # Upload the entire generated folder and attach it to the CI run
-      - name: Attach baseline profile
+      - name: Upload baseline profile
+        if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: Baseline profile output
+          name: baseline-profile-output
           path: benchmark/build/outputs/baseline-prof
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: |
+            **/build/reports/*
 
       - name: Clean secrets
         if: always()

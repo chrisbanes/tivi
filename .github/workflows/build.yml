@@ -123,21 +123,18 @@ jobs:
           name: build-outputs
           path: app/build/outputs
 
-      - name: Upload build reports
+      - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: build-reports
-          path: app/build/reports
+          name: reports
+          path: |
+            **/build/reports/*
 
-      - name: Copy test results
-        if: always()
-        run: |
-          mkdir -p junit
-          find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} junit/ \;
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: junit-results
-          path: junit
+          path: |
+            **/build/test-results/*
