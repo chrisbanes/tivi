@@ -86,7 +86,6 @@ jobs:
 
       # Upload the entire generated folder and attach it to the CI run
       - name: Upload baseline profile
-        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: baseline-profile-output
