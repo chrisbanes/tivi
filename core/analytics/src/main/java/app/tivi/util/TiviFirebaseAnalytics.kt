@@ -16,6 +16,7 @@
 
 package app.tivi.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import app.tivi.extensions.unsafeLazy
@@ -27,6 +28,8 @@ import javax.inject.Inject
 internal class TiviFirebaseAnalytics @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : Analytics {
+    // False positive. Permissions are added via manifest
+    @delegate:SuppressLint("MissingPermission")
     private val firebaseAnalytics: FirebaseAnalytics by unsafeLazy {
         FirebaseAnalytics.getInstance(context)
     }
