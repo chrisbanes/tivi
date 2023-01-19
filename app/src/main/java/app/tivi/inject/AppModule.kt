@@ -22,8 +22,6 @@ import app.tivi.BuildConfig
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktModule
 import app.tivi.util.AppCoroutineDispatchers
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -72,14 +70,4 @@ object AppModule {
     @Provides
     @Named("trakt-client-secret")
     fun provideTraktClientSecret(): String = BuildConfig.TRAKT_CLIENT_SECRET
-
-    @Provides
-    @Singleton
-    fun provideFirebaseCrashlytics(): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
-
-    @Provides
-    @Singleton
-    fun provideFirebaseAnalytics(
-        @ApplicationContext context: Context,
-    ): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
 }

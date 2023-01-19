@@ -29,7 +29,8 @@ android {
 dependencies {
     api(projects.base)
 
-    implementation(libs.google.analytics)
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.analytics)
 
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)

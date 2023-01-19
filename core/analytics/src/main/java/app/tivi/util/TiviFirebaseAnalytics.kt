@@ -16,22 +16,28 @@
 
 package app.tivi.util
 
+import android.content.Context
 import android.os.Bundle
+import app.tivi.extensions.unsafeLazy
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import javax.inject.Provider
 
-internal class TiviAnalytics @Inject constructor(
-    private val firebaseAnalytics: Provider<FirebaseAnalytics>,
+internal class TiviFirebaseAnalytics @Inject constructor(
+    @ApplicationContext private val context: Context,
 ) : Analytics {
+    private val firebaseAnalytics: FirebaseAnalytics by unsafeLazy {
+        FirebaseAnalytics.getInstance(context)
+    }
+
     override fun trackScreenView(
         label: String,
         route: String?,
         arguments: Any?,
     ) {
         try {
-            firebaseAnalytics.get().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
                 param(FirebaseAnalytics.Param.SCREEN_NAME, label)
                 if (route != null) param("screen_route", route)
 
@@ -48,6 +54,7 @@ internal class TiviAnalytics @Inject constructor(
                             }
                         }
                     }
+
                     arguments != null -> param("screen_arg", arguments.toString())
                 }
             }

@@ -29,7 +29,8 @@ android {
 dependencies {
     api(projects.base)
 
-    implementation(libs.google.crashlytics)
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.crashlytics)
     implementation(libs.timber)
 
     implementation(libs.hilt.library)
