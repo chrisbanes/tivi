@@ -278,7 +278,9 @@ internal fun ShowDetails(
                 unfollowPreviousSeasons = unfollowPreviousSeasons,
                 onMarkSeasonWatched = onMarkSeasonWatched,
                 onMarkSeasonUnwatched = onMarkSeasonUnwatched,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .testTag("show_details_lazycolumn")
+                    .fillMaxSize(),
             )
         }
     }
