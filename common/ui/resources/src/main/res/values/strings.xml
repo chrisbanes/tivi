@@ -70,6 +70,9 @@
     <string name="settings_ui_category_title">User Interface</string>
     <string name="settings_theme_title">Theme</string>
 
+    <string name="settings_dynamic_color_title">Dynamic colors</string>
+    <string name="settings_dynamic_color_summary">Use colors derived from your wallpaper</string>
+
     <string name="settings_data_saver_title">Data saver</string>
     <string name="settings_data_saver_summary_on">Fetch data less often and display lower quality images</string>
     <string name="settings_data_saver_summary_system">Automatically enabled due to system setting</string>

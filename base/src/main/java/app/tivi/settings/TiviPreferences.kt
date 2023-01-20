@@ -25,6 +25,9 @@ interface TiviPreferences {
     var theme: Theme
     fun observeTheme(): Flow<Theme>
 
+    var useDynamicColors: Boolean
+    fun observeUseDynamicColors(): Flow<Boolean>
+
     var useLessData: Boolean
     fun observeUseLessData(): Flow<Boolean>
 

@@ -34,6 +34,7 @@ import app.tivi.TiviActivity
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.shouldUseDarkColors
+import app.tivi.common.compose.shouldUseDynamicColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.settings.SettingsActivity
 import app.tivi.settings.TiviPreferences
@@ -82,7 +83,10 @@ class MainActivity : TiviActivity() {
             LocalTiviDateFormatter provides tiviDateFormatter,
             LocalTiviTextCreator provides textCreator,
         ) {
-            TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
+            TiviTheme(
+                useDarkColors = preferences.shouldUseDarkColors(),
+                useDynamicColors = preferences.shouldUseDynamicColors(),
+            ) {
                 Home(
                     analytics = analytics,
                     onOpenSettings = {
