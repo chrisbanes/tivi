@@ -61,15 +61,21 @@ jobs:
       - name: Build app and benchmark
         run: ./gradlew :benchmark:assembleBenchmark :app:assembleStandardBenchmark
 
-      - name: Clear unused Gradle Managed Devices
-        run: ./gradlew cleanManagedDevices --unused-only
-
-      - name: Run benchmark on Gradle Managed Device
-        run: |
-          ./gradlew api31BenchmarkAndroidTest \
-            -Dorg.gradle.workers.max=1 \
-            -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile \
-            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
+      # Now use reactivecircus/android-emulator-runner to spin up an emulator and run our
+      # baseline profile generator. We need to manually pull the baseline profiles off the
+      # emulator when using the GA runner
+      - name: Run benchmark
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          target: default
+          arch: x86_64
+          profile: pixel_6
+          script: |
+            # Run our benchmark, enabling only tests using BaselineProfile
+            ./gradlew connectedBenchmarkAndroidTest -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
+            # Need to manually pull the generated profiles from the emulator
+            adb pull /sdcard/Android/media/app.tivi.benchmark benchmark/build/outputs/baseline-prof/
 
       # If we're on main branch, copy over the baseline profile and
       # commit it to the repository (if changed)
@@ -78,8 +84,8 @@ jobs:
         run: |
           # Pull down any changes which may have been committed while this workflow has been running
           git pull
-          # Sort the baseline profile, output to app/
-          sort -o app/src/main/baseline-prof.txt benchmark/build/outputs/managed_device_android_test_additional_output/api31/BaselineProfileGenerator_generateBaselineProfile-baseline-prof.txt
+          # Sort the baseline profile, saving it to app/
+          sort -o app/src/main/baseline-prof.txt benchmark/build/outputs/baseline-prof/BaselineProfileGenerator_generateBaselineProfile-baseline-prof.txt
           # If the baseline profile has changed, commit it
           if [[ $(git diff --stat app/src/main/baseline-prof.txt) != '' ]]; then
             git config user.name github-actions
@@ -88,12 +94,12 @@ jobs:
             git commit -m "Update app baseline profile" && git push
           fi
 
-      # Upload the entire output folder and attach it to the CI run
+      # Upload the entire generated folder and attach it to the CI run
       - name: Upload baseline profile
         uses: actions/upload-artifact@v3
         with:
           name: baseline-profile-output
-          path: benchmark/build/outputs/managed_device_android_test_additional_output
+          path: benchmark/build/outputs/baseline-prof
 
       - name: Upload reports
         if: always()
