@@ -58,9 +58,9 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
-          target: google_apis
+          target: default
           arch: x86_64
-          profile: Galaxy Nexus
+          profile: pixel_6
           script: |
             # Clear logcat
             adb logcat -c
