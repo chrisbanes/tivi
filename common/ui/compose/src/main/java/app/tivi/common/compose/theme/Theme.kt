@@ -27,14 +27,15 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun TiviTheme(
     useDarkColors: Boolean = isSystemInDarkTheme(),
+    useDynamicColors: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
         colorScheme = when {
-            Build.VERSION.SDK_INT >= 31 && useDarkColors -> {
+            Build.VERSION.SDK_INT >= 31 && useDynamicColors && useDarkColors -> {
                 dynamicDarkColorScheme(LocalContext.current)
             }
-            Build.VERSION.SDK_INT >= 31 && !useDarkColors -> {
+            Build.VERSION.SDK_INT >= 31 && useDynamicColors && !useDarkColors -> {
                 dynamicLightColorScheme(LocalContext.current)
             }
             useDarkColors -> TiviDarkColors

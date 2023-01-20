@@ -18,6 +18,8 @@ package app.tivi.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.core.content.edit
 import app.tivi.settings.TiviPreferences.Theme
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -36,6 +38,9 @@ class TiviPreferencesImpl @Inject constructor(
 ) : TiviPreferences {
     private val defaultThemeValue = context.getString(R.string.pref_theme_default_value)
 
+    @ChecksSdkIntAtLeast(api = 31)
+    private val defaultUseDynamicColors = Build.VERSION.SDK_INT >= 31
+
     private val preferenceKeyChangedFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -44,6 +49,7 @@ class TiviPreferencesImpl @Inject constructor(
 
     companion object {
         const val KEY_THEME = "pref_theme"
+        const val KEY_USE_DYNAMIC_COLORS = "pref_dynamic_colors"
         const val KEY_DATA_SAVER = "pref_data_saver"
         const val KEY_LIBRARY_FOLLOWED_ACTIVE = "pref_library_followed_active"
         const val KEY_LIBRARY_WATCHED_ACTIVE = "pref_library_watched_active"
@@ -59,6 +65,18 @@ class TiviPreferencesImpl @Inject constructor(
             putString(KEY_THEME, value.storageKey)
         }
 
+    override fun observeTheme(): Flow<Theme> = createPreferenceFlow(KEY_THEME) { theme }
+
+    override var useDynamicColors: Boolean
+        get() = sharedPreferences.getBoolean(KEY_USE_DYNAMIC_COLORS, defaultUseDynamicColors)
+        set(value) = sharedPreferences.edit {
+            putBoolean(KEY_USE_DYNAMIC_COLORS, value)
+        }
+
+    override fun observeUseDynamicColors(): Flow<Boolean> {
+        return createPreferenceFlow(KEY_USE_DYNAMIC_COLORS) { useDynamicColors }
+    }
+
     override var useLessData: Boolean
         get() = sharedPreferences.getBoolean(KEY_DATA_SAVER, false)
         set(value) = sharedPreferences.edit {
@@ -68,8 +86,6 @@ class TiviPreferencesImpl @Inject constructor(
     override fun observeUseLessData(): Flow<Boolean> = createPreferenceFlow(KEY_DATA_SAVER) {
         useLessData
     }
-
-    override fun observeTheme(): Flow<Theme> = createPreferenceFlow(KEY_THEME) { theme }
 
     override var libraryFollowedActive: Boolean
         get() = sharedPreferences.getBoolean(KEY_LIBRARY_FOLLOWED_ACTIVE, true)

@@ -19,7 +19,9 @@
 package app.tivi.settings
 
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceCategory
 import android.preference.PreferenceFragment
 import android.preference.SwitchPreference
 import androidx.browser.customtabs.CustomTabsIntent
@@ -73,6 +75,11 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
                 pkgInfo.versionName,
                 PackageInfoCompat.getLongVersionCode(pkgInfo),
             )
+        }
+
+        if (Build.VERSION.SDK_INT < 31) {
+            val category = findPreference("pref_category_ui") as PreferenceCategory?
+            category?.removePreference(findPreference("pref_dynamic_colors"))
         }
     }
 }

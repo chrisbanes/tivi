@@ -18,7 +18,9 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/settings_ui_category_title">
+    <PreferenceCategory
+        android:key="pref_category_ui"
+        android:title="@string/settings_ui_category_title">
 
         <ListPreference
             android:defaultValue="@string/pref_theme_default_value"
@@ -26,6 +28,12 @@
             android:entryValues="@array/prefs_theme_values"
             android:key="pref_theme"
             android:title="@string/settings_theme_title" />
+
+        <SwitchPreference
+            android:key="pref_dynamic_colors"
+            android:defaultValue="true"
+            android:summary="@string/settings_dynamic_color_summary"
+            android:title="@string/settings_dynamic_color_title" />
 
         <SwitchPreference
             android:key="pref_data_saver"
