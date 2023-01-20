@@ -62,6 +62,10 @@ jobs:
           arch: x86_64
           profile: Galaxy Nexus
           script: |
+            # Clear logcat
+            adb logcat -c
+            # Write logcat to temp file
+            adb logcat > ${{ runner.temp }}/logcat.txt &
             # Run our benchmark, enabling only tests using BaselineProfile
             ./gradlew connectedBenchmarkAndroidTest -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
             # Need to manually pull the generated profiles from the emulator
@@ -90,6 +94,13 @@ jobs:
         with:
           name: baseline-profile-output
           path: benchmark/build/outputs/baseline-prof
+
+      - name: Upload logcat
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: logcat
+          path: ${{ runner.temp }}/logcat.txt
 
       - name: Upload reports
         if: always()
