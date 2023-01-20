@@ -16,11 +16,12 @@
 
 package app.tivi.appinitializers
 
+import app.tivi.BuildConfig
 import app.tivi.util.Logger
 import javax.inject.Inject
 
 class TimberInitializer @Inject constructor(
     private val logger: Logger,
 ) : AppInitializer {
-    override fun init() = logger.setup(true) // FIXME revert before landing!
+    override fun init() = logger.setup(BuildConfig.DEBUG)
 }
