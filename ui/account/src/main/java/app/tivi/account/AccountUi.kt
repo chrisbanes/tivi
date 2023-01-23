@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -63,10 +62,12 @@ import org.threeten.bp.ZoneOffset
 @Composable
 fun AccountUi(
     openSettings: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     AccountUi(
         viewModel = hiltViewModel(),
         openSettings = openSettings,
+        modifier = modifier,
     )
 }
 
@@ -74,6 +75,7 @@ fun AccountUi(
 internal fun AccountUi(
     viewModel: AccountUiViewModel,
     openSettings: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -90,6 +92,7 @@ internal fun AccountUi(
         openSettings = openSettings,
         login = { loginLauncher.launch(Unit) },
         logout = { viewModel.logout() },
+        modifier = modifier,
     )
 }
 
@@ -100,11 +103,12 @@ internal fun AccountUi(
     openSettings: () -> Unit,
     login: () -> Unit,
     logout: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.defaultMinSize(minHeight = 200.dp),
+        modifier = modifier,
     ) {
         Column {
             Spacer(modifier = Modifier.height(16.dp))
