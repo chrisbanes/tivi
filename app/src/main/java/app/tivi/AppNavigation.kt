@@ -24,7 +24,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -35,6 +37,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import app.tivi.account.AccountUi
+import app.tivi.common.compose.ui.androidMinWidthDialogSize
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.home.discover.Discover
 import app.tivi.home.library.Library
@@ -394,7 +397,7 @@ private fun NavGraphBuilder.addPopularShows(
     }
 }
 
-@ExperimentalAnimationApi
+@OptIn(ExperimentalComposeUiApi::class)
 private fun NavGraphBuilder.addAccount(
     root: RootScreen,
     onOpenSettings: () -> Unit,
@@ -402,9 +405,14 @@ private fun NavGraphBuilder.addAccount(
     dialog(
         route = Screen.Account.createRoute(root),
         debugLabel = "AccountUi()",
+        // Required due to https://issuetracker.google.com/issues/221643630
+        dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         AccountUi(
             openSettings = onOpenSettings,
+            modifier = Modifier
+                // Required due to `usePlatformDefaultWidth = false` above
+                .androidMinWidthDialogSize(clampMaxWidth = true),
         )
     }
 }
