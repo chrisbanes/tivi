@@ -28,7 +28,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.6.2" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:1.8.0-1.0.8"
+ksp = "com.google.devtools.ksp:1.8.0-1.0.9"
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.2"
