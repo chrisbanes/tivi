@@ -24,9 +24,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import app.tivi.ContentViewSetter
@@ -105,8 +106,8 @@ private fun ComponentActivity.setOwners() {
     if (decorView.findViewTreeLifecycleOwner() == null) {
         decorView.setViewTreeLifecycleOwner(this)
     }
-    if (ViewTreeViewModelStoreOwner.get(decorView) == null) {
-        ViewTreeViewModelStoreOwner.set(decorView, this)
+    if (decorView.findViewTreeViewModelStoreOwner() == null) {
+        decorView.setViewTreeViewModelStoreOwner(this)
     }
     if (decorView.findViewTreeSavedStateRegistryOwner() == null) {
         decorView.setViewTreeSavedStateRegistryOwner(this)
