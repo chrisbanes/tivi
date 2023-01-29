@@ -19,6 +19,7 @@ package app.tivi.data.daos
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.Transaction
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
@@ -49,6 +50,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?>
 
     @Transaction
+    @RewriteQueriesToDropUnusedColumns
     @Query(
         """
         SELECT followed_next_to_watch.* FROM followed_next_to_watch
@@ -62,6 +64,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract fun pagedUpNextShowsLastWatched(): PagingSource<Int, UpNextEntry>
 
     @Transaction
+    @RewriteQueriesToDropUnusedColumns
     @Query(
         """
         SELECT followed_next_to_watch.* FROM followed_next_to_watch
@@ -73,6 +76,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract fun pagedUpNextShowsDateAired(): PagingSource<Int, UpNextEntry>
 
     @Transaction
+    @RewriteQueriesToDropUnusedColumns
     @Query(
         """
         SELECT followed_next_to_watch.* FROM followed_next_to_watch
@@ -84,6 +88,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract fun pagedUpNextShowsDateAdded(): PagingSource<Int, UpNextEntry>
 
     @Transaction
+    @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM followed_next_to_watch")
     abstract suspend fun getUpNextShows(): List<UpNextEntry>
 
