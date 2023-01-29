@@ -36,8 +36,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CloudUpload
@@ -62,7 +60,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -343,31 +340,29 @@ private fun EpisodeWithWatchesRow(
             )
         }
 
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            var needSpacer = false
-            if (hasPending) {
-                Icon(
-                    imageVector = Icons.Default.CloudUpload,
-                    contentDescription = stringResource(UiR.string.cd_episode_syncing),
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                )
-                needSpacer = true
-            }
-            if (isWatched) {
-                if (needSpacer) Spacer(Modifier.width(4.dp))
+        var needSpacer = false
+        if (hasPending) {
+            Icon(
+                imageVector = Icons.Default.CloudUpload,
+                contentDescription = stringResource(UiR.string.cd_episode_syncing),
+                modifier = Modifier.align(Alignment.CenterVertically),
+            )
+            needSpacer = true
+        }
+        if (isWatched) {
+            if (needSpacer) Spacer(Modifier.width(4.dp))
 
-                Icon(
-                    imageVector = when {
-                        onlyPendingDeletes -> Icons.Default.VisibilityOff
-                        else -> Icons.Default.Visibility
-                    },
-                    contentDescription = when {
-                        onlyPendingDeletes -> stringResource(UiR.string.cd_episode_deleted)
-                        else -> stringResource(UiR.string.cd_episode_watched)
-                    },
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                )
-            }
+            Icon(
+                imageVector = when {
+                    onlyPendingDeletes -> Icons.Default.VisibilityOff
+                    else -> Icons.Default.Visibility
+                },
+                contentDescription = when {
+                    onlyPendingDeletes -> stringResource(UiR.string.cd_episode_deleted)
+                    else -> stringResource(UiR.string.cd_episode_watched)
+                },
+                modifier = Modifier.align(Alignment.CenterVertically),
+            )
         }
     }
 }
