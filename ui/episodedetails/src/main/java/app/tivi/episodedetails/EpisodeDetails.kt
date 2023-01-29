@@ -36,12 +36,9 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Close
@@ -51,8 +48,9 @@ import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Button
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,9 +61,11 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -158,15 +158,16 @@ internal fun EpisodeDetails(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val dismissSnackbarState = rememberDismissState { value ->
-        when {
-            value != DismissValue.Default -> {
+    val dismissSnackbarState = rememberDismissState(
+        confirmValueChange = { value ->
+            if (value != DismissValue.Default) {
                 snackbarHostState.currentSnackbarData?.dismiss()
                 true
+            } else {
+                false
             }
-            else -> false
-        }
-    }
+        },
+    )
 
     viewState.message?.let { message ->
         LaunchedEffect(message) {
@@ -281,19 +282,23 @@ internal fun EpisodeDetails(
 
                 viewState.watches.forEach { watch ->
                     key(watch.id) {
-                        val dismissState = rememberDismissState {
-                            if (it != DismissValue.Default) {
-                                onRemoveWatch(watch.id)
-                            }
-                            it != DismissValue.DismissedToEnd
-                        }
+                        val dismissState = rememberDismissState(
+                            confirmValueChange = { value ->
+                                if (value != DismissValue.Default) {
+                                    onRemoveWatch(watch.id)
+                                    true
+                                } else {
+                                    false
+                                }
+                            },
+                        )
 
                         SwipeToDismiss(
                             state = dismissState,
                             modifier = Modifier.padding(vertical = 4.dp),
                             directions = setOf(DismissDirection.EndToStart),
                             background = {
-                                val fraction = dismissState.progress.fraction
+                                val fraction = dismissState.progress
                                 EpisodeWatchSwipeBackground(
                                     swipeProgress = fraction,
                                     wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f,

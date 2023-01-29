@@ -52,16 +52,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.DismissValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -78,10 +75,12 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -175,7 +174,6 @@ internal fun ShowDetails(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ShowDetails(
     viewState: ShowDetailsViewState,
@@ -195,16 +193,16 @@ internal fun ShowDetails(
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
 
-    val dismissSnackbarState = rememberDismissState { value ->
-        when {
-            value != DismissValue.Default -> {
+    val dismissSnackbarState = rememberDismissState(
+        confirmValueChange = { value ->
+            if (value != DismissValue.Default) {
                 snackbarHostState.currentSnackbarData?.dismiss()
                 true
+            } else {
+                false
             }
-
-            else -> false
-        }
-    }
+        },
+    )
 
     viewState.message?.let { message ->
         LaunchedEffect(message) {
