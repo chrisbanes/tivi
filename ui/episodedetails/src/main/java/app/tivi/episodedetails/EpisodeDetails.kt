@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalMaterialNavigationApi::class)
+
 package app.tivi.episodedetails
 
 import androidx.compose.animation.AnimatedVisibility
@@ -37,6 +39,7 @@ import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
@@ -105,6 +108,8 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
+import com.google.accompanist.navigation.material.BottomSheetNavigatorSheetState
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
 import org.threeten.bp.OffsetDateTime
@@ -112,12 +117,12 @@ import org.threeten.bp.OffsetDateTime
 @ExperimentalMaterialApi
 @Composable
 fun EpisodeDetails(
-    expandedValue: ModalBottomSheetValue,
+    sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
 ) {
     EpisodeDetails(
         viewModel = hiltViewModel(),
-        expandedValue = expandedValue,
+        sheetState = sheetState,
         navigateUp = navigateUp,
     )
 }
@@ -126,14 +131,14 @@ fun EpisodeDetails(
 @Composable
 internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
-    expandedValue: ModalBottomSheetValue,
+    sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
 
     EpisodeDetails(
         viewState = viewState,
-        expandedValue = expandedValue,
+        sheetState = sheetState,
         navigateUp = navigateUp,
         refresh = viewModel::refresh,
         onRemoveAllWatches = viewModel::removeAllWatches,
@@ -148,7 +153,7 @@ internal fun EpisodeDetails(
 @Composable
 internal fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
-    expandedValue: ModalBottomSheetValue,
+    sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
     refresh: () -> Unit,
     onRemoveAllWatches: () -> Unit,
@@ -191,7 +196,9 @@ internal fun EpisodeDetails(
                 }
 
                 Column {
-                    AnimatedVisibility(visible = expandedValue == ModalBottomSheetValue.Expanded) {
+                    AnimatedVisibility(
+                        visible = sheetState.targetValue == ModalBottomSheetValue.Expanded,
+                    ) {
                         Spacer(
                             Modifier
                                 .background(MaterialTheme.colorScheme.background.copy(alpha = 0.4f))
@@ -635,7 +642,9 @@ fun PreviewEpisodeDetails() {
                 ),
             ),
         ),
-        expandedValue = ModalBottomSheetValue.HalfExpanded,
+        sheetState = BottomSheetNavigatorSheetState(
+            ModalBottomSheetState(ModalBottomSheetValue.HalfExpanded),
+        ),
         navigateUp = {},
         refresh = {},
         onRemoveAllWatches = {},
