@@ -337,7 +337,7 @@ private fun NavGraphBuilder.addEpisodeDetails(
         val bottomSheetNavigator = navController.navigatorProvider
             .getNavigator(BottomSheetNavigator::class.java)
         EpisodeDetails(
-            expandedValue = bottomSheetNavigator.navigatorSheetState.currentValue,
+            sheetState = bottomSheetNavigator.navigatorSheetState,
             navigateUp = navController::navigateUp,
         )
     }
