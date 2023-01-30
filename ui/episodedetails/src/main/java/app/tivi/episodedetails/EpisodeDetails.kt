@@ -84,7 +84,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -111,6 +114,7 @@ import com.google.accompanist.navigation.material.BottomSheetNavigatorSheetState
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
+import kotlin.math.roundToInt
 import org.threeten.bp.OffsetDateTime
 
 @ExperimentalMaterialApi
@@ -181,11 +185,18 @@ internal fun EpisodeDetails(
         }
     }
 
+    // I don't love this, but it's the only way currently to know where the modal sheet
+    // is laid out. https://issuetracker.google.com/issues/209825720
+    var bottomSheetY by remember { mutableStateOf(0) }
+
     Surface(
         shadowElevation = 2.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("episode_details"),
+            .testTag("episode_details")
+            .onGloballyPositioned { coords ->
+                bottomSheetY = coords.positionInWindow().y.roundToInt()
+            },
     ) {
         Column {
             Surface {
@@ -200,9 +211,10 @@ internal fun EpisodeDetails(
                 }
 
                 Column {
-                    AnimatedVisibility(
-                        visible = sheetState.targetValue == ModalBottomSheetValue.Expanded,
-                    ) {
+                    val showScrim = sheetState.targetValue == ModalBottomSheetValue.Expanded &&
+                        bottomSheetY <= WindowInsets.statusBars.getBottom(LocalDensity.current)
+
+                    AnimatedVisibility(visible = showScrim) {
                         Spacer(
                             Modifier
                                 .background(MaterialTheme.colorScheme.background.copy(alpha = 0.4f))
@@ -212,7 +224,6 @@ internal fun EpisodeDetails(
                     }
 
                     EpisodeDetailsAppBar(
-                        // backgroundColor = Color.Transparent,
                         isRefreshing = viewState.refreshing,
                         navigateUp = navigateUp,
                         refresh = refresh,
