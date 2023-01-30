@@ -59,7 +59,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -182,8 +181,13 @@ internal fun EpisodeDetails(
         }
     }
 
-    Scaffold(
-        topBar = {
+    Surface(
+        shadowElevation = 2.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("episode_details"),
+    ) {
+        Column {
             Surface {
                 if (viewState.episode != null && viewState.season != null) {
                     EpisodeDetailsBackdrop(
@@ -216,30 +220,10 @@ internal fun EpisodeDetails(
                     )
                 }
             }
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                SwipeToDismiss(
-                    state = dismissSnackbarState,
-                    background = {},
-                    dismissContent = { Snackbar(snackbarData = data) },
-                    modifier = Modifier
-                        .padding(horizontal = Layout.bodyMargin)
-                        .fillMaxWidth(),
-                )
-            }
-        },
-        modifier = Modifier
-            .testTag("episode_details"),
-    ) { contentPadding ->
-        Surface(
-            shadowElevation = 2.dp,
-            modifier = Modifier.fillMaxSize(),
-        ) {
+
             Column(
-                Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(contentPadding),
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState()),
             ) {
                 val episode = viewState.episode
                 if (episode != null) {
@@ -309,6 +293,7 @@ internal fun EpisodeDetails(
                                 EpisodeWatchSwipeBackground(
                                     swipeProgress = fraction,
                                     wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f,
+                                    modifier = Modifier.fillMaxSize(),
                                 )
                             },
                             dismissContent = { EpisodeWatch(episodeWatchEntry = watch) },
@@ -318,6 +303,17 @@ internal fun EpisodeDetails(
 
                 Spacer(Modifier.height(8.dp))
             }
+        }
+
+        SnackbarHost(hostState = snackbarHostState) { data ->
+            SwipeToDismiss(
+                state = dismissSnackbarState,
+                background = {},
+                dismissContent = { Snackbar(snackbarData = data) },
+                modifier = Modifier
+                    .padding(horizontal = Layout.bodyMargin)
+                    .fillMaxWidth(),
+            )
         }
     }
 }
@@ -471,6 +467,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 @Composable
 private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
+    modifier: Modifier = Modifier,
     wouldCompleteOnRelease: Boolean = false,
 ) {
     var iconCenter by remember { mutableStateOf(Offset(0f, 0f)) }
@@ -480,14 +477,13 @@ private fun EpisodeWatchSwipeBackground(
     val default = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
 
     Box(
-        Modifier
-            .fillMaxSize()
+        modifier
             .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), RectangleShape),
     ) {
         // A simple box to draw the growing circle, which emanates from behind the icon
         Spacer(
             modifier = Modifier
-                .fillMaxSize()
+                .matchParentSize()
                 .drawGrowingCircle(
                     color = animateColorAsState(
                         targetValue = when (wouldCompleteOnRelease) {
