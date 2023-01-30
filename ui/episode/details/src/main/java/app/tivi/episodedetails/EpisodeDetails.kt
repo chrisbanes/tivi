@@ -61,7 +61,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -309,13 +308,12 @@ private fun EpisodeDetailsBackdrop(
                 val epNumber = episode.number
                 val seasonNumber = season.number
                 if (seasonNumber != null && epNumber != null) {
-                    @Suppress("DEPRECATION")
                     Text(
                         text = stringResource(
                             MR.strings.season_episode_number,
                             seasonNumber,
                             epNumber,
-                        ).uppercase(LocalConfiguration.current.locale),
+                        ),
                     )
                 }
             },

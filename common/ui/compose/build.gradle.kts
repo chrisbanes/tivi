@@ -43,7 +43,8 @@ dependencies {
     implementation(libs.compose.foundation.layout)
     implementation(libs.compose.material.material)
     implementation(libs.compose.material.iconsext)
-    implementation(libs.compose.material3)
+    api(libs.compose.material3.material3)
+    api(libs.compose.material3.windowsizeclass)
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
 

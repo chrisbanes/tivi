@@ -24,7 +24,7 @@ dependencies {
     implementation(projects.common.ui.screens)
 
     implementation(platform(libs.compose.bom))
-    implementation(libs.compose.material3)
+    implementation(libs.compose.material3.material3)
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
     implementation(libs.androidx.activity.compose)

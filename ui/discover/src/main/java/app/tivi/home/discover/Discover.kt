@@ -293,7 +293,7 @@ private fun NextEpisodeToWatch(
         onClick = onClick,
         modifier = modifier,
     ) {
-        Column(Modifier.padding(Layout.bodyMargin)) {
+        Column(Modifier.padding(Layout.gutter * 2)) {
             Header(
                 title = stringResource(MR.strings.discover_keep_watching_title),
                 modifier = Modifier.padding(bottom = 16.dp),
