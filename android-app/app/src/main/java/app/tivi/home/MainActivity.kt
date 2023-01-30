@@ -9,6 +9,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +28,7 @@ import app.tivi.ContentViewSetter
 import app.tivi.TiviActivity
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.shouldUseDynamicColors
 import app.tivi.common.compose.theme.TiviTheme
@@ -93,6 +96,7 @@ class MainActivity : TiviActivity() {
         component.contentViewSetter.setContentView(this, composeView)
     }
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @Composable
     private fun TiviContent() {
         CircuitCompositionLocals(component.circuitConfig) {
@@ -117,12 +121,16 @@ class MainActivity : TiviActivity() {
                 LocalTiviDateFormatter provides component.tiviDateFormatter,
                 LocalTiviTextCreator provides component.textCreator,
                 LocalNavigator provides navigator,
+                LocalWindowSizeClass provides calculateWindowSizeClass(this@MainActivity),
             ) {
                 TiviTheme(
                     useDarkColors = preferences.shouldUseDarkColors(),
                     useDynamicColors = preferences.shouldUseDynamicColors(),
                 ) {
-                    Home(backstack = backstack, navigator = navigator)
+                    Home(
+                        backstack = backstack,
+                        navigator = navigator,
+                    )
                 }
             }
         }

@@ -5,6 +5,7 @@ package app.tivi.common.compose.ui
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
@@ -30,14 +31,14 @@ import app.tivi.data.models.TraktUser
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarWithBottomContent(
-    title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit,
-    bottomContent: @Composable (() -> Unit)? = null,
+    bottomContent: @Composable (ColumnScope.() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
     elevation: Dp = 0.dp,
+    title: @Composable () -> Unit,
 ) {
     Surface(
         color = containerColor,
@@ -57,7 +58,7 @@ fun TopAppBarWithBottomContent(
                 ),
             )
 
-            bottomContent?.invoke()
+            bottomContent?.invoke(this)
         }
     }
 }

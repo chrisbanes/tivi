@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.DismissValue
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -184,6 +185,8 @@ internal fun ShowSeasons(
                         containerColor = Color.Transparent,
                         contentColor = LocalContentColor.current,
                     )
+
+                    Divider(Modifier.fillMaxWidth())
                 },
             )
         },
@@ -238,6 +241,7 @@ private fun SeasonPagerTabs(
                 Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
             )
         },
+        divider = {},
         modifier = modifier,
     ) {
         // Add tabs for all of our pages

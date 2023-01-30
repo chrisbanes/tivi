@@ -4,6 +4,7 @@
 package app.tivi.home
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -27,11 +30,15 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.derivedStateOf
@@ -40,10 +47,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.ui.resources.MR
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
@@ -64,8 +71,10 @@ internal fun Home(
     backstack: SaveableBackStack,
     navigator: Navigator,
 ) {
-    val configuration = LocalConfiguration.current
-    val useBottomNavigation = configuration.smallestScreenWidthDp < 600
+    val windowSizeClass = LocalWindowSizeClass.current
+    val navigationType = remember(windowSizeClass) {
+        NavigationType.forWindowSizeSize(windowSizeClass)
+    }
 
     val rootScreen by remember {
         derivedStateOf { backstack.last().screen }
@@ -73,7 +82,7 @@ internal fun Home(
 
     Scaffold(
         bottomBar = {
-            if (useBottomNavigation) {
+            if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
                 HomeNavigationBar(
                     selectedNavigation = rootScreen,
                     onNavigationSelected = { navigator.resetRoot(it) },
@@ -100,7 +109,7 @@ internal fun Home(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            if (!useBottomNavigation) {
+            if (navigationType == NavigationType.RAIL) {
                 HomeNavigationRail(
                     selectedNavigation = rootScreen,
                     onNavigationSelected = { navigator.resetRoot(it) },
@@ -111,6 +120,12 @@ internal fun Home(
                     Modifier
                         .fillMaxHeight()
                         .width(1.dp),
+                )
+            } else if (navigationType == NavigationType.PERMANENT_DRAWER) {
+                HomeNavigationDrawer(
+                    selectedNavigation = rootScreen,
+                    onNavigationSelected = { navigator.resetRoot(it) },
+                    modifier = Modifier.fillMaxHeight(),
                 )
             }
 
@@ -175,6 +190,34 @@ internal fun HomeNavigationRail(
 }
 
 @Composable
+internal fun HomeNavigationDrawer(
+    selectedNavigation: Screen,
+    onNavigationSelected: (Screen) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .safeContentPadding()
+            .padding(16.dp)
+            .widthIn(max = 280.dp),
+    ) {
+        for (item in HomeNavigationItems) {
+            NavigationDrawerItem(
+                icon = {
+                    Icon(
+                        imageVector = item.iconImageVector,
+                        contentDescription = stringResource(item.contentDescriptionResource),
+                    )
+                },
+                label = { Text(text = stringResource(item.labelResource)) },
+                selected = selectedNavigation == item.screen,
+                onClick = { onNavigationSelected(item.screen) },
+            )
+        }
+    }
+}
+
+@Composable
 private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) {
     if (item.selectedImageVector != null) {
         Crossfade(targetState = selected) { s ->
@@ -199,6 +242,22 @@ private data class HomeNavigationItem(
     val iconImageVector: ImageVector,
     val selectedImageVector: ImageVector? = null,
 )
+
+internal enum class NavigationType {
+    BOTTOM_NAVIGATION,
+    RAIL,
+    PERMANENT_DRAWER,
+    ;
+
+    companion object {
+        fun forWindowSizeSize(windowSizeClass: WindowSizeClass): NavigationType = when {
+            windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact -> BOTTOM_NAVIGATION
+            windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact -> BOTTOM_NAVIGATION
+            windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium -> RAIL
+            else -> PERMANENT_DRAWER
+        }
+    }
+}
 
 private val HomeNavigationItems by lazy {
     listOf(
