@@ -203,6 +203,8 @@ dependencies {
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
 
+    lintChecks(libs.slack.lint.compose)
+
     implementation(libs.accompanist.navigation.animation)
     implementation(libs.accompanist.navigation.material)
 

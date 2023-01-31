@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.0.0-beta02" type="baseline" client="gradle" dependencies="false" name="AGP (8.0.0-beta02)" variant="all" version="8.0.0-beta02">
+
+    <issue
+        id="ComposeParameterOrder"
+        message="Parameters in a composable function should be ordered following this pattern: params without defaults, modifiers, params with defaults and optionally, a trailing function that might not have a default param.&#xA;Current params are: [title: @Composable () -> Unit, modifier: Modifier = Modifier, navigationIcon: @Composable () -> Unit, bottomContent: @Composable (() -> Unit)? = null, actions: @Composable RowScope.() -> Unit = {}, containerColor: Color = MaterialTheme.colorScheme.surface, contentColor: Color = contentColorFor(containerColor), elevation: Dp = 0.dp] but should be [title: @Composable () -> Unit, navigationIcon: @Composable () -> Unit, modifier: Modifier = Modifier, bottomContent: @Composable (() -> Unit)? = null, actions: @Composable RowScope.() -> Unit = {}, containerColor: Color = MaterialTheme.colorScheme.surface, contentColor: Color = contentColorFor(containerColor), elevation: Dp = 0.dp].&#xA;See https://slackhq.github.io/compose-lints/rules/#ordering-composable-parameters-properly for more information."
+        errorLine1="/**"
+        errorLine2="^">
+        <location
+            file="src/main/java/app/tivi/common/compose/ui/AppBar.kt"
+            line="39"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="ComposeUnstableCollections"
+        message="The Compose Compiler cannot infer the stability of a parameter if a List&lt;SortOption> is used in it, even if the item type is stable.&#xA;You should use Kotlinx Immutable Collections instead: `sortOptions: ImmutableList&lt;SortOption>` or create an `@Immutable` wrapper for this class: `@Immutable data class SortOptionsList(val items: List&lt;SortOption>)`&#xA;See https://slackhq.github.io/compose-lints/rules/#avoid-using-unstable-collections for more information."
+        errorLine1="    sortOptions: List&lt;SortOption>,"
+        errorLine2="                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/app/tivi/common/compose/ui/SortChip.kt"
+            line="43"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ComposeUnstableCollections"
+        message="The Compose Compiler cannot infer the stability of a parameter if a List&lt;SortOption> is used in it, even if the item type is stable.&#xA;You should use Kotlinx Immutable Collections instead: `sortOptions: ImmutableList&lt;SortOption>` or create an `@Immutable` wrapper for this class: `@Immutable data class SortOptionsList(val items: List&lt;SortOption>)`&#xA;See https://slackhq.github.io/compose-lints/rules/#avoid-using-unstable-collections for more information."
+        errorLine1="    sortOptions: List&lt;SortOption>,"
+        errorLine2="                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/app/tivi/common/compose/ui/SortMenuPopup.kt"
+            line="32"
+            column="18"/>
+    </issue>
+
+</issues>
