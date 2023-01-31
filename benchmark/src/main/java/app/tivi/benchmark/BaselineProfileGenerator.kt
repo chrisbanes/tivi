@@ -17,7 +17,7 @@
 package app.tivi.benchmark
 
 import android.os.SystemClock
-import androidx.benchmark.macro.ExperimentalBaselineProfilesApi
+import androidx.benchmark.macro.ExperimentalStableBaselineProfilesApi
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
@@ -28,39 +28,42 @@ import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
 
-@OptIn(ExperimentalBaselineProfilesApi::class)
 class BaselineProfileGenerator {
 
     @get:Rule
     val rule = BaselineProfileRule()
 
+    @OptIn(ExperimentalStableBaselineProfilesApi::class)
     @Test
-    fun generateBaselineProfile() = rule.collectBaselineProfile("app.tivi") {
+    fun generateBaselineProfile() = rule.collectStableBaselineProfile(
+        packageName = "app.tivi",
+        maxIterations = 15, // What @tikurahul said
+    ) {
         startActivityAndWait()
         device.waitForIdle()
 
         // -------------
         // Discover
         // -------------
-        device.testDiscover() || return@collectBaselineProfile
+        device.testDiscover() || return@collectStableBaselineProfile
         device.navigateFromDiscoverToShowDetails()
 
         // -------------
         // Show Details
         // -------------
-        device.testShowDetails() || return@collectBaselineProfile
+        device.testShowDetails() || return@collectStableBaselineProfile
         device.navigateFromShowDetailsToSeasons()
 
         // -------------
         // Seasons
         // -------------
-        device.testSeasons() || return@collectBaselineProfile
+        device.testSeasons() || return@collectStableBaselineProfile
         device.navigateFromSeasonsToEpisodeDetails()
 
         // -------------
         // Episode details
         // -------------
-        device.testEpisodeDetails() || return@collectBaselineProfile
+        device.testEpisodeDetails() || return@collectStableBaselineProfile
     }
 
     private fun UiDevice.testDiscover(): Boolean {
