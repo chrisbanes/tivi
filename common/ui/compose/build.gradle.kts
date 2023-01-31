@@ -32,6 +32,10 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composecompiler.get()
     }
+
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
 }
 
 dependencies {
@@ -60,4 +64,6 @@ dependencies {
     implementation(libs.androidx.paging.compose)
 
     implementation(libs.coil.compose)
+
+    lintChecks(libs.slack.lint.compose)
 }

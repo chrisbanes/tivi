@@ -52,4 +52,6 @@ dependencies {
     implementation(libs.compose.ui.tooling)
 
     ksp(libs.kotlininject.compiler)
+
+    lintChecks(libs.slack.lint.compose)
 }

@@ -34,10 +34,14 @@ import app.tivi.common.compose.theme.TiviTheme
 fun ScrimmedIconButton(
     showScrim: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     invertThemeOnScrim: Boolean = true,
     icon: @Composable () -> Unit,
 ) {
-    IconButton(onClick = onClick) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
         if (invertThemeOnScrim) {
             val isLight = MaterialTheme.colorScheme.surface.luminance() > 0.5
 

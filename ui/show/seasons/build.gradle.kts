@@ -54,4 +54,6 @@ dependencies {
     implementation(libs.coil.compose)
 
     ksp(libs.kotlininject.compiler)
+
+    lintChecks(libs.slack.lint.compose)
 }
