@@ -81,8 +81,8 @@ jobs:
         run: |
           # Pull down any changes which may have been committed while this workflow has been running
           git pull
-          # Sort the baseline profile, output to app/
-          sort -o app/src/main/baseline-prof.txt benchmark/build/outputs/managed_device_android_test_additional_output/api31/BaselineProfileGenerator_generateBaselineProfile-baseline-prof.txt
+          # Copy the baseline profile to :app
+          cp benchmark/build/outputs/managed_device_android_test_additional_output/api31/BaselineProfileGenerator_generateBaselineProfile-baseline-prof.txt app/src/main/baseline-prof.txt
           # If the baseline profile has changed, commit it
           if [[ $(git diff --stat app/src/main/baseline-prof.txt) != '' ]]; then
             git config user.name github-actions
