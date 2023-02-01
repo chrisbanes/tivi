@@ -67,8 +67,9 @@ jobs:
         run: ./gradlew cleanManagedDevices --unused-only
 
       - name: Run benchmark on Gradle Managed Device
+        # --info used to add a repro to https://issuetracker.google.com/issues/193118030
         run: |
-          ./gradlew api31BenchmarkAndroidTest \
+          ./gradlew --info api31BenchmarkAndroidTest \
             -Dorg.gradle.workers.max=1 \
             -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile \
             -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
