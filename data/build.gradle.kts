@@ -31,7 +31,5 @@ dependencies {
 
     implementation(libs.retrofit.retrofit)
 
-    api(libs.store)
-
     api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
 }

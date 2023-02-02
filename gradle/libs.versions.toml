@@ -120,6 +120,7 @@ androidx-hilt-work = "androidx.hilt:hilt-work:1.0.0"
 
 junit = "junit:junit:4.13.2"
 
+kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.19.0"
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
@@ -141,7 +142,7 @@ retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref =
 
 robolectric = "org.robolectric:robolectric:4.9.2"
 
-store = "com.dropbox.mobile.store:store4:4.0.5"
+store = "org.mobilenativefoundation.store:store5:5.0.0-alpha03"
 
 threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.4.4"
 
