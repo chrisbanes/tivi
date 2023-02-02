@@ -28,8 +28,8 @@ android {
 
 dependencies {
     implementation(projects.base)
-    api(projects.data)
-    implementation(projects.dataAndroid)
+    api(projects.data.legacy)
+    implementation(projects.data.legacyAndroid)
     implementation(projects.api.traktAuth)
     implementation(projects.api.tmdb)
 
