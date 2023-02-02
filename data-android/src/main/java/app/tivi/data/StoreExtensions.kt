@@ -16,12 +16,12 @@
 
 package app.tivi.data
 
-import com.dropbox.android.external.store4.Store
-import com.dropbox.android.external.store4.StoreResponse
-import com.dropbox.android.external.store4.fresh
-import com.dropbox.android.external.store4.get
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
+import org.mobilenativefoundation.store.store5.Store
+import org.mobilenativefoundation.store.store5.StoreResponse
+import org.mobilenativefoundation.store.store5.fresh
+import org.mobilenativefoundation.store.store5.get
 
 suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     key: Key,

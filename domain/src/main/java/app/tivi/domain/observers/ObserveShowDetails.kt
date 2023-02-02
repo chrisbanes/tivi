@@ -20,13 +20,13 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import com.dropbox.android.external.store4.StoreRequest
-import com.dropbox.android.external.store4.StoreResponse
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import org.mobilenativefoundation.store.store5.StoreRequest
+import org.mobilenativefoundation.store.store5.StoreResponse
 
 class ObserveShowDetails @Inject constructor(
     private val showStore: ShowStore,

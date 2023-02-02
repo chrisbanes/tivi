@@ -21,11 +21,11 @@ import app.tivi.data.filterForResult
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import com.dropbox.android.external.store4.StoreRequest
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import org.mobilenativefoundation.store.store5.StoreRequest
 
 class ObserveShowImages @Inject constructor(
     private val store: ShowImagesStore,
