@@ -26,7 +26,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.data)
+    implementation(projects.data.legacy)
     api(projects.common.ui.resources)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

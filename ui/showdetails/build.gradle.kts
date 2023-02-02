@@ -37,7 +37,7 @@ android {
 
 dependencies {
     implementation(projects.base)
-    implementation(projects.data)
+    implementation(projects.data.legacy)
     implementation(projects.domain)
     implementation(projects.common.ui.view)
     implementation(projects.common.ui.compose)
