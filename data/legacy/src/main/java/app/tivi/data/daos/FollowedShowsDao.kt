@@ -21,11 +21,11 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.Transaction
+import app.tivi.data.compoundmodels.FollowedShowEntryWithShow
+import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.models.Season
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.data.resultentities.UpNextEntry
 import app.tivi.data.views.FollowedShowsWatchStats
 import kotlinx.coroutines.flow.Flow
 

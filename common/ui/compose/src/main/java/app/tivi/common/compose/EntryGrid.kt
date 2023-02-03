@@ -63,8 +63,8 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.R as UiR
+import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
-import app.tivi.data.resultentities.EntryWithShow
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)

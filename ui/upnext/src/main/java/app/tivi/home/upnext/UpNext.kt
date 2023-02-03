@@ -76,11 +76,11 @@ import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.R as UiR
+import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
-import app.tivi.data.resultentities.UpNextEntry
 import app.tivi.trakt.TraktAuthState
 
 @Composable

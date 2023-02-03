@@ -20,8 +20,8 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.PaginatedEntry
-import app.tivi.data.resultentities.EntryWithShow
 
 /**
  * A [RemoteMediator] which works on [PaginatedEntry] entities. [fetch] will be called with the

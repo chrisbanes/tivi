@@ -20,8 +20,8 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import app.tivi.data.compoundmodels.TrendingEntryWithShow
 import app.tivi.data.daos.TrendingDao
-import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.PaginatedEntryRemoteMediator
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.interactors.UpdateTrendingShows

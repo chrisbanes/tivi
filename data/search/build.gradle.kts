@@ -22,7 +22,6 @@ plugins {
 
 dependencies {
     api(projects.data.models)
-    implementation(projects.data.legacy) // remove this eventually
 
     implementation(projects.api.trakt)
     implementation(projects.api.tmdb)

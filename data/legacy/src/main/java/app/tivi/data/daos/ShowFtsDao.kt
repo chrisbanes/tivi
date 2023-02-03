@@ -19,7 +19,7 @@ package app.tivi.data.daos
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import app.tivi.data.resultentities.ShowDetailed
+import app.tivi.data.compoundmodels.ShowDetailed
 
 @Dao
 abstract class ShowFtsDao {

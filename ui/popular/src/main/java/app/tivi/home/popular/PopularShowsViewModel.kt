@@ -21,7 +21,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.domain.observers.ObservePagedPopularShows
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

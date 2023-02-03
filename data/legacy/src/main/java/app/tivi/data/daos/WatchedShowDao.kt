@@ -20,9 +20,9 @@ import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import app.tivi.data.compoundmodels.WatchedShowEntryWithShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.WatchedShowEntry
-import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import kotlinx.coroutines.flow.Flow
 
 @Dao

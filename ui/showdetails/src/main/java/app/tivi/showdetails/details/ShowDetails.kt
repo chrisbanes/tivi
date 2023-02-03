@@ -113,6 +113,14 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.common.ui.resources.R as UiR
+import app.tivi.data.compoundmodels.EpisodeWithSeason
+import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
+import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
+import app.tivi.data.compoundmodels.nextToAir
+import app.tivi.data.compoundmodels.numberAired
+import app.tivi.data.compoundmodels.numberAiredToWatch
+import app.tivi.data.compoundmodels.numberToAir
+import app.tivi.data.compoundmodels.numberWatched
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Genre
 import app.tivi.data.models.ImageType
@@ -121,14 +129,6 @@ import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TmdbImageEntity
-import app.tivi.data.resultentities.EpisodeWithSeason
-import app.tivi.data.resultentities.RelatedShowEntryWithShow
-import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
-import app.tivi.data.resultentities.nextToAir
-import app.tivi.data.resultentities.numberAired
-import app.tivi.data.resultentities.numberAiredToWatch
-import app.tivi.data.resultentities.numberToAir
-import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import org.threeten.bp.OffsetDateTime
 

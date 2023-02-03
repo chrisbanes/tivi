@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.data.resultentities
+package app.tivi.data.compoundmodels
 
 import androidx.room.Embedded
 import androidx.room.Ignore
@@ -22,20 +22,16 @@ import androidx.room.Relation
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import app.tivi.data.models.TrendingShowEntry
 import app.tivi.data.util.findHighestRatedItem
 import app.tivi.extensions.unsafeLazy
 import java.util.Objects
 
-class TrendingEntryWithShow : EntryWithShow<TrendingShowEntry> {
+class ShowDetailed {
     @Embedded
-    override lateinit var entry: TrendingShowEntry
+    lateinit var show: TiviShow
 
-    @Relation(parentColumn = "show_id", entityColumn = "id")
-    override lateinit var relations: List<TiviShow>
-
-    @Relation(parentColumn = "show_id", entityColumn = "show_id")
-    override lateinit var images: List<ShowTmdbImage>
+    @Relation(parentColumn = "id", entityColumn = "show_id")
+    lateinit var images: List<ShowTmdbImage>
 
     @delegate:Ignore
     val backdrop: ShowTmdbImage? by unsafeLazy {
@@ -43,17 +39,15 @@ class TrendingEntryWithShow : EntryWithShow<TrendingShowEntry> {
     }
 
     @delegate:Ignore
-    override val poster: ShowTmdbImage? by unsafeLazy {
+    val poster: ShowTmdbImage? by unsafeLazy {
         findHighestRatedItem(images, ImageType.POSTER)
     }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is TrendingEntryWithShow -> {
-            entry == other.entry && relations == other.relations && images == other.images
-        }
+        other is ShowDetailed -> show == other.show && images == other.images
         else -> false
     }
 
-    override fun hashCode(): Int = Objects.hash(entry, relations, images)
+    override fun hashCode(): Int = Objects.hash(show, images)
 }

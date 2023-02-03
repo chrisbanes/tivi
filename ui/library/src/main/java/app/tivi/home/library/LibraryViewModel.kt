@@ -22,9 +22,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import app.tivi.api.UiMessageManager
+import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.RefreshType
 import app.tivi.data.models.SortOption
-import app.tivi.data.resultentities.LibraryShow
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.GetTraktAuthState

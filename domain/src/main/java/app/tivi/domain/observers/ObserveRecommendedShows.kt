@@ -16,8 +16,8 @@
 
 package app.tivi.domain.observers
 
+import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import app.tivi.data.daos.RecommendedDao
-import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.SubjectInteractor
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

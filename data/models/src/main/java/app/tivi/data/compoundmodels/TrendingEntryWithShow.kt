@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.data.resultentities
+package app.tivi.data.compoundmodels
 
 import androidx.room.Embedded
 import androidx.room.Ignore
@@ -22,14 +22,14 @@ import androidx.room.Relation
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import app.tivi.data.models.WatchedShowEntry
+import app.tivi.data.models.TrendingShowEntry
 import app.tivi.data.util.findHighestRatedItem
 import app.tivi.extensions.unsafeLazy
 import java.util.Objects
 
-class WatchedShowEntryWithShow : EntryWithShow<WatchedShowEntry> {
+class TrendingEntryWithShow : EntryWithShow<TrendingShowEntry> {
     @Embedded
-    override lateinit var entry: WatchedShowEntry
+    override lateinit var entry: TrendingShowEntry
 
     @Relation(parentColumn = "show_id", entityColumn = "id")
     override lateinit var relations: List<TiviShow>
@@ -49,7 +49,7 @@ class WatchedShowEntryWithShow : EntryWithShow<WatchedShowEntry> {
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is WatchedShowEntryWithShow -> {
+        other is TrendingEntryWithShow -> {
             entry == other.entry && relations == other.relations && images == other.images
         }
         else -> false

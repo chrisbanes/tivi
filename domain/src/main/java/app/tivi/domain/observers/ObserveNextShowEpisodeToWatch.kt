@@ -16,9 +16,9 @@
 
 package app.tivi.domain.observers
 
+import app.tivi.data.compoundmodels.EpisodeWithSeasonWithShow
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.followedshows.FollowedShowsRepository
-import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.domain.SubjectInteractor
 import app.tivi.extensions.flatMapLatestNullable
 import app.tivi.extensions.mapNullable

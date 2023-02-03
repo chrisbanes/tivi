@@ -17,7 +17,7 @@
 package app.tivi.home.search
 
 import app.tivi.api.UiMessage
-import app.tivi.data.resultentities.ShowDetailed
+import app.tivi.data.compoundmodels.ShowDetailed
 
 internal data class SearchViewState(
     val query: String = "",

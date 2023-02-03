@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package app.tivi.data.resultentities
+package app.tivi.data.compoundmodels
 
 import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
 import app.tivi.data.models.ImageType
-import app.tivi.data.models.RecommendedShowEntry
+import app.tivi.data.models.RelatedShowEntry
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import app.tivi.data.util.findHighestRatedItem
 import app.tivi.extensions.unsafeLazy
 import java.util.Objects
 
-class RecommendedEntryWithShow : EntryWithShow<RecommendedShowEntry> {
+class RelatedShowEntryWithShow : EntryWithShow<RelatedShowEntry> {
     @Embedded
-    override lateinit var entry: RecommendedShowEntry
+    override lateinit var entry: RelatedShowEntry
 
-    @Relation(parentColumn = "show_id", entityColumn = "id")
+    @Relation(parentColumn = "other_show_id", entityColumn = "id")
     override lateinit var relations: List<TiviShow>
 
-    @Relation(parentColumn = "show_id", entityColumn = "show_id")
+    @Relation(parentColumn = "other_show_id", entityColumn = "show_id")
     override lateinit var images: List<ShowTmdbImage>
 
     @delegate:Ignore
@@ -49,7 +49,7 @@ class RecommendedEntryWithShow : EntryWithShow<RecommendedShowEntry> {
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is RecommendedEntryWithShow -> {
+        other is RelatedShowEntryWithShow -> {
             entry == other.entry && relations == other.relations && images == other.images
         }
         else -> false

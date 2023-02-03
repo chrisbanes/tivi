@@ -17,9 +17,9 @@
 package app.tivi.data.search
 
 import androidx.collection.LruCache
+import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.resultentities.ShowDetailed
 import javax.inject.Inject
 import javax.inject.Singleton
 
