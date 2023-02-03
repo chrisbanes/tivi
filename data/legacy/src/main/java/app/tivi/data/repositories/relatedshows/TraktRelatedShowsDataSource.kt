@@ -16,14 +16,14 @@
 
 package app.tivi.data.repositories.relatedshows
 
-import app.tivi.data.bodyOrThrow
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.data.withRetry
+import app.tivi.data.util.bodyOrThrow
+import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows

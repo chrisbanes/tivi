@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.data
+package app.tivi.data.db
 
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao

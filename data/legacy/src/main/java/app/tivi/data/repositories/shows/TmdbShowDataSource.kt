@@ -16,10 +16,10 @@
 
 package app.tivi.data.repositories.shows
 
-import app.tivi.data.bodyOrThrow
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbShowToTiviShow
-import app.tivi.data.withRetry
+import app.tivi.data.util.bodyOrThrow
+import app.tivi.data.util.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 import retrofit2.awaitResponse

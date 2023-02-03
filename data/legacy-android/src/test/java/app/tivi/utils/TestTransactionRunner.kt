@@ -16,7 +16,7 @@
 
 package app.tivi.utils
 
-import app.tivi.data.DatabaseTransactionRunner
+import app.tivi.data.db.DatabaseTransactionRunner
 
 internal object TestTransactionRunner : DatabaseTransactionRunner {
     override suspend fun <T> invoke(block: suspend () -> T): T = block()

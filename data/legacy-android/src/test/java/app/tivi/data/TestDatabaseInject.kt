@@ -18,6 +18,8 @@ package app.tivi.data
 
 import android.content.Context
 import androidx.room.Room
+import app.tivi.data.db.DatabaseTransactionRunner
+import app.tivi.data.db.TiviDatabase
 import app.tivi.data.repositories.episodes.EpisodeDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource

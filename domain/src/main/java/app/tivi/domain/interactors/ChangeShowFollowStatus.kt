@@ -17,11 +17,11 @@
 package app.tivi.domain.interactors
 
 import app.tivi.actions.ShowTasks
-import app.tivi.data.fetch
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
+import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger

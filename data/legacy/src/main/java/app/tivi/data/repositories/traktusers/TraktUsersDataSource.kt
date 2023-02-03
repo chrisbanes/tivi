@@ -16,10 +16,10 @@
 
 package app.tivi.data.repositories.traktusers
 
-import app.tivi.data.bodyOrThrow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.mappers.UserToTraktUser
-import app.tivi.data.withRetry
+import app.tivi.data.util.bodyOrThrow
+import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Users

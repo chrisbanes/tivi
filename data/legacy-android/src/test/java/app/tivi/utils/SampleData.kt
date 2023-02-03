@@ -16,7 +16,7 @@
 
 package app.tivi.utils
 
-import app.tivi.data.TiviDatabase
+import app.tivi.data.db.TiviDatabase
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.FollowedShowEntry

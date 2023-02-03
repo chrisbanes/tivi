@@ -19,7 +19,7 @@ package app.tivi.data.repositories.lastrequests
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.entities.LastRequest
 import app.tivi.data.entities.Request
-import app.tivi.data.inPast
+import app.tivi.data.util.inPast
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.TemporalAmount
 

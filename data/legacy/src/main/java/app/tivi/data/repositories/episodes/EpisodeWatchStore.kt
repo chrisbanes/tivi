@@ -16,8 +16,8 @@
 
 package app.tivi.data.repositories.episodes
 
-import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.syncers.syncerForEntity

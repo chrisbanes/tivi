@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
-package app.tivi.data
+package app.tivi.data.db
 
-import androidx.room.withTransaction
-import javax.inject.Inject
-
-class RoomTransactionRunner @Inject constructor(
-    private val db: TiviRoomDatabase,
-) : DatabaseTransactionRunner {
-    override suspend operator fun <T> invoke(block: suspend () -> T): T {
-        return db.withTransaction {
-            block()
-        }
-    }
+interface DatabaseTransactionRunner {
+    suspend operator fun <T> invoke(block: suspend () -> T): T
 }

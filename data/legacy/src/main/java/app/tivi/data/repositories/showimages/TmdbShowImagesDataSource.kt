@@ -16,11 +16,11 @@
 
 package app.tivi.data.repositories.showimages
 
-import app.tivi.data.bodyOrThrow
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbImagesToShowImages
-import app.tivi.data.withRetry
+import app.tivi.data.util.bodyOrThrow
+import app.tivi.data.util.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 import retrofit2.awaitResponse

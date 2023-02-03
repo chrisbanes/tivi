@@ -16,9 +16,9 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.fetch
 import app.tivi.data.repositories.shows.ShowLastRequestStore
 import app.tivi.data.repositories.shows.ShowStore
+import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowDetails.Params
 import app.tivi.util.AppCoroutineDispatchers

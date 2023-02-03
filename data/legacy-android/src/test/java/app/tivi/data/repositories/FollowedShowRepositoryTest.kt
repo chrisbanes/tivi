@@ -18,8 +18,8 @@ package app.tivi.data.repositories
 
 import app.tivi.data.DatabaseModuleBinds
 import app.tivi.data.DatabaseTest
-import app.tivi.data.TiviDatabase
 import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.db.TiviDatabase
 import app.tivi.data.repositories.episodes.EpisodeDataSourceBinds
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
