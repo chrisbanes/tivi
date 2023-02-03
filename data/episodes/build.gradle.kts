@@ -27,9 +27,4 @@ dependencies {
     implementation(projects.api.trakt)
     implementation(projects.api.tmdb)
     implementation(libs.retrofit.retrofit)
-
-    api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
-
-    implementation(libs.androidx.collection) // LruCache
 }

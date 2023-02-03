@@ -32,11 +32,18 @@ android {
 
 dependencies {
     implementation(projects.base)
-    api(projects.data.legacy)
 
+    api(projects.data.legacy) // needed for DAOs
+
+    api(projects.data.episodes)
     api(projects.data.followedshows)
-    api(projects.data.search)
+    api(projects.data.popularshows)
+    api(projects.data.recommendedshows)
+    api(projects.data.relatedshows)
+    api(projects.data.showimages)
     api(projects.data.shows)
+    api(projects.data.trendingshows)
+    api(projects.data.watchedshows)
 
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)

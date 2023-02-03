@@ -32,10 +32,19 @@ dependencies {
     api(projects.data.models)
     implementation(projects.data.legacy) // remove this eventually
 
+    api(projects.data.episodes)
     api(projects.data.followedshows)
+    api(projects.data.popularshows)
+    api(projects.data.recommendedshows)
+    api(projects.data.relatedshows)
     api(projects.data.search)
+    api(projects.data.showimages)
     api(projects.data.shows)
+    api(projects.data.traktusers)
+    api(projects.data.trendingshows)
+    api(projects.data.watchedshows)
 
+    api(projects.api.trakt) // TraktAuthState
     implementation(projects.api.traktAuth)
     implementation(projects.api.tmdb)
 

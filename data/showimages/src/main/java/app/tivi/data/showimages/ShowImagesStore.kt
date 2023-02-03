@@ -27,7 +27,9 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-class ShowImagesStore(store: Store<Long, List<ShowTmdbImage>>) : Store<Long, List<ShowTmdbImage>> by store
+class ShowImagesStore internal constructor(
+    store: Store<Long, List<ShowTmdbImage>>,
+) : Store<Long, List<ShowTmdbImage>> by store
 
 fun ShowImagesStore(
     showTmdbImagesDao: ShowTmdbImagesDao,
