@@ -20,7 +20,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import app.tivi.data.PaginatedEntry
+import app.tivi.data.entities.PaginatedEntry
 import app.tivi.data.resultentities.EntryWithShow
 
 /**
