@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
+package app.tivi.data.daos
 
-plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
-}
+import app.tivi.data.models.LastRequest
+import app.tivi.data.models.Request
 
-dependencies {
-    api(projects.data.models)
-    implementation(projects.data.db)
-    implementation(projects.data.legacy) // remove this eventually
+interface LastRequestDao : EntityDao<LastRequest> {
 
-    implementation(projects.api.trakt)
-    implementation(projects.api.tmdb)
-    implementation(libs.retrofit.retrofit)
+    suspend fun lastRequest(request: Request, entityId: Long): LastRequest?
 
-    api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
+    suspend fun requestCount(request: Request, entityId: Long): Int
+
+    override suspend fun insert(entity: LastRequest): Long
 }

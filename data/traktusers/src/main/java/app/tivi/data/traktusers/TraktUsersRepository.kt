@@ -17,6 +17,7 @@
 package app.tivi.data.traktusers
 
 import app.tivi.data.daos.UserDao
+import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.TraktUser
 import app.tivi.data.util.withRetry
 import javax.inject.Inject

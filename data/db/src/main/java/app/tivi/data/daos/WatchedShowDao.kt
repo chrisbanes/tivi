@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
+package app.tivi.data.daos
 
-plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
-}
+import app.tivi.data.compoundmodels.WatchedShowEntryWithShow
+import app.tivi.data.models.WatchedShowEntry
+import kotlinx.coroutines.flow.Flow
 
-dependencies {
-    api(projects.data.models)
-    implementation(projects.data.db)
-    implementation(projects.data.legacy) // remove this eventually
+interface WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
 
-    implementation(projects.api.trakt)
-    implementation(projects.api.tmdb)
-    implementation(libs.retrofit.retrofit)
+    suspend fun entryWithShowId(showId: Long): WatchedShowEntry?
 
-    api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
+    suspend fun entries(): List<WatchedShowEntry>
+
+    fun entriesObservable(): Flow<List<WatchedShowEntry>>
+
+    override suspend fun deleteAll()
 }

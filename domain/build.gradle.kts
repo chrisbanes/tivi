@@ -30,6 +30,7 @@ dependencies {
     implementation(projects.base)
 
     api(projects.data.models)
+    implementation(projects.data.db) // remove this eventually
     implementation(projects.data.legacy) // remove this eventually
 
     api(projects.data.episodes)

@@ -20,6 +20,21 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import app.tivi.data.daos.RoomEpisodeWatchEntryDao
+import app.tivi.data.daos.RoomEpisodesDao
+import app.tivi.data.daos.RoomFollowedShowsDao
+import app.tivi.data.daos.RoomLastRequestDao
+import app.tivi.data.daos.RoomLibraryShowsDao
+import app.tivi.data.daos.RoomPopularDao
+import app.tivi.data.daos.RoomRecommendedDao
+import app.tivi.data.daos.RoomRelatedShowsDao
+import app.tivi.data.daos.RoomSeasonsDao
+import app.tivi.data.daos.RoomShowFtsDao
+import app.tivi.data.daos.RoomShowTmdbImagesDao
+import app.tivi.data.daos.RoomTiviShowDao
+import app.tivi.data.daos.RoomTrendingDao
+import app.tivi.data.daos.RoomUserDao
+import app.tivi.data.daos.RoomWatchedShowDao
 import app.tivi.data.db.TiviDatabase
 import app.tivi.data.db.TiviTypeConverters
 import app.tivi.data.models.Episode
@@ -74,4 +89,20 @@ import app.tivi.data.views.FollowedShowsWatchStats
     ],
 )
 @TypeConverters(TiviTypeConverters::class)
-abstract class TiviRoomDatabase : RoomDatabase(), TiviDatabase
+abstract class TiviRoomDatabase : RoomDatabase(), TiviDatabase {
+    abstract override fun showDao(): RoomTiviShowDao
+    abstract override fun showFtsDao(): RoomShowFtsDao
+    abstract override fun showImagesDao(): RoomShowTmdbImagesDao
+    abstract override fun trendingDao(): RoomTrendingDao
+    abstract override fun popularDao(): RoomPopularDao
+    abstract override fun userDao(): RoomUserDao
+    abstract override fun watchedShowsDao(): RoomWatchedShowDao
+    abstract override fun followedShowsDao(): RoomFollowedShowsDao
+    abstract override fun seasonsDao(): RoomSeasonsDao
+    abstract override fun episodesDao(): RoomEpisodesDao
+    abstract override fun relatedShowsDao(): RoomRelatedShowsDao
+    abstract override fun episodeWatchesDao(): RoomEpisodeWatchEntryDao
+    abstract override fun lastRequestDao(): RoomLastRequestDao
+    abstract override fun recommendedShowsDao(): RoomRecommendedDao
+    abstract override fun libraryShowsDao(): RoomLibraryShowsDao
+}

@@ -25,12 +25,12 @@ import app.tivi.data.models.LastRequest
 import app.tivi.data.models.Request
 
 @Dao
-abstract class LastRequestDao : EntityDao<LastRequest>() {
+abstract class RoomLastRequestDao : LastRequestDao, RoomEntityDao<LastRequest> {
     @Query("SELECT * FROM last_requests WHERE request = :request AND entity_id = :entityId")
-    abstract suspend fun lastRequest(request: Request, entityId: Long): LastRequest?
+    abstract override suspend fun lastRequest(request: Request, entityId: Long): LastRequest?
 
     @Query("SELECT COUNT(*) FROM last_requests WHERE request = :request AND entity_id = :entityId")
-    abstract suspend fun requestCount(request: Request, entityId: Long): Int
+    abstract override suspend fun requestCount(request: Request, entityId: Long): Int
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)

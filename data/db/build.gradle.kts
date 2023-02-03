@@ -21,14 +21,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.base)
     api(projects.data.models)
-    implementation(projects.data.db)
-    implementation(projects.data.legacy) // remove this eventually
-
-    implementation(projects.api.trakt)
-    implementation(projects.api.tmdb)
-    implementation(libs.retrofit.retrofit)
-
-    api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
+    api(libs.androidx.paging.common)
 }

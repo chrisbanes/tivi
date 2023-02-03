@@ -19,6 +19,8 @@ package app.tivi.data.followedshows
 import app.tivi.data.compoundmodels.FollowedShowEntryWithShow
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
+import app.tivi.data.daos.getIdOrSavePlaceholder
+import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.util.ItemSyncerResult

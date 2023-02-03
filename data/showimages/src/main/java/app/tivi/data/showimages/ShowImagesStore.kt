@@ -18,6 +18,7 @@ package app.tivi.data.showimages
 
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
+import app.tivi.data.daos.saveImages
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.inject.Tmdb
 import kotlinx.coroutines.flow.map

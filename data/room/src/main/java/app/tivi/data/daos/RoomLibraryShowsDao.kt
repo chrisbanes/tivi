@@ -26,22 +26,11 @@ import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 
 @Dao
-abstract class LibraryShowsDao : EntityDao<TiviShow>() {
-
-    fun observeForPaging(
-        sort: SortOption,
-        filter: String?,
-        includeWatched: Boolean,
-        includeFollowed: Boolean,
-    ): PagingSource<Int, LibraryShow> = if (filter.isNullOrEmpty()) {
-        pagedListLastWatched(sort, includeWatched, includeFollowed)
-    } else {
-        pagedListLastWatchedFilter(sort, "*$filter*", includeWatched, includeFollowed)
-    }
+abstract class RoomLibraryShowsDao : LibraryShowsDao, RoomEntityDao<TiviShow> {
 
     @Transaction
     @Query(QUERY_LAST_WATCHED)
-    internal abstract fun pagedListLastWatched(
+    abstract override fun pagedListLastWatched(
         sort: SortOption,
         includeWatched: Boolean,
         includeFollowed: Boolean,
@@ -49,7 +38,7 @@ abstract class LibraryShowsDao : EntityDao<TiviShow>() {
 
     @Transaction
     @Query(QUERY_LAST_WATCHED_FILTER)
-    internal abstract fun pagedListLastWatchedFilter(
+    abstract override fun pagedListLastWatchedFilter(
         sort: SortOption,
         filter: String,
         includeWatched: Boolean,

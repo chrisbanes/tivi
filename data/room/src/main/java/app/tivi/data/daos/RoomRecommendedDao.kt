@@ -25,18 +25,18 @@ import app.tivi.data.models.RecommendedShowEntry
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class RecommendedDao : PaginatedEntryDao<RecommendedShowEntry, RecommendedEntryWithShow>() {
+abstract class RoomRecommendedDao : RecommendedDao, RoomPaginatedEntryDao<RecommendedShowEntry, RecommendedEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM recommended_entries WHERE page = :page ORDER BY id ASC")
-    abstract fun entriesForPage(page: Int): Flow<List<RecommendedShowEntry>>
+    abstract override fun entriesForPage(page: Int): Flow<List<RecommendedShowEntry>>
 
     @Transaction
     @Query("SELECT * FROM recommended_entries ORDER BY page ASC, id ASC LIMIT :count OFFSET :offset")
-    abstract fun entriesObservable(count: Int, offset: Int): Flow<List<RecommendedEntryWithShow>>
+    abstract override fun entriesObservable(count: Int, offset: Int): Flow<List<RecommendedEntryWithShow>>
 
     @Transaction
     @Query("SELECT * FROM recommended_entries ORDER BY page ASC, id ASC")
-    abstract fun entriesPagingSource(): PagingSource<Int, RecommendedEntryWithShow>
+    abstract override fun entriesPagingSource(): PagingSource<Int, RecommendedEntryWithShow>
 
     @Query("DELETE FROM recommended_entries WHERE page = :page")
     abstract override suspend fun deletePage(page: Int)

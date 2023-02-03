@@ -24,45 +24,44 @@ import app.tivi.data.models.TraktUser
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class UserDao : EntityDao<TraktUser>() {
+abstract class RoomUserDao : UserDao, RoomEntityDao<TraktUser> {
     @Query("SELECT * FROM users WHERE is_me != 0")
-    abstract fun observeMe(): Flow<TraktUser?>
+    abstract override fun observeMe(): Flow<TraktUser?>
 
     @Query("SELECT * FROM users WHERE username = :username")
-    abstract fun observeTraktUser(username: String): Flow<TraktUser?>
+    abstract override fun observeTraktUser(username: String): Flow<TraktUser?>
 
     @Query("SELECT * FROM users WHERE username = :username")
-    internal abstract suspend fun getTraktUser(username: String): TraktUser?
+    abstract override suspend fun getTraktUser(username: String): TraktUser?
 
-    suspend fun getUser(username: String) = when (username) {
+    @Query("SELECT * FROM users WHERE is_me != 0")
+    abstract override suspend fun getMe(): TraktUser?
+
+    override suspend fun getUser(username: String): TraktUser? = when (username) {
         "me" -> getMe()
         else -> getTraktUser(username)
     }
-
-    @Query("SELECT * FROM users WHERE is_me != 0")
-    abstract suspend fun getMe(): TraktUser?
 
     @Suppress("FunctionName")
     @Query("SELECT id FROM users WHERE username = :username")
     internal abstract suspend fun _getIdForUsername(username: String): Long?
 
-    @Query("SELECT id FROM users WHERE is_me != 0")
-    abstract suspend fun getIdForMe(): Long?
-
-    suspend fun getIdForUsername(username: String) = when (username) {
-        "me" -> getIdForMe()
-        else -> _getIdForUsername(username)
+    override suspend fun getIdForUsername(username: String): Long? {
+        return if (username == "me") getIdForMe() else _getIdForUsername(username)
     }
 
+    @Query("SELECT id FROM users WHERE is_me != 0")
+    abstract override suspend fun getIdForMe(): Long?
+
     @Query("DELETE FROM users WHERE username = :username")
-    abstract suspend fun deleteWithUsername(username: String)
+    abstract override suspend fun deleteWithUsername(username: String)
 
     @Query("DELETE FROM users WHERE is_me != 0")
-    abstract suspend fun deleteMe()
+    abstract override suspend fun deleteMe()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract override suspend fun insert(entity: TraktUser): Long
 
     @Query("DELETE FROM users")
-    abstract suspend fun deleteAll()
+    abstract override suspend fun deleteAll()
 }

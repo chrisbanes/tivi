@@ -30,9 +30,9 @@ import app.tivi.data.views.FollowedShowsWatchStats
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithShow>() {
+abstract class RoomFollowedShowsDao : FollowedShowsDao, RoomEntityDao<FollowedShowEntry> {
     @Query("SELECT * FROM myshows_entries")
-    abstract suspend fun entries(): List<FollowedShowEntry>
+    abstract override suspend fun entries(): List<FollowedShowEntry>
 
     @Transaction
     @Query(
@@ -47,7 +47,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
 			LIMIT 1
         """,
     )
-    abstract fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?>
+    abstract override fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?>
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
@@ -61,7 +61,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
         ORDER BY datetime(episode_watch_entries.watched_at) DESC
         """,
     )
-    abstract fun pagedUpNextShowsLastWatched(): PagingSource<Int, UpNextEntry>
+    abstract override fun pagedUpNextShowsLastWatched(): PagingSource<Int, UpNextEntry>
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
@@ -73,7 +73,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
         ORDER BY datetime(episodes.first_aired) DESC
         """,
     )
-    abstract fun pagedUpNextShowsDateAired(): PagingSource<Int, UpNextEntry>
+    abstract override fun pagedUpNextShowsDateAired(): PagingSource<Int, UpNextEntry>
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
@@ -85,28 +85,28 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
         ORDER BY datetime(myshows_entries.followed_at) DESC
         """,
     )
-    abstract fun pagedUpNextShowsDateAdded(): PagingSource<Int, UpNextEntry>
+    abstract override fun pagedUpNextShowsDateAdded(): PagingSource<Int, UpNextEntry>
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM followed_next_to_watch")
-    abstract suspend fun getUpNextShows(): List<UpNextEntry>
+    abstract override suspend fun getUpNextShows(): List<UpNextEntry>
 
     @Query("DELETE FROM myshows_entries")
     abstract override suspend fun deleteAll()
 
     @Transaction
     @Query("SELECT * FROM myshows_entries WHERE id = :id")
-    abstract suspend fun entryWithId(id: Long): FollowedShowEntryWithShow?
+    abstract override suspend fun entryWithId(id: Long): FollowedShowEntryWithShow?
 
     @Query("SELECT * FROM myshows_entries WHERE show_id = :showId")
-    abstract suspend fun entryWithShowId(showId: Long): FollowedShowEntry?
+    abstract override suspend fun entryWithShowId(showId: Long): FollowedShowEntry?
 
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId AND pending_action != 'delete'")
-    abstract fun entryCountWithShowIdNotPendingDeleteObservable(showId: Long): Flow<Int>
+    abstract override fun entryCountWithShowIdNotPendingDeleteObservable(showId: Long): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId")
-    abstract suspend fun entryCountWithShowId(showId: Long): Int
+    abstract override suspend fun entryCountWithShowId(showId: Long): Int
 
     @Transaction
     @Query(
@@ -116,42 +116,26 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
         WHERE stats.show_id = :showId
         """,
     )
-    abstract fun entryShowViewStats(showId: Long): Flow<FollowedShowsWatchStats>
+    abstract override fun entryShowViewStats(showId: Long): Flow<FollowedShowsWatchStats>
 
-    suspend fun entriesWithNoPendingAction() = entriesWithPendingAction(PendingAction.NOTHING)
+    override suspend fun entriesWithNoPendingAction(): List<FollowedShowEntry> {
+        return entriesWithPendingAction(PendingAction.NOTHING)
+    }
 
-    suspend fun entriesWithSendPendingActions() = entriesWithPendingAction(PendingAction.UPLOAD)
+    override suspend fun entriesWithSendPendingActions(): List<FollowedShowEntry> {
+        return entriesWithPendingAction(PendingAction.UPLOAD)
+    }
 
-    suspend fun entriesWithDeletePendingActions() = entriesWithPendingAction(PendingAction.DELETE)
+    override suspend fun entriesWithDeletePendingActions(): List<FollowedShowEntry> {
+        return entriesWithPendingAction(PendingAction.DELETE)
+    }
 
     @Query("SELECT * FROM myshows_entries WHERE pending_action = :pendingAction")
-    internal abstract suspend fun entriesWithPendingAction(pendingAction: PendingAction): List<FollowedShowEntry>
+    abstract override suspend fun entriesWithPendingAction(pendingAction: PendingAction): List<FollowedShowEntry>
 
     @Query("UPDATE myshows_entries SET pending_action = :pendingAction WHERE id IN (:ids)")
-    abstract suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction): Int
+    abstract override suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction): Int
 
     @Query("DELETE FROM myshows_entries WHERE id IN (:ids)")
-    abstract suspend fun deleteWithIds(ids: List<Long>): Int
-
-    companion object {
-        private const val ENTRY_QUERY_ORDER_LAST_WATCHED = """
-            SELECT fs.* FROM myshows_entries as fs
-            LEFT JOIN seasons AS s ON fs.show_id = s.show_id
-            LEFT JOIN episodes AS eps ON eps.season_id = s.id
-            LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-            GROUP BY fs.id
-            ORDER BY MAX(datetime(ew.watched_at)) DESC
-        """
-
-        private const val ENTRY_QUERY_ORDER_ALPHA = """
-            SELECT fs.* FROM myshows_entries as fs
-            INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
-            ORDER BY title ASC
-        """
-
-        private const val ENTRY_QUERY_ORDER_ADDED = """
-            SELECT * FROM myshows_entries
-            ORDER BY datetime(followed_at) DESC
-        """
-    }
+    abstract override suspend fun deleteWithIds(ids: List<Long>): Int
 }

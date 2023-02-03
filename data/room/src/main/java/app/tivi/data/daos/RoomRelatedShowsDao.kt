@@ -24,14 +24,14 @@ import app.tivi.data.models.RelatedShowEntry
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowEntryWithShow>() {
+abstract class RoomRelatedShowsDao : RelatedShowsDao, RoomEntityDao<RelatedShowEntry> {
     @Transaction
     @Query("SELECT * FROM related_shows WHERE show_id = :showId ORDER BY order_index")
     abstract override fun entries(showId: Long): List<RelatedShowEntry>
 
     @Transaction
     @Query("SELECT * FROM related_shows WHERE show_id = :showId ORDER BY order_index")
-    abstract fun entriesObservable(showId: Long): Flow<List<RelatedShowEntry>>
+    abstract override fun entriesObservable(showId: Long): Flow<List<RelatedShowEntry>>
 
     @Transaction
     @Query("SELECT * FROM related_shows WHERE show_id = :showId ORDER BY order_index")
@@ -45,5 +45,5 @@ abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowEntry
     abstract override suspend fun deleteWithShowId(showId: Long)
 
     @Query("DELETE FROM related_shows")
-    abstract suspend fun deleteAll()
+    abstract override suspend fun deleteAll()
 }
