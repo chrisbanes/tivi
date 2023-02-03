@@ -16,7 +16,7 @@
 
 package app.tivi.domain.observers
 
-import app.tivi.data.entities.ShowImages
+import app.tivi.data.models.ShowImages
 import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.data.util.filterForResult
 import app.tivi.domain.SubjectInteractor

@@ -23,11 +23,11 @@ import androidx.core.text.color
 import androidx.core.text.parseAsHtml
 import androidx.emoji.text.EmojiCompat
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.Genre
-import app.tivi.data.entities.Season
-import app.tivi.data.entities.ShowStatus
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.models.Episode
+import app.tivi.data.models.Genre
+import app.tivi.data.models.Season
+import app.tivi.data.models.ShowStatus
+import app.tivi.data.models.TiviShow
 import app.tivi.ui.GenreStringer
 import dagger.hilt.android.qualifiers.ActivityContext
 import java.util.Locale

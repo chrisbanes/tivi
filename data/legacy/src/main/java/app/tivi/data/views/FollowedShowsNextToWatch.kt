@@ -18,7 +18,7 @@ package app.tivi.data.views
 
 import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
-import app.tivi.data.entities.Season
+import app.tivi.data.models.Season
 
 @DatabaseView(
     viewName = "followed_next_to_watch",

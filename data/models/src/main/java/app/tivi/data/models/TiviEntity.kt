@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,30 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
-enum class SortOption(val sqlValue: String) {
-    LAST_WATCHED("last_watched"),
-    AIR_DATE("recently_aired"),
-    ALPHABETICAL("alpha"),
-    DATE_ADDED("added"),
+interface TiviEntity {
+    val id: Long
+}
+
+interface TraktIdEntity {
+    val traktId: Int?
+}
+
+interface TmdbIdEntity {
+    val tmdbId: Int?
+}
+
+interface TmdbImageEntity : TiviEntity {
+    val path: String
+    val type: ImageType
+    val language: String?
+    val rating: Float
+    val isPrimary: Boolean
+}
+
+enum class ImageType(val storageKey: String) {
+    BACKDROP("backdrop"),
+    POSTER("poster"),
+    LOGO("logo"),
 }

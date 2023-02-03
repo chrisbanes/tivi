@@ -16,7 +16,7 @@
 
 package app.tivi.data.daos
 
-import app.tivi.data.entities.Entry
+import app.tivi.data.models.Entry
 import app.tivi.data.resultentities.EntryWithShow
 
 /**

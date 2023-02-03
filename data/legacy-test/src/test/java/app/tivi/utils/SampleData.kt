@@ -17,14 +17,14 @@
 package app.tivi.utils
 
 import app.tivi.data.db.TiviDatabase
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.ImageType
-import app.tivi.data.entities.PendingAction
-import app.tivi.data.entities.Season
-import app.tivi.data.entities.ShowTmdbImage
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.models.Episode
+import app.tivi.data.models.EpisodeWatchEntry
+import app.tivi.data.models.FollowedShowEntry
+import app.tivi.data.models.ImageType
+import app.tivi.data.models.PendingAction
+import app.tivi.data.models.Season
+import app.tivi.data.models.ShowTmdbImage
+import app.tivi.data.models.TiviShow
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 

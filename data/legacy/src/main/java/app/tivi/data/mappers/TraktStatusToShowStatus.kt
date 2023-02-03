@@ -16,7 +16,7 @@
 
 package app.tivi.data.mappers
 
-import app.tivi.data.entities.ShowStatus
+import app.tivi.data.models.ShowStatus
 import com.uwetrottmann.trakt5.enums.Status
 import javax.inject.Inject
 import javax.inject.Singleton

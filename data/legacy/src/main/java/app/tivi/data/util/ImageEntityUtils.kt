@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.util
 
-/* ktlint-disable trailing-comma-on-declaration-site */
-enum class Genre(val traktValue: String) {
-    DRAMA("drama"),
-    FANTASY("fantasy"),
-    SCIENCE_FICTION("science-fiction"),
-    ACTION("action"),
-    ADVENTURE("adventure"),
-    CRIME("crime"),
-    THRILLER("thriller"),
-    COMEDY("comedy"),
-    HORROR("horror"),
-    MYSTERY("mystery");
+import app.tivi.data.models.ImageType
+import app.tivi.data.models.TmdbImageEntity
 
-    companion object {
-        private val values by lazy { values() }
-        fun fromTraktValue(value: String) = values.firstOrNull { it.traktValue == value }
+internal fun <T : TmdbImageEntity> findHighestRatedItem(items: Collection<T>, type: ImageType): T? {
+    if (items.size <= 1) {
+        return items.firstOrNull()
     }
+    return items.asSequence()
+        .filter { it.type == type }
+        .maxByOrNull { it.rating + (if (it.isPrimary) 10f else 0f) }
 }

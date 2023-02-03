@@ -17,8 +17,8 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.RefreshType
 import app.tivi.data.episodes.SeasonsEpisodesRepository
+import app.tivi.data.models.RefreshType
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject

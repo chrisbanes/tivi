@@ -16,8 +16,8 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.entities.ActionDate
 import app.tivi.data.episodes.SeasonsEpisodesRepository
+import app.tivi.data.models.ActionDate
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject

@@ -20,7 +20,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.data.daos.LibraryShowsDao
-import app.tivi.data.entities.SortOption
+import app.tivi.data.models.SortOption
 import app.tivi.data.resultentities.LibraryShow
 import app.tivi.domain.PagingInteractor
 import javax.inject.Inject

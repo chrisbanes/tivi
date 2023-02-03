@@ -17,11 +17,11 @@
 package app.tivi.data.db
 
 import androidx.room.TypeConverter
-import app.tivi.data.entities.ImageType
-import app.tivi.data.entities.PendingAction
-import app.tivi.data.entities.Request
-import app.tivi.data.entities.ShowStatus
-import app.tivi.data.entities.SortOption
+import app.tivi.data.models.ImageType
+import app.tivi.data.models.PendingAction
+import app.tivi.data.models.Request
+import app.tivi.data.models.ShowStatus
+import app.tivi.data.models.SortOption
 import app.tivi.extensions.unsafeLazy
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Instant

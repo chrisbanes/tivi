@@ -16,7 +16,7 @@
 
 package app.tivi.domain.observers
 
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.models.TiviShow
 import app.tivi.data.shows.ShowStore
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers

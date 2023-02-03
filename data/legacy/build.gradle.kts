@@ -24,10 +24,11 @@ dependencies {
     api(projects.base)
     api(projects.api.trakt)
     api(projects.api.tmdb)
+    api(projects.data.models)
 
     api(libs.androidx.room.common)
     api(libs.androidx.paging.common)
-    implementation(libs.androidx.collection)
+    implementation(libs.androidx.collection) // LruCache
 
     implementation(libs.retrofit.retrofit)
 

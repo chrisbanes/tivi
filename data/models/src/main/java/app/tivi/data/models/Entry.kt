@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Fts4
+interface Entry : TiviEntity {
+    val showId: Long
+}
 
-@Fts4(contentEntity = TiviShow::class)
-@Entity(tableName = "shows_fts")
-data class TiviShowFts(
-    @ColumnInfo(name = "title") val title: String? = null,
-    @ColumnInfo(name = "original_title") val originalTitle: String? = null,
-)
+interface MultipleEntry : Entry {
+    val otherShowId: Long
+}
+
+interface PaginatedEntry : Entry {
+    val page: Int
+}

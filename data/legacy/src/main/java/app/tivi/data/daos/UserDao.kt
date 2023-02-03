@@ -20,7 +20,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import app.tivi.data.entities.TraktUser
+import app.tivi.data.models.TraktUser
 import kotlinx.coroutines.flow.Flow
 
 @Dao

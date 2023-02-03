@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import org.threeten.bp.OffsetDateTime
 
 @Entity(
-    tableName = "myshows_entries",
+    tableName = "related_shows",
     indices = [
-        Index(value = ["show_id"], unique = true),
+        Index(value = ["show_id"]),
+        Index(value = ["other_show_id"]),
     ],
     foreignKeys = [
         ForeignKey(
@@ -36,12 +36,18 @@ import org.threeten.bp.OffsetDateTime
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE,
         ),
+        ForeignKey(
+            entity = TiviShow::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("other_show_id"),
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
 )
-data class FollowedShowEntry(
+data class RelatedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
-    @ColumnInfo(name = "followed_at") val followedAt: OffsetDateTime? = null,
-    @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING,
-    @ColumnInfo(name = "trakt_id") val traktId: Long? = null,
-) : Entry
+    @ColumnInfo(name = "other_show_id") override val otherShowId: Long,
+    @ColumnInfo(name = "order_index") val orderIndex: Int,
+) : MultipleEntry

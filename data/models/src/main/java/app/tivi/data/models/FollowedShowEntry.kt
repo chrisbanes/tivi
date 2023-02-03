@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import org.threeten.bp.OffsetDateTime
 
 @Entity(
-    tableName = "popular_shows",
+    tableName = "myshows_entries",
     indices = [
         Index(value = ["show_id"], unique = true),
     ],
@@ -37,9 +38,10 @@ import androidx.room.PrimaryKey
         ),
     ],
 )
-data class PopularShowEntry(
+data class FollowedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
-    @ColumnInfo(name = "page") override val page: Int,
-    @ColumnInfo(name = "page_order") val pageOrder: Int,
-) : PaginatedEntry
+    @ColumnInfo(name = "followed_at") val followedAt: OffsetDateTime? = null,
+    @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING,
+    @ColumnInfo(name = "trakt_id") val traktId: Long? = null,
+) : Entry

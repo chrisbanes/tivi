@@ -21,8 +21,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import app.tivi.data.entities.LastRequest
-import app.tivi.data.entities.Request
+import app.tivi.data.models.LastRequest
+import app.tivi.data.models.Request
 
 @Dao
 abstract class LastRequestDao : EntityDao<LastRequest>() {

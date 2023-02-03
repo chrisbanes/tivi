@@ -50,6 +50,7 @@ include(
     ":data:legacy",
     ":data:legacy-test",
     ":data:legacy-inject",
+    ":data:models",
     ":data:room",
     ":api:trakt",
     ":api:trakt-auth",

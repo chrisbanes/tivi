@@ -16,7 +16,7 @@
 
 package app.tivi.data.daos
 
-import app.tivi.data.entities.MultipleEntry
+import app.tivi.data.models.MultipleEntry
 import app.tivi.data.resultentities.EntryWithShow
 import kotlinx.coroutines.flow.Flow
 

@@ -16,8 +16,8 @@
 
 package app.tivi.data.mappers
 
-import app.tivi.data.entities.ImageType
-import app.tivi.data.entities.ShowTmdbImage
+import app.tivi.data.models.ImageType
+import app.tivi.data.models.ShowTmdbImage
 import com.uwetrottmann.tmdb2.entities.Image
 import com.uwetrottmann.tmdb2.entities.TvShow
 import javax.inject.Inject

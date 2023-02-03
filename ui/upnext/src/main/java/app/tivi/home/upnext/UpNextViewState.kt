@@ -17,8 +17,8 @@
 package app.tivi.home.upnext
 
 import app.tivi.api.UiMessage
-import app.tivi.data.entities.SortOption
-import app.tivi.data.entities.TraktUser
+import app.tivi.data.models.SortOption
+import app.tivi.data.models.TraktUser
 import app.tivi.trakt.TraktAuthState
 
 internal data class UpNextViewState(

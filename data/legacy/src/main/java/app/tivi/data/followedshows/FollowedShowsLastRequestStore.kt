@@ -17,8 +17,8 @@
 package app.tivi.data.followedshows
 
 import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.entities.Request
 import app.tivi.data.lastrequests.GroupLastRequestStore
+import app.tivi.data.models.Request
 import javax.inject.Inject
 
 class FollowedShowsLastRequestStore @Inject constructor(

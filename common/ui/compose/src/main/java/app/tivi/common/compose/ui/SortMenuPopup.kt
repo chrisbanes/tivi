@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.SortOption
+import app.tivi.data.models.SortOption
 
 @Composable
 internal fun ColumnScope.SortDropdownMenuContent(

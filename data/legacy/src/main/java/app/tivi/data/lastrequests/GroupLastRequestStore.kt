@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package app.tivi.data.lastrequests
 
 import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.entities.LastRequest
-import app.tivi.data.entities.Request
+import app.tivi.data.models.LastRequest
+import app.tivi.data.models.Request
 import app.tivi.data.util.inPast
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.TemporalAmount

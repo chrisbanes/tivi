@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
-enum class ShowStatus(val storageKey: String) {
-    ENDED("ended"),
-    RETURNING("returning"),
-    CANCELED("canceled"),
-    IN_PRODUCTION("inproduction"),
-}
+enum class RefreshType { QUICK, FULL }

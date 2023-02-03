@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import org.threeten.bp.OffsetDateTime
 
 @Entity(
-    tableName = "watched_entries",
+    tableName = "popular_shows",
     indices = [
         Index(value = ["show_id"], unique = true),
     ],
@@ -38,8 +37,9 @@ import org.threeten.bp.OffsetDateTime
         ),
     ],
 )
-data class WatchedShowEntry(
+data class PopularShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
-    @ColumnInfo(name = "last_watched") val lastWatched: OffsetDateTime,
-) : Entry
+    @ColumnInfo(name = "page") override val page: Int,
+    @ColumnInfo(name = "page_order") val pageOrder: Int,
+) : PaginatedEntry

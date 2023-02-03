@@ -18,8 +18,8 @@ package app.tivi.data.resultentities
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import app.tivi.data.entities.Season
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.models.Season
+import app.tivi.data.models.TiviShow
 import java.util.Objects
 
 class SeasonWithShow {

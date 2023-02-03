@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
-interface Entry : TiviEntity {
-    val showId: Long
-}
+import app.tivi.extensions.unsafeLazy
 
-interface MultipleEntry : Entry {
-    val otherShowId: Long
-}
+data class ShowImages(val images: List<ShowTmdbImage>) {
 
-interface PaginatedEntry : Entry {
-    val page: Int
+    val backdrop by unsafeLazy { findHighestRatedForType(ImageType.BACKDROP) }
+
+    val poster by unsafeLazy { findHighestRatedForType(ImageType.POSTER) }
+
+    private fun findHighestRatedForType(type: ImageType): ShowTmdbImage? {
+        return images.filter { it.type == type }
+            .maxByOrNull { it.rating + (if (it.isPrimary) 10f else 0f) }
+    }
 }

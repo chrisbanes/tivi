@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package app.tivi.data.episodes
 
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.db.DatabaseTransactionRunner
-import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.PendingAction
+import app.tivi.data.models.EpisodeWatchEntry
+import app.tivi.data.models.PendingAction
 import app.tivi.data.util.syncerForEntity
 import app.tivi.util.Logger
 import javax.inject.Inject

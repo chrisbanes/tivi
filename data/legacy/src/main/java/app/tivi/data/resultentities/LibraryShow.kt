@@ -19,12 +19,12 @@ package app.tivi.data.resultentities
 import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.ShowTmdbImage
-import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.WatchedShowEntry
-import app.tivi.data.entities.findHighestRatedBackdrop
-import app.tivi.data.entities.findHighestRatedPoster
+import app.tivi.data.models.FollowedShowEntry
+import app.tivi.data.models.ImageType
+import app.tivi.data.models.ShowTmdbImage
+import app.tivi.data.models.TiviShow
+import app.tivi.data.models.WatchedShowEntry
+import app.tivi.data.util.findHighestRatedItem
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.extensions.unsafeLazy
 
@@ -55,10 +55,14 @@ class LibraryShow {
     val stats: FollowedShowsWatchStats? get() = _stats.firstOrNull()
 
     @delegate:Ignore
-    val backdrop: ShowTmdbImage? by unsafeLazy { images.findHighestRatedBackdrop() }
+    val backdrop: ShowTmdbImage? by unsafeLazy {
+        findHighestRatedItem(images, ImageType.BACKDROP)
+    }
 
     @delegate:Ignore
-    val poster: ShowTmdbImage? by unsafeLazy { images.findHighestRatedPoster() }
+    val poster: ShowTmdbImage? by unsafeLazy {
+        findHighestRatedItem(images, ImageType.POSTER)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

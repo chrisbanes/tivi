@@ -17,9 +17,9 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.RefreshType
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.followedshows.FollowedShowsRepository
+import app.tivi.data.models.RefreshType
 import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch

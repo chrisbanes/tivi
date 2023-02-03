@@ -20,7 +20,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import app.tivi.data.entities.RefreshType
+import app.tivi.data.models.RefreshType
 import app.tivi.domain.interactors.UpdateFollowedShows
 import app.tivi.util.Logger
 import dagger.assisted.Assisted
