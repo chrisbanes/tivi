@@ -20,11 +20,11 @@ import android.content.Context
 import androidx.room.Room
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.db.TiviDatabase
-import app.tivi.data.repositories.episodes.EpisodeDataSource
-import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
-import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
-import app.tivi.data.repositories.showimages.ShowImagesDataSource
-import app.tivi.data.repositories.shows.ShowDataSource
+import app.tivi.data.episodes.EpisodeDataSource
+import app.tivi.data.episodes.SeasonsEpisodesDataSource
+import app.tivi.data.followedshows.TraktFollowedShowsDataSource
+import app.tivi.data.showimages.ShowImagesDataSource
+import app.tivi.data.shows.ShowDataSource
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Analytics
@@ -47,9 +47,9 @@ import javax.inject.Singleton
 @Module
 class TestDataSourceModule {
     private val traktFollowedShowsDataSource: TraktFollowedShowsDataSource = mockk()
-    private val traktEpisodeDataSource: EpisodeDataSource = mockk()
-    private val tmdbEpisodeDataSource: EpisodeDataSource = mockk()
-    private val seasonsDataSource: SeasonsEpisodesDataSource = mockk()
+    private val traktEpisodeDataSource: app.tivi.data.episodes.EpisodeDataSource = mockk()
+    private val tmdbEpisodeDataSource: app.tivi.data.episodes.EpisodeDataSource = mockk()
+    private val seasonsDataSource: app.tivi.data.episodes.SeasonsEpisodesDataSource = mockk()
     private val traktShowDataSource: ShowDataSource = SuccessFakeShowDataSource
     private val tmdbShowDataSource: ShowDataSource = SuccessFakeShowDataSource
     private val tmdbShowImagesDataSource: ShowImagesDataSource = SuccessFakeShowImagesDataSource

@@ -20,9 +20,9 @@ import app.tivi.data.DatabaseModuleBinds
 import app.tivi.data.DatabaseTest
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.db.TiviDatabase
-import app.tivi.data.repositories.episodes.EpisodeDataSourceBinds
-import app.tivi.data.repositories.followedshows.FollowedShowsRepository
-import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
+import app.tivi.data.episodes.EpisodeDataSourceBinds
+import app.tivi.data.followedshows.FollowedShowsRepository
+import app.tivi.data.followedshows.TraktFollowedShowsDataSource
 import app.tivi.utils.followedShow1Local
 import app.tivi.utils.followedShow1Network
 import app.tivi.utils.followedShow1PendingDelete

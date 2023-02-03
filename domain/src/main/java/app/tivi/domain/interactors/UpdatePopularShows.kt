@@ -17,9 +17,9 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.daos.PopularDao
-import app.tivi.data.repositories.popularshows.PopularShowsStore
-import app.tivi.data.repositories.showimages.ShowImagesStore
-import app.tivi.data.repositories.shows.ShowStore
+import app.tivi.data.popularshows.PopularShowsStore
+import app.tivi.data.showimages.ShowImagesStore
+import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdatePopularShows.Params

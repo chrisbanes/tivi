@@ -16,7 +16,7 @@
 
 package app.tivi.domain.observers
 
-import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
+import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.domain.SubjectInteractor
 import javax.inject.Inject

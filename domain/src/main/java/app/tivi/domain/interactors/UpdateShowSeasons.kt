@@ -16,8 +16,8 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
-import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import app.tivi.data.episodes.SeasonsEpisodesRepository
+import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowSeasons.Params
 import app.tivi.util.AppCoroutineDispatchers

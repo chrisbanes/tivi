@@ -20,8 +20,8 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.repositories.shows.mergeShows
 import app.tivi.data.resultentities.ShowDetailed
+import app.tivi.data.shows.mergeShows
 import kotlinx.coroutines.flow.Flow
 
 @Dao
