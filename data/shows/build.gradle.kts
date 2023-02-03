@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,18 @@
 
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.cacheFixPlugin)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
-}
-
-android {
-    namespace = "app.tivi.domain"
+    id("kotlin")
+    alias(libs.plugins.android.lint)
 }
 
 dependencies {
-    implementation(projects.base)
-
     api(projects.data.models)
-    api(projects.data.legacy) // remove this eventually
+    implementation(projects.data.legacy) // remove this eventually
 
-    api(projects.data.followedshows)
-    api(projects.data.search)
-    api(projects.data.shows)
-
-    implementation(projects.api.traktAuth)
+    implementation(projects.api.trakt)
     implementation(projects.api.tmdb)
+    implementation(libs.retrofit.retrofit)
 
-    implementation(libs.hilt.library)
-    kapt(libs.hilt.compiler)
-
-    api(libs.androidx.paging.common)
-    implementation(libs.androidx.paging.runtime)
+    api(libs.store)
+    implementation(libs.kotlinx.atomicfu)
 }

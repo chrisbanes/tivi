@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.data.shows
+package app.tivi.data.util
 
 import app.tivi.data.models.TiviShow
 
