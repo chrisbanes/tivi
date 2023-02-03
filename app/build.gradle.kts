@@ -156,7 +156,6 @@ dependencies {
     implementation(projects.common.ui.view)
     implementation(projects.common.imageloading)
     implementation(projects.common.ui.compose)
-    implementation(projects.data.legacy)
     implementation(projects.data.legacyInject)
     implementation(projects.data.room)
     implementation(projects.api.trakt)

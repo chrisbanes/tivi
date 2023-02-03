@@ -35,7 +35,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.data.legacy)
+    api(projects.data.models)
     api(projects.common.imageloading)
 
     // TODO: Remove this dependency
