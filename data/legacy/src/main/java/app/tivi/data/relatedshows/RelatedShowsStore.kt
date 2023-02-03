@@ -26,44 +26,46 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-typealias RelatedShowsStore = Store<Long, List<RelatedShowEntry>>
+class RelatedShowsStore(store: Store<Long, List<RelatedShowEntry>>) : Store<Long, List<RelatedShowEntry>> by store
 
 fun RelatedShowsStore(
     tmdbRelatedShows: TmdbRelatedShowsDataSource,
     relatedShowsDao: RelatedShowsDao,
     showDao: TiviShowDao,
     lastRequestStore: RelatedShowsLastRequestStore,
-): RelatedShowsStore = StoreBuilder.from(
-    fetcher = Fetcher.of { showId: Long ->
-        tmdbRelatedShows(showId)
-            .also { lastRequestStore.updateLastRequest(showId) }
-    },
-    sourceOfTruth = SourceOfTruth.of(
-        reader = { showId ->
-            relatedShowsDao.entriesObservable(showId).map { entries ->
-                when {
-                    // Store only treats null as 'no value', so convert to null
-                    entries.isEmpty() -> null
-                    // If the request is expired, our data is stale
-                    lastRequestStore.isRequestExpired(showId, Duration.ofDays(28)) -> null
-                    // Otherwise, our data is fresh and valid
-                    else -> entries
-                }
-            }
+): RelatedShowsStore = RelatedShowsStore(
+    StoreBuilder.from(
+        fetcher = Fetcher.of { showId: Long ->
+            tmdbRelatedShows(showId)
+                .also { lastRequestStore.updateLastRequest(showId) }
         },
-        writer = { showId, response ->
-            relatedShowsDao.withTransaction {
-                val entries = response.map { (show, entry) ->
-                    entry.copy(
-                        showId = showId,
-                        otherShowId = showDao.getIdOrSavePlaceholder(show),
-                    )
+        sourceOfTruth = SourceOfTruth.of(
+            reader = { showId ->
+                relatedShowsDao.entriesObservable(showId).map { entries ->
+                    when {
+                        // Store only treats null as 'no value', so convert to null
+                        entries.isEmpty() -> null
+                        // If the request is expired, our data is stale
+                        lastRequestStore.isRequestExpired(showId, Duration.ofDays(28)) -> null
+                        // Otherwise, our data is fresh and valid
+                        else -> entries
+                    }
                 }
-                relatedShowsDao.deleteWithShowId(showId)
-                relatedShowsDao.insertOrUpdate(entries)
-            }
-        },
-        delete = relatedShowsDao::deleteWithShowId,
-        deleteAll = relatedShowsDao::deleteAll,
-    ),
-).build()
+            },
+            writer = { showId, response ->
+                relatedShowsDao.withTransaction {
+                    val entries = response.map { (show, entry) ->
+                        entry.copy(
+                            showId = showId,
+                            otherShowId = showDao.getIdOrSavePlaceholder(show),
+                        )
+                    }
+                    relatedShowsDao.deleteWithShowId(showId)
+                    relatedShowsDao.insertOrUpdate(entries)
+                }
+            },
+            delete = relatedShowsDao::deleteWithShowId,
+            deleteAll = relatedShowsDao::deleteAll,
+        ),
+    ).build(),
+)
