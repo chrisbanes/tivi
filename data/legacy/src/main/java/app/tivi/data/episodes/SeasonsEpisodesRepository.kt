@@ -16,6 +16,8 @@
 
 package app.tivi.data.episodes
 
+import app.tivi.data.compoundmodels.EpisodeWithSeason
+import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.db.DatabaseTransactionRunner
@@ -25,8 +27,6 @@ import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.models.RefreshType
 import app.tivi.data.models.Season
-import app.tivi.data.resultentities.EpisodeWithSeason
-import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.util.instantInPast
 import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.Tmdb

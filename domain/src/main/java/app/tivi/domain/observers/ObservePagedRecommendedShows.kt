@@ -20,8 +20,8 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import app.tivi.data.daos.RecommendedDao
-import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.RefreshOnlyRemoteMediator
 import app.tivi.domain.interactors.UpdateRecommendedShows

@@ -16,8 +16,8 @@
 
 package app.tivi.domain.observers
 
+import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.daos.RelatedShowsDao
-import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.domain.SubjectInteractor
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

@@ -18,8 +18,8 @@ package app.tivi.showdetails.seasons
 
 import androidx.compose.runtime.Immutable
 import app.tivi.api.UiMessage
+import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.TiviShow
-import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 
 @Immutable
 internal data class ShowSeasonsViewState(

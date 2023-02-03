@@ -19,8 +19,8 @@ package app.tivi.data.daos
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.models.TiviShow
-import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.data.util.mergeShows
 import kotlinx.coroutines.flow.Flow
 

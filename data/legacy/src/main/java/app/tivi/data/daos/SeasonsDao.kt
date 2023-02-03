@@ -19,9 +19,9 @@ package app.tivi.data.daos
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.Season
 import app.tivi.data.models.Season.Companion.NUMBER_SPECIALS
-import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import kotlinx.coroutines.flow.Flow
 
 @Dao

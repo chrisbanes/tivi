@@ -16,8 +16,8 @@
 
 package app.tivi.domain.observers
 
+import app.tivi.data.compoundmodels.TrendingEntryWithShow
 import app.tivi.data.daos.TrendingDao
-import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.SubjectInteractor
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

@@ -18,11 +18,11 @@ package app.tivi.home.discover
 
 import androidx.compose.runtime.Immutable
 import app.tivi.api.UiMessage
+import app.tivi.data.compoundmodels.EpisodeWithSeasonWithShow
+import app.tivi.data.compoundmodels.PopularEntryWithShow
+import app.tivi.data.compoundmodels.RecommendedEntryWithShow
+import app.tivi.data.compoundmodels.TrendingEntryWithShow
 import app.tivi.data.models.TraktUser
-import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
-import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.data.resultentities.RecommendedEntryWithShow
-import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.trakt.TraktAuthState
 
 @Immutable

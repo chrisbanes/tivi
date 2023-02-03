@@ -19,8 +19,8 @@ package app.tivi.data.daos
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Transaction
+import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.PaginatedEntry
-import app.tivi.data.resultentities.EntryWithShow
 
 abstract class PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI>() {
     @Insert(onConflict = OnConflictStrategy.REPLACE)

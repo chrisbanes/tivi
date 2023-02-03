@@ -18,11 +18,11 @@ package app.tivi.showdetails.details
 
 import androidx.compose.runtime.Immutable
 import app.tivi.api.UiMessage
+import app.tivi.data.compoundmodels.EpisodeWithSeason
+import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
+import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import app.tivi.data.resultentities.EpisodeWithSeason
-import app.tivi.data.resultentities.RelatedShowEntryWithShow
-import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
 
 @Immutable

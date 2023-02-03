@@ -20,10 +20,10 @@ import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
-import app.tivi.data.resultentities.LibraryShow
 
 @Dao
 abstract class LibraryShowsDao : EntityDao<TiviShow>() {

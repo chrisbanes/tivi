@@ -17,8 +17,8 @@
 package app.tivi.domain.interactors
 
 import android.database.sqlite.SQLiteException
+import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.daos.ShowFtsDao
-import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.data.search.SearchRepository
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers

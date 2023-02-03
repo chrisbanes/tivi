@@ -16,8 +16,8 @@
 
 package app.tivi.domain.observers
 
+import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.episodes.SeasonsEpisodesRepository
-import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.domain.SubjectInteractor
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

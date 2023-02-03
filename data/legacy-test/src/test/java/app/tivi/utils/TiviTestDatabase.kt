@@ -19,6 +19,7 @@ package app.tivi.utils
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.daos.ShowFtsDao
 import app.tivi.data.db.TiviDatabase
 import app.tivi.data.db.TiviTypeConverters
@@ -35,7 +36,6 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TraktUser
 import app.tivi.data.models.TrendingShowEntry
 import app.tivi.data.models.WatchedShowEntry
-import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.data.views.FollowedShowsLastWatched
 import app.tivi.data.views.FollowedShowsNextToWatch
 import app.tivi.data.views.FollowedShowsWatchStats

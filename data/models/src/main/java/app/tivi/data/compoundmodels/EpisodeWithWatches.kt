@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.data.resultentities
+package app.tivi.data.compoundmodels
 
 import androidx.room.Embedded
 import androidx.room.Ignore
