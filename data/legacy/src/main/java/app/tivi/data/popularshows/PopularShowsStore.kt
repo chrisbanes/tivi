@@ -26,48 +26,50 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-typealias PopularShowsStore = Store<Int, List<PopularShowEntry>>
+class PopularShowsStore(store: Store<Int, List<PopularShowEntry>>) : Store<Int, List<PopularShowEntry>> by store
 
 fun PopularShowsStore(
     traktPopularShows: TraktPopularShowsDataSource,
     popularShowsDao: PopularDao,
     showDao: TiviShowDao,
     lastRequestStore: PopularShowsLastRequestStore,
-): PopularShowsStore = StoreBuilder.from(
-    fetcher = Fetcher.of { page: Int ->
-        traktPopularShows(page, 20)
-            .also {
-                if (page == 0) lastRequestStore.updateLastRequest()
-            }
-    },
-    sourceOfTruth = SourceOfTruth.of(
-        reader = { page ->
-            popularShowsDao.entriesObservable(page).map { entries ->
-                when {
-                    // Store only treats null as 'no value', so convert to null
-                    entries.isEmpty() -> null
-                    // If the request is expired, our data is stale
-                    lastRequestStore.isRequestExpired(Duration.ofHours(3)) -> null
-                    // Otherwise, our data is fresh and valid
-                    else -> entries
+): PopularShowsStore = PopularShowsStore(
+    StoreBuilder.from(
+        fetcher = Fetcher.of { page: Int ->
+            traktPopularShows(page, 20)
+                .also {
+                    if (page == 0) lastRequestStore.updateLastRequest()
                 }
-            }
         },
-        writer = { page, response ->
-            popularShowsDao.withTransaction {
-                val entries = response.map { (show, entry) ->
-                    entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
+        sourceOfTruth = SourceOfTruth.of(
+            reader = { page ->
+                popularShowsDao.entriesObservable(page).map { entries ->
+                    when {
+                        // Store only treats null as 'no value', so convert to null
+                        entries.isEmpty() -> null
+                        // If the request is expired, our data is stale
+                        lastRequestStore.isRequestExpired(Duration.ofHours(3)) -> null
+                        // Otherwise, our data is fresh and valid
+                        else -> entries
+                    }
                 }
-                if (page == 0) {
-                    // If we've requested page 0, remove any existing entries first
-                    popularShowsDao.deleteAll()
-                    popularShowsDao.insertAll(entries)
-                } else {
-                    popularShowsDao.updatePage(page, entries)
+            },
+            writer = { page, response ->
+                popularShowsDao.withTransaction {
+                    val entries = response.map { (show, entry) ->
+                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
+                    }
+                    if (page == 0) {
+                        // If we've requested page 0, remove any existing entries first
+                        popularShowsDao.deleteAll()
+                        popularShowsDao.insertAll(entries)
+                    } else {
+                        popularShowsDao.updatePage(page, entries)
+                    }
                 }
-            }
-        },
-        delete = popularShowsDao::deletePage,
-        deleteAll = popularShowsDao::deleteAll,
-    ),
-).build()
+            },
+            delete = popularShowsDao::deletePage,
+            deleteAll = popularShowsDao::deleteAll,
+        ),
+    ).build(),
+)

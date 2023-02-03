@@ -26,46 +26,48 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-typealias WatchedShowsStore = Store<Unit, List<WatchedShowEntry>>
+class WatchedShowsStore(store: Store<Unit, List<WatchedShowEntry>>) : Store<Unit, List<WatchedShowEntry>> by store
 
 fun WatchedShowsStore(
     traktWatchedShows: TraktWatchedShowsDataSource,
     watchedShowsDao: WatchedShowDao,
     showDao: TiviShowDao,
     lastRequestStore: WatchedShowsLastRequestStore,
-): WatchedShowsStore = StoreBuilder.from(
-    fetcher = Fetcher.of {
-        traktWatchedShows()
-            .also {
-                lastRequestStore.updateLastRequest()
-            }
-    },
-    sourceOfTruth = SourceOfTruth.of(
-        reader = {
-            watchedShowsDao.entriesObservable().map { entries ->
-                when {
-                    // Store only treats null as 'no value', so convert to null
-                    entries.isEmpty() -> null
-                    // If the request is expired, our data is stale
-                    lastRequestStore.isRequestExpired(Duration.ofHours(6)) -> null
-                    // Otherwise, our data is fresh and valid
-                    else -> entries
+): WatchedShowsStore = WatchedShowsStore(
+    StoreBuilder.from(
+        fetcher = Fetcher.of {
+            traktWatchedShows()
+                .also {
+                    lastRequestStore.updateLastRequest()
                 }
-            }
         },
-        writer = { _: Unit, response ->
-            watchedShowsDao.withTransaction {
-                val entries = response.map { (show, entry) ->
-                    entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
+        sourceOfTruth = SourceOfTruth.of(
+            reader = {
+                watchedShowsDao.entriesObservable().map { entries ->
+                    when {
+                        // Store only treats null as 'no value', so convert to null
+                        entries.isEmpty() -> null
+                        // If the request is expired, our data is stale
+                        lastRequestStore.isRequestExpired(Duration.ofHours(6)) -> null
+                        // Otherwise, our data is fresh and valid
+                        else -> entries
+                    }
                 }
+            },
+            writer = { _: Unit, response ->
+                watchedShowsDao.withTransaction {
+                    val entries = response.map { (show, entry) ->
+                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
+                    }
+                    watchedShowsDao.deleteAll()
+                    watchedShowsDao.insertAll(entries)
+                }
+            },
+            delete = {
+                // Delete of an entity here means the entire list
                 watchedShowsDao.deleteAll()
-                watchedShowsDao.insertAll(entries)
-            }
-        },
-        delete = {
-            // Delete of an entity here means the entire list
-            watchedShowsDao.deleteAll()
-        },
-        deleteAll = watchedShowsDao::deleteAll,
-    ),
-).build()
+            },
+            deleteAll = watchedShowsDao::deleteAll,
+        ),
+    ).build(),
+)
