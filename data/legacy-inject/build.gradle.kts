@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,18 +23,17 @@ plugins {
 }
 
 android {
-    namespace = "app.tivi.domain"
+    namespace = "app.tivi.data.legacy.inject"
+
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 }
 
 dependencies {
     implementation(projects.base)
     api(projects.data.legacy)
-    implementation(projects.api.traktAuth)
-    implementation(projects.api.tmdb)
 
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
-
-    api(libs.androidx.paging.common)
-    implementation(libs.androidx.paging.runtime)
 }
