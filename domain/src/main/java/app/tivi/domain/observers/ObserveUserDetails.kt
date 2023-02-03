@@ -17,7 +17,7 @@
 package app.tivi.domain.observers
 
 import app.tivi.data.entities.TraktUser
-import app.tivi.data.repositories.traktusers.TraktUsersRepository
+import app.tivi.data.traktusers.TraktUsersRepository
 import app.tivi.domain.SubjectInteractor
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

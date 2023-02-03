@@ -16,7 +16,7 @@
 
 package app.tivi.domain.observers
 
-import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.domain.SubjectInteractor
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

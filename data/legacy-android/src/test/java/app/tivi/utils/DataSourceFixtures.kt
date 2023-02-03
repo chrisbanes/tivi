@@ -18,8 +18,8 @@ package app.tivi.utils
 
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.repositories.showimages.ShowImagesDataSource
-import app.tivi.data.repositories.shows.ShowDataSource
+import app.tivi.data.showimages.ShowImagesDataSource
+import app.tivi.data.shows.ShowDataSource
 
 object SuccessFakeShowDataSource : ShowDataSource {
     override suspend fun getShow(show: TiviShow): TiviShow = show

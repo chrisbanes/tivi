@@ -16,7 +16,7 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.repositories.traktusers.TraktUsersRepository
+import app.tivi.data.traktusers.TraktUsersRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateUserDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
