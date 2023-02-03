@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
+package app.tivi.data.daos
 
-plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
-}
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Transaction
+import app.tivi.data.compoundmodels.ShowDetailed
 
-dependencies {
-    api(projects.data.models)
-    implementation(projects.data.db)
-    implementation(projects.data.legacy) // remove this eventually
-
-    implementation(projects.api.trakt)
-    implementation(projects.api.tmdb)
-    implementation(libs.retrofit.retrofit)
-
-    api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
+@Dao
+abstract class RoomShowFtsDao : ShowFtsDao {
+    @Transaction
+    @Query(
+        """
+        SELECT s.* FROM shows as s
+        INNER JOIN shows_fts AS fts ON s.id = fts.docid
+        WHERE fts.title MATCH :filter
+        """,
+    )
+    abstract override suspend fun search(filter: String): List<ShowDetailed>
 }

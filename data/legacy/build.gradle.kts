@@ -25,15 +25,11 @@ dependencies {
     api(projects.api.trakt)
     api(projects.api.tmdb)
     api(projects.data.models)
-
-    api(libs.androidx.room.common)
-    api(libs.androidx.paging.common)
-    implementation(libs.androidx.collection) // LruCache
+    implementation(projects.data.db)
 
     implementation(libs.retrofit.retrofit)
 
     api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
 
     api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
 }

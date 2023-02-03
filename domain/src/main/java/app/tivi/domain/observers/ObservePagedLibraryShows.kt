@@ -33,12 +33,20 @@ class ObservePagedLibraryShows @Inject constructor(
     override fun createObservable(
         params: Parameters,
     ): Flow<PagingData<LibraryShow>> = Pager(config = params.pagingConfig) {
-        libraryShowsDao.observeForPaging(
-            sort = params.sort,
-            filter = params.filter,
-            includeWatched = params.includeWatched,
-            includeFollowed = params.includeFollowed,
-        )
+        if (params.filter.isNullOrEmpty()) {
+            libraryShowsDao.pagedListLastWatched(
+                sort = params.sort,
+                includeWatched = params.includeWatched,
+                includeFollowed = params.includeFollowed,
+            )
+        } else {
+            libraryShowsDao.pagedListLastWatchedFilter(
+                sort = params.sort,
+                filter = params.filter,
+                includeWatched = params.includeWatched,
+                includeFollowed = params.includeFollowed,
+            )
+        }
     }.flow
 
     data class Parameters(

@@ -26,31 +26,31 @@ import app.tivi.data.models.Season
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class EpisodesDao : EntityDao<Episode>() {
+abstract class RoomEpisodesDao : EpisodesDao(), RoomEntityDao<Episode> {
     @Query("SELECT * from episodes WHERE season_id = :seasonId ORDER BY number")
-    abstract suspend fun episodesWithSeasonId(seasonId: Long): List<Episode>
+    abstract override suspend fun episodesWithSeasonId(seasonId: Long): List<Episode>
 
     @Query("DELETE FROM episodes WHERE season_id = :seasonId")
-    abstract suspend fun deleteWithSeasonId(seasonId: Long)
+    abstract override suspend fun deleteWithSeasonId(seasonId: Long)
 
     @Query("SELECT * from episodes WHERE trakt_id = :traktId")
-    abstract suspend fun episodeWithTraktId(traktId: Int): Episode?
+    abstract override suspend fun episodeWithTraktId(traktId: Int): Episode?
 
     @Query("SELECT * from episodes WHERE tmdb_id = :tmdbId")
-    abstract suspend fun episodeWithTmdbId(tmdbId: Int): Episode?
+    abstract override suspend fun episodeWithTmdbId(tmdbId: Int): Episode?
 
     @Query("SELECT * from episodes WHERE id = :id")
-    abstract suspend fun episodeWithId(id: Long): Episode?
+    abstract override suspend fun episodeWithId(id: Long): Episode?
 
     @Query("SELECT trakt_id from episodes WHERE id = :id")
-    abstract suspend fun episodeTraktIdForId(id: Long): Int?
+    abstract override suspend fun episodeTraktIdForId(id: Long): Int?
 
     @Query("SELECT id from episodes WHERE trakt_id = :traktId")
-    abstract suspend fun episodeIdWithTraktId(traktId: Int): Long?
+    abstract override suspend fun episodeIdWithTraktId(traktId: Int): Long?
 
     @Transaction
     @Query("SELECT * from episodes WHERE id = :id")
-    abstract fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason>
+    abstract override fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason>
 
     @Query(
         "SELECT shows.id FROM shows" +
@@ -58,17 +58,17 @@ abstract class EpisodesDao : EntityDao<Episode>() {
             " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
             " WHERE eps.id = :episodeId",
     )
-    abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
+    abstract override suspend fun showIdForEpisodeId(episodeId: Long): Long
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
     @Query(latestWatchedEpisodeForShowId)
-    abstract fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
+    abstract override fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
     @Query(nextEpisodeForShowIdAfter)
-    abstract fun observeNextEpisodeForShowAfter(
+    abstract override fun observeNextEpisodeForShowAfter(
         showId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
@@ -77,7 +77,7 @@ abstract class EpisodesDao : EntityDao<Episode>() {
     @Transaction
     @RewriteQueriesToDropUnusedColumns
     @Query(nextAiredEpisodeForShowIdAfter)
-    abstract fun observeNextAiredEpisodeForShowAfter(
+    abstract override fun observeNextAiredEpisodeForShowAfter(
         showId: Long,
         seasonNumber: Int,
         episodeNumber: Int,

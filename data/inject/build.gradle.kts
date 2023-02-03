@@ -33,8 +33,7 @@ android {
 dependencies {
     implementation(projects.base)
 
-    api(projects.data.legacy) // needed for DAOs
-
+    api(projects.data.db)
     api(projects.data.episodes)
     api(projects.data.followedshows)
     api(projects.data.popularshows)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,30 @@
 
 package app.tivi.data.daos
 
-import app.tivi.data.compoundmodels.EntryWithShow
-import app.tivi.data.models.MultipleEntry
+import app.tivi.data.models.TraktUser
 import kotlinx.coroutines.flow.Flow
 
-/**
- * This interface represents a DAO which contains entities which are part of a collective list for a given show.
- */
-abstract class PairEntryDao<EC : MultipleEntry, LI : EntryWithShow<EC>> : EntityDao<EC>() {
-    abstract fun entries(showId: Long): List<EC>
-    abstract fun entriesWithShows(showId: Long): List<LI>
-    abstract fun entriesWithShowsObservable(showId: Long): Flow<List<LI>>
-    abstract suspend fun deleteWithShowId(showId: Long)
+interface UserDao : EntityDao<TraktUser> {
+
+    fun observeMe(): Flow<TraktUser?>
+
+    fun observeTraktUser(username: String): Flow<TraktUser?>
+
+    suspend fun getTraktUser(username: String): TraktUser?
+
+    suspend fun getUser(username: String): TraktUser?
+
+    suspend fun getMe(): TraktUser?
+
+    suspend fun getIdForMe(): Long?
+
+    suspend fun getIdForUsername(username: String): Long?
+
+    suspend fun deleteWithUsername(username: String)
+
+    suspend fun deleteMe()
+
+    override suspend fun insert(entity: TraktUser): Long
+
+    suspend fun deleteAll()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
+package app.tivi.data.daos
 
-plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
-}
+import app.tivi.data.compoundmodels.EntryWithShow
+import app.tivi.data.models.Entry
 
-dependencies {
-    api(projects.data.models)
-    implementation(projects.data.db)
-    implementation(projects.data.legacy) // remove this eventually
-
-    implementation(projects.api.trakt)
-    implementation(projects.api.tmdb)
-    implementation(libs.retrofit.retrofit)
-
-    api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
-}
+/**
+ * This interface represents a DAO which contains entities which are part of a single collective list.
+ */
+interface RoomEntryDao<EC : Entry, LI : EntryWithShow<EC>> : EntryDao<EC, LI>, RoomEntityDao<EC>

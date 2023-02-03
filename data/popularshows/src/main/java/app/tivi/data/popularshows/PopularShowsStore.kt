@@ -18,6 +18,8 @@ package app.tivi.data.popularshows
 
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.TiviShowDao
+import app.tivi.data.daos.getIdOrSavePlaceholder
+import app.tivi.data.daos.updatePage
 import app.tivi.data.models.PopularShowEntry
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher

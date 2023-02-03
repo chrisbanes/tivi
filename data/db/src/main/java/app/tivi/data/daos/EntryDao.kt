@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
+package app.tivi.data.daos
 
-plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
-}
+import app.tivi.data.compoundmodels.EntryWithShow
+import app.tivi.data.models.Entry
 
-dependencies {
-    api(projects.data.models)
-    implementation(projects.data.db)
-    implementation(projects.data.legacy) // remove this eventually
-
-    implementation(projects.api.trakt)
-    implementation(projects.api.tmdb)
-    implementation(libs.retrofit.retrofit)
-
-    api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
+/**
+ * This interface represents a DAO which contains entities which are part of a single collective list.
+ */
+interface EntryDao<EC : Entry, LI : EntryWithShow<EC>> : EntityDao<EC> {
+    suspend fun deleteAll()
 }

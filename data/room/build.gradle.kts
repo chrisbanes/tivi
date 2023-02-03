@@ -38,7 +38,7 @@ ksp {
 
 dependencies {
     implementation(projects.base)
-    api(projects.data.legacy)
+    api(projects.data.db)
 
     api(libs.androidx.room.runtime)
     api(libs.androidx.room.ktx)

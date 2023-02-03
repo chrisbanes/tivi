@@ -16,20 +16,9 @@
 
 package app.tivi.data.daos
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Transaction
 import app.tivi.data.compoundmodels.ShowDetailed
 
-@Dao
-abstract class ShowFtsDao {
-    @Transaction
-    @Query(
-        """
-        SELECT s.* FROM shows as s
-        INNER JOIN shows_fts AS fts ON s.id = fts.docid
-        WHERE fts.title MATCH :filter
-        """,
-    )
-    abstract suspend fun search(filter: String): List<ShowDetailed>
+interface ShowFtsDao {
+
+    suspend fun search(filter: String): List<ShowDetailed>
 }

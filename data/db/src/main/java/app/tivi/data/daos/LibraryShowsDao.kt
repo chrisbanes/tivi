@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
+package app.tivi.data.daos
 
-plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
-}
+import androidx.paging.PagingSource
+import app.tivi.data.compoundmodels.LibraryShow
+import app.tivi.data.models.SortOption
+import app.tivi.data.models.TiviShow
 
-dependencies {
-    api(projects.data.models)
-    implementation(projects.data.db)
-    implementation(projects.data.legacy) // remove this eventually
+interface LibraryShowsDao : EntityDao<TiviShow> {
+    fun pagedListLastWatched(
+        sort: SortOption,
+        includeWatched: Boolean,
+        includeFollowed: Boolean,
+    ): PagingSource<Int, LibraryShow>
 
-    implementation(projects.api.trakt)
-    implementation(projects.api.tmdb)
-    implementation(libs.retrofit.retrofit)
-
-    api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
+    fun pagedListLastWatchedFilter(
+        sort: SortOption,
+        filter: String,
+        includeWatched: Boolean,
+        includeFollowed: Boolean,
+    ): PagingSource<Int, LibraryShow>
 }

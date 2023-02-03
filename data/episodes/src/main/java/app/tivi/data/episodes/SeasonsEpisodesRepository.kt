@@ -20,6 +20,7 @@ import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.ActionDate
 import app.tivi.data.models.Episode

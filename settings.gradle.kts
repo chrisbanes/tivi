@@ -47,6 +47,7 @@ include(
     ":common:ui:resources",
     ":common:ui:compose",
     ":common:imageloading",
+    ":data:db",
     ":data:inject",
     ":data:legacy",
     ":data:models",

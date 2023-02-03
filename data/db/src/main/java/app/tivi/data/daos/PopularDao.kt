@@ -16,12 +16,22 @@
 
 package app.tivi.data.daos
 
-import app.tivi.data.compoundmodels.EntryWithShow
-import app.tivi.data.models.Entry
+import androidx.paging.PagingSource
+import app.tivi.data.compoundmodels.PopularEntryWithShow
+import app.tivi.data.models.PopularShowEntry
+import kotlinx.coroutines.flow.Flow
 
-/**
- * This interface represents a DAO which contains entities which are part of a single collective list.
- */
-abstract class EntryDao<EC : Entry, LI : EntryWithShow<EC>> : EntityDao<EC>() {
-    abstract suspend fun deleteAll()
+interface PopularDao : PaginatedEntryDao<PopularShowEntry, PopularEntryWithShow> {
+
+    fun entriesObservable(page: Int): Flow<List<PopularShowEntry>>
+
+    fun entriesObservable(count: Int, offset: Int): Flow<List<PopularEntryWithShow>>
+
+    fun entriesPagingSource(): PagingSource<Int, PopularEntryWithShow>
+
+    override suspend fun deletePage(page: Int)
+
+    override suspend fun deleteAll()
+
+    override suspend fun getLastPage(): Int?
 }

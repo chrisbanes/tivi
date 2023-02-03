@@ -17,6 +17,7 @@
 package app.tivi.data.episodes
 
 import app.tivi.data.daos.EpisodeWatchEntryDao
+import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
