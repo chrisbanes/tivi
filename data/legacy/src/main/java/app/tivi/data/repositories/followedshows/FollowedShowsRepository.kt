@@ -21,9 +21,9 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.data.syncers.ItemSyncerResult
-import app.tivi.data.syncers.syncerForEntity
+import app.tivi.data.util.ItemSyncerResult
 import app.tivi.data.util.instantInPast
+import app.tivi.data.util.syncerForEntity
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
