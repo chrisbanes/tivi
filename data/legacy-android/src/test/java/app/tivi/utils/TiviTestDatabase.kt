@@ -19,9 +19,9 @@ package app.tivi.utils
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import app.tivi.data.TiviDatabase
-import app.tivi.data.TiviTypeConverters
 import app.tivi.data.daos.ShowFtsDao
+import app.tivi.data.db.TiviDatabase
+import app.tivi.data.db.TiviTypeConverters
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.FollowedShowEntry

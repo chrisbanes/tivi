@@ -19,6 +19,9 @@ package app.tivi.data
 import android.content.Context
 import android.os.Debug
 import androidx.room.Room
+import app.tivi.data.db.DatabaseTransactionRunner
+import app.tivi.data.db.RoomTransactionRunner
+import app.tivi.data.db.TiviDatabase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

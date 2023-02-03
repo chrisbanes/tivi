@@ -16,7 +16,6 @@
 
 package app.tivi.data.repositories.relatedshows
 
-import app.tivi.data.bodyOrThrow
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.IndexedMapper
@@ -24,7 +23,8 @@ import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbBaseShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.mappers.unwrapTmdbShowResults
-import app.tivi.data.withRetry
+import app.tivi.data.util.bodyOrThrow
+import app.tivi.data.util.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import javax.inject.Inject

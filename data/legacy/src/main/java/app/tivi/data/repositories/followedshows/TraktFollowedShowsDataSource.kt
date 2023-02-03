@@ -16,13 +16,13 @@
 
 package app.tivi.data.repositories.followedshows
 
-import app.tivi.data.bodyOrThrow
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktListEntryToFollowedShowEntry
 import app.tivi.data.mappers.TraktListEntryToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.data.withRetry
+import app.tivi.data.util.bodyOrThrow
+import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.entities.ShowIds
 import com.uwetrottmann.trakt5.entities.SyncItems
 import com.uwetrottmann.trakt5.entities.SyncShow

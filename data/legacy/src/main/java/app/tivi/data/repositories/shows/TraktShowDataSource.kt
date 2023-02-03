@@ -16,9 +16,9 @@
 
 package app.tivi.data.repositories.shows
 
-import app.tivi.data.bodyOrThrow
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktShowToTiviShow
+import app.tivi.data.util.bodyOrThrow
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.IdType
 import com.uwetrottmann.trakt5.enums.Type

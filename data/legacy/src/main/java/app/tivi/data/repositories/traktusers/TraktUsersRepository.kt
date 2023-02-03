@@ -18,7 +18,7 @@ package app.tivi.data.repositories.traktusers
 
 import app.tivi.data.daos.UserDao
 import app.tivi.data.entities.TraktUser
-import app.tivi.data.withRetry
+import app.tivi.data.util.withRetry
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow

@@ -19,10 +19,10 @@ package app.tivi.data.dao
 import android.database.sqlite.SQLiteConstraintException
 import app.tivi.data.DatabaseModuleBinds
 import app.tivi.data.DatabaseTest
-import app.tivi.data.TiviDatabase
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.db.TiviDatabase
 import app.tivi.utils.episodeWatch2PendingDelete
 import app.tivi.utils.episodeWatch2PendingSend
 import app.tivi.utils.insertShow

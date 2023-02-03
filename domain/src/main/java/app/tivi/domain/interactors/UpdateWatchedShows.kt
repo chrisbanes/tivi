@@ -16,10 +16,10 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.fetch
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.watchedshows.WatchedShowsStore
+import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger

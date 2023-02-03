@@ -16,19 +16,19 @@
 
 package app.tivi.data.repositories.episodes
 
-import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.Season
-import app.tivi.data.instantInPast
 import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.syncers.syncerForEntity
+import app.tivi.data.util.instantInPast
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
