@@ -34,7 +34,6 @@ android {
 
 dependencies {
     implementation(projects.base)
-    implementation(projects.data.legacy)
     api(projects.api.trakt)
 
     implementation(libs.hilt.library)

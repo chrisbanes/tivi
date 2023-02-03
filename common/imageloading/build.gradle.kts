@@ -28,7 +28,7 @@ android {
 
 dependencies {
     implementation(projects.base)
-    implementation(projects.data.legacy)
+    implementation(projects.data.models)
     implementation(projects.common.ui.view)
     implementation(projects.api.tmdb)
 
