@@ -21,6 +21,8 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.updatePage
 import app.tivi.data.models.PopularShowEntry
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -28,52 +30,47 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-class PopularShowsStore internal constructor(
-    store: Store<Int, List<PopularShowEntry>>,
-) : Store<Int, List<PopularShowEntry>> by store
-
-fun PopularShowsStore(
+@Singleton
+class PopularShowsStore @Inject constructor(
     traktPopularShows: TraktPopularShowsDataSource,
     popularShowsDao: PopularDao,
     showDao: TiviShowDao,
     lastRequestStore: PopularShowsLastRequestStore,
-): PopularShowsStore = PopularShowsStore(
-    StoreBuilder.from(
-        fetcher = Fetcher.of { page: Int ->
-            traktPopularShows(page, 20)
-                .also {
-                    if (page == 0) lastRequestStore.updateLastRequest()
+) : Store<Int, List<PopularShowEntry>> by StoreBuilder.from(
+    fetcher = Fetcher.of { page: Int ->
+        traktPopularShows(page, 20)
+            .also {
+                if (page == 0) lastRequestStore.updateLastRequest()
+            }
+    },
+    sourceOfTruth = SourceOfTruth.of(
+        reader = { page ->
+            popularShowsDao.entriesObservable(page).map { entries ->
+                when {
+                    // Store only treats null as 'no value', so convert to null
+                    entries.isEmpty() -> null
+                    // If the request is expired, our data is stale
+                    lastRequestStore.isRequestExpired(Duration.ofHours(3)) -> null
+                    // Otherwise, our data is fresh and valid
+                    else -> entries
                 }
+            }
         },
-        sourceOfTruth = SourceOfTruth.of(
-            reader = { page ->
-                popularShowsDao.entriesObservable(page).map { entries ->
-                    when {
-                        // Store only treats null as 'no value', so convert to null
-                        entries.isEmpty() -> null
-                        // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(Duration.ofHours(3)) -> null
-                        // Otherwise, our data is fresh and valid
-                        else -> entries
-                    }
+        writer = { page, response ->
+            popularShowsDao.withTransaction {
+                val entries = response.map { (show, entry) ->
+                    entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
                 }
-            },
-            writer = { page, response ->
-                popularShowsDao.withTransaction {
-                    val entries = response.map { (show, entry) ->
-                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
-                    }
-                    if (page == 0) {
-                        // If we've requested page 0, remove any existing entries first
-                        popularShowsDao.deleteAll()
-                        popularShowsDao.insertAll(entries)
-                    } else {
-                        popularShowsDao.updatePage(page, entries)
-                    }
+                if (page == 0) {
+                    // If we've requested page 0, remove any existing entries first
+                    popularShowsDao.deleteAll()
+                    popularShowsDao.insertAll(entries)
+                } else {
+                    popularShowsDao.updatePage(page, entries)
                 }
-            },
-            delete = popularShowsDao::deletePage,
-            deleteAll = popularShowsDao::deleteAll,
-        ),
-    ).build(),
-)
+            }
+        },
+        delete = popularShowsDao::deletePage,
+        deleteAll = popularShowsDao::deleteAll,
+    ),
+).build()

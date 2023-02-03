@@ -20,7 +20,8 @@ import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.saveImages
 import app.tivi.data.models.ShowTmdbImage
-import app.tivi.inject.Tmdb
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -28,41 +29,36 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-class ShowImagesStore internal constructor(
-    store: Store<Long, List<ShowTmdbImage>>,
-) : Store<Long, List<ShowTmdbImage>> by store
-
-fun ShowImagesStore(
+@Singleton
+class ShowImagesStore @Inject constructor(
     showTmdbImagesDao: ShowTmdbImagesDao,
     showDao: TiviShowDao,
     lastRequestStore: ShowImagesLastRequestStore,
-    @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource,
-): ShowImagesStore = ShowImagesStore(
-    StoreBuilder.from(
-        fetcher = Fetcher.of { showId: Long ->
-            val show = showDao.getShowWithId(showId)
-                ?: throw IllegalArgumentException("Show with ID $showId does not exist")
+    tmdbShowImagesDataSource: TmdbShowImagesDataSource,
+) : Store<Long, List<ShowTmdbImage>> by StoreBuilder.from(
+    fetcher = Fetcher.of { showId: Long ->
+        val show = showDao.getShowWithId(showId)
+            ?: throw IllegalArgumentException("Show with ID $showId does not exist")
 
-            tmdbShowImagesDataSource.getShowImages(show)
-                .also { lastRequestStore.updateLastRequest(showId) }
-                .map { it.copy(showId = showId) }
-        },
-        sourceOfTruth = SourceOfTruth.of(
-            reader = { showId ->
-                showTmdbImagesDao.getImagesForShowId(showId).map { entries ->
-                    when {
-                        // Store only treats null as 'no value', so convert to null
-                        entries.isEmpty() -> null
-                        // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(showId, Duration.ofDays(28)) -> null
-                        // Otherwise, our data is fresh and valid
-                        else -> entries
-                    }
+        tmdbShowImagesDataSource.getShowImages(show)
+            .also { lastRequestStore.updateLastRequest(showId) }
+            .map { it.copy(showId = showId) }
+    },
+    sourceOfTruth = SourceOfTruth.of(
+        reader = { showId ->
+            showTmdbImagesDao.getImagesForShowId(showId).map { entries ->
+                when {
+                    // Store only treats null as 'no value', so convert to null
+                    entries.isEmpty() -> null
+                    // If the request is expired, our data is stale
+                    lastRequestStore.isRequestExpired(showId, Duration.ofDays(28)) -> null
+                    // Otherwise, our data is fresh and valid
+                    else -> entries
                 }
-            },
-            writer = showTmdbImagesDao::saveImages,
-            delete = showTmdbImagesDao::deleteForShowId,
-            deleteAll = showTmdbImagesDao::deleteAll,
-        ),
-    ).build(),
-)
+            }
+        },
+        writer = showTmdbImagesDao::saveImages,
+        delete = showTmdbImagesDao::deleteForShowId,
+        deleteAll = showTmdbImagesDao::deleteAll,
+    ),
+).build()

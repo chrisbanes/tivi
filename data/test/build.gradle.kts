@@ -48,7 +48,11 @@ ksp {
 }
 
 dependencies {
-    testImplementation(projects.data.inject)
+    implementation(projects.data.followedshows)
+    implementation(projects.data.episodes)
+    implementation(projects.data.showimages)
+    implementation(projects.data.shows)
+
     testImplementation(projects.data.legacy)
     testImplementation(projects.data.dbRoom)
 

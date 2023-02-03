@@ -21,6 +21,8 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.updatePage
 import app.tivi.data.models.RecommendedShowEntry
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -28,55 +30,50 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-class RecommendedShowsStore internal constructor(
-    store: Store<Int, List<RecommendedShowEntry>>,
-) : Store<Int, List<RecommendedShowEntry>> by store
-
-fun RecommendedShowsStore(
+@Singleton
+class RecommendedShowsStore @Inject constructor(
     traktRecommendedShows: TraktRecommendedShowsDataSource,
     recommendedDao: RecommendedDao,
     showDao: TiviShowDao,
     lastRequestStore: RecommendedShowsLastRequestStore,
-): RecommendedShowsStore = RecommendedShowsStore(
-    StoreBuilder.from(
-        fetcher = Fetcher.of { page: Int ->
-            traktRecommendedShows(page, 20)
-                .also {
-                    if (page == 0) {
-                        lastRequestStore.updateLastRequest()
-                    }
+) : Store<Int, List<RecommendedShowEntry>> by StoreBuilder.from(
+    fetcher = Fetcher.of { page: Int ->
+        traktRecommendedShows(page, 20)
+            .also {
+                if (page == 0) {
+                    lastRequestStore.updateLastRequest()
                 }
+            }
+    },
+    sourceOfTruth = SourceOfTruth.of(
+        reader = { page ->
+            recommendedDao.entriesForPage(page).map { entries ->
+                when {
+                    // Store only treats null as 'no value', so convert to null
+                    entries.isEmpty() -> null
+                    // If the request is expired, our data is stale
+                    lastRequestStore.isRequestExpired(Duration.ofDays(3)) -> null
+                    // Otherwise, our data is fresh and valid
+                    else -> entries
+                }
+            }
         },
-        sourceOfTruth = SourceOfTruth.of(
-            reader = { page ->
-                recommendedDao.entriesForPage(page).map { entries ->
-                    when {
-                        // Store only treats null as 'no value', so convert to null
-                        entries.isEmpty() -> null
-                        // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(Duration.ofDays(3)) -> null
-                        // Otherwise, our data is fresh and valid
-                        else -> entries
-                    }
+        writer = { page, response ->
+            recommendedDao.withTransaction {
+                val entries = response.map { show ->
+                    val showId = showDao.getIdOrSavePlaceholder(show)
+                    RecommendedShowEntry(showId = showId, page = page)
                 }
-            },
-            writer = { page, response ->
-                recommendedDao.withTransaction {
-                    val entries = response.map { show ->
-                        val showId = showDao.getIdOrSavePlaceholder(show)
-                        RecommendedShowEntry(showId = showId, page = page)
-                    }
-                    if (page == 0) {
-                        // If we've requested page 0, remove any existing entries first
-                        recommendedDao.deleteAll()
-                        recommendedDao.insertAll(entries)
-                    } else {
-                        recommendedDao.updatePage(page, entries)
-                    }
+                if (page == 0) {
+                    // If we've requested page 0, remove any existing entries first
+                    recommendedDao.deleteAll()
+                    recommendedDao.insertAll(entries)
+                } else {
+                    recommendedDao.updatePage(page, entries)
                 }
-            },
-            delete = recommendedDao::deletePage,
-            deleteAll = recommendedDao::deleteAll,
-        ),
-    ).build(),
-)
+            }
+        },
+        delete = recommendedDao::deletePage,
+        deleteAll = recommendedDao::deleteAll,
+    ),
+).build()

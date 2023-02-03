@@ -20,7 +20,6 @@ import app.tivi.data.DatabaseModuleBinds
 import app.tivi.data.DatabaseTest
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.db.TiviDatabase
-import app.tivi.data.episodes.EpisodeDataSourceBinds
 import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.followedshows.TraktFollowedShowsDataSource
 import app.tivi.utils.followedShow1Local
@@ -45,7 +44,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
-@UninstallModules(DatabaseModuleBinds::class, EpisodeDataSourceBinds::class)
+@UninstallModules(DatabaseModuleBinds::class)
 @HiltAndroidTest
 class FollowedShowRepositoryTest : DatabaseTest() {
     @Inject lateinit var followShowsDao: FollowedShowsDao

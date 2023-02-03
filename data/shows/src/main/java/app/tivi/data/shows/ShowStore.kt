@@ -21,6 +21,8 @@ import app.tivi.data.daos.getShowWithIdOrThrow
 import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.TiviShow
 import app.tivi.data.util.mergeShows
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -28,58 +30,50 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-/**
- * Wrapper class so that we can safely inject this without type erasure
- */
-class ShowStore internal constructor(
-    store: Store<Long, TiviShow>,
-) : Store<Long, TiviShow> by store
-
-fun ShowStore(
+@Singleton
+class ShowStore @Inject constructor(
     showDao: TiviShowDao,
     lastRequestStore: ShowLastRequestStore,
     traktShowDataSource: TraktShowDataSource,
     tmdbShowDataSource: TmdbShowDataSource,
-): ShowStore = ShowStore(
-    StoreBuilder.from(
-        fetcher = Fetcher.of { id: Long ->
-            val savedShow = showDao.getShowWithIdOrThrow(id)
+) : Store<Long, TiviShow> by StoreBuilder.from(
+    fetcher = Fetcher.of { id: Long ->
+        val savedShow = showDao.getShowWithIdOrThrow(id)
 
-            val traktResult = runCatching { traktShowDataSource.getShow(savedShow) }
-            if (traktResult.isSuccess) {
-                lastRequestStore.updateLastRequest(id)
-                return@of traktResult.getOrThrow()
+        val traktResult = runCatching { traktShowDataSource.getShow(savedShow) }
+        if (traktResult.isSuccess) {
+            lastRequestStore.updateLastRequest(id)
+            return@of traktResult.getOrThrow()
+        }
+
+        // If trakt fails, try TMDb
+        val tmdbResult = runCatching { tmdbShowDataSource.getShow(savedShow) }
+        if (tmdbResult.isSuccess) {
+            lastRequestStore.updateLastRequest(id)
+            return@of tmdbResult.getOrThrow()
+        }
+
+        throw traktResult.exceptionOrNull()!!
+    },
+    sourceOfTruth = SourceOfTruth.of(
+        reader = { showId ->
+            showDao.getShowWithIdFlow(showId).map {
+                when {
+                    // If the request is expired, our data is stale
+                    lastRequestStore.isRequestExpired(showId, Duration.ofDays(14)) -> null
+                    // Otherwise, our data is fresh and valid
+                    else -> it
+                }
             }
-
-            // If trakt fails, try TMDb
-            val tmdbResult = runCatching { tmdbShowDataSource.getShow(savedShow) }
-            if (tmdbResult.isSuccess) {
-                lastRequestStore.updateLastRequest(id)
-                return@of tmdbResult.getOrThrow()
-            }
-
-            throw traktResult.exceptionOrNull()!!
         },
-        sourceOfTruth = SourceOfTruth.of(
-            reader = { showId ->
-                showDao.getShowWithIdFlow(showId).map {
-                    when {
-                        // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(showId, Duration.ofDays(14)) -> null
-                        // Otherwise, our data is fresh and valid
-                        else -> it
-                    }
-                }
-            },
-            writer = { id, response ->
-                showDao.withTransaction {
-                    showDao.insertOrUpdate(
-                        mergeShows(local = showDao.getShowWithIdOrThrow(id), trakt = response),
-                    )
-                }
-            },
-            delete = showDao::delete,
-            deleteAll = showDao::deleteAll,
-        ),
-    ).build(),
-)
+        writer = { id, response ->
+            showDao.withTransaction {
+                showDao.insertOrUpdate(
+                    mergeShows(local = showDao.getShowWithIdOrThrow(id), trakt = response),
+                )
+            }
+        },
+        delete = showDao::delete,
+        deleteAll = showDao::deleteAll,
+    ),
+).build()
