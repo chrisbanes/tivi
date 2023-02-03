@@ -31,5 +31,8 @@ dependencies {
 
     implementation(libs.retrofit.retrofit)
 
+    api(libs.store)
+    implementation(libs.kotlinx.atomicfu)
+
     api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
 }

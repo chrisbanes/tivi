@@ -18,20 +18,11 @@ package app.tivi.data.recommendedshows
 
 import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.RecommendedShowEntry
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.map
-import org.mobilenativefoundation.store.store5.Fetcher
-import org.mobilenativefoundation.store.store5.SourceOfTruth
-import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
-import org.threeten.bp.Duration
-
-typealias RecommendedShowsStore = Store<Int, List<RecommendedShowEntry>>
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -43,45 +34,10 @@ internal object RecommendedShowsModule {
         recommendedDao: RecommendedDao,
         showDao: TiviShowDao,
         lastRequestStore: RecommendedShowsLastRequestStore,
-    ): RecommendedShowsStore = StoreBuilder.from(
-        fetcher = Fetcher.of { page: Int ->
-            traktRecommendedShows(page, 20)
-                .also {
-                    if (page == 0) {
-                        lastRequestStore.updateLastRequest()
-                    }
-                }
-        },
-        sourceOfTruth = SourceOfTruth.of(
-            reader = { page ->
-                recommendedDao.entriesForPage(page).map { entries ->
-                    when {
-                        // Store only treats null as 'no value', so convert to null
-                        entries.isEmpty() -> null
-                        // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(Duration.ofDays(3)) -> null
-                        // Otherwise, our data is fresh and valid
-                        else -> entries
-                    }
-                }
-            },
-            writer = { page, response ->
-                recommendedDao.withTransaction {
-                    val entries = response.map { show ->
-                        val showId = showDao.getIdOrSavePlaceholder(show)
-                        RecommendedShowEntry(showId = showId, page = page)
-                    }
-                    if (page == 0) {
-                        // If we've requested page 0, remove any existing entries first
-                        recommendedDao.deleteAll()
-                        recommendedDao.insertAll(entries)
-                    } else {
-                        recommendedDao.updatePage(page, entries)
-                    }
-                }
-            },
-            delete = recommendedDao::deletePage,
-            deleteAll = recommendedDao::deleteAll,
-        ),
-    ).build()
+    ): RecommendedShowsStore = RecommendedShowsStore(
+        traktRecommendedShows = traktRecommendedShows,
+        recommendedDao = recommendedDao,
+        showDao = showDao,
+        lastRequestStore = lastRequestStore,
+    )
 }

@@ -73,9 +73,6 @@ dependencies {
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.hilt.testing)
 
-    api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
-
     kspTest(libs.androidx.room.compiler)
     kaptTest(libs.hilt.compiler)
 

@@ -18,7 +18,6 @@ package app.tivi.data.showimages
 
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.inject.Tmdb
 import dagger.Binds
 import dagger.Module
@@ -26,14 +25,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.map
-import org.mobilenativefoundation.store.store5.Fetcher
-import org.mobilenativefoundation.store.store5.SourceOfTruth
-import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
-import org.threeten.bp.Duration
-
-typealias ShowImagesStore = Store<Long, List<ShowTmdbImage>>
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -53,31 +44,10 @@ object ShowImagesStoreModule {
         showDao: TiviShowDao,
         lastRequestStore: ShowImagesLastRequestStore,
         @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource,
-    ): ShowImagesStore = StoreBuilder.from(
-        fetcher = Fetcher.of { showId: Long ->
-            val show = showDao.getShowWithId(showId)
-                ?: throw IllegalArgumentException("Show with ID $showId does not exist")
-
-            tmdbShowImagesDataSource.getShowImages(show)
-                .also { lastRequestStore.updateLastRequest(showId) }
-                .map { it.copy(showId = showId) }
-        },
-        sourceOfTruth = SourceOfTruth.of(
-            reader = { showId ->
-                showTmdbImagesDao.getImagesForShowId(showId).map { entries ->
-                    when {
-                        // Store only treats null as 'no value', so convert to null
-                        entries.isEmpty() -> null
-                        // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(showId, Duration.ofDays(28)) -> null
-                        // Otherwise, our data is fresh and valid
-                        else -> entries
-                    }
-                }
-            },
-            writer = showTmdbImagesDao::saveImages,
-            delete = showTmdbImagesDao::deleteForShowId,
-            deleteAll = showTmdbImagesDao::deleteAll,
-        ),
-    ).build()
+    ): ShowImagesStore = ShowImagesStore(
+        showTmdbImagesDao = showTmdbImagesDao,
+        showDao = showDao,
+        lastRequestStore = lastRequestStore,
+        tmdbShowImagesDataSource = tmdbShowImagesDataSource,
+    )
 }

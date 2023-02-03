@@ -18,20 +18,11 @@ package app.tivi.data.watchedshows
 
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
-import app.tivi.data.entities.WatchedShowEntry
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.map
-import org.mobilenativefoundation.store.store5.Fetcher
-import org.mobilenativefoundation.store.store5.SourceOfTruth
-import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
-import org.threeten.bp.Duration
-
-typealias WatchedShowsStore = Store<Unit, List<WatchedShowEntry>>
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -43,40 +34,10 @@ internal object WatchedShowsModule {
         watchedShowsDao: WatchedShowDao,
         showDao: TiviShowDao,
         lastRequestStore: WatchedShowsLastRequestStore,
-    ): WatchedShowsStore = StoreBuilder.from(
-        fetcher = Fetcher.of {
-            traktWatchedShows()
-                .also {
-                    lastRequestStore.updateLastRequest()
-                }
-        },
-        sourceOfTruth = SourceOfTruth.of(
-            reader = {
-                watchedShowsDao.entriesObservable().map { entries ->
-                    when {
-                        // Store only treats null as 'no value', so convert to null
-                        entries.isEmpty() -> null
-                        // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(Duration.ofHours(6)) -> null
-                        // Otherwise, our data is fresh and valid
-                        else -> entries
-                    }
-                }
-            },
-            writer = { _: Unit, response ->
-                watchedShowsDao.withTransaction {
-                    val entries = response.map { (show, entry) ->
-                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
-                    }
-                    watchedShowsDao.deleteAll()
-                    watchedShowsDao.insertAll(entries)
-                }
-            },
-            delete = {
-                // Delete of an entity here means the entire list
-                watchedShowsDao.deleteAll()
-            },
-            deleteAll = watchedShowsDao::deleteAll,
-        ),
-    ).build()
+    ): WatchedShowsStore = WatchedShowsStore(
+        traktWatchedShows = traktWatchedShows,
+        watchedShowsDao = watchedShowsDao,
+        showDao = showDao,
+        lastRequestStore = lastRequestStore,
+    )
 }
