@@ -18,20 +18,11 @@ package app.tivi.data.relatedshows
 
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.RelatedShowEntry
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.map
-import org.mobilenativefoundation.store.store5.Fetcher
-import org.mobilenativefoundation.store.store5.SourceOfTruth
-import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
-import org.threeten.bp.Duration
-
-typealias RelatedShowsStore = Store<Long, List<RelatedShowEntry>>
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -43,38 +34,10 @@ internal object RelatedShowsModule {
         relatedShowsDao: RelatedShowsDao,
         showDao: TiviShowDao,
         lastRequestStore: RelatedShowsLastRequestStore,
-    ): RelatedShowsStore = StoreBuilder.from(
-        fetcher = Fetcher.of { showId: Long ->
-            tmdbRelatedShows(showId)
-                .also { lastRequestStore.updateLastRequest(showId) }
-        },
-        sourceOfTruth = SourceOfTruth.of(
-            reader = { showId ->
-                relatedShowsDao.entriesObservable(showId).map { entries ->
-                    when {
-                        // Store only treats null as 'no value', so convert to null
-                        entries.isEmpty() -> null
-                        // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(showId, Duration.ofDays(28)) -> null
-                        // Otherwise, our data is fresh and valid
-                        else -> entries
-                    }
-                }
-            },
-            writer = { showId, response ->
-                relatedShowsDao.withTransaction {
-                    val entries = response.map { (show, entry) ->
-                        entry.copy(
-                            showId = showId,
-                            otherShowId = showDao.getIdOrSavePlaceholder(show),
-                        )
-                    }
-                    relatedShowsDao.deleteWithShowId(showId)
-                    relatedShowsDao.insertOrUpdate(entries)
-                }
-            },
-            delete = relatedShowsDao::deleteWithShowId,
-            deleteAll = relatedShowsDao::deleteAll,
-        ),
-    ).build()
+    ): RelatedShowsStore = RelatedShowsStore(
+        tmdbRelatedShows = tmdbRelatedShows,
+        relatedShowsDao = relatedShowsDao,
+        showDao = showDao,
+        lastRequestStore = lastRequestStore,
+    )
 }
