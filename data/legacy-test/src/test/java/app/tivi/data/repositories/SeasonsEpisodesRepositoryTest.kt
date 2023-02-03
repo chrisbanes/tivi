@@ -23,6 +23,7 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.db.TiviDatabase
 import app.tivi.data.episodes.EpisodeDataSourceBinds
+import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.utils.insertShow
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes

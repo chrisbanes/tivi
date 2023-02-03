@@ -24,21 +24,10 @@ plugins {
 }
 
 android {
-    namespace = "app.tivi.data"
+    namespace = "app.tivi.data.room"
 
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-
-            all {
-                it.minHeapSize = "64m"
-                it.maxHeapSize = "128m"
-            }
-        }
     }
 }
 
@@ -52,32 +41,12 @@ dependencies {
     api(projects.data.legacy)
 
     api(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.room.paging)
+    api(libs.androidx.room.ktx)
+    api(libs.androidx.room.paging)
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.paging.runtime)
 
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
-
-    testImplementation(libs.junit)
-    testImplementation(libs.robolectric)
-    testImplementation(libs.mockK)
-
-    testImplementation(libs.androidx.archCoreTesting)
-    testImplementation(libs.androidx.test.core)
-    testImplementation(libs.androidx.test.junit)
-    testImplementation(libs.androidx.room.testing)
-    testImplementation(libs.truth)
-    testImplementation(libs.kotlin.coroutines.test)
-    testImplementation(libs.hilt.testing)
-
-    kspTest(libs.androidx.room.compiler)
-    kaptTest(libs.hilt.compiler)
-
-    // Needed for Tzdb
-    testImplementation("org.threeten:threetenbp:${libs.versions.threetenbp.get()}")
-    // Needed for Main dispatcher to work
-    testImplementation(libs.kotlin.coroutines.android)
 }
