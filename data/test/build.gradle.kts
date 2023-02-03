@@ -50,7 +50,7 @@ ksp {
 dependencies {
     testImplementation(projects.data.inject)
     testImplementation(projects.data.legacy)
-    testImplementation(projects.data.room)
+    testImplementation(projects.data.dbRoom)
 
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
