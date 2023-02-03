@@ -48,8 +48,8 @@ ksp {
 }
 
 dependencies {
+    testImplementation(projects.data.inject)
     testImplementation(projects.data.legacy)
-    testImplementation(projects.data.legacyInject)
     testImplementation(projects.data.room)
 
     testImplementation(libs.junit)
