@@ -26,7 +26,9 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-class TrendingShowsStore(store: Store<Int, List<TrendingShowEntry>>) : Store<Int, List<TrendingShowEntry>> by store
+class TrendingShowsStore internal constructor(
+    store: Store<Int, List<TrendingShowEntry>>,
+) : Store<Int, List<TrendingShowEntry>> by store
 
 fun TrendingShowsStore(
     traktTrendingShows: TraktTrendingShowsDataSource,

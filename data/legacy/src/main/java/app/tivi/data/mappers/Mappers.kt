@@ -47,7 +47,7 @@ inline fun <F, T1, T2> pairMapperOf(
     }
 }
 
-internal inline fun <T> unwrapTmdbShowResults(
+inline fun <T> unwrapTmdbShowResults(
     crossinline f: suspend (List<BaseTvShow>) -> List<T>,
 ): suspend (TvShowResultsPage) -> List<T> = {
     f(it.results ?: emptyList())

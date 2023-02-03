@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.data.watchedshows
+package app.tivi.data.relatedshows
 
+import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.daos.WatchedShowDao
-import app.tivi.data.models.WatchedShowEntry
+import app.tivi.data.models.RelatedShowEntry
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -26,48 +26,48 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-class WatchedShowsStore(store: Store<Unit, List<WatchedShowEntry>>) : Store<Unit, List<WatchedShowEntry>> by store
+class RelatedShowsStore internal constructor(
+    store: Store<Long, List<RelatedShowEntry>>,
+) : Store<Long, List<RelatedShowEntry>> by store
 
-fun WatchedShowsStore(
-    traktWatchedShows: TraktWatchedShowsDataSource,
-    watchedShowsDao: WatchedShowDao,
+fun RelatedShowsStore(
+    tmdbRelatedShows: TmdbRelatedShowsDataSource,
+    relatedShowsDao: RelatedShowsDao,
     showDao: TiviShowDao,
-    lastRequestStore: WatchedShowsLastRequestStore,
-): WatchedShowsStore = WatchedShowsStore(
+    lastRequestStore: RelatedShowsLastRequestStore,
+): RelatedShowsStore = RelatedShowsStore(
     StoreBuilder.from(
-        fetcher = Fetcher.of {
-            traktWatchedShows()
-                .also {
-                    lastRequestStore.updateLastRequest()
-                }
+        fetcher = Fetcher.of { showId: Long ->
+            tmdbRelatedShows(showId)
+                .also { lastRequestStore.updateLastRequest(showId) }
         },
         sourceOfTruth = SourceOfTruth.of(
-            reader = {
-                watchedShowsDao.entriesObservable().map { entries ->
+            reader = { showId ->
+                relatedShowsDao.entriesObservable(showId).map { entries ->
                     when {
                         // Store only treats null as 'no value', so convert to null
                         entries.isEmpty() -> null
                         // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(Duration.ofHours(6)) -> null
+                        lastRequestStore.isRequestExpired(showId, Duration.ofDays(28)) -> null
                         // Otherwise, our data is fresh and valid
                         else -> entries
                     }
                 }
             },
-            writer = { _: Unit, response ->
-                watchedShowsDao.withTransaction {
+            writer = { showId, response ->
+                relatedShowsDao.withTransaction {
                     val entries = response.map { (show, entry) ->
-                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
+                        entry.copy(
+                            showId = showId,
+                            otherShowId = showDao.getIdOrSavePlaceholder(show),
+                        )
                     }
-                    watchedShowsDao.deleteAll()
-                    watchedShowsDao.insertAll(entries)
+                    relatedShowsDao.deleteWithShowId(showId)
+                    relatedShowsDao.insertOrUpdate(entries)
                 }
             },
-            delete = {
-                // Delete of an entity here means the entire list
-                watchedShowsDao.deleteAll()
-            },
-            deleteAll = watchedShowsDao::deleteAll,
+            delete = relatedShowsDao::deleteWithShowId,
+            deleteAll = relatedShowsDao::deleteAll,
         ),
     ).build(),
 )

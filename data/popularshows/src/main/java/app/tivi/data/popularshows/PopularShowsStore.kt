@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.data.recommendedshows
+package app.tivi.data.popularshows
 
-import app.tivi.data.daos.RecommendedDao
+import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.models.RecommendedShowEntry
+import app.tivi.data.models.PopularShowEntry
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -26,53 +26,52 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-class RecommendedShowsStore(store: Store<Int, List<RecommendedShowEntry>>) : Store<Int, List<RecommendedShowEntry>> by store
+class PopularShowsStore internal constructor(
+    store: Store<Int, List<PopularShowEntry>>,
+) : Store<Int, List<PopularShowEntry>> by store
 
-fun RecommendedShowsStore(
-    traktRecommendedShows: TraktRecommendedShowsDataSource,
-    recommendedDao: RecommendedDao,
+fun PopularShowsStore(
+    traktPopularShows: TraktPopularShowsDataSource,
+    popularShowsDao: PopularDao,
     showDao: TiviShowDao,
-    lastRequestStore: RecommendedShowsLastRequestStore,
-): RecommendedShowsStore = RecommendedShowsStore(
+    lastRequestStore: PopularShowsLastRequestStore,
+): PopularShowsStore = PopularShowsStore(
     StoreBuilder.from(
         fetcher = Fetcher.of { page: Int ->
-            traktRecommendedShows(page, 20)
+            traktPopularShows(page, 20)
                 .also {
-                    if (page == 0) {
-                        lastRequestStore.updateLastRequest()
-                    }
+                    if (page == 0) lastRequestStore.updateLastRequest()
                 }
         },
         sourceOfTruth = SourceOfTruth.of(
             reader = { page ->
-                recommendedDao.entriesForPage(page).map { entries ->
+                popularShowsDao.entriesObservable(page).map { entries ->
                     when {
                         // Store only treats null as 'no value', so convert to null
                         entries.isEmpty() -> null
                         // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(Duration.ofDays(3)) -> null
+                        lastRequestStore.isRequestExpired(Duration.ofHours(3)) -> null
                         // Otherwise, our data is fresh and valid
                         else -> entries
                     }
                 }
             },
             writer = { page, response ->
-                recommendedDao.withTransaction {
-                    val entries = response.map { show ->
-                        val showId = showDao.getIdOrSavePlaceholder(show)
-                        RecommendedShowEntry(showId = showId, page = page)
+                popularShowsDao.withTransaction {
+                    val entries = response.map { (show, entry) ->
+                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
                     }
                     if (page == 0) {
                         // If we've requested page 0, remove any existing entries first
-                        recommendedDao.deleteAll()
-                        recommendedDao.insertAll(entries)
+                        popularShowsDao.deleteAll()
+                        popularShowsDao.insertAll(entries)
                     } else {
-                        recommendedDao.updatePage(page, entries)
+                        popularShowsDao.updatePage(page, entries)
                     }
                 }
             },
-            delete = recommendedDao::deletePage,
-            deleteAll = recommendedDao::deleteAll,
+            delete = popularShowsDao::deletePage,
+            deleteAll = popularShowsDao::deleteAll,
         ),
     ).build(),
 )

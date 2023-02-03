@@ -29,7 +29,9 @@ import org.threeten.bp.Duration
 /**
  * Wrapper class so that we can safely inject this without type erasure
  */
-class ShowStore(store: Store<Long, TiviShow>) : Store<Long, TiviShow> by store
+class ShowStore internal constructor(
+    store: Store<Long, TiviShow>,
+) : Store<Long, TiviShow> by store
 
 fun ShowStore(
     showDao: TiviShowDao,
