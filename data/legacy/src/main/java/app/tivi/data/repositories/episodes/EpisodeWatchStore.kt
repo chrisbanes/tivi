@@ -20,7 +20,7 @@ import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
-import app.tivi.data.syncers.syncerForEntity
+import app.tivi.data.util.syncerForEntity
 import app.tivi.util.Logger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

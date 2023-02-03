@@ -27,8 +27,8 @@ import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
-import app.tivi.data.syncers.syncerForEntity
 import app.tivi.data.util.instantInPast
+import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
