@@ -157,7 +157,7 @@ dependencies {
     implementation(projects.common.imageloading)
     implementation(projects.common.ui.compose)
     implementation(projects.data.inject)
-    implementation(projects.data.room)
+    implementation(projects.data.dbRoom)
     implementation(projects.api.trakt)
     implementation(projects.api.traktAuth)
     implementation(projects.api.tmdb)
