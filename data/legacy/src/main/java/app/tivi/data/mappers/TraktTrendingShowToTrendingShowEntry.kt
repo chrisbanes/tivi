@@ -16,7 +16,7 @@
 
 package app.tivi.data.mappers
 
-import app.tivi.data.entities.TrendingShowEntry
+import app.tivi.data.models.TrendingShowEntry
 import com.uwetrottmann.trakt5.entities.TrendingShow
 import javax.inject.Inject
 import javax.inject.Singleton

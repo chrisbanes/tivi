@@ -18,8 +18,8 @@ package app.tivi.data.daos
 
 import androidx.room.Dao
 import androidx.room.Query
-import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.PendingAction
+import app.tivi.data.models.EpisodeWatchEntry
+import app.tivi.data.models.PendingAction
 import kotlinx.coroutines.flow.Flow
 
 @Dao

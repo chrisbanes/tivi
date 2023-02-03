@@ -16,7 +16,7 @@
 
 package app.tivi.data.mappers
 
-import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.models.EpisodeWatchEntry
 import com.uwetrottmann.trakt5.entities.HistoryEntry
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,35 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import org.threeten.bp.OffsetDateTime
 
 @Entity(
-    tableName = "recommended_entries",
+    tableName = "episode_watch_entries",
     indices = [
-        Index(value = ["show_id"], unique = true),
+        Index(value = ["episode_id"]),
+        Index(value = ["trakt_id"], unique = true),
     ],
     foreignKeys = [
         ForeignKey(
-            entity = TiviShow::class,
+            entity = Episode::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("show_id"),
+            childColumns = arrayOf("episode_id"),
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE,
         ),
     ],
 )
-data class RecommendedShowEntry(
+data class EpisodeWatchEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
-    @ColumnInfo(name = "show_id") override val showId: Long,
-    @ColumnInfo(name = "page") override val page: Int,
-) : PaginatedEntry
+    @ColumnInfo(name = "episode_id") val episodeId: Long,
+    @ColumnInfo(name = "trakt_id") val traktId: Long? = null,
+    @ColumnInfo(name = "watched_at") val watchedAt: OffsetDateTime,
+    @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING,
+) : TiviEntity

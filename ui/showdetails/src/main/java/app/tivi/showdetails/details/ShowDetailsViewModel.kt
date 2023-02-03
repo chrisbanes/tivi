@@ -20,7 +20,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiMessageManager
-import app.tivi.data.entities.ActionDate
+import app.tivi.data.models.ActionDate
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action

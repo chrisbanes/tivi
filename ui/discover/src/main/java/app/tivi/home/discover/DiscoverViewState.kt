@@ -18,7 +18,7 @@ package app.tivi.home.discover
 
 import androidx.compose.runtime.Immutable
 import app.tivi.api.UiMessage
-import app.tivi.data.entities.TraktUser
+import app.tivi.data.models.TraktUser
 import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.RecommendedEntryWithShow

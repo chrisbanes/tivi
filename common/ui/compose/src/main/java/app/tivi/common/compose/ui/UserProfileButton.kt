@@ -29,7 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.TraktUser
+import app.tivi.data.models.TraktUser
 
 @Composable
 fun UserProfileButton(

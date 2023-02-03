@@ -18,7 +18,7 @@ package app.tivi.data.relatedshows
 
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.RelatedShowEntry
+import app.tivi.data.models.RelatedShowEntry
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth

@@ -105,10 +105,10 @@ import app.tivi.common.compose.ui.boundsInParent
 import app.tivi.common.compose.ui.none
 import app.tivi.common.compose.ui.onPositionInParentChanged
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.PendingAction
-import app.tivi.data.entities.Season
+import app.tivi.data.models.Episode
+import app.tivi.data.models.EpisodeWatchEntry
+import app.tivi.data.models.PendingAction
+import app.tivi.data.models.Season
 import app.tivi.ui.animations.lerp
 import com.google.accompanist.navigation.material.BottomSheetNavigatorSheetState
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi

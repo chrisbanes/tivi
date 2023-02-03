@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package app.tivi.data.relatedshows
 
-import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbBaseShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.mappers.unwrapTmdbShowResults
+import app.tivi.data.models.RelatedShowEntry
+import app.tivi.data.models.TiviShow
 import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.tmdb2.Tmdb

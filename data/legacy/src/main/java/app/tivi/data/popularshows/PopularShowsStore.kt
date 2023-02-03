@@ -18,7 +18,7 @@ package app.tivi.data.popularshows
 
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.PopularShowEntry
+import app.tivi.data.models.PopularShowEntry
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth

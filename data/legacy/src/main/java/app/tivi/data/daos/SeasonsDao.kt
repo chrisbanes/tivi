@@ -19,8 +19,8 @@ package app.tivi.data.daos
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import app.tivi.data.entities.Season
-import app.tivi.data.entities.Season.Companion.NUMBER_SPECIALS
+import app.tivi.data.models.Season
+import app.tivi.data.models.Season.Companion.NUMBER_SPECIALS
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import kotlinx.coroutines.flow.Flow
 
@@ -57,7 +57,7 @@ abstract class SeasonsDao : EntityDao<Season>() {
 
     @Query(
         """
-        SELECT id from seasons WHERE 
+        SELECT id from seasons WHERE
           show_id = (SELECT show_id from SEASONS WHERE id = :seasonId)
           AND number != $NUMBER_SPECIALS
           AND number < (SELECT number from SEASONS WHERE id = :seasonId)

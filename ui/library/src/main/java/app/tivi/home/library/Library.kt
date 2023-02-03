@@ -92,9 +92,9 @@ import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.ShowTmdbImage
-import app.tivi.data.entities.SortOption
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.models.ShowTmdbImage
+import app.tivi.data.models.SortOption
+import app.tivi.data.models.TiviShow
 import app.tivi.data.resultentities.LibraryShow
 import app.tivi.trakt.TraktAuthState
 import org.threeten.bp.OffsetDateTime

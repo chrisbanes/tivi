@@ -16,12 +16,12 @@
 
 package app.tivi.data.resultentities
 
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.Season
-import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.TmdbImageEntity
-import app.tivi.data.entities.findHighestRatedBackdrop
-import app.tivi.data.entities.findHighestRatedPoster
+import app.tivi.data.models.Episode
+import app.tivi.data.models.ImageType
+import app.tivi.data.models.Season
+import app.tivi.data.models.TiviShow
+import app.tivi.data.models.TmdbImageEntity
+import app.tivi.data.util.findHighestRatedItem
 import app.tivi.extensions.unsafeLazy
 
 data class EpisodeWithSeasonWithShow(
@@ -30,7 +30,6 @@ data class EpisodeWithSeasonWithShow(
     val show: TiviShow,
     private val showImages: List<TmdbImageEntity>,
 ) {
-    val backdrop by unsafeLazy { showImages.findHighestRatedBackdrop() }
-
-    val poster by unsafeLazy { showImages.findHighestRatedPoster() }
+    val backdrop by unsafeLazy { findHighestRatedItem(showImages, ImageType.BACKDROP) }
+    val poster by unsafeLazy { findHighestRatedItem(showImages, ImageType.POSTER) }
 }

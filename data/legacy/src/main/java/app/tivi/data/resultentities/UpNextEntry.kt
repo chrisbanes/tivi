@@ -19,9 +19,9 @@ package app.tivi.data.resultentities
 import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.Season
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.models.Episode
+import app.tivi.data.models.Season
+import app.tivi.data.models.TiviShow
 import app.tivi.data.views.FollowedShowsNextToWatch
 import app.tivi.extensions.unsafeLazy
 

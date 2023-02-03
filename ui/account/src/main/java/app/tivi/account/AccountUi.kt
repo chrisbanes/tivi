@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.TraktUser
+import app.tivi.data.models.TraktUser
 import app.tivi.trakt.TraktAuthState
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset

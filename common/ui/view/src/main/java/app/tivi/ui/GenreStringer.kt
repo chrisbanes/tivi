@@ -18,7 +18,7 @@ package app.tivi.ui
 
 import androidx.annotation.StringRes
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.Genre
+import app.tivi.data.models.Genre
 
 object GenreStringer {
     fun getEmoji(genre: Genre): String = when (genre) {

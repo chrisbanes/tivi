@@ -16,7 +16,7 @@
 
 package app.tivi.domain.observers
 
-import app.tivi.data.entities.TraktUser
+import app.tivi.data.models.TraktUser
 import app.tivi.data.traktusers.TraktUsersRepository
 import app.tivi.domain.SubjectInteractor
 import javax.inject.Inject

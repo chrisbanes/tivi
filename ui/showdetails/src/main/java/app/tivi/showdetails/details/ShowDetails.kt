@@ -113,14 +113,14 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.Genre
-import app.tivi.data.entities.ImageType
-import app.tivi.data.entities.Season
-import app.tivi.data.entities.ShowStatus
-import app.tivi.data.entities.ShowTmdbImage
-import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.TmdbImageEntity
+import app.tivi.data.models.Episode
+import app.tivi.data.models.Genre
+import app.tivi.data.models.ImageType
+import app.tivi.data.models.Season
+import app.tivi.data.models.ShowStatus
+import app.tivi.data.models.ShowTmdbImage
+import app.tivi.data.models.TiviShow
+import app.tivi.data.models.TmdbImageEntity
 import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches

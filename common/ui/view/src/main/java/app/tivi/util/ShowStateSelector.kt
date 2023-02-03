@@ -16,7 +16,7 @@
 
 package app.tivi.util
 
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.models.TiviShow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

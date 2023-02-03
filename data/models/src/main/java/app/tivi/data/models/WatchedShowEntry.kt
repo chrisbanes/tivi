@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import org.threeten.bp.OffsetDateTime
 
 @Entity(
-    tableName = "related_shows",
+    tableName = "watched_entries",
     indices = [
-        Index(value = ["show_id"]),
-        Index(value = ["other_show_id"]),
+        Index(value = ["show_id"], unique = true),
     ],
     foreignKeys = [
         ForeignKey(
@@ -36,18 +36,10 @@ import androidx.room.PrimaryKey
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE,
         ),
-        ForeignKey(
-            entity = TiviShow::class,
-            parentColumns = arrayOf("id"),
-            childColumns = arrayOf("other_show_id"),
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE,
-        ),
     ],
 )
-data class RelatedShowEntry(
+data class WatchedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
-    @ColumnInfo(name = "other_show_id") override val otherShowId: Long,
-    @ColumnInfo(name = "order_index") val orderIndex: Int,
-) : MultipleEntry
+    @ColumnInfo(name = "last_watched") val lastWatched: OffsetDateTime,
+) : Entry

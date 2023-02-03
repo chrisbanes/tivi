@@ -83,8 +83,8 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.TopAppBarWithBottomContent
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.Season
+import app.tivi.data.models.Episode
+import app.tivi.data.models.Season
 import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import kotlinx.coroutines.launch

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package app.tivi.data.episodes
 
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.Season
+import app.tivi.data.models.Episode
+import app.tivi.data.models.EpisodeWatchEntry
+import app.tivi.data.models.Season
 import org.threeten.bp.OffsetDateTime
 
 interface SeasonsEpisodesDataSource {

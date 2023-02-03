@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package app.tivi.data.followedshows
 
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.PendingAction
+import app.tivi.data.models.FollowedShowEntry
+import app.tivi.data.models.PendingAction
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.util.ItemSyncerResult
 import app.tivi.data.util.instantInPast

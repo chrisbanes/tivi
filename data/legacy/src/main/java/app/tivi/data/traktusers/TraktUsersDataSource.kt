@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package app.tivi.data.traktusers
 
-import app.tivi.data.entities.TraktUser
 import app.tivi.data.mappers.UserToTraktUser
+import app.tivi.data.models.TraktUser
 import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.entities.UserSlug

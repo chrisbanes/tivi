@@ -16,7 +16,7 @@
 
 package app.tivi.common.imageloading
 
-import app.tivi.data.entities.Episode
+import app.tivi.data.models.Episode
 import app.tivi.tmdb.TmdbImageUrlProvider
 import coil.annotation.ExperimentalCoilApi
 import coil.intercept.Interceptor

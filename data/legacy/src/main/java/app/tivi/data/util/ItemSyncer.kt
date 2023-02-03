@@ -17,7 +17,7 @@
 package app.tivi.data.util
 
 import app.tivi.data.daos.EntityDao
-import app.tivi.data.entities.TiviEntity
+import app.tivi.data.models.TiviEntity
 import app.tivi.util.Logger
 
 /**

@@ -30,8 +30,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.TmdbImageEntity
+import app.tivi.data.models.TiviShow
+import app.tivi.data.models.TmdbImageEntity
 
 @Composable
 fun PosterCard(

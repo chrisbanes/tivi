@@ -16,7 +16,7 @@
 
 package app.tivi.data.mappers
 
-import app.tivi.data.entities.TraktUser
+import app.tivi.data.models.TraktUser
 import com.uwetrottmann.trakt5.entities.User
 import javax.inject.Inject
 import javax.inject.Singleton

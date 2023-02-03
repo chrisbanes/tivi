@@ -18,7 +18,7 @@ package app.tivi.data.trendingshows
 
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.TrendingDao
-import app.tivi.data.entities.TrendingShowEntry
+import app.tivi.data.models.TrendingShowEntry
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth

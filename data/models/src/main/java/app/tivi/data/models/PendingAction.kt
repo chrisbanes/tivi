@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
-enum class ActionDate {
-    NOW,
-    AIR_DATE,
+enum class PendingAction(val value: String) {
+    NOTHING("nothing"),
+    UPLOAD("upload"),
+    DELETE("delete"),
 }

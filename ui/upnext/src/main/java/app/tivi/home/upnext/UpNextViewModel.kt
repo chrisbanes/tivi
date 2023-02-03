@@ -22,7 +22,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import app.tivi.api.UiMessageManager
-import app.tivi.data.entities.SortOption
+import app.tivi.data.models.SortOption
 import app.tivi.data.resultentities.UpNextEntry
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.GetTraktAuthState

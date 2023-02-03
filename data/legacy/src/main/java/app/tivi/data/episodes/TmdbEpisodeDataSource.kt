@@ -16,9 +16,9 @@
 
 package app.tivi.data.episodes
 
-import app.tivi.data.entities.Episode
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbEpisodeToEpisode
+import app.tivi.data.models.Episode
 import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.tmdb2.Tmdb

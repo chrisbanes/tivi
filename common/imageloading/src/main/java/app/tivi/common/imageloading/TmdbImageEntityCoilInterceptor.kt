@@ -16,8 +16,8 @@
 
 package app.tivi.common.imageloading
 
-import app.tivi.data.entities.ImageType
-import app.tivi.data.entities.TmdbImageEntity
+import app.tivi.data.models.ImageType
+import app.tivi.data.models.TmdbImageEntity
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.PowerController
 import app.tivi.util.SaveData

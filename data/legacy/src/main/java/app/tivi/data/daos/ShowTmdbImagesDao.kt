@@ -19,7 +19,7 @@ package app.tivi.data.daos
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import app.tivi.data.entities.ShowTmdbImage
+import app.tivi.data.models.ShowTmdbImage
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -20,7 +20,7 @@ import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import app.tivi.data.entities.RecommendedShowEntry
+import app.tivi.data.models.RecommendedShowEntry
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import kotlinx.coroutines.flow.Flow
 

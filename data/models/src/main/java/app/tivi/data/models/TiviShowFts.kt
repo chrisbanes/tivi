@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
-import org.threeten.bp.Instant
+import androidx.room.Fts4
 
-@Entity(
-    tableName = "last_requests",
-    indices = [Index(value = ["request", "entity_id"], unique = true)],
+@Fts4(contentEntity = TiviShow::class)
+@Entity(tableName = "shows_fts")
+data class TiviShowFts(
+    @ColumnInfo(name = "title") val title: String? = null,
+    @ColumnInfo(name = "original_title") val originalTitle: String? = null,
 )
-data class LastRequest(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    override val id: Long = 0,
-    @ColumnInfo(name = "request") val request: Request,
-    @ColumnInfo(name = "entity_id") val entityId: Long,
-    @ColumnInfo(name = "timestamp") val timestamp: Instant,
-) : TiviEntity

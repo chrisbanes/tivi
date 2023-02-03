@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.models
 
-import app.tivi.extensions.unsafeLazy
-
-data class ShowImages(val images: List<ShowTmdbImage>) {
-
-    val backdrop by unsafeLazy { findHighestRatedForType(ImageType.BACKDROP) }
-
-    val poster by unsafeLazy { findHighestRatedForType(ImageType.POSTER) }
-
-    private fun findHighestRatedForType(type: ImageType): ShowTmdbImage? {
-        return images.filter { it.type == type }
-            .maxByOrNull { it.rating + (if (it.isPrimary) 10f else 0f) }
-    }
+enum class Request(val tag: String) {
+    SHOW_DETAILS("show_details"),
+    SHOW_IMAGES("show_images"),
+    SHOW_SEASONS("show_seasons"),
+    EPISODE_DETAILS("episode_details"),
+    SHOW_EPISODE_WATCHES("show_episode_watches"),
+    FOLLOWED_SHOWS("followed_shows"),
+    WATCHED_SHOWS("watched_shows"),
+    USER_PROFILE("user_profile"),
+    RELATED_SHOWS("related_shows"),
+    TRENDING_SHOWS("trending_shows"),
+    POPULAR_SHOWS("popular_shows"),
+    RECOMMENDED_SHOWS("recommended_shows"),
 }

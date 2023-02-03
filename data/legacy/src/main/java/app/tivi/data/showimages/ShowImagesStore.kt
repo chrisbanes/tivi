@@ -18,7 +18,7 @@ package app.tivi.data.showimages
 
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.ShowTmdbImage
+import app.tivi.data.models.ShowTmdbImage
 import app.tivi.inject.Tmdb
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher

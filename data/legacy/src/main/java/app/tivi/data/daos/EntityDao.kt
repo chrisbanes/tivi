@@ -20,7 +20,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Transaction
 import androidx.room.Update
-import app.tivi.data.entities.TiviEntity
+import app.tivi.data.models.TiviEntity
 
 abstract class EntityDao<in E : TiviEntity> {
     @Insert

@@ -19,9 +19,9 @@ package app.tivi.data.resultentities
 import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.PendingAction
+import app.tivi.data.models.Episode
+import app.tivi.data.models.EpisodeWatchEntry
+import app.tivi.data.models.PendingAction
 import java.util.Objects
 import org.threeten.bp.OffsetDateTime
 

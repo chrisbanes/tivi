@@ -18,7 +18,7 @@ package app.tivi.data.watchedshows
 
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
-import app.tivi.data.entities.WatchedShowEntry
+import app.tivi.data.models.WatchedShowEntry
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth

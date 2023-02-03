@@ -16,8 +16,8 @@
 
 package app.tivi.utils
 
-import app.tivi.data.entities.ShowTmdbImage
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.models.ShowTmdbImage
+import app.tivi.data.models.TiviShow
 import app.tivi.data.showimages.ShowImagesDataSource
 import app.tivi.data.shows.ShowDataSource
 

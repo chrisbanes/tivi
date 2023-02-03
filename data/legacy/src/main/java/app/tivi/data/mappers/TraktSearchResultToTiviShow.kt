@@ -16,7 +16,7 @@
 
 package app.tivi.data.mappers
 
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.models.TiviShow
 import com.uwetrottmann.trakt5.entities.SearchResult
 import javax.inject.Inject
 import javax.inject.Singleton
