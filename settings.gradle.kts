@@ -49,7 +49,6 @@ include(
     ":common:imageloading",
     ":data:db",
     ":data:db-room",
-    ":data:inject",
     ":data:legacy",
     ":data:models",
     ":data:test",

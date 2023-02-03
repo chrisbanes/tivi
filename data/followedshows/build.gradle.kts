@@ -18,6 +18,7 @@
 plugins {
     id("kotlin")
     alias(libs.plugins.android.lint)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 dependencies {
@@ -31,4 +32,7 @@ dependencies {
 
     api(libs.store)
     implementation(libs.kotlinx.atomicfu)
+
+    implementation(libs.dagger.dagger)
+    kapt(libs.dagger.compiler)
 }

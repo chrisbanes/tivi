@@ -20,6 +20,8 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.models.WatchedShowEntry
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -27,50 +29,43 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-class WatchedShowsStore internal constructor(
-    store: Store<Unit, List<WatchedShowEntry>>,
-) : Store<Unit, List<WatchedShowEntry>> by store
-
-fun WatchedShowsStore(
+@Singleton
+class WatchedShowsStore @Inject constructor(
     traktWatchedShows: TraktWatchedShowsDataSource,
     watchedShowsDao: WatchedShowDao,
     showDao: TiviShowDao,
     lastRequestStore: WatchedShowsLastRequestStore,
-): WatchedShowsStore = WatchedShowsStore(
-    StoreBuilder.from(
-        fetcher = Fetcher.of {
-            traktWatchedShows()
-                .also {
-                    lastRequestStore.updateLastRequest()
+) : Store<Unit, List<WatchedShowEntry>> by StoreBuilder.from(
+    fetcher = Fetcher.of {
+        traktWatchedShows()
+            .also { lastRequestStore.updateLastRequest() }
+    },
+    sourceOfTruth = SourceOfTruth.of(
+        reader = {
+            watchedShowsDao.entriesObservable().map { entries ->
+                when {
+                    // Store only treats null as 'no value', so convert to null
+                    entries.isEmpty() -> null
+                    // If the request is expired, our data is stale
+                    lastRequestStore.isRequestExpired(Duration.ofHours(6)) -> null
+                    // Otherwise, our data is fresh and valid
+                    else -> entries
                 }
+            }
         },
-        sourceOfTruth = SourceOfTruth.of(
-            reader = {
-                watchedShowsDao.entriesObservable().map { entries ->
-                    when {
-                        // Store only treats null as 'no value', so convert to null
-                        entries.isEmpty() -> null
-                        // If the request is expired, our data is stale
-                        lastRequestStore.isRequestExpired(Duration.ofHours(6)) -> null
-                        // Otherwise, our data is fresh and valid
-                        else -> entries
-                    }
+        writer = { _: Unit, response ->
+            watchedShowsDao.withTransaction {
+                val entries = response.map { (show, entry) ->
+                    entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
                 }
-            },
-            writer = { _: Unit, response ->
-                watchedShowsDao.withTransaction {
-                    val entries = response.map { (show, entry) ->
-                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
-                    }
-                    watchedShowsDao.deleteAll()
-                    watchedShowsDao.insertAll(entries)
-                }
-            },
-            delete = {
-                // Delete of an entity here means the entire list
                 watchedShowsDao.deleteAll()
-            },
-            deleteAll = watchedShowsDao::deleteAll,
-        ),
-    ).build(),
-)
+                watchedShowsDao.insertAll(entries)
+            }
+        },
+        delete = {
+            // Delete of an entity here means the entire list
+            watchedShowsDao.deleteAll()
+        },
+        deleteAll = watchedShowsDao::deleteAll,
+    ),
+).build()

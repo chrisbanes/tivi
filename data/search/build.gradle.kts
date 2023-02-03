@@ -18,6 +18,7 @@
 plugins {
     id("kotlin")
     alias(libs.plugins.android.lint)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 dependencies {
@@ -33,4 +34,7 @@ dependencies {
     implementation(libs.kotlinx.atomicfu)
 
     implementation(libs.androidx.collection) // LruCache
+
+    implementation(libs.dagger.dagger)
+    kapt(libs.dagger.compiler)
 }

@@ -18,6 +18,7 @@
 plugins {
     id("kotlin")
     alias(libs.plugins.android.lint)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 dependencies {
@@ -28,4 +29,7 @@ dependencies {
     implementation(projects.api.trakt)
     implementation(projects.api.tmdb)
     implementation(libs.retrofit.retrofit)
+
+    implementation(libs.dagger.dagger)
+    kapt(libs.dagger.compiler)
 }
