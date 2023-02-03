@@ -23,6 +23,8 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.db.TiviDatabase
 import app.tivi.data.episodes.EpisodeDataSourceBinds
+import app.tivi.data.episodes.EpisodeWatchStore
+import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.utils.insertShow
 import app.tivi.utils.s1
@@ -62,11 +64,11 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Inject lateinit var episodesDao: EpisodesDao
 
-    @Inject lateinit var watchStore: app.tivi.data.episodes.EpisodeWatchStore
+    @Inject lateinit var watchStore: EpisodeWatchStore
 
     @Inject lateinit var repository: SeasonsEpisodesRepository
 
-    @Inject lateinit var seasonsDataSource: app.tivi.data.episodes.SeasonsEpisodesDataSource
+    @Inject lateinit var seasonsDataSource: SeasonsEpisodesDataSource
 
     @Before
     fun setup() {

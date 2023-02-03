@@ -17,11 +17,10 @@
 package app.tivi.utils
 
 import androidx.room.Database
-import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import app.tivi.data.TiviRoomDatabase
 import app.tivi.data.compoundmodels.ShowDetailed
-import app.tivi.data.daos.ShowFtsDao
-import app.tivi.data.db.TiviDatabase
+import app.tivi.data.daos.RoomShowFtsDao
 import app.tivi.data.db.TiviTypeConverters
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -66,10 +65,8 @@ import app.tivi.data.views.FollowedShowsWatchStats
     exportSchema = false,
 )
 @TypeConverters(TiviTypeConverters::class)
-abstract class TiviTestDatabase : RoomDatabase(), TiviDatabase {
-    override fun showFtsDao(): ShowFtsDao = object : ShowFtsDao() {
-        override suspend fun search(filter: String): List<ShowDetailed> {
-            return emptyList()
-        }
+abstract class TiviTestDatabase : TiviRoomDatabase() {
+    override fun showFtsDao(): RoomShowFtsDao = object : RoomShowFtsDao() {
+        override suspend fun search(filter: String): List<ShowDetailed> = emptyList()
     }
 }

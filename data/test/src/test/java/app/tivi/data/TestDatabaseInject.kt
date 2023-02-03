@@ -47,9 +47,9 @@ import javax.inject.Singleton
 @Module
 class TestDataSourceModule {
     private val traktFollowedShowsDataSource: TraktFollowedShowsDataSource = mockk()
-    private val traktEpisodeDataSource: app.tivi.data.episodes.EpisodeDataSource = mockk()
-    private val tmdbEpisodeDataSource: app.tivi.data.episodes.EpisodeDataSource = mockk()
-    private val seasonsDataSource: app.tivi.data.episodes.SeasonsEpisodesDataSource = mockk()
+    private val traktEpisodeDataSource: EpisodeDataSource = mockk()
+    private val tmdbEpisodeDataSource: EpisodeDataSource = mockk()
+    private val seasonsDataSource: SeasonsEpisodesDataSource = mockk()
     private val traktShowDataSource: ShowDataSource = SuccessFakeShowDataSource
     private val tmdbShowDataSource: ShowDataSource = SuccessFakeShowDataSource
     private val tmdbShowImagesDataSource: ShowImagesDataSource = SuccessFakeShowImagesDataSource
