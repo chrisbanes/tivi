@@ -16,7 +16,7 @@
 
 package app.tivi.data.resultentities
 
-import app.tivi.data.Entry
+import app.tivi.data.entities.Entry
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import java.util.Objects

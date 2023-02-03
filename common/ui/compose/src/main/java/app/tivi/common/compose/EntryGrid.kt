@@ -63,7 +63,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.Entry
+import app.tivi.data.entities.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import kotlin.math.roundToInt
 

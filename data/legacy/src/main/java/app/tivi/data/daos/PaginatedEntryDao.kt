@@ -19,7 +19,7 @@ package app.tivi.data.daos
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Transaction
-import app.tivi.data.PaginatedEntry
+import app.tivi.data.entities.PaginatedEntry
 import app.tivi.data.resultentities.EntryWithShow
 
 abstract class PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI>() {
