@@ -34,6 +34,10 @@ dependencies {
     implementation(projects.base)
     api(projects.data.legacy)
 
+    api(projects.data.followedshows)
+    api(projects.data.search)
+    api(projects.data.shows)
+
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
 }

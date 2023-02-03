@@ -21,15 +21,15 @@ package app.tivi.data.mappers
 import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import com.uwetrottmann.tmdb2.entities.TvShowResultsPage
 
-internal inline fun <F, T> Mapper<F, T>.forLists(): suspend (List<F>) -> List<T> {
+inline fun <F, T> Mapper<F, T>.forLists(): suspend (List<F>) -> List<T> {
     return { list -> list.map { item -> map(item) } }
 }
 
-internal inline fun <F, T> IndexedMapper<F, T>.forLists(): suspend (List<F>) -> List<T> {
+inline fun <F, T> IndexedMapper<F, T>.forLists(): suspend (List<F>) -> List<T> {
     return { list -> list.mapIndexed { index, item -> map(index, item) } }
 }
 
-internal inline fun <F, T1, T2> pairMapperOf(
+inline fun <F, T1, T2> pairMapperOf(
     firstMapper: Mapper<F, T1>,
     secondMapper: Mapper<F, T2>,
 ): suspend (List<F>) -> List<Pair<T1, T2>> = { from ->
@@ -38,7 +38,7 @@ internal inline fun <F, T1, T2> pairMapperOf(
     }
 }
 
-internal inline fun <F, T1, T2> pairMapperOf(
+inline fun <F, T1, T2> pairMapperOf(
     firstMapper: Mapper<F, T1>,
     secondMapper: IndexedMapper<F, T2>,
 ): suspend (List<F>) -> List<Pair<T1, T2>> = { from ->
