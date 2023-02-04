@@ -34,13 +34,13 @@ class ShowImagesStore @Inject constructor(
     showTmdbImagesDao: ShowTmdbImagesDao,
     showDao: TiviShowDao,
     lastRequestStore: ShowImagesLastRequestStore,
-    tmdbShowImagesDataSource: TmdbShowImagesDataSource,
+    dataSource: ShowImagesDataSource,
 ) : Store<Long, List<ShowTmdbImage>> by StoreBuilder.from(
     fetcher = Fetcher.of { showId: Long ->
         val show = showDao.getShowWithId(showId)
             ?: throw IllegalArgumentException("Show with ID $showId does not exist")
 
-        tmdbShowImagesDataSource.getShowImages(show)
+        dataSource.getShowImages(show)
             .also { lastRequestStore.updateLastRequest(showId) }
             .map { it.copy(showId = showId) }
     },

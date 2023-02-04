@@ -30,6 +30,8 @@ import app.tivi.data.models.RefreshType
 import app.tivi.data.models.Season
 import app.tivi.data.util.instantInPast
 import app.tivi.data.util.syncerForEntity
+import app.tivi.inject.Tmdb
+import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import javax.inject.Inject
@@ -51,9 +53,9 @@ class SeasonsEpisodesRepository @Inject constructor(
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
     private val seasonsLastRequestStore: SeasonsLastRequestStore,
-    private val traktSeasonsDataSource: TraktSeasonsEpisodesDataSource,
-    private val traktEpisodeDataSource: TraktEpisodeDataSource,
-    private val tmdbEpisodeDataSource: TmdbEpisodeDataSource,
+    private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
+    @Trakt private val traktEpisodeDataSource: EpisodeDataSource,
+    @Tmdb private val tmdbEpisodeDataSource: EpisodeDataSource,
     private val traktAuthState: Provider<TraktAuthState>,
     logger: Logger,
 ) {

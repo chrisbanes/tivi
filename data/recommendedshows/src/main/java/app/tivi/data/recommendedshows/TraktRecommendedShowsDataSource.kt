@@ -29,8 +29,11 @@ import retrofit2.awaitResponse
 class TraktRecommendedShowsDataSource @Inject constructor(
     private val recommendationsService: Provider<Recommendations>,
     private val showMapper: TraktShowToTiviShow,
-) {
-    suspend operator fun invoke(page: Int, pageSize: Int): List<TiviShow> = withRetry {
+) : RecommendedShowsDataSource {
+    override suspend operator fun invoke(
+        page: Int,
+        pageSize: Int,
+    ): List<TiviShow> = withRetry {
         recommendationsService.get()
             // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
             .shows(page + 1, pageSize, null)

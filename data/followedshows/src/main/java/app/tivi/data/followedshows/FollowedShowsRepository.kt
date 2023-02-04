@@ -41,7 +41,7 @@ import org.threeten.bp.OffsetDateTime
 class FollowedShowsRepository @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     private val followedShowsLastRequestStore: FollowedShowsLastRequestStore,
-    private val dataSource: TraktFollowedShowsDataSource,
+    private val dataSource: FollowedShowsDataSource,
     private val traktAuthState: Provider<TraktAuthState>,
     private val logger: Logger,
     private val showDao: TiviShowDao,

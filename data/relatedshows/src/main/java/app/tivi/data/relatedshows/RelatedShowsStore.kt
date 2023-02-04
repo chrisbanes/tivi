@@ -21,6 +21,7 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.RelatedShowEntry
+import app.tivi.inject.Tmdb
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
@@ -32,13 +33,13 @@ import org.threeten.bp.Duration
 
 @Singleton
 class RelatedShowsStore @Inject constructor(
-    tmdbRelatedShows: TmdbRelatedShowsDataSource,
+    @Tmdb dataSource: RelatedShowsDataSource,
     relatedShowsDao: RelatedShowsDao,
     showDao: TiviShowDao,
     lastRequestStore: RelatedShowsLastRequestStore,
 ) : Store<Long, List<RelatedShowEntry>> by StoreBuilder.from(
     fetcher = Fetcher.of { showId: Long ->
-        tmdbRelatedShows(showId)
+        dataSource(showId)
             .also { lastRequestStore.updateLastRequest(showId) }
     },
     sourceOfTruth = SourceOfTruth.of(

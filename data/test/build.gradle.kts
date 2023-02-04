@@ -48,6 +48,7 @@ ksp {
 }
 
 dependencies {
+    implementation(projects.data.inject)
     implementation(projects.data.followedshows)
     implementation(projects.data.episodes)
     implementation(projects.data.showimages)

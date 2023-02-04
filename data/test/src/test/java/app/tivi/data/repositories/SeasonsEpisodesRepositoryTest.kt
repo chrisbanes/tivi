@@ -22,6 +22,7 @@ import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.db.TiviDatabase
+import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.episodes.EpisodeWatchStore
 import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.SeasonsEpisodesRepository
@@ -52,7 +53,7 @@ import org.junit.Before
 import org.junit.Test
 import org.threeten.bp.OffsetDateTime
 
-@UninstallModules(DatabaseModuleBinds::class)
+@UninstallModules(DatabaseModuleBinds::class, EpisodeBinds::class)
 @HiltAndroidTest
 class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     @Inject lateinit var database: TiviDatabase

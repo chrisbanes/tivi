@@ -32,13 +32,13 @@ import org.threeten.bp.Duration
 
 @Singleton
 class TrendingShowsStore @Inject constructor(
-    traktTrendingShows: TraktTrendingShowsDataSource,
+    dataSource: TrendingShowsDataSource,
     trendingShowsDao: TrendingDao,
     showDao: TiviShowDao,
     lastRequestStore: TrendingShowsLastRequestStore,
 ) : Store<Int, List<TrendingShowEntry>> by StoreBuilder.from(
     fetcher = Fetcher.of { page: Int ->
-        traktTrendingShows(page, 20)
+        dataSource(page, 20)
             .also {
                 if (page == 0) {
                     lastRequestStore.updateLastRequest()

@@ -33,14 +33,14 @@ import retrofit2.awaitResponse
 class TraktPopularShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     showMapper: TraktShowToTiviShow,
-) {
+) : PopularShowsDataSource {
     private val entryMapper = IndexedMapper<Show, PopularShowEntry> { index, _ ->
         PopularShowEntry(showId = 0, pageOrder = index, page = 0)
     }
 
     private val resultsMapper = pairMapperOf(showMapper, entryMapper)
 
-    suspend operator fun invoke(
+    override suspend operator fun invoke(
         page: Int,
         pageSize: Int,
     ): List<Pair<TiviShow, PopularShowEntry>> = withRetry {

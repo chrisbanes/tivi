@@ -31,13 +31,13 @@ import org.threeten.bp.Duration
 
 @Singleton
 class WatchedShowsStore @Inject constructor(
-    traktWatchedShows: TraktWatchedShowsDataSource,
+    dataSource: WatchedShowsDataSource,
     watchedShowsDao: WatchedShowDao,
     showDao: TiviShowDao,
     lastRequestStore: WatchedShowsLastRequestStore,
 ) : Store<Unit, List<WatchedShowEntry>> by StoreBuilder.from(
     fetcher = Fetcher.of {
-        traktWatchedShows()
+        dataSource()
             .also { lastRequestStore.updateLastRequest() }
     },
     sourceOfTruth = SourceOfTruth.of(

@@ -30,8 +30,8 @@ import retrofit2.awaitResponse
 class TraktUsersDataSource @Inject constructor(
     private val usersService: Provider<Users>,
     private val mapper: UserToTraktUser,
-) {
-    suspend fun getUser(slug: String): TraktUser = withRetry {
+) : UsersDataSource {
+    override suspend fun getUser(slug: String): TraktUser = withRetry {
         usersService.get()
             .profile(UserSlug(slug), Extended.FULL)
             .awaitResponse()
