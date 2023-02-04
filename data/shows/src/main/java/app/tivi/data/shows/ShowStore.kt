@@ -21,6 +21,8 @@ import app.tivi.data.daos.getShowWithIdOrThrow
 import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.TiviShow
 import app.tivi.data.util.mergeShows
+import app.tivi.inject.Tmdb
+import app.tivi.inject.Trakt
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
@@ -34,20 +36,20 @@ import org.threeten.bp.Duration
 class ShowStore @Inject constructor(
     showDao: TiviShowDao,
     lastRequestStore: ShowLastRequestStore,
-    traktShowDataSource: TraktShowDataSource,
-    tmdbShowDataSource: TmdbShowDataSource,
+    @Trakt traktDataSource: ShowDataSource,
+    @Tmdb tmdbDataSource: ShowDataSource,
 ) : Store<Long, TiviShow> by StoreBuilder.from(
     fetcher = Fetcher.of { id: Long ->
         val savedShow = showDao.getShowWithIdOrThrow(id)
 
-        val traktResult = runCatching { traktShowDataSource.getShow(savedShow) }
+        val traktResult = runCatching { traktDataSource.getShow(savedShow) }
         if (traktResult.isSuccess) {
             lastRequestStore.updateLastRequest(id)
             return@of traktResult.getOrThrow()
         }
 
         // If trakt fails, try TMDb
-        val tmdbResult = runCatching { tmdbShowDataSource.getShow(savedShow) }
+        val tmdbResult = runCatching { tmdbDataSource.getShow(savedShow) }
         if (tmdbResult.isSuccess) {
             lastRequestStore.updateLastRequest(id)
             return@of tmdbResult.getOrThrow()

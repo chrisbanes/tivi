@@ -31,12 +31,12 @@ import retrofit2.awaitResponse
 class TraktWatchedShowsDataSource @Inject constructor(
     private val syncService: Provider<Sync>,
     showMapper: TraktBaseShowToTiviShow,
-) {
+) : WatchedShowsDataSource {
     private val responseMapper = pairMapperOf(showMapper) { from ->
         WatchedShowEntry(showId = 0, lastWatched = from.last_watched_at!!)
     }
 
-    suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>> = withRetry {
+    override suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>> = withRetry {
         syncService.get()
             .watchedShows(Extended.NOSEASONS)
             .awaitResponse()

@@ -31,17 +31,17 @@ import javax.inject.Inject
 import javax.inject.Provider
 import retrofit2.awaitResponse
 
-internal class TraktRelatedShowsDataSource @Inject constructor(
+class TraktRelatedShowsDataSource @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val showService: Provider<Shows>,
     showMapper: TraktShowToTiviShow,
-) {
+) : RelatedShowsDataSource {
     private val entryMapper = IndexedMapper<Show, RelatedShowEntry> { index, _ ->
         RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
     }
     private val resultMapper = pairMapperOf(showMapper, entryMapper)
 
-    suspend operator fun invoke(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
+    override suspend operator fun invoke(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
         val traktId = traktIdMapper.map(showId)
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
         return withRetry {

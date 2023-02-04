@@ -34,13 +34,13 @@ class TmdbRelatedShowsDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
     showMapper: TmdbBaseShowToTiviShow,
-) {
+) : RelatedShowsDataSource {
     private val entryMapper = IndexedMapper<BaseTvShow, RelatedShowEntry> { index, _ ->
         RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
     }
     private val resultMapper = unwrapTmdbShowResults(pairMapperOf(showMapper, entryMapper))
 
-    suspend operator fun invoke(
+    override suspend operator fun invoke(
         showId: Long,
     ): List<Pair<TiviShow, RelatedShowEntry>> = withRetry {
         tmdb.tvService()

@@ -30,7 +30,7 @@ import org.threeten.bp.Period
 class TraktUsersRepository @Inject constructor(
     private val userDao: UserDao,
     private val lastRequestStore: TraktUsersLastRequestStore,
-    private val traktDataSource: TraktUsersDataSource,
+    private val dataSource: UsersDataSource,
 ) {
     fun observeUser(username: String): Flow<TraktUser?> = when (username) {
         "me" -> userDao.observeMe()
@@ -39,10 +39,14 @@ class TraktUsersRepository @Inject constructor(
 
     suspend fun updateUser(username: String) {
         var user = withRetry {
-            traktDataSource.getUser(username)
+            dataSource.getUser(username)
         }.let {
             // Tag the user as 'me' if that's what we're requesting
-            if (username == "me") it.copy(isMe = true) else it
+            if (username == "me") {
+                it.copy(isMe = true)
+            } else {
+                it
+            }
         }
         // Make sure we use the current DB id (if present)
         val localUser = userDao.getUser(user.username)
