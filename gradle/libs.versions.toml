@@ -38,7 +38,7 @@ spotless = "com.diffplug.spotless:6.14.1"
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
 accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
 
-androidx-activity-compose = "androidx.activity:activity-compose:1.7.0-alpha04"
+androidx-activity-compose = "androidx.activity:activity-compose:1.7.0-beta01"
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 androidx-browser = "androidx.browser:browser:1.4.0"
 androidx-collection = "androidx.collection:collection-ktx:1.2.0"
