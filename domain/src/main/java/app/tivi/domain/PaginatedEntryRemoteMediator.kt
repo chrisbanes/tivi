@@ -16,10 +16,9 @@
 
 package app.tivi.domain
 
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.LoadType
-import androidx.paging.PagingState
-import androidx.paging.RemoteMediator
+import app.cash.paging.LoadType
+import app.cash.paging.PagingState
+import app.cash.paging.RemoteMediator
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.PaginatedEntry
 
@@ -27,7 +26,7 @@ import app.tivi.data.models.PaginatedEntry
  * A [RemoteMediator] which works on [PaginatedEntry] entities. [fetch] will be called with the
  * next page to load.
  */
-@OptIn(ExperimentalPagingApi::class)
+
 internal class PaginatedEntryRemoteMediator<LI, ET>(
     private val fetch: suspend (page: Int) -> Unit,
 ) : RemoteMediator<Int, LI>() where ET : PaginatedEntry, LI : EntryWithShow<ET> {

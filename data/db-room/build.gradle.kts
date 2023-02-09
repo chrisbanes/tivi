@@ -20,7 +20,6 @@ plugins {
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -31,9 +30,8 @@ android {
     }
 }
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.incremental", "true")
+room {
+    schemaLocationDir.set(file("$projectDir/schemas"))
 }
 
 dependencies {
@@ -43,9 +41,11 @@ dependencies {
     api(libs.androidx.room.runtime)
     api(libs.androidx.room.ktx)
     api(libs.androidx.room.paging)
-    ksp(libs.androidx.room.compiler)
+    // Need to use kapt rather than ksp currently. KSP doesn't like app.cash.paging:paging-common's
+    // typealiases
+    kapt(libs.androidx.room.compiler)
 
-    implementation(libs.androidx.paging.runtime)
+    api(libs.androidx.paging.runtime)
 
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
