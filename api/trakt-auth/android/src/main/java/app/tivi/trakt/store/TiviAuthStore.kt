@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,8 @@
 
 package app.tivi.trakt.store
 
+import app.tivi.trakt.AuthState
 import javax.inject.Inject
-import net.openid.appauth.AuthState
-
-interface AuthStore {
-    suspend fun get(): AuthState?
-    suspend fun save(state: AuthState)
-    suspend fun clear()
-    suspend fun isAvailable(): Boolean = true
-}
 
 class TiviAuthStore @Inject constructor(
     private val preferencesAuthStore: PreferencesAuthStore,

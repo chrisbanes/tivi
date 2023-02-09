@@ -17,7 +17,7 @@
 package app.tivi.trakt
 
 import app.tivi.actions.ShowTasks
-import app.tivi.trakt.store.TiviAuthStore
+import app.tivi.trakt.store.AuthStore
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.openid.appauth.AuthState
 
 @OptIn(DelicateCoroutinesApi::class)
 @Singleton
@@ -38,9 +37,9 @@ class TraktManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val showTasks: ShowTasks,
     private val traktClient: Lazy<TraktV2>,
-    private val authStore: TiviAuthStore,
+    private val authStore: AuthStore,
 ) {
-    private val authState = MutableStateFlow(EmptyAuthState)
+    private val authState = MutableStateFlow(AuthState.Empty)
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
     val state: StateFlow<TraktAuthState>
@@ -62,20 +61,19 @@ class TraktManager @Inject constructor(
         // Read the auth state from prefs
         GlobalScope.launch(dispatchers.main) {
             val state = withContext(dispatchers.io) { authStore.get() }
-            authState.value = state ?: EmptyAuthState
+            authState.value = state ?: AuthState.Empty
         }
     }
 
     private fun updateAuthState(authState: AuthState) {
-        if (authState.isAuthorized) {
-            _state.value = TraktAuthState.LOGGED_IN
-        } else {
-            _state.value = TraktAuthState.LOGGED_OUT
+        _state.value = when {
+            authState.isAuthorized -> TraktAuthState.LOGGED_IN
+            else -> TraktAuthState.LOGGED_OUT
         }
     }
 
     fun clearAuth() {
-        authState.value = EmptyAuthState
+        authState.value = AuthState.Empty
         GlobalScope.launch(dispatchers.io) { authStore.clear() }
     }
 
@@ -91,9 +89,5 @@ class TraktManager @Inject constructor(
         // Now trigger a sync of all shows
         showTasks.syncWatchedShows()
         showTasks.syncFollowedShows()
-    }
-
-    companion object {
-        private val EmptyAuthState = AuthState()
     }
 }

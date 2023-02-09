@@ -18,10 +18,11 @@ package app.tivi.trakt.store
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import app.tivi.trakt.AppAuthAuthState
+import app.tivi.trakt.AuthState
 import dagger.Lazy
 import javax.inject.Inject
 import javax.inject.Named
-import net.openid.appauth.AuthState
 
 class PreferencesAuthStore @Inject constructor(
     @Named("auth") private val authPrefs: Lazy<SharedPreferences>,
@@ -29,12 +30,12 @@ class PreferencesAuthStore @Inject constructor(
     override suspend fun get(): AuthState? {
         return authPrefs.get()
             .getString(PreferenceAuthKey, null)
-            ?.let(AuthState::jsonDeserialize)
+            ?.let(::AppAuthAuthState)
     }
 
     override suspend fun save(state: AuthState) {
         authPrefs.get().edit(commit = true) {
-            putString(PreferenceAuthKey, state.jsonSerializeString())
+            putString(PreferenceAuthKey, state.serializeToJson())
         }
     }
 

@@ -40,7 +40,7 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.common.ui.view)
     implementation(projects.common.ui.compose)
-    implementation(projects.api.traktAuth)
+    implementation(projects.api.traktAuth.android) // This should really be common
 
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

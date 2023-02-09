@@ -15,10 +15,10 @@
  */
 
 
-import org.gradle.android.Versions.android
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,46 +34,15 @@ import org.gradle.android.Versions.android
  */
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.cacheFixPlugin)
-    alias(libs.plugins.kotlin.android)
+    id("kotlin")
     alias(libs.plugins.kotlin.kapt)
-}
-
-android {
-    namespace = "app.tivi.domain"
-}
-
-// https://github.com/cashapp/multiplatform-paging/issues/6
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>> {
-    compilerOptions.freeCompilerArgs.add("-opt-in=androidx.paging.ExperimentalPagingApi")
+    alias(libs.plugins.cacheFixPlugin)
 }
 
 dependencies {
     implementation(projects.base)
+    api(projects.api.trakt)
 
-    api(projects.data.models)
-    implementation(projects.data.db) // remove this eventually
-    implementation(projects.data.legacy) // remove this eventually
-
-    api(projects.data.episodes)
-    api(projects.data.followedshows)
-    api(projects.data.popularshows)
-    api(projects.data.recommendedshows)
-    api(projects.data.relatedshows)
-    api(projects.data.search)
-    api(projects.data.showimages)
-    api(projects.data.shows)
-    api(projects.data.traktusers)
-    api(projects.data.trendingshows)
-    api(projects.data.watchedshows)
-
-    api(projects.api.trakt) // TraktAuthState
-    implementation(projects.api.traktAuth.common)
-    implementation(projects.api.tmdb)
-
-    implementation(libs.hilt.library)
-    kapt(libs.hilt.compiler)
-
-    api(libs.cashapp.paging.common)
+    implementation(libs.dagger.dagger)
+    kapt(libs.dagger.compiler)
 }

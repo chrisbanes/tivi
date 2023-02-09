@@ -17,6 +17,8 @@
 package app.tivi.trakt.store
 
 import android.content.Context
+import app.tivi.trakt.AppAuthAuthState
+import app.tivi.trakt.AuthState
 import com.google.android.gms.auth.blockstore.Blockstore
 import com.google.android.gms.auth.blockstore.StoreBytesData
 import com.google.android.gms.common.ConnectionResult
@@ -24,7 +26,6 @@ import com.google.android.gms.common.GoogleApiAvailability
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
-import net.openid.appauth.AuthState
 
 class BlockStoreAuthStore @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -39,13 +40,13 @@ class BlockStoreAuthStore @Inject constructor(
         client.retrieveBytes()
             .await()
             .decodeToString()
-            .let(AuthState::jsonDeserialize)
+            .let(::AppAuthAuthState)
     }.getOrNull()
 
     override suspend fun save(state: AuthState) {
         val data = StoreBytesData.Builder()
             .setShouldBackupToCloud(false)
-            .setBytes(state.jsonSerializeString().encodeToByteArray())
+            .setBytes(state.serializeToJson().encodeToByteArray())
             .build()
 
         client.storeBytes(data).await()
