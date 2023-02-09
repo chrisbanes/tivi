@@ -48,10 +48,7 @@ jobs:
         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
       - name: Build
-        run: ./gradlew spotlessCheck assemble bundle lintDebug
-
-      - name: Check
-        run: ./gradlew testDebugUnitTest testQaDebugUnitTest
+        run: ./gradlew build
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
