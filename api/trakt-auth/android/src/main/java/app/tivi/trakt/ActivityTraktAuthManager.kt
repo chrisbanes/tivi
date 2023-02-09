@@ -48,9 +48,9 @@ internal class ActivityTraktAuthManager @Inject constructor(
                     response.createTokenExchangeRequest(),
                     clientAuth.get(),
                 ) { tokenResponse, ex ->
-                    val state = AuthState().apply {
-                        update(tokenResponse, ex)
-                    }
+                    val state = AuthState()
+                        .apply { update(tokenResponse, ex) }
+                        .let(::AppAuthAuthState)
                     traktManager.onNewAuthState(state)
                 }
             }

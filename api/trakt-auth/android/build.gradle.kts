@@ -33,8 +33,8 @@ android {
 }
 
 dependencies {
-    implementation(projects.base)
-    api(projects.api.trakt)
+    api(projects.base)
+    api(projects.api.traktAuth.common)
 
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
