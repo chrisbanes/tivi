@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
 
+    implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
 
     implementation(libs.coil.compose)

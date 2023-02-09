@@ -16,7 +16,7 @@
 
 package app.tivi.data.daos
 
-import androidx.paging.PagingSource
+import app.cash.paging.PagingSource
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow

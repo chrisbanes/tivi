@@ -16,7 +16,7 @@
 
 package app.tivi.data.daos
 
-import androidx.paging.PagingSource
+import app.cash.paging.PagingSource
 import app.tivi.data.compoundmodels.FollowedShowEntryWithShow
 import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.FollowedShowEntry

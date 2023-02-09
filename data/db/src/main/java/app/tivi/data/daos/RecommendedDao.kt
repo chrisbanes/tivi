@@ -16,7 +16,7 @@
 
 package app.tivi.data.daos
 
-import androidx.paging.PagingSource
+import app.cash.paging.PagingSource
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import app.tivi.data.models.RecommendedShowEntry
 import kotlinx.coroutines.flow.Flow

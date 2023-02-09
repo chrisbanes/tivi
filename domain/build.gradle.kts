@@ -26,6 +26,11 @@ android {
     namespace = "app.tivi.domain"
 }
 
+// https://github.com/cashapp/multiplatform-paging/issues/6
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>> {
+    compilerOptions.freeCompilerArgs.add("-opt-in=androidx.paging.ExperimentalPagingApi")
+}
+
 dependencies {
     implementation(projects.base)
 
@@ -52,6 +57,5 @@ dependencies {
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
 
-    api(libs.androidx.paging.common)
-    implementation(libs.androidx.paging.runtime)
+    api(libs.cashapp.paging.common)
 }

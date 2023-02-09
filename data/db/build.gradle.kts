@@ -20,8 +20,13 @@ plugins {
     alias(libs.plugins.android.lint)
 }
 
+// https://github.com/cashapp/multiplatform-paging/issues/6
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>> {
+    compilerOptions.freeCompilerArgs.add("-opt-in=androidx.paging.ExperimentalPagingApi")
+}
+
 dependencies {
     implementation(projects.base)
     api(projects.data.models)
-    api(libs.androidx.paging.common)
+    api(libs.cashapp.paging.common)
 }

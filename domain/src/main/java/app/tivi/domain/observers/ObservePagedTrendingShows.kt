@@ -16,10 +16,9 @@
 
 package app.tivi.domain.observers
 
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import app.cash.paging.Pager
+import app.cash.paging.PagingConfig
+import app.cash.paging.PagingData
 import app.tivi.data.compoundmodels.TrendingEntryWithShow
 import app.tivi.data.daos.TrendingDao
 import app.tivi.domain.PaginatedEntryRemoteMediator
@@ -28,7 +27,6 @@ import app.tivi.domain.interactors.UpdateTrendingShows
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
-@OptIn(ExperimentalPagingApi::class)
 class ObservePagedTrendingShows @Inject constructor(
     private val trendingShowsDao: TrendingDao,
     private val updateTrendingShows: UpdateTrendingShows,

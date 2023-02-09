@@ -16,11 +16,11 @@
 
 package app.tivi.data.daos
 
-import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.Transaction
+import app.cash.paging.PagingSource
 import app.tivi.data.compoundmodels.FollowedShowEntryWithShow
 import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.FollowedShowEntry

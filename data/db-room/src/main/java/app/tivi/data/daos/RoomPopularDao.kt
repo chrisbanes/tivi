@@ -16,10 +16,10 @@
 
 package app.tivi.data.daos
 
-import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import app.cash.paging.PagingSource
 import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.data.models.PopularShowEntry
 import kotlinx.coroutines.flow.Flow

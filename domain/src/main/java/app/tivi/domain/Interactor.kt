@@ -16,8 +16,8 @@
 
 package app.tivi.domain
 
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import app.cash.paging.PagingConfig
+import app.cash.paging.PagingData
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
