@@ -20,7 +20,6 @@ plugins {
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -40,11 +39,6 @@ android {
             }
         }
     }
-}
-
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.incremental", "true")
 }
 
 dependencies {
@@ -69,7 +63,7 @@ dependencies {
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.hilt.testing)
 
-    kspTest(libs.androidx.room.compiler)
+    kaptTest(libs.androidx.room.compiler)
     kaptTest(libs.hilt.compiler)
 
     // Needed for Tzdb
