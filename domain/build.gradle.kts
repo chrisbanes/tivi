@@ -15,8 +15,6 @@
  */
 
 
-import org.gradle.android.Versions.android
-
 /*
  * Copyright 2019 Google LLC
  *
@@ -34,14 +32,9 @@ import org.gradle.android.Versions.android
  */
 
 plugins {
-    alias(libs.plugins.android.library)
+    id("kotlin")
     alias(libs.plugins.cacheFixPlugin)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
-}
-
-android {
-    namespace = "app.tivi.domain"
 }
 
 // https://github.com/cashapp/multiplatform-paging/issues/6
@@ -72,8 +65,8 @@ dependencies {
     implementation(projects.api.traktAuth.common)
     implementation(projects.api.tmdb)
 
-    implementation(libs.hilt.library)
-    kapt(libs.hilt.compiler)
+    implementation(libs.dagger.dagger)
+    kapt(libs.dagger.compiler)
 
     api(libs.cashapp.paging.common)
 }

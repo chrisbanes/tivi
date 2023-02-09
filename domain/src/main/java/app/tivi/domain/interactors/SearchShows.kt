@@ -16,7 +16,6 @@
 
 package app.tivi.domain.interactors
 
-import android.database.sqlite.SQLiteException
 import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.daos.ShowFtsDao
 import app.tivi.data.search.SearchRepository
@@ -37,12 +36,9 @@ class SearchShows @Inject constructor(
             params.query.isNotBlank() -> {
                 try {
                     showFtsDao.search("*$params.query*")
-                } catch (sqe: SQLiteException) {
+                } catch (e: Exception) {
                     // Re-throw wrapped exception with the query
-                    throw SQLiteException(
-                        "Error while searching database with query: ${params.query}",
-                        sqe,
-                    )
+                    throw Exception("Error while searching database with query: ${params.query}", e)
                 }
             }
             else -> emptyList()
