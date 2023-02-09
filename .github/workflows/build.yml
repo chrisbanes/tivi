@@ -88,7 +88,9 @@ jobs:
         with:
           configurationJson: |
             {
-              "template": "Changes:\n#{{UNCATEGORIZED}}\n#{{CHANGELOG}}"
+              "template": "Changes:\n#{{UNCATEGORIZED}}",
+              "pr_template": "#{{TITLE}} ##{{NUMBER}}",
+              "trim_values": true,
             }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -99,6 +101,7 @@ jobs:
 
       - name: Write changelog for beta release
         if: steps.build_changelog.outcome == 'success'
+        continue-on-error: true # Need to fix echo multiline string
         run: echo '${{ steps.build_changelog.outputs.changelog }}' > playwhatsnew/whatsnew-en-US
 
       - name: Publish tagged release to beta track
