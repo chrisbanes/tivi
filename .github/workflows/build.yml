@@ -60,7 +60,7 @@ jobs:
 
       - name: Publish QA build to internal track
         if: github.ref == 'refs/heads/main'
-        uses: r0adkll/upload-google-play@v1.1.0
+        uses: r0adkll/upload-google-play@v1.1.1
         with:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
@@ -70,7 +70,7 @@ jobs:
 
       - name: Publish build to alpha track
         if: github.ref == 'refs/heads/main'
-        uses: r0adkll/upload-google-play@v1.1.0
+        uses: r0adkll/upload-google-play@v1.1.1
         with:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
@@ -103,7 +103,7 @@ jobs:
 
       - name: Publish tagged release to beta track
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: r0adkll/upload-google-play@v1.1.0
+        uses: r0adkll/upload-google-play@v1.1.1
         with:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
