@@ -28,7 +28,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import retrofit2.awaitResponse
 
-class TraktShowDataSource @Inject constructor(
+class TraktShowDataSourceImpl @Inject constructor(
     private val showService: Provider<Shows>,
     private val searchService: Provider<Search>,
     private val mapper: TraktShowToTiviShow,

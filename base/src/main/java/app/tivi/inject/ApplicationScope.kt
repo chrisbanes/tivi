@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package app.tivi.trakt.store
+package app.tivi.inject
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Scope
 
-@InstallIn(SingletonComponent::class)
-@Module
-internal abstract class AuthStoreModule {
-    @Binds
-    abstract fun provideAuthStore(manager: TiviAuthStore): AuthStore
-}
+@Scope
+annotation class ApplicationScope

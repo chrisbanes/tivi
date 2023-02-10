@@ -18,7 +18,7 @@
 plugins {
     id("kotlin")
     alias(libs.plugins.android.lint)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 dependencies {
@@ -35,6 +35,6 @@ dependencies {
 
     implementation(libs.androidx.collection) // LruCache
 
-    implementation(libs.hilt.core)
-    kapt(libs.hilt.compiler)
+    implementation(libs.kotlininject.runtime)
+    ksp(libs.kotlininject.compiler)
 }

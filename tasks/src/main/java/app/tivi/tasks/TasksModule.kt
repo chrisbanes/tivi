@@ -16,37 +16,28 @@
 
 package app.tivi.tasks
 
-import android.content.Context
+import android.app.Application
 import androidx.work.WorkManager
 import app.tivi.actions.ShowTasks
 import app.tivi.appinitializers.AppInitializer
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import dagger.multibindings.IntoSet
 import javax.inject.Singleton
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.IntoSet
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
-object TasksModule {
+@Component
+abstract class TasksModule {
     @Provides
     @Singleton
-    fun provideWorkManager(
-        @ApplicationContext context: Context,
-    ): WorkManager = WorkManager.getInstance(context)
-}
+    fun provideWorkManager(application: Application): WorkManager {
+        return WorkManager.getInstance(application)
+    }
 
-@InstallIn(SingletonComponent::class)
-@Module
-abstract class TasksModuleBinds {
-    @Binds
+    @Provides
     @IntoSet
-    abstract fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer
+    fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer = bind
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun provideShowTasks(bind: ShowTasksImpl): ShowTasks
+    fun provideShowTasks(bind: ShowTasksImpl): ShowTasks = bind
 }

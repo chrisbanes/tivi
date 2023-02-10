@@ -19,7 +19,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -32,6 +32,6 @@ dependencies {
     implementation(platform(libs.google.firebase.bom))
     implementation(libs.google.firebase.analytics)
 
-    implementation(libs.hilt.library)
-    kapt(libs.hilt.compiler)
+    implementation(libs.kotlininject.runtime)
+    ksp(libs.kotlininject.compiler)
 }

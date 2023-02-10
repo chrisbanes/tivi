@@ -16,14 +16,11 @@
 
 package app.tivi.data.followedshows
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class FollowedShowsBinds {
-    @Binds
-    abstract fun bind(source: TraktFollowedShowsDataSource): FollowedShowsDataSource
+    @Provides
+    fun bind(source: TraktFollowedShowsDataSource): FollowedShowsDataSource = source
 }

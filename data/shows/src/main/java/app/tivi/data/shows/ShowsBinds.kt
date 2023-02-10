@@ -16,21 +16,17 @@
 
 package app.tivi.data.shows
 
-import app.tivi.inject.Tmdb
-import app.tivi.inject.Trakt
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class ShowsBinds {
-    @Binds
-    @Trakt
-    abstract fun bindTraktShowDataSource(source: TraktShowDataSource): ShowDataSource
+    @Provides
+    fun bindTraktShowDataSource(source: TraktShowDataSourceImpl): TraktShowDataSource = source
 
-    @Binds
-    @Tmdb
-    abstract fun bindTmdbShowDataSource(source: TmdbShowDataSource): ShowDataSource
+    @Provides
+    fun bindTmdbShowDataSource(source: TmdbShowDataSourceImpl): TmdbShowDataSource = source
 }
+
+typealias TmdbShowDataSource = ShowDataSource
+typealias TraktShowDataSource = ShowDataSource

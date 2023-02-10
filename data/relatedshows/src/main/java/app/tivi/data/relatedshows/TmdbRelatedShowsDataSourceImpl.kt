@@ -30,7 +30,7 @@ import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import javax.inject.Inject
 import retrofit2.awaitResponse
 
-class TmdbRelatedShowsDataSource @Inject constructor(
+class TmdbRelatedShowsDataSourceImpl @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
     showMapper: TmdbBaseShowToTiviShow,

@@ -16,14 +16,11 @@
 
 package app.tivi.data.recommendedshows
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class RecommendedShowsBinds {
-    @Binds
-    abstract fun bindRecommendedShowsDataSource(source: TraktRecommendedShowsDataSource): RecommendedShowsDataSource
+    @Provides
+    fun bindRecommendedShowsDataSource(source: TraktRecommendedShowsDataSource): RecommendedShowsDataSource = source
 }

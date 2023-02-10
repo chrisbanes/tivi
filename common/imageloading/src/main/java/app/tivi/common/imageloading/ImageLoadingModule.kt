@@ -17,16 +17,13 @@
 package app.tivi.common.imageloading
 
 import app.tivi.appinitializers.AppInitializer
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class ImageLoadingModule {
-    @Binds
+    @Provides
     @IntoSet
-    abstract fun provideCoilInitializer(bind: CoilAppInitializer): AppInitializer
+    fun provideCoilInitializer(bind: CoilAppInitializer): AppInitializer = bind
 }

@@ -17,16 +17,15 @@
 package app.tivi.util
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.app.Application
 import android.os.Bundle
 import app.tivi.extensions.unsafeLazy
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 internal class TiviFirebaseAnalytics @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val context: Application,
 ) : Analytics {
     // False positive. Permissions are added via manifest
     @delegate:SuppressLint("MissingPermission")

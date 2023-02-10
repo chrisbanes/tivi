@@ -16,14 +16,11 @@
 
 package app.tivi.data.traktusers
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class TraktUsersBinds {
-    @Binds
-    abstract fun bindUsersDataSource(source: TraktUsersDataSource): UsersDataSource
+    @Provides
+    fun bindUsersDataSource(source: TraktUsersDataSource): UsersDataSource = source
 }

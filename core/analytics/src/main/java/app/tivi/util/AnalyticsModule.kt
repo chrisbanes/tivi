@@ -16,16 +16,13 @@
 
 package app.tivi.util
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class AnalyticsModule {
     @Singleton
-    @Binds
-    internal abstract fun provideAnalytics(bind: TiviFirebaseAnalytics): Analytics
+    @Provides
+    internal fun provideAnalytics(bind: TiviFirebaseAnalytics): Analytics = bind
 }

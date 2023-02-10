@@ -16,14 +16,11 @@
 
 package app.tivi.data.showimages
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class ShowImagesBinds {
-    @Binds
-    abstract fun bindShowImagesDataSource(source: TmdbShowImagesDataSource): ShowImagesDataSource
+    @Provides
+    fun bindShowImagesDataSource(source: TmdbShowImagesDataSource): ShowImagesDataSource = source
 }

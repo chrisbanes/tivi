@@ -15,8 +15,6 @@
  */
 
 
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 /*
  * Copyright 2017 Google LLC
  *
@@ -36,7 +34,7 @@ import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 plugins {
     id("kotlin")
     alias(libs.plugins.android.lint)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 dependencies {
@@ -51,6 +49,6 @@ dependencies {
     api(libs.store)
     implementation(libs.kotlinx.atomicfu)
 
-    implementation(libs.hilt.core)
-    kapt(libs.hilt.compiler)
+    implementation(libs.kotlininject.runtime)
+    ksp(libs.kotlininject.compiler)
 }

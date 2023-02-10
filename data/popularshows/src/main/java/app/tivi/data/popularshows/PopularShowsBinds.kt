@@ -16,14 +16,11 @@
 
 package app.tivi.data.popularshows
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class PopularShowsBinds {
-    @Binds
-    abstract fun bind(source: TraktPopularShowsDataSource): PopularShowsDataSource
+    @Provides
+    fun bind(source: TraktPopularShowsDataSource): PopularShowsDataSource = source
 }

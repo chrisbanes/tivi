@@ -16,7 +16,7 @@
 
 package app.tivi.data
 
-import android.content.Context
+import android.app.Application
 import android.os.Debug
 import androidx.room.Room
 import app.tivi.data.daos.EpisodeWatchEntryDao
@@ -37,34 +37,25 @@ import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.db.RoomTransactionRunner
 import app.tivi.data.db.TiviDatabase
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
-object RoomDatabaseModule {
-    @Singleton
+@Component
+@ApplicationScope
+abstract class RoomDatabaseModule {
     @Provides
     fun provideDatabase(
-        @ApplicationContext context: Context,
+        application: Application,
     ): TiviRoomDatabase {
-        val builder = Room.databaseBuilder(context, TiviRoomDatabase::class.java, "shows.db")
+        val builder = Room.databaseBuilder(application, TiviRoomDatabase::class.java, "shows.db")
             .fallbackToDestructiveMigration()
         if (Debug.isDebuggerConnected()) {
             builder.allowMainThreadQueries()
         }
         return builder.build()
     }
-}
 
-@InstallIn(SingletonComponent::class)
-@Module
-object DatabaseDaoModule {
     @Provides
     fun provideTiviShowDao(db: TiviDatabase): TiviShowDao = db.showDao()
 
@@ -109,15 +100,11 @@ object DatabaseDaoModule {
 
     @Provides
     fun provideLibraryShowsDao(db: TiviDatabase): LibraryShowsDao = db.libraryShowsDao()
-}
 
-@InstallIn(SingletonComponent::class)
-@Module
-abstract class DatabaseModuleBinds {
-    @Binds
-    abstract fun bindTiviDatabase(db: TiviRoomDatabase): TiviDatabase
+    @Provides
+    fun bindTiviDatabase(db: TiviRoomDatabase): TiviDatabase = db
 
-    @Singleton
-    @Binds
-    abstract fun provideDatabaseTransactionRunner(runner: RoomTransactionRunner): DatabaseTransactionRunner
+    @Provides
+    @ApplicationScope
+    fun provideDatabaseTransactionRunner(runner: RoomTransactionRunner): DatabaseTransactionRunner = runner
 }

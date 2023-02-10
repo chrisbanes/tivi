@@ -2,6 +2,7 @@
 agp = "8.0.0-beta02"
 accompanist = "0.29.0-alpha"
 androidxlifecycle = "2.6.0-beta01"
+androidxactivity = "1.7.0-beta01"
 chucker = "3.5.2"
 coil = "2.2.2"
 compose-bom = "2023.02.00-beta01"
@@ -10,6 +11,7 @@ coroutines = "1.6.4"
 dagger = "2.45"
 debugdrawer = "0.9.8"
 kotlin = "1.8.10"
+kotlininject = "0.5.1"
 ktlint = "0.48.1"
 okhttp = "4.10.0"
 paging = "3.1.1"
@@ -38,7 +40,8 @@ spotless = "com.diffplug.spotless:6.15.0"
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
 accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
 
-androidx-activity-compose = "androidx.activity:activity-compose:1.7.0-beta01"
+androidx-activity-activity = { module = "androidx.activity:activity", version.ref = "androidxactivity" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxactivity" }
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 androidx-browser = "androidx.browser:browser:1.5.0"
 androidx-collection = "androidx.collection:collection-ktx:1.2.0"
@@ -127,6 +130,9 @@ kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-co
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-coroutines-playservices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 kotlin-extensions = { module = "org.jetbrains.kotlin:kotlin-android-extensions", version.ref = "kotlin" }
+
+kotlininject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
+kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
 
 leakCanary = "com.squareup.leakcanary:leakcanary-android:2.10"
 

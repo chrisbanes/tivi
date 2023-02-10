@@ -16,16 +16,11 @@
 
 package app.tivi.util
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
 abstract class LoggerModule {
     @Singleton
-    @Binds
-    internal abstract fun provideLogger(bind: TiviLogger): Logger
+    @Provides
+    fun provideLogger(bind: TiviLogger): Logger = bind
 }

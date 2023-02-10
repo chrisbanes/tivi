@@ -16,19 +16,18 @@
 
 package app.tivi.trakt.store
 
-import android.content.Context
+import android.app.Application
 import app.tivi.trakt.AppAuthAuthState
 import app.tivi.trakt.AuthState
 import com.google.android.gms.auth.blockstore.Blockstore
 import com.google.android.gms.auth.blockstore.StoreBytesData
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
 
 class BlockStoreAuthStore @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val context: Application,
 ) : AuthStore {
     private val client by lazy { Blockstore.getClient(context) }
 

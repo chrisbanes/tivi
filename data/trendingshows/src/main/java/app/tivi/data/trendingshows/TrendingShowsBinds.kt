@@ -16,14 +16,11 @@
 
 package app.tivi.data.trendingshows
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class TrendingShowsBinds {
-    @Binds
-    abstract fun bindTrendingShowsDataSource(source: TraktTrendingShowsDataSource): TrendingShowsDataSource
+    @Provides
+    fun bindTrendingShowsDataSource(source: TraktTrendingShowsDataSource): TrendingShowsDataSource = source
 }

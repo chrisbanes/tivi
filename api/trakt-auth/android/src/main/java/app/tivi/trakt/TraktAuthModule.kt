@@ -16,29 +16,28 @@
 
 package app.tivi.trakt
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.core.net.toUri
 import app.tivi.inject.ApplicationId
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import app.tivi.trakt.store.AuthStore
+import app.tivi.trakt.store.TiviAuthStore
 import javax.inject.Named
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.ResponseTypeValues
 
-@InstallIn(SingletonComponent::class)
-@Module
-object TraktAuthModule {
+@Component
+abstract class TraktAuthModule {
     @Singleton
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {
@@ -89,8 +88,14 @@ object TraktAuthModule {
     @Provides
     @Named("auth")
     fun provideAuthSharedPrefs(
-        @ApplicationContext context: Context,
+        application: Application,
     ): SharedPreferences {
-        return context.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
+        return application.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
     }
+
+    @Provides
+    fun provideTraktAuthManager(manager: ActivityTraktAuthManager): TraktAuthManager = manager
+
+    @Provides
+    fun provideAuthStore(manager: TiviAuthStore): AuthStore = manager
 }

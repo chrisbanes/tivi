@@ -24,7 +24,7 @@ import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 import retrofit2.awaitResponse
 
-class TmdbShowDataSource @Inject constructor(
+class TmdbShowDataSourceImpl @Inject constructor(
     private val tmdb: Tmdb,
     private val mapper: TmdbShowToTiviShow,
 ) : ShowDataSource {

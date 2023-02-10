@@ -20,6 +20,7 @@ plugins {
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -32,6 +33,11 @@ android {
 
 room {
     schemaLocationDir.set(file("$projectDir/schemas"))
+}
+
+ksp {
+    arg("me.tatarka.inject.enableJavaxAnnotations", "true")
+    arg("me.tatarka.inject.dumpGraph", "true")
 }
 
 dependencies {
@@ -47,6 +53,6 @@ dependencies {
 
     api(libs.androidx.paging.runtime)
 
-    implementation(libs.hilt.library)
-    kapt(libs.hilt.compiler)
+    implementation(libs.kotlininject.runtime)
+    ksp(libs.kotlininject.compiler)
 }

@@ -21,6 +21,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
     alias(libs.plugins.cacheFixPlugin)
+    alias(libs.plugins.ksp)
 }
 
 val appVersionCode = propOrDef("TIVI_VERSIONCODE", "17").toInt()
@@ -149,6 +150,11 @@ android {
     }
 }
 
+ksp {
+    arg("me.tatarka.inject.enableJavaxAnnotations", "true")
+    arg("me.tatarka.inject.dumpGraph", "true")
+}
+
 dependencies {
     implementation(projects.base)
     implementation(projects.core.analytics)
@@ -208,6 +214,9 @@ dependencies {
     implementation(libs.hilt.library)
     implementation(libs.androidx.hilt.navigationcompose)
     kapt(libs.hilt.compiler)
+
+    implementation(libs.kotlininject.runtime)
+    ksp(libs.kotlininject.compiler)
 
     implementation(platform(libs.google.firebase.bom))
     implementation(libs.google.firebase.crashlytics)
