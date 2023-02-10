@@ -14,41 +14,36 @@
  * limitations under the License.
  */
 
-package app.tivi.data.relatedshows
+package app.tivi.data.episodes
 
-import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
-import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.data.mappers.pairMapperOf
-import app.tivi.data.models.RelatedShowEntry
-import app.tivi.data.models.TiviShow
+import app.tivi.data.mappers.TraktEpisodeToEpisode
+import app.tivi.data.models.Episode
 import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
-import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Shows
+import com.uwetrottmann.trakt5.services.Episodes
 import javax.inject.Inject
 import javax.inject.Provider
 import retrofit2.awaitResponse
 
-class TraktRelatedShowsDataSource @Inject constructor(
+class TraktEpisodeDataSourceImpl @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
-    private val showService: Provider<Shows>,
-    showMapper: TraktShowToTiviShow,
-) : RelatedShowsDataSource {
-    private val entryMapper = IndexedMapper<Show, RelatedShowEntry> { index, _ ->
-        RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
-    }
-    private val resultMapper = pairMapperOf(showMapper, entryMapper)
-
-    override suspend operator fun invoke(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
+    private val service: Provider<Episodes>,
+    private val episodeMapper: TraktEpisodeToEpisode,
+) : app.tivi.data.episodes.EpisodeDataSource {
+    override suspend fun getEpisode(
+        showId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int,
+    ): Episode {
         val traktId = traktIdMapper.map(showId)
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
         return withRetry {
-            showService.get()
-                .related(traktId.toString(), 0, 10, Extended.NOSEASONS)
+            service.get()
+                .summary(traktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
                 .awaitResponse()
-                .let { resultMapper.invoke(it.bodyOrThrow()) }
+                .let { episodeMapper.map(it.bodyOrThrow()) }
         }
     }
 }

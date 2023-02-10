@@ -17,7 +17,6 @@
 package app.tivi.tasks
 
 import android.content.Context
-import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import app.tivi.data.models.RefreshType
@@ -26,7 +25,7 @@ import app.tivi.util.Logger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-@HiltWorker
+// @HiltWorker
 class SyncAllFollowedShows @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,

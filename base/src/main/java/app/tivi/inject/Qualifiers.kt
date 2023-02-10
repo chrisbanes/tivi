@@ -17,38 +17,46 @@
 package app.tivi.inject
 
 import javax.inject.Qualifier
+import me.tatarka.inject.annotations.Scope
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
+@Scope
 @MustBeDocumented
 annotation class Trakt
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
+@Scope
 @MustBeDocumented
 annotation class Tmdb
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
+@Scope
 @MustBeDocumented
 annotation class MediumDate
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
+@Scope
 @MustBeDocumented
 annotation class MediumDateTime
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
+@Scope
 @MustBeDocumented
 annotation class ShortDate
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
+@Scope
 @MustBeDocumented
 annotation class ShortTime
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
+@Scope
 @MustBeDocumented
 annotation class ApplicationId

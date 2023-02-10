@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package app.tivi.trakt
+package app.tivi
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import android.app.Application
+import app.tivi.data.RoomDatabaseModule
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
-internal abstract class TraktAuthManagerModule {
-    @Binds
-    abstract fun provideTraktAuthManager(manager: ActivityTraktAuthManager): TraktAuthManager
-}
+@Component
+abstract class ApplicationComponent(
+    @get:Provides val application: Application,
+    @Component val roomDatabaseModule: RoomDatabaseModule,
+)

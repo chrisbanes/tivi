@@ -16,14 +16,11 @@
 
 package app.tivi.data.search
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class SearchBinds {
-    @Binds
-    abstract fun bindSearchDataSource(source: TmdbSearchDataSource): SearchDataSource
+    @Provides
+    fun bindSearchDataSource(source: TmdbSearchDataSource): SearchDataSource = source
 }

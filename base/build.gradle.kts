@@ -24,4 +24,5 @@ dependencies {
     api(libs.kotlin.coroutines.core)
 
     api(libs.dagger.dagger)
+    api(libs.kotlininject.runtime)
 }

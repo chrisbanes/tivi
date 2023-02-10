@@ -16,24 +16,20 @@
 
 package app.tivi.data.episodes
 
-import app.tivi.inject.Tmdb
-import app.tivi.inject.Trakt
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
+@Component
 abstract class EpisodeBinds {
-    @Binds
-    @Trakt
-    abstract fun bindTraktEpisodeDataSource(source: TraktEpisodeDataSource): EpisodeDataSource
+    @Provides
+    fun bindTraktEpisodeDataSource(source: TraktEpisodeDataSourceImpl): TraktEpisodeDataSource = source
 
-    @Binds
-    @Tmdb
-    abstract fun bindTmdbEpisodeDataSource(source: TmdbEpisodeDataSource): EpisodeDataSource
+    @Provides
+    fun bindTmdbEpisodeDataSource(source: TmdbEpisodeDataSourceImpl): TmdbEpisodeDataSource = source
 
-    @Binds
-    abstract fun bindSeasonsEpisodesDataSource(source: TraktSeasonsEpisodesDataSource): SeasonsEpisodesDataSource
+    @Provides
+    fun bindSeasonsEpisodesDataSource(source: TraktSeasonsEpisodesDataSource): SeasonsEpisodesDataSource = source
 }
+
+typealias TmdbEpisodeDataSource = EpisodeDataSource
+typealias TraktEpisodeDataSource = EpisodeDataSource

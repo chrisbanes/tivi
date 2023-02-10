@@ -17,7 +17,6 @@
 package app.tivi
 
 import android.app.Application
-import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import app.tivi.appinitializers.AppInitializers
 import dagger.hilt.android.HiltAndroidApp
@@ -27,7 +26,8 @@ import javax.inject.Inject
 class TiviApplication : Application(), Configuration.Provider {
     @Inject lateinit var initializers: AppInitializers
 
-    @Inject lateinit var workerFactory: HiltWorkerFactory
+    // FIXME @Inject lateinit var workerFactory: HiltWorkerFactory
+    // private val component = ApplicationComponent
 
     override fun onCreate() {
         super.onCreate()
@@ -36,7 +36,7 @@ class TiviApplication : Application(), Configuration.Provider {
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()
-            .setWorkerFactory(workerFactory)
+            // .setWorkerFactory(workerFactory)
             .build()
     }
 }

@@ -23,7 +23,7 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 import timber.log.Timber
 
-internal class TiviLogger @Inject constructor() : Logger {
+class TiviLogger @Inject constructor() : Logger {
     override fun setup(debugMode: Boolean) {
         if (debugMode) {
             Timber.plant(TiviDebugTree())
