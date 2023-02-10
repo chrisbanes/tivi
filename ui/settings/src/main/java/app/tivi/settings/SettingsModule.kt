@@ -18,34 +18,25 @@
 
 package app.tivi.settings
 
-import android.content.Context
+import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 import javax.inject.Singleton
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
-internal abstract class SettingsModuleBinds {
+@Component
+internal abstract class SettingsModule {
     @Singleton
-    @Binds
-    abstract fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences
-}
+    @Provides
+    fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind
 
-@InstallIn(SingletonComponent::class)
-@Module
-internal object SettingsModule {
     @Named("app")
     @Provides
     @Singleton
     fun provideAppPreferences(
-        @ApplicationContext context: Context,
+        context: Application,
     ): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(context)
     }

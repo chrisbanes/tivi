@@ -16,6 +16,7 @@
 
 package app.tivi.util
 
+import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -26,7 +27,6 @@ import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
 import app.tivi.settings.TiviPreferences
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -37,8 +37,8 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 
 @Singleton
-internal class AndroidPowerController @Inject constructor(
-    @ApplicationContext private val context: Context,
+class AndroidPowerController @Inject constructor(
+    private val context: Application,
     private val preferences: TiviPreferences,
 ) : PowerController {
     private val powerManager: PowerManager = context.getSystemService()!!

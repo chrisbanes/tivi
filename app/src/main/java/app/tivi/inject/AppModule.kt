@@ -17,47 +17,41 @@
 package app.tivi.inject
 
 import android.app.Application
-import android.content.Context
 import app.tivi.BuildConfig
-import app.tivi.tmdb.TmdbModule
-import app.tivi.trakt.TraktModule
+import app.tivi.app.ApplicationInfo
+import app.tivi.appinitializers.AppInitializer
+import app.tivi.appinitializers.EmojiInitializer
+import app.tivi.appinitializers.PreferencesInitializer
+import app.tivi.appinitializers.ThreeTenBpInitializer
+import app.tivi.appinitializers.TimberInitializer
+import app.tivi.appinitializers.TmdbInitializer
+import app.tivi.util.AndroidPowerController
 import app.tivi.util.AppCoroutineDispatchers
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import app.tivi.util.PowerController
 import java.io.File
 import javax.inject.Named
-import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.IntoSet
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module(
-    includes = [
-        TraktModule::class,
-        TmdbModule::class,
-    ],
-)
-object AppModule {
-    @ApplicationId
+@Component
+abstract class AppModule {
     @Provides
-    fun provideApplicationId(application: Application): String = application.packageName
+    fun provideApplicationId(application: Application): ApplicationInfo {
+        return ApplicationInfo(application.packageName)
+    }
 
-    @Singleton
     @Provides
-    fun provideCoroutineDispatchers() = AppCoroutineDispatchers(
+    fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
         io = Dispatchers.IO,
         computation = Dispatchers.Default,
         main = Dispatchers.Main,
     )
 
     @Provides
-    @Singleton
     @Named("cache")
-    fun provideCacheDir(
-        @ApplicationContext context: Context,
-    ): File = context.cacheDir
+    fun provideCacheDir(context: Application): File = context.cacheDir
 
     @Provides
     @Named("tmdb-api")
@@ -70,4 +64,27 @@ object AppModule {
     @Provides
     @Named("trakt-client-secret")
     fun provideTraktClientSecret(): String = BuildConfig.TRAKT_CLIENT_SECRET
+
+    @Provides
+    fun providePowerController(bind: AndroidPowerController): PowerController = bind
+
+    @Provides
+    @IntoSet
+    fun provideEmojiInitializer(bind: EmojiInitializer): AppInitializer = bind
+
+    @Provides
+    @IntoSet
+    fun provideThreeTenAbpInitializer(bind: ThreeTenBpInitializer): AppInitializer = bind
+
+    @Provides
+    @IntoSet
+    fun provideTimberInitializer(bind: TimberInitializer): AppInitializer = bind
+
+    @Provides
+    @IntoSet
+    fun providePreferencesInitializer(bind: PreferencesInitializer): AppInitializer = bind
+
+    @Provides
+    @IntoSet
+    fun provideTmdbInitializer(bind: TmdbInitializer): AppInitializer = bind
 }

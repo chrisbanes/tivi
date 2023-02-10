@@ -18,7 +18,7 @@
 plugins {
     id("kotlin")
     alias(libs.plugins.cacheFixPlugin)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 // https://github.com/cashapp/multiplatform-paging/issues/6
@@ -49,8 +49,8 @@ dependencies {
     implementation(projects.api.traktAuth.common)
     implementation(projects.api.tmdb)
 
-    implementation(libs.dagger.dagger)
-    kapt(libs.dagger.compiler)
-
     api(libs.cashapp.paging.common)
+
+    implementation(libs.kotlininject.runtime)
+    ksp(libs.kotlininject.compiler)
 }

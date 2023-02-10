@@ -22,6 +22,7 @@ plugins {
 
 dependencies {
     api(libs.kotlin.coroutines.core)
+    api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
 
     api(libs.dagger.dagger)
     api(libs.kotlininject.runtime)

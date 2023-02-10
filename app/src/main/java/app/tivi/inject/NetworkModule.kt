@@ -16,28 +16,23 @@
 
 package app.tivi.inject
 
-import android.content.Context
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import android.app.Application
 import java.io.File
 import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
-@InstallIn(SingletonComponent::class)
-@Module
-object NetworkModule {
-    @Singleton
+@Component
+@ApplicationScope
+abstract class NetworkModule {
     @Provides
     fun provideOkHttpClient(
-        @ApplicationContext context: Context,
+        context: Application,
         interceptors: Set<@JvmSuppressWildcards Interceptor>,
     ): OkHttpClient = OkHttpClient.Builder()
         .apply { interceptors.forEach(::addInterceptor) }

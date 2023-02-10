@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.inject
+package app.tivi.datetime
 
-import dagger.Provides
-import okhttp3.Interceptor
+import org.threeten.bp.format.DateTimeFormatter
 
-abstract class StandardNetworkModule {
-    /**
-     * We have no interceptors in the standard release currently
-     */
-    @Provides
-    fun provideInterceptors(): Set<Interceptor> = emptySet()
-}
+data class DateTimeFormatters(
+    val shortDate: DateTimeFormatter,
+    val shortTime: DateTimeFormatter,
+    val mediumDate: DateTimeFormatter,
+    val mediumDateTime: DateTimeFormatter,
+)

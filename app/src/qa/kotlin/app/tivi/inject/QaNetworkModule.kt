@@ -16,12 +16,11 @@
 
 package app.tivi.inject
 
-import android.content.Context
+import android.app.Application
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import javax.inject.Singleton
@@ -42,7 +41,7 @@ object QaNetworkModule {
     @Singleton
     @IntoSet
     fun provideChuckerInterceptor(
-        @ApplicationContext context: Context,
+        context: Application,
     ): Interceptor = ChuckerInterceptor.Builder(context)
         .redactHeaders(
             "trakt-api-key",
