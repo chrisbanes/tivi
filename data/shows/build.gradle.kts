@@ -33,6 +33,6 @@ dependencies {
     api(libs.store)
     implementation(libs.kotlinx.atomicfu)
 
-    implementation(libs.dagger.dagger)
-    kapt(libs.dagger.compiler)
+    implementation(libs.hilt.core)
+    kapt(libs.hilt.compiler)
 }

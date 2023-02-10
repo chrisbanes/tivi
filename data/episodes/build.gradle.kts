@@ -30,6 +30,6 @@ dependencies {
     implementation(projects.api.tmdb)
     implementation(libs.retrofit.retrofit)
 
-    implementation(libs.dagger.dagger)
-    kapt(libs.dagger.compiler)
+    implementation(libs.hilt.core)
+    kapt(libs.hilt.compiler)
 }
