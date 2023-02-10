@@ -111,6 +111,7 @@ debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber
 debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-okhttp-logger", version.ref = "debugdrawer" }
 
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
+hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "dagger" }
 hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
 hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "dagger" }
 

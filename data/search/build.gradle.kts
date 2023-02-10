@@ -35,6 +35,6 @@ dependencies {
 
     implementation(libs.androidx.collection) // LruCache
 
-    implementation(libs.dagger.dagger)
-    kapt(libs.dagger.compiler)
+    implementation(libs.hilt.core)
+    kapt(libs.hilt.compiler)
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 plugins {
     id("kotlin")
     alias(libs.plugins.android.lint)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 dependencies {
@@ -31,4 +32,7 @@ dependencies {
 
     api(libs.store)
     implementation(libs.kotlinx.atomicfu)
+
+    implementation(libs.hilt.core)
+    kapt(libs.hilt.compiler)
 }
