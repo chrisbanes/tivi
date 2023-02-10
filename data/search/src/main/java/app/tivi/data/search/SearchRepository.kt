@@ -31,7 +31,7 @@ class SearchRepository @Inject constructor(
     private val showDao: TiviShowDao,
     private val tmdbDataSource: SearchDataSource,
 ) {
-    private val cache by lazy { LruCache<String, LongArray>(32) }
+    private val cache by lazy { LruCache<String, List<Long>>(20) }
 
     suspend fun search(query: String): List<ShowDetailed> {
         if (query.isBlank()) {
@@ -40,27 +40,33 @@ class SearchRepository @Inject constructor(
 
         val cacheValues = cache[query]
         if (cacheValues != null) {
-            return cacheValues.map { showDao.getShowWithIdDetailed(it)!! }
+            return cacheValues
+                .mapNotNull { showDao.getShowWithIdDetailed(it) }
         }
 
-        // We need to hit TMDb instead
-        return try {
-            val tmdbResult = tmdbDataSource.search(query)
-            tmdbResult.map { (show, images) ->
+        // We need to hit TMDb
+        val remoteResult = runCatching {
+            fetchFromTmdb(query)
+                .also { results ->
+                    // We need to save the search results
+                    cache.put(query, results)
+                }
+                .mapNotNull { showDao.getShowWithIdDetailed(it) }
+        }
+        return remoteResult.getOrDefault(emptyList())
+    }
+
+    private suspend fun fetchFromTmdb(query: String): List<Long> {
+        return tmdbDataSource.search(query)
+            .map { (show, images) ->
                 val showId = showDao.getIdOrSavePlaceholder(show)
                 if (images.isNotEmpty()) {
-                    showTmdbImagesDao.saveImagesIfEmpty(showId, images.map { it.copy(showId = showId) })
+                    showTmdbImagesDao.saveImagesIfEmpty(
+                        showId = showId,
+                        images = images.map { it.copy(showId = showId) },
+                    )
                 }
                 showId
-            }.also { results ->
-                // We need to save the search results
-                cache.put(query, results.toLongArray())
-            }.mapNotNull {
-                // Finally map back to a TiviShow instance
-                showDao.getShowWithIdDetailed(it)
             }
-        } catch (e: Exception) {
-            emptyList()
-        }
     }
 }
