@@ -18,7 +18,6 @@
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.diffplug.gradle.spotless.SpotlessExtension
-import dagger.hilt.android.plugin.HiltExtension
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
@@ -31,7 +30,6 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.hilt) apply false
     alias(libs.plugins.gms.googleServices) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.spotless) apply false
@@ -105,10 +103,7 @@ allprojects {
         }
     }
 
-    // Configure Hilt + Dagger
-    plugins.withId(rootProject.libs.plugins.hilt.get().pluginId) {
-        extensions.getByType<HiltExtension>().enableAggregatingTask = true
-    }
+    // Configure kapt
     plugins.withId(rootProject.libs.plugins.kotlin.kapt.get().pluginId) {
         extensions.getByType<KaptExtension>().correctErrorTypes = true
     }

@@ -40,7 +40,6 @@ dependencies {
     api(libs.androidx.work.runtime)
 
     implementation(libs.hilt.library)
-    kapt(libs.hilt.compiler)
 
     implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)

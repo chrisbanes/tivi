@@ -21,7 +21,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.core.net.toUri
-import app.tivi.inject.ApplicationId
+import app.tivi.app.ApplicationInfo
 import app.tivi.trakt.store.AuthStore
 import app.tivi.trakt.store.TiviAuthStore
 import javax.inject.Named
@@ -73,8 +73,8 @@ abstract class TraktAuthModule {
     @Named("trakt-auth-redirect-uri")
     @Provides
     fun provideAuthRedirectUri(
-        @ApplicationId applicationId: String,
-    ): String = "$applicationId://${TraktConstants.URI_AUTH_CALLBACK_PATH}"
+        info: ApplicationInfo,
+    ): String = "${info.packageName}://${TraktConstants.URI_AUTH_CALLBACK_PATH}"
 
     @Singleton
     @Provides

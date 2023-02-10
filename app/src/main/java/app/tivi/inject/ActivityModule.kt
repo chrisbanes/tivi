@@ -18,47 +18,36 @@ package app.tivi.inject
 
 import android.app.Activity
 import androidx.core.os.ConfigurationCompat
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
+import app.tivi.datetime.DateTimeFormatters
 import java.util.Locale
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 
-@InstallIn(ActivityComponent::class)
-@Module
-class ActivityModule {
+@Component
+abstract class ActivityModule(
+    @get:Provides val activity: Activity,
+) {
     @Provides
-    @MediumDate
     fun provideMediumDateFormatter(
         locale: Locale,
-    ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
-    }
-
-    @Provides
-    @MediumDateTime
-    fun provideDateTimeFormatter(
-        locale: Locale,
-    ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale)
-    }
-
-    @Provides
-    @ShortDate
-    fun provideShortDateFormatter(
-        locale: Locale,
-    ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale)
-    }
-
-    @Provides
-    @ShortTime
-    fun provideShortTimeFormatter(
-        locale: Locale,
-    ): DateTimeFormatter {
-        return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
+    ): DateTimeFormatters {
+        // TODO: make these lazily instantiated
+        return DateTimeFormatters(
+            mediumDate = DateTimeFormatter
+                .ofLocalizedDate(FormatStyle.MEDIUM)
+                .withLocale(locale),
+            mediumDateTime = DateTimeFormatter
+                .ofLocalizedDateTime(FormatStyle.MEDIUM)
+                .withLocale(locale),
+            shortDate = DateTimeFormatter
+                .ofLocalizedDate(FormatStyle.SHORT)
+                .withLocale(locale),
+            shortTime = DateTimeFormatter
+                .ofLocalizedTime(FormatStyle.SHORT)
+                .withLocale(locale),
+        )
     }
 
     @Provides

@@ -20,7 +20,6 @@ plugins {
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.hilt)
 }
 
 android {
@@ -37,5 +36,4 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.hilt.library)
-    kapt(libs.hilt.compiler)
 }
