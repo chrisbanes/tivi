@@ -70,7 +70,7 @@ include(
     ":data:trendingshows",
     ":data:watchedshows",
     ":api:trakt",
-    ":api:trakt-auth:common",
+    ":api:trakt-auth:api",
     ":api:trakt-auth:android",
     ":api:tmdb",
     ":tasks",

@@ -35,7 +35,7 @@ android {
 dependencies {
     api(projects.base)
     api(projects.core.logging.api)
-    api(projects.api.traktAuth.common)
+    api(projects.api.traktAuth.api)
 
     implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)
