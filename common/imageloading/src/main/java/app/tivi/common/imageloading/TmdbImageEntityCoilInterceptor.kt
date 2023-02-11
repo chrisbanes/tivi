@@ -27,13 +27,12 @@ import coil.request.ImageResult
 import coil.size.Size
 import coil.size.pxOrElse
 import javax.inject.Inject
-import javax.inject.Provider
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @ExperimentalCoilApi
 class TmdbImageEntityCoilInterceptor @Inject constructor(
-    private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>,
+    private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
     private val powerController: PowerController,
 ) : Interceptor {
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
@@ -55,7 +54,7 @@ class TmdbImageEntityCoilInterceptor @Inject constructor(
             is SaveData.Enabled -> size.width.pxOrElse { 0 } / 2
         }
 
-        val urlProvider = tmdbImageUrlProvider.get()
+        val urlProvider by tmdbImageUrlProvider
         return when (data.type) {
             ImageType.BACKDROP -> urlProvider.getBackdropUrl(data.path, width).toHttpUrl()
             ImageType.POSTER -> urlProvider.getPosterUrl(data.path, width).toHttpUrl()

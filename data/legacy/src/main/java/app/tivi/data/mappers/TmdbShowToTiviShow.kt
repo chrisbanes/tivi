@@ -17,11 +17,11 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.TiviShow
+import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.entities.TvShow
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class TmdbShowToTiviShow @Inject constructor() : Mapper<TvShow, TiviShow> {
     override suspend fun map(from: TvShow) = TiviShow(
         tmdbId = from.id,

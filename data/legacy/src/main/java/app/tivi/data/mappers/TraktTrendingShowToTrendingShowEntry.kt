@@ -17,11 +17,11 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.TrendingShowEntry
+import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.TrendingShow
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class TraktTrendingShowToTrendingShowEntry @Inject constructor() : Mapper<TrendingShow, TrendingShowEntry> {
     override suspend fun map(from: TrendingShow): TrendingShowEntry {
         return TrendingShowEntry(

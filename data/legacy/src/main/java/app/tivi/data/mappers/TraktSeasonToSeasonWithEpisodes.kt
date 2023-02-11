@@ -18,11 +18,11 @@ package app.tivi.data.mappers
 
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
+import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class TraktSeasonToSeasonWithEpisodes @Inject constructor(
     private val seasonMapper: TraktSeasonToSeason,
     private val episoderMapper: TraktEpisodeToEpisode,

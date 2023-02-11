@@ -25,11 +25,10 @@ import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Sync
 import javax.inject.Inject
-import javax.inject.Provider
 import retrofit2.awaitResponse
 
 class TraktWatchedShowsDataSource @Inject constructor(
-    private val syncService: Provider<Sync>,
+    private val syncService: Lazy<Sync>,
     showMapper: TraktBaseShowToTiviShow,
 ) : WatchedShowsDataSource {
     private val responseMapper = pairMapperOf(showMapper) { from ->
@@ -37,7 +36,7 @@ class TraktWatchedShowsDataSource @Inject constructor(
     }
 
     override suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>> = withRetry {
-        syncService.get()
+        syncService.value
             .watchedShows(Extended.NOSEASONS)
             .awaitResponse()
             .let { responseMapper.invoke(it.bodyOrThrow()) }

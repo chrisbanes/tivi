@@ -19,9 +19,7 @@ package app.tivi.data.mappers
 import app.tivi.data.models.ShowStatus
 import com.uwetrottmann.trakt5.enums.Status
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class TraktStatusToShowStatus @Inject constructor() : Mapper<Status, ShowStatus> {
     override suspend fun map(from: Status) = when (from) {
         Status.ENDED -> ShowStatus.ENDED

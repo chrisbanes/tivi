@@ -31,7 +31,7 @@ dependencies {
 
     api(projects.data.models)
     implementation(projects.data.db) // remove this eventually
-    implementation(projects.data.legacy) // remove this eventually
+    api(projects.data.legacy) // remove this eventually
 
     api(projects.data.episodes)
     api(projects.data.followedshows)

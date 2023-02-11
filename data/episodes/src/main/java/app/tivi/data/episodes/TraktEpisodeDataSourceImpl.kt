@@ -24,12 +24,11 @@ import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Episodes
 import javax.inject.Inject
-import javax.inject.Provider
 import retrofit2.awaitResponse
 
 class TraktEpisodeDataSourceImpl @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
-    private val service: Provider<Episodes>,
+    private val service: Lazy<Episodes>,
     private val episodeMapper: TraktEpisodeToEpisode,
 ) : app.tivi.data.episodes.EpisodeDataSource {
     override suspend fun getEpisode(
@@ -40,7 +39,7 @@ class TraktEpisodeDataSourceImpl @Inject constructor(
         val traktId = traktIdMapper.map(showId)
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
         return withRetry {
-            service.get()
+            service.value
                 .summary(traktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
                 .awaitResponse()
                 .let { episodeMapper.map(it.bodyOrThrow()) }

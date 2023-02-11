@@ -25,6 +25,7 @@ import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.followedshows.TraktFollowedShowsDataSource
 import app.tivi.data.showimages.ShowImagesDataSource
 import app.tivi.data.shows.ShowDataSource
+import app.tivi.inject.ApplicationScope
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Analytics
@@ -41,7 +42,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.mockk.mockk
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -103,7 +103,7 @@ object TestDatabaseModule {
 @InstallIn(SingletonComponent::class)
 @Module
 object TestRoomDatabaseModule {
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideDatabase(@ApplicationContext context: Context): TiviDatabase {
         return Room.inMemoryDatabaseBuilder(context, TiviTestDatabase::class.java)
@@ -111,7 +111,7 @@ object TestRoomDatabaseModule {
             .build()
     }
 
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideDatabaseTransactionRunner(): DatabaseTransactionRunner = TestTransactionRunner
 }

@@ -27,11 +27,10 @@ import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
-import javax.inject.Provider
 import retrofit2.awaitResponse
 
 class TraktPopularShowsDataSource @Inject constructor(
-    private val showService: Provider<Shows>,
+    private val showService: Lazy<Shows>,
     showMapper: TraktShowToTiviShow,
 ) : PopularShowsDataSource {
     private val entryMapper = IndexedMapper<Show, PopularShowEntry> { index, _ ->
@@ -44,7 +43,7 @@ class TraktPopularShowsDataSource @Inject constructor(
         page: Int,
         pageSize: Int,
     ): List<Pair<TiviShow, PopularShowEntry>> = withRetry {
-        showService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
+        showService.value.popular(page + 1, pageSize, Extended.NOSEASONS)
             .awaitResponse()
             .let { resultsMapper.invoke(it.bodyOrThrow()) }
     }

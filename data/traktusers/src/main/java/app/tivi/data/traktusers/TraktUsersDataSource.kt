@@ -24,15 +24,14 @@ import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Users
 import javax.inject.Inject
-import javax.inject.Provider
 import retrofit2.awaitResponse
 
 class TraktUsersDataSource @Inject constructor(
-    private val usersService: Provider<Users>,
+    private val usersService: Lazy<Users>,
     private val mapper: UserToTraktUser,
 ) : UsersDataSource {
     override suspend fun getUser(slug: String): TraktUser = withRetry {
-        usersService.get()
+        usersService.value
             .profile(UserSlug(slug), Extended.FULL)
             .awaitResponse()
             .let { mapper.map(it.bodyOrThrow()) }

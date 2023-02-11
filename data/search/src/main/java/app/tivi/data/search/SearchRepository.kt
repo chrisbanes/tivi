@@ -22,10 +22,10 @@ import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.saveImagesIfEmpty
+import app.tivi.inject.ApplicationScope
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class SearchRepository @Inject constructor(
     private val showTmdbImagesDao: ShowTmdbImagesDao,
     private val showDao: TiviShowDao,

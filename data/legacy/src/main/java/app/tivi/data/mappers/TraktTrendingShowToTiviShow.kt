@@ -17,11 +17,11 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.TiviShow
+import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.TrendingShow
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class TraktTrendingShowToTiviShow @Inject constructor(
     private val showMapper: TraktShowToTiviShow,
 ) : Mapper<TrendingShow, TiviShow> {

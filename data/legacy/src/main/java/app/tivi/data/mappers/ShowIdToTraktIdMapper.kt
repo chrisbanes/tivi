@@ -17,10 +17,10 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.daos.TiviShowDao
+import app.tivi.inject.ApplicationScope
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class ShowIdToTraktIdMapper @Inject constructor(
     private val showDao: TiviShowDao,
 ) : Mapper<Long, Int?> {

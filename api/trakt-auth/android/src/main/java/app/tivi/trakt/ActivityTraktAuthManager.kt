@@ -19,7 +19,6 @@ package app.tivi.trakt
 import android.app.Application
 import android.content.Intent
 import app.tivi.util.Logger
-import dagger.Lazy
 import javax.inject.Inject
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationRequest
@@ -36,7 +35,7 @@ class ActivityTraktAuthManager @Inject constructor(
     private val authService = AuthorizationService(context)
 
     override fun buildLoginIntent(): Intent {
-        return authService.getAuthorizationRequestIntent(requestProvider.get())
+        return authService.getAuthorizationRequestIntent(requestProvider.value)
     }
 
     override fun onLoginResult(result: LoginTrakt.Result) {
@@ -45,7 +44,7 @@ class ActivityTraktAuthManager @Inject constructor(
             response != null -> {
                 authService.performTokenRequest(
                     response.createTokenExchangeRequest(),
-                    clientAuth.get(),
+                    clientAuth.value,
                 ) { tokenResponse, ex ->
                     val state = AuthState()
                         .apply { update(tokenResponse, ex) }

@@ -20,13 +20,13 @@ import app.tivi.data.daos.UserDao
 import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.TraktUser
 import app.tivi.data.util.withRetry
+import app.tivi.inject.ApplicationScope
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.Instant
 import org.threeten.bp.Period
 
-@Singleton
+@ApplicationScope
 class TraktUsersRepository @Inject constructor(
     private val userDao: UserDao,
     private val lastRequestStore: TraktUsersLastRequestStore,

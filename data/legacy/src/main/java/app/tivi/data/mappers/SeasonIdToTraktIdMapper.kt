@@ -17,10 +17,10 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.inject.ApplicationScope
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class SeasonIdToTraktIdMapper @Inject constructor(
     private val dao: SeasonsDao,
 ) : Mapper<Long, Int> {
