@@ -21,7 +21,6 @@ import app.tivi.data.models.TmdbImageEntity
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.PowerController
 import app.tivi.util.SaveData
-import coil.annotation.ExperimentalCoilApi
 import coil.intercept.Interceptor
 import coil.request.ImageResult
 import coil.size.Size
@@ -30,7 +29,6 @@ import me.tatarka.inject.annotations.Inject
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-@ExperimentalCoilApi
 @Inject
 class TmdbImageEntityCoilInterceptor(
     private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
