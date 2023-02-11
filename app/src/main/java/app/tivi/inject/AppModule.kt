@@ -28,9 +28,7 @@ import app.tivi.appinitializers.TmdbInitializer
 import app.tivi.tmdb.TmdbOAuthInfo
 import app.tivi.trakt.TraktConstants
 import app.tivi.trakt.TraktOAuthInfo
-import app.tivi.util.AndroidPowerController
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.PowerController
 import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
@@ -63,9 +61,6 @@ interface AppModule {
         clientSecret = BuildConfig.TRAKT_CLIENT_SECRET,
         redirectUri = "${appInfo.packageName}://${TraktConstants.URI_AUTH_CALLBACK_PATH}",
     )
-
-    @Provides
-    fun providePowerController(bind: AndroidPowerController): PowerController = bind
 
     @Provides
     @IntoSet

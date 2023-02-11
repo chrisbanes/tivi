@@ -23,15 +23,14 @@ plugins {
 }
 
 android {
-    namespace = "app.tivi.core.logging"
+    namespace = "app.tivi.core.preferences"
 }
 
 dependencies {
     api(projects.base)
+    api(projects.core.preferences.api)
 
-    implementation(platform(libs.google.firebase.bom))
-    implementation(libs.google.firebase.crashlytics)
-    implementation(libs.timber)
+    implementation(libs.androidx.core)
 
     implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)

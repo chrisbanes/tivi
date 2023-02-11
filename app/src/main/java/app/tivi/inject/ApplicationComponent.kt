@@ -41,6 +41,7 @@ import app.tivi.trakt.TraktAuthModule
 import app.tivi.trakt.TraktModule
 import app.tivi.util.AnalyticsModule
 import app.tivi.util.LoggerModule
+import app.tivi.util.PowerControllerModule
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -55,6 +56,7 @@ abstract class ApplicationComponent(
     AppModule,
     NetworkModule,
     TasksModule,
+    PowerControllerModule,
     ImageLoadingModule,
     AnalyticsModule,
     SettingsModule,

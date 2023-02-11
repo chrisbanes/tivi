@@ -16,22 +16,10 @@
 
 
 plugins {
-    alias(libs.plugins.android.library)
+    id("kotlin")
     alias(libs.plugins.cacheFixPlugin)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
-}
-
-android {
-    namespace = "app.tivi.core.analytics"
 }
 
 dependencies {
     api(projects.base)
-
-    implementation(platform(libs.google.firebase.bom))
-    implementation(libs.google.firebase.analytics)
-
-    implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
 }

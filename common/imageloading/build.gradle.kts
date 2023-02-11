@@ -28,6 +28,8 @@ android {
 
 dependencies {
     implementation(projects.base)
+    implementation(projects.core.logging.api)
+    implementation(projects.core.powercontroller.api)
     implementation(projects.data.models)
     implementation(projects.common.ui.view)
     implementation(projects.api.tmdb)

@@ -35,11 +35,6 @@ room {
     schemaLocationDir.set(file("$projectDir/schemas"))
 }
 
-ksp {
-    arg("me.tatarka.inject.enableJavaxAnnotations", "true")
-    arg("me.tatarka.inject.dumpGraph", "true")
-}
-
 dependencies {
     implementation(projects.base)
     api(projects.data.db)

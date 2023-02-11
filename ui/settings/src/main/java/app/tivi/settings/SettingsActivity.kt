@@ -18,18 +18,24 @@
 
 package app.tivi.settings
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
+import app.tivi.inject.ApplicationScope
 import app.tivi.util.PowerController
-import dagger.hilt.android.AndroidEntryPoint
+import app.tivi.util.PowerControllerModule
+import dagger.hilt.android.components.ActivityComponent
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
-@AndroidEntryPoint
 class SettingsActivity : ComponentActivity() {
-    lateinit var powerController: PowerController
+    private lateinit var powerController: PowerController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // val component = SettingsActivityComponent::class.crea
 
         val fragment = SettingsPreferenceFragment()
 
@@ -43,4 +49,15 @@ class SettingsActivity : ComponentActivity() {
             }
         }
     }
+}
+
+@Component
+@ApplicationScope
+abstract class SettingsActivityComponent(
+    @get:Provides val application: Application,
+) : ActivityComponent,
+    PowerControllerModule,
+    SettingsModule {
+
+    abstract val powerController: PowerController
 }
