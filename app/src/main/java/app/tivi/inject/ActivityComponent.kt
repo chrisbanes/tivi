@@ -20,15 +20,13 @@ import android.app.Activity
 import androidx.core.os.ConfigurationCompat
 import app.tivi.datetime.DateTimeFormatters
 import java.util.Locale
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 
-@Component
-abstract class ActivityModule(
-    @get:Provides val activity: Activity,
-) {
+interface ActivityComponent {
+    val activity: Activity
+
     @Provides
     fun provideMediumDateFormatter(
         locale: Locale,

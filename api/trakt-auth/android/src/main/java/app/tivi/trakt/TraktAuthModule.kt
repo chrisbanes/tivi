@@ -22,13 +22,12 @@ import android.content.SharedPreferences
 import android.net.Uri
 import androidx.core.net.toUri
 import app.tivi.app.ApplicationInfo
+import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.store.AuthStore
 import app.tivi.trakt.store.TiviAuthStore
 import javax.inject.Named
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationServiceConfiguration
@@ -36,9 +35,8 @@ import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.ResponseTypeValues
 
-@Component
-abstract class TraktAuthModule {
-    @Singleton
+interface TraktAuthModule {
+    @ApplicationScope
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {
         return AuthorizationServiceConfiguration(
@@ -69,14 +67,14 @@ abstract class TraktAuthModule {
         }.build()
     }
 
-    @Singleton
+    @ApplicationScope
     @Named("trakt-auth-redirect-uri")
     @Provides
     fun provideAuthRedirectUri(
         info: ApplicationInfo,
     ): String = "${info.packageName}://${TraktConstants.URI_AUTH_CALLBACK_PATH}"
 
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideClientAuth(
         @Named("trakt-client-secret") clientSecret: String,
@@ -84,7 +82,7 @@ abstract class TraktAuthModule {
         return ClientSecretBasic(clientSecret)
     }
 
-    @Singleton
+    @ApplicationScope
     @Provides
     @Named("auth")
     fun provideAuthSharedPrefs(
@@ -94,8 +92,10 @@ abstract class TraktAuthModule {
     }
 
     @Provides
+    @ApplicationScope
     fun provideTraktAuthManager(manager: ActivityTraktAuthManager): TraktAuthManager = manager
 
     @Provides
+    @ApplicationScope
     fun provideAuthStore(manager: TiviAuthStore): AuthStore = manager
 }

@@ -16,11 +16,11 @@
 
 package app.tivi.data.search
 
-import me.tatarka.inject.annotations.Component
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class SearchBinds {
-    @Provides
-    fun bindSearchDataSource(source: TmdbSearchDataSource): SearchDataSource = source
+interface SearchBinds {
+    val TmdbSearchDataSource.bind: SearchDataSource
+        @ApplicationScope @Provides
+        get() = this
 }

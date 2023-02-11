@@ -38,12 +38,10 @@ import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.db.RoomTransactionRunner
 import app.tivi.data.db.TiviDatabase
 import app.tivi.inject.ApplicationScope
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
-@Component
-@ApplicationScope
-abstract class RoomDatabaseModule {
+interface RoomDatabaseModule {
+    @ApplicationScope
     @Provides
     fun provideDatabase(
         application: Application,
@@ -101,8 +99,8 @@ abstract class RoomDatabaseModule {
     @Provides
     fun provideLibraryShowsDao(db: TiviDatabase): LibraryShowsDao = db.libraryShowsDao()
 
-    @Provides
-    fun bindTiviDatabase(db: TiviRoomDatabase): TiviDatabase = db
+    val TiviRoomDatabase.bind: TiviDatabase
+        @Provides get() = this
 
     @Provides
     @ApplicationScope

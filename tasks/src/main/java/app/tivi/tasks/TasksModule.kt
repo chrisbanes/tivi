@@ -20,24 +20,23 @@ import android.app.Application
 import androidx.work.WorkManager
 import app.tivi.actions.ShowTasks
 import app.tivi.appinitializers.AppInitializer
-import javax.inject.Singleton
-import me.tatarka.inject.annotations.Component
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class TasksModule {
+interface TasksModule {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideWorkManager(application: Application): WorkManager {
         return WorkManager.getInstance(application)
     }
 
     @Provides
+    @ApplicationScope
     @IntoSet
     fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer = bind
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideShowTasks(bind: ShowTasksImpl): ShowTasks = bind
 }

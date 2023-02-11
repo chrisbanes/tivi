@@ -16,7 +16,7 @@
 
 package app.tivi.util
 
-import android.content.Context
+import android.app.Activity
 import android.graphics.Color
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -29,7 +29,6 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.TiviShow
 import app.tivi.ui.GenreStringer
-import dagger.hilt.android.qualifiers.ActivityContext
 import java.util.Locale
 import javax.inject.Inject
 import org.threeten.bp.OffsetDateTime
@@ -38,7 +37,7 @@ import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.TextStyle
 
 class TiviTextCreator @Inject constructor(
-    @ActivityContext private val context: Context,
+    private val context: Activity,
     private val tiviDateFormatter: TiviDateFormatter,
 ) {
     fun showTitle(

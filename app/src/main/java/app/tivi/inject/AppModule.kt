@@ -31,18 +31,18 @@ import app.tivi.util.PowerController
 import java.io.File
 import javax.inject.Named
 import kotlinx.coroutines.Dispatchers
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class AppModule {
+interface AppModule {
     @Provides
+    @ApplicationScope
     fun provideApplicationId(application: Application): ApplicationInfo {
         return ApplicationInfo(application.packageName)
     }
 
     @Provides
+    @ApplicationScope
     fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
         io = Dispatchers.IO,
         computation = Dispatchers.Default,

@@ -16,16 +16,16 @@
 
 package app.tivi.tmdb
 
+import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import retrofit2.awaitResponse
 
-@Singleton
+@ApplicationScope
 class TmdbManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val tmdbClient: Tmdb,

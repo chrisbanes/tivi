@@ -16,11 +16,11 @@
 
 package app.tivi.data.showimages
 
-import me.tatarka.inject.annotations.Component
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class ShowImagesBinds {
-    @Provides
-    fun bindShowImagesDataSource(source: TmdbShowImagesDataSource): ShowImagesDataSource = source
+interface ShowImagesBinds {
+    val TmdbShowImagesDataSource.bind: ShowImagesDataSource
+        @ApplicationScope @Provides
+        get() = this
 }
