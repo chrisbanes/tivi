@@ -28,12 +28,11 @@ import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
-import javax.inject.Provider
 import retrofit2.awaitResponse
 
 class TraktRelatedShowsDataSourceImpl @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
-    private val showService: Provider<Shows>,
+    private val showService: Lazy<Shows>,
     showMapper: TraktShowToTiviShow,
 ) : RelatedShowsDataSource {
     private val entryMapper = IndexedMapper<Show, RelatedShowEntry> { index, _ ->
@@ -45,7 +44,7 @@ class TraktRelatedShowsDataSourceImpl @Inject constructor(
         val traktId = traktIdMapper.map(showId)
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
         return withRetry {
-            showService.get()
+            showService.value
                 .related(traktId.toString(), 0, 10, Extended.NOSEASONS)
                 .awaitResponse()
                 .let { resultMapper.invoke(it.bodyOrThrow()) }

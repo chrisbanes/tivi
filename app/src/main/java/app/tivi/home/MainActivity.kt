@@ -20,10 +20,12 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
@@ -31,6 +33,7 @@ import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import app.tivi.ComposeScreens
 import app.tivi.ContentViewSetter
 import app.tivi.TiviActivity
 import app.tivi.common.compose.LocalTiviDateFormatter
@@ -38,6 +41,7 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.shouldUseDynamicColors
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ApplicationComponent
 import app.tivi.settings.SettingsActivity
@@ -46,33 +50,34 @@ import app.tivi.util.Analytics
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
 @AndroidEntryPoint
 class MainActivity : TiviActivity() {
 
-    // private val component = MainActivityComponent::c
+    private lateinit var component: MainActivityComponent
 
-    private lateinit var viewModel: MainActivityViewModel
+    private val viewModel: MainActivityViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return component.viewModel() as T
+            }
+        }
+    }
 
-    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
-
-    @Inject internal lateinit var textCreator: TiviTextCreator
-
-    @Inject internal lateinit var preferences: TiviPreferences
-
-    @Inject internal lateinit var analytics: Analytics
-
-    @Inject internal lateinit var contentViewSetter: ContentViewSetter
+    private val preferences: TiviPreferences by unsafeLazy { component.preferences }
+    private val analytics: Analytics by unsafeLazy { component.analytics }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        component = MainActivityComponent::class.create(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
+        // Get the viewModel, so it is started and 'running'
+        viewModel
 
         val composeView = ComposeView(this).apply {
             setContent {
@@ -83,14 +88,14 @@ class MainActivity : TiviActivity() {
         // Copied from setContent {} ext-fun
         setOwners()
 
-        contentViewSetter.setContentView(this, composeView)
+        component.contentViewSetter.setContentView(this, composeView)
     }
 
     @Composable
     private fun TiviContent() {
         CompositionLocalProvider(
-            LocalTiviDateFormatter provides tiviDateFormatter,
-            LocalTiviTextCreator provides textCreator,
+            LocalTiviDateFormatter provides component.tiviDateFormatter,
+            LocalTiviTextCreator provides component.textCreator,
         ) {
             TiviTheme(
                 useDarkColors = preferences.shouldUseDarkColors(),
@@ -98,6 +103,7 @@ class MainActivity : TiviActivity() {
             ) {
                 Home(
                     analytics = analytics,
+                    composeScreens = component.screens,
                     onOpenSettings = {
                         startActivity(
                             Intent(this@MainActivity, SettingsActivity::class.java),
@@ -111,7 +117,7 @@ class MainActivity : TiviActivity() {
 
 @Component
 abstract class MainActivityComponent(
-    @get:Provides override val activity: Activity,
+    @get:Provides val activity: Activity,
     @Component val applicationComponent: ApplicationComponent = ApplicationComponent.from(activity),
 ) : ActivityComponent {
     abstract val tiviDateFormatter: TiviDateFormatter
@@ -119,6 +125,8 @@ abstract class MainActivityComponent(
     abstract val preferences: TiviPreferences
     abstract val analytics: Analytics
     abstract val contentViewSetter: ContentViewSetter
+    abstract val screens: ComposeScreens
+    abstract val viewModel: () -> MainActivityViewModel
 }
 
 private fun ComponentActivity.setOwners() {

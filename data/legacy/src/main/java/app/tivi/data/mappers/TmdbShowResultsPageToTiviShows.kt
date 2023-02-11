@@ -19,11 +19,11 @@ package app.tivi.data.mappers
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
+import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.entities.TvShowResultsPage
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class TmdbShowResultsPageToTiviShows @Inject constructor(
     private val tmdbShowMapper: TmdbBaseShowToTiviShow,
 ) : Mapper<TvShowResultsPage, List<Pair<TiviShow, List<ShowTmdbImage>>>> {

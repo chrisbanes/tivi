@@ -26,9 +26,9 @@ import android.os.Build
 import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
+import app.tivi.inject.ApplicationScope
 import app.tivi.settings.TiviPreferences
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 
-@Singleton
+@ApplicationScope
 class AndroidPowerController @Inject constructor(
     private val context: Application,
     private val preferences: TiviPreferences,

@@ -20,8 +20,8 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.models.WatchedShowEntry
+import app.tivi.inject.ApplicationScope
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -29,7 +29,7 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-@Singleton
+@ApplicationScope
 class WatchedShowsStore @Inject constructor(
     dataSource: WatchedShowsDataSource,
     watchedShowsDao: WatchedShowDao,

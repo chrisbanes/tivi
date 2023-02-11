@@ -17,11 +17,11 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.Season
+import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class TraktSeasonToSeason @Inject constructor() : Mapper<TraktSeason, Season> {
     override suspend fun map(from: TraktSeason) = Season(
         showId = 0,

@@ -20,7 +20,6 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import app.tivi.trakt.AppAuthAuthState
 import app.tivi.trakt.AuthState
-import dagger.Lazy
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -28,19 +27,19 @@ class PreferencesAuthStore @Inject constructor(
     @Named("auth") private val authPrefs: Lazy<SharedPreferences>,
 ) : AuthStore {
     override suspend fun get(): AuthState? {
-        return authPrefs.get()
+        return authPrefs.value
             .getString(PreferenceAuthKey, null)
             ?.let(::AppAuthAuthState)
     }
 
     override suspend fun save(state: AuthState) {
-        authPrefs.get().edit(commit = true) {
+        authPrefs.value.edit(commit = true) {
             putString(PreferenceAuthKey, state.serializeToJson())
         }
     }
 
     override suspend fun clear() {
-        authPrefs.get().edit(commit = true) {
+        authPrefs.value.edit(commit = true) {
             remove(PreferenceAuthKey)
         }
     }

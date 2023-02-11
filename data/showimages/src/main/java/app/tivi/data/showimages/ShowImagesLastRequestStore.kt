@@ -19,10 +19,10 @@ package app.tivi.data.showimages
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.lastrequests.EntityLastRequestStore
 import app.tivi.data.models.Request
+import app.tivi.inject.ApplicationScope
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class ShowImagesLastRequestStore @Inject constructor(
     dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.SHOW_IMAGES, dao)

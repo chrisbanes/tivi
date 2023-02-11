@@ -39,7 +39,6 @@ import com.uwetrottmann.trakt5.services.Seasons
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
 import javax.inject.Inject
-import javax.inject.Provider
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 import retrofit2.awaitResponse
@@ -48,16 +47,16 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
     private val showIdToTraktIdMapper: ShowIdToTraktIdMapper,
     private val seasonIdToTraktIdMapper: SeasonIdToTraktIdMapper,
     private val episodeIdToTraktIdMapper: EpisodeIdToTraktIdMapper,
-    private val seasonsService: Provider<Seasons>,
-    private val usersService: Provider<Users>,
-    private val syncService: Provider<Sync>,
+    private val seasonsService: Lazy<Seasons>,
+    private val usersService: Lazy<Users>,
+    private val syncService: Lazy<Sync>,
     private val seasonMapper: TraktSeasonToSeasonWithEpisodes,
     private val episodeMapper: TraktHistoryEntryToEpisode,
     private val historyItemMapper: TraktHistoryItemToEpisodeWatchEntry,
 ) : app.tivi.data.episodes.SeasonsEpisodesDataSource {
     override suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>> {
         return withRetry {
-            seasonsService.get()
+            seasonsService.value
                 .summary(showIdToTraktIdMapper.map(showId).toString(), Extended.FULLEPISODES)
                 .awaitResponse()
                 .let { seasonMapper.forLists().invoke(it.bodyOrThrow()) }
@@ -72,7 +71,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
 
         return withRetry {
-            usersService.get().history(
+            usersService.value.history(
                 UserSlug.ME,
                 HistoryType.SHOWS,
                 showTraktId,
@@ -91,7 +90,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         seasonId: Long,
         since: OffsetDateTime?,
     ): List<Pair<Episode, EpisodeWatchEntry>> = withRetry {
-        usersService.get().history(
+        usersService.value.history(
             UserSlug.ME,
             HistoryType.SEASONS,
             seasonIdToTraktIdMapper.map(seasonId),
@@ -109,7 +108,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         episodeId: Long,
         since: OffsetDateTime?,
     ): List<EpisodeWatchEntry> = withRetry {
-        usersService.get().history(
+        usersService.value.history(
             UserSlug.ME,
             HistoryType.EPISODES,
             episodeIdToTraktIdMapper.map(episodeId),
@@ -131,7 +130,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
                 .watchedAt(it.watchedAt.withOffsetSameInstant(ZoneOffset.UTC))
         }
         withRetry {
-            syncService.get().addItemsToWatchedHistory(items)
+            syncService.value.addItemsToWatchedHistory(items)
                 .awaitResponse()
                 .bodyOrThrow()
         }
@@ -141,7 +140,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         val items = SyncItems()
         items.ids = watches.mapNotNull { it.traktId }
         return withRetry {
-            syncService.get().deleteItemsFromWatchedHistory(items)
+            syncService.value.deleteItemsFromWatchedHistory(items)
                 .awaitResponse()
                 .bodyOrThrow()
         }

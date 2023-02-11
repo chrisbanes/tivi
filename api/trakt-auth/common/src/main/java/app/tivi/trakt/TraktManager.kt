@@ -17,12 +17,11 @@
 package app.tivi.trakt
 
 import app.tivi.actions.ShowTasks
+import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.store.AuthStore
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.TraktV2
-import dagger.Lazy
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(DelicateCoroutinesApi::class)
-@Singleton
+@ApplicationScope
 class TraktManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val showTasks: ShowTasks,
@@ -51,7 +50,7 @@ class TraktManager @Inject constructor(
             authState.collect { authState ->
                 updateAuthState(authState)
 
-                traktClient.get().apply {
+                traktClient.value.apply {
                     accessToken(authState.accessToken)
                     refreshToken(authState.refreshToken)
                 }

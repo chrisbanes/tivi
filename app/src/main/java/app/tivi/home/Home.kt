@@ -40,10 +40,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.Weekend
-import androidx.compose.material.icons.outlined.Subscriptions
 import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material.icons.outlined.Weekend
-import androidx.compose.material.icons.rounded.Subscriptions
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -77,6 +75,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import app.tivi.AppNavigation
+import app.tivi.ComposeScreens
 import app.tivi.RootScreen
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.debugLabel
@@ -93,6 +92,7 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 )
 @Composable
 internal fun Home(
+    composeScreens: ComposeScreens,
     analytics: Analytics,
     onOpenSettings: () -> Unit,
 ) {
@@ -189,6 +189,7 @@ internal fun Home(
             ) {
                 AppNavigation(
                     navController = navController,
+                    composeScreens = composeScreens,
                     onOpenSettings = onOpenSettings,
                     modifier = Modifier
                         .weight(1f)

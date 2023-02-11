@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,12 @@
  * limitations under the License.
  */
 
+package app.tivi
 
-plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
-    alias(libs.plugins.ksp)
-}
+import app.tivi.home.discover.Discover
+import me.tatarka.inject.annotations.Inject
 
-dependencies {
-    api(projects.base)
-    api(projects.api.trakt)
-    api(projects.api.tmdb)
-    api(projects.data.models)
-    implementation(projects.data.db)
-
-    implementation(libs.retrofit.retrofit)
-
-    api(libs.store)
-
-    api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
-
-    implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
-}
+@Inject
+class ComposeScreens(
+    val discover: Discover,
+)

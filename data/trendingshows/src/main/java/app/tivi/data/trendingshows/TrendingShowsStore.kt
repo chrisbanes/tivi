@@ -21,8 +21,8 @@ import app.tivi.data.daos.TrendingDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.updatePage
 import app.tivi.data.models.TrendingShowEntry
+import app.tivi.inject.ApplicationScope
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -30,7 +30,7 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import org.threeten.bp.Duration
 
-@Singleton
+@ApplicationScope
 class TrendingShowsStore @Inject constructor(
     dataSource: TrendingShowsDataSource,
     trendingShowsDao: TrendingDao,

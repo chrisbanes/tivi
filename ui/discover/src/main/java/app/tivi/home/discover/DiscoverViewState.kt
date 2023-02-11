@@ -26,7 +26,7 @@ import app.tivi.data.models.TraktUser
 import app.tivi.trakt.TraktAuthState
 
 @Immutable
-internal data class DiscoverViewState(
+data class DiscoverViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
     val trendingItems: List<TrendingEntryWithShow> = emptyList(),

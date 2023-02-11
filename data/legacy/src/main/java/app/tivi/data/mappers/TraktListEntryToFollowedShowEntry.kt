@@ -17,11 +17,11 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.FollowedShowEntry
+import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.ListEntry
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class TraktListEntryToFollowedShowEntry @Inject constructor() : Mapper<ListEntry, FollowedShowEntry> {
     override suspend fun map(from: ListEntry) = FollowedShowEntry(
         showId = 0,

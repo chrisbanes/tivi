@@ -25,13 +25,12 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 import retrofit2.HttpException
 
-@HiltViewModel
-class MainActivityViewModel @Inject constructor(
+@Inject
+class MainActivityViewModel(
     observeTraktAuthState: ObserveTraktAuthState,
     private val updateUserDetails: UpdateUserDetails,
     observeUserDetails: ObserveUserDetails,

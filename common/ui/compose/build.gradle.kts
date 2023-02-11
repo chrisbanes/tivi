@@ -42,6 +42,7 @@ dependencies {
     api(projects.common.ui.view)
 
     implementation(libs.androidx.core)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     api(platform(libs.compose.bom))
     implementation(libs.compose.ui.ui)

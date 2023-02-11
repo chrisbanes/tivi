@@ -35,6 +35,7 @@ import app.tivi.data.trendingshows.TrendingShowsBinds
 import app.tivi.data.watchedshows.WatchedShowsBinds
 import app.tivi.home.ContentViewSetterModule
 import app.tivi.settings.SettingsModule
+import app.tivi.tasks.TasksModule
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktAuthModule
 import app.tivi.trakt.TraktModule
@@ -53,6 +54,7 @@ abstract class ApplicationComponent(
     TraktModule,
     AppModule,
     NetworkModule,
+    TasksModule,
     ImageLoadingModule,
     AnalyticsModule,
     SettingsModule,

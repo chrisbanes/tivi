@@ -25,8 +25,6 @@ import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 
 interface ActivityComponent {
-    val activity: Activity
-
     @Provides
     fun provideMediumDateFormatter(
         locale: Locale,

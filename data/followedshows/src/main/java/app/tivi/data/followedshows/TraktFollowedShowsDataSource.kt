@@ -32,11 +32,10 @@ import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.ListPrivacy
 import com.uwetrottmann.trakt5.services.Users
 import javax.inject.Inject
-import javax.inject.Provider
 import retrofit2.awaitResponse
 
 class TraktFollowedShowsDataSource @Inject constructor(
-    private val usersService: Provider<Users>,
+    private val usersService: Lazy<Users>,
     listEntryToShowMapper: TraktListEntryToTiviShow,
     listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry,
 ) : FollowedShowsDataSource {
@@ -58,7 +57,7 @@ class TraktFollowedShowsDataSource @Inject constructor(
             }
         }
         withRetry {
-            usersService.get()
+            usersService.value
                 .addListItems(UserSlug.ME, listId.toString(), syncItems)
                 .awaitResponse()
                 .bodyOrThrow()
@@ -77,7 +76,7 @@ class TraktFollowedShowsDataSource @Inject constructor(
             }
         }
         withRetry {
-            usersService.get()
+            usersService.value
                 .deleteListItems(UserSlug.ME, listId.toString(), syncItems)
                 .awaitResponse()
                 .bodyOrThrow()
@@ -86,7 +85,7 @@ class TraktFollowedShowsDataSource @Inject constructor(
 
     override suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>> {
         return withRetry {
-            usersService.get()
+            usersService.value
                 .listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
                 .awaitResponse()
                 .let { listShowsMapper.invoke(it.bodyOrThrow()) }
@@ -95,7 +94,7 @@ class TraktFollowedShowsDataSource @Inject constructor(
 
     override suspend fun getFollowedListId(): TraktList {
         val fetchResult = withRetry {
-            usersService.get()
+            usersService.value
                 .lists(UserSlug.ME)
                 .awaitResponse()
                 .let { response ->
@@ -108,7 +107,7 @@ class TraktFollowedShowsDataSource @Inject constructor(
         }
 
         return withRetry {
-            usersService.get()
+            usersService.value
                 .createList(
                     UserSlug.ME,
                     TraktList().name(LIST_NAME)!!.privacy(ListPrivacy.PRIVATE),

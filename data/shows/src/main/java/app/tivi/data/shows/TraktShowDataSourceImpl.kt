@@ -25,12 +25,11 @@ import com.uwetrottmann.trakt5.enums.Type
 import com.uwetrottmann.trakt5.services.Search
 import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
-import javax.inject.Provider
 import retrofit2.awaitResponse
 
 class TraktShowDataSourceImpl @Inject constructor(
-    private val showService: Provider<Shows>,
-    private val searchService: Provider<Search>,
+    private val showService: Lazy<Shows>,
+    private val searchService: Lazy<Search>,
     private val mapper: TraktShowToTiviShow,
 ) : ShowDataSource {
     override suspend fun getShow(show: TiviShow): TiviShow {
@@ -38,21 +37,20 @@ class TraktShowDataSourceImpl @Inject constructor(
 
         if (traktId == null && show.tmdbId != null) {
             // We need to fetch the search for the trakt id
-            traktId = searchService.get()
-                .idLookup(
-                    IdType.TMDB,
-                    show.tmdbId.toString(),
-                    Type.SHOW,
-                    Extended.NOSEASONS,
-                    1,
-                    1,
-                )
+            traktId = searchService.value.idLookup(
+                IdType.TMDB,
+                show.tmdbId.toString(),
+                Type.SHOW,
+                Extended.NOSEASONS,
+                1,
+                1,
+            )
                 .awaitResponse()
                 .let { it.body()?.getOrNull(0)?.show?.ids?.trakt }
         }
 
         if (traktId == null) {
-            traktId = searchService.get()
+            traktId = searchService.value
                 .textQueryShow(
                     show.title, null /* years */, null /* genres */,
                     null /* lang */, show.country /* countries */, null /* runtime */, null /* ratings */,
@@ -64,7 +62,7 @@ class TraktShowDataSourceImpl @Inject constructor(
         }
 
         return if (traktId != null) {
-            showService.get()
+            showService.value
                 .summary(traktId.toString(), Extended.FULL)
                 .awaitResponse()
                 .let { mapper.map(it.bodyOrThrow()) }

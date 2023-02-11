@@ -26,11 +26,10 @@ import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
-import javax.inject.Provider
 import retrofit2.awaitResponse
 
 class TraktTrendingShowsDataSource @Inject constructor(
-    private val showService: Provider<Shows>,
+    private val showService: Lazy<Shows>,
     showMapper: TraktTrendingShowToTiviShow,
     entryMapper: TraktTrendingShowToTrendingShowEntry,
 ) : TrendingShowsDataSource {
@@ -40,7 +39,7 @@ class TraktTrendingShowsDataSource @Inject constructor(
         page: Int,
         pageSize: Int,
     ): List<Pair<TiviShow, TrendingShowEntry>> = withRetry {
-        showService.get()
+        showService.value
             // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
             .trending(page + 1, pageSize, Extended.NOSEASONS)
             .awaitResponse()

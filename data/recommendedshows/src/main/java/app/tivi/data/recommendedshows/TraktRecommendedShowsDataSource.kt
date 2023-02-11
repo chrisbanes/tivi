@@ -23,18 +23,17 @@ import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.services.Recommendations
 import javax.inject.Inject
-import javax.inject.Provider
 import retrofit2.awaitResponse
 
 class TraktRecommendedShowsDataSource @Inject constructor(
-    private val recommendationsService: Provider<Recommendations>,
+    private val recommendationsService: Lazy<Recommendations>,
     private val showMapper: TraktShowToTiviShow,
 ) : RecommendedShowsDataSource {
     override suspend operator fun invoke(
         page: Int,
         pageSize: Int,
     ): List<TiviShow> = withRetry {
-        recommendationsService.get()
+        recommendationsService.value
             // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
             .shows(page + 1, pageSize, null)
             .awaitResponse()

@@ -17,11 +17,11 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.EpisodeWatchEntry
+import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.HistoryEntry
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class TraktHistoryItemToEpisodeWatchEntry @Inject constructor() : Mapper<HistoryEntry, EpisodeWatchEntry> {
     override suspend fun map(from: HistoryEntry) = EpisodeWatchEntry(
         episodeId = 0,
