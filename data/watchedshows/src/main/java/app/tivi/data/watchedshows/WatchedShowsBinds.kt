@@ -16,11 +16,11 @@
 
 package app.tivi.data.watchedshows
 
-import me.tatarka.inject.annotations.Component
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class WatchedShowsBinds {
-    @Provides
-    fun bindWatchedShowsDataSource(source: TraktWatchedShowsDataSource): WatchedShowsDataSource = source
+interface WatchedShowsBinds {
+    val TraktWatchedShowsDataSource.bind: WatchedShowsDataSource
+        @ApplicationScope @Provides
+        get() = this
 }

@@ -16,11 +16,8 @@
 
 package app.tivi.data.followedshows
 
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class FollowedShowsBinds {
-    @Provides
-    fun bind(source: TraktFollowedShowsDataSource): FollowedShowsDataSource = source
+interface FollowedShowsBinds {
+    val TraktFollowedShowsDataSource.bind: FollowedShowsDataSource @Provides get() = this
 }

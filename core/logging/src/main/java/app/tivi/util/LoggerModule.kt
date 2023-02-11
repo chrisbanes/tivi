@@ -16,11 +16,11 @@
 
 package app.tivi.util
 
-import javax.inject.Singleton
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-abstract class LoggerModule {
-    @Singleton
+interface LoggerModule {
+    @ApplicationScope
     @Provides
     fun provideLogger(bind: TiviLogger): Logger = bind
 }

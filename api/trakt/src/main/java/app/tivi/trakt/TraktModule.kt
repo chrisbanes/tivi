@@ -16,6 +16,7 @@
 
 package app.tivi.trakt
 
+import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.services.Episodes
 import com.uwetrottmann.trakt5.services.Recommendations
@@ -24,16 +25,13 @@ import com.uwetrottmann.trakt5.services.Seasons
 import com.uwetrottmann.trakt5.services.Shows
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
-import dagger.Module
-import dagger.Provides
 import javax.inject.Named
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
-@Module(includes = [TraktServiceModule::class])
-object TraktModule {
+interface TraktModule {
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideTrakt(
         client: OkHttpClient,
         @Named("trakt-client-id") clientId: String,
@@ -44,10 +42,7 @@ object TraktModule {
             .apply { setOkHttpClientDefaults(this) }
             .build()
     }
-}
 
-@Module
-object TraktServiceModule {
     @Provides
     fun provideTraktUsersService(traktV2: TraktV2): Users = traktV2.users()
 

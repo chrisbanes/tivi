@@ -17,14 +17,9 @@
 package app.tivi.home
 
 import app.tivi.ContentViewSetter
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
-object StandardContentViewModule {
+interface ContentViewSetterModule {
     @Provides
     fun provideContentViewSetter(): ContentViewSetter = ContentViewSetter { activity, view ->
         activity.setContentView(view)

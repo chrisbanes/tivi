@@ -16,11 +16,8 @@
 
 package app.tivi.data.popularshows
 
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class PopularShowsBinds {
-    @Provides
-    fun bind(source: TraktPopularShowsDataSource): PopularShowsDataSource = source
+interface PopularShowsBinds {
+    val TraktPopularShowsDataSource.bind: PopularShowsDataSource @Provides get() = this
 }

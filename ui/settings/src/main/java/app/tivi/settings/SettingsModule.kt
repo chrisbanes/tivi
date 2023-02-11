@@ -21,20 +21,18 @@ package app.tivi.settings
 import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import app.tivi.inject.ApplicationScope
 import javax.inject.Named
-import javax.inject.Singleton
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
-@Component
-internal abstract class SettingsModule {
-    @Singleton
+interface SettingsModule {
+    @ApplicationScope
     @Provides
     fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind
 
     @Named("app")
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideAppPreferences(
         context: Application,
     ): SharedPreferences {

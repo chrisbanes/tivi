@@ -16,13 +16,11 @@
 
 package app.tivi.util
 
-import javax.inject.Singleton
-import me.tatarka.inject.annotations.Component
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class AnalyticsModule {
-    @Singleton
-    @Provides
-    internal fun provideAnalytics(bind: TiviFirebaseAnalytics): Analytics = bind
+interface AnalyticsModule {
+    val TiviFirebaseAnalytics.bind: Analytics
+        @Provides @ApplicationScope
+        get() = this
 }

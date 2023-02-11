@@ -16,6 +16,7 @@
 
 package app.tivi.home
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -37,6 +38,8 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.shouldUseDynamicColors
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.inject.ActivityComponent
+import app.tivi.inject.ApplicationComponent
 import app.tivi.settings.SettingsActivity
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Analytics
@@ -44,9 +47,14 @@ import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
 @AndroidEntryPoint
 class MainActivity : TiviActivity() {
+
+    // private val component = MainActivityComponent::c
+
     private lateinit var viewModel: MainActivityViewModel
 
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
@@ -99,6 +107,18 @@ class MainActivity : TiviActivity() {
             }
         }
     }
+}
+
+@Component
+abstract class MainActivityComponent(
+    @get:Provides override val activity: Activity,
+    @Component val applicationComponent: ApplicationComponent = ApplicationComponent.from(activity),
+) : ActivityComponent {
+    abstract val tiviDateFormatter: TiviDateFormatter
+    abstract val textCreator: TiviTextCreator
+    abstract val preferences: TiviPreferences
+    abstract val analytics: Analytics
+    abstract val contentViewSetter: ContentViewSetter
 }
 
 private fun ComponentActivity.setOwners() {

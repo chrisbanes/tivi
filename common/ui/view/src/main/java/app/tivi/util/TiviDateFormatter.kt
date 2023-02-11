@@ -17,37 +17,29 @@
 package app.tivi.util
 
 import android.text.format.DateUtils
-import app.tivi.inject.MediumDate
-import app.tivi.inject.MediumDateTime
-import app.tivi.inject.ShortDate
-import app.tivi.inject.ShortTime
-import dagger.Lazy
+import app.tivi.datetime.DateTimeFormatters
 import javax.inject.Inject
 import org.threeten.bp.LocalTime
 import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.Temporal
 
 class TiviDateFormatter @Inject constructor(
-    @ShortTime private val shortTimeFormatter: Lazy<DateTimeFormatter>,
-    @ShortDate private val shortDateFormatter: Lazy<DateTimeFormatter>,
-    @MediumDate private val mediumDateFormatter: Lazy<DateTimeFormatter>,
-    @MediumDateTime private val mediumDateTimeFormatter: Lazy<DateTimeFormatter>,
+    private val formatters: DateTimeFormatters,
 ) {
     fun formatShortDate(temporalAmount: Temporal): String {
-        return shortDateFormatter.get().format(temporalAmount)
+        return formatters.shortDate.format(temporalAmount)
     }
 
     fun formatMediumDate(temporalAmount: Temporal): String {
-        return mediumDateFormatter.get().format(temporalAmount)
+        return formatters.mediumDate.format(temporalAmount)
     }
 
     fun formatMediumDateTime(temporalAmount: Temporal): String {
-        return mediumDateTimeFormatter.get().format(temporalAmount)
+        return formatters.mediumDateTime.format(temporalAmount)
     }
 
     fun formatShortTime(localTime: LocalTime): String {
-        return shortTimeFormatter.get().format(localTime)
+        return formatters.shortTime.format(localTime)
     }
 
     fun formatShortRelativeTime(dateTime: OffsetDateTime): String {

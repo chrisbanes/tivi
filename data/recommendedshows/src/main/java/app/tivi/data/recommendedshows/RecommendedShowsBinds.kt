@@ -16,11 +16,8 @@
 
 package app.tivi.data.recommendedshows
 
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class RecommendedShowsBinds {
-    @Provides
-    fun bindRecommendedShowsDataSource(source: TraktRecommendedShowsDataSource): RecommendedShowsDataSource = source
+interface RecommendedShowsBinds {
+    val TraktRecommendedShowsDataSource.bind: RecommendedShowsDataSource @Provides get() = this
 }

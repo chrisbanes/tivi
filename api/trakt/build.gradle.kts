@@ -17,7 +17,7 @@
 
 plugins {
     id("kotlin")
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.android.lint)
 }
 
@@ -33,5 +33,6 @@ dependencies {
     implementation(libs.retrofit.retrofit)
     implementation(libs.retrofit.gsonConverter)
 
-    kapt(libs.dagger.compiler)
+    implementation(libs.kotlininject.runtime)
+    ksp(libs.kotlininject.compiler)
 }

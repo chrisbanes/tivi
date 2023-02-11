@@ -16,16 +16,17 @@
 
 package app.tivi.data.shows
 
-import me.tatarka.inject.annotations.Component
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class ShowsBinds {
-    @Provides
-    fun bindTraktShowDataSource(source: TraktShowDataSourceImpl): TraktShowDataSource = source
+interface ShowsBinds {
+    val TraktShowDataSourceImpl.bind: TraktShowDataSource
+        @ApplicationScope @Provides
+        get() = this
 
-    @Provides
-    fun bindTmdbShowDataSource(source: TmdbShowDataSourceImpl): TmdbShowDataSource = source
+    val TmdbShowDataSourceImpl.bind: TmdbShowDataSource
+        @ApplicationScope @Provides
+        get() = this
 }
 
 typealias TmdbShowDataSource = ShowDataSource

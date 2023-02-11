@@ -19,7 +19,6 @@ package app.tivi.inject
 import android.app.Application
 import java.io.File
 import java.util.concurrent.TimeUnit
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import okhttp3.Cache
 import okhttp3.ConnectionPool
@@ -27,13 +26,12 @@ import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
-@Component
-@ApplicationScope
-abstract class NetworkModule {
+interface NetworkModule {
     @Provides
+    @ApplicationScope
     fun provideOkHttpClient(
         context: Application,
-        interceptors: Set<@JvmSuppressWildcards Interceptor>,
+        interceptors: Set<Interceptor>,
     ): OkHttpClient = OkHttpClient.Builder()
         .apply { interceptors.forEach(::addInterceptor) }
         // Around 4¢ worth of storage in 2020

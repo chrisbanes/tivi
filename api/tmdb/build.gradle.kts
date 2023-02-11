@@ -17,7 +17,7 @@
 
 plugins {
     id("kotlin")
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.android.lint)
 }
 
@@ -31,5 +31,6 @@ dependencies {
 
     implementation(libs.okhttp.okhttp)
 
-    kapt(libs.dagger.compiler)
+    implementation(libs.kotlininject.runtime)
+    ksp(libs.kotlininject.compiler)
 }

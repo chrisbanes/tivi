@@ -24,7 +24,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import javax.inject.Inject
 
-internal class TiviFirebaseAnalytics @Inject constructor(
+class TiviFirebaseAnalytics @Inject constructor(
     private val context: Application,
 ) : Analytics {
     // False positive. Permissions are added via manifest

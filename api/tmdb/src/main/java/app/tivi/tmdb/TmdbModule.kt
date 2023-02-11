@@ -16,21 +16,20 @@
 
 package app.tivi.tmdb
 
+import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.Tmdb
-import dagger.Module
-import dagger.Provides
 import javax.inject.Named
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
-@Module
-object TmdbModule {
+interface TmdbModule {
+    @ApplicationScope
     @Provides
     fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
         return tmdbManager.getLatestImageProvider()
     }
 
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideTmdb(
         client: OkHttpClient,

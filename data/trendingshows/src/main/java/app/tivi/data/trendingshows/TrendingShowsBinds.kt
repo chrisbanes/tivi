@@ -16,11 +16,12 @@
 
 package app.tivi.data.trendingshows
 
-import me.tatarka.inject.annotations.Component
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class TrendingShowsBinds {
-    @Provides
-    fun bindTrendingShowsDataSource(source: TraktTrendingShowsDataSource): TrendingShowsDataSource = source
+interface TrendingShowsBinds {
+    val TraktTrendingShowsDataSource.bind: TrendingShowsDataSource
+        @ApplicationScope
+        @Provides
+        get() = this
 }

@@ -16,10 +16,10 @@
 
 package app.tivi.inject
 
-import dagger.Provides
+import me.tatarka.inject.annotations.Provides
 import okhttp3.Interceptor
 
-abstract class StandardNetworkModule {
+interface VariantAwareModule {
     /**
      * We have no interceptors in the standard release currently
      */

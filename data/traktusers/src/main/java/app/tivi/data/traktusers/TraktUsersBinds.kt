@@ -16,11 +16,11 @@
 
 package app.tivi.data.traktusers
 
-import me.tatarka.inject.annotations.Component
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-@Component
-abstract class TraktUsersBinds {
-    @Provides
-    fun bindUsersDataSource(source: TraktUsersDataSource): UsersDataSource = source
+interface TraktUsersBinds {
+    val TraktUsersDataSource.bind: UsersDataSource
+        @ApplicationScope @Provides
+        get() = this
 }
