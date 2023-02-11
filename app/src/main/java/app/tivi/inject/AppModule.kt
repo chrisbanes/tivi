@@ -31,8 +31,6 @@ import app.tivi.trakt.TraktOAuthInfo
 import app.tivi.util.AndroidPowerController
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.PowerController
-import java.io.File
-import javax.inject.Named
 import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
@@ -51,10 +49,6 @@ interface AppModule {
         computation = Dispatchers.Default,
         main = Dispatchers.Main,
     )
-
-    @Provides
-    @Named("cache")
-    fun provideCacheDir(context: Application): File = context.cacheDir
 
     @Provides
     @ApplicationScope

@@ -20,12 +20,13 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import app.tivi.trakt.AppAuthAuthState
 import app.tivi.trakt.AuthState
-import javax.inject.Named
 import me.tatarka.inject.annotations.Inject
+
+typealias AuthSharedPreferences = SharedPreferences
 
 @Inject
 class PreferencesAuthStore(
-    @Named("auth") private val authPrefs: Lazy<SharedPreferences>,
+    private val authPrefs: Lazy<AuthSharedPreferences>,
 ) : AuthStore {
     override suspend fun get(): AuthState? {
         return authPrefs.value

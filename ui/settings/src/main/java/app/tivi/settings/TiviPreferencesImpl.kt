@@ -22,7 +22,6 @@ import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.core.content.edit
 import app.tivi.settings.TiviPreferences.Theme
-import javax.inject.Named
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -34,7 +33,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TiviPreferencesImpl(
     private val context: Application,
-    @Named("app") private val sharedPreferences: SharedPreferences,
+    private val sharedPreferences: AppSharedPreferences,
 ) : TiviPreferences {
     private val defaultThemeValue = context.getString(R.string.pref_theme_default_value)
 

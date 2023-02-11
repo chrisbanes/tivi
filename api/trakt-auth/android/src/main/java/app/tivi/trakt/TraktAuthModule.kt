@@ -18,14 +18,13 @@ package app.tivi.trakt
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import android.net.Uri
 import androidx.core.net.toUri
 import app.tivi.app.ApplicationInfo
 import app.tivi.inject.ApplicationScope
+import app.tivi.trakt.store.AuthSharedPreferences
 import app.tivi.trakt.store.AuthStore
 import app.tivi.trakt.store.TiviAuthStore
-import javax.inject.Named
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Provides
@@ -75,10 +74,9 @@ interface TraktAuthModule {
 
     @ApplicationScope
     @Provides
-    @Named("auth")
     fun provideAuthSharedPrefs(
         application: Application,
-    ): SharedPreferences {
+    ): AuthSharedPreferences {
         return application.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
     }
 
