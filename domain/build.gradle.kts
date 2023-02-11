@@ -46,7 +46,7 @@ dependencies {
     api(projects.data.watchedshows)
 
     api(projects.api.trakt) // TraktAuthState
-    implementation(projects.api.traktAuth.common)
+    implementation(projects.api.traktAuth.api)
     implementation(projects.api.tmdb)
 
     api(libs.cashapp.paging.common)
