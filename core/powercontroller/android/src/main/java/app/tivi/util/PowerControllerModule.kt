@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package app.tivi.util
 
-package app.tivi.settings
-
-import android.app.Application
-import android.content.SharedPreferences
-import android.preference.PreferenceManager
-import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface SettingsModule {
-    @ApplicationScope
+interface PowerControllerModule {
     @Provides
-    fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind
-
-    @Provides
-    @ApplicationScope
-    fun provideAppPreferences(
-        context: Application,
-    ): AppSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    fun providePowerController(bind: AndroidPowerController): PowerController = bind
 }
-
-typealias AppSharedPreferences = SharedPreferences

@@ -19,7 +19,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -30,10 +30,15 @@ dependencies {
     implementation(projects.base)
     implementation(projects.common.ui.resources)
     implementation(projects.common.ui.view)
+    implementation(projects.core.powercontroller.android)
+    implementation(projects.core.preferences.android)
 
     implementation(libs.androidx.browser)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.hilt.library)
+
+    implementation(libs.kotlininject.runtime)
+    ksp(libs.kotlininject.compiler)
 }

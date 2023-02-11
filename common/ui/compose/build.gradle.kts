@@ -36,6 +36,7 @@ android {
 
 dependencies {
     api(projects.data.models)
+    api(projects.core.preferences.api)
     api(projects.common.imageloading)
 
     // TODO: Remove this dependency

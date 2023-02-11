@@ -150,14 +150,15 @@ android {
 }
 
 ksp {
-    arg("me.tatarka.inject.enableJavaxAnnotations", "true")
     arg("me.tatarka.inject.dumpGraph", "true")
 }
 
 dependencies {
     implementation(projects.base)
-    implementation(projects.core.analytics)
-    implementation(projects.core.logging)
+    implementation(projects.core.analytics.android)
+    implementation(projects.core.logging.android)
+    implementation(projects.core.powercontroller.android)
+    implementation(projects.core.preferences.android)
     implementation(projects.common.ui.view)
     implementation(projects.common.imageloading)
     implementation(projects.common.ui.compose)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,19 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "app.tivi.common.ui"
+    namespace = "app.tivi.core.powercontroller"
 }
 
 dependencies {
-    api(projects.data.models)
-    api(projects.common.ui.resources)
-    api(projects.core.logging.api)
-
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
-    implementation(libs.kotlin.coroutines.core)
+    api(projects.core.powercontroller.api)
+    api(projects.core.preferences.api)
 
     implementation(libs.androidx.core)
-    implementation(libs.androidx.emoji)
 
-    implementation(libs.hilt.library)
+    implementation(libs.kotlininject.runtime)
+    ksp(libs.kotlininject.compiler)
 }
