@@ -20,9 +20,7 @@ import android.app.Application
 import androidx.work.Configuration
 import app.tivi.inject.ApplicationComponent
 import app.tivi.inject.create
-import dagger.hilt.android.HiltAndroidApp
 
-@HiltAndroidApp
 class TiviApplication : Application(), Configuration.Provider {
 
     // FIXME @Inject lateinit var workerFactory: HiltWorkerFactory
