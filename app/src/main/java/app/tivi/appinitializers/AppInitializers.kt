@@ -16,14 +16,15 @@
 
 package app.tivi.appinitializers
 
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class AppInitializers @Inject constructor(
+@Inject
+class AppInitializers(
     private val initializers: Set<AppInitializer>,
 ) {
     fun init() {
-        initializers.forEach {
-            it.init()
+        for (initializer in initializers) {
+            initializer.init()
         }
     }
 }

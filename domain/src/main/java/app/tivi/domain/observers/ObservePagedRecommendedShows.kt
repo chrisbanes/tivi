@@ -24,10 +24,11 @@ import app.tivi.data.daos.RecommendedDao
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.RefreshOnlyRemoteMediator
 import app.tivi.domain.interactors.UpdateRecommendedShows
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObservePagedRecommendedShows @Inject constructor(
+@Inject
+class ObservePagedRecommendedShows(
     private val RecommendedShowsDao: RecommendedDao,
     private val updateRecommendedShows: UpdateRecommendedShows,
 ) : PagingInteractor<ObservePagedRecommendedShows.Params, RecommendedEntryWithShow>() {

@@ -19,10 +19,11 @@ package app.tivi.domain.observers
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.domain.SubjectInteractor
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObserveRelatedShows @Inject constructor(
+@Inject
+class ObserveRelatedShows(
     private val relatedShowsDao: RelatedShowsDao,
 ) : SubjectInteractor<ObserveRelatedShows.Params, List<RelatedShowEntryWithShow>>() {
 

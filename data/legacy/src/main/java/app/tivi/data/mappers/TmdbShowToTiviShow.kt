@@ -19,10 +19,11 @@ package app.tivi.data.mappers
 import app.tivi.data.models.TiviShow
 import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.entities.TvShow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class TmdbShowToTiviShow @Inject constructor() : Mapper<TvShow, TiviShow> {
+@Inject
+class TmdbShowToTiviShow() : Mapper<TvShow, TiviShow> {
     override suspend fun map(from: TvShow) = TiviShow(
         tmdbId = from.id,
         imdbId = from.external_ids?.imdb_id,

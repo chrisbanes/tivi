@@ -25,10 +25,11 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class UpdateTrendingShows @Inject constructor(
+@Inject
+class UpdateTrendingShows(
     private val trendingShowsStore: TrendingShowsStore,
     private val trendingShowsDao: TrendingDao,
     private val showStore: ShowStore,
@@ -44,6 +45,7 @@ class UpdateTrendingShows @Inject constructor(
                     val lastPage = trendingShowsDao.getLastPage()
                     if (lastPage != null) lastPage + 1 else 0
                 }
+
                 else -> 0
             }
 

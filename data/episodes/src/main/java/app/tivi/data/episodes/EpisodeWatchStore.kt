@@ -23,10 +23,11 @@ import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.util.syncerForEntity
 import app.tivi.util.Logger
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class EpisodeWatchStore @Inject constructor(
+@Inject
+class EpisodeWatchStore(
     private val transactionRunner: DatabaseTransactionRunner,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     logger: Logger,

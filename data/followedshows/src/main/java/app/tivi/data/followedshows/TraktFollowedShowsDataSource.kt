@@ -31,10 +31,11 @@ import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.ListPrivacy
 import com.uwetrottmann.trakt5.services.Users
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TraktFollowedShowsDataSource @Inject constructor(
+@Inject
+class TraktFollowedShowsDataSource(
     private val usersService: Lazy<Users>,
     listEntryToShowMapper: TraktListEntryToTiviShow,
     listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry,

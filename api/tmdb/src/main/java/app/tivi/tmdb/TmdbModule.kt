@@ -18,7 +18,6 @@ package app.tivi.tmdb
 
 import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.Tmdb
-import javax.inject.Named
 import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
@@ -33,8 +32,8 @@ interface TmdbModule {
     @Provides
     fun provideTmdb(
         client: OkHttpClient,
-        @Named("tmdb-api") apiKey: String,
-    ): Tmdb = object : Tmdb(apiKey) {
+        tmdbOAuthInfo: TmdbOAuthInfo,
+    ): Tmdb = object : Tmdb(tmdbOAuthInfo.apiKey) {
         override fun okHttpClient(): OkHttpClient = client.newBuilder()
             .apply { setOkHttpClientDefaults(this) }
             .build()

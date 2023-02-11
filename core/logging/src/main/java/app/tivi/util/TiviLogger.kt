@@ -20,10 +20,11 @@ import android.os.Build
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.util.regex.Pattern
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
 
-class TiviLogger @Inject constructor() : Logger {
+@Inject
+class TiviLogger() : Logger {
     override fun setup(debugMode: Boolean) {
         if (debugMode) {
             Timber.plant(TiviDebugTree())

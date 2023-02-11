@@ -19,10 +19,11 @@ package app.tivi.domain.interactors
 import app.tivi.domain.Interactor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class UpdateTmdbConfig @Inject constructor(
+@Inject
+class UpdateTmdbConfig(
     private val tmdbManager: TmdbManager,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Unit>() {

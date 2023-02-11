@@ -20,10 +20,11 @@ import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class UpdateShowImages @Inject constructor(
+@Inject
+class UpdateShowImages(
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateShowImages.Params>() {

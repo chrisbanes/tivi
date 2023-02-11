@@ -25,7 +25,6 @@ import com.uwetrottmann.trakt5.services.Seasons
 import com.uwetrottmann.trakt5.services.Shows
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
-import javax.inject.Named
 import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
@@ -34,10 +33,12 @@ interface TraktModule {
     @ApplicationScope
     fun provideTrakt(
         client: OkHttpClient,
-        @Named("trakt-client-id") clientId: String,
-        @Named("trakt-client-secret") clientSecret: String,
-        @Named("trakt-auth-redirect-uri") redirectUri: String,
-    ): TraktV2 = object : TraktV2(clientId, clientSecret, redirectUri) {
+        oauthInfo: TraktOAuthInfo,
+    ): TraktV2 = object : TraktV2(
+        oauthInfo.clientId,
+        oauthInfo.clientSecret,
+        oauthInfo.redirectUri,
+    ) {
         override fun okHttpClient(): OkHttpClient = client.newBuilder()
             .apply { setOkHttpClientDefaults(this) }
             .build()

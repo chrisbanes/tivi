@@ -19,8 +19,9 @@ package app.tivi.data.episodes
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.lastrequests.EntityLastRequestStore
 import app.tivi.data.models.Request
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class EpisodeLastRequestStore @Inject constructor(
+@Inject
+class EpisodeLastRequestStore(
     dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.EPISODE_DETAILS, dao)

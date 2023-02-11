@@ -18,9 +18,10 @@ package app.tivi.data.mappers
 
 import app.tivi.data.models.ShowStatus
 import com.uwetrottmann.trakt5.enums.Status
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class TraktStatusToShowStatus @Inject constructor() : Mapper<Status, ShowStatus> {
+@Inject
+class TraktStatusToShowStatus() : Mapper<Status, ShowStatus> {
     override suspend fun map(from: Status) = when (from) {
         Status.ENDED -> ShowStatus.ENDED
         Status.RETURNING -> ShowStatus.RETURNING

@@ -22,9 +22,10 @@ import android.os.Bundle
 import app.tivi.extensions.unsafeLazy
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class TiviFirebaseAnalytics @Inject constructor(
+@Inject
+class TiviFirebaseAnalytics(
     private val context: Application,
 ) : Analytics {
     // False positive. Permissions are added via manifest

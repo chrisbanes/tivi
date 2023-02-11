@@ -17,9 +17,10 @@
 package app.tivi.trakt.store
 
 import app.tivi.trakt.AuthState
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class TiviAuthStore @Inject constructor(
+@Inject
+class TiviAuthStore(
     private val preferencesAuthStore: PreferencesAuthStore,
     private val blockStoreAuthStore: BlockStoreAuthStore,
 ) : AuthStore {

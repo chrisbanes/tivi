@@ -23,10 +23,11 @@ import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.daos.LibraryShowsDao
 import app.tivi.data.models.SortOption
 import app.tivi.domain.PagingInteractor
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObservePagedLibraryShows @Inject constructor(
+@Inject
+class ObservePagedLibraryShows(
     private val libraryShowsDao: LibraryShowsDao,
 ) : PagingInteractor<ObservePagedLibraryShows.Parameters, LibraryShow>() {
 

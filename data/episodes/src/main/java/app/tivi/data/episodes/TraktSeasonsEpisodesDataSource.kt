@@ -38,12 +38,13 @@ import com.uwetrottmann.trakt5.enums.HistoryType
 import com.uwetrottmann.trakt5.services.Seasons
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 import retrofit2.awaitResponse
 
-class TraktSeasonsEpisodesDataSource @Inject constructor(
+@Inject
+class TraktSeasonsEpisodesDataSource(
     private val showIdToTraktIdMapper: ShowIdToTraktIdMapper,
     private val seasonIdToTraktIdMapper: SeasonIdToTraktIdMapper,
     private val episodeIdToTraktIdMapper: EpisodeIdToTraktIdMapper,

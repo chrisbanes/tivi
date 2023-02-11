@@ -21,10 +21,11 @@ import app.tivi.data.daos.ShowFtsDao
 import app.tivi.data.search.SearchRepository
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class SearchShows @Inject constructor(
+@Inject
+class SearchShows(
     private val searchRepository: SearchRepository,
     private val showFtsDao: ShowFtsDao,
     private val dispatchers: AppCoroutineDispatchers,
@@ -41,6 +42,7 @@ class SearchShows @Inject constructor(
                     throw Exception("Error while searching database with query: ${params.query}", e)
                 }
             }
+
             else -> emptyList()
         }
     }

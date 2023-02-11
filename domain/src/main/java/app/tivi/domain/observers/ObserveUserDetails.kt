@@ -19,10 +19,11 @@ package app.tivi.domain.observers
 import app.tivi.data.models.TraktUser
 import app.tivi.data.traktusers.TraktUsersRepository
 import app.tivi.domain.SubjectInteractor
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObserveUserDetails @Inject constructor(
+@Inject
+class ObserveUserDetails(
     private val repository: TraktUsersRepository,
 ) : SubjectInteractor<ObserveUserDetails.Params, TraktUser?>() {
 

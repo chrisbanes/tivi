@@ -20,10 +20,11 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.Season as TraktSeason
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class TraktSeasonToSeasonWithEpisodes @Inject constructor(
+@Inject
+class TraktSeasonToSeasonWithEpisodes(
     private val seasonMapper: TraktSeasonToSeason,
     private val episoderMapper: TraktEpisodeToEpisode,
 ) : Mapper<TraktSeason, Pair<Season, List<Episode>>> {

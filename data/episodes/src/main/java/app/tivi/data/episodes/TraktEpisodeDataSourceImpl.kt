@@ -23,10 +23,11 @@ import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Episodes
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TraktEpisodeDataSourceImpl @Inject constructor(
+@Inject
+class TraktEpisodeDataSourceImpl(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val service: Lazy<Episodes>,
     private val episodeMapper: TraktEpisodeToEpisode,

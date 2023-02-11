@@ -33,16 +33,17 @@ import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
-import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 
 @ApplicationScope
-class SeasonsEpisodesRepository @Inject constructor(
+@Inject
+class SeasonsEpisodesRepository(
     private val episodeWatchStore: EpisodeWatchStore,
     private val episodeWatchLastLastRequestStore: EpisodeWatchLastRequestStore,
     private val episodeLastRequestStore: EpisodeLastRequestStore,

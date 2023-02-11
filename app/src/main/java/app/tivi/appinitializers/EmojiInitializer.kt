@@ -20,9 +20,10 @@ import android.app.Application
 import androidx.core.provider.FontRequest
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class EmojiInitializer @Inject constructor(
+@Inject
+class EmojiInitializer(
     private val application: Application,
 ) : AppInitializer {
     override fun init() {

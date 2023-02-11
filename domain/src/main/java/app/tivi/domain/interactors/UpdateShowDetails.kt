@@ -22,10 +22,11 @@ import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class UpdateShowDetails @Inject constructor(
+@Inject
+class UpdateShowDetails(
     private val showStore: ShowStore,
     private val lastRequestStore: ShowLastRequestStore,
     private val dispatchers: AppCoroutineDispatchers,

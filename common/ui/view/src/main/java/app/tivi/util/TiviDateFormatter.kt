@@ -18,12 +18,13 @@ package app.tivi.util
 
 import android.text.format.DateUtils
 import app.tivi.datetime.DateTimeFormatters
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.LocalTime
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.temporal.Temporal
 
-class TiviDateFormatter @Inject constructor(
+@Inject
+class TiviDateFormatter(
     private val formatters: DateTimeFormatters,
 ) {
     fun formatShortDate(temporalAmount: Temporal): String {

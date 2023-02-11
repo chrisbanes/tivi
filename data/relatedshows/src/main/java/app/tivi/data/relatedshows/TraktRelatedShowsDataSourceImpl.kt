@@ -27,10 +27,11 @@ import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TraktRelatedShowsDataSourceImpl @Inject constructor(
+@Inject
+class TraktRelatedShowsDataSourceImpl(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val showService: Lazy<Shows>,
     showMapper: TraktShowToTiviShow,

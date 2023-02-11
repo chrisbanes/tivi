@@ -35,7 +35,6 @@ import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -46,9 +45,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
 @HiltViewModel
-internal class UpNextViewModel @Inject constructor(
+@Inject
+internal class UpNextViewModel(
     private val observePagedUpNextShows: ObservePagedUpNextShows,
     private val updateUpNextEpisodes: UpdateUpNextEpisodes,
     observeTraktAuthState: ObserveTraktAuthState,

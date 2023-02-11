@@ -19,8 +19,9 @@ package app.tivi.data.relatedshows
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.lastrequests.EntityLastRequestStore
 import app.tivi.data.models.Request
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class RelatedShowsLastRequestStore @Inject constructor(
+@Inject
+class RelatedShowsLastRequestStore(
     dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.RELATED_SHOWS, dao)

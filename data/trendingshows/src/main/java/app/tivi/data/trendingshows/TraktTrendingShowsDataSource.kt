@@ -25,10 +25,11 @@ import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TraktTrendingShowsDataSource @Inject constructor(
+@Inject
+class TraktTrendingShowsDataSource(
     private val showService: Lazy<Shows>,
     showMapper: TraktTrendingShowToTiviShow,
     entryMapper: TraktTrendingShowToTrendingShowEntry,

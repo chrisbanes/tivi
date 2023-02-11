@@ -21,7 +21,6 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.store.AuthStore
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.TraktV2
-import javax.inject.Inject
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,10 +28,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
 @OptIn(DelicateCoroutinesApi::class)
 @ApplicationScope
-class TraktManager @Inject constructor(
+@Inject
+class TraktManager(
     private val dispatchers: AppCoroutineDispatchers,
     private val showTasks: ShowTasks,
     private val traktClient: Lazy<TraktV2>,

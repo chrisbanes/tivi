@@ -25,6 +25,9 @@ import app.tivi.appinitializers.PreferencesInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
 import app.tivi.appinitializers.TmdbInitializer
+import app.tivi.tmdb.TmdbOAuthInfo
+import app.tivi.trakt.TraktConstants
+import app.tivi.trakt.TraktOAuthInfo
 import app.tivi.util.AndroidPowerController
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.PowerController
@@ -54,16 +57,18 @@ interface AppModule {
     fun provideCacheDir(context: Application): File = context.cacheDir
 
     @Provides
-    @Named("tmdb-api")
-    fun provideTmdbApiKey(): String = BuildConfig.TMDB_API_KEY
+    @ApplicationScope
+    fun provideTmdbApiKey(): TmdbOAuthInfo = TmdbOAuthInfo(BuildConfig.TMDB_API_KEY)
 
     @Provides
-    @Named("trakt-client-id")
-    fun provideTraktClientId(): String = BuildConfig.TRAKT_CLIENT_ID
-
-    @Provides
-    @Named("trakt-client-secret")
-    fun provideTraktClientSecret(): String = BuildConfig.TRAKT_CLIENT_SECRET
+    @ApplicationScope
+    fun provideTraktOAuthInfo(
+        appInfo: ApplicationInfo,
+    ): TraktOAuthInfo = TraktOAuthInfo(
+        clientId = BuildConfig.TRAKT_CLIENT_ID,
+        clientSecret = BuildConfig.TRAKT_CLIENT_SECRET,
+        redirectUri = "${appInfo.packageName}://${TraktConstants.URI_AUTH_CALLBACK_PATH}",
+    )
 
     @Provides
     fun providePowerController(bind: AndroidPowerController): PowerController = bind

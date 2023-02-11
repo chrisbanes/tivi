@@ -18,9 +18,10 @@ package app.tivi.appinitializers
 
 import app.tivi.BuildConfig
 import app.tivi.util.Logger
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class TimberInitializer @Inject constructor(
+@Inject
+class TimberInitializer(
     private val logger: Logger,
 ) : AppInitializer {
     override fun init() = logger.setup(BuildConfig.DEBUG)

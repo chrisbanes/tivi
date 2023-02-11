@@ -23,11 +23,12 @@ import app.tivi.data.watchedshows.WatchedShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import javax.inject.Inject
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class UpdateWatchedShows @Inject constructor(
+@Inject
+class UpdateWatchedShows(
     private val watchedShowsStore: WatchedShowsStore,
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,

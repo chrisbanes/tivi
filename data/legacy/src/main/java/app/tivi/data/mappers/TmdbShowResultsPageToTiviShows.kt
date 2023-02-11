@@ -21,10 +21,11 @@ import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.entities.TvShowResultsPage
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class TmdbShowResultsPageToTiviShows @Inject constructor(
+@Inject
+class TmdbShowResultsPageToTiviShows(
     private val tmdbShowMapper: TmdbBaseShowToTiviShow,
 ) : Mapper<TvShowResultsPage, List<Pair<TiviShow, List<ShowTmdbImage>>>> {
     override suspend fun map(from: TvShowResultsPage): List<Pair<TiviShow, List<ShowTmdbImage>>> {

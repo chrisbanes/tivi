@@ -22,10 +22,11 @@ import app.tivi.data.models.Episode
 import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TmdbEpisodeDataSourceImpl @Inject constructor(
+@Inject
+class TmdbEpisodeDataSourceImpl(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
     private val episodeMapper: TmdbEpisodeToEpisode,

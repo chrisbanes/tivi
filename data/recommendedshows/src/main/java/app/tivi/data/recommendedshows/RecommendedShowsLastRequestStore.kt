@@ -19,8 +19,9 @@ package app.tivi.data.recommendedshows
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.lastrequests.GroupLastRequestStore
 import app.tivi.data.models.Request
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class RecommendedShowsLastRequestStore @Inject constructor(
+@Inject
+class RecommendedShowsLastRequestStore(
     dao: LastRequestDao,
 ) : GroupLastRequestStore(Request.RECOMMENDED_SHOWS, dao)

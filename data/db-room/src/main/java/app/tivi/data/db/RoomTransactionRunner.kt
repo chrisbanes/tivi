@@ -18,9 +18,10 @@ package app.tivi.data.db
 
 import androidx.room.withTransaction
 import app.tivi.data.TiviRoomDatabase
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class RoomTransactionRunner @Inject constructor(
+@Inject
+class RoomTransactionRunner(
     private val db: TiviRoomDatabase,
 ) : DatabaseTransactionRunner {
     override suspend operator fun <T> invoke(block: suspend () -> T): T {

@@ -24,10 +24,11 @@ import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Sync
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TraktWatchedShowsDataSource @Inject constructor(
+@Inject
+class TraktWatchedShowsDataSource(
     private val syncService: Lazy<Sync>,
     showMapper: TraktBaseShowToTiviShow,
 ) : WatchedShowsDataSource {

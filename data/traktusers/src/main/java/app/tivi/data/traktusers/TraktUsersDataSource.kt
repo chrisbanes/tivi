@@ -23,10 +23,11 @@ import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Users
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TraktUsersDataSource @Inject constructor(
+@Inject
+class TraktUsersDataSource(
     private val usersService: Lazy<Users>,
     private val mapper: UserToTraktUser,
 ) : UsersDataSource {
