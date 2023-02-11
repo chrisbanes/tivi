@@ -53,14 +53,14 @@ interface TraktAuthModule {
     @Provides
     fun provideAuthRequest(
         serviceConfig: AuthorizationServiceConfiguration,
-        @Named("trakt-client-id") clientId: String,
-        @Named("trakt-auth-redirect-uri") redirectUri: String,
+        oauthInfo: TraktOAuthInfo,
+        appInfo: ApplicationInfo,
     ): AuthorizationRequest {
         return AuthorizationRequest.Builder(
             serviceConfig,
-            clientId,
+            oauthInfo.clientId,
             ResponseTypeValues.CODE,
-            redirectUri.toUri(),
+            oauthInfo.redirectUri.toUri(),
         ).apply {
             // Disable PKCE since Trakt does not support it
             setCodeVerifier(null)
@@ -68,19 +68,10 @@ interface TraktAuthModule {
     }
 
     @ApplicationScope
-    @Named("trakt-auth-redirect-uri")
-    @Provides
-    fun provideAuthRedirectUri(
-        info: ApplicationInfo,
-    ): String = "${info.packageName}://${TraktConstants.URI_AUTH_CALLBACK_PATH}"
-
-    @ApplicationScope
     @Provides
     fun provideClientAuth(
-        @Named("trakt-client-secret") clientSecret: String,
-    ): ClientAuthentication {
-        return ClientSecretBasic(clientSecret)
-    }
+        info: TraktOAuthInfo,
+    ): ClientAuthentication = ClientSecretBasic(info.clientSecret)
 
     @ApplicationScope
     @Provides

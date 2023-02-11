@@ -30,13 +30,14 @@ import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.TiviShow
 import app.tivi.ui.GenreStringer
 import java.util.Locale
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.TextStyle
 
-class TiviTextCreator @Inject constructor(
+@Inject
+class TiviTextCreator(
     private val context: Activity,
     private val tiviDateFormatter: TiviDateFormatter,
 ) {
@@ -68,9 +69,11 @@ class TiviTextCreator @Inject constructor(
                 episodeCount - watchedEpisodeCount,
             ).parseAsHtml()
         }
+
         watchedEpisodeCount > 0 -> {
             context.getString(UiR.string.followed_watch_stats_complete)
         }
+
         else -> ""
     }
 
@@ -89,6 +92,7 @@ class TiviTextCreator @Inject constructor(
         season.number != null -> {
             context.getString(UiR.string.season_title_fallback, season.number)
         }
+
         else -> ""
     }
 

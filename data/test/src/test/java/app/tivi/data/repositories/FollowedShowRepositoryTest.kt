@@ -39,9 +39,9 @@ import com.uwetrottmann.trakt5.entities.TraktList
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import io.mockk.coEvery
-import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import me.tatarka.inject.annotations.Inject
 import org.junit.Before
 import org.junit.Test
 

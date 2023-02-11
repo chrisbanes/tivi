@@ -20,9 +20,10 @@ import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.lastrequests.GroupLastRequestStore
 import app.tivi.data.models.Request
 import app.tivi.inject.ApplicationScope
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class TrendingShowsLastRequestStore @Inject constructor(
+@Inject
+class TrendingShowsLastRequestStore(
     dao: LastRequestDao,
 ) : GroupLastRequestStore(Request.TRENDING_SHOWS, dao)

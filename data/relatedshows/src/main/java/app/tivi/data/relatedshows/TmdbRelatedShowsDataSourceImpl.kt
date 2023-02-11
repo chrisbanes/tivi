@@ -27,10 +27,11 @@ import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.BaseTvShow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TmdbRelatedShowsDataSourceImpl @Inject constructor(
+@Inject
+class TmdbRelatedShowsDataSourceImpl(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
     showMapper: TmdbBaseShowToTiviShow,

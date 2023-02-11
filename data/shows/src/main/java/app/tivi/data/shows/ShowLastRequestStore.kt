@@ -20,9 +20,10 @@ import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.lastrequests.EntityLastRequestStore
 import app.tivi.data.models.Request
 import app.tivi.inject.ApplicationScope
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class ShowLastRequestStore @Inject constructor(
+@Inject
+class ShowLastRequestStore(
     dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.SHOW_DETAILS, dao)

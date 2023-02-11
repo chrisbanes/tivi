@@ -20,13 +20,14 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
 @ApplicationScope
-class TmdbManager @Inject constructor(
+@Inject
+class TmdbManager(
     private val dispatchers: AppCoroutineDispatchers,
     private val tmdbClient: Tmdb,
 ) {

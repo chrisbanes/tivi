@@ -24,10 +24,11 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class UpdateRelatedShows @Inject constructor(
+@Inject
+class UpdateRelatedShows(
     private val relatedShowsStore: RelatedShowsStore,
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,

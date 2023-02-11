@@ -19,10 +19,11 @@ package app.tivi.domain.observers
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import app.tivi.data.daos.RecommendedDao
 import app.tivi.domain.SubjectInteractor
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObserveRecommendedShows @Inject constructor(
+@Inject
+class ObserveRecommendedShows(
     private val recommendedDao: RecommendedDao,
 ) : SubjectInteractor<ObserveRecommendedShows.Params, List<RecommendedEntryWithShow>>() {
 

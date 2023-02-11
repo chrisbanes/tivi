@@ -22,10 +22,11 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TmdbShowImagesDataSource @Inject constructor(
+@Inject
+class TmdbShowImagesDataSource(
     private val tmdb: Tmdb,
     private val mapper: TmdbImagesToShowImages,
 ) : ShowImagesDataSource {

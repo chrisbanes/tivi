@@ -20,10 +20,11 @@ import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.models.ActionDate
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class ChangeSeasonWatchedStatus @Inject constructor(
+@Inject
+class ChangeSeasonWatchedStatus(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ChangeSeasonWatchedStatus.Params>() {
@@ -38,6 +39,7 @@ class ChangeSeasonWatchedStatus @Inject constructor(
                         params.actionDate,
                     )
                 }
+
                 Action.UNWATCH -> {
                     seasonsEpisodesRepository.markSeasonUnwatched(params.seasonId)
                 }

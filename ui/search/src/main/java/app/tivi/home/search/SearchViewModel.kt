@@ -23,7 +23,6 @@ import app.tivi.api.UiMessageManager
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.util.ObservableLoadingCounter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,9 +33,11 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
 @HiltViewModel
-internal class SearchViewModel @Inject constructor(
+@Inject
+internal class SearchViewModel(
     private val searchShows: SearchShows,
 ) : ViewModel() {
     private val searchQuery = MutableStateFlow("")

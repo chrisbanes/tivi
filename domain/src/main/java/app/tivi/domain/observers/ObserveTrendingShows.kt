@@ -19,10 +19,11 @@ package app.tivi.domain.observers
 import app.tivi.data.compoundmodels.TrendingEntryWithShow
 import app.tivi.data.daos.TrendingDao
 import app.tivi.domain.SubjectInteractor
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObserveTrendingShows @Inject constructor(
+@Inject
+class ObserveTrendingShows(
     private val trendingShowsDao: TrendingDao,
 ) : SubjectInteractor<ObserveTrendingShows.Params, List<TrendingEntryWithShow>>() {
 

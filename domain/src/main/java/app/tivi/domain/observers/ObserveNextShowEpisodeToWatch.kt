@@ -22,10 +22,11 @@ import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.domain.SubjectInteractor
 import app.tivi.extensions.flatMapLatestNullable
 import app.tivi.extensions.mapNullable
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObserveNextShowEpisodeToWatch @Inject constructor(
+@Inject
+class ObserveNextShowEpisodeToWatch(
     private val followedShowsRepository: FollowedShowsRepository,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
 ) : SubjectInteractor<Unit, EpisodeWithSeasonWithShow?>() {

@@ -19,10 +19,11 @@ package app.tivi.domain.interactors
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class UpdateEpisodeDetails @Inject constructor(
+@Inject
+class UpdateEpisodeDetails(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateEpisodeDetails.Params>() {

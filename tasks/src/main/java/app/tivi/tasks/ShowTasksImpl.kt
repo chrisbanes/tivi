@@ -25,9 +25,10 @@ import androidx.work.WorkManager
 import app.tivi.actions.ShowTasks
 import app.tivi.extensions.fluentIf
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class ShowTasksImpl @Inject constructor(
+@Inject
+class ShowTasksImpl(
     private val workManager: WorkManager,
 ) : ShowTasks {
     override fun syncFollowedShows(deferUntilIdle: Boolean) {

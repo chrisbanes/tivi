@@ -22,10 +22,11 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.services.Recommendations
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TraktRecommendedShowsDataSource @Inject constructor(
+@Inject
+class TraktRecommendedShowsDataSource(
     private val recommendationsService: Lazy<Recommendations>,
     private val showMapper: TraktShowToTiviShow,
 ) : RecommendedShowsDataSource {

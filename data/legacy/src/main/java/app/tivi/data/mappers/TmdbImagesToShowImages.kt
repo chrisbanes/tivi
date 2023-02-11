@@ -21,10 +21,11 @@ import app.tivi.data.models.ShowTmdbImage
 import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.entities.Image
 import com.uwetrottmann.tmdb2.entities.TvShow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class TmdbImagesToShowImages @Inject constructor() : Mapper<TvShow, List<ShowTmdbImage>> {
+@Inject
+class TmdbImagesToShowImages() : Mapper<TvShow, List<ShowTmdbImage>> {
     override suspend fun map(from: TvShow): List<ShowTmdbImage> {
         val results = ArrayList<ShowTmdbImage>()
         from.images?.posters?.mapTo(results) { image ->

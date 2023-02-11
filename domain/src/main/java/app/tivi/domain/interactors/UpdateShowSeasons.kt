@@ -21,11 +21,12 @@ import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowSeasons.Params
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class UpdateShowSeasons @Inject constructor(
+@Inject
+class UpdateShowSeasons(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val followedShowsRepository: FollowedShowsRepository,
     private val dispatchers: AppCoroutineDispatchers,

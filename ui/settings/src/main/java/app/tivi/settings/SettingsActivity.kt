@@ -23,11 +23,10 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import app.tivi.util.PowerController
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingsActivity : ComponentActivity() {
-    @Inject lateinit var powerController: PowerController
+    lateinit var powerController: PowerController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

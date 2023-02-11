@@ -19,10 +19,11 @@ package app.tivi.domain.interactors
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import java.io.File
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class DeleteFolder @Inject constructor(
+@Inject
+class DeleteFolder(
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<DeleteFolder.Params>() {
     override suspend fun doWork(params: Params) {

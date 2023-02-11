@@ -22,10 +22,11 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.tmdb2.Tmdb
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TmdbSearchDataSource @Inject constructor(
+@Inject
+class TmdbSearchDataSource(
     private val tmdb: Tmdb,
     private val mapper: TmdbShowResultsPageToTiviShows,
 ) : SearchDataSource {

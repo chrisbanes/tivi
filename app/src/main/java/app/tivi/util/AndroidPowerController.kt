@@ -28,16 +28,17 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
 import app.tivi.inject.ApplicationScope
 import app.tivi.settings.TiviPreferences
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class AndroidPowerController @Inject constructor(
+@Inject
+class AndroidPowerController(
     private val context: Application,
     private val preferences: TiviPreferences,
 ) : PowerController {
@@ -59,12 +60,15 @@ class AndroidPowerController @Inject constructor(
         preferences.useLessData -> {
             SaveData.Enabled(SaveDataReason.PREFERENCE)
         }
+
         powerManager.isPowerSaveMode -> {
             SaveData.Enabled(SaveDataReason.SYSTEM_POWER_SAVER)
         }
+
         Build.VERSION.SDK_INT >= 24 && isBackgroundDataRestricted() -> {
             SaveData.Enabled(SaveDataReason.SYSTEM_DATA_SAVER)
         }
+
         else -> SaveData.Disabled
     }
 

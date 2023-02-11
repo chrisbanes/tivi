@@ -17,9 +17,10 @@
 package app.tivi.appinitializers
 
 import app.tivi.settings.TiviPreferences
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class PreferencesInitializer @Inject constructor(
+@Inject
+class PreferencesInitializer(
     private val prefs: TiviPreferences,
 ) : AppInitializer {
     override fun init() {

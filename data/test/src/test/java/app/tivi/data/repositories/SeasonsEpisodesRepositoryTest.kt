@@ -43,11 +43,11 @@ import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import io.mockk.coEvery
-import javax.inject.Inject
 import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
+import me.tatarka.inject.annotations.Inject
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

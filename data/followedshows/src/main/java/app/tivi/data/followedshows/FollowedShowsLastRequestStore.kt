@@ -19,8 +19,9 @@ package app.tivi.data.followedshows
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.lastrequests.GroupLastRequestStore
 import app.tivi.data.models.Request
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class FollowedShowsLastRequestStore @Inject constructor(
+@Inject
+class FollowedShowsLastRequestStore(
     dao: LastRequestDao,
 ) : GroupLastRequestStore(Request.FOLLOWED_SHOWS, dao)

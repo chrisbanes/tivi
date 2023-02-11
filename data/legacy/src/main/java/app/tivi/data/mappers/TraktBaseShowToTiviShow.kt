@@ -19,10 +19,11 @@ package app.tivi.data.mappers
 import app.tivi.data.models.TiviShow
 import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.BaseShow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class TraktBaseShowToTiviShow @Inject constructor(
+@Inject
+class TraktBaseShowToTiviShow(
     private val showMapper: TraktShowToTiviShow,
 ) : Mapper<BaseShow, TiviShow> {
     override suspend fun map(from: BaseShow): TiviShow {

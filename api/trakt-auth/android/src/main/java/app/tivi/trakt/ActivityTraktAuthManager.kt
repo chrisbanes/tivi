@@ -19,13 +19,14 @@ package app.tivi.trakt
 import android.app.Application
 import android.content.Intent
 import app.tivi.util.Logger
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
 
-class ActivityTraktAuthManager @Inject constructor(
+@Inject
+class ActivityTraktAuthManager(
     context: Application,
     private val traktManager: TraktManager,
     private val requestProvider: Lazy<AuthorizationRequest>,
@@ -52,6 +53,7 @@ class ActivityTraktAuthManager @Inject constructor(
                     traktManager.onNewAuthState(state)
                 }
             }
+
             error != null -> logger.d(error, "AuthException")
         }
     }

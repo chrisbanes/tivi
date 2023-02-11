@@ -21,11 +21,12 @@ import app.tivi.appinitializers.AppInitializer
 import coil.Coil
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import okhttp3.OkHttpClient
 
 @OptIn(ExperimentalCoilApi::class)
-class CoilAppInitializer @Inject constructor(
+@Inject
+class CoilAppInitializer(
     private val application: Application,
     private val tmdbImageEntityInterceptor: TmdbImageEntityCoilInterceptor,
     private val episodeEntityInterceptor: EpisodeEntityCoilInterceptor,

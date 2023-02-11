@@ -25,10 +25,11 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdatePopularShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class UpdatePopularShows @Inject constructor(
+@Inject
+class UpdatePopularShows(
     private val popularShowStore: PopularShowsStore,
     private val popularDao: PopularDao,
     private val showStore: ShowStore,
@@ -44,6 +45,7 @@ class UpdatePopularShows @Inject constructor(
                     val lastPage = popularDao.getLastPage()
                     if (lastPage != null) lastPage + 1 else 0
                 }
+
                 else -> 0
             }
 

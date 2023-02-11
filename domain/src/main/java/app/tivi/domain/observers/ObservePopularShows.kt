@@ -19,10 +19,11 @@ package app.tivi.domain.observers
 import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.data.daos.PopularDao
 import app.tivi.domain.SubjectInteractor
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObservePopularShows @Inject constructor(
+@Inject
+class ObservePopularShows(
     private val popularShowsRepository: PopularDao,
 ) : SubjectInteractor<ObservePopularShows.Params, List<PopularEntryWithShow>>() {
 

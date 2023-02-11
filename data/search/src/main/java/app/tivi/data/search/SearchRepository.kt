@@ -23,10 +23,11 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.saveImagesIfEmpty
 import app.tivi.inject.ApplicationScope
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class SearchRepository @Inject constructor(
+@Inject
+class SearchRepository(
     private val showTmdbImagesDao: ShowTmdbImagesDao,
     private val showDao: TiviShowDao,
     private val tmdbDataSource: SearchDataSource,

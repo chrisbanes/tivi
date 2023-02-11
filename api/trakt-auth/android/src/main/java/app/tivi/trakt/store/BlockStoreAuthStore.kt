@@ -23,10 +23,11 @@ import com.google.android.gms.auth.blockstore.Blockstore
 import com.google.android.gms.auth.blockstore.StoreBytesData
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
+import me.tatarka.inject.annotations.Inject
 
-class BlockStoreAuthStore @Inject constructor(
+@Inject
+class BlockStoreAuthStore(
     private val context: Application,
 ) : AuthStore {
     private val client by lazy { Blockstore.getClient(context) }

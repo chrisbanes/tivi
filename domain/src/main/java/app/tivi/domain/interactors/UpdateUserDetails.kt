@@ -20,10 +20,11 @@ import app.tivi.data.traktusers.TraktUsersRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateUserDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class UpdateUserDetails @Inject constructor(
+@Inject
+class UpdateUserDetails(
     private val repository: TraktUsersRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params>() {

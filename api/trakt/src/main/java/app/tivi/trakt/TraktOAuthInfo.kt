@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.domain.interactors
+package app.tivi.trakt
 
-import app.tivi.domain.ResultInteractor
-import app.tivi.trakt.TraktManager
-import me.tatarka.inject.annotations.Inject
-
-@Inject
-class ClearTraktAuthState(
-    private val traktManager: TraktManager,
-) : ResultInteractor<Unit, Unit>() {
-    override suspend fun doWork(params: Unit) {
-        traktManager.clearAuth()
-    }
-}
+data class TraktOAuthInfo(
+    val clientId: String,
+    val clientSecret: String,
+    val redirectUri: String,
+)

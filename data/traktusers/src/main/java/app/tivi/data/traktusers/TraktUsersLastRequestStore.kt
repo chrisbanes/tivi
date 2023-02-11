@@ -19,8 +19,9 @@ package app.tivi.data.traktusers
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.lastrequests.EntityLastRequestStore
 import app.tivi.data.models.Request
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class TraktUsersLastRequestStore @Inject constructor(
+@Inject
+class TraktUsersLastRequestStore(
     dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.USER_PROFILE, dao)

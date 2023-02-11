@@ -19,10 +19,11 @@ package app.tivi.domain.observers
 import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.domain.SubjectInteractor
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObserveShowViewStats @Inject constructor(
+@Inject
+class ObserveShowViewStats(
     private val repository: FollowedShowsRepository,
 ) : SubjectInteractor<ObserveShowViewStats.Params, FollowedShowsWatchStats?>() {
 

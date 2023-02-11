@@ -19,10 +19,11 @@ package app.tivi.domain.observers
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.models.Season
 import app.tivi.domain.SubjectInteractor
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObserveShowSeasons @Inject constructor(
+@Inject
+class ObserveShowSeasons(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
 ) : SubjectInteractor<ObserveShowSeasons.Params, List<Season>>() {
 

@@ -23,12 +23,13 @@ import coil.intercept.Interceptor
 import coil.request.ImageResult
 import coil.size.Size
 import coil.size.pxOrElse
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @ExperimentalCoilApi
-class EpisodeEntityCoilInterceptor @Inject constructor(
+@Inject
+class EpisodeEntityCoilInterceptor(
     private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
 ) : Interceptor {
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
@@ -39,6 +40,7 @@ class EpisodeEntityCoilInterceptor @Inject constructor(
                     .data(map(data, chain.size))
                     .build()
             }
+
             else -> chain.request
         }
         return chain.proceed(request)

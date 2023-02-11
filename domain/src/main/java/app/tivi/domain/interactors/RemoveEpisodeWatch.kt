@@ -19,10 +19,11 @@ package app.tivi.domain.interactors
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
-class RemoveEpisodeWatch @Inject constructor(
+@Inject
+class RemoveEpisodeWatch(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<RemoveEpisodeWatch.Params>() {

@@ -24,10 +24,11 @@ import com.uwetrottmann.trakt5.enums.IdType
 import com.uwetrottmann.trakt5.enums.Type
 import com.uwetrottmann.trakt5.services.Search
 import com.uwetrottmann.trakt5.services.Shows
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import retrofit2.awaitResponse
 
-class TraktShowDataSourceImpl @Inject constructor(
+@Inject
+class TraktShowDataSourceImpl(
     private val showService: Lazy<Shows>,
     private val searchService: Lazy<Search>,
     private val mapper: TraktShowToTiviShow,
@@ -52,9 +53,9 @@ class TraktShowDataSourceImpl @Inject constructor(
         if (traktId == null) {
             traktId = searchService.value
                 .textQueryShow(
-                    show.title, null /* years */, null /* genres */,
-                    null /* lang */, show.country /* countries */, null /* runtime */, null /* ratings */,
-                    null /* certs */, show.network /* networks */, null /* status */,
+                    show.title, null, /* years */ null, /* genres */
+                    null, /* lang */ show.country, /* countries */ null, /* runtime */ null, /* ratings */
+                    null, /* certs */ show.network, /* networks */ null, /* status */
                     Extended.NOSEASONS, 1, 1,
                 )
                 .awaitResponse()

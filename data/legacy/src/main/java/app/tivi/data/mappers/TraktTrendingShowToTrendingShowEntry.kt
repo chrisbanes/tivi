@@ -19,10 +19,11 @@ package app.tivi.data.mappers
 import app.tivi.data.models.TrendingShowEntry
 import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.TrendingShow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class TraktTrendingShowToTrendingShowEntry @Inject constructor() : Mapper<TrendingShow, TrendingShowEntry> {
+@Inject
+class TraktTrendingShowToTrendingShowEntry() : Mapper<TrendingShow, TrendingShowEntry> {
     override suspend fun map(from: TrendingShow): TrendingShowEntry {
         return TrendingShowEntry(
             showId = 0,

@@ -30,14 +30,15 @@ import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 
 @ApplicationScope
-class FollowedShowsRepository @Inject constructor(
+@Inject
+class FollowedShowsRepository(
     private val followedShowsDao: FollowedShowsDao,
     private val followedShowsLastRequestStore: FollowedShowsLastRequestStore,
     private val dataSource: FollowedShowsDataSource,

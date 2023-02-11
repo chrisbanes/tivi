@@ -19,10 +19,11 @@ package app.tivi.data.mappers
 import app.tivi.data.models.TraktUser
 import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.User
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class UserToTraktUser @Inject constructor() : Mapper<User, TraktUser> {
+@Inject
+class UserToTraktUser() : Mapper<User, TraktUser> {
     override suspend fun map(from: User) = TraktUser(
         username = from.username!!,
         name = from.name,

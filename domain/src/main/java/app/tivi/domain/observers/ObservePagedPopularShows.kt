@@ -24,10 +24,11 @@ import app.tivi.data.daos.PopularDao
 import app.tivi.domain.PaginatedEntryRemoteMediator
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.interactors.UpdatePopularShows
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObservePagedPopularShows @Inject constructor(
+@Inject
+class ObservePagedPopularShows(
     private val PopularShowsDao: PopularDao,
     private val updatePopularShows: UpdatePopularShows,
 ) : PagingInteractor<ObservePagedPopularShows.Params, PopularEntryWithShow>() {

@@ -24,10 +24,11 @@ import app.tivi.data.daos.TrendingDao
 import app.tivi.domain.PaginatedEntryRemoteMediator
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.interactors.UpdateTrendingShows
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObservePagedTrendingShows @Inject constructor(
+@Inject
+class ObservePagedTrendingShows(
     private val trendingShowsDao: TrendingDao,
     private val updateTrendingShows: UpdateTrendingShows,
 ) : PagingInteractor<ObservePagedTrendingShows.Params, TrendingEntryWithShow>() {

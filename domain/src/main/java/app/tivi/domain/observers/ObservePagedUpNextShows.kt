@@ -23,10 +23,11 @@ import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.models.SortOption
 import app.tivi.domain.PagingInteractor
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
-class ObservePagedUpNextShows @Inject constructor(
+@Inject
+class ObservePagedUpNextShows(
     private val followedShowsDao: FollowedShowsDao,
 ) : PagingInteractor<ObservePagedUpNextShows.Parameters, UpNextEntry>() {
 

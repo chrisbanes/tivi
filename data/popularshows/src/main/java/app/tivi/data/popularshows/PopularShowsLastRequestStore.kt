@@ -19,8 +19,9 @@ package app.tivi.data.popularshows
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.lastrequests.GroupLastRequestStore
 import app.tivi.data.models.Request
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class PopularShowsLastRequestStore @Inject constructor(
+@Inject
+class PopularShowsLastRequestStore(
     dao: LastRequestDao,
 ) : GroupLastRequestStore(Request.POPULAR_SHOWS, dao)

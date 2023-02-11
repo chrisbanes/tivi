@@ -19,12 +19,13 @@ package app.tivi.appinitializers
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.UpdateTmdbConfig
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
-class TmdbInitializer @Inject constructor(
+@Inject
+class TmdbInitializer(
     private val updateTmdbConfig: UpdateTmdbConfig,
     private val dispatchers: AppCoroutineDispatchers,
 ) : AppInitializer {

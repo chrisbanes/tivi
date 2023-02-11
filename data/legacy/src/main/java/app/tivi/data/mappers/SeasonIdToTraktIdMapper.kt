@@ -18,10 +18,11 @@ package app.tivi.data.mappers
 
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.inject.ApplicationScope
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class SeasonIdToTraktIdMapper @Inject constructor(
+@Inject
+class SeasonIdToTraktIdMapper(
     private val dao: SeasonsDao,
 ) : Mapper<Long, Int> {
     override suspend fun map(from: Long): Int {

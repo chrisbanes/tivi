@@ -27,15 +27,16 @@ import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
 @HiltViewModel
-internal class ShowSeasonsViewModel @Inject constructor(
+@Inject
+internal class ShowSeasonsViewModel(
     savedStateHandle: SavedStateHandle,
     observeShowDetails: ObserveShowDetails,
     observeShowSeasons: ObserveShowSeasonsEpisodesWatches,

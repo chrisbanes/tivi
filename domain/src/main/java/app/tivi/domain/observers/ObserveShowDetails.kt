@@ -20,15 +20,16 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.shows.ShowStore
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreRequest
 import org.mobilenativefoundation.store.store5.StoreResponse
 
-class ObserveShowDetails @Inject constructor(
+@Inject
+class ObserveShowDetails(
     private val showStore: ShowStore,
     private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<ObserveShowDetails.Params, TiviShow>() {
