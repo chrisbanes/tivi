@@ -26,7 +26,6 @@ import app.tivi.data.followedshows.TraktFollowedShowsDataSource
 import app.tivi.data.showimages.ShowImagesDataSource
 import app.tivi.data.shows.ShowDataSource
 import app.tivi.inject.ApplicationScope
-import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Analytics
 import app.tivi.util.Logger
@@ -58,26 +57,21 @@ class TestDataSourceModule {
     fun provideTraktFollowedShowsDataSource() = traktFollowedShowsDataSource
 
     @Provides
-    @Trakt
     fun provideTraktEpisodeDataSource() = traktEpisodeDataSource
 
     @Provides
-    @app.tivi.inject.Tmdb
     fun provideTmdbEpisodeDataSource() = tmdbEpisodeDataSource
 
     @Provides
     fun provideSeasonsEpisodesDataSource() = seasonsDataSource
 
     @Provides
-    @Trakt
     fun provideTraktShowDataSource(): ShowDataSource = traktShowDataSource
 
     @Provides
-    @app.tivi.inject.Tmdb
     fun provideTmdbShowDataSource(): ShowDataSource = tmdbShowDataSource
 
     @Provides
-    @app.tivi.inject.Tmdb
     fun provideTmdbShowImagesDataSource(): ShowImagesDataSource = tmdbShowImagesDataSource
 }
 

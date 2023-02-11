@@ -22,7 +22,6 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import app.tivi.inject.ApplicationScope
-import javax.inject.Named
 import me.tatarka.inject.annotations.Provides
 
 interface SettingsModule {
@@ -30,12 +29,11 @@ interface SettingsModule {
     @Provides
     fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind
 
-    @Named("app")
     @Provides
     @ApplicationScope
     fun provideAppPreferences(
         context: Application,
-    ): SharedPreferences {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-    }
+    ): AppSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 }
+
+typealias AppSharedPreferences = SharedPreferences
