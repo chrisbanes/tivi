@@ -16,7 +16,10 @@
 
 package app.tivi.data.repositories
 
+import androidx.test.core.app.ApplicationProvider
 import app.tivi.data.DatabaseTest
+import app.tivi.data.TestApplicationComponent
+import app.tivi.data.create
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
@@ -43,6 +46,7 @@ import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
+import me.tatarka.inject.annotations.Component
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -59,6 +63,15 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Before
     fun setup() {
+        val component = SeasonsEpisodesRepositoryTestComponent::class.create()
+        database = component.database
+        episodeWatchDao = component.episodeWatchDao
+        seasonsDao = component.seasonsDao
+        episodesDao = component.episodesDao
+        watchStore = component.watchStore
+        repository = component.repository
+        seasonsDataSource = component.seasonsDataSource
+
         runBlocking {
             // We'll assume that there's a show in the db
             insertShow(database)
@@ -222,4 +235,18 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
         results.cancel()
     }
+}
+
+@Component
+abstract class SeasonsEpisodesRepositoryTestComponent(
+    @Component val testApplicationComponent: TestApplicationComponent =
+        TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext()),
+) {
+    abstract val database: TiviDatabase
+    abstract val episodeWatchDao: EpisodeWatchEntryDao
+    abstract val seasonsDao: SeasonsDao
+    abstract val episodesDao: EpisodesDao
+    abstract val watchStore: EpisodeWatchStore
+    abstract val repository: SeasonsEpisodesRepository
+    abstract val seasonsDataSource: SeasonsEpisodesDataSource
 }

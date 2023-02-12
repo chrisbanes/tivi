@@ -19,14 +19,21 @@ package app.tivi.data.episodes
 import me.tatarka.inject.annotations.Provides
 
 interface EpisodeBinds {
-    val TraktEpisodeDataSourceImpl.bind: TraktEpisodeDataSource
-        @Provides get() = this
 
-    val TmdbEpisodeDataSourceImpl.bind: TmdbEpisodeDataSource
-        @Provides get() = this
+    @Provides
+    fun provideTraktEpisodeDataSource(
+        bind: TraktEpisodeDataSourceImpl,
+    ): TraktEpisodeDataSource = bind
 
-    val TraktSeasonsEpisodesDataSource.bind: SeasonsEpisodesDataSource
-        @Provides get() = this
+    @Provides
+    fun provideTmdbEpisodeDataSource(
+        bind: TmdbEpisodeDataSourceImpl,
+    ): TmdbEpisodeDataSource = bind
+
+    @Provides
+    fun provideTraktSeasonsEpisodesDataSource(
+        bind: TraktSeasonsEpisodesDataSource,
+    ): SeasonsEpisodesDataSource = bind
 }
 
 typealias TmdbEpisodeDataSource = EpisodeDataSource

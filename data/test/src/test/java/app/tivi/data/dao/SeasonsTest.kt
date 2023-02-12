@@ -17,7 +17,10 @@
 package app.tivi.data.dao
 
 import android.database.sqlite.SQLiteConstraintException
+import androidx.test.core.app.ApplicationProvider
 import app.tivi.data.DatabaseTest
+import app.tivi.data.TestApplicationComponent
+import app.tivi.data.create
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.db.TiviDatabase
 import app.tivi.utils.deleteShow
@@ -29,6 +32,7 @@ import app.tivi.utils.s2
 import app.tivi.utils.showId
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import me.tatarka.inject.annotations.Component
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -41,6 +45,10 @@ class SeasonsTest : DatabaseTest() {
 
     @Before
     fun setup() {
+        val component = SeasonsTestComponent::class.create()
+        database = component.database
+        seasonsDao = component.seasonsDao
+
         runBlocking {
             // We'll assume that there's a show in the db
             insertShow(database)
@@ -93,4 +101,13 @@ class SeasonsTest : DatabaseTest() {
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
     }
+}
+
+@Component
+abstract class SeasonsTestComponent(
+    @Component val testApplicationComponent: TestApplicationComponent =
+        TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext()),
+) {
+    abstract val database: TiviDatabase
+    abstract val seasonsDao: SeasonsDao
 }

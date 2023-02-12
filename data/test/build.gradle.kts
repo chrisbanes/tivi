@@ -19,6 +19,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
 }
 
@@ -65,6 +66,8 @@ dependencies {
     testImplementation(libs.androidx.room.testing)
     testImplementation(libs.truth)
     testImplementation(libs.kotlin.coroutines.test)
+
+    kaptTest(libs.androidx.room.compiler)
 
     kspTest(libs.kotlininject.compiler)
 

@@ -56,7 +56,7 @@ import me.tatarka.inject.annotations.Provides
 @AndroidEntryPoint
 class MainActivity : TiviActivity() {
 
-    private lateinit var component: MainActivityComponent
+    abstract val component: MainActivityComponent
 
     private val viewModel: MainActivityViewModel by viewModels {
         object : ViewModelProvider.Factory {
