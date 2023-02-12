@@ -16,10 +16,9 @@
 
 package app.tivi.data
 
-import android.content.Context
+import android.app.Application
 import androidx.room.Room
 import app.tivi.data.db.DatabaseTransactionRunner
-import app.tivi.data.db.TiviDatabase
 import app.tivi.data.episodes.EpisodeDataSource
 import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.followedshows.TraktFollowedShowsDataSource
@@ -35,16 +34,10 @@ import app.tivi.utils.TestTransactionRunner
 import app.tivi.utils.TiviTestDatabase
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.trakt5.TraktV2
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import io.mockk.mockk
+import me.tatarka.inject.annotations.Provides
 
-@InstallIn(SingletonComponent::class)
-@Module
-class TestDataSourceModule {
+abstract class TestDataSourceModule {
     private val traktFollowedShowsDataSource: TraktFollowedShowsDataSource = mockk()
     private val traktEpisodeDataSource: EpisodeDataSource = mockk()
     private val tmdbEpisodeDataSource: EpisodeDataSource = mockk()
@@ -75,9 +68,7 @@ class TestDataSourceModule {
     fun provideTmdbShowImagesDataSource(): ShowImagesDataSource = tmdbShowImagesDataSource
 }
 
-@InstallIn(SingletonComponent::class)
-@Module
-object TestDatabaseModule {
+interface TestDatabaseModule {
     @Provides
     fun provideTrakt(): TraktV2 = TraktV2("fakefakefake")
 
@@ -94,13 +85,11 @@ object TestDatabaseModule {
     fun provideAnalytics(): Analytics = mockk(relaxUnitFun = true)
 }
 
-@InstallIn(SingletonComponent::class)
-@Module
-object TestRoomDatabaseModule {
+interface TestRoomDatabaseModule {
     @ApplicationScope
     @Provides
-    fun provideDatabase(@ApplicationContext context: Context): TiviDatabase {
-        return Room.inMemoryDatabaseBuilder(context, TiviTestDatabase::class.java)
+    fun provideDatabase(application: Application): TiviRoomDatabase {
+        return Room.inMemoryDatabaseBuilder(application, TiviTestDatabase::class.java)
             .allowMainThreadQueries()
             .build()
     }

@@ -16,20 +16,46 @@
 
 package app.tivi.data
 
+import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltTestApplication
+import app.tivi.data.episodes.EpisodeBinds
+import app.tivi.data.followedshows.FollowedShowsBinds
+import app.tivi.data.showimages.ShowImagesBinds
+import app.tivi.data.shows.ShowsBinds
+import app.tivi.extensions.unsafeLazy
+import app.tivi.inject.ApplicationScope
+import app.tivi.tmdb.TmdbModule
+import app.tivi.trakt.TraktModule
+import app.tivi.util.AnalyticsModule
+import app.tivi.util.LoggerModule
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 import org.junit.Rule
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
-@Config(application = HiltTestApplication::class)
 @RunWith(AndroidJUnit4::class)
 abstract class DatabaseTest {
-    @get:Rule(order = 0)
-    val hiltRule: HiltAndroidRule by lazy { HiltAndroidRule(this) }
-
     @get:Rule(order = 1)
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    val component by unsafeLazy {
+        TestApplicationComponent::class
+    }
 }
+
+@Component
+@ApplicationScope
+abstract class TestApplicationComponent(
+    @get:Provides val application: Application,
+) : TmdbModule,
+    TraktModule,
+    AnalyticsModule,
+    EpisodeBinds,
+    FollowedShowsBinds,
+    ShowImagesBinds,
+    ShowsBinds,
+    LoggerModule,
+    TestDataSourceModule(),
+    TestDatabaseModule,
+    TestRoomDatabaseModule

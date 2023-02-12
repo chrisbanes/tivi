@@ -16,11 +16,9 @@
 
 package app.tivi.data.repositories
 
-import app.tivi.data.DatabaseModuleBinds
 import app.tivi.data.DatabaseTest
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.db.TiviDatabase
-import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.followedshows.TraktFollowedShowsDataSource
 import app.tivi.utils.followedShow1Local
@@ -36,30 +34,20 @@ import app.tivi.utils.show2
 import com.google.common.truth.Truth.assertThat
 import com.uwetrottmann.trakt5.entities.ListIds
 import com.uwetrottmann.trakt5.entities.TraktList
-import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.UninstallModules
 import io.mockk.coEvery
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import me.tatarka.inject.annotations.Inject
 import org.junit.Before
 import org.junit.Test
 
-@UninstallModules(DatabaseModuleBinds::class, EpisodeBinds::class)
-@HiltAndroidTest
 class FollowedShowRepositoryTest : DatabaseTest() {
-    @Inject lateinit var followShowsDao: FollowedShowsDao
-
-    @Inject lateinit var repository: FollowedShowsRepository
-
-    @Inject lateinit var database: TiviDatabase
-
-    @Inject lateinit var traktDataSource: TraktFollowedShowsDataSource
+    private lateinit var followShowsDao: FollowedShowsDao
+    private lateinit var repository: FollowedShowsRepository
+    private lateinit var database: TiviDatabase
+    private lateinit var traktDataSource: TraktFollowedShowsDataSource
 
     @Before
     fun setup() {
-        hiltRule.inject()
-
         runBlocking {
             // We'll assume that there's a show in the db
             insertShow(database)

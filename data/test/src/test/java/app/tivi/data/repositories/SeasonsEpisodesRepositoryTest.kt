@@ -16,13 +16,11 @@
 
 package app.tivi.data.repositories
 
-import app.tivi.data.DatabaseModuleBinds
 import app.tivi.data.DatabaseTest
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.db.TiviDatabase
-import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.episodes.EpisodeWatchStore
 import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.SeasonsEpisodesRepository
@@ -40,40 +38,27 @@ import app.tivi.utils.s2_id
 import app.tivi.utils.s2e1
 import app.tivi.utils.showId
 import com.google.common.truth.Truth.assertThat
-import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.UninstallModules
 import io.mockk.coEvery
 import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
-import me.tatarka.inject.annotations.Inject
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.threeten.bp.OffsetDateTime
 
-@UninstallModules(DatabaseModuleBinds::class, EpisodeBinds::class)
-@HiltAndroidTest
 class SeasonsEpisodesRepositoryTest : DatabaseTest() {
-    @Inject lateinit var database: TiviDatabase
-
-    @Inject lateinit var episodeWatchDao: EpisodeWatchEntryDao
-
-    @Inject lateinit var seasonsDao: SeasonsDao
-
-    @Inject lateinit var episodesDao: EpisodesDao
-
-    @Inject lateinit var watchStore: EpisodeWatchStore
-
-    @Inject lateinit var repository: SeasonsEpisodesRepository
-
-    @Inject lateinit var seasonsDataSource: SeasonsEpisodesDataSource
+    private lateinit var database: TiviDatabase
+    private lateinit var episodeWatchDao: EpisodeWatchEntryDao
+    private lateinit var seasonsDao: SeasonsDao
+    private lateinit var episodesDao: EpisodesDao
+    private lateinit var watchStore: EpisodeWatchStore
+    private lateinit var repository: SeasonsEpisodesRepository
+    private lateinit var seasonsDataSource: SeasonsEpisodesDataSource
 
     @Before
     fun setup() {
-        hiltRule.inject()
-
         runBlocking {
             // We'll assume that there's a show in the db
             insertShow(database)

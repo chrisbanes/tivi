@@ -19,7 +19,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -42,10 +42,15 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.analytics.android)
+    implementation(projects.core.logging.android)
+
     implementation(projects.data.followedshows)
     implementation(projects.data.episodes)
     implementation(projects.data.showimages)
     implementation(projects.data.shows)
+
+    implementation(libs.kotlininject.runtime)
 
     testImplementation(projects.data.legacy)
     testImplementation(projects.data.dbRoom)
@@ -60,10 +65,8 @@ dependencies {
     testImplementation(libs.androidx.room.testing)
     testImplementation(libs.truth)
     testImplementation(libs.kotlin.coroutines.test)
-    testImplementation(libs.hilt.testing)
 
-    kaptTest(libs.androidx.room.compiler)
-    kaptTest(libs.hilt.compiler)
+    kspTest(libs.kotlininject.compiler)
 
     // Needed for Tzdb
     testImplementation("org.threeten:threetenbp:${libs.versions.threetenbp.get()}")

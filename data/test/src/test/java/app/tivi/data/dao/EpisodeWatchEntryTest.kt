@@ -17,7 +17,6 @@
 package app.tivi.data.dao
 
 import android.database.sqlite.SQLiteConstraintException
-import app.tivi.data.DatabaseModuleBinds
 import app.tivi.data.DatabaseTest
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
@@ -32,32 +31,22 @@ import app.tivi.utils.s1e1
 import app.tivi.utils.s1e1w
 import app.tivi.utils.s1e1w_id
 import app.tivi.utils.showId
-import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.UninstallModules
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import me.tatarka.inject.annotations.Inject
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
 
-@UninstallModules(DatabaseModuleBinds::class)
-@HiltAndroidTest
 class EpisodeWatchEntryTest : DatabaseTest() {
-    @Inject lateinit var database: TiviDatabase
-
-    @Inject lateinit var episodesDao: EpisodesDao
-
-    @Inject lateinit var seasonsDao: SeasonsDao
-
-    @Inject lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
+    private lateinit var database: TiviDatabase
+    private lateinit var episodesDao: EpisodesDao
+    private lateinit var seasonsDao: SeasonsDao
+    private lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
 
     @Before
     fun setup() {
-        hiltRule.inject()
-
         runBlocking {
             // We'll assume that there's a show, season and s1_episodes in the db
             insertShow(database)
