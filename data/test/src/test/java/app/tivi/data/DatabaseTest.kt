@@ -18,19 +18,25 @@ package app.tivi.data
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import app.tivi.data.episodes.EpisodeBinds
-import app.tivi.data.followedshows.FollowedShowsBinds
-import app.tivi.data.showimages.ShowImagesBinds
-import app.tivi.data.shows.ShowsBinds
 import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ApplicationScope
 import app.tivi.tmdb.TmdbModule
+import app.tivi.tmdb.TmdbOAuthInfo
+import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktModule
+import app.tivi.trakt.TraktOAuthInfo
 import app.tivi.util.AnalyticsModule
+import app.tivi.util.Logger
 import app.tivi.util.LoggerModule
+import app.tivi.util.TiviLogger
+import com.uwetrottmann.tmdb2.Tmdb
+import com.uwetrottmann.trakt5.TraktV2
+import io.mockk.mockk
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
+import okhttp3.OkHttpClient
 import org.junit.Rule
 import org.junit.runner.RunWith
 
@@ -39,8 +45,8 @@ abstract class DatabaseTest {
     @get:Rule(order = 1)
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    val component by unsafeLazy {
-        TestApplicationComponent::class
+    val component: TestApplicationComponent by unsafeLazy {
+        TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext())
     }
 }
 
@@ -51,11 +57,40 @@ abstract class TestApplicationComponent(
 ) : TmdbModule,
     TraktModule,
     AnalyticsModule,
-    EpisodeBinds,
-    FollowedShowsBinds,
-    ShowImagesBinds,
-    ShowsBinds,
     LoggerModule,
     TestDataSourceModule(),
-    TestDatabaseModule,
-    TestRoomDatabaseModule
+    TestRoomDatabaseModule {
+
+    @Provides
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
+
+    @Provides
+    fun provideTraktOAuthInfo(): TraktOAuthInfo = TraktOAuthInfo(
+        clientId = "",
+        clientSecret = "",
+        redirectUri = "",
+    )
+
+    @Provides
+    fun provideTmdbOAuthInfo(): TmdbOAuthInfo = TmdbOAuthInfo(
+        apiKey = "",
+    )
+
+    @Provides
+    fun provideTraktAuthState(): TraktAuthState = TraktAuthState.LOGGED_IN
+
+    @Provides
+    override fun provideTrakt(
+        client: OkHttpClient,
+        oauthInfo: TraktOAuthInfo,
+    ): TraktV2 = TraktV2("fakefakefake")
+
+    @Provides
+    override fun provideTmdb(
+        client: OkHttpClient,
+        tmdbOAuthInfo: TmdbOAuthInfo,
+    ): Tmdb = Tmdb("fakefakefake")
+
+    @Provides
+    override fun provideLogger(bind: TiviLogger): Logger = mockk(relaxUnitFun = true)
+}

@@ -17,7 +17,10 @@
 package app.tivi.data.dao
 
 import android.database.sqlite.SQLiteConstraintException
+import androidx.test.core.app.ApplicationProvider
 import app.tivi.data.DatabaseTest
+import app.tivi.data.TestApplicationComponent
+import app.tivi.data.create
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
@@ -33,6 +36,7 @@ import app.tivi.utils.s1e1w_id
 import app.tivi.utils.showId
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import me.tatarka.inject.annotations.Component
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -47,6 +51,12 @@ class EpisodeWatchEntryTest : DatabaseTest() {
 
     @Before
     fun setup() {
+        val component = EpisodeWatchEntryTestComponent::class.create()
+        database = component.database
+        seasonsDao = component.seasonsDao
+        episodesDao = component.episodesDao
+        episodeWatchEntryDao = component.episodeWatchEntryDao
+
         runBlocking {
             // We'll assume that there's a show, season and s1_episodes in the db
             insertShow(database)
@@ -101,4 +111,15 @@ class EpisodeWatchEntryTest : DatabaseTest() {
         episodesDao.deleteEntity(s1e1)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))
     }
+}
+
+@Component
+abstract class EpisodeWatchEntryTestComponent(
+    @Component val testApplicationComponent: TestApplicationComponent =
+        TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext()),
+) {
+    abstract val database: TiviDatabase
+    abstract val episodesDao: EpisodesDao
+    abstract val seasonsDao: SeasonsDao
+    abstract val episodeWatchEntryDao: EpisodeWatchEntryDao
 }

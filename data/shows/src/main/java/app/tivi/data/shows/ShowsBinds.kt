@@ -20,13 +20,13 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface ShowsBinds {
-    val TraktShowDataSourceImpl.bind: TraktShowDataSource
-        @ApplicationScope @Provides
-        get() = this
+    @ApplicationScope
+    @Provides
+    fun bindTraktShowDataSource(bind: TraktShowDataSourceImpl): TraktShowDataSource = bind
 
-    val TmdbShowDataSourceImpl.bind: TmdbShowDataSource
-        @ApplicationScope @Provides
-        get() = this
+    @ApplicationScope
+    @Provides
+    fun bindTmdbShowDataSource(bind: TmdbShowDataSourceImpl): TmdbShowDataSource = bind
 }
 
 typealias TmdbShowDataSource = ShowDataSource

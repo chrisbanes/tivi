@@ -43,7 +43,7 @@ import me.tatarka.inject.annotations.Provides
 interface RoomDatabaseModule {
     @ApplicationScope
     @Provides
-    fun provideDatabase(
+    fun provideTiviRoomDatabase(
         application: Application,
     ): TiviRoomDatabase {
         val builder = Room.databaseBuilder(application, TiviRoomDatabase::class.java, "shows.db")
@@ -53,6 +53,9 @@ interface RoomDatabaseModule {
         }
         return builder.build()
     }
+
+    @Provides
+    fun provideTiviDatabase(bind: TiviRoomDatabase): TiviDatabase = bind
 
     @Provides
     fun provideTiviShowDao(db: TiviDatabase): TiviShowDao = db.showDao()
@@ -98,9 +101,6 @@ interface RoomDatabaseModule {
 
     @Provides
     fun provideLibraryShowsDao(db: TiviDatabase): LibraryShowsDao = db.libraryShowsDao()
-
-    val TiviRoomDatabase.bind: TiviDatabase
-        @Provides get() = this
 
     @Provides
     @ApplicationScope

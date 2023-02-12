@@ -30,7 +30,7 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
 class SettingsActivity : ComponentActivity() {
-    private lateinit var powerController: PowerController
+    abstract val powerController: PowerController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

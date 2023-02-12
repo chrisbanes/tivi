@@ -19,26 +19,42 @@ package app.tivi.data
 import android.app.Application
 import androidx.room.Room
 import app.tivi.data.db.DatabaseTransactionRunner
+import app.tivi.data.db.RoomTransactionRunner
+import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.episodes.EpisodeDataSource
 import app.tivi.data.episodes.SeasonsEpisodesDataSource
+import app.tivi.data.episodes.TmdbEpisodeDataSource
+import app.tivi.data.episodes.TmdbEpisodeDataSourceImpl
+import app.tivi.data.episodes.TraktEpisodeDataSource
+import app.tivi.data.episodes.TraktEpisodeDataSourceImpl
+import app.tivi.data.episodes.TraktSeasonsEpisodesDataSource
+import app.tivi.data.followedshows.FollowedShowsBinds
+import app.tivi.data.followedshows.FollowedShowsDataSource
 import app.tivi.data.followedshows.TraktFollowedShowsDataSource
+import app.tivi.data.showimages.ShowImagesBinds
 import app.tivi.data.showimages.ShowImagesDataSource
+import app.tivi.data.showimages.TmdbShowImagesDataSource
 import app.tivi.data.shows.ShowDataSource
+import app.tivi.data.shows.ShowsBinds
+import app.tivi.data.shows.TmdbShowDataSource
+import app.tivi.data.shows.TmdbShowDataSourceImpl
+import app.tivi.data.shows.TraktShowDataSource
+import app.tivi.data.shows.TraktShowDataSourceImpl
 import app.tivi.inject.ApplicationScope
-import app.tivi.trakt.TraktAuthState
-import app.tivi.util.Analytics
-import app.tivi.util.Logger
 import app.tivi.utils.SuccessFakeShowDataSource
 import app.tivi.utils.SuccessFakeShowImagesDataSource
 import app.tivi.utils.TestTransactionRunner
 import app.tivi.utils.TiviTestDatabase
-import com.uwetrottmann.tmdb2.Tmdb
-import com.uwetrottmann.trakt5.TraktV2
 import io.mockk.mockk
 import me.tatarka.inject.annotations.Provides
 
-abstract class TestDataSourceModule {
-    private val traktFollowedShowsDataSource: TraktFollowedShowsDataSource = mockk()
+abstract class TestDataSourceModule :
+    FollowedShowsBinds,
+    EpisodeBinds,
+    ShowsBinds,
+    ShowImagesBinds {
+
+    private val traktFollowedShowsDataSource: FollowedShowsDataSource = mockk()
     private val traktEpisodeDataSource: EpisodeDataSource = mockk()
     private val tmdbEpisodeDataSource: EpisodeDataSource = mockk()
     private val seasonsDataSource: SeasonsEpisodesDataSource = mockk()
@@ -47,48 +63,50 @@ abstract class TestDataSourceModule {
     private val tmdbShowImagesDataSource: ShowImagesDataSource = SuccessFakeShowImagesDataSource
 
     @Provides
-    fun provideTraktFollowedShowsDataSource() = traktFollowedShowsDataSource
+    override fun provideTraktFollowedShowsDataSource(
+        bind: TraktFollowedShowsDataSource,
+    ): FollowedShowsDataSource = traktFollowedShowsDataSource
 
     @Provides
-    fun provideTraktEpisodeDataSource() = traktEpisodeDataSource
+    override fun provideTraktEpisodeDataSource(
+        bind: TraktEpisodeDataSourceImpl,
+    ): TraktEpisodeDataSource = traktEpisodeDataSource
 
     @Provides
-    fun provideTmdbEpisodeDataSource() = tmdbEpisodeDataSource
+    override fun provideTmdbEpisodeDataSource(
+        bind: TmdbEpisodeDataSourceImpl,
+    ): TmdbEpisodeDataSource = tmdbEpisodeDataSource
 
     @Provides
-    fun provideSeasonsEpisodesDataSource() = seasonsDataSource
+    override fun provideTraktSeasonsEpisodesDataSource(
+        bind: TraktSeasonsEpisodesDataSource,
+    ): SeasonsEpisodesDataSource = seasonsDataSource
 
     @Provides
-    fun provideTraktShowDataSource(): ShowDataSource = traktShowDataSource
+    @ApplicationScope
+    override fun bindTraktShowDataSource(
+        bind: TraktShowDataSourceImpl,
+    ): TraktShowDataSource = traktShowDataSource
 
-    @Provides
-    fun provideTmdbShowDataSource(): ShowDataSource = tmdbShowDataSource
-
-    @Provides
-    fun provideTmdbShowImagesDataSource(): ShowImagesDataSource = tmdbShowImagesDataSource
-}
-
-interface TestDatabaseModule {
-    @Provides
-    fun provideTrakt(): TraktV2 = TraktV2("fakefakefake")
-
-    @Provides
-    fun provideTmdb(): Tmdb = Tmdb("fakefakefake")
-
-    @Provides
-    fun provideTraktAuthState() = TraktAuthState.LOGGED_IN
-
-    @Provides
-    fun provideLogger(): Logger = mockk(relaxUnitFun = true)
-
-    @Provides
-    fun provideAnalytics(): Analytics = mockk(relaxUnitFun = true)
-}
-
-interface TestRoomDatabaseModule {
     @ApplicationScope
     @Provides
-    fun provideDatabase(application: Application): TiviRoomDatabase {
+    override fun bindTmdbShowDataSource(
+        bind: TmdbShowDataSourceImpl,
+    ): TmdbShowDataSource = tmdbShowDataSource
+
+    @ApplicationScope
+    @Provides
+    override fun bindShowImagesDataSource(
+        bind: TmdbShowImagesDataSource,
+    ): ShowImagesDataSource = tmdbShowImagesDataSource
+}
+
+interface TestRoomDatabaseModule : RoomDatabaseModule {
+    @ApplicationScope
+    @Provides
+    override fun provideTiviRoomDatabase(
+        application: Application,
+    ): TiviRoomDatabase {
         return Room.inMemoryDatabaseBuilder(application, TiviTestDatabase::class.java)
             .allowMainThreadQueries()
             .build()
@@ -96,5 +114,7 @@ interface TestRoomDatabaseModule {
 
     @ApplicationScope
     @Provides
-    fun provideDatabaseTransactionRunner(): DatabaseTransactionRunner = TestTransactionRunner
+    override fun provideDatabaseTransactionRunner(
+        runner: RoomTransactionRunner,
+    ): DatabaseTransactionRunner = TestTransactionRunner
 }

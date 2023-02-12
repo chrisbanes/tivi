@@ -16,11 +16,14 @@
 
 package app.tivi.data.repositories
 
+import androidx.test.core.app.ApplicationProvider
 import app.tivi.data.DatabaseTest
+import app.tivi.data.TestApplicationComponent
+import app.tivi.data.TiviRoomDatabase
+import app.tivi.data.create
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.db.TiviDatabase
+import app.tivi.data.followedshows.FollowedShowsDataSource
 import app.tivi.data.followedshows.FollowedShowsRepository
-import app.tivi.data.followedshows.TraktFollowedShowsDataSource
 import app.tivi.utils.followedShow1Local
 import app.tivi.utils.followedShow1Network
 import app.tivi.utils.followedShow1PendingDelete
@@ -37,17 +40,25 @@ import com.uwetrottmann.trakt5.entities.TraktList
 import io.mockk.coEvery
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import me.tatarka.inject.annotations.Component
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
 class FollowedShowRepositoryTest : DatabaseTest() {
     private lateinit var followShowsDao: FollowedShowsDao
-    private lateinit var repository: FollowedShowsRepository
-    private lateinit var database: TiviDatabase
-    private lateinit var traktDataSource: TraktFollowedShowsDataSource
+    private lateinit var followedShowsRepository: FollowedShowsRepository
+    private lateinit var followedShowsDataSource: FollowedShowsDataSource
+    private lateinit var database: TiviRoomDatabase
 
     @Before
     fun setup() {
+        val component = FollowedShowsRepositoryTestComponent::class.create()
+        followShowsDao = component.followShowsDao
+        followedShowsRepository = component.followedShowsRepository
+        database = component.database
+        followedShowsDataSource = component.followedShowsDataSource
+
         runBlocking {
             // We'll assume that there's a show in the db
             insertShow(database)
@@ -56,14 +67,16 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync() = runTest {
-        coEvery { traktDataSource.getFollowedListId() } returns TraktList().apply {
-            ids = ListIds().apply { trakt = 0 }
-        }
-        coEvery { traktDataSource.getListShows(0) } returns listOf(followedShow1Network to show)
+        coEvery { followedShowsDataSource.getFollowedListId() }
+            .returns(
+                TraktList().apply { ids = ListIds().apply { trakt = 0 } },
+            )
+        coEvery { followedShowsDataSource.getListShows(0) }
+            .returns(listOf(followedShow1Network to show))
 
-        repository.syncFollowedShows()
+        followedShowsRepository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows())
+        assertThat(followedShowsRepository.getFollowedShows())
             .containsExactly(followedShow1Local)
     }
 
@@ -71,29 +84,29 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     fun testSync_emptyResponse() = runTest {
         insertFollowedShow(database)
 
-        coEvery { traktDataSource.getFollowedListId() } returns TraktList().apply {
+        coEvery { followedShowsDataSource.getFollowedListId() } returns TraktList().apply {
             ids = ListIds().apply { trakt = 0 }
         }
 
-        coEvery { traktDataSource.getListShows(0) } returns emptyList()
+        coEvery { followedShowsDataSource.getListShows(0) } returns emptyList()
 
-        repository.syncFollowedShows()
+        followedShowsRepository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows()).isEmpty()
+        assertThat(followedShowsRepository.getFollowedShows()).isEmpty()
     }
 
     @Test
     fun testSync_responseDifferentShow() = runTest {
         insertFollowedShow(database)
 
-        coEvery { traktDataSource.getFollowedListId() } returns TraktList().apply {
+        coEvery { followedShowsDataSource.getFollowedListId() } returns TraktList().apply {
             ids = ListIds().apply { trakt = 0 }
         }
-        coEvery { traktDataSource.getListShows(0) } returns listOf(followedShow2Network to show2)
+        coEvery { followedShowsDataSource.getListShows(0) } returns listOf(followedShow2Network to show2)
 
-        repository.syncFollowedShows()
+        followedShowsRepository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows())
+        assertThat(followedShowsRepository.getFollowedShows())
             .containsExactly(followedShow2Local)
     }
 
@@ -102,11 +115,11 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followShowsDao.insert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } throws IllegalArgumentException()
+        coEvery { followedShowsDataSource.getFollowedListId() } throws IllegalArgumentException()
 
-        repository.syncFollowedShows()
+        followedShowsRepository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows()).isEmpty()
+        assertThat(followedShowsRepository.getFollowedShows()).isEmpty()
     }
 
     @Test
@@ -114,11 +127,27 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followShowsDao.insert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } throws IllegalArgumentException()
+        coEvery { followedShowsDataSource.getFollowedListId() } throws IllegalArgumentException()
 
-        repository.syncFollowedShows()
+        followedShowsRepository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows())
+        assertThat(followedShowsRepository.getFollowedShows())
             .containsExactly(followedShow1Local)
     }
+
+    @After
+    fun after() {
+        database.close()
+    }
+}
+
+@Component
+abstract class FollowedShowsRepositoryTestComponent(
+    @Component val testApplicationComponent: TestApplicationComponent =
+        TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext()),
+) {
+    abstract val followShowsDao: FollowedShowsDao
+    abstract val followedShowsRepository: FollowedShowsRepository
+    abstract val followedShowsDataSource: FollowedShowsDataSource
+    abstract val database: TiviRoomDatabase
 }
