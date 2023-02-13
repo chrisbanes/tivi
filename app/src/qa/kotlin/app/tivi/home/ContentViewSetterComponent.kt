@@ -26,7 +26,7 @@ import au.com.gridstone.debugdrawer.retrofit.RetrofitModule
 import au.com.gridstone.debugdrawer.timber.TimberModule
 import me.tatarka.inject.annotations.Provides
 
-interface ContentViewSetterModule {
+interface ContentViewSetterComponent {
     @Provides
     fun provideContentViewSetter(
         httpLogger: HttpLogger,

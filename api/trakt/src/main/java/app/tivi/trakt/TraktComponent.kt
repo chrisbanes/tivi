@@ -28,7 +28,7 @@ import com.uwetrottmann.trakt5.services.Users
 import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
-interface TraktModule {
+interface TraktComponent {
     @ApplicationScope
     @Provides
     fun provideTrakt(

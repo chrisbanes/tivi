@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.common.imageloading
+package app.tivi.util
 
-import app.tivi.appinitializers.AppInitializer
-import me.tatarka.inject.annotations.IntoSet
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface ImageLoadingModule {
+interface AnalyticsComponent {
+    @ApplicationScope
     @Provides
-    @IntoSet
-    fun provideCoilInitializer(bind: CoilAppInitializer): AppInitializer = bind
+    fun provideTiviFirebaseAnalytics(bind: TiviFirebaseAnalytics): Analytics = bind
 }

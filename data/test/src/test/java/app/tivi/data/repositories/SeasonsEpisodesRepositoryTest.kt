@@ -27,6 +27,8 @@ import app.tivi.data.db.TiviDatabase
 import app.tivi.data.episodes.EpisodeWatchStore
 import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.SeasonsEpisodesRepository
+import app.tivi.trakt.TraktManager
+import app.tivi.utils.AuthorizedAuthState
 import app.tivi.utils.insertShow
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
@@ -60,6 +62,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     private lateinit var watchStore: EpisodeWatchStore
     private lateinit var repository: SeasonsEpisodesRepository
     private lateinit var seasonsDataSource: SeasonsEpisodesDataSource
+    private lateinit var traktManager: TraktManager
 
     @Before
     fun setup() {
@@ -71,6 +74,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         watchStore = component.watchStore
         repository = component.repository
         seasonsDataSource = component.seasonsDataSource
+        traktManager = component.traktManager
 
         runBlocking {
             // We'll assume that there's a show in the db
@@ -86,6 +90,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Return a response with 2 items
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
             listOf(s1e1 to s1e1w, s1e1 to s1e1w2)
+        traktManager.onNewAuthState(AuthorizedAuthState)
         // Sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
@@ -120,6 +125,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Return a response with just the second item
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
             listOf(s1e1 to s1e1w2)
+        traktManager.onNewAuthState(AuthorizedAuthState)
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that only the second is in the db
@@ -135,6 +141,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a empty response
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns emptyList()
+        traktManager.onNewAuthState(AuthorizedAuthState)
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that the database is empty
@@ -249,4 +256,5 @@ abstract class SeasonsEpisodesRepositoryTestComponent(
     abstract val watchStore: EpisodeWatchStore
     abstract val repository: SeasonsEpisodesRepository
     abstract val seasonsDataSource: SeasonsEpisodesDataSource
+    abstract val traktManager: TraktManager
 }

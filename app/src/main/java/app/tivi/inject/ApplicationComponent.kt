@@ -20,8 +20,8 @@ import android.app.Application
 import android.content.Context
 import app.tivi.TiviApplication
 import app.tivi.appinitializers.AppInitializers
-import app.tivi.common.imageloading.ImageLoadingModule
-import app.tivi.data.RoomDatabaseModule
+import app.tivi.common.imageloading.ImageLoadingComponent
+import app.tivi.data.RoomDatabaseComponent
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsBinds
 import app.tivi.data.popularshows.PopularShowsBinds
@@ -33,16 +33,16 @@ import app.tivi.data.shows.ShowsBinds
 import app.tivi.data.traktusers.TraktUsersBinds
 import app.tivi.data.trendingshows.TrendingShowsBinds
 import app.tivi.data.watchedshows.WatchedShowsBinds
-import app.tivi.home.ContentViewSetterModule
-import app.tivi.settings.SettingsModule
-import app.tivi.tasks.TasksModule
+import app.tivi.home.ContentViewSetterComponent
+import app.tivi.settings.PreferencesComponent
+import app.tivi.tasks.TasksComponent
 import app.tivi.tasks.TiviWorkerFactory
-import app.tivi.tmdb.TmdbModule
-import app.tivi.trakt.TraktAuthModule
-import app.tivi.trakt.TraktModule
-import app.tivi.util.AnalyticsModule
-import app.tivi.util.LoggerModule
-import app.tivi.util.PowerControllerModule
+import app.tivi.tmdb.TmdbComponent
+import app.tivi.trakt.TraktAuthComponent
+import app.tivi.trakt.TraktComponent
+import app.tivi.util.AnalyticsComponent
+import app.tivi.util.LoggerComponent
+import app.tivi.util.PowerControllerComponent
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -50,17 +50,17 @@ import me.tatarka.inject.annotations.Provides
 @ApplicationScope
 abstract class ApplicationComponent(
     @get:Provides val application: Application,
-) : RoomDatabaseModule,
-    TraktAuthModule,
-    TmdbModule,
-    TraktModule,
-    AppModule,
-    NetworkModule,
-    TasksModule,
-    PowerControllerModule,
-    ImageLoadingModule,
-    AnalyticsModule,
-    SettingsModule,
+) : RoomDatabaseComponent,
+    TraktAuthComponent,
+    TmdbComponent,
+    TraktComponent,
+    AppComponent,
+    NetworkComponent,
+    TasksComponent,
+    PowerControllerComponent,
+    ImageLoadingComponent,
+    AnalyticsComponent,
+    PreferencesComponent,
     EpisodeBinds,
     FollowedShowsBinds,
     PopularShowsBinds,
@@ -72,9 +72,9 @@ abstract class ApplicationComponent(
     TraktUsersBinds,
     TrendingShowsBinds,
     WatchedShowsBinds,
-    LoggerModule,
-    ContentViewSetterModule,
-    VariantAwareModule {
+    LoggerComponent,
+    ContentViewSetterComponent,
+    VariantAwareComponent {
 
     abstract val initializers: AppInitializers
     abstract val workerFactory: TiviWorkerFactory

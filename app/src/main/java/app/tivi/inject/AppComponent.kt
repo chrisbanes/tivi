@@ -33,7 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
-interface AppModule {
+interface AppComponent {
     @ApplicationScope
     @Provides
     fun provideApplicationId(application: Application): ApplicationInfo {

@@ -32,7 +32,7 @@ import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.ResponseTypeValues
 
-interface TraktAuthModule {
+interface TraktAuthComponent {
     @ApplicationScope
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {
