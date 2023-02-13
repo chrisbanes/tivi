@@ -56,23 +56,30 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.plus
+import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
+import me.tatarka.inject.annotations.Inject
 
+typealias Search = @Composable (
+    openShowDetails: (showId: Long) -> Unit,
+) -> Unit
+
+@Inject
 @Composable
 fun Search(
+    viewModelFactory: () -> SearchViewModel,
     openShowDetails: (showId: Long) -> Unit,
 ) {
     Search(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(factory = viewModelFactory),
         openShowDetails = openShowDetails,
     )
 }

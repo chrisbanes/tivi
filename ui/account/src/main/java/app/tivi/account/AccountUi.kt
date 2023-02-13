@@ -51,21 +51,29 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import app.tivi.common.compose.ui.AsyncImage
+import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.models.TraktUser
 import app.tivi.trakt.TraktAuthState
+import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
+typealias AccountUi = @Composable (
+    openSettings: () -> Unit,
+    modifier: Modifier,
+) -> Unit
+
+@Inject
 @Composable
 fun AccountUi(
+    viewModelFactory: () -> AccountUiViewModel,
     openSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AccountUi(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(factory = viewModelFactory),
         openSettings = openSettings,
         modifier = modifier,
     )

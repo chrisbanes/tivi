@@ -24,7 +24,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
@@ -37,14 +36,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import app.tivi.account.AccountUi
 import app.tivi.common.compose.ui.androidMinWidthDialogSize
-import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.home.library.Library
-import app.tivi.home.popular.PopularShows
 import app.tivi.home.recommended.RecommendedShows
 import app.tivi.home.search.Search
-import app.tivi.home.trending.TrendingShows
 import app.tivi.home.upnext.UpNext
 import app.tivi.showdetails.details.ShowDetails
 import app.tivi.showdetails.seasons.ShowSeasons
@@ -256,7 +251,7 @@ private fun NavGraphBuilder.addLibrary(
         route = Screen.Library.createRoute(root),
         debugLabel = "Library()",
     ) {
-        Library(
+        composeScreens.library(
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
             },
@@ -277,7 +272,7 @@ private fun NavGraphBuilder.addUpNext(
         route = Screen.UpNext.createRoute(root),
         debugLabel = "UpNext()",
     ) {
-        UpNext(
+        composeScreens.upNext(
             openShowDetails = { showId, seasonId, episodeId ->
                 navController.navigateToShow(root, showId, seasonId, episodeId)
             },
@@ -295,7 +290,7 @@ private fun NavGraphBuilder.addSearch(
     root: RootScreen,
 ) {
     composable(Screen.Search.createRoute(root)) {
-        Search(
+        composeScreens.search(
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
             },
@@ -316,7 +311,7 @@ private fun NavGraphBuilder.addShowDetails(
             navArgument("showId") { type = NavType.LongType },
         ),
     ) {
-        ShowDetails(
+        composeScreens.showDetails(
             navigateUp = navController::navigateUp,
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
@@ -331,7 +326,7 @@ private fun NavGraphBuilder.addShowDetails(
     }
 }
 
-@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialNavigationApi::class)
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addEpisodeDetails(
     navController: NavController,
@@ -345,10 +340,10 @@ private fun NavGraphBuilder.addEpisodeDetails(
             navArgument("episodeId") { type = NavType.LongType },
         ),
     ) {
-        val bottomSheetNavigator = navController.navigatorProvider
-            .getNavigator(BottomSheetNavigator::class.java)
-        EpisodeDetails(
-            sheetState = bottomSheetNavigator.navigatorSheetState,
+        composeScreens.episodeDetails(
+            sheetState = navController.navigatorProvider
+                .getNavigator(BottomSheetNavigator::class.java)
+                .navigatorSheetState,
             navigateUp = navController::navigateUp,
         )
     }
@@ -364,7 +359,7 @@ private fun NavGraphBuilder.addRecommendedShows(
         route = Screen.RecommendedShows.createRoute(root),
         debugLabel = "RecommendedShows()",
     ) {
-        RecommendedShows(
+        composeScreens.recommendedShows(
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
             },
@@ -383,7 +378,7 @@ private fun NavGraphBuilder.addTrendingShows(
         route = Screen.Trending.createRoute(root),
         debugLabel = "TrendingShows()",
     ) {
-        TrendingShows(
+        composeScreens.trendingShows(
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
             },
@@ -402,7 +397,7 @@ private fun NavGraphBuilder.addPopularShows(
         route = Screen.Popular.createRoute(root),
         debugLabel = "PopularShows()",
     ) {
-        PopularShows(
+        composeScreens.popularShows(
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
             },
@@ -422,7 +417,7 @@ private fun NavGraphBuilder.addAccount(
         // Required due to https://issuetracker.google.com/issues/221643630
         dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-        AccountUi(
+        composeScreens.accountUi(
             openSettings = onOpenSettings,
             modifier = Modifier
                 // Required due to `usePlatformDefaultWidth = false` above
@@ -450,7 +445,7 @@ private fun NavGraphBuilder.addShowSeasons(
             },
         ),
     ) {
-        ShowSeasons(
+        composeScreens.showSeasons(
             navigateUp = navController::navigateUp,
             openEpisodeDetails = { episodeId ->
                 navController.navigate(Screen.EpisodeDetails.createRoute(root, episodeId))

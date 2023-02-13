@@ -21,7 +21,7 @@ import app.tivi.data.models.SortOption
 import app.tivi.data.models.TraktUser
 import app.tivi.trakt.TraktAuthState
 
-internal data class LibraryViewState(
+data class LibraryViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
     val isLoading: Boolean = false,

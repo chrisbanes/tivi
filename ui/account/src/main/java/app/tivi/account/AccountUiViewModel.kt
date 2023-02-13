@@ -23,7 +23,6 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthManager
 import app.tivi.trakt.TraktManager
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -32,9 +31,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 @Inject
-internal class AccountUiViewModel(
+class AccountUiViewModel(
     private val traktManager: TraktManager,
     private val traktAuthManager: TraktAuthManager,
     observeTraktAuthState: ObserveTraktAuthState,

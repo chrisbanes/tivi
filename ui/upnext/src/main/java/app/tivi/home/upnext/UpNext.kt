@@ -63,7 +63,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
@@ -75,6 +74,7 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
+import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.Episode
@@ -82,14 +82,22 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.trakt.TraktAuthState
+import me.tatarka.inject.annotations.Inject
 
+typealias UpNext = @Composable (
+    openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
+    openUser: () -> Unit,
+) -> Unit
+
+@Inject
 @Composable
 fun UpNext(
+    viewModelFactory: () -> UpNextViewModel,
     openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
     openUser: () -> Unit,
 ) {
     UpNext(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(factory = viewModelFactory),
         openShowDetails = openShowDetails,
         openUser = openUser,
     )

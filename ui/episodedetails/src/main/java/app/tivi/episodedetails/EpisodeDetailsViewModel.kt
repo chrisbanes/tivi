@@ -29,19 +29,18 @@ import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
 
-@HiltViewModel
 @Inject
-internal class EpisodeDetailsViewModel(
-    savedStateHandle: SavedStateHandle,
+class EpisodeDetailsViewModel(
+    @Assisted savedStateHandle: SavedStateHandle,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
     observeEpisodeWatches: ObserveEpisodeWatches,

@@ -22,7 +22,7 @@ import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.TiviShow
 
 @Immutable
-internal data class ShowSeasonsViewState(
+data class ShowSeasonsViewState(
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val refreshing: Boolean = false,

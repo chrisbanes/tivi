@@ -76,27 +76,37 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.TopAppBarWithBottomContent
+import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.EpisodeWithWatches
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
+typealias ShowSeasons = @Composable (
+    navigateUp: () -> Unit,
+    openEpisodeDetails: (episodeId: Long) -> Unit,
+    initialSeasonId: Long?,
+) -> Unit
+
+@Inject
 @Composable
 fun ShowSeasons(
+    viewModelFactory: (SavedStateHandle) -> ShowSeasonsViewModel,
     navigateUp: () -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
     initialSeasonId: Long? = null,
 ) {
     ShowSeasons(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(factory = viewModelFactory),
         navigateUp = navigateUp,
         openEpisodeDetails = openEpisodeDetails,
         initialSeasonId = initialSeasonId,
