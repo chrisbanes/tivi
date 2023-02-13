@@ -25,12 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import app.tivi.ComposeScreens
@@ -56,14 +55,11 @@ import me.tatarka.inject.annotations.Provides
 @AndroidEntryPoint
 class MainActivity : TiviActivity() {
 
-    abstract val component: MainActivityComponent
+    private lateinit var component: MainActivityComponent
 
     private val viewModel: MainActivityViewModel by viewModels {
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                return component.viewModel() as T
-            }
+        viewModelFactory {
+            addInitializer(MainActivityViewModel::class) { component.viewModel() }
         }
     }
 
