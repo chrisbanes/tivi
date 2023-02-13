@@ -45,7 +45,7 @@ jobs:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew build bundle
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
