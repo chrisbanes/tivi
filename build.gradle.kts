@@ -77,6 +77,20 @@ allprojects {
         }
     }
 
+    // Workaround for https://issuetracker.google.com/issues/268961156
+    tasks.withType<com.android.build.gradle.internal.lint.AndroidLintTask>() {
+        val kspTestTask = tasks.findByName("kspTestKotlin")
+        if (kspTestTask != null) {
+            dependsOn(kspTestTask)
+        }
+    }
+    tasks.withType<com.android.build.gradle.internal.lint.AndroidLintAnalysisTask>() {
+        val kspTestTask = tasks.findByName("kspTestKotlin")
+        if (kspTestTask != null) {
+            dependsOn(kspTestTask)
+        }
+    }
+
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions {
             // Treat all Kotlin warnings as errors
