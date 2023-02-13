@@ -32,6 +32,7 @@ import app.tivi.data.util.instantInPast
 import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.TraktAuthState
+import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -54,7 +55,7 @@ class SeasonsEpisodesRepository(
     private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
     private val traktEpisodeDataSource: TraktEpisodeDataSource,
     private val tmdbEpisodeDataSource: TmdbEpisodeDataSource,
-    private val traktAuthState: Lazy<TraktAuthState>,
+    private val traktManager: TraktManager,
     logger: Logger,
 ) {
     private val seasonSyncer = syncerForEntity(
@@ -208,7 +209,7 @@ class SeasonsEpisodesRepository(
     }
 
     private suspend fun updateShowEpisodeWatches(showId: Long, since: OffsetDateTime? = null) {
-        if (traktAuthState.value == TraktAuthState.LOGGED_IN) {
+        if (traktManager.state.value == TraktAuthState.LOGGED_IN) {
             fetchShowWatchesFromRemote(showId, since)
         }
     }
@@ -224,7 +225,7 @@ class SeasonsEpisodesRepository(
             it.isNotEmpty() && processPendingAdditions(it)
         }
 
-        if (traktAuthState.value == TraktAuthState.LOGGED_IN) {
+        if (traktManager.state.value == TraktAuthState.LOGGED_IN) {
             fetchShowWatchesFromRemote(showId)
         }
     }
@@ -341,7 +342,7 @@ class SeasonsEpisodesRepository(
             needUpdate = true
         }
 
-        if (needUpdate && traktAuthState.value == TraktAuthState.LOGGED_IN) {
+        if (needUpdate && traktManager.state.value == TraktAuthState.LOGGED_IN) {
             fetchEpisodeWatchesFromRemote(episodeId)
         }
     }
@@ -377,7 +378,7 @@ class SeasonsEpisodesRepository(
      * @return true if a network service was updated
      */
     private suspend fun processPendingDeletes(entries: List<EpisodeWatchEntry>): Boolean {
-        if (traktAuthState.value == TraktAuthState.LOGGED_IN) {
+        if (traktManager.state.value == TraktAuthState.LOGGED_IN) {
             val localOnlyDeletes = entries.filter { it.traktId == null }
             // If we've got deletes which are local only, just remove them from the DB
             if (localOnlyDeletes.isNotEmpty()) {
@@ -404,7 +405,7 @@ class SeasonsEpisodesRepository(
      * @return true if a network service was updated
      */
     private suspend fun processPendingAdditions(entries: List<EpisodeWatchEntry>): Boolean {
-        if (traktAuthState.value == TraktAuthState.LOGGED_IN) {
+        if (traktManager.state.value == TraktAuthState.LOGGED_IN) {
             traktSeasonsDataSource.addEpisodeWatches(entries)
             // Now update the database
             episodeWatchStore.updateEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)

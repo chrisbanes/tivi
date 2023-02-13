@@ -29,6 +29,7 @@ import app.tivi.data.util.syncerForEntity
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.TraktAuthState
+import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -42,7 +43,7 @@ class FollowedShowsRepository(
     private val followedShowsDao: FollowedShowsDao,
     private val followedShowsLastRequestStore: FollowedShowsLastRequestStore,
     private val dataSource: FollowedShowsDataSource,
-    private val traktAuthState: Lazy<TraktAuthState>,
+    private val traktManager: TraktManager,
     private val logger: Logger,
     private val showDao: TiviShowDao,
 ) {
@@ -108,7 +109,7 @@ class FollowedShowsRepository(
     }
 
     suspend fun syncFollowedShows(): ItemSyncerResult<FollowedShowEntry> {
-        val listId = when (traktAuthState.value) {
+        val listId = when (traktManager.state.value) {
             TraktAuthState.LOGGED_IN -> getFollowedTraktListId()
             else -> null
         }
@@ -148,7 +149,7 @@ class FollowedShowsRepository(
             return
         }
 
-        if (listId != null && traktAuthState.value == TraktAuthState.LOGGED_IN) {
+        if (listId != null && traktManager.state.value == TraktAuthState.LOGGED_IN) {
             val shows = pending.mapNotNull { showDao.getShowWithId(it.showId) }
             logger.v("processPendingAdditions. Entries mapped: %s", shows)
 
@@ -177,7 +178,7 @@ class FollowedShowsRepository(
             return
         }
 
-        if (listId != null && traktAuthState.value == TraktAuthState.LOGGED_IN) {
+        if (listId != null && traktManager.state.value == TraktAuthState.LOGGED_IN) {
             val shows = pending.mapNotNull { showDao.getShowWithId(it.showId) }
             logger.v("processPendingDelete. Entries mapped: %s", shows)
 
