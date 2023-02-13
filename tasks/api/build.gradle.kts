@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,8 @@
 
 plugins {
     id("kotlin")
-    alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.cacheFixPlugin)
 }
 
 dependencies {
     implementation(projects.base)
-    api(projects.api.trakt)
-    api(projects.tasks.api)
-
-    implementation(libs.dagger.dagger)
-    kapt(libs.dagger.compiler)
 }

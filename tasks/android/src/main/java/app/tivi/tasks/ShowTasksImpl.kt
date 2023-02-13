@@ -22,7 +22,6 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import app.tivi.actions.ShowTasks
 import app.tivi.extensions.fluentIf
 import java.util.concurrent.TimeUnit
 import me.tatarka.inject.annotations.Inject

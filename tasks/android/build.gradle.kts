@@ -35,6 +35,7 @@ android {
 dependencies {
     implementation(projects.base)
     implementation(projects.domain)
+    api(projects.tasks.api)
 
     api(libs.androidx.work.runtime)
 
