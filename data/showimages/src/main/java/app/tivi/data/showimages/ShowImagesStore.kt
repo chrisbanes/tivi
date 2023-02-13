@@ -40,9 +40,13 @@ class ShowImagesStore @Inject constructor(
         val show = showDao.getShowWithId(showId)
             ?: throw IllegalArgumentException("Show with ID $showId does not exist")
 
-        dataSource.getShowImages(show)
-            .also { lastRequestStore.updateLastRequest(showId) }
-            .map { it.copy(showId = showId) }
+        if (show.tmdbId != null) {
+            dataSource.getShowImages(show)
+                .also { lastRequestStore.updateLastRequest(showId) }
+                .map { it.copy(showId = showId) }
+        } else {
+            emptyList()
+        }
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { showId ->
