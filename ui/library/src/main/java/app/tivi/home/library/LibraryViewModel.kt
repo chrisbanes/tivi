@@ -39,7 +39,6 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -51,9 +50,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 @Inject
-internal class LibraryViewModel(
+class LibraryViewModel(
     private val updateFollowedShows: UpdateFollowedShows,
     private val updateWatchedShows: UpdateWatchedShows,
     private val observePagedLibraryShows: ObservePagedLibraryShows,

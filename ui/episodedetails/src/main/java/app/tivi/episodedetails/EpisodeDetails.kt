@@ -92,7 +92,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.theme.TiviTheme
@@ -104,6 +104,7 @@ import app.tivi.common.compose.ui.TiviAlertDialog
 import app.tivi.common.compose.ui.boundsInParent
 import app.tivi.common.compose.ui.none
 import app.tivi.common.compose.ui.onPositionInParentChanged
+import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -115,16 +116,24 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
 import kotlin.math.roundToInt
+import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
 
-@ExperimentalMaterialApi
+typealias EpisodeDetails = @Composable (
+    sheetState: BottomSheetNavigatorSheetState,
+    navigateUp: () -> Unit,
+) -> Unit
+
+@OptIn(ExperimentalMaterialApi::class)
+@Inject
 @Composable
 fun EpisodeDetails(
+    viewModelFactory: (SavedStateHandle) -> EpisodeDetailsViewModel,
     sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
 ) {
     EpisodeDetails(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(factory = viewModelFactory),
         sheetState = sheetState,
         navigateUp = navigateUp,
     )

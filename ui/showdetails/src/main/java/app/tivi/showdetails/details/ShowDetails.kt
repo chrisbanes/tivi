@@ -99,7 +99,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
@@ -111,6 +111,7 @@ import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.viewModel
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.EpisodeWithSeason
@@ -130,17 +131,27 @@ import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TmdbImageEntity
 import app.tivi.data.views.FollowedShowsWatchStats
+import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
 
+typealias ShowDetails = @Composable (
+    navigateUp: () -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    openEpisodeDetails: (episodeId: Long) -> Unit,
+    openSeasons: (showId: Long, seasonId: Long) -> Unit,
+) -> Unit
+
+@Inject
 @Composable
 fun ShowDetails(
+    viewModelFactory: (SavedStateHandle) -> ShowDetailsViewModel,
     navigateUp: () -> Unit,
     openShowDetails: (showId: Long) -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
     openSeasons: (showId: Long, seasonId: Long) -> Unit,
 ) {
     ShowDetails(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(factory = viewModelFactory),
         navigateUp = navigateUp,
         openShowDetails = openShowDetails,
         openEpisodeDetails = openEpisodeDetails,

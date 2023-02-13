@@ -42,16 +42,15 @@ import app.tivi.extensions.combine
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 @Inject
-internal class ShowDetailsViewModel(
-    savedStateHandle: SavedStateHandle,
+class ShowDetailsViewModel(
+    @Assisted savedStateHandle: SavedStateHandle,
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
     observeShowImages: ObserveShowImages,

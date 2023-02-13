@@ -26,7 +26,7 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.views.FollowedShowsWatchStats
 
 @Immutable
-internal data class ShowDetailsViewState(
+data class ShowDetailsViewState(
     val isFollowed: Boolean = false,
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val posterImage: ShowTmdbImage? = null,

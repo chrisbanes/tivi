@@ -15,6 +15,8 @@
  */
 
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -151,6 +153,12 @@ android {
 
 ksp {
     arg("me.tatarka.inject.dumpGraph", "true")
+}
+
+tasks.withType<KotlinCompilationTask<*>> {
+    compilerOptions {
+        freeCompilerArgs.add("-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi")
+    }
 }
 
 dependencies {

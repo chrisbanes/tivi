@@ -23,13 +23,11 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.domain.observers.ObservePagedPopularShows
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 @Inject
-internal class PopularShowsViewModel(
+class PopularShowsViewModel(
     pagingInteractor: ObservePagedPopularShows,
 ) : ViewModel() {
 

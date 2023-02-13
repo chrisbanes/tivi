@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalMaterialApi::class)
-
 package app.tivi.home.library
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -77,7 +74,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.Layout
@@ -91,21 +87,30 @@ import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
+import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.trakt.TraktAuthState
+import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
 
+typealias Library = @Composable (
+    openShowDetails: (showId: Long) -> Unit,
+    openUser: () -> Unit,
+) -> Unit
+
+@Inject
 @Composable
 fun Library(
+    viewModelFactory: () -> LibraryViewModel,
     openShowDetails: (showId: Long) -> Unit,
     openUser: () -> Unit,
 ) {
     Library(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(factory = viewModelFactory),
         openShowDetails = openShowDetails,
         openUser = openUser,
     )
@@ -134,7 +139,7 @@ internal fun Library(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun Library(
     state: LibraryViewState,

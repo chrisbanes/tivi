@@ -20,18 +20,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
+import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
+import me.tatarka.inject.annotations.Inject
 
+typealias TrendingShows = @Composable (
+    openShowDetails: (showId: Long) -> Unit,
+    navigateUp: () -> Unit,
+) -> Unit
+
+@Inject
 @Composable
 fun TrendingShows(
+    viewModelFactory: () -> TrendingShowsViewModel,
     openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit,
 ) {
     TrendingShows(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(factory = viewModelFactory),
         openShowDetails = openShowDetails,
         navigateUp = navigateUp,
     )
