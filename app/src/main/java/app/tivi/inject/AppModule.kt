@@ -34,26 +34,26 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface AppModule {
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideApplicationId(application: Application): ApplicationInfo {
         return ApplicationInfo(application.packageName)
     }
 
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
         io = Dispatchers.IO,
         computation = Dispatchers.Default,
         main = Dispatchers.Main,
     )
 
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideTmdbApiKey(): TmdbOAuthInfo = TmdbOAuthInfo(BuildConfig.TMDB_API_KEY)
 
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideTraktOAuthInfo(
         appInfo: ApplicationInfo,
     ): TraktOAuthInfo = TraktOAuthInfo(

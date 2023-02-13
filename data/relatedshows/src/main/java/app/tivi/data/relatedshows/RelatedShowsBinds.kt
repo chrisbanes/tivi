@@ -20,14 +20,17 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface RelatedShowsBinds {
-    val TraktRelatedShowsDataSourceImpl.bind: TraktRelatedShowsDataSource
-        @ApplicationScope @Provides
-        get() = this
+    @ApplicationScope
+    @Provides
+    fun provideTmdbRelatedShowsDataSource(
+        bind: TmdbRelatedShowsDataSourceImpl,
+    ): TmdbRelatedShowsDataSource = bind
 
     @ApplicationScope
-    val TmdbRelatedShowsDataSourceImpl.bind: TmdbRelatedShowsDataSource
-        @ApplicationScope @Provides
-        get() = this
+    @Provides
+    fun provideTraktRelatedShowsDataSource(
+        bind: TraktRelatedShowsDataSourceImpl,
+    ): TraktRelatedShowsDataSource = bind
 }
 
 typealias TmdbRelatedShowsDataSource = RelatedShowsDataSource

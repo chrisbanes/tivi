@@ -20,7 +20,9 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface WatchedShowsBinds {
-    val TraktWatchedShowsDataSource.bind: WatchedShowsDataSource
-        @ApplicationScope @Provides
-        get() = this
+    @Provides
+    @ApplicationScope
+    fun provideTraktWatchedShowsDataSource(
+        bind: TraktWatchedShowsDataSource,
+    ): WatchedShowsDataSource = bind
 }

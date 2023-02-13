@@ -35,7 +35,7 @@ class TmdbRelatedShowsDataSourceImpl(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
     showMapper: TmdbBaseShowToTiviShow,
-) : RelatedShowsDataSource {
+) : TmdbRelatedShowsDataSource {
     private val entryMapper = IndexedMapper<BaseTvShow, RelatedShowEntry> { index, _ ->
         RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
     }

@@ -29,8 +29,8 @@ import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
 interface TraktModule {
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideTrakt(
         client: OkHttpClient,
         oauthInfo: TraktOAuthInfo,

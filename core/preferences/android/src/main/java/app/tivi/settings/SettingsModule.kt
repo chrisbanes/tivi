@@ -29,8 +29,8 @@ interface SettingsModule {
     @Provides
     fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind
 
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideAppPreferences(
         context: Application,
     ): AppSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)

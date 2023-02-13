@@ -35,7 +35,7 @@ class TraktRelatedShowsDataSourceImpl(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val showService: Lazy<Shows>,
     showMapper: TraktShowToTiviShow,
-) : RelatedShowsDataSource {
+) : TraktRelatedShowsDataSource {
     private val entryMapper = IndexedMapper<Show, RelatedShowEntry> { index, _ ->
         RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
     }

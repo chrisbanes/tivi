@@ -20,7 +20,7 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface TraktUsersBinds {
-    val TraktUsersDataSource.bind: UsersDataSource
-        @ApplicationScope @Provides
-        get() = this
+    @ApplicationScope
+    @Provides
+    fun provideTraktUsersDataSource(bind: TraktUsersDataSource): UsersDataSource = bind
 }

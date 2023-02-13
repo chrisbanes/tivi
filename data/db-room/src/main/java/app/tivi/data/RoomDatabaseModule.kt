@@ -103,6 +103,5 @@ interface RoomDatabaseModule {
     fun provideLibraryShowsDao(db: TiviDatabase): LibraryShowsDao = db.libraryShowsDao()
 
     @Provides
-    @ApplicationScope
     fun provideDatabaseTransactionRunner(runner: RoomTransactionRunner): DatabaseTransactionRunner = runner
 }
