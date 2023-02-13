@@ -30,12 +30,13 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
 class SettingsActivity : ComponentActivity() {
-    abstract val powerController: PowerController
+    private lateinit var powerController: PowerController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // val component = SettingsActivityComponent::class.crea
+        val component = SettingsActivityComponent::class.create(application)
+        powerController = component.powerController
 
         val fragment = SettingsPreferenceFragment()
 
@@ -58,6 +59,5 @@ abstract class SettingsActivityComponent(
 ) : ActivityComponent,
     PowerControllerModule,
     SettingsModule {
-
     abstract val powerController: PowerController
 }
