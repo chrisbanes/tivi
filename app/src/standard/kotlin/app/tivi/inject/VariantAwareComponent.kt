@@ -16,4 +16,13 @@
 
 package app.tivi.inject
 
-interface VariantAwareComponent
+import me.tatarka.inject.annotations.Provides
+import okhttp3.Interceptor
+
+interface VariantAwareComponent {
+    /**
+     * We have no interceptors in the standard release currently
+     */
+    @Provides
+    fun provideInterceptors(): Set<Interceptor> = emptySet()
+}
