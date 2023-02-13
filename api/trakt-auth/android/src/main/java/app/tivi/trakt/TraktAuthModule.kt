@@ -73,11 +73,11 @@ interface TraktAuthModule {
         return application.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
     }
 
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideTraktAuthManager(manager: ActivityTraktAuthManager): TraktAuthManager = manager
 
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideAuthStore(manager: TiviAuthStore): AuthStore = manager
 }

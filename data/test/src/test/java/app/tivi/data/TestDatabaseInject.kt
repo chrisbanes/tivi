@@ -82,8 +82,8 @@ abstract class TestDataSourceModule :
         bind: TraktSeasonsEpisodesDataSource,
     ): SeasonsEpisodesDataSource = seasonsDataSource
 
-    @Provides
     @ApplicationScope
+    @Provides
     override fun bindTraktShowDataSource(
         bind: TraktShowDataSourceImpl,
     ): TraktShowDataSource = traktShowDataSource

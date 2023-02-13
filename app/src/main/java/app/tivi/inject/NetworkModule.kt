@@ -27,8 +27,8 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
 interface NetworkModule {
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideOkHttpClient(
         context: Application,
         interceptors: Set<Interceptor>,

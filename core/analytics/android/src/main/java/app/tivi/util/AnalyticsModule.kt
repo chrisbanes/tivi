@@ -20,7 +20,7 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface AnalyticsModule {
-    val TiviFirebaseAnalytics.bind: Analytics
-        @Provides @ApplicationScope
-        get() = this
+    @ApplicationScope
+    @Provides
+    fun provideTiviFirebaseAnalytics(bind: TiviFirebaseAnalytics): Analytics = bind
 }

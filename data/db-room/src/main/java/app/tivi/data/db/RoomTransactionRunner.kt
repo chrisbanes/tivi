@@ -18,8 +18,10 @@ package app.tivi.data.db
 
 import androidx.room.withTransaction
 import app.tivi.data.TiviRoomDatabase
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Inject
 
+@ApplicationScope
 @Inject
 class RoomTransactionRunner(
     private val db: TiviRoomDatabase,

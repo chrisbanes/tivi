@@ -20,8 +20,9 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface TrendingShowsBinds {
-    val TraktTrendingShowsDataSource.bind: TrendingShowsDataSource
-        @ApplicationScope
-        @Provides
-        get() = this
+    @Provides
+    @ApplicationScope
+    fun provideTraktTrendingShowsDataSource(
+        bind: TraktTrendingShowsDataSource,
+    ): TrendingShowsDataSource = bind
 }

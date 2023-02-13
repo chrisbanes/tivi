@@ -29,16 +29,16 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.mock.NetworkBehavior
 
 interface VariantAwareModule {
-    @Provides
     @ApplicationScope
     @IntoSet
+    @Provides
     fun provideHttpLoggingInterceptor(): Interceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BASIC
     }
 
-    @Provides
     @ApplicationScope
     @IntoSet
+    @Provides
     fun provideChuckerInterceptor(
         context: Application,
     ): Interceptor = ChuckerInterceptor.Builder(context)
@@ -48,16 +48,16 @@ interface VariantAwareModule {
         )
         .build()
 
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideHttpLogger(application: Application): HttpLogger = HttpLogger(application)
 
     @Provides
     @IntoSet
     fun provideHttpLoggerInterceptor(httpLogger: HttpLogger): Interceptor = httpLogger.interceptor
 
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideNetworkBehavior(): NetworkBehavior = NetworkBehavior.create()
 
     @Provides
@@ -67,8 +67,8 @@ interface VariantAwareModule {
         return NetworkBehaviorSimulatorInterceptor(networkBehavior)
     }
 
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideDebugRetrofitConfig(
         application: Application,
         networkBehavior: NetworkBehavior,

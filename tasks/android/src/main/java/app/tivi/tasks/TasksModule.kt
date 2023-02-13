@@ -24,18 +24,18 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface TasksModule {
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideWorkManager(application: Application): WorkManager {
         return WorkManager.getInstance(application)
     }
 
-    @Provides
     @ApplicationScope
+    @Provides
     @IntoSet
     fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer = bind
 
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideShowTasks(bind: ShowTasksImpl): ShowTasks = bind
 }
