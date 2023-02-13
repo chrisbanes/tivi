@@ -167,7 +167,7 @@ dependencies {
     implementation(projects.api.traktAuth.android)
     implementation(projects.api.tmdb)
     implementation(projects.domain)
-    implementation(projects.tasks)
+    implementation(projects.tasks.android)
 
     implementation(projects.ui.account)
     implementation(projects.ui.discover)

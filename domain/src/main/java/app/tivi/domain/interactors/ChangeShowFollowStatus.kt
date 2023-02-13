@@ -16,13 +16,13 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.actions.ShowTasks
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
+import app.tivi.tasks.ShowTasks
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import kotlinx.coroutines.withContext

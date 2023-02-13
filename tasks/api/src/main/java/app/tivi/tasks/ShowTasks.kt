@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.actions
+package app.tivi.tasks
 
 interface ShowTasks {
     fun syncFollowedShows(deferUntilIdle: Boolean = false)

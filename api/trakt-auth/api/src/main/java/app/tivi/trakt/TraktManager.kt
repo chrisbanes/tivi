@@ -16,8 +16,8 @@
 
 package app.tivi.trakt
 
-import app.tivi.actions.ShowTasks
 import app.tivi.inject.ApplicationScope
+import app.tivi.tasks.ShowTasks
 import app.tivi.trakt.store.AuthStore
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.TraktV2

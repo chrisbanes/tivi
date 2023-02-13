@@ -16,15 +16,26 @@
 
 package app.tivi.tasks
 
-import app.tivi.actions.ShowTasks
+import android.app.Application
+import androidx.work.WorkManager
 import app.tivi.appinitializers.AppInitializer
-import me.tatarka.inject.annotations.Inject
+import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.IntoSet
+import me.tatarka.inject.annotations.Provides
 
-@Inject
-class ShowTasksInitializer(
-    private val showTasks: Lazy<ShowTasks>,
-) : AppInitializer {
-    override fun init() {
-        showTasks.value.setupNightSyncs()
+interface TasksModule {
+    @Provides
+    @ApplicationScope
+    fun provideWorkManager(application: Application): WorkManager {
+        return WorkManager.getInstance(application)
     }
+
+    @Provides
+    @ApplicationScope
+    @IntoSet
+    fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer = bind
+
+    @Provides
+    @ApplicationScope
+    fun provideShowTasks(bind: ShowTasksImpl): ShowTasks = bind
 }
