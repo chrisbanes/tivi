@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package app.tivi.util
+package app.tivi.home
 
-import app.tivi.inject.ApplicationScope
+import app.tivi.ContentViewSetter
 import me.tatarka.inject.annotations.Provides
 
-interface AnalyticsModule {
-    @ApplicationScope
+interface ContentViewSetterComponent {
     @Provides
-    fun provideTiviFirebaseAnalytics(bind: TiviFirebaseAnalytics): Analytics = bind
+    fun provideContentViewSetter(): ContentViewSetter = ContentViewSetter { activity, view ->
+        activity.setContentView(view)
+    }
 }

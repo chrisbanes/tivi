@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package app.tivi.home
+package app.tivi.common.imageloading
 
-import app.tivi.ContentViewSetter
+import app.tivi.appinitializers.AppInitializer
+import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
-interface ContentViewSetterModule {
+interface ImageLoadingComponent {
     @Provides
-    fun provideContentViewSetter(): ContentViewSetter = ContentViewSetter { activity, view ->
-        activity.setContentView(view)
-    }
+    @IntoSet
+    fun provideCoilInitializer(bind: CoilAppInitializer): AppInitializer = bind
 }

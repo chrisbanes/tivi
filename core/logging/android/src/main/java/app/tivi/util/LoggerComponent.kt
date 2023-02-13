@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package app.tivi.util
 
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface PowerControllerModule {
+interface LoggerComponent {
+    @ApplicationScope
     @Provides
-    fun providePowerController(bind: AndroidPowerController): PowerController = bind
+    fun provideLogger(bind: TiviLogger): Logger = bind
 }

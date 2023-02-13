@@ -21,7 +21,6 @@ import androidx.room.Room
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.db.RoomTransactionRunner
 import app.tivi.data.episodes.EpisodeBinds
-import app.tivi.data.episodes.EpisodeDataSource
 import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.TmdbEpisodeDataSource
 import app.tivi.data.episodes.TmdbEpisodeDataSourceImpl
@@ -34,74 +33,89 @@ import app.tivi.data.followedshows.TraktFollowedShowsDataSource
 import app.tivi.data.showimages.ShowImagesBinds
 import app.tivi.data.showimages.ShowImagesDataSource
 import app.tivi.data.showimages.TmdbShowImagesDataSource
-import app.tivi.data.shows.ShowDataSource
 import app.tivi.data.shows.ShowsBinds
 import app.tivi.data.shows.TmdbShowDataSource
 import app.tivi.data.shows.TmdbShowDataSourceImpl
 import app.tivi.data.shows.TraktShowDataSource
 import app.tivi.data.shows.TraktShowDataSourceImpl
 import app.tivi.inject.ApplicationScope
+import app.tivi.tasks.ShowTasks
+import app.tivi.trakt.store.AuthStore
+import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.utils.AuthorizedAuthStore
 import app.tivi.utils.SuccessFakeShowDataSource
 import app.tivi.utils.SuccessFakeShowImagesDataSource
 import app.tivi.utils.TestTransactionRunner
 import app.tivi.utils.TiviTestDatabase
 import io.mockk.mockk
+import kotlinx.coroutines.test.StandardTestDispatcher
 import me.tatarka.inject.annotations.Provides
 
-abstract class TestDataSourceModule :
+abstract class TestDataSourceComponent :
     FollowedShowsBinds,
     EpisodeBinds,
     ShowsBinds,
     ShowImagesBinds {
 
-    private val traktFollowedShowsDataSource: FollowedShowsDataSource = mockk()
-    private val traktEpisodeDataSource: EpisodeDataSource = mockk()
-    private val tmdbEpisodeDataSource: EpisodeDataSource = mockk()
-    private val seasonsDataSource: SeasonsEpisodesDataSource = mockk()
-    private val traktShowDataSource: ShowDataSource = SuccessFakeShowDataSource
-    private val tmdbShowDataSource: ShowDataSource = SuccessFakeShowDataSource
-    private val tmdbShowImagesDataSource: ShowImagesDataSource = SuccessFakeShowImagesDataSource
-
+    @ApplicationScope
     @Provides
     override fun provideTraktFollowedShowsDataSource(
         bind: TraktFollowedShowsDataSource,
-    ): FollowedShowsDataSource = traktFollowedShowsDataSource
+    ): FollowedShowsDataSource = mockk()
 
+    @ApplicationScope
     @Provides
     override fun provideTraktEpisodeDataSource(
         bind: TraktEpisodeDataSourceImpl,
-    ): TraktEpisodeDataSource = traktEpisodeDataSource
+    ): TraktEpisodeDataSource = mockk()
 
+    @ApplicationScope
     @Provides
     override fun provideTmdbEpisodeDataSource(
         bind: TmdbEpisodeDataSourceImpl,
-    ): TmdbEpisodeDataSource = tmdbEpisodeDataSource
+    ): TmdbEpisodeDataSource = mockk()
 
+    @ApplicationScope
     @Provides
     override fun provideTraktSeasonsEpisodesDataSource(
         bind: TraktSeasonsEpisodesDataSource,
-    ): SeasonsEpisodesDataSource = seasonsDataSource
+    ): SeasonsEpisodesDataSource = mockk()
 
     @ApplicationScope
     @Provides
     override fun bindTraktShowDataSource(
         bind: TraktShowDataSourceImpl,
-    ): TraktShowDataSource = traktShowDataSource
+    ): TraktShowDataSource = SuccessFakeShowDataSource
 
     @ApplicationScope
     @Provides
     override fun bindTmdbShowDataSource(
         bind: TmdbShowDataSourceImpl,
-    ): TmdbShowDataSource = tmdbShowDataSource
+    ): TmdbShowDataSource = SuccessFakeShowDataSource
 
     @ApplicationScope
     @Provides
     override fun bindShowImagesDataSource(
         bind: TmdbShowImagesDataSource,
-    ): ShowImagesDataSource = tmdbShowImagesDataSource
+    ): ShowImagesDataSource = SuccessFakeShowImagesDataSource
+
+    @ApplicationScope
+    @Provides
+    fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
+        io = StandardTestDispatcher(),
+        computation = StandardTestDispatcher(),
+        main = StandardTestDispatcher(),
+    )
+
+    @ApplicationScope
+    @Provides
+    fun provideShowTasks(): ShowTasks = mockk(relaxUnitFun = true)
+
+    @Provides
+    fun provideAuthStore(): AuthStore = AuthorizedAuthStore
 }
 
-interface TestRoomDatabaseModule : RoomDatabaseModule {
+interface TestRoomDatabaseComponent : RoomDatabaseComponent {
     @ApplicationScope
     @Provides
     override fun provideTiviRoomDatabase(

@@ -42,12 +42,11 @@ class TraktManager(
     private val authState = MutableStateFlow(AuthState.Empty)
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
-    val state: StateFlow<TraktAuthState>
-        get() = _state.asStateFlow()
+    val state: StateFlow<TraktAuthState> get() = _state.asStateFlow()
 
     init {
         // Observer which updates local state
-        GlobalScope.launch(dispatchers.io) {
+        GlobalScope.launch(dispatchers.main) {
             authState.collect { authState ->
                 updateAuthState(authState)
 
@@ -78,10 +77,10 @@ class TraktManager(
     }
 
     fun onNewAuthState(newState: AuthState) {
-        GlobalScope.launch(dispatchers.main) {
-            // Update our local state
-            authState.value = newState
-        }
+        // Update our local state
+        authState.value = newState
+        updateAuthState(newState)
+
         GlobalScope.launch(dispatchers.io) {
             // Persist auth state
             authStore.save(newState)

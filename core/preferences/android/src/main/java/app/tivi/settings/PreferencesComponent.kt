@@ -24,7 +24,7 @@ import android.preference.PreferenceManager
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface SettingsModule {
+interface PreferencesComponent {
     @ApplicationScope
     @Provides
     fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind

@@ -22,14 +22,14 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ApplicationScope
-import app.tivi.tmdb.TmdbModule
+import app.tivi.tmdb.TmdbComponent
 import app.tivi.tmdb.TmdbOAuthInfo
 import app.tivi.trakt.TraktAuthState
-import app.tivi.trakt.TraktModule
+import app.tivi.trakt.TraktComponent
 import app.tivi.trakt.TraktOAuthInfo
-import app.tivi.util.AnalyticsModule
+import app.tivi.util.AnalyticsComponent
 import app.tivi.util.Logger
-import app.tivi.util.LoggerModule
+import app.tivi.util.LoggerComponent
 import app.tivi.util.TiviLogger
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.trakt5.TraktV2
@@ -54,12 +54,12 @@ abstract class DatabaseTest {
 @ApplicationScope
 abstract class TestApplicationComponent(
     @get:Provides val application: Application,
-) : TmdbModule,
-    TraktModule,
-    AnalyticsModule,
-    LoggerModule,
-    TestDataSourceModule(),
-    TestRoomDatabaseModule {
+) : TmdbComponent,
+    TraktComponent,
+    AnalyticsComponent,
+    LoggerComponent,
+    TestDataSourceComponent(),
+    TestRoomDatabaseComponent {
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()

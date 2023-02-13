@@ -40,7 +40,7 @@ import app.tivi.data.db.TiviDatabase
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface RoomDatabaseModule {
+interface RoomDatabaseComponent {
     @ApplicationScope
     @Provides
     fun provideTiviRoomDatabase(

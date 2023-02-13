@@ -28,7 +28,7 @@ import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.mock.NetworkBehavior
 
-interface VariantAwareModule {
+interface VariantAwareComponent {
     @ApplicationScope
     @IntoSet
     @Provides

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,28 @@
  * limitations under the License.
  */
 
-package app.tivi.util
+package app.tivi.tasks
 
+import android.app.Application
+import androidx.work.WorkManager
+import app.tivi.appinitializers.AppInitializer
 import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
-interface LoggerModule {
+interface TasksComponent {
     @ApplicationScope
     @Provides
-    fun provideLogger(bind: TiviLogger): Logger = bind
+    fun provideWorkManager(application: Application): WorkManager {
+        return WorkManager.getInstance(application)
+    }
+
+    @ApplicationScope
+    @Provides
+    @IntoSet
+    fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer = bind
+
+    @ApplicationScope
+    @Provides
+    fun provideShowTasks(bind: ShowTasksImpl): ShowTasks = bind
 }

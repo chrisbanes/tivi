@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package app.tivi.tasks
+package app.tivi.tmdb
 
-import android.app.Application
-import androidx.work.WorkManager
-import app.tivi.appinitializers.AppInitializer
 import app.tivi.inject.ApplicationScope
-import me.tatarka.inject.annotations.IntoSet
+import com.uwetrottmann.tmdb2.Tmdb
 import me.tatarka.inject.annotations.Provides
+import okhttp3.OkHttpClient
 
-interface TasksModule {
+interface TmdbComponent {
     @ApplicationScope
     @Provides
-    fun provideWorkManager(application: Application): WorkManager {
-        return WorkManager.getInstance(application)
+    fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
+        return tmdbManager.getLatestImageProvider()
     }
 
     @ApplicationScope
     @Provides
-    @IntoSet
-    fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer = bind
-
-    @ApplicationScope
-    @Provides
-    fun provideShowTasks(bind: ShowTasksImpl): ShowTasks = bind
+    fun provideTmdb(
+        client: OkHttpClient,
+        tmdbOAuthInfo: TmdbOAuthInfo,
+    ): Tmdb = object : Tmdb(tmdbOAuthInfo.apiKey) {
+        override fun okHttpClient(): OkHttpClient = client.newBuilder()
+            .apply { setOkHttpClientDefaults(this) }
+            .build()
+    }
 }

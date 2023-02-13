@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
+package app.tivi.utils
 
-plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
-    alias(libs.plugins.ksp)
+import app.tivi.trakt.AuthState
+import app.tivi.trakt.store.AuthStore
+
+object AuthorizedAuthStore : AuthStore {
+    override suspend fun get(): AuthState = AuthorizedAuthState
+    override suspend fun save(state: AuthState) = Unit
+    override suspend fun clear() = Unit
 }
 
-dependencies {
-    api(projects.data.models)
-    implementation(projects.data.db)
-    implementation(projects.data.legacy) // remove this eventually
-
-    api(projects.api.trakt)
-    api(projects.api.traktAuth.api)
-    api(projects.api.tmdb)
-    implementation(libs.retrofit.retrofit)
-
-    implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
+object AuthorizedAuthState : AuthState {
+    override val accessToken: String = "access-token"
+    override val refreshToken: String = "refresh-token"
+    override val isAuthorized: Boolean = true
+    override fun serializeToJson(): String = "{}"
 }

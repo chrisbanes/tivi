@@ -24,6 +24,8 @@ import app.tivi.data.create
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.followedshows.FollowedShowsDataSource
 import app.tivi.data.followedshows.FollowedShowsRepository
+import app.tivi.trakt.TraktManager
+import app.tivi.utils.AuthorizedAuthState
 import app.tivi.utils.followedShow1Local
 import app.tivi.utils.followedShow1Network
 import app.tivi.utils.followedShow1PendingDelete
@@ -50,6 +52,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     private lateinit var followedShowsRepository: FollowedShowsRepository
     private lateinit var followedShowsDataSource: FollowedShowsDataSource
     private lateinit var database: TiviRoomDatabase
+    private lateinit var traktManager: TraktManager
 
     @Before
     fun setup() {
@@ -58,6 +61,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followedShowsRepository = component.followedShowsRepository
         database = component.database
         followedShowsDataSource = component.followedShowsDataSource
+        traktManager = component.traktManager
 
         runBlocking {
             // We'll assume that there's a show in the db
@@ -73,6 +77,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
             )
         coEvery { followedShowsDataSource.getListShows(0) }
             .returns(listOf(followedShow1Network to show))
+
+        traktManager.onNewAuthState(AuthorizedAuthState)
 
         followedShowsRepository.syncFollowedShows()
 
@@ -90,6 +96,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
         coEvery { followedShowsDataSource.getListShows(0) } returns emptyList()
 
+        traktManager.onNewAuthState(AuthorizedAuthState)
+
         followedShowsRepository.syncFollowedShows()
 
         assertThat(followedShowsRepository.getFollowedShows()).isEmpty()
@@ -104,6 +112,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         }
         coEvery { followedShowsDataSource.getListShows(0) } returns listOf(followedShow2Network to show2)
 
+        traktManager.onNewAuthState(AuthorizedAuthState)
+
         followedShowsRepository.syncFollowedShows()
 
         assertThat(followedShowsRepository.getFollowedShows())
@@ -117,6 +127,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         // Return error for the list ID so that we disable syncing
         coEvery { followedShowsDataSource.getFollowedListId() } throws IllegalArgumentException()
 
+        traktManager.onNewAuthState(AuthorizedAuthState)
+
         followedShowsRepository.syncFollowedShows()
 
         assertThat(followedShowsRepository.getFollowedShows()).isEmpty()
@@ -128,6 +140,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
         // Return an error for the list ID so that we disable syncing
         coEvery { followedShowsDataSource.getFollowedListId() } throws IllegalArgumentException()
+
+        traktManager.onNewAuthState(AuthorizedAuthState)
 
         followedShowsRepository.syncFollowedShows()
 
@@ -150,4 +164,5 @@ abstract class FollowedShowsRepositoryTestComponent(
     abstract val followedShowsRepository: FollowedShowsRepository
     abstract val followedShowsDataSource: FollowedShowsDataSource
     abstract val database: TiviRoomDatabase
+    abstract val traktManager: TraktManager
 }
