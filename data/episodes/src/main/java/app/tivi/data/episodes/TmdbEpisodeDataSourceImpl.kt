@@ -30,7 +30,7 @@ class TmdbEpisodeDataSourceImpl(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
     private val episodeMapper: TmdbEpisodeToEpisode,
-) : app.tivi.data.episodes.EpisodeDataSource {
+) : EpisodeDataSource {
     override suspend fun getEpisode(
         showId: Long,
         seasonNumber: Int,

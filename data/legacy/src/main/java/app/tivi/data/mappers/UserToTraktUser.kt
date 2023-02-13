@@ -17,11 +17,9 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.TraktUser
-import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.User
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
 class UserToTraktUser() : Mapper<User, TraktUser> {
     override suspend fun map(from: User) = TraktUser(

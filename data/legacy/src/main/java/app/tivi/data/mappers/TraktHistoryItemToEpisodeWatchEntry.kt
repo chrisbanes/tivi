@@ -17,11 +17,9 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.EpisodeWatchEntry
-import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.HistoryEntry
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
 class TraktHistoryItemToEpisodeWatchEntry() : Mapper<HistoryEntry, EpisodeWatchEntry> {
     override suspend fun map(from: HistoryEntry) = EpisodeWatchEntry(
