@@ -17,13 +17,11 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.Episode
-import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.entities.TvEpisode
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
-class TmdbEpisodeToEpisode() : Mapper<TvEpisode, Episode> {
+class TmdbEpisodeToEpisode : Mapper<TvEpisode, Episode> {
     override suspend fun map(from: TvEpisode) = Episode(
         seasonId = 0,
         tmdbId = from.id,

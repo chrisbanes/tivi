@@ -31,7 +31,7 @@ class TraktEpisodeDataSourceImpl(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val service: Lazy<Episodes>,
     private val episodeMapper: TraktEpisodeToEpisode,
-) : app.tivi.data.episodes.EpisodeDataSource {
+) : EpisodeDataSource {
     override suspend fun getEpisode(
         showId: Long,
         seasonNumber: Int,

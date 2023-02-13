@@ -17,11 +17,9 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.TiviShow
-import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
 class TmdbBaseShowToTiviShow() : Mapper<BaseTvShow, TiviShow> {
     override suspend fun map(from: BaseTvShow) = TiviShow(

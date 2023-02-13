@@ -17,11 +17,9 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.TiviShow
-import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.ListEntry
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
 class TraktListEntryToTiviShow(
     private val showMapper: TraktShowToTiviShow,

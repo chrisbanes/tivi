@@ -17,10 +17,8 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
 class ShowIdToTraktIdMapper(
     private val showDao: TiviShowDao,

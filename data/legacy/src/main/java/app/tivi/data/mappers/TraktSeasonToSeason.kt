@@ -17,11 +17,9 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.Season
-import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
 class TraktSeasonToSeason() : Mapper<TraktSeason, Season> {
     override suspend fun map(from: TraktSeason) = Season(

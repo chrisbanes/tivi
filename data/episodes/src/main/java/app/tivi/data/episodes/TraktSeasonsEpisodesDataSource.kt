@@ -54,7 +54,7 @@ class TraktSeasonsEpisodesDataSource(
     private val seasonMapper: TraktSeasonToSeasonWithEpisodes,
     private val episodeMapper: TraktHistoryEntryToEpisode,
     private val historyItemMapper: TraktHistoryItemToEpisodeWatchEntry,
-) : app.tivi.data.episodes.SeasonsEpisodesDataSource {
+) : SeasonsEpisodesDataSource {
     override suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>> {
         return withRetry {
             seasonsService.value

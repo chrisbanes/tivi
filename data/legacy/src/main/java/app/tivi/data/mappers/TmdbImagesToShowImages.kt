@@ -18,12 +18,10 @@ package app.tivi.data.mappers
 
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.ShowTmdbImage
-import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.entities.Image
 import com.uwetrottmann.tmdb2.entities.TvShow
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
 class TmdbImagesToShowImages() : Mapper<TvShow, List<ShowTmdbImage>> {
     override suspend fun map(from: TvShow): List<ShowTmdbImage> {

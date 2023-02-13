@@ -18,11 +18,9 @@ package app.tivi.data.mappers
 
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
-import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
 class TraktSeasonToSeasonWithEpisodes(
     private val seasonMapper: TraktSeasonToSeason,

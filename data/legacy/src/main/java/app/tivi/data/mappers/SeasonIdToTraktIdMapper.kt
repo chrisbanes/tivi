@@ -17,10 +17,8 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.daos.SeasonsDao
-import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
 class SeasonIdToTraktIdMapper(
     private val dao: SeasonsDao,

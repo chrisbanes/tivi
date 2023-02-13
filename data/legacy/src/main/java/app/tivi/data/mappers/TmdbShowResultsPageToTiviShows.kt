@@ -19,11 +19,9 @@ package app.tivi.data.mappers
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import app.tivi.inject.ApplicationScope
 import com.uwetrottmann.tmdb2.entities.TvShowResultsPage
 import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
 @Inject
 class TmdbShowResultsPageToTiviShows(
     private val tmdbShowMapper: TmdbBaseShowToTiviShow,
