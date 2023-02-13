@@ -20,11 +20,9 @@ import android.app.Application
 import app.tivi.appinitializers.AppInitializer
 import coil.Coil
 import coil.ImageLoader
-import coil.annotation.ExperimentalCoilApi
 import me.tatarka.inject.annotations.Inject
 import okhttp3.OkHttpClient
 
-@OptIn(ExperimentalCoilApi::class)
 @Inject
 class CoilAppInitializer(
     private val application: Application,

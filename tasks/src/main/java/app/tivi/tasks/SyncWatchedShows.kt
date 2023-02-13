@@ -21,11 +21,11 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import app.tivi.domain.interactors.UpdateWatchedShows
 import app.tivi.util.Logger
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-// @HiltWorker
-class SyncWatchedShows @AssistedInject constructor(
+@Inject
+class SyncWatchedShows(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val updateWatchedShows: UpdateWatchedShows,

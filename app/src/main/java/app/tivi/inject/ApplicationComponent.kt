@@ -36,6 +36,7 @@ import app.tivi.data.watchedshows.WatchedShowsBinds
 import app.tivi.home.ContentViewSetterModule
 import app.tivi.settings.SettingsModule
 import app.tivi.tasks.TasksModule
+import app.tivi.tasks.TiviWorkerFactory
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktAuthModule
 import app.tivi.trakt.TraktModule
@@ -76,6 +77,7 @@ abstract class ApplicationComponent(
     VariantAwareModule {
 
     abstract val initializers: AppInitializers
+    abstract val workerFactory: TiviWorkerFactory
 
     companion object {
         fun from(context: Context): ApplicationComponent {

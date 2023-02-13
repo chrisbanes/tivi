@@ -19,7 +19,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
 }
 
@@ -38,8 +37,6 @@ dependencies {
     implementation(projects.domain)
 
     api(libs.androidx.work.runtime)
-
-    implementation(libs.hilt.library)
 
     implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)
