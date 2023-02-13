@@ -48,11 +48,9 @@ import app.tivi.settings.TiviPreferences
 import app.tivi.util.Analytics
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
-import dagger.hilt.android.AndroidEntryPoint
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
-@AndroidEntryPoint
 class MainActivity : TiviActivity() {
 
     private lateinit var component: MainActivityComponent

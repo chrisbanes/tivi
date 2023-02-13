@@ -17,7 +17,6 @@
 
 plugins {
     id("kotlin")
-    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.cacheFixPlugin)
 }
 
@@ -25,7 +24,4 @@ dependencies {
     implementation(projects.base)
     api(projects.api.trakt)
     api(projects.tasks.api)
-
-    implementation(libs.dagger.dagger)
-    kapt(libs.dagger.compiler)
 }

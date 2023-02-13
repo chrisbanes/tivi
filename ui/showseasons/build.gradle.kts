@@ -19,7 +19,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -53,6 +53,5 @@ dependencies {
 
     implementation(libs.coil.compose)
 
-    implementation(libs.androidx.hilt.navigationcompose)
-    implementation(libs.hilt.library)
+    ksp(libs.kotlininject.compiler)
 }

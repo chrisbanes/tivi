@@ -25,7 +25,6 @@ import androidx.lifecycle.lifecycleScope
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.PowerController
 import app.tivi.util.PowerControllerModule
-import dagger.hilt.android.components.ActivityComponent
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -56,8 +55,6 @@ class SettingsActivity : ComponentActivity() {
 @ApplicationScope
 abstract class SettingsActivityComponent(
     @get:Provides val application: Application,
-) : ActivityComponent,
-    PowerControllerModule,
-    SettingsModule {
+) : PowerControllerModule, SettingsModule {
     abstract val powerController: PowerController
 }

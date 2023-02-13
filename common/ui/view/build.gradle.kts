@@ -34,8 +34,7 @@ dependencies {
 
     implementation(libs.kotlin.coroutines.core)
 
+    implementation(libs.androidx.activity.activity)
     implementation(libs.androidx.core)
     implementation(libs.androidx.emoji)
-
-    implementation(libs.hilt.library)
 }

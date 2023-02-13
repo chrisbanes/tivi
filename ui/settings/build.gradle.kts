@@ -33,12 +33,10 @@ dependencies {
     implementation(projects.core.powercontroller.android)
     implementation(projects.core.preferences.android)
 
+    implementation(libs.androidx.activity.activity)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation(libs.hilt.library)
-
-    implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)
 }

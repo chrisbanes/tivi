@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.ksp)
 }
@@ -192,6 +191,7 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
+    implementation(libs.androidx.activity.activity)
     implementation(libs.androidx.activity.compose)
 
     implementation(libs.androidx.navigation.compose)
@@ -219,10 +219,6 @@ dependencies {
 
     implementation(libs.okhttp.loggingInterceptor)
 
-    implementation(libs.hilt.library)
-    implementation(libs.androidx.hilt.navigationcompose)
-
-    implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)
 
     implementation(platform(libs.google.firebase.bom))
