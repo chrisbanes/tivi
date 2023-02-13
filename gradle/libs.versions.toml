@@ -8,7 +8,6 @@ coil = "2.2.2"
 compose-bom = "2023.02.00-beta01"
 composecompiler = "1.4.2"
 coroutines = "1.6.4"
-dagger = "2.45"
 debugdrawer = "0.9.8"
 kotlin = "1.8.10"
 kotlininject = "0.6.1"
@@ -31,7 +30,6 @@ cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.6.5" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = "com.google.devtools.ksp:1.8.10-1.0.9"
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.4"
 spotless = "com.diffplug.spotless:6.15.0"
@@ -101,9 +99,6 @@ compose-ui-uitextfonts = { module = "androidx.compose.ui:ui-text-google-fonts" }
 compose-ui-util = { module = "androidx.compose.ui:ui-util" }
 compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding" }
 
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
-dagger-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
-
 google-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 google-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 google-firebase-bom = "com.google.firebase:firebase-bom:31.2.1"
@@ -112,11 +107,6 @@ debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer",
 debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retrofit", version.ref = "debugdrawer" }
 debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber", version.ref = "debugdrawer" }
 debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-okhttp-logger", version.ref = "debugdrawer" }
-
-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
-hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "dagger" }
-hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
-hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "dagger" }
 
 androidx-hilt-compiler = "androidx.hilt:hilt-compiler:1.0.0"
 androidx-hilt-navigationcompose = "androidx.hilt:hilt-navigation-compose:1.0.0"
