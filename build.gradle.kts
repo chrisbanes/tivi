@@ -126,6 +126,7 @@ allprojects {
     plugins.withType<BasePlugin>().configureEach {
         extensions.configure<BaseExtension> {
             compileSdkVersion(libs.versions.compileSdk.get().toInt())
+
             defaultConfig {
                 minSdk = libs.versions.minSdk.get().toInt()
                 targetSdk = libs.versions.targetSdk.get().toInt()
@@ -136,7 +137,15 @@ allprojects {
             compileOptions {
                 sourceCompatibility = JavaVersion.VERSION_11
                 targetCompatibility = JavaVersion.VERSION_11
+
+                // https://developer.android.com/studio/write/java8-support
+                isCoreLibraryDesugaringEnabled = true
             }
+        }
+
+        dependencies {
+            // https://developer.android.com/studio/write/java8-support
+            "coreLibraryDesugaring"(libs.tools.desugarjdklibs)
         }
     }
 }

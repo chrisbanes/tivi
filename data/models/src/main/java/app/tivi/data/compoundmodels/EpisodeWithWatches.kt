@@ -23,7 +23,6 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import java.util.Objects
-import org.threeten.bp.OffsetDateTime
 
 class EpisodeWithWatches {
     @Embedded
@@ -50,11 +49,8 @@ class EpisodeWithWatches {
         watches.all { it.pendingAction == PendingAction.DELETE }
     }
 
-    @delegate:Ignore
-    val hasAired by lazy {
-        val aired = episode.firstAired
-        aired != null && aired.isBefore(OffsetDateTime.now())
-    }
+    @get:Ignore
+    val hasAired: Boolean get() = episode.hasAired
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

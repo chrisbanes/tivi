@@ -21,6 +21,7 @@ import androidx.room.TypeConverters
 import app.tivi.data.TiviRoomDatabase
 import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.daos.RoomShowFtsDao
+import app.tivi.data.db.DateTimeTypeConverters
 import app.tivi.data.db.TiviTypeConverters
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -64,7 +65,7 @@ import app.tivi.data.views.FollowedShowsWatchStats
     version = 1,
     exportSchema = false,
 )
-@TypeConverters(TiviTypeConverters::class)
+@TypeConverters(TiviTypeConverters::class, DateTimeTypeConverters::class)
 abstract class TiviTestDatabase : TiviRoomDatabase() {
     override fun showFtsDao(): RoomShowFtsDao = object : RoomShowFtsDao() {
         override suspend fun search(filter: String): List<ShowDetailed> = emptyList()

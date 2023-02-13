@@ -21,10 +21,10 @@ import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.TraktUser
 import app.tivi.data.util.withRetry
 import app.tivi.inject.ApplicationScope
+import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.Instant
-import org.threeten.bp.Period
 
 @ApplicationScope
 @Inject
@@ -55,12 +55,12 @@ class TraktUsersRepository(
             user = user.copy(id = localUser.id)
         }
         val id = userDao.insertOrUpdate(user)
-        lastRequestStore.updateLastRequest(id, Instant.now())
+        lastRequestStore.updateLastRequest(id, Clock.System.now())
     }
 
     suspend fun needUpdate(username: String): Boolean {
         return userDao.getIdForUsername(username)?.let { userId ->
-            lastRequestStore.isRequestExpired(userId, Period.ofDays(7))
+            lastRequestStore.isRequestExpired(userId, 7.days)
         } ?: true
     }
 }

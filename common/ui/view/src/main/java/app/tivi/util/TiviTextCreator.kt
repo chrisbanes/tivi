@@ -18,6 +18,8 @@ package app.tivi.util
 
 import android.app.Activity
 import android.graphics.Color
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.parseAsHtml
@@ -30,11 +32,12 @@ import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.TiviShow
 import app.tivi.ui.GenreStringer
 import java.util.Locale
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalTime
+import kotlinx.datetime.toJavaZoneId
+import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZonedDateTime
-import org.threeten.bp.format.TextStyle
 
 @Inject
 class TiviTextCreator(
@@ -46,12 +49,14 @@ class TiviTextCreator(
     ): CharSequence = StringBuilder()
         .append(show.title)
         .apply {
-            show.firstAired?.also { firstAired ->
-                append(" ")
-                append("(")
-                append(firstAired.year.toString())
-                append(")")
-            }
+            show.firstAired
+                ?.toLocalDateTime(TimeZone.currentSystemDefault())
+                ?.also { firstAired ->
+                    append(" ")
+                    append("(")
+                    append(firstAired.year.toString())
+                    append(")")
+                }
         }.toString()
 
     fun showHeaderCount(count: Int, filtered: Boolean = false): CharSequence = when {
@@ -100,7 +105,7 @@ class TiviTextCreator(
         watched: Int,
         toWatch: Int,
         toAir: Int,
-        nextToAirDate: OffsetDateTime? = null,
+        nextToAirDate: Instant? = null,
     ): CharSequence {
         val text = StringBuilder()
         if (watched > 0) {
@@ -140,7 +145,7 @@ class TiviTextCreator(
     }
 
     fun genreString(genres: List<Genre>?): CharSequence? {
-        if (genres != null && genres.isNotEmpty()) {
+        if (!genres.isNullOrEmpty()) {
             val spanned = buildSpannedString {
                 for (i in genres.indices) {
                     val genre = genres[i]
@@ -166,6 +171,7 @@ class TiviTextCreator(
         return genres?.joinToString(", ") { context.getString(GenreStringer.getLabel(it)) }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun airsText(show: TiviShow): CharSequence? {
         val airTime = show.airsTime
         val airTz = show.airsTimeZone
@@ -176,16 +182,17 @@ class TiviTextCreator(
             return null
         }
 
-        val local = ZonedDateTime.now()
-            .withZoneSameLocal(airTz)
+        val local = java.time.ZonedDateTime.now()
+            .withZoneSameLocal(airTz.toJavaZoneId())
             .with(show.airsDay)
-            .with(airTime)
-            .withZoneSameInstant(ZoneId.systemDefault())
+            .with(airTime.toJavaLocalTime())
+            .withZoneSameInstant(java.time.ZoneId.systemDefault())
 
         return context.getString(
             UiR.string.airs_text,
-            local.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-            tiviDateFormatter.formatShortTime(local.toLocalTime()),
+            local.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault()),
+            /*tiviDateFormatter.formatShortTime(local.toLocalTime()) */
+            "12:34",
         )
     }
 

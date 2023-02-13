@@ -19,9 +19,9 @@ package app.tivi.data.lastrequests
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.models.LastRequest
 import app.tivi.data.models.Request
-import app.tivi.data.util.inPast
-import org.threeten.bp.Instant
-import org.threeten.bp.temporal.TemporalAmount
+import kotlin.time.Duration
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 abstract class EntityLastRequestStore(
     private val request: Request,
@@ -31,19 +31,25 @@ abstract class EntityLastRequestStore(
         return dao.lastRequest(request, entityId)?.timestamp
     }
 
-    suspend fun isRequestExpired(entityId: Long, threshold: TemporalAmount): Boolean {
-        return isRequestBefore(entityId, threshold.inPast())
+    suspend fun isRequestExpired(entityId: Long, threshold: Duration): Boolean {
+        return isRequestBefore(entityId, Clock.System.now() - threshold)
     }
 
     suspend fun hasBeenRequested(entityId: Long): Boolean = dao.requestCount(request, entityId) > 0
 
     suspend fun isRequestBefore(entityId: Long, instant: Instant): Boolean {
-        return getRequestInstant(entityId)?.isBefore(instant) ?: true
+        return getRequestInstant(entityId)?.let { it < instant } ?: true
     }
 
-    suspend fun updateLastRequest(entityId: Long, timestamp: Instant = Instant.now()) {
-        dao.insert(LastRequest(request = request, entityId = entityId, timestamp = timestamp))
+    suspend fun updateLastRequest(entityId: Long, timestamp: Instant = Clock.System.now()) {
+        dao.insert(
+            LastRequest(
+                request = request,
+                entityId = entityId,
+                _timestamp = timestamp.toEpochMilliseconds(),
+            ),
+        )
     }
 
-    private suspend fun invalidateLastRequest(entityId: Long) = updateLastRequest(entityId, Instant.EPOCH)
+    private suspend fun invalidateLastRequest(entityId: Long) = updateLastRequest(entityId, Instant.DISTANT_PAST)
 }

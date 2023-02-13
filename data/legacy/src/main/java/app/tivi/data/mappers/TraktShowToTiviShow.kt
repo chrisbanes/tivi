@@ -17,13 +17,13 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.TiviShow
+import app.tivi.data.util.toKotlinInstant
 import com.uwetrottmann.trakt5.entities.Show
 import java.util.Locale
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.DayOfWeek
-import org.threeten.bp.LocalTime
-import org.threeten.bp.ZoneId
-import org.threeten.bp.format.TextStyle
 
 @Inject
 class TraktShowToTiviShow(
@@ -42,13 +42,14 @@ class TraktShowToTiviShow(
         runtime = from.runtime,
         network = from.network,
         country = from.country,
-        firstAired = from.first_aired,
+        firstAired = from.first_aired?.toKotlinInstant(),
         _genres = from.genres?.joinToString(","),
-        traktDataUpdate = from.updated_at,
+        traktDataUpdate = from.updated_at?.toKotlinInstant(),
         status = from.status?.let { statusMapper.map(it) },
-        airsDay = from.airs?.day?.let { dayString ->
+        airsDay = from.airs?.day?.let { airsDayString ->
             DayOfWeek.values().firstOrNull { day ->
-                dayString.equals(day.getDisplayName(TextStyle.FULL, Locale.getDefault()), true)
+                val dayString = day.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
+                airsDayString.equals(dayString, true)
             }
         },
         airsTime = from.airs?.time?.let {
@@ -60,7 +61,7 @@ class TraktShowToTiviShow(
         },
         airsTimeZone = from.airs?.timezone?.let {
             try {
-                ZoneId.of(it)
+                TimeZone.of(it)
             } catch (e: Exception) {
                 null
             }

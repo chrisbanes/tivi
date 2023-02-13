@@ -71,8 +71,6 @@ dependencies {
 
     kspTest(libs.kotlininject.compiler)
 
-    // Needed for Tzdb
-    testImplementation("org.threeten:threetenbp:${libs.versions.threetenbp.get()}")
     // Needed for Main dispatcher to work
     testImplementation(libs.kotlin.coroutines.android)
 }

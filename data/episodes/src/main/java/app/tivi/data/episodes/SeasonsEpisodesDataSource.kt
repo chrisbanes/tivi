@@ -19,23 +19,23 @@ package app.tivi.data.episodes
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.Season
-import org.threeten.bp.OffsetDateTime
+import kotlinx.datetime.Instant
 
 interface SeasonsEpisodesDataSource {
     suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>>
     suspend fun getShowEpisodeWatches(
         showId: Long,
-        since: OffsetDateTime? = null,
+        since: Instant? = null,
     ): List<Pair<Episode, EpisodeWatchEntry>>
 
     suspend fun getEpisodeWatches(
         episodeId: Long,
-        since: OffsetDateTime? = null,
+        since: Instant? = null,
     ): List<EpisodeWatchEntry>
 
     suspend fun getSeasonWatches(
         seasonId: Long,
-        since: OffsetDateTime? = null,
+        since: Instant? = null,
     ): List<Pair<Episode, EpisodeWatchEntry>>
 
     suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>)

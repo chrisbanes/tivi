@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.inject
+package app.tivi.data.util
 
-import me.tatarka.inject.annotations.Scope
+import kotlin.time.Duration
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
-@Scope
-annotation class ApplicationScope
+inline val Duration.inPast: Instant
+    get() = Clock.System.now() - this

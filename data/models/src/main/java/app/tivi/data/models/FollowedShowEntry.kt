@@ -21,7 +21,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import org.threeten.bp.OffsetDateTime
+import kotlinx.datetime.Instant
 
 @Entity(
     tableName = "myshows_entries",
@@ -41,7 +41,7 @@ import org.threeten.bp.OffsetDateTime
 data class FollowedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
-    @ColumnInfo(name = "followed_at") val followedAt: OffsetDateTime? = null,
+    @ColumnInfo(name = "followed_at") val followedAt: Instant? = null,
     @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING,
     @ColumnInfo(name = "trakt_id") val traktId: Long? = null,
 ) : Entry

@@ -21,6 +21,7 @@ import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
 import app.tivi.data.util.bodyOrThrow
+import app.tivi.data.util.toKotlinInstant
 import app.tivi.data.util.withRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Sync
@@ -33,7 +34,10 @@ class TraktWatchedShowsDataSource(
     showMapper: TraktBaseShowToTiviShow,
 ) : WatchedShowsDataSource {
     private val responseMapper = pairMapperOf(showMapper) { from ->
-        WatchedShowEntry(showId = 0, lastWatched = from.last_watched_at!!)
+        WatchedShowEntry(
+            showId = 0,
+            lastWatched = from.last_watched_at!!.toKotlinInstant(),
+        )
     }
 
     override suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>> = withRetry {

@@ -17,6 +17,7 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.TraktUser
+import app.tivi.data.util.toKotlinInstant
 import com.uwetrottmann.trakt5.entities.User
 import me.tatarka.inject.annotations.Inject
 
@@ -28,7 +29,7 @@ class UserToTraktUser() : Mapper<User, TraktUser> {
         location = from.location,
         about = from.about,
         avatarUrl = from.images?.avatar?.full,
-        joined = from.joined_at,
+        joined = from.joined_at?.toKotlinInstant(),
         vip = from.vip,
     )
 }

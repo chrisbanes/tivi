@@ -35,6 +35,7 @@ import app.tivi.data.daos.RoomTiviShowDao
 import app.tivi.data.daos.RoomTrendingDao
 import app.tivi.data.daos.RoomUserDao
 import app.tivi.data.daos.RoomWatchedShowDao
+import app.tivi.data.db.DateTimeTypeConverters
 import app.tivi.data.db.TiviDatabase
 import app.tivi.data.db.TiviTypeConverters
 import app.tivi.data.models.Episode
@@ -88,7 +89,7 @@ import app.tivi.data.views.FollowedShowsWatchStats
         AutoMigration(from = 27, to = 30),
     ],
 )
-@TypeConverters(TiviTypeConverters::class)
+@TypeConverters(TiviTypeConverters::class, DateTimeTypeConverters::class)
 abstract class TiviRoomDatabase : RoomDatabase(), TiviDatabase {
     abstract override fun showDao(): RoomTiviShowDao
     abstract override fun showFtsDao(): RoomShowFtsDao

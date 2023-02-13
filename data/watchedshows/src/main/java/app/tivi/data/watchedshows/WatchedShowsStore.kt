@@ -21,13 +21,13 @@ import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.models.WatchedShowEntry
 import app.tivi.inject.ApplicationScope
+import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
-import org.threeten.bp.Duration
 
 @ApplicationScope
 @Inject
@@ -48,7 +48,7 @@ class WatchedShowsStore(
                     // Store only treats null as 'no value', so convert to null
                     entries.isEmpty() -> null
                     // If the request is expired, our data is stale
-                    lastRequestStore.isRequestExpired(Duration.ofHours(6)) -> null
+                    lastRequestStore.isRequestExpired(6.hours) -> null
                     // Otherwise, our data is fresh and valid
                     else -> entries
                 }
