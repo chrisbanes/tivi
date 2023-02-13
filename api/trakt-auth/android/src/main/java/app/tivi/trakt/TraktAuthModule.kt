@@ -25,8 +25,6 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.store.AuthSharedPreferences
 import app.tivi.trakt.store.AuthStore
 import app.tivi.trakt.store.TiviAuthStore
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationServiceConfiguration
@@ -42,11 +40,6 @@ interface TraktAuthModule {
             Uri.parse("https://trakt.tv/oauth/authorize"),
             Uri.parse("https://trakt.tv/oauth/token"),
         )
-    }
-
-    @Provides
-    fun provideAuthState(traktManager: TraktManager) = runBlocking {
-        traktManager.state.first()
     }
 
     @Provides

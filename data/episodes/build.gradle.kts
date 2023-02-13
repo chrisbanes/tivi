@@ -27,6 +27,7 @@ dependencies {
     implementation(projects.data.legacy) // remove this eventually
 
     implementation(projects.api.trakt)
+    implementation(projects.api.traktAuth.api)
     implementation(projects.api.tmdb)
     implementation(libs.retrofit.retrofit)
 
