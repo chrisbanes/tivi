@@ -150,10 +150,6 @@ android {
     }
 }
 
-ksp {
-    arg("me.tatarka.inject.dumpGraph", "true")
-}
-
 tasks.withType<KotlinCompilationTask<*>> {
     compilerOptions {
         freeCompilerArgs.add("-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi")
