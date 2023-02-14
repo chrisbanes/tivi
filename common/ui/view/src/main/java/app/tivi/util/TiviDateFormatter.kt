@@ -18,8 +18,7 @@ package app.tivi.util
 
 import android.text.format.DateUtils
 import app.tivi.inject.ActivityScope
-import java.time.LocalDateTime
-import java.time.LocalTime
+import java.time.LocalDateTime as JavaLocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -27,8 +26,10 @@ import java.time.temporal.Temporal
 import java.util.Locale
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaInstant
+import kotlinx.datetime.toJavaLocalTime
 import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
 
@@ -59,7 +60,7 @@ class TiviDateFormatter(
     }
 
     private fun Instant.toTemporal(): Temporal {
-        return LocalDateTime.ofInstant(toJavaInstant(), ZoneId.systemDefault())
+        return JavaLocalDateTime.ofInstant(toJavaInstant(), ZoneId.systemDefault())
     }
 
     fun formatShortDate(instant: Instant): String {
@@ -75,7 +76,7 @@ class TiviDateFormatter(
     }
 
     fun formatShortTime(localTime: LocalTime): String {
-        return shortTime.format(localTime)
+        return shortTime.format(localTime.toJavaLocalTime())
     }
 
     fun formatShortRelativeTime(dateTime: Instant): String {

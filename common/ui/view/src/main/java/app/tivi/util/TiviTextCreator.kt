@@ -34,6 +34,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalTime
 import kotlinx.datetime.toJavaZoneId
+import kotlinx.datetime.toKotlinLocalTime
 import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
 
@@ -179,17 +180,15 @@ class TiviTextCreator(
             return null
         }
 
-        val local = java.time.ZonedDateTime.now()
-            .withZoneSameLocal(airTz.toJavaZoneId())
+        val localDateTime = java.time.ZonedDateTime.now(airTz.toJavaZoneId())
             .with(show.airsDay)
             .with(airTime.toJavaLocalTime())
             .withZoneSameInstant(java.time.ZoneId.systemDefault())
 
         return context.getString(
             UiR.string.airs_text,
-            local.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault()),
-            /*tiviDateFormatter.formatShortTime(local.toLocalTime()) */
-            "12:34",
+            localDateTime.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault()),
+            tiviDateFormatter.formatShortTime(localDateTime.toLocalTime().toKotlinLocalTime()),
         )
     }
 
