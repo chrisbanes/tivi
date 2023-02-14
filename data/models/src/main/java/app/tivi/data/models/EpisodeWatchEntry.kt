@@ -21,7 +21,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import org.threeten.bp.OffsetDateTime
+import kotlinx.datetime.Instant
 
 @Entity(
     tableName = "episode_watch_entries",
@@ -43,6 +43,6 @@ data class EpisodeWatchEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "episode_id") val episodeId: Long,
     @ColumnInfo(name = "trakt_id") val traktId: Long? = null,
-    @ColumnInfo(name = "watched_at") val watchedAt: OffsetDateTime,
+    @ColumnInfo(name = "watched_at") val watchedAt: Instant,
     @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING,
 ) : TiviEntity

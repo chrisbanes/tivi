@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package app.tivi.datetime
+package app.tivi.inject
 
-import org.threeten.bp.format.DateTimeFormatter
+import me.tatarka.inject.annotations.Scope
 
-data class DateTimeFormatters(
-    val shortDate: DateTimeFormatter,
-    val shortTime: DateTimeFormatter,
-    val mediumDate: DateTimeFormatter,
-    val mediumDateTime: DateTimeFormatter,
-)
+@Scope
+annotation class ApplicationScope
+
+@Scope
+annotation class ActivityScope

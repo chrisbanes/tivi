@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.data.mappers
+package app.tivi.data.util
 
-import app.tivi.data.models.EpisodeWatchEntry
-import app.tivi.data.util.toKotlinInstant
-import com.uwetrottmann.trakt5.entities.HistoryEntry
-import me.tatarka.inject.annotations.Inject
+import kotlinx.datetime.Instant
+import org.threeten.bp.OffsetDateTime
 
-@Inject
-class TraktHistoryItemToEpisodeWatchEntry() : Mapper<HistoryEntry, EpisodeWatchEntry> {
-    override suspend fun map(from: HistoryEntry) = EpisodeWatchEntry(
-        episodeId = 0,
-        traktId = from.id,
-        watchedAt = from.watched_at!!.toKotlinInstant(),
-    )
+fun OffsetDateTime.toKotlinInstant(): Instant {
+    return Instant.fromEpochMilliseconds(toInstant().toEpochMilli())
 }

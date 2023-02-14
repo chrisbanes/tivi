@@ -23,67 +23,12 @@ import app.tivi.data.models.Request
 import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.SortOption
 import app.tivi.extensions.unsafeLazy
-import org.threeten.bp.DayOfWeek
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalTime
-import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneId
-import org.threeten.bp.format.DateTimeFormatter
 
 object TiviTypeConverters {
-    private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-
     private val requestValues by unsafeLazy { Request.values() }
     private val imageTypeValues by unsafeLazy { ImageType.values() }
     private val pendingActionValues by unsafeLazy { PendingAction.values() }
     private val showStatusValues by unsafeLazy { ShowStatus.values() }
-    private val dayOfWeekValues by unsafeLazy { DayOfWeek.values() }
-
-    @TypeConverter
-    @JvmStatic
-    fun toOffsetDateTime(value: String?) = value?.let { formatter.parse(value, OffsetDateTime::from) }
-
-    @TypeConverter
-    @JvmStatic
-    fun fromOffsetDateTime(date: OffsetDateTime?): String? = date?.format(formatter)
-
-    @TypeConverter
-    @JvmStatic
-    fun toZoneId(value: String?) = value?.let { ZoneId.of(it) }
-
-    @TypeConverter
-    @JvmStatic
-    fun fromZoneId(value: ZoneId?) = value?.id
-
-    @TypeConverter
-    @JvmStatic
-    fun toLocalTime(value: String?) = value?.let { LocalTime.parse(value) }
-
-    @TypeConverter
-    @JvmStatic
-    fun fromLocalTime(value: LocalTime?) = value?.format(DateTimeFormatter.ISO_LOCAL_TIME)
-
-    @TypeConverter
-    @JvmStatic
-    fun toDayOfWeek(value: Int?): DayOfWeek? {
-        return if (value != null) {
-            dayOfWeekValues.firstOrNull { it.value == value }
-        } else {
-            null
-        }
-    }
-
-    @TypeConverter
-    @JvmStatic
-    fun fromDayOfWeek(day: DayOfWeek?) = day?.value
-
-    @TypeConverter
-    @JvmStatic
-    fun toInstant(value: Long?) = value?.let { Instant.ofEpochMilli(it) }
-
-    @TypeConverter
-    @JvmStatic
-    fun fromInstant(date: Instant?) = date?.toEpochMilli()
 
     @TypeConverter
     @JvmStatic

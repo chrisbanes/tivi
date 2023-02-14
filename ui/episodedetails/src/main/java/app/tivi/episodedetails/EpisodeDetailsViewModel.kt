@@ -34,9 +34,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.OffsetDateTime
 
 @Inject
 class EpisodeDetailsViewModel(
@@ -64,8 +64,7 @@ class EpisodeDetailsViewModel(
             episode = episodeDetails.episode,
             season = episodeDetails.season,
             watches = episodeWatches,
-            canAddEpisodeWatch = episodeDetails.episode?.firstAired?.isBefore(OffsetDateTime.now())
-                ?: true,
+            canAddEpisodeWatch = episodeDetails.episode?.hasAired ?: true,
             refreshing = refreshing,
             message = message,
         )
@@ -100,9 +99,8 @@ class EpisodeDetailsViewModel(
 
     fun addWatch() {
         viewModelScope.launch {
-            addEpisodeWatch(
-                AddEpisodeWatch.Params(episodeId, OffsetDateTime.now()),
-            ).collectStatus(loadingState, logger, uiMessageManager)
+            addEpisodeWatch(AddEpisodeWatch.Params(episodeId, Clock.System.now()))
+                .collectStatus(loadingState, logger, uiMessageManager)
         }
     }
 

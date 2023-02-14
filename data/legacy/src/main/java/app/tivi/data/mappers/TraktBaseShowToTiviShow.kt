@@ -17,6 +17,7 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.TiviShow
+import app.tivi.data.util.toKotlinInstant
 import com.uwetrottmann.trakt5.entities.BaseShow
 import me.tatarka.inject.annotations.Inject
 
@@ -25,9 +26,9 @@ class TraktBaseShowToTiviShow(
     private val showMapper: TraktShowToTiviShow,
 ) : Mapper<BaseShow, TiviShow> {
     override suspend fun map(from: BaseShow): TiviShow {
-        val mapped = showMapper.map(from.show)
+        val mapped = showMapper.map(from.show!!)
         return mapped.copy(
-            traktDataUpdate = from.last_updated_at ?: mapped.traktDataUpdate,
+            traktDataUpdate = from.last_updated_at?.toKotlinInstant() ?: mapped.traktDataUpdate,
         )
     }
 }

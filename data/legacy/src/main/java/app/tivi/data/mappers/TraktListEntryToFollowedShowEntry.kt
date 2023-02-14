@@ -17,6 +17,7 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.FollowedShowEntry
+import app.tivi.data.util.toKotlinInstant
 import com.uwetrottmann.trakt5.entities.ListEntry
 import me.tatarka.inject.annotations.Inject
 
@@ -24,7 +25,7 @@ import me.tatarka.inject.annotations.Inject
 class TraktListEntryToFollowedShowEntry() : Mapper<ListEntry, FollowedShowEntry> {
     override suspend fun map(from: ListEntry) = FollowedShowEntry(
         showId = 0,
-        followedAt = from.listed_at,
+        followedAt = from.listed_at?.toKotlinInstant(),
         traktId = from.id,
     )
 }

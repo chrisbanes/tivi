@@ -116,8 +116,8 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
 import kotlin.math.roundToInt
+import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.OffsetDateTime
 
 typealias EpisodeDetails = @Composable (
     sheetState: BottomSheetNavigatorSheetState,
@@ -644,7 +644,7 @@ fun PreviewEpisodeDetails() {
                 summary = "A long description of a episode",
                 traktRating = 0.5f,
                 traktRatingVotes = 84,
-                firstAired = OffsetDateTime.now(),
+                firstAired = Clock.System.now(),
             ),
             season = Season(
                 id = 100,
@@ -654,7 +654,7 @@ fun PreviewEpisodeDetails() {
                 EpisodeWatchEntry(
                     id = 10,
                     episodeId = 100,
-                    watchedAt = OffsetDateTime.now(),
+                    watchedAt = Clock.System.now(),
                 ),
             ),
         ),
