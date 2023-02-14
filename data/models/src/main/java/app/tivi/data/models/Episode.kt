@@ -22,7 +22,8 @@ import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import org.threeten.bp.OffsetDateTime
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @Entity(
     tableName = "episodes",
@@ -50,7 +51,7 @@ data class Episode(
     @ColumnInfo(name = "title") val title: String? = null,
     @ColumnInfo(name = "overview") val summary: String? = null,
     @ColumnInfo(name = "number") val number: Int? = null,
-    @ColumnInfo(name = "first_aired") val firstAired: OffsetDateTime? = null,
+    @ColumnInfo(name = "first_aired") val firstAired: Instant? = null,
     @ColumnInfo(name = "trakt_rating") val traktRating: Float? = null,
     @ColumnInfo(name = "trakt_rating_votes") val traktRatingVotes: Int? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
@@ -59,6 +60,6 @@ data class Episode(
         val EMPTY = Episode(seasonId = 0)
     }
 
-    @delegate:Ignore
-    val isAired by lazy { firstAired?.isBefore(OffsetDateTime.now()) ?: false }
+    @get:Ignore
+    val hasAired: Boolean get() = firstAired?.let { it < Clock.System.now() } ?: false
 }

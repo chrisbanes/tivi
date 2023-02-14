@@ -56,10 +56,11 @@ import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.models.TraktUser
 import app.tivi.trakt.TraktAuthState
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneOffset
 
 typealias AccountUi = @Composable (
     openSettings: () -> Unit,
@@ -258,7 +259,15 @@ fun PreviewUserRow() {
             username = "sammendes",
             name = "Sam Mendes",
             location = "London, UK",
-            joined = OffsetDateTime.of(2019, 5, 4, 11, 12, 33, 0, ZoneOffset.UTC),
+            joined = LocalDateTime(
+                year = 2019,
+                monthNumber = 5,
+                dayOfMonth = 4,
+                hour = 11,
+                minute = 12,
+                second = 33,
+                nanosecond = 0,
+            ).toInstant(TimeZone.currentSystemDefault()),
         ),
     )
 }

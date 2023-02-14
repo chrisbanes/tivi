@@ -17,6 +17,7 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.models.Episode
+import app.tivi.data.util.toKotlinInstant
 import com.uwetrottmann.trakt5.entities.Episode as TraktEpisode
 import me.tatarka.inject.annotations.Inject
 
@@ -24,12 +25,12 @@ import me.tatarka.inject.annotations.Inject
 class TraktEpisodeToEpisode() : Mapper<TraktEpisode, Episode> {
     override suspend fun map(from: TraktEpisode) = Episode(
         seasonId = 0,
-        traktId = from.ids.trakt,
-        tmdbId = from.ids.tmdb,
+        traktId = from.ids?.trakt,
+        tmdbId = from.ids?.tmdb,
         title = from.title,
         number = from.number,
         summary = from.overview,
-        firstAired = from.first_aired,
+        firstAired = from.first_aired?.toKotlinInstant(),
         traktRating = from.rating?.toFloat() ?: 0f,
         traktRatingVotes = from.votes,
     )

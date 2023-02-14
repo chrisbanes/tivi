@@ -24,18 +24,19 @@ import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.util.ItemSyncerResult
-import app.tivi.data.util.instantInPast
+import app.tivi.data.util.inPast
 import app.tivi.data.util.syncerForEntity
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
+import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.Instant
-import org.threeten.bp.OffsetDateTime
 
 @ApplicationScope
 @Inject
@@ -77,7 +78,7 @@ class FollowedShowsRepository(
         return followedShowsDao.entries()
     }
 
-    suspend fun needFollowedShowsSync(expiry: Instant = instantInPast(hours = 1)): Boolean {
+    suspend fun needFollowedShowsSync(expiry: Instant = 1.hours.inPast): Boolean {
         return followedShowsLastRequestStore.isRequestBefore(expiry)
     }
 
@@ -91,7 +92,7 @@ class FollowedShowsRepository(
             val newEntry = FollowedShowEntry(
                 id = entry?.id ?: 0,
                 showId = showId,
-                followedAt = entry?.followedAt ?: OffsetDateTime.now(),
+                followedAt = entry?.followedAt ?: Clock.System.now(),
                 pendingAction = PendingAction.UPLOAD,
             )
             val newEntryId = followedShowsDao.insertOrUpdate(newEntry)

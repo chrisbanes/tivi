@@ -22,13 +22,13 @@ import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.TiviShow
 import app.tivi.data.util.mergeShows
 import app.tivi.inject.ApplicationScope
+import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
-import org.threeten.bp.Duration
 
 @ApplicationScope
 @Inject
@@ -61,7 +61,7 @@ class ShowStore(
             showDao.getShowWithIdFlow(showId).map {
                 when {
                     // If the request is expired, our data is stale
-                    lastRequestStore.isRequestExpired(showId, Duration.ofDays(14)) -> null
+                    lastRequestStore.isRequestExpired(showId, 14.days) -> null
                     // Otherwise, our data is fresh and valid
                     else -> it
                 }

@@ -19,9 +19,9 @@ package app.tivi.data.lastrequests
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.models.LastRequest
 import app.tivi.data.models.Request
-import app.tivi.data.util.inPast
-import org.threeten.bp.Instant
-import org.threeten.bp.temporal.TemporalAmount
+import kotlin.time.Duration
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 open class GroupLastRequestStore(
     private val request: Request,
@@ -31,19 +31,25 @@ open class GroupLastRequestStore(
         return dao.lastRequest(request, DEFAULT_ID)?.timestamp
     }
 
-    suspend fun isRequestExpired(threshold: TemporalAmount): Boolean {
-        return isRequestBefore(threshold.inPast())
+    suspend fun isRequestExpired(threshold: Duration): Boolean {
+        return isRequestBefore(Clock.System.now() - threshold)
     }
 
     suspend fun isRequestBefore(instant: Instant): Boolean {
-        return getRequestInstant()?.isBefore(instant) ?: true
+        return getRequestInstant()?.let { it < instant } ?: true
     }
 
-    suspend fun updateLastRequest(timestamp: Instant = Instant.now()) {
-        dao.insert(LastRequest(request = request, entityId = DEFAULT_ID, timestamp = timestamp))
+    suspend fun updateLastRequest(timestamp: Instant = Clock.System.now()) {
+        dao.insert(
+            LastRequest(
+                request = request,
+                entityId = DEFAULT_ID,
+                _timestamp = timestamp.toEpochMilliseconds(),
+            ),
+        )
     }
 
-    suspend fun invalidateLastRequest() = updateLastRequest(Instant.EPOCH)
+    suspend fun invalidateLastRequest() = updateLastRequest(Instant.DISTANT_PAST)
 
     companion object {
         private const val DEFAULT_ID = 0L

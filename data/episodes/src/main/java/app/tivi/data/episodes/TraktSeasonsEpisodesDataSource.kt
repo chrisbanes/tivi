@@ -38,9 +38,9 @@ import com.uwetrottmann.trakt5.enums.HistoryType
 import com.uwetrottmann.trakt5.services.Seasons
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneOffset
 import retrofit2.awaitResponse
 
 @Inject
@@ -66,7 +66,7 @@ class TraktSeasonsEpisodesDataSource(
 
     override suspend fun getShowEpisodeWatches(
         showId: Long,
-        since: OffsetDateTime?,
+        since: Instant?,
     ): List<Pair<Episode, EpisodeWatchEntry>> {
         val showTraktId = showIdToTraktIdMapper.map(showId)
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
@@ -79,7 +79,7 @@ class TraktSeasonsEpisodesDataSource(
                 0,
                 10000,
                 Extended.NOSEASONS,
-                since,
+                since?.toThreeTenOffsetDateTime(),
                 null,
             )
                 .awaitResponse()
@@ -89,7 +89,7 @@ class TraktSeasonsEpisodesDataSource(
 
     override suspend fun getSeasonWatches(
         seasonId: Long,
-        since: OffsetDateTime?,
+        since: Instant?,
     ): List<Pair<Episode, EpisodeWatchEntry>> = withRetry {
         usersService.value.history(
             UserSlug.ME,
@@ -98,7 +98,7 @@ class TraktSeasonsEpisodesDataSource(
             0,
             10000,
             Extended.NOSEASONS,
-            since,
+            since?.toThreeTenOffsetDateTime(),
             null,
         )
             .awaitResponse()
@@ -107,7 +107,7 @@ class TraktSeasonsEpisodesDataSource(
 
     override suspend fun getEpisodeWatches(
         episodeId: Long,
-        since: OffsetDateTime?,
+        since: Instant?,
     ): List<EpisodeWatchEntry> = withRetry {
         usersService.value.history(
             UserSlug.ME,
@@ -116,7 +116,7 @@ class TraktSeasonsEpisodesDataSource(
             0, // page
             10000, // limit
             Extended.NOSEASONS, // extended info
-            since, // since date
+            since?.toThreeTenOffsetDateTime(), // since date
             null, // end date
         )
             .awaitResponse()
@@ -128,7 +128,7 @@ class TraktSeasonsEpisodesDataSource(
         items.episodes = watches.map {
             SyncEpisode()
                 .id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))
-                .watchedAt(it.watchedAt.withOffsetSameInstant(ZoneOffset.UTC))
+                .watchedAt(it.watchedAt.toThreeTenOffsetDateTime())
         }
         withRetry {
             syncService.value.addItemsToWatchedHistory(items)
@@ -146,4 +146,12 @@ class TraktSeasonsEpisodesDataSource(
                 .bodyOrThrow()
         }
     }
+}
+
+internal fun Instant.toThreeTenOffsetDateTime(
+    offset: org.threeten.bp.ZoneOffset = org.threeten.bp.ZoneOffset.UTC,
+): OffsetDateTime = toThreeTenInstant().atOffset(offset)
+
+private fun Instant.toThreeTenInstant(): org.threeten.bp.Instant {
+    return org.threeten.bp.Instant.ofEpochMilli(toEpochMilliseconds())
 }

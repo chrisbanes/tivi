@@ -17,41 +17,79 @@
 package app.tivi.util
 
 import android.text.format.DateUtils
-import app.tivi.datetime.DateTimeFormatters
+import app.tivi.inject.ActivityScope
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.time.temporal.Temporal
+import java.util.Locale
+import kotlin.time.Duration.Companion.days
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaInstant
+import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.LocalTime
-import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.temporal.Temporal
 
+@ActivityScope
 @Inject
 class TiviDateFormatter(
-    private val formatters: DateTimeFormatters,
+    private val locale: Locale,
 ) {
-    fun formatShortDate(temporalAmount: Temporal): String {
-        return formatters.shortDate.format(temporalAmount)
+    private val shortDate: DateTimeFormatter by lazy {
+        DateTimeFormatter
+            .ofLocalizedDate(FormatStyle.SHORT)
+            .withLocale(locale)
+    }
+    private val shortTime: DateTimeFormatter by lazy {
+        DateTimeFormatter
+            .ofLocalizedTime(FormatStyle.SHORT)
+            .withLocale(locale)
+    }
+    private val mediumDate: DateTimeFormatter by lazy {
+        DateTimeFormatter
+            .ofLocalizedDate(FormatStyle.MEDIUM)
+            .withLocale(locale)
+    }
+    private val mediumDateTime: DateTimeFormatter by lazy {
+        DateTimeFormatter
+            .ofLocalizedDateTime(FormatStyle.MEDIUM)
+            .withLocale(locale)
     }
 
-    fun formatMediumDate(temporalAmount: Temporal): String {
-        return formatters.mediumDate.format(temporalAmount)
+    private fun Instant.toTemporal(): Temporal {
+        return LocalDateTime.ofInstant(toJavaInstant(), ZoneId.systemDefault())
     }
 
-    fun formatMediumDateTime(temporalAmount: Temporal): String {
-        return formatters.mediumDateTime.format(temporalAmount)
+    fun formatShortDate(instant: Instant): String {
+        return shortDate.format(instant.toTemporal())
+    }
+
+    fun formatMediumDate(instant: Instant): String {
+        return mediumDate.format(instant.toTemporal())
+    }
+
+    fun formatMediumDateTime(instant: Instant): String {
+        return mediumDateTime.format(instant.toTemporal())
     }
 
     fun formatShortTime(localTime: LocalTime): String {
-        return formatters.shortTime.format(localTime)
+        return shortTime.format(localTime)
     }
 
-    fun formatShortRelativeTime(dateTime: OffsetDateTime): String {
-        val now = OffsetDateTime.now()
+    fun formatShortRelativeTime(dateTime: Instant): String {
+        val nowInstant = kotlinx.datetime.Clock.System.now()
+        val now = nowInstant.toLocalDateTime(TimeZone.currentSystemDefault())
 
-        return if (dateTime.isBefore(now)) {
-            if (dateTime.year == now.year || dateTime.isAfter(now.minusDays(7))) {
+        val localDateTime = dateTime.toLocalDateTime(TimeZone.currentSystemDefault())
+
+        return if (dateTime < nowInstant) {
+            if (localDateTime.year == now.year || dateTime > (nowInstant - 7.days)) {
                 // Within the past week
                 DateUtils.getRelativeTimeSpanString(
-                    dateTime.toEpochSecond() * 1000,
-                    now.toEpochSecond() * 1000,
+                    dateTime.toEpochMilliseconds(),
+                    nowInstant.toEpochMilliseconds(),
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_SHOW_DATE,
                 ).toString()
@@ -60,11 +98,11 @@ class TiviDateFormatter(
                 formatShortDate(dateTime)
             }
         } else {
-            if (dateTime.year == now.year || dateTime.isBefore(now.plusDays(14))) {
+            if (localDateTime.year == now.year || dateTime > (nowInstant - 14.days)) {
                 // In the near future (next 2 weeks)
                 DateUtils.getRelativeTimeSpanString(
-                    dateTime.toEpochSecond() * 1000,
-                    now.toEpochSecond() * 1000,
+                    dateTime.toEpochMilliseconds(),
+                    nowInstant.toEpochMilliseconds(),
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_SHOW_DATE,
                 ).toString()

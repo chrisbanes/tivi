@@ -22,13 +22,13 @@ import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.RelatedShowEntry
 import app.tivi.inject.ApplicationScope
+import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
-import org.threeten.bp.Duration
 
 @ApplicationScope
 @Inject
@@ -49,7 +49,7 @@ class RelatedShowsStore(
                     // Store only treats null as 'no value', so convert to null
                     entries.isEmpty() -> null
                     // If the request is expired, our data is stale
-                    lastRequestStore.isRequestExpired(showId, Duration.ofDays(28)) -> null
+                    lastRequestStore.isRequestExpired(showId, 28.days) -> null
                     // Otherwise, our data is fresh and valid
                     else -> entries
                 }

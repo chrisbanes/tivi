@@ -94,9 +94,9 @@ import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.trakt.TraktAuthState
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.OffsetDateTime
 
 typealias Library = @Composable (
     openShowDetails: (showId: Long) -> Unit,
@@ -370,7 +370,7 @@ private fun LibraryItem(
     poster: ShowTmdbImage?,
     watchedEpisodeCount: Int?,
     totalEpisodeCount: Int?,
-    lastWatchedDate: OffsetDateTime?,
+    lastWatchedDate: Instant?,
     onClick: () -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,

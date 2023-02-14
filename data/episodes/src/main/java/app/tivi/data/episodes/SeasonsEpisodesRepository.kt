@@ -28,19 +28,22 @@ import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.models.RefreshType
 import app.tivi.data.models.Season
-import app.tivi.data.util.instantInPast
+import app.tivi.data.util.inPast
 import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.Instant
-import org.threeten.bp.OffsetDateTime
 
 @ApplicationScope
 @Inject
@@ -108,7 +111,7 @@ class SeasonsEpisodesRepository(
 
     suspend fun needShowSeasonsUpdate(
         showId: Long,
-        expiry: Instant = instantInPast(days = 7),
+        expiry: Instant = 7.days.inPast,
     ): Boolean {
         return seasonsLastRequestStore.isRequestBefore(showId, expiry)
     }
@@ -148,7 +151,7 @@ class SeasonsEpisodesRepository(
 
     suspend fun needEpisodeUpdate(
         episodeId: Long,
-        expiry: Instant = instantInPast(days = 28),
+        expiry: Instant = 28.days.inPast,
     ): Boolean {
         return episodeLastRequestStore.isRequestBefore(episodeId, expiry)
     }
@@ -184,14 +187,14 @@ class SeasonsEpisodesRepository(
         showId: Long,
         refreshType: RefreshType = RefreshType.QUICK,
         forceRefresh: Boolean = false,
-        lastUpdated: OffsetDateTime? = null,
+        lastUpdated: Instant? = null,
     ) {
         if (refreshType == RefreshType.QUICK) {
             // If we have a lastUpdated time and we've already fetched the watched episodes, we can try
             // and do a delta fetch
             if (lastUpdated != null && episodeWatchLastLastRequestStore.hasBeenRequested(showId)) {
-                if (forceRefresh || needShowEpisodeWatchesSync(showId, lastUpdated.toInstant())) {
-                    updateShowEpisodeWatches(showId, lastUpdated.plusSeconds(1))
+                if (forceRefresh || needShowEpisodeWatchesSync(showId, lastUpdated)) {
+                    updateShowEpisodeWatches(showId, lastUpdated + 1.seconds)
                 }
             } else {
                 // We don't have a trakt date/time to use as a delta, so we'll do a full refresh.
@@ -208,7 +211,7 @@ class SeasonsEpisodesRepository(
         }
     }
 
-    private suspend fun updateShowEpisodeWatches(showId: Long, since: OffsetDateTime? = null) {
+    private suspend fun updateShowEpisodeWatches(showId: Long, since: Instant? = null) {
         if (traktManager.state.value == TraktAuthState.LOGGED_IN) {
             fetchShowWatchesFromRemote(showId, since)
         }
@@ -232,18 +235,18 @@ class SeasonsEpisodesRepository(
 
     suspend fun needShowEpisodeWatchesSync(
         showId: Long,
-        expiry: Instant = instantInPast(hours = 1),
+        expiry: Instant = 1.hours.inPast,
     ): Boolean {
         return episodeWatchLastLastRequestStore.isRequestBefore(showId, expiry)
     }
 
     suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean, date: ActionDate) {
         val watchesToSave = episodesDao.episodesWithSeasonId(seasonId).mapNotNull { episode ->
-            if (!onlyAired || episode.firstAired?.isBefore(OffsetDateTime.now()) == true) {
+            if (!onlyAired || episode.hasAired) {
                 if (!episodeWatchStore.hasEpisodeBeenWatched(episode.id)) {
                     val timestamp = when (date) {
-                        ActionDate.NOW -> OffsetDateTime.now()
-                        ActionDate.AIR_DATE -> episode.firstAired ?: OffsetDateTime.now()
+                        ActionDate.NOW -> Clock.System.now()
+                        ActionDate.AIR_DATE -> episode.firstAired ?: Clock.System.now()
                     }
                     return@mapNotNull EpisodeWatchEntry(
                         episodeId = episode.id,
@@ -295,7 +298,7 @@ class SeasonsEpisodesRepository(
         }
     }
 
-    suspend fun addEpisodeWatch(episodeId: Long, timestamp: OffsetDateTime) {
+    suspend fun addEpisodeWatch(episodeId: Long, timestamp: Instant) {
         val entry = EpisodeWatchEntry(
             episodeId = episodeId,
             watchedAt = timestamp,
@@ -347,7 +350,7 @@ class SeasonsEpisodesRepository(
         }
     }
 
-    private suspend fun fetchShowWatchesFromRemote(showId: Long, since: OffsetDateTime? = null) {
+    private suspend fun fetchShowWatchesFromRemote(showId: Long, since: Instant? = null) {
         val response = traktSeasonsDataSource.getShowEpisodeWatches(showId, since)
 
         val watches = response.mapNotNull { (episode, watchEntry) ->

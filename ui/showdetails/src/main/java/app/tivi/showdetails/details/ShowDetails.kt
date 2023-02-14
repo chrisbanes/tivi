@@ -131,9 +131,9 @@ import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TmdbImageEntity
 import app.tivi.data.views.FollowedShowsWatchStats
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import org.threeten.bp.OffsetDateTime
 
 typealias ShowDetails = @Composable (
     navigateUp: () -> Unit,
@@ -842,7 +842,7 @@ private fun SeasonRow(
     onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
-    nextToAirDate: OffsetDateTime? = null,
+    nextToAirDate: Instant? = null,
 ) {
     Row(
         modifier = modifier

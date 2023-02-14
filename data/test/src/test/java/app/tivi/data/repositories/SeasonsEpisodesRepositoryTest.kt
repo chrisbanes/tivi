@@ -48,11 +48,11 @@ import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
+import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Component
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.threeten.bp.OffsetDateTime
 
 class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     private lateinit var database: TiviDatabase
@@ -233,7 +233,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Now mark s1e1 as watched
         coEvery { seasonsDataSource.addEpisodeWatches(any()) } returns Unit
         coEvery { seasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns listOf(s1e1w)
-        repository.addEpisodeWatch(s1e1.id, OffsetDateTime.now())
+        repository.addEpisodeWatch(s1e1.id, Clock.System.now())
 
         // Receive the second emission
         withTimeout(10_000) {

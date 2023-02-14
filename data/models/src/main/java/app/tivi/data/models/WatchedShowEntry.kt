@@ -21,7 +21,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import org.threeten.bp.OffsetDateTime
+import kotlinx.datetime.Instant
 
 @Entity(
     tableName = "watched_entries",
@@ -41,5 +41,5 @@ import org.threeten.bp.OffsetDateTime
 data class WatchedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
-    @ColumnInfo(name = "last_watched") val lastWatched: OffsetDateTime,
+    @ColumnInfo(name = "last_watched") val lastWatched: Instant,
 ) : Entry

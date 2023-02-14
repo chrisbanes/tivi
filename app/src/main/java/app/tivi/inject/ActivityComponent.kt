@@ -18,37 +18,13 @@ package app.tivi.inject
 
 import android.app.Activity
 import androidx.core.os.ConfigurationCompat
-import app.tivi.datetime.DateTimeFormatters
 import java.util.Locale
 import me.tatarka.inject.annotations.Provides
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
 
 interface ActivityComponent {
     @Provides
-    fun provideMediumDateFormatter(
-        locale: Locale,
-    ): DateTimeFormatters {
-        // TODO: make these lazily instantiated
-        return DateTimeFormatters(
-            mediumDate = DateTimeFormatter
-                .ofLocalizedDate(FormatStyle.MEDIUM)
-                .withLocale(locale),
-            mediumDateTime = DateTimeFormatter
-                .ofLocalizedDateTime(FormatStyle.MEDIUM)
-                .withLocale(locale),
-            shortDate = DateTimeFormatter
-                .ofLocalizedDate(FormatStyle.SHORT)
-                .withLocale(locale),
-            shortTime = DateTimeFormatter
-                .ofLocalizedTime(FormatStyle.SHORT)
-                .withLocale(locale),
-        )
-    }
-
-    @Provides
     fun provideActivityLocale(activity: Activity): Locale {
-        return ConfigurationCompat.getLocales(activity.resources.configuration).get(0)
-            ?: Locale.getDefault()
+        return ConfigurationCompat.getLocales(activity.resources.configuration)
+            .get(0) ?: Locale.getDefault()
     }
 }
