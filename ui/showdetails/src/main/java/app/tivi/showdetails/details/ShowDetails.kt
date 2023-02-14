@@ -97,6 +97,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.lifecycle.SavedStateHandle
@@ -667,12 +669,18 @@ private fun Header(title: String) {
 
 @Composable
 private fun Genres(genres: List<Genre>) {
+    val textCreator = LocalTiviTextCreator.current
+
     Box(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
+            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+            .semantics {
+                contentDescription = textCreator
+                    .genreContentDescription(genres)
+                    .toString()
+            },
     ) {
-        val textCreator = LocalTiviTextCreator.current
         Text(
             text = textCreator.genreString(genres).toString(),
             style = MaterialTheme.typography.bodyMedium,
@@ -789,7 +797,7 @@ private fun InfoPanels(
             RuntimeInfoPanel(runtime = show.runtime!!, modifier = itemMod)
         }
         if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null &&
-            show.status == ShowStatus.IN_PRODUCTION
+            (show.status == ShowStatus.IN_PRODUCTION || show.status == ShowStatus.RETURNING)
         ) {
             AirsInfoPanel(show = show, modifier = itemMod)
         }
