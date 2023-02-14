@@ -59,6 +59,7 @@ import app.tivi.trakt.TraktAuthState
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias AccountUi = @Composable (
@@ -70,8 +71,8 @@ typealias AccountUi = @Composable (
 @Composable
 fun AccountUi(
     viewModelFactory: () -> AccountUiViewModel,
-    openSettings: () -> Unit,
-    modifier: Modifier = Modifier,
+    @Assisted openSettings: () -> Unit,
+    @Assisted modifier: Modifier = Modifier,
 ) {
     AccountUi(
         viewModel = viewModel(factory = viewModelFactory),

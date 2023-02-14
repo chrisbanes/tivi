@@ -15,13 +15,5 @@
   ~ limitations under the License.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <application>
-        <activity
-            android:name="net.openid.appauth.RedirectUriReceiverActivity"
-            tools:node="remove" />
-    </application>
-
+<manifest>
 </manifest>

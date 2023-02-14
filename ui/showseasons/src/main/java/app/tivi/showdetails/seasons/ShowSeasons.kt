@@ -89,6 +89,7 @@ import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias ShowSeasons = @Composable (
@@ -101,9 +102,9 @@ typealias ShowSeasons = @Composable (
 @Composable
 fun ShowSeasons(
     viewModelFactory: (SavedStateHandle) -> ShowSeasonsViewModel,
-    navigateUp: () -> Unit,
-    openEpisodeDetails: (episodeId: Long) -> Unit,
-    initialSeasonId: Long? = null,
+    @Assisted navigateUp: () -> Unit,
+    @Assisted openEpisodeDetails: (episodeId: Long) -> Unit,
+    @Assisted initialSeasonId: Long? = null,
 ) {
     ShowSeasons(
         viewModel = viewModel(factory = viewModelFactory),

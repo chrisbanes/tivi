@@ -95,6 +95,7 @@ import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.trakt.TraktAuthState
 import kotlinx.datetime.Instant
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias Library = @Composable (
@@ -106,8 +107,8 @@ typealias Library = @Composable (
 @Composable
 fun Library(
     viewModelFactory: () -> LibraryViewModel,
-    openShowDetails: (showId: Long) -> Unit,
-    openUser: () -> Unit,
+    @Assisted openShowDetails: (showId: Long) -> Unit,
+    @Assisted openUser: () -> Unit,
 ) {
     Library(
         viewModel = viewModel(factory = viewModelFactory),

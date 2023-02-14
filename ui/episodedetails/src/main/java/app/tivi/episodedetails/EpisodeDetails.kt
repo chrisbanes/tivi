@@ -117,6 +117,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.hypot
 import kotlin.math.roundToInt
 import kotlinx.datetime.Clock
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias EpisodeDetails = @Composable (
@@ -129,8 +130,8 @@ typealias EpisodeDetails = @Composable (
 @Composable
 fun EpisodeDetails(
     viewModelFactory: (SavedStateHandle) -> EpisodeDetailsViewModel,
-    sheetState: BottomSheetNavigatorSheetState,
-    navigateUp: () -> Unit,
+    @Assisted sheetState: BottomSheetNavigatorSheetState,
+    @Assisted navigateUp: () -> Unit,
 ) {
     EpisodeDetails(
         viewModel = viewModel(factory = viewModelFactory),
