@@ -86,6 +86,7 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TmdbImageEntity
 import app.tivi.trakt.TraktAuthState
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 /**
@@ -103,11 +104,11 @@ typealias Discover = @Composable (
 @Composable
 fun Discover(
     viewModelFactory: () -> DiscoverViewModel,
-    openTrendingShows: () -> Unit,
-    openPopularShows: () -> Unit,
-    openRecommendedShows: () -> Unit,
-    openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openUser: () -> Unit,
+    @Assisted openTrendingShows: () -> Unit,
+    @Assisted openPopularShows: () -> Unit,
+    @Assisted openRecommendedShows: () -> Unit,
+    @Assisted openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
+    @Assisted openUser: () -> Unit,
 ) {
     Discover(
         viewModel = viewModel(factory = viewModelFactory),

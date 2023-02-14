@@ -24,6 +24,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias RecommendedShows = @Composable (
@@ -35,8 +36,8 @@ typealias RecommendedShows = @Composable (
 @Composable
 fun RecommendedShows(
     viewModelFactory: () -> RecommendedShowsViewModel,
-    openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit,
+    @Assisted openShowDetails: (showId: Long) -> Unit,
+    @Assisted navigateUp: () -> Unit,
 ) {
     RecommendedShows(
         viewModel = viewModel(factory = viewModelFactory),

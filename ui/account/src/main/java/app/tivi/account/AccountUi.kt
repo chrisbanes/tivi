@@ -56,6 +56,7 @@ import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.models.TraktUser
 import app.tivi.trakt.TraktAuthState
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
@@ -69,8 +70,8 @@ typealias AccountUi = @Composable (
 @Composable
 fun AccountUi(
     viewModelFactory: () -> AccountUiViewModel,
-    openSettings: () -> Unit,
-    modifier: Modifier = Modifier,
+    @Assisted openSettings: () -> Unit,
+    @Assisted modifier: Modifier = Modifier,
 ) {
     AccountUi(
         viewModel = viewModel(factory = viewModelFactory),

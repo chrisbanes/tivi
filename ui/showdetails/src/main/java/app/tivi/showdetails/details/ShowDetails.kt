@@ -131,6 +131,7 @@ import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TmdbImageEntity
 import app.tivi.data.views.FollowedShowsWatchStats
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
 
@@ -145,10 +146,10 @@ typealias ShowDetails = @Composable (
 @Composable
 fun ShowDetails(
     viewModelFactory: (SavedStateHandle) -> ShowDetailsViewModel,
-    navigateUp: () -> Unit,
-    openShowDetails: (showId: Long) -> Unit,
-    openEpisodeDetails: (episodeId: Long) -> Unit,
-    openSeasons: (showId: Long, seasonId: Long) -> Unit,
+    @Assisted navigateUp: () -> Unit,
+    @Assisted openShowDetails: (showId: Long) -> Unit,
+    @Assisted openEpisodeDetails: (episodeId: Long) -> Unit,
+    @Assisted openSeasons: (showId: Long, seasonId: Long) -> Unit,
 ) {
     ShowDetails(
         viewModel = viewModel(factory = viewModelFactory),

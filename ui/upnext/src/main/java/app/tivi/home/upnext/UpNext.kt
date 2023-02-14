@@ -82,6 +82,7 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.trakt.TraktAuthState
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias UpNext = @Composable (
@@ -93,8 +94,8 @@ typealias UpNext = @Composable (
 @Composable
 fun UpNext(
     viewModelFactory: () -> UpNextViewModel,
-    openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
-    openUser: () -> Unit,
+    @Assisted openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
+    @Assisted openUser: () -> Unit,
 ) {
     UpNext(
         viewModel = viewModel(factory = viewModelFactory),

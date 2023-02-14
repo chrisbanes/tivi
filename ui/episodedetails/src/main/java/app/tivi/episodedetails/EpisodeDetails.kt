@@ -116,6 +116,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
 import kotlin.math.roundToInt
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import org.threeten.bp.OffsetDateTime
 
@@ -129,8 +130,8 @@ typealias EpisodeDetails = @Composable (
 @Composable
 fun EpisodeDetails(
     viewModelFactory: (SavedStateHandle) -> EpisodeDetailsViewModel,
-    sheetState: BottomSheetNavigatorSheetState,
-    navigateUp: () -> Unit,
+    @Assisted sheetState: BottomSheetNavigatorSheetState,
+    @Assisted navigateUp: () -> Unit,
 ) {
     EpisodeDetails(
         viewModel = viewModel(factory = viewModelFactory),

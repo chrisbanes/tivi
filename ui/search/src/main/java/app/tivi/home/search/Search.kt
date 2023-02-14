@@ -66,6 +66,7 @@ import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias Search = @Composable (
@@ -76,7 +77,7 @@ typealias Search = @Composable (
 @Composable
 fun Search(
     viewModelFactory: () -> SearchViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    @Assisted openShowDetails: (showId: Long) -> Unit,
 ) {
     Search(
         viewModel = viewModel(factory = viewModelFactory),
