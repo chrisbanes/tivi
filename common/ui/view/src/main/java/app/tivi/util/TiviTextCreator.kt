@@ -18,8 +18,6 @@ package app.tivi.util
 
 import android.app.Activity
 import android.graphics.Color
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.parseAsHtml
@@ -171,7 +169,6 @@ class TiviTextCreator(
         return genres?.joinToString(", ") { context.getString(GenreStringer.getLabel(it)) }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun airsText(show: TiviShow): CharSequence? {
         val airTime = show.airsTime
         val airTz = show.airsTimeZone
