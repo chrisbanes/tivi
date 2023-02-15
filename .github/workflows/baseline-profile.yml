@@ -55,9 +55,6 @@ jobs:
         env:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
-      - name: Copy CI gradle.properties
-        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
-
       # This allows us to build most of what we need without the emulator running
       # and using resources
       - name: Build app and benchmark
