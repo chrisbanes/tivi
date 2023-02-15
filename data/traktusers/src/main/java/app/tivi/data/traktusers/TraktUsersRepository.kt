@@ -17,7 +17,7 @@
 package app.tivi.data.traktusers
 
 import app.tivi.data.daos.UserDao
-import app.tivi.data.daos.insertOrUpdate
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.TraktUser
 import app.tivi.data.util.withRetry
 import app.tivi.inject.ApplicationScope
@@ -32,6 +32,7 @@ class TraktUsersRepository(
     private val userDao: UserDao,
     private val lastRequestStore: TraktUsersLastRequestStore,
     private val dataSource: UsersDataSource,
+    private val transactionRunner: DatabaseTransactionRunner,
 ) {
     fun observeUser(username: String): Flow<TraktUser?> = when (username) {
         "me" -> userDao.observeMe()
@@ -50,12 +51,14 @@ class TraktUsersRepository(
             }
         }
         // Make sure we use the current DB id (if present)
-        val localUser = userDao.getUser(user.username)
-        if (localUser != null) {
-            user = user.copy(id = localUser.id)
+        transactionRunner {
+            val localUser = userDao.getUser(user.username)
+            if (localUser != null) {
+                user = user.copy(id = localUser.id)
+            }
+            val id = userDao.upsert(user)
+            lastRequestStore.updateLastRequest(id, Clock.System.now())
         }
-        val id = userDao.insertOrUpdate(user)
-        lastRequestStore.updateLastRequest(id, Clock.System.now())
     }
 
     suspend fun needUpdate(username: String): Boolean {

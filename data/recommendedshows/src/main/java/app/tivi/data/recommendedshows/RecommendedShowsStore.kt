@@ -70,7 +70,7 @@ class RecommendedShowsStore(
                 if (page == 0) {
                     // If we've requested page 0, remove any existing entries first
                     recommendedDao.deleteAll()
-                    recommendedDao.insertAll(entries)
+                    recommendedDao.upsertAll(entries)
                 } else {
                     recommendedDao.updatePage(page, entries)
                 }

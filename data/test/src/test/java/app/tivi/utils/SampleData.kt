@@ -37,7 +37,7 @@ val show = TiviShow(id = showId, title = "Down Under", traktId = 243)
 const val show2Id = 2L
 val show2 = TiviShow(id = show2Id, title = "G'day mate", traktId = 546)
 
-internal suspend fun insertShow(db: TiviDatabase) = db.showDao().insert(show)
+internal suspend fun insertShow(db: TiviDatabase) = db.showDao().upsert(show)
 
 internal suspend fun deleteShow(db: TiviDatabase) = db.showDao().deleteEntity(show)
 
@@ -137,7 +137,7 @@ val s1e1w2 = s1e1w.copy(id = s1e1w2_id, traktId = 4385783)
 val episodeWatch2PendingSend = s1e1w2.copy(pendingAction = PendingAction.UPLOAD)
 val episodeWatch2PendingDelete = s1e1w2.copy(pendingAction = PendingAction.DELETE)
 
-internal suspend fun insertFollowedShow(db: TiviDatabase) = db.followedShowsDao().insert(followedShow1Local)
+internal suspend fun insertFollowedShow(db: TiviDatabase) = db.followedShowsDao().upsert(followedShow1Local)
 
 const val followedShowId = 1L
 val followedShow1Network = FollowedShowEntry(0, showId, traktId = 100)

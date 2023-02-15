@@ -84,8 +84,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSyncEpisodeWatches() = runTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao.upsert(s1)
+        episodesDao.upsertAll(s1_episodes)
 
         // Return a response with 2 items
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
@@ -100,11 +100,11 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Test
     fun testEpisodeWatches_sameEntries() = runTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao.upsert(s1)
+        episodesDao.upsertAll(s1_episodes)
 
         // Insert both the watches
-        episodeWatchDao.insertAll(s1e1w, s1e1w2)
+        episodeWatchDao.upsertAll(s1e1w, s1e1w2)
         // Return a response with the same items
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
             listOf(s1e1 to s1e1w, s1e1 to s1e1w2)
@@ -117,11 +117,11 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Test
     fun testEpisodeWatches_deletesMissing() = runTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao.upsert(s1)
+        episodesDao.upsertAll(s1_episodes)
 
         // Insert both the watches
-        episodeWatchDao.insertAll(s1e1w, s1e1w2)
+        episodeWatchDao.upsertAll(s1e1w, s1e1w2)
         // Return a response with just the second item
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
             listOf(s1e1 to s1e1w2)
@@ -134,11 +134,11 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Test
     fun testEpisodeWatches_emptyResponse() = runTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao.upsert(s1)
+        episodesDao.upsertAll(s1_episodes)
 
         // Insert both the watches
-        episodeWatchDao.insertAll(s1e1w, s1e1w2)
+        episodeWatchDao.upsertAll(s1e1w, s1e1w2)
         // Return a empty response
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns emptyList()
         traktManager.onNewAuthState(AuthorizedAuthState)
@@ -161,8 +161,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSyncSeasonsEpisodes_sameEntries() = runTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao.upsert(s1)
+        episodesDao.upsertAll(s1_episodes)
 
         // Return a response with the same items
         coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns listOf(s1 to s1_episodes)
@@ -175,8 +175,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSyncSeasonsEpisodes_emptyResponse() = runTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao.upsert(s1)
+        episodesDao.upsertAll(s1_episodes)
 
         // Return an empty response
         coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns emptyList()
@@ -189,9 +189,9 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSyncSeasonsEpisodes_deletesMissingSeasons() = runTest {
-        seasonsDao.insertAll(s1, s2)
-        episodesDao.insertAll(s1_episodes)
-        episodesDao.insertAll(s2_episodes)
+        seasonsDao.upsertAll(s1, s2)
+        episodesDao.upsertAll(s1_episodes)
+        episodesDao.upsertAll(s2_episodes)
 
         // Return a response with just the first season
         coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns listOf(s1 to s1_episodes)
@@ -204,9 +204,9 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSyncSeasonsEpisodes_deletesMissingEpisodes() = runTest {
-        seasonsDao.insertAll(s1, s2)
-        episodesDao.insertAll(s1_episodes)
-        episodesDao.insertAll(s2_episodes)
+        seasonsDao.upsertAll(s1, s2)
+        episodesDao.upsertAll(s1_episodes)
+        episodesDao.upsertAll(s2_episodes)
 
         // Return a response with both seasons, but just a single episodes in each
         coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns listOf(s1 to listOf(s1e1), s2 to listOf(s2e1))
@@ -220,8 +220,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
     @Test
     fun testObserveNextEpisodeToWatch_singleFlow() = runTest {
-        seasonsDao.insertAll(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao.upsertAll(s1)
+        episodesDao.upsertAll(s1_episodes)
 
         val results = repository.observeNextEpisodeToWatch(showId).produceIn(this)
 

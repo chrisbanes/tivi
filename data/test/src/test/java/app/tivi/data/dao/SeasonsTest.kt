@@ -57,26 +57,26 @@ class SeasonsTest : DatabaseTest() {
 
     @Test
     fun insertSeason() = runTest {
-        seasonsDao.insert(s1)
+        seasonsDao.upsert(s1)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(s1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() = runTest {
-        seasonsDao.insert(s1)
+        seasonsDao.upsert(s1)
 
         // Make a copy with a 0 id
         val copy = s1.copy(id = 0)
 
-        seasonsDao.insert(copy)
+        seasonsDao.upsert(copy)
     }
 
     @Test
     fun specialsOrder() = runTest {
-        seasonsDao.insert(s0)
-        seasonsDao.insert(s1)
-        seasonsDao.insert(s2)
+        seasonsDao.upsert(s0)
+        seasonsDao.upsert(s1)
+        seasonsDao.upsert(s2)
 
         // Specials should always be last
         assertThat(
@@ -87,7 +87,7 @@ class SeasonsTest : DatabaseTest() {
 
     @Test
     fun deleteSeason() = runTest {
-        seasonsDao.insert(s1)
+        seasonsDao.upsert(s1)
         seasonsDao.deleteEntity(s1)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
@@ -95,7 +95,7 @@ class SeasonsTest : DatabaseTest() {
 
     @Test
     fun deleteShow_deletesSeason() = runTest {
-        seasonsDao.insert(s1)
+        seasonsDao.upsert(s1)
         // Now delete show
         deleteShow(database)
 

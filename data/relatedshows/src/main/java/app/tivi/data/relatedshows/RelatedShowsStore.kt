@@ -19,7 +19,6 @@ package app.tivi.data.relatedshows
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
-import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.RelatedShowEntry
 import app.tivi.inject.ApplicationScope
@@ -66,7 +65,7 @@ class RelatedShowsStore(
                     )
                 }
                 relatedShowsDao.deleteWithShowId(showId)
-                relatedShowsDao.insertOrUpdate(entries)
+                relatedShowsDao.upsertAll(entries)
             }
         },
         delete = relatedShowsDao::deleteWithShowId,

@@ -42,7 +42,7 @@ abstract class EntityLastRequestStore(
     }
 
     suspend fun updateLastRequest(entityId: Long, timestamp: Instant = Clock.System.now()) {
-        dao.insert(
+        dao.upsert(
             LastRequest(
                 request = request,
                 entityId = entityId,

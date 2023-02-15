@@ -40,7 +40,7 @@ open class GroupLastRequestStore(
     }
 
     suspend fun updateLastRequest(timestamp: Instant = Clock.System.now()) {
-        dao.insert(
+        dao.upsert(
             LastRequest(
                 request = request,
                 entityId = DEFAULT_ID,

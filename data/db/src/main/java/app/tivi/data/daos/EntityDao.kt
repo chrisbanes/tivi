@@ -19,11 +19,11 @@ package app.tivi.data.daos
 import app.tivi.data.models.TiviEntity
 
 interface EntityDao<in E : TiviEntity> {
-    suspend fun insert(entity: E): Long
+    suspend fun upsert(entity: E): Long
 
-    suspend fun insertAll(vararg entity: E)
+    suspend fun upsertAll(vararg entity: E)
 
-    suspend fun insertAll(entities: List<E>)
+    suspend fun upsertAll(entities: List<E>)
 
     suspend fun update(entity: E)
 
@@ -32,15 +32,9 @@ interface EntityDao<in E : TiviEntity> {
 
 suspend fun <E : TiviEntity> EntityDao<E>.insertOrUpdate(entity: E): Long {
     return if (entity.id == 0L) {
-        insert(entity)
+        upsert(entity)
     } else {
         update(entity)
         entity.id
-    }
-}
-
-suspend fun <E : TiviEntity> EntityDao<E>.insertOrUpdate(entities: List<E>) {
-    for (entity in entities) {
-        insertOrUpdate(entity)
     }
 }

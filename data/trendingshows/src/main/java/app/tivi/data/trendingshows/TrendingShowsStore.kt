@@ -69,7 +69,7 @@ class TrendingShowsStore(
                 if (page == 0) {
                     // If we've requested page 0, remove any existing entries first
                     trendingShowsDao.deleteAll()
-                    trendingShowsDao.insertAll(entries)
+                    trendingShowsDao.upsertAll(entries)
                 } else {
                     trendingShowsDao.updatePage(page, entries)
                 }

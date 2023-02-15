@@ -56,34 +56,34 @@ class EpisodesTest : DatabaseTest() {
         runBlocking {
             // We'll assume that there's a show and season in the db
             insertShow(database)
-            seasonsDao.insert(s1)
+            seasonsDao.upsert(s1)
         }
     }
 
     @Test
     fun insert() = runTest {
-        episodeDao.insert(s1e1)
+        episodeDao.upsert(s1e1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(s1e1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() = runTest {
-        episodeDao.insert(s1e1)
+        episodeDao.upsert(s1e1)
         // Make a copy with a 0 id
         val copy = s1e1.copy(id = 0)
-        episodeDao.insert(copy)
+        episodeDao.upsert(copy)
     }
 
     @Test
     fun delete() = runTest {
-        episodeDao.insert(s1e1)
+        episodeDao.upsert(s1e1)
         episodeDao.deleteEntity(s1e1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
     }
 
     @Test
     fun deleteSeason_deletesEpisode() = runTest {
-        episodeDao.insert(s1e1)
+        episodeDao.upsert(s1e1)
         // Now delete season
         seasonsDao.deleteEntity(s1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
@@ -91,13 +91,13 @@ class EpisodesTest : DatabaseTest() {
 
     @Test
     fun showIdForEpisodeId() = runTest {
-        episodeDao.insert(s1e1)
+        episodeDao.upsert(s1e1)
         assertThat(episodeDao.showIdForEpisodeId(s1e1.id), `is`(showId))
     }
 
     @Test
     fun nextAiredEpisodeAfter() = runTest {
-        episodeDao.insertAll(s1_episodes)
+        episodeDao.upsertAll(s1_episodes)
 
         assertThat(
             episodeDao.observeNextEpisodeForShowAfter(showId, 0, 0)

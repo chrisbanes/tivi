@@ -25,5 +25,5 @@ interface LastRequestDao : EntityDao<LastRequest> {
 
     suspend fun requestCount(request: Request, entityId: Long): Int
 
-    override suspend fun insert(entity: LastRequest): Long
+    override suspend fun upsert(entity: LastRequest): Long
 }

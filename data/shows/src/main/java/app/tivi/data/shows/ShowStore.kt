@@ -18,7 +18,6 @@ package app.tivi.data.shows
 
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getShowWithIdOrThrow
-import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.TiviShow
 import app.tivi.data.util.mergeShows
@@ -71,7 +70,7 @@ class ShowStore(
         },
         writer = { id, response ->
             transactionRunner {
-                showDao.insertOrUpdate(
+                showDao.upsert(
                     mergeShows(local = showDao.getShowWithIdOrThrow(id), trakt = response),
                 )
             }
