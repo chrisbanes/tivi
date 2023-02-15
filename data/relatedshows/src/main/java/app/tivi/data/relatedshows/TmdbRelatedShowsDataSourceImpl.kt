@@ -47,6 +47,6 @@ class TmdbRelatedShowsDataSourceImpl(
         tmdb.tvService()
             .recommendations(tmdbIdMapper.map(showId), 1, null)
             .awaitResponse()
-            .let { resultMapper.invoke(it.bodyOrThrow()) }
+            .let { resultMapper(it.bodyOrThrow()) }
     }
 }

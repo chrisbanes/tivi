@@ -17,7 +17,7 @@
 package app.tivi.data.recommendedshows
 
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.data.mappers.forLists
+import app.tivi.data.mappers.map
 import app.tivi.data.models.TiviShow
 import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
@@ -38,6 +38,6 @@ class TraktRecommendedShowsDataSource(
             // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
             .shows(page + 1, pageSize, null)
             .awaitResponse()
-            .let { showMapper.forLists().invoke(it.bodyOrThrow()) }
+            .let { showMapper.map(it.bodyOrThrow()) }
     }
 }

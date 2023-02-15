@@ -44,6 +44,6 @@ class TraktTrendingShowsDataSource(
             // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
             .trending(page + 1, pageSize, Extended.NOSEASONS)
             .awaitResponse()
-            .let { responseMapper.invoke(it.bodyOrThrow()) }
+            .let { responseMapper(it.bodyOrThrow()) }
     }
 }

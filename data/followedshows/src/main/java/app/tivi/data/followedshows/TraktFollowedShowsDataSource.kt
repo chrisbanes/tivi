@@ -89,7 +89,7 @@ class TraktFollowedShowsDataSource(
             usersService.value
                 .listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
                 .awaitResponse()
-                .let { listShowsMapper.invoke(it.bodyOrThrow()) }
+                .let { listShowsMapper(it.bodyOrThrow()) }
         }
     }
 
