@@ -23,6 +23,7 @@ import app.tivi.data.watchedshows.WatchedShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import app.tivi.util.parallelForEach
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -39,7 +40,7 @@ class UpdateWatchedShows(
         withContext(dispatchers.io) {
             val shows = watchedShowsStore.fetch(Unit, params.forceRefresh)
 
-            for (show in shows) {
+            shows.parallelForEach { show ->
                 ensureActive()
                 showsStore.fetch(show.showId)
 

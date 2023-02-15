@@ -25,6 +25,7 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdatePopularShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import app.tivi.util.parallelForEach
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -49,7 +50,7 @@ class UpdatePopularShows(
                 else -> 0
             }
 
-            popularShowStore.fetch(page, forceFresh = params.forceRefresh).forEach {
+            popularShowStore.fetch(page, forceFresh = params.forceRefresh).parallelForEach {
                 showStore.fetch(it.showId)
                 try {
                     showImagesStore.fetch(it.showId)
