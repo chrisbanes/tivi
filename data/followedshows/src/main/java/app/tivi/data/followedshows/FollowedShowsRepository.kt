@@ -53,7 +53,7 @@ class FollowedShowsRepository(
     private val syncer = syncerForEntity(
         entityDao = followedShowsDao,
         entityToKey = { it.traktId },
-        mapper = { entity, id -> entity.copy(id = id ?: 0) },
+        mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
         logger = logger,
     )
 

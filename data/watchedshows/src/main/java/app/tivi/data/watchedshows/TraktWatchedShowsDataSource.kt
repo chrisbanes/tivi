@@ -37,6 +37,7 @@ class TraktWatchedShowsDataSource(
         WatchedShowEntry(
             showId = 0,
             lastWatched = from.last_watched_at!!.toKotlinInstant(),
+            lastUpdated = from.last_updated_at!!.toKotlinInstant(),
         )
     }
 
