@@ -31,7 +31,7 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
     private val deleteEntity: suspend (LocalType) -> Int,
     private val localEntityToKey: suspend (LocalType) -> Key?,
     private val networkEntityToKey: suspend (NetworkType) -> Key,
-    private val networkEntityToLocalEntity: suspend (NetworkType, Long?) -> LocalType,
+    private val networkEntityToLocalEntity: suspend (networkEntity: NetworkType, currentEntity: LocalType?) -> LocalType,
     private val logger: Logger,
 ) {
     suspend fun sync(
@@ -60,7 +60,7 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
             logger.v("Matched database entity for remote ID %s : %s", remoteId, dbEntityForId)
 
             if (dbEntityForId != null) {
-                val entity = networkEntityToLocalEntity(networkEntity, dbEntityForId.id)
+                val entity = networkEntityToLocalEntity(networkEntity, dbEntityForId)
                 logger.v("Mapped network entity to local entity: %s", entity)
                 if (dbEntityForId != entity) {
                     // This is currently in the DB, so lets merge it with the saved version
@@ -105,7 +105,7 @@ fun <LocalType : TiviEntity, NetworkType, Key> syncerForEntity(
     entityDao: EntityDao<LocalType>,
     localEntityToKey: suspend (LocalType) -> Key?,
     networkEntityToKey: suspend (NetworkType) -> Key,
-    networkEntityToLocalEntity: suspend (NetworkType, Long?) -> LocalType,
+    networkEntityToLocalEntity: suspend (networkEntity: NetworkType, currentEntity: LocalType?) -> LocalType,
     logger: Logger,
 ) = ItemSyncer(
     entityDao::insert,
@@ -120,7 +120,7 @@ fun <LocalType : TiviEntity, NetworkType, Key> syncerForEntity(
 fun <Type : TiviEntity, Key> syncerForEntity(
     entityDao: EntityDao<Type>,
     entityToKey: suspend (Type) -> Key?,
-    mapper: suspend (Type, Long?) -> Type,
+    mapper: suspend (Type, Type?) -> Type,
     logger: Logger,
 ) = ItemSyncer(
     entityDao::insert,

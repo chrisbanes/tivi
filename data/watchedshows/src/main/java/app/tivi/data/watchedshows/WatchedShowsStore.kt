@@ -20,7 +20,9 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.models.WatchedShowEntry
+import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
@@ -36,6 +38,7 @@ class WatchedShowsStore(
     watchedShowsDao: WatchedShowDao,
     showDao: TiviShowDao,
     lastRequestStore: WatchedShowsLastRequestStore,
+    logger: Logger,
 ) : Store<Unit, List<WatchedShowEntry>> by StoreBuilder.from(
     fetcher = Fetcher.of {
         dataSource()
@@ -55,12 +58,27 @@ class WatchedShowsStore(
             }
         },
         writer = { _: Unit, response ->
+            val syncer = syncerForEntity(
+                entityDao = watchedShowsDao,
+                entityToKey = { it.showId },
+                mapper = { newEntity, currentEntity ->
+                    newEntity.copy(
+                        id = currentEntity?.id ?: 0,
+                        dirty = currentEntity?.let { current ->
+                            // TODO: add jitter to lastUpdated check?
+                            current.dirty || current.lastUpdated < newEntity.lastUpdated
+                        } ?: true,
+                    )
+                },
+                logger = logger,
+            )
             watchedShowsDao.withTransaction {
-                val entries = response.map { (show, entry) ->
-                    entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
-                }
-                watchedShowsDao.deleteAll()
-                watchedShowsDao.insertAll(entries)
+                syncer.sync(
+                    currentValues = watchedShowsDao.entries(),
+                    networkValues = response.map { (show, entry) ->
+                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
+                    },
+                )
             }
         },
         delete = {

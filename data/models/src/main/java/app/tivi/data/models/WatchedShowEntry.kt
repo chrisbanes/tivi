@@ -42,4 +42,6 @@ data class WatchedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
     @ColumnInfo(name = "last_watched") val lastWatched: Instant,
+    @ColumnInfo(name = "last_updated", defaultValue = "2000-01-01T00:00:00.000000Z") val lastUpdated: Instant,
+    @ColumnInfo(name = "is_dirty", defaultValue = "false") val dirty: Boolean = false,
 ) : Entry

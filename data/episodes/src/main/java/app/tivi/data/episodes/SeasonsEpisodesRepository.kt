@@ -64,14 +64,14 @@ class SeasonsEpisodesRepository(
     private val seasonSyncer = syncerForEntity(
         entityDao = seasonsDao,
         entityToKey = { it.traktId },
-        mapper = { entity, id -> entity.copy(id = id ?: 0) },
+        mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
         logger = logger,
     )
 
     private val episodeSyncer = syncerForEntity(
         entityDao = episodesDao,
         entityToKey = { it.traktId },
-        mapper = { entity, id -> entity.copy(id = id ?: 0) },
+        mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
         logger = logger,
     )
 
