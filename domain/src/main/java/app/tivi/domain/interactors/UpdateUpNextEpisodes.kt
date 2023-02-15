@@ -28,15 +28,16 @@ import me.tatarka.inject.annotations.Inject
 class UpdateUpNextEpisodes(
     private val followedShowsDao: FollowedShowsDao,
     private val seasonEpisodeRepository: SeasonsEpisodesRepository,
-    private val updateFollowedShows: UpdateFollowedShows,
+    private val updateLibraryShows: UpdateLibraryShows,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateUpNextEpisodes.Params>() {
 
     override suspend fun doWork(params: Params) {
-        updateFollowedShows.executeSync(
-            UpdateFollowedShows.Params(params.forceRefresh),
+        updateLibraryShows.executeSync(
+            UpdateLibraryShows.Params(params.forceRefresh),
         )
 
+        // Now update the next episodes, to fetch images, etc
         withContext(dispatchers.io) {
             followedShowsDao.getUpNextShows().parallelForEach { entry ->
                 if (seasonEpisodeRepository.needEpisodeUpdate(entry.episode.id)) {

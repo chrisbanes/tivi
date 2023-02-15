@@ -86,7 +86,6 @@ class TraktManager(
             authStore.save(newState)
         }
         // Now trigger a sync of all shows
-        showTasks.syncWatchedShows()
-        showTasks.syncFollowedShows()
+        showTasks.syncLibraryShows()
     }
 }

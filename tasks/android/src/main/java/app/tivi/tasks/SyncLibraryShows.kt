@@ -19,16 +19,16 @@ package app.tivi.tasks
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import app.tivi.domain.interactors.UpdateFollowedShows
+import app.tivi.domain.interactors.UpdateLibraryShows
 import app.tivi.util.Logger
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class SyncAllFollowedShows(
+class SyncLibraryShows(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val updateFollowedShows: UpdateFollowedShows,
+    private val updateLibraryShows: UpdateLibraryShows,
     private val logger: Logger,
 ) : CoroutineWorker(context, params) {
     companion object {
@@ -38,7 +38,7 @@ class SyncAllFollowedShows(
 
     override suspend fun doWork(): Result {
         logger.d("$tags worker running")
-        updateFollowedShows.executeSync(UpdateFollowedShows.Params(true))
+        updateLibraryShows.executeSync(UpdateLibraryShows.Params(true))
         return Result.success()
     }
 }

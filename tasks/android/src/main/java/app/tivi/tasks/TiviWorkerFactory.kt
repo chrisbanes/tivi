@@ -24,16 +24,14 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TiviWorkerFactory(
-    private val syncAllFollowedShows: (Context, WorkerParameters) -> SyncAllFollowedShows,
-    private val syncWatchedShows: (Context, WorkerParameters) -> SyncWatchedShows,
+    private val syncLibraryShows: (Context, WorkerParameters) -> SyncLibraryShows,
 ) : WorkerFactory() {
     override fun createWorker(
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters,
     ): ListenableWorker? = when (workerClassName) {
-        name<SyncAllFollowedShows>() -> syncAllFollowedShows(appContext, workerParameters)
-        name<SyncWatchedShows>() -> syncWatchedShows(appContext, workerParameters)
+        name<SyncLibraryShows>() -> syncLibraryShows(appContext, workerParameters)
         else -> null
     }
 
