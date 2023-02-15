@@ -17,7 +17,6 @@
 package app.tivi.tasks
 
 interface ShowTasks {
-    fun syncFollowedShows(deferUntilIdle: Boolean = false)
-    fun syncWatchedShows(deferUntilIdle: Boolean = false)
+    fun syncLibraryShows(deferUntilIdle: Boolean = false)
     fun setupNightSyncs()
 }

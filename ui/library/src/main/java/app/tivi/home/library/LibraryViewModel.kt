@@ -27,8 +27,7 @@ import app.tivi.data.models.SortOption
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.GetTraktAuthState
-import app.tivi.domain.interactors.UpdateFollowedShows
-import app.tivi.domain.interactors.UpdateWatchedShows
+import app.tivi.domain.interactors.UpdateLibraryShows
 import app.tivi.domain.observers.ObservePagedLibraryShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
@@ -51,8 +50,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LibraryViewModel(
-    private val updateFollowedShows: UpdateFollowedShows,
-    private val updateWatchedShows: UpdateWatchedShows,
+    private val updateLibraryShows: UpdateLibraryShows,
     private val observePagedLibraryShows: ObservePagedLibraryShows,
     observeTraktAuthState: ObserveTraktAuthState,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
@@ -151,11 +149,6 @@ class LibraryViewModel(
                 refreshFollowed(fromUser)
             }
         }
-        viewModelScope.launch {
-            if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
-                refreshWatched(fromUser)
-            }
-        }
     }
 
     fun setFilter(filter: String?) {
@@ -180,17 +173,9 @@ class LibraryViewModel(
 
     private fun refreshFollowed(fromInteraction: Boolean) {
         viewModelScope.launch {
-            updateFollowedShows(
-                UpdateFollowedShows.Params(fromInteraction),
+            updateLibraryShows(
+                UpdateLibraryShows.Params(fromInteraction),
             ).collectStatus(followedLoadingState, logger, uiMessageManager)
-        }
-    }
-
-    private fun refreshWatched(fromUser: Boolean) {
-        viewModelScope.launch {
-            updateWatchedShows(
-                UpdateWatchedShows.Params(forceRefresh = fromUser),
-            ).collectStatus(watchedLoadingState, logger, uiMessageManager)
         }
     }
 

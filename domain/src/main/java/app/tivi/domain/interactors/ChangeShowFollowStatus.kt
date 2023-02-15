@@ -25,6 +25,7 @@ import app.tivi.domain.Interactor
 import app.tivi.tasks.ShowTasks
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import app.tivi.util.parallelForEach
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -57,7 +58,7 @@ class ChangeShowFollowStatus(
             // Finally, sync the changes to Trakt
             val result = followedShowsRepository.syncFollowedShows()
 
-            result.added.forEach {
+            result.added.parallelForEach {
                 showStore.fetch(it.showId)
                 try {
                     showImagesStore.fetch(it.showId)
@@ -67,7 +68,7 @@ class ChangeShowFollowStatus(
             }
 
             if (params.deferDataFetch) {
-                showTasks.syncFollowedShows()
+                showTasks.syncLibraryShows()
             }
         }
     }

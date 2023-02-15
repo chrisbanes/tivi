@@ -30,23 +30,9 @@ import me.tatarka.inject.annotations.Inject
 class ShowTasksImpl(
     private val workManager: WorkManager,
 ) : ShowTasks {
-    override fun syncFollowedShows(deferUntilIdle: Boolean) {
-        val request = OneTimeWorkRequestBuilder<SyncAllFollowedShows>()
-            .addTag(SyncAllFollowedShows.TAG)
-            .fluentIf(deferUntilIdle) {
-                setConstraints(
-                    Constraints.Builder()
-                        .setRequiresDeviceIdle(true)
-                        .build(),
-                )
-            }
-            .build()
-        workManager.enqueue(request)
-    }
-
-    override fun syncWatchedShows(deferUntilIdle: Boolean) {
-        val request = OneTimeWorkRequestBuilder<SyncWatchedShows>()
-            .addTag(SyncWatchedShows.TAG)
+    override fun syncLibraryShows(deferUntilIdle: Boolean) {
+        val request = OneTimeWorkRequestBuilder<SyncLibraryShows>()
+            .addTag(SyncLibraryShows.TAG)
             .fluentIf(deferUntilIdle) {
                 setConstraints(
                     Constraints.Builder()
@@ -65,17 +51,9 @@ class ShowTasksImpl(
             .build()
 
         workManager.enqueueUniquePeriodicWork(
-            SyncAllFollowedShows.NIGHTLY_SYNC_TAG,
+            SyncLibraryShows.NIGHTLY_SYNC_TAG,
             ExistingPeriodicWorkPolicy.KEEP,
-            PeriodicWorkRequestBuilder<SyncAllFollowedShows>(24, TimeUnit.HOURS)
-                .setConstraints(nightlyConstraints)
-                .build(),
-        )
-
-        workManager.enqueueUniquePeriodicWork(
-            SyncWatchedShows.NIGHTLY_SYNC_TAG,
-            ExistingPeriodicWorkPolicy.KEEP,
-            PeriodicWorkRequestBuilder<SyncWatchedShows>(24, TimeUnit.HOURS)
+            PeriodicWorkRequestBuilder<SyncLibraryShows>(24, TimeUnit.HOURS)
                 .setConstraints(nightlyConstraints)
                 .build(),
         )
