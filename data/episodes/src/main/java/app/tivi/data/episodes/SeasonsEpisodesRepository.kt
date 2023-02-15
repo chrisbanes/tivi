@@ -26,7 +26,6 @@ import app.tivi.data.models.ActionDate
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
-import app.tivi.data.models.RefreshType
 import app.tivi.data.models.Season
 import app.tivi.data.util.inPast
 import app.tivi.data.util.syncerForEntity
@@ -36,7 +35,6 @@ import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -178,42 +176,26 @@ class SeasonsEpisodesRepository(
         }
         check(trakt != null || tmdb != null)
 
-        episodesDao.insertOrUpdate(
+        val id = episodesDao.insertOrUpdate(
             mergeEpisode(local, trakt ?: Episode.EMPTY, tmdb ?: Episode.EMPTY),
         )
+
+        episodeLastRequestStore.updateLastRequest(id)
     }
 
     suspend fun updateShowEpisodeWatches(
         showId: Long,
-        refreshType: RefreshType = RefreshType.QUICK,
         forceRefresh: Boolean = false,
         lastUpdated: Instant? = null,
     ) {
-        if (refreshType == RefreshType.QUICK) {
+        if (traktManager.state.value == TraktAuthState.LOGGED_IN) {
             // If we have a lastUpdated time and we've already fetched the watched episodes, we can try
             // and do a delta fetch
-            if (lastUpdated != null && episodeWatchLastLastRequestStore.hasBeenRequested(showId)) {
-                if (forceRefresh || needShowEpisodeWatchesSync(showId, lastUpdated)) {
-                    updateShowEpisodeWatches(showId, lastUpdated + 1.seconds)
-                }
-            } else {
-                // We don't have a trakt date/time to use as a delta, so we'll do a full refresh.
-                // If the user hasn't watched the show, this should be empty anyway
-                if (forceRefresh || needShowEpisodeWatchesSync(showId)) {
-                    updateShowEpisodeWatches(showId)
-                }
+            if (forceRefresh ||
+                needShowEpisodeWatchesSync(showId, lastUpdated ?: 24.hours.inPast)
+            ) {
+                fetchShowWatchesFromRemote(showId)
             }
-        } else if (refreshType == RefreshType.FULL) {
-            // A full refresh is requested, so we pull down all history
-            if (forceRefresh || needShowEpisodeWatchesSync(showId)) {
-                updateShowEpisodeWatches(showId)
-            }
-        }
-    }
-
-    private suspend fun updateShowEpisodeWatches(showId: Long, since: Instant? = null) {
-        if (traktManager.state.value == TraktAuthState.LOGGED_IN) {
-            fetchShowWatchesFromRemote(showId, since)
         }
     }
 
@@ -235,7 +217,7 @@ class SeasonsEpisodesRepository(
 
     suspend fun needShowEpisodeWatchesSync(
         showId: Long,
-        expiry: Instant = 1.hours.inPast,
+        expiry: Instant = 24.hours.inPast,
     ): Boolean {
         return episodeWatchLastLastRequestStore.isRequestBefore(showId, expiry)
     }
@@ -350,22 +332,15 @@ class SeasonsEpisodesRepository(
         }
     }
 
-    private suspend fun fetchShowWatchesFromRemote(showId: Long, since: Instant? = null) {
-        val response = traktSeasonsDataSource.getShowEpisodeWatches(showId, since)
+    private suspend fun fetchShowWatchesFromRemote(showId: Long) {
+        val response = traktSeasonsDataSource.getShowEpisodeWatches(showId)
 
         val watches = response.mapNotNull { (episode, watchEntry) ->
             val epId = episodesDao.episodeIdWithTraktId(episode.traktId!!)
                 ?: return@mapNotNull null // We don't have the episode, skip
             watchEntry.copy(episodeId = epId)
         }
-        if (since != null) {
-            // We did a delta fetch, so just append/update the new watches
-            if (watches.isNotEmpty()) {
-                episodeWatchStore.addNewShowWatchEntries(showId, watches)
-            }
-        } else {
-            episodeWatchStore.syncShowWatchEntries(showId, watches)
-        }
+        episodeWatchStore.syncShowWatchEntries(showId, watches)
         episodeWatchLastLastRequestStore.updateLastRequest(showId)
     }
 

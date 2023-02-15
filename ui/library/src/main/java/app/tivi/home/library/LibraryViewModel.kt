@@ -23,7 +23,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import app.tivi.api.UiMessageManager
 import app.tivi.data.compoundmodels.LibraryShow
-import app.tivi.data.models.RefreshType
 import app.tivi.data.models.SortOption
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ChangeShowFollowStatus
@@ -182,7 +181,7 @@ class LibraryViewModel(
     private fun refreshFollowed(fromInteraction: Boolean) {
         viewModelScope.launch {
             updateFollowedShows(
-                UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK),
+                UpdateFollowedShows.Params(fromInteraction),
             ).collectStatus(followedLoadingState, logger, uiMessageManager)
         }
     }
