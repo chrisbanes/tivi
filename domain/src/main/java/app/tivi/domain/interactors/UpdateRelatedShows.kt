@@ -24,6 +24,7 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import app.tivi.util.parallelForEach
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -36,7 +37,7 @@ class UpdateRelatedShows(
     private val logger: Logger,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
-        relatedShowsStore.fetch(params.showId, params.forceLoad).forEach {
+        relatedShowsStore.fetch(params.showId, params.forceLoad).parallelForEach {
             try {
                 showsStore.fetch(it.otherShowId)
             } catch (t: Throwable) {

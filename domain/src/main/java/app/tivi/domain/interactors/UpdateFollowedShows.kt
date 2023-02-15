@@ -27,6 +27,7 @@ import app.tivi.data.watchedshows.WatchedShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import app.tivi.util.parallelForEach
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.joinAll
@@ -70,7 +71,7 @@ class UpdateFollowedShows(
             joinAll(watchedShowsJob, followedShowsJob)
 
             // Finally sync the seasons/episodes and watches
-            followedShowsRepository.getFollowedShows().forEach { entry ->
+            followedShowsRepository.getFollowedShows().parallelForEach { entry ->
                 ensureActive()
 
                 showStore.fetch(entry.showId)

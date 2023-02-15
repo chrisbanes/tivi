@@ -26,6 +26,7 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import app.tivi.util.parallelForEach
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -43,7 +44,7 @@ class UpdateRecommendedShows(
         if (traktManager.state.value != TraktAuthState.LOGGED_IN) return
 
         withContext(dispatchers.io) {
-            recommendedShowsStore.fetch(0, forceFresh = params.forceRefresh).forEach {
+            recommendedShowsStore.fetch(0, forceFresh = params.forceRefresh).parallelForEach {
                 try {
                     showStore.fetch(it.showId)
                 } catch (t: Throwable) {

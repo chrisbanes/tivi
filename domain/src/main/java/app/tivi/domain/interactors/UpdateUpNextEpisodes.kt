@@ -20,6 +20,7 @@ import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.parallelForEach
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -37,7 +38,7 @@ class UpdateUpNextEpisodes(
         )
 
         withContext(dispatchers.io) {
-            for (entry in followedShowsDao.getUpNextShows()) {
+            followedShowsDao.getUpNextShows().parallelForEach { entry ->
                 if (seasonEpisodeRepository.needEpisodeUpdate(entry.episode.id)) {
                     seasonEpisodeRepository.updateEpisode(entry.episode.id)
                 }

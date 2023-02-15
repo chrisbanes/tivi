@@ -25,6 +25,7 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import app.tivi.util.parallelForEach
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -49,7 +50,7 @@ class UpdateTrendingShows(
                 else -> 0
             }
 
-            trendingShowsStore.fetch(page, params.forceRefresh).forEach {
+            trendingShowsStore.fetch(page, params.forceRefresh).parallelForEach {
                 showStore.fetch(it.showId)
                 try {
                     showImagesStore.fetch(it.showId)
