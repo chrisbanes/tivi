@@ -18,7 +18,6 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.episodes.SeasonsEpisodesRepository
-import app.tivi.data.models.RefreshType
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
@@ -34,17 +33,12 @@ class UpdateUpNextEpisodes(
 
     override suspend fun doWork(params: Params) {
         updateFollowedShows.executeSync(
-            UpdateFollowedShows.Params(
-                forceRefresh = params.forceRefresh,
-                type = RefreshType.QUICK,
-            ),
+            UpdateFollowedShows.Params(params.forceRefresh),
         )
 
         withContext(dispatchers.io) {
             for (entry in followedShowsDao.getUpNextShows()) {
-                if (params.forceRefresh ||
-                    seasonEpisodeRepository.needEpisodeUpdate(entry.episode.id)
-                ) {
+                if (seasonEpisodeRepository.needEpisodeUpdate(entry.episode.id)) {
                     seasonEpisodeRepository.updateEpisode(entry.episode.id)
                 }
             }

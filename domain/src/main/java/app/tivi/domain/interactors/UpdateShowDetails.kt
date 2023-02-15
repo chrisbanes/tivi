@@ -22,6 +22,7 @@ import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
+import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -33,7 +34,11 @@ class UpdateShowDetails(
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
-            showStore.fetch(params.showId, params.forceLoad)
+            showStore.fetch(
+                key = params.showId,
+                forceFresh = params.forceLoad ||
+                    lastRequestStore.isRequestExpired(params.showId, 28.days),
+            )
         }
     }
 

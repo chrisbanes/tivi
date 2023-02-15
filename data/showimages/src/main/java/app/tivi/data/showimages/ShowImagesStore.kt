@@ -39,9 +39,7 @@ class ShowImagesStore(
 ) : Store<Long, List<ShowTmdbImage>> by StoreBuilder.from(
     fetcher = Fetcher.of { showId: Long ->
         val show = showDao.getShowWithId(showId)
-            ?: throw IllegalArgumentException("Show with ID $showId does not exist")
-
-        if (show.tmdbId != null) {
+        if (show?.tmdbId != null) {
             dataSource.getShowImages(show)
                 .also { lastRequestStore.updateLastRequest(showId) }
                 .map { it.copy(showId = showId) }

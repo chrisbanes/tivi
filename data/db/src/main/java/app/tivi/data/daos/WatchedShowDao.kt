@@ -29,4 +29,8 @@ interface WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> 
     fun entriesObservable(): Flow<List<WatchedShowEntry>>
 
     override suspend fun deleteAll()
+
+    fun isDirty(showId: Long): Boolean?
+
+    fun resetDirty(showId: Long)
 }

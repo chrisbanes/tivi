@@ -37,15 +37,17 @@ class UpdateWatchedShows(
 ) : Interactor<UpdateWatchedShows.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
-            watchedShowsStore.fetch(Unit, params.forceRefresh).forEach {
+            val shows = watchedShowsStore.fetch(Unit, params.forceRefresh)
+
+            for (show in shows) {
                 ensureActive()
-                showsStore.fetch(it.showId)
+                showsStore.fetch(show.showId)
 
                 ensureActive()
                 try {
-                    showImagesStore.fetch(it.showId)
+                    showImagesStore.fetch(show.showId)
                 } catch (t: Throwable) {
-                    logger.e(t, "Error while fetching images for show: ${it.showId}")
+                    logger.e(t, "Error while fetching images for show: ${show.showId}")
                 }
             }
         }

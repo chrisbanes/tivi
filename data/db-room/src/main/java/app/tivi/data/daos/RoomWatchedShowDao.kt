@@ -39,6 +39,12 @@ abstract class RoomWatchedShowDao : WatchedShowDao, RoomEntityDao<WatchedShowEnt
     @Query("DELETE FROM watched_entries")
     abstract override suspend fun deleteAll()
 
+    @Query("SELECT is_dirty FROM watched_entries WHERE show_id = :showId")
+    abstract override fun isDirty(showId: Long): Boolean?
+
+    @Query("UPDATE watched_entries SET is_dirty = 0 WHERE show_id = :showId")
+    abstract override fun resetDirty(showId: Long)
+
     companion object {
         private const val ENTRY_QUERY_ORDER_LAST_WATCHED = """
             SELECT we.* FROM watched_entries as we

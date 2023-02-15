@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 31,
-    "identityHash": "2f7b1b797d95b95324fca2e28cb34624",
+    "identityHash": "649acff543a37f3a243c1812e7d95abf",
     "entities": [
       {
         "tableName": "shows",
@@ -410,7 +410,7 @@
       },
       {
         "tableName": "watched_entries",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `last_watched` TEXT NOT NULL, `last_updated` TEXT NOT NULL DEFAULT '2000-00-00T00:00:00.000000Z', `is_dirty` INTEGER NOT NULL DEFAULT true, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `last_watched` TEXT NOT NULL, `last_updated` TEXT NOT NULL DEFAULT '2000-01-01T00:00:00.000000Z', `is_dirty` INTEGER NOT NULL DEFAULT false, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -435,14 +435,14 @@
             "columnName": "last_updated",
             "affinity": "TEXT",
             "notNull": true,
-            "defaultValue": "'2000-00-00T00:00:00.000000Z'"
+            "defaultValue": "'2000-01-01T00:00:00.000000Z'"
           },
           {
             "fieldPath": "dirty",
             "columnName": "is_dirty",
             "affinity": "INTEGER",
             "notNull": true,
-            "defaultValue": "true"
+            "defaultValue": "false"
           }
         ],
         "primaryKey": {
@@ -1141,7 +1141,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2f7b1b797d95b95324fca2e28cb34624')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '649acff543a37f3a243c1812e7d95abf')"
     ]
   }
 }

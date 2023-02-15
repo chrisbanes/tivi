@@ -78,7 +78,7 @@ class FollowedShowsRepository(
         return followedShowsDao.entries()
     }
 
-    suspend fun needFollowedShowsSync(expiry: Instant = 1.hours.inPast): Boolean {
+    suspend fun needFollowedShowsSync(expiry: Instant = 3.hours.inPast): Boolean {
         return followedShowsLastRequestStore.isRequestBefore(expiry)
     }
 
