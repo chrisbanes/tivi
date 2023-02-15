@@ -20,7 +20,6 @@ import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
-import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.ActionDate
 import app.tivi.data.models.Episode
@@ -109,10 +108,11 @@ class SeasonsEpisodesRepository(
 
     suspend fun needShowSeasonsUpdate(
         showId: Long,
-        expiry: Instant = 7.days.inPast,
-    ): Boolean {
-        return seasonsLastRequestStore.isRequestBefore(showId, expiry)
-    }
+        expiry: Instant? = null,
+    ): Boolean = seasonsLastRequestStore.isRequestBefore(
+        entityId = showId,
+        instant = expiry ?: 7.days.inPast,
+    )
 
     suspend fun removeShowSeasonData(showId: Long) {
         seasonsDao.deleteSeasonsForShowId(showId)
@@ -176,27 +176,11 @@ class SeasonsEpisodesRepository(
         }
         check(trakt != null || tmdb != null)
 
-        val id = episodesDao.insertOrUpdate(
+        val id = episodesDao.upsert(
             mergeEpisode(local, trakt ?: Episode.EMPTY, tmdb ?: Episode.EMPTY),
         )
 
         episodeLastRequestStore.updateLastRequest(id)
-    }
-
-    suspend fun updateShowEpisodeWatches(
-        showId: Long,
-        forceRefresh: Boolean = false,
-        lastUpdated: Instant? = null,
-    ) {
-        if (traktManager.state.value == TraktAuthState.LOGGED_IN) {
-            // If we have a lastUpdated time and we've already fetched the watched episodes, we can try
-            // and do a delta fetch
-            if (forceRefresh ||
-                needShowEpisodeWatchesSync(showId, lastUpdated ?: 24.hours.inPast)
-            ) {
-                fetchShowWatchesFromRemote(showId)
-            }
-        }
     }
 
     suspend fun syncEpisodeWatchesForShow(showId: Long) {
@@ -211,16 +195,17 @@ class SeasonsEpisodesRepository(
         }
 
         if (traktManager.state.value == TraktAuthState.LOGGED_IN) {
-            fetchShowWatchesFromRemote(showId)
+            updateShowEpisodeWatches(showId)
         }
     }
 
     suspend fun needShowEpisodeWatchesSync(
         showId: Long,
-        expiry: Instant = 24.hours.inPast,
-    ): Boolean {
-        return episodeWatchLastLastRequestStore.isRequestBefore(showId, expiry)
-    }
+        expiry: Instant? = null,
+    ): Boolean = episodeWatchLastLastRequestStore.isRequestBefore(
+        entityId = showId,
+        instant = expiry ?: 24.hours.inPast,
+    )
 
     suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean, date: ActionDate) {
         val watchesToSave = episodesDao.episodesWithSeasonId(seasonId).mapNotNull { episode ->
@@ -332,7 +317,9 @@ class SeasonsEpisodesRepository(
         }
     }
 
-    private suspend fun fetchShowWatchesFromRemote(showId: Long) {
+    suspend fun updateShowEpisodeWatches(showId: Long) {
+        if (traktManager.state.value != TraktAuthState.LOGGED_IN) return
+
         val response = traktSeasonsDataSource.getShowEpisodeWatches(showId)
 
         val watches = response.mapNotNull { (episode, watchEntry) ->

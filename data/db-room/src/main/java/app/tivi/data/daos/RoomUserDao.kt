@@ -60,7 +60,7 @@ abstract class RoomUserDao : UserDao, RoomEntityDao<TraktUser> {
     abstract override suspend fun deleteMe()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract override suspend fun insert(entity: TraktUser): Long
+    abstract override suspend fun upsert(entity: TraktUser): Long
 
     @Query("DELETE FROM users")
     abstract override suspend fun deleteAll()

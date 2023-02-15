@@ -46,6 +46,6 @@ class TraktPopularShowsDataSource(
     ): List<Pair<TiviShow, PopularShowEntry>> = withRetry {
         showService.value.popular(page + 1, pageSize, Extended.NOSEASONS)
             .awaitResponse()
-            .let { resultsMapper.invoke(it.bodyOrThrow()) }
+            .let { resultsMapper(it.bodyOrThrow()) }
     }
 }

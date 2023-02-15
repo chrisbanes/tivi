@@ -22,6 +22,7 @@ import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.saveImagesIfEmpty
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Inject
 
@@ -31,6 +32,7 @@ class SearchRepository(
     private val showTmdbImagesDao: ShowTmdbImagesDao,
     private val showDao: TiviShowDao,
     private val tmdbDataSource: SearchDataSource,
+    private val transactionRunner: DatabaseTransactionRunner,
 ) {
     private val cache by lazy { LruCache<String, List<Long>>(20) }
 
@@ -60,14 +62,16 @@ class SearchRepository(
     private suspend fun fetchFromTmdb(query: String): List<Long> {
         return tmdbDataSource.search(query)
             .map { (show, images) ->
-                val showId = showDao.getIdOrSavePlaceholder(show)
-                if (images.isNotEmpty()) {
-                    showTmdbImagesDao.saveImagesIfEmpty(
-                        showId = showId,
-                        images = images.map { it.copy(showId = showId) },
-                    )
+                transactionRunner {
+                    val showId = showDao.getIdOrSavePlaceholder(show)
+                    if (images.isNotEmpty()) {
+                        showTmdbImagesDao.saveImagesIfEmpty(
+                            showId = showId,
+                            images = images.map { it.copy(showId = showId) },
+                        )
+                    }
+                    showId
                 }
-                showId
             }
     }
 }

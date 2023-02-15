@@ -20,6 +20,7 @@ import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.updatePage
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.PopularShowEntry
 import app.tivi.inject.ApplicationScope
 import kotlin.time.Duration.Companion.hours
@@ -37,6 +38,7 @@ class PopularShowsStore(
     popularShowsDao: PopularDao,
     showDao: TiviShowDao,
     lastRequestStore: PopularShowsLastRequestStore,
+    transactionRunner: DatabaseTransactionRunner,
 ) : Store<Int, List<PopularShowEntry>> by StoreBuilder.from(
     fetcher = Fetcher.of { page: Int ->
         dataSource(page, 20)
@@ -58,14 +60,14 @@ class PopularShowsStore(
             }
         },
         writer = { page, response ->
-            popularShowsDao.withTransaction {
+            transactionRunner {
                 val entries = response.map { (show, entry) ->
                     entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
                 }
                 if (page == 0) {
                     // If we've requested page 0, remove any existing entries first
                     popularShowsDao.deleteAll()
-                    popularShowsDao.insertAll(entries)
+                    popularShowsDao.upsertAll(entries)
                 } else {
                     popularShowsDao.updatePage(page, entries)
                 }

@@ -26,8 +26,7 @@ import app.tivi.util.Logger
  * @param Key Network ID type
  */
 class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
-    private val insertEntity: suspend (LocalType) -> Long,
-    private val updateEntity: suspend (LocalType) -> Unit,
+    private val upsertEntity: suspend (LocalType) -> Long,
     private val deleteEntity: suspend (LocalType) -> Int,
     private val localEntityToKey: suspend (LocalType) -> Key?,
     private val networkEntityToKey: suspend (NetworkType) -> Key,
@@ -65,7 +64,7 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
                 if (dbEntityForId != entity) {
                     // This is currently in the DB, so lets merge it with the saved version
                     // and update it
-                    updateEntity(entity)
+                    upsertEntity(entity)
                     logger.v("Updated entry with remote id: %s", remoteId)
                 }
                 // Remove it from the list so that it is not deleted
@@ -88,7 +87,7 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
 
         // Finally we can insert all of the new entities
         added.forEach {
-            insertEntity(it)
+            upsertEntity(it)
         }
 
         return ItemSyncerResult(added, removed, updated)
@@ -108,8 +107,7 @@ fun <LocalType : TiviEntity, NetworkType, Key> syncerForEntity(
     networkEntityToLocalEntity: suspend (networkEntity: NetworkType, currentEntity: LocalType?) -> LocalType,
     logger: Logger,
 ) = ItemSyncer(
-    entityDao::insert,
-    entityDao::update,
+    entityDao::upsert,
     entityDao::deleteEntity,
     localEntityToKey,
     networkEntityToKey,
@@ -123,8 +121,7 @@ fun <Type : TiviEntity, Key> syncerForEntity(
     mapper: suspend (Type, Type?) -> Type,
     logger: Logger,
 ) = ItemSyncer(
-    entityDao::insert,
-    entityDao::update,
+    entityDao::upsert,
     entityDao::deleteEntity,
     entityToKey,
     entityToKey,

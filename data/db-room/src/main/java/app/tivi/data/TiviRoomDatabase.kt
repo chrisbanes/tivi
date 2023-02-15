@@ -18,8 +18,10 @@ package app.tivi.data
 
 import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.DeleteColumn
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
 import app.tivi.data.daos.RoomEpisodeWatchEntryDao
 import app.tivi.data.daos.RoomEpisodesDao
 import app.tivi.data.daos.RoomFollowedShowsDao
@@ -87,11 +89,17 @@ import app.tivi.data.views.FollowedShowsWatchStats
         AutoMigration(from = 28, to = 29), // can remove this later
         AutoMigration(from = 29, to = 30), // can remove this later
         AutoMigration(from = 27, to = 30),
-        AutoMigration(from = 30, to = 31),
+        AutoMigration(from = 30, to = 31, spec = TiviRoomDatabase.AutoMigrationSpec31::class),
     ],
 )
 @TypeConverters(TiviTypeConverters::class, DateTimeTypeConverters::class)
 abstract class TiviRoomDatabase : RoomDatabase(), TiviDatabase {
+
+    @DeleteColumn.Entries(
+        DeleteColumn(tableName = "shows", columnName = "last_trakt_data_update"),
+    )
+    class AutoMigrationSpec31 : AutoMigrationSpec
+
     abstract override fun showDao(): RoomTiviShowDao
     abstract override fun showFtsDao(): RoomShowFtsDao
     abstract override fun showImagesDao(): RoomShowTmdbImagesDao

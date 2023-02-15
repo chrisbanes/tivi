@@ -122,7 +122,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync_pendingDelete() = runTest {
-        followShowsDao.insert(followedShow1PendingDelete)
+        followShowsDao.upsert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
         coEvery { followedShowsDataSource.getFollowedListId() } throws IllegalArgumentException()
@@ -136,7 +136,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync_pendingAdd() = runTest {
-        followShowsDao.insert(followedShow1PendingUpload)
+        followShowsDao.upsert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
         coEvery { followedShowsDataSource.getFollowedListId() } throws IllegalArgumentException()

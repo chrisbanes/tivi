@@ -39,7 +39,7 @@ interface UserDao : EntityDao<TraktUser> {
 
     suspend fun deleteMe()
 
-    override suspend fun insert(entity: TraktUser): Long
+    override suspend fun upsert(entity: TraktUser): Long
 
     suspend fun deleteAll()
 }

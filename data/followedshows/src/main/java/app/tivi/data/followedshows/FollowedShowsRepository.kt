@@ -20,7 +20,6 @@ import app.tivi.data.compoundmodels.FollowedShowEntryWithShow
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
-import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.util.ItemSyncerResult
@@ -95,7 +94,7 @@ class FollowedShowsRepository(
                 followedAt = entry?.followedAt ?: Clock.System.now(),
                 pendingAction = PendingAction.UPLOAD,
             )
-            val newEntryId = followedShowsDao.insertOrUpdate(newEntry)
+            val newEntryId = followedShowsDao.upsert(newEntry)
 
             logger.v("addFollowedShow. Entry saved with ID: %s - %s", newEntryId, newEntry)
         }
@@ -105,7 +104,7 @@ class FollowedShowsRepository(
         // Update the followed show to be deleted
         followedShowsDao.entryWithShowId(showId)?.also {
             // Mark the show as pending deletion
-            followedShowsDao.insertOrUpdate(it.copy(pendingAction = PendingAction.DELETE))
+            followedShowsDao.upsert(it.copy(pendingAction = PendingAction.DELETE))
         }
     }
 

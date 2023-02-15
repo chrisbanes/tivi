@@ -19,7 +19,7 @@ package app.tivi.data.relatedshows
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
-import app.tivi.data.daos.insertOrUpdate
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.RelatedShowEntry
 import app.tivi.inject.ApplicationScope
 import kotlin.time.Duration.Companion.days
@@ -37,6 +37,7 @@ class RelatedShowsStore(
     relatedShowsDao: RelatedShowsDao,
     showDao: TiviShowDao,
     lastRequestStore: RelatedShowsLastRequestStore,
+    transactionRunner: DatabaseTransactionRunner,
 ) : Store<Long, List<RelatedShowEntry>> by StoreBuilder.from(
     fetcher = Fetcher.of { showId: Long ->
         dataSource(showId)
@@ -56,7 +57,7 @@ class RelatedShowsStore(
             }
         },
         writer = { showId, response ->
-            relatedShowsDao.withTransaction {
+            transactionRunner {
                 val entries = response.map { (show, entry) ->
                     entry.copy(
                         showId = showId,
@@ -64,7 +65,7 @@ class RelatedShowsStore(
                     )
                 }
                 relatedShowsDao.deleteWithShowId(showId)
-                relatedShowsDao.insertOrUpdate(entries)
+                relatedShowsDao.upsertAll(entries)
             }
         },
         delete = relatedShowsDao::deleteWithShowId,

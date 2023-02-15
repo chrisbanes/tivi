@@ -17,7 +17,6 @@
 package app.tivi.data.episodes
 
 import app.tivi.data.daos.EpisodeWatchEntryDao
-import app.tivi.data.daos.insertOrUpdate
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
@@ -43,9 +42,9 @@ class EpisodeWatchStore(
         return episodeWatchEntryDao.watchesForEpisodeObservable(episodeId)
     }
 
-    suspend fun save(watch: EpisodeWatchEntry) = episodeWatchEntryDao.insertOrUpdate(watch)
+    suspend fun save(watch: EpisodeWatchEntry): Long = episodeWatchEntryDao.upsert(watch)
 
-    suspend fun save(watches: List<EpisodeWatchEntry>) = episodeWatchEntryDao.insertOrUpdate(watches)
+    suspend fun save(watches: List<EpisodeWatchEntry>): Unit = episodeWatchEntryDao.upsertAll(watches)
 
     suspend fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
 

@@ -30,13 +30,13 @@ interface ShowTmdbImagesDao : EntityDao<ShowTmdbImage> {
     suspend fun deleteAll()
 }
 
-suspend fun ShowTmdbImagesDao.saveImages(showId: Long, images: List<ShowTmdbImage>) = withTransaction {
+suspend fun ShowTmdbImagesDao.saveImages(showId: Long, images: List<ShowTmdbImage>) {
     deleteForShowId(showId)
-    insertOrUpdate(images)
+    upsertAll(images)
 }
 
-suspend fun ShowTmdbImagesDao.saveImagesIfEmpty(showId: Long, images: List<ShowTmdbImage>) = withTransaction {
+suspend fun ShowTmdbImagesDao.saveImagesIfEmpty(showId: Long, images: List<ShowTmdbImage>) {
     if (imageCountForShowId(showId) <= 0) {
-        insertAll(images)
+        upsertAll(images)
     }
 }

@@ -34,5 +34,5 @@ abstract class RoomLastRequestDao : LastRequestDao, RoomEntityDao<LastRequest> {
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract override suspend fun insert(entity: LastRequest): Long
+    abstract override suspend fun upsert(entity: LastRequest): Long
 }

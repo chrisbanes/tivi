@@ -48,7 +48,7 @@ class TraktRelatedShowsDataSourceImpl(
             showService.value
                 .related(traktId.toString(), 0, 10, Extended.NOSEASONS)
                 .awaitResponse()
-                .let { resultMapper.invoke(it.bodyOrThrow()) }
+                .let { resultMapper(it.bodyOrThrow()) }
         }
     }
 }

@@ -20,6 +20,7 @@ import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.updatePage
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.RecommendedShowEntry
 import app.tivi.inject.ApplicationScope
 import kotlin.time.Duration.Companion.days
@@ -37,6 +38,7 @@ class RecommendedShowsStore(
     recommendedDao: RecommendedDao,
     showDao: TiviShowDao,
     lastRequestStore: RecommendedShowsLastRequestStore,
+    transactionRunner: DatabaseTransactionRunner,
 ) : Store<Int, List<RecommendedShowEntry>> by StoreBuilder.from(
     fetcher = Fetcher.of { page: Int ->
         dataSource(page, 20)
@@ -60,7 +62,7 @@ class RecommendedShowsStore(
             }
         },
         writer = { page, response ->
-            recommendedDao.withTransaction {
+            transactionRunner {
                 val entries = response.map { show ->
                     val showId = showDao.getIdOrSavePlaceholder(show)
                     RecommendedShowEntry(showId = showId, page = page)
@@ -68,7 +70,7 @@ class RecommendedShowsStore(
                 if (page == 0) {
                     // If we've requested page 0, remove any existing entries first
                     recommendedDao.deleteAll()
-                    recommendedDao.insertAll(entries)
+                    recommendedDao.upsertAll(entries)
                 } else {
                     recommendedDao.updatePage(page, entries)
                 }

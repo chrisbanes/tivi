@@ -50,18 +50,14 @@ class UpdateLibraryShows(
 
     override suspend fun doWork(params: Params): Unit = withContext(dispatchers.io) {
         val watchedShowsJob = launch {
-            if (params.forceRefresh ||
-                watchedShowsLastRequestStore.isRequestExpired(1.hours)
-            ) {
+            if (params.forceRefresh || watchedShowsLastRequestStore.isRequestExpired(1.hours)) {
                 // We use a low threshold here as the data contains a 'last updated' value.
                 // It's a quick way to know whether to cascade the updates below
                 watchedShowsStore.fetch(Unit, true)
             }
         }
         val followedShowsJob = launch {
-            if (params.forceRefresh ||
-                followedShowsRepository.needFollowedShowsSync()
-            ) {
+            if (params.forceRefresh || followedShowsRepository.needFollowedShowsSync()) {
                 followedShowsRepository.syncFollowedShows()
             }
         }
@@ -78,23 +74,22 @@ class UpdateLibraryShows(
 
             ensureActive()
 
-            val watchedEntry = watchedShowDao.entryWithShowId(entry.showId)
-            val isDirty = watchedEntry?.dirty ?: false
+            try {
+                with(seasonEpisodeRepository) {
+                    val watchedEntry = watchedShowDao.entryWithShowId(entry.showId)
 
-            // Force-refresh the seasons + episodes if the show is 'dirty'
-            if (isDirty) {
-                try {
-                    seasonEpisodeRepository.updateSeasonsEpisodes(entry.showId)
+                    if (needShowSeasonsUpdate(entry.showId, watchedEntry?.lastUpdated)) {
+                        updateSeasonsEpisodes(entry.showId)
+                    }
+
                     ensureActive()
-                    seasonEpisodeRepository.updateShowEpisodeWatches(
-                        showId = entry.showId,
-                        lastUpdated = watchedEntry?.lastUpdated,
-                    )
 
-                    watchedShowDao.resetDirty(entry.showId)
-                } catch (t: Throwable) {
-                    logger.e(t, "Error while updating show seasons/episodes: ${entry.showId}")
+                    if (needShowEpisodeWatchesSync(entry.showId, watchedEntry?.lastUpdated)) {
+                        updateShowEpisodeWatches(entry.showId)
+                    }
                 }
+            } catch (t: Throwable) {
+                logger.e(t, "Error while updating show seasons/episodes: ${entry.showId}")
             }
         }
     }

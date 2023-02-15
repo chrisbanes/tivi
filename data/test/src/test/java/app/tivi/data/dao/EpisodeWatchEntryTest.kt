@@ -60,28 +60,28 @@ class EpisodeWatchEntryTest : DatabaseTest() {
         runBlocking {
             // We'll assume that there's a show, season and s1_episodes in the db
             insertShow(database)
-            seasonsDao.insert(s1)
-            episodesDao.insertAll(s1_episodes)
+            seasonsDao.upsert(s1)
+            episodesDao.upsertAll(s1_episodes)
         }
     }
 
     @Test
     fun insert() = runTest {
-        episodeWatchEntryDao.insert(s1e1w)
+        episodeWatchEntryDao.upsert(s1e1w)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(s1e1w))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() = runTest {
-        episodeWatchEntryDao.insert(s1e1w)
+        episodeWatchEntryDao.upsert(s1e1w)
         // Make a copy with a 0 id
         val copy = s1e1w.copy(id = 0)
-        episodeWatchEntryDao.insert(copy)
+        episodeWatchEntryDao.upsert(copy)
     }
 
     @Test
     fun fetchEntries_WithPendingSendAction() = runTest {
-        episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingSend)
+        episodeWatchEntryDao.upsertAll(s1e1w, episodeWatch2PendingSend)
         assertThat(
             episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
             `is`(listOf(episodeWatch2PendingSend)),
@@ -90,7 +90,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
 
     @Test
     fun fetchEntries_WithPendingDeleteAction() = runTest {
-        episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingDelete)
+        episodeWatchEntryDao.upsertAll(s1e1w, episodeWatch2PendingDelete)
         assertThat(
             episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
             `is`(listOf(episodeWatch2PendingDelete)),
@@ -99,14 +99,14 @@ class EpisodeWatchEntryTest : DatabaseTest() {
 
     @Test
     fun delete() = runTest {
-        episodeWatchEntryDao.insert(s1e1w)
+        episodeWatchEntryDao.upsert(s1e1w)
         episodeWatchEntryDao.deleteEntity(s1e1w)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))
     }
 
     @Test
     fun deleteEpisode_deletesWatch() = runTest {
-        episodeWatchEntryDao.insert(s1e1w)
+        episodeWatchEntryDao.upsert(s1e1w)
         // Now delete episode
         episodesDao.deleteEntity(s1e1)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))

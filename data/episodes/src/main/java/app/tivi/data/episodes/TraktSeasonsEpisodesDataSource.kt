@@ -22,7 +22,7 @@ import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktHistoryEntryToEpisode
 import app.tivi.data.mappers.TraktHistoryItemToEpisodeWatchEntry
 import app.tivi.data.mappers.TraktSeasonToSeasonWithEpisodes
-import app.tivi.data.mappers.forLists
+import app.tivi.data.mappers.map
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -55,12 +55,14 @@ class TraktSeasonsEpisodesDataSource(
     private val episodeMapper: TraktHistoryEntryToEpisode,
     private val historyItemMapper: TraktHistoryItemToEpisodeWatchEntry,
 ) : SeasonsEpisodesDataSource {
+    private val showEpisodeWatchesMapper = pairMapperOf(episodeMapper, historyItemMapper)
+
     override suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>> {
         return withRetry {
             seasonsService.value
                 .summary(showIdToTraktIdMapper.map(showId).toString(), Extended.FULLEPISODES)
                 .awaitResponse()
-                .let { seasonMapper.forLists().invoke(it.bodyOrThrow()) }
+                .let { seasonMapper.map(it.bodyOrThrow()) }
         }
     }
 
@@ -83,7 +85,7 @@ class TraktSeasonsEpisodesDataSource(
                 null,
             )
                 .awaitResponse()
-                .let { pairMapperOf(episodeMapper, historyItemMapper).invoke(it.bodyOrThrow()) }
+                .let { showEpisodeWatchesMapper(it.bodyOrThrow()) }
         }
     }
 
@@ -120,7 +122,7 @@ class TraktSeasonsEpisodesDataSource(
             null, // end date
         )
             .awaitResponse()
-            .let { historyItemMapper.forLists().invoke(it.bodyOrThrow()) }
+            .let { historyItemMapper.map(it.bodyOrThrow()) }
     }
 
     override suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>) {
