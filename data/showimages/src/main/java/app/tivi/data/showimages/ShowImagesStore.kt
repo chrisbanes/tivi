@@ -19,6 +19,7 @@ package app.tivi.data.showimages
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.saveImages
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.inject.ApplicationScope
 import kotlin.time.Duration.Companion.days
@@ -36,6 +37,7 @@ class ShowImagesStore(
     showDao: TiviShowDao,
     lastRequestStore: ShowImagesLastRequestStore,
     dataSource: ShowImagesDataSource,
+    transactionRunner: DatabaseTransactionRunner,
 ) : Store<Long, List<ShowTmdbImage>> by StoreBuilder.from(
     fetcher = Fetcher.of { showId: Long ->
         val show = showDao.getShowWithId(showId)
@@ -60,7 +62,11 @@ class ShowImagesStore(
                 }
             }
         },
-        writer = showTmdbImagesDao::saveImages,
+        writer = { showId, images ->
+            transactionRunner {
+                showTmdbImagesDao.saveImages(showId, images)
+            }
+        },
         delete = showTmdbImagesDao::deleteForShowId,
         deleteAll = showTmdbImagesDao::deleteAll,
     ),

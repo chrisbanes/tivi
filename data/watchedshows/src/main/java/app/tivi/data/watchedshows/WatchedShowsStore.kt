@@ -19,6 +19,7 @@ package app.tivi.data.watchedshows
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.WatchedShowEntry
 import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.ApplicationScope
@@ -39,6 +40,7 @@ class WatchedShowsStore(
     showDao: TiviShowDao,
     lastRequestStore: WatchedShowsLastRequestStore,
     logger: Logger,
+    transactionRunner: DatabaseTransactionRunner,
 ) : Store<Unit, List<WatchedShowEntry>> by StoreBuilder.from(
     fetcher = Fetcher.of {
         dataSource()
@@ -62,17 +64,11 @@ class WatchedShowsStore(
                 entityDao = watchedShowsDao,
                 entityToKey = { it.showId },
                 mapper = { newEntity, currentEntity ->
-                    newEntity.copy(
-                        id = currentEntity?.id ?: 0,
-                        dirty = currentEntity?.let { current ->
-                            // TODO: add jitter to lastUpdated check?
-                            current.dirty || current.lastUpdated < newEntity.lastUpdated
-                        } ?: true,
-                    )
+                    newEntity.copy(id = currentEntity?.id ?: 0)
                 },
                 logger = logger,
             )
-            watchedShowsDao.withTransaction {
+            transactionRunner {
                 syncer.sync(
                     currentValues = watchedShowsDao.entries(),
                     networkValues = response.map { (show, entry) ->

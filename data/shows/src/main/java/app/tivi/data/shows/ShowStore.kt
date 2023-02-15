@@ -19,6 +19,7 @@ package app.tivi.data.shows
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getShowWithIdOrThrow
 import app.tivi.data.daos.insertOrUpdate
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.TiviShow
 import app.tivi.data.util.mergeShows
 import app.tivi.inject.ApplicationScope
@@ -37,6 +38,7 @@ class ShowStore(
     lastRequestStore: ShowLastRequestStore,
     traktDataSource: TraktShowDataSource,
     tmdbDataSource: TmdbShowDataSource,
+    transactionRunner: DatabaseTransactionRunner,
 ) : Store<Long, TiviShow> by StoreBuilder.from(
     fetcher = Fetcher.of { id: Long ->
         val savedShow = showDao.getShowWithIdOrThrow(id)
@@ -68,7 +70,7 @@ class ShowStore(
             }
         },
         writer = { id, response ->
-            showDao.withTransaction {
+            transactionRunner {
                 showDao.insertOrUpdate(
                     mergeShows(local = showDao.getShowWithIdOrThrow(id), trakt = response),
                 )

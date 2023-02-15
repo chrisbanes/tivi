@@ -18,7 +18,6 @@ package app.tivi.data.daos
 
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.Transaction
 import androidx.room.Update
 import app.tivi.data.models.TiviEntity
 
@@ -37,7 +36,4 @@ interface RoomEntityDao<in E : TiviEntity> : EntityDao<E> {
 
     @Delete
     override suspend fun deleteEntity(entity: E): Int
-
-    @Transaction
-    override suspend fun withTransaction(tx: suspend () -> Unit) = tx()
 }

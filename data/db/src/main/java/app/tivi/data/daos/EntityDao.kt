@@ -28,8 +28,6 @@ interface EntityDao<in E : TiviEntity> {
     suspend fun update(entity: E)
 
     suspend fun deleteEntity(entity: E): Int
-
-    suspend fun withTransaction(tx: suspend () -> Unit)
 }
 
 suspend fun <E : TiviEntity> EntityDao<E>.insertOrUpdate(entity: E): Long {
@@ -41,8 +39,8 @@ suspend fun <E : TiviEntity> EntityDao<E>.insertOrUpdate(entity: E): Long {
     }
 }
 
-suspend fun <E : TiviEntity> EntityDao<E>.insertOrUpdate(entities: List<E>) = withTransaction {
-    entities.forEach {
-        insertOrUpdate(it)
+suspend fun <E : TiviEntity> EntityDao<E>.insertOrUpdate(entities: List<E>) {
+    for (entity in entities) {
+        insertOrUpdate(entity)
     }
 }

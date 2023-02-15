@@ -43,9 +43,13 @@ class EpisodeWatchStore(
         return episodeWatchEntryDao.watchesForEpisodeObservable(episodeId)
     }
 
-    suspend fun save(watch: EpisodeWatchEntry) = episodeWatchEntryDao.insertOrUpdate(watch)
+    suspend fun save(watch: EpisodeWatchEntry): Long = transactionRunner {
+        episodeWatchEntryDao.insertOrUpdate(watch)
+    }
 
-    suspend fun save(watches: List<EpisodeWatchEntry>) = episodeWatchEntryDao.insertOrUpdate(watches)
+    suspend fun save(watches: List<EpisodeWatchEntry>): Unit = transactionRunner {
+        episodeWatchEntryDao.insertOrUpdate(watches)
+    }
 
     suspend fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
 

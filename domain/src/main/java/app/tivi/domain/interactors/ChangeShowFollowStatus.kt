@@ -84,7 +84,7 @@ class ChangeShowFollowStatus(
         // Update seasons, episodes and watches now if we're not deferring the fetch
         if (!deferDataFetch) {
             seasonsEpisodesRepository.updateSeasonsEpisodes(showId)
-            seasonsEpisodesRepository.updateShowEpisodeWatches(showId, forceRefresh = true)
+            seasonsEpisodesRepository.updateShowEpisodeWatches(showId)
         }
     }
 

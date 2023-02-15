@@ -20,6 +20,7 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.updatePage
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.TrendingShowEntry
 import app.tivi.inject.ApplicationScope
 import kotlin.time.Duration.Companion.hours
@@ -37,6 +38,7 @@ class TrendingShowsStore(
     trendingShowsDao: TrendingDao,
     showDao: TiviShowDao,
     lastRequestStore: TrendingShowsLastRequestStore,
+    transactionRunner: DatabaseTransactionRunner,
 ) : Store<Int, List<TrendingShowEntry>> by StoreBuilder.from(
     fetcher = Fetcher.of { page: Int ->
         dataSource(page, 20)
@@ -60,7 +62,7 @@ class TrendingShowsStore(
             }
         },
         writer = { page, response ->
-            trendingShowsDao.withTransaction {
+            transactionRunner {
                 val entries = response.map { (show, entry) ->
                     entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
                 }

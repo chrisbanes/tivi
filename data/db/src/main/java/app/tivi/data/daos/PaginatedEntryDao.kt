@@ -30,7 +30,7 @@ interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : Entry
 suspend fun <EC : PaginatedEntry, LI : EntryWithShow<EC>> PaginatedEntryDao<EC, LI>.updatePage(
     page: Int,
     entities: List<EC>,
-) = withTransaction {
+) {
     deletePage(page)
     insertAll(entities)
 }

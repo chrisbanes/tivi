@@ -54,7 +54,6 @@ data class TiviShow(
     @ColumnInfo(name = "network_logo_path") val networkLogoPath: String? = null,
     @ColumnInfo(name = "runtime") val runtime: Int? = null,
     @ColumnInfo(name = "genres") val _genres: String? = null,
-    @ColumnInfo(name = "last_trakt_data_update") val traktDataUpdate: Instant? = null,
     @ColumnInfo(name = "status") val status: ShowStatus? = null,
     @ColumnInfo(name = "airs_day") val airsDay: DayOfWeek? = null,
     @ColumnInfo(name = "airs_time") val airsTime: LocalTime? = null,

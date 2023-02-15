@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 31,
-    "identityHash": "649acff543a37f3a243c1812e7d95abf",
+    "identityHash": "d7be97cfb44c1c8b6bd9ec64d9f9683d",
     "entities": [
       {
         "tableName": "shows",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `trakt_votes` INTEGER, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `network_logo_path` TEXT, `runtime` INTEGER, `genres` TEXT, `last_trakt_data_update` TEXT, `status` TEXT, `airs_day` INTEGER, `airs_time` TEXT, `airs_tz` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `trakt_votes` INTEGER, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `network_logo_path` TEXT, `runtime` INTEGER, `genres` TEXT, `status` TEXT, `airs_day` INTEGER, `airs_time` TEXT, `airs_tz` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -107,12 +107,6 @@
           {
             "fieldPath": "_genres",
             "columnName": "genres",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "traktDataUpdate",
-            "columnName": "last_trakt_data_update",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -410,7 +404,7 @@
       },
       {
         "tableName": "watched_entries",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `last_watched` TEXT NOT NULL, `last_updated` TEXT NOT NULL DEFAULT '2000-01-01T00:00:00.000000Z', `is_dirty` INTEGER NOT NULL DEFAULT false, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `last_watched` TEXT NOT NULL, `last_updated` TEXT NOT NULL DEFAULT '2000-01-01T00:00:00.000000Z', FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -436,13 +430,6 @@
             "affinity": "TEXT",
             "notNull": true,
             "defaultValue": "'2000-01-01T00:00:00.000000Z'"
-          },
-          {
-            "fieldPath": "dirty",
-            "columnName": "is_dirty",
-            "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "false"
           }
         ],
         "primaryKey": {
@@ -1141,7 +1128,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '649acff543a37f3a243c1812e7d95abf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd7be97cfb44c1c8b6bd9ec64d9f9683d')"
     ]
   }
 }

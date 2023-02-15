@@ -44,7 +44,6 @@ class TraktShowToTiviShow(
         country = from.country,
         firstAired = from.first_aired?.toKotlinInstant(),
         _genres = from.genres?.joinToString(","),
-        traktDataUpdate = from.updated_at?.toKotlinInstant(),
         status = from.status?.let { statusMapper.map(it) },
         airsDay = from.airs?.day?.let { airsDayString ->
             DayOfWeek.values().firstOrNull { day ->
