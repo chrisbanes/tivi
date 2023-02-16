@@ -53,7 +53,7 @@ androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-view
 
 androidx-navigation-compose = "androidx.navigation:navigation-compose:2.6.0-alpha05"
 
-cashapp-paging-common = "app.cash.paging:paging-common:3.1.1-0.1.1"
+cashapp-paging-common = "app.cash.paging:paging-common:3.1.1-0.2.0"
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
 androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha18"
 
