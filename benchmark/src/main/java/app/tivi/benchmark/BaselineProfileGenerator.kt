@@ -37,7 +37,8 @@ class BaselineProfileGenerator {
     @Test
     fun generateBaselineProfile() = rule.collectStableBaselineProfile(
         packageName = "app.tivi",
-        maxIterations = 15, // What @tikurahul said
+        stableIterations = 2,
+        maxIterations = 8,
     ) {
         startActivityAndWait()
         device.waitForIdle()
