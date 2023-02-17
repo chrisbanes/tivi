@@ -174,14 +174,14 @@ dependencies {
 
     implementation(projects.ui.account)
     implementation(projects.ui.discover)
-    implementation(projects.ui.showdetails)
-    implementation(projects.ui.episodedetails)
+    implementation(projects.ui.episode.details)
     implementation(projects.ui.library)
     implementation(projects.ui.popular)
     implementation(projects.ui.trending)
     implementation(projects.ui.recommended)
     implementation(projects.ui.search)
-    implementation(projects.ui.showseasons)
+    implementation(projects.ui.show.details)
+    implementation(projects.ui.show.seasons)
     implementation(projects.ui.settings)
     implementation(projects.ui.upnext)
 
