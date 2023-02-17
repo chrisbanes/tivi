@@ -65,11 +65,14 @@ jobs:
 
       - name: Run benchmark on Gradle Managed Device
         # --info used to add a repro to https://issuetracker.google.com/issues/193118030
+        # config cache is disabled due to https://issuetracker.google.com/issues/262270582
         run: |
-          ./gradlew --info api31BenchmarkAndroidTest \
+          ./gradlew api31BenchmarkAndroidTest \
             -Dorg.gradle.workers.max=1 \
             -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile \
-            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
+            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect" \
+            --info \
+            --no-configuration-cache
 
       # If we're on main branch, copy over the baseline profile and
       # commit it to the repository (if changed)
