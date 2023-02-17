@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,50 +15,38 @@
  */
 
 @file:OptIn(ExperimentalMaterialNavigationApi::class)
+@file:Suppress("UNUSED_PARAMETER")
 
-package app.tivi.episodedetails
+package app.tivi.episode.track
 
+import app.tivi.common.ui.resources.R as UiR
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -72,17 +60,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
@@ -90,7 +74,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
@@ -100,67 +83,51 @@ import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.ScrimmedIconButton
-import app.tivi.common.compose.ui.TiviAlertDialog
-import app.tivi.common.compose.ui.boundsInParent
 import app.tivi.common.compose.ui.none
-import app.tivi.common.compose.ui.onPositionInParentChanged
 import app.tivi.common.compose.viewModel
-import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.models.Episode
-import app.tivi.data.models.EpisodeWatchEntry
-import app.tivi.data.models.PendingAction
 import app.tivi.data.models.Season
-import app.tivi.ui.animations.lerp
 import com.google.accompanist.navigation.material.BottomSheetNavigatorSheetState
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import kotlin.math.absoluteValue
-import kotlin.math.hypot
 import kotlin.math.roundToInt
-import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias EpisodeDetails = @Composable (
+typealias EpisodeTrack = @Composable (
     sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
-    navigateToTrack: () -> Unit,
 ) -> Unit
 
 @OptIn(ExperimentalMaterialApi::class)
 @Inject
 @Composable
-fun EpisodeDetails(
-    viewModelFactory: (SavedStateHandle) -> EpisodeDetailsViewModel,
+fun EpisodeTrack(
+    viewModelFactory: (SavedStateHandle) -> EpisodeTrackViewModel,
     @Assisted sheetState: BottomSheetNavigatorSheetState,
     @Assisted navigateUp: () -> Unit,
-    @Assisted navigateToTrack: () -> Unit,
 ) {
-    EpisodeDetails(
+    EpisodeTrack(
         viewModel = viewModel(factory = viewModelFactory),
         sheetState = sheetState,
         navigateUp = navigateUp,
-        navigateToTrack = navigateToTrack,
     )
 }
 
 @ExperimentalMaterialApi
 @Composable
-internal fun EpisodeDetails(
-    viewModel: EpisodeDetailsViewModel,
+internal fun EpisodeTrack(
+    viewModel: EpisodeTrackViewModel,
     sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
-    navigateToTrack: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
 
-    EpisodeDetails(
+    EpisodeTrack(
         viewState = viewState,
         sheetState = sheetState,
         navigateUp = navigateUp,
         refresh = viewModel::refresh,
-        onRemoveAllWatches = viewModel::removeAllWatches,
-        onRemoveWatch = viewModel::removeWatchEntry,
-        onAddWatch = navigateToTrack,
+        onAddWatch = viewModel::addWatch,
         onMessageShown = viewModel::clearMessage,
     )
 }
@@ -168,13 +135,11 @@ internal fun EpisodeDetails(
 @OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalMaterialApi
 @Composable
-internal fun EpisodeDetails(
-    viewState: EpisodeDetailsViewState,
+internal fun EpisodeTrack(
+    viewState: EpisodeTrackViewState,
     sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
     refresh: () -> Unit,
-    onRemoveAllWatches: () -> Unit,
-    onRemoveWatch: (id: Long) -> Unit,
     onAddWatch: () -> Unit,
     onMessageShown: (id: Long) -> Unit,
 ) {
@@ -258,72 +223,6 @@ internal fun EpisodeDetails(
                         text = episode.summary ?: "No summary",
                         modifier = Modifier.padding(16.dp),
                     )
-                }
-
-                if (viewState.canAddEpisodeWatch) {
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    if (viewState.watches.isEmpty()) {
-                        MarkWatchedButton(
-                            onClick = onAddWatch,
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                        )
-                    } else {
-                        AddWatchButton(
-                            onClick = onAddWatch,
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                if (viewState.watches.isNotEmpty()) {
-                    var openDialog by remember { mutableStateOf(false) }
-
-                    EpisodeWatchesHeader(
-                        onSweepWatchesClick = { openDialog = true },
-                    )
-
-                    if (openDialog) {
-                        RemoveAllWatchesDialog(
-                            onConfirm = {
-                                onRemoveAllWatches()
-                                openDialog = false
-                            },
-                            onDismiss = { openDialog = false },
-                        )
-                    }
-                }
-
-                viewState.watches.forEach { watch ->
-                    key(watch.id) {
-                        val dismissState = rememberDismissState(
-                            confirmValueChange = { value ->
-                                if (value != DismissValue.Default) {
-                                    onRemoveWatch(watch.id)
-                                    true
-                                } else {
-                                    false
-                                }
-                            },
-                        )
-
-                        SwipeToDismiss(
-                            state = dismissState,
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            directions = setOf(DismissDirection.EndToStart),
-                            background = {
-                                val fraction = dismissState.progress
-                                EpisodeWatchSwipeBackground(
-                                    swipeProgress = fraction,
-                                    wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f,
-                                    modifier = Modifier.fillMaxSize(),
-                                )
-                            },
-                            dismissContent = { EpisodeWatch(episodeWatchEntry = watch) },
-                        )
-                    }
                 }
 
                 Spacer(Modifier.height(8.dp))
@@ -425,174 +324,6 @@ private fun InfoPane(
     }
 }
 
-@Composable
-private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
-    Row {
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .align(Alignment.CenterVertically),
-            text = stringResource(UiR.string.episode_watches),
-            style = MaterialTheme.typography.titleMedium,
-        )
-
-        Spacer(Modifier.weight(1f))
-        IconButton(
-            modifier = Modifier.padding(end = 4.dp),
-            onClick = { onSweepWatchesClick() },
-        ) {
-            Icon(
-                imageVector = Icons.Default.DeleteSweep,
-                contentDescription = stringResource(UiR.string.cd_delete),
-            )
-        }
-    }
-}
-
-@Composable
-private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
-    Surface {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .sizeIn(minWidth = 40.dp, minHeight = 40.dp),
-        ) {
-            val formatter = LocalTiviDateFormatter.current
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
-                Icon(
-                    imageVector = Icons.Default.Publish,
-                    contentDescription = stringResource(UiR.string.cd_episode_syncing),
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .align(Alignment.CenterVertically),
-                )
-            }
-
-            if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
-                Icon(
-                    imageVector = Icons.Default.VisibilityOff,
-                    contentDescription = stringResource(UiR.string.cd_episode_deleted),
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .align(Alignment.CenterVertically),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun EpisodeWatchSwipeBackground(
-    swipeProgress: Float,
-    modifier: Modifier = Modifier,
-    wouldCompleteOnRelease: Boolean = false,
-) {
-    var iconCenter by remember { mutableStateOf(Offset(0f, 0f)) }
-    val maxRadius = hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
-
-    val secondary = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
-    val default = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-
-    Box(
-        modifier
-            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), RectangleShape),
-    ) {
-        // A simple box to draw the growing circle, which emanates from behind the icon
-        Spacer(
-            modifier = Modifier
-                .matchParentSize()
-                .drawGrowingCircle(
-                    color = animateColorAsState(
-                        targetValue = when (wouldCompleteOnRelease) {
-                            true -> secondary
-                            false -> default
-                        },
-                    ).value,
-                    center = iconCenter,
-                    radius = lerp(
-                        startValue = 0f,
-                        endValue = maxRadius.toFloat(),
-                        fraction = FastOutLinearInEasing.transform(swipeProgress),
-                    ),
-                ),
-        )
-
-        Icon(
-            imageVector = Icons.Default.Delete,
-            contentDescription = stringResource(UiR.string.cd_delete),
-            modifier = Modifier
-                .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
-                .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                .align(Alignment.CenterEnd),
-        )
-    }
-}
-
-private fun Modifier.drawGrowingCircle(
-    color: Color,
-    center: Offset,
-    radius: Float,
-) = drawWithContent {
-    drawContent()
-
-    clipRect {
-        drawCircle(
-            color = color,
-            radius = radius,
-            center = center,
-        )
-    }
-}
-
-@Composable
-private fun MarkWatchedButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        Text(text = stringResource(UiR.string.episode_mark_watched))
-    }
-}
-
-@Composable
-private fun AddWatchButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        Text(text = stringResource(UiR.string.episode_add_watch))
-    }
-}
-
-@Composable
-private fun RemoveAllWatchesDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    TiviAlertDialog(
-        title = stringResource(UiR.string.episode_remove_watches_dialog_title),
-        message = stringResource(UiR.string.episode_remove_watches_dialog_message),
-        confirmText = stringResource(UiR.string.episode_remove_watches_dialog_confirm),
-        onConfirm = { onConfirm() },
-        dismissText = stringResource(UiR.string.dialog_dismiss),
-        onDismissRequest = { onDismiss() },
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EpisodeDetailsAppBar(
@@ -634,43 +365,5 @@ private fun EpisodeDetailsAppBar(
         },
         windowInsets = WindowInsets.none,
         modifier = modifier,
-    )
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Preview
-@Composable
-fun PreviewEpisodeDetails() {
-    EpisodeDetails(
-        viewState = EpisodeDetailsViewState(
-            episode = Episode(
-                seasonId = 100,
-                title = "A show too far",
-                summary = "A long description of a episode",
-                traktRating = 0.5f,
-                traktRatingVotes = 84,
-                firstAired = Clock.System.now(),
-            ),
-            season = Season(
-                id = 100,
-                showId = 0,
-            ),
-            watches = listOf(
-                EpisodeWatchEntry(
-                    id = 10,
-                    episodeId = 100,
-                    watchedAt = Clock.System.now(),
-                ),
-            ),
-        ),
-        sheetState = BottomSheetNavigatorSheetState(
-            ModalBottomSheetState(ModalBottomSheetValue.HalfExpanded),
-        ),
-        navigateUp = {},
-        refresh = {},
-        onRemoveAllWatches = {},
-        onRemoveWatch = {},
-        onAddWatch = {},
-        onMessageShown = {},
     )
 }

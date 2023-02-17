@@ -175,6 +175,7 @@ dependencies {
     implementation(projects.ui.account)
     implementation(projects.ui.discover)
     implementation(projects.ui.episode.details)
+    implementation(projects.ui.episode.track)
     implementation(projects.ui.library)
     implementation(projects.ui.popular)
     implementation(projects.ui.trending)
