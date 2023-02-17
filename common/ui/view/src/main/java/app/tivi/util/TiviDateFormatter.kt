@@ -26,9 +26,11 @@ import java.time.temporal.Temporal
 import java.util.Locale
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaInstant
+import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalTime
 import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
@@ -65,6 +67,10 @@ class TiviDateFormatter(
 
     fun formatShortDate(instant: Instant): String {
         return shortDate.format(instant.toTemporal())
+    }
+
+    fun formatShortDate(date: LocalDate): String {
+        return shortDate.format(date.toJavaLocalDate())
     }
 
     fun formatMediumDate(instant: Instant): String {

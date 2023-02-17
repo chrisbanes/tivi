@@ -14,48 +14,41 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalMaterialNavigationApi::class)
 @file:Suppress("UNUSED_PARAMETER")
 
 package app.tivi.episode.track
 
-import app.tivi.common.ui.resources.R as UiR
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsTopHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DismissValue
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -65,66 +58,53 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.compose.theme.TiviTheme
-import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
-import app.tivi.common.compose.ui.Backdrop
-import app.tivi.common.compose.ui.ExpandingText
-import app.tivi.common.compose.ui.ScrimmedIconButton
-import app.tivi.common.compose.ui.none
+import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.ui.AsyncImage
+import app.tivi.common.compose.ui.TimePickerDialog
 import app.tivi.common.compose.viewModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
-import com.google.accompanist.navigation.material.BottomSheetNavigatorSheetState
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import kotlin.math.roundToInt
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias EpisodeTrack = @Composable (
-    sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
 ) -> Unit
 
-@OptIn(ExperimentalMaterialApi::class)
 @Inject
 @Composable
 fun EpisodeTrack(
     viewModelFactory: (SavedStateHandle) -> EpisodeTrackViewModel,
-    @Assisted sheetState: BottomSheetNavigatorSheetState,
     @Assisted navigateUp: () -> Unit,
 ) {
     EpisodeTrack(
         viewModel = viewModel(factory = viewModelFactory),
-        sheetState = sheetState,
         navigateUp = navigateUp,
     )
 }
 
-@ExperimentalMaterialApi
 @Composable
 internal fun EpisodeTrack(
     viewModel: EpisodeTrackViewModel,
-    sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
-
     EpisodeTrack(
         viewState = viewState,
-        sheetState = sheetState,
         navigateUp = navigateUp,
         refresh = viewModel::refresh,
         onAddWatch = viewModel::addWatch,
@@ -133,11 +113,9 @@ internal fun EpisodeTrack(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@ExperimentalMaterialApi
 @Composable
 internal fun EpisodeTrack(
     viewState: EpisodeTrackViewState,
-    sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
     refresh: () -> Unit,
     onAddWatch: () -> Unit,
@@ -164,69 +142,22 @@ internal fun EpisodeTrack(
         }
     }
 
-    // I don't love this, but it's the only way currently to know where the modal sheet
-    // is laid out. https://issuetracker.google.com/issues/209825720
-    var bottomSheetY by remember { mutableStateOf(0) }
-
     Surface(
         shadowElevation = 2.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("episode_details")
-            .onGloballyPositioned { coords ->
-                bottomSheetY = coords.positionInWindow().y.roundToInt()
-            },
+            .testTag("episode_details"),
     ) {
-        Column {
-            Surface {
-                if (viewState.episode != null && viewState.season != null) {
-                    EpisodeDetailsBackdrop(
-                        season = viewState.season,
-                        episode = viewState.episode,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(16 / 9f),
-                    )
-                }
-
-                Column {
-                    val showScrim = sheetState.targetValue == ModalBottomSheetValue.Expanded &&
-                        bottomSheetY <= WindowInsets.statusBars.getBottom(LocalDensity.current)
-
-                    AnimatedVisibility(visible = showScrim) {
-                        Spacer(
-                            Modifier
-                                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.4f))
-                                .windowInsetsTopHeight(WindowInsets.statusBars)
-                                .fillMaxWidth(),
-                        )
-                    }
-
-                    EpisodeDetailsAppBar(
-                        isRefreshing = viewState.refreshing,
-                        navigateUp = navigateUp,
-                        refresh = refresh,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
+        Column(Modifier.padding(16.dp)) {
+            viewState.episode?.let { episode ->
+                EpisodeHeader(
+                    episode = episode,
+                    season = viewState.season,
+                )
             }
+            Divider()
 
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState()),
-            ) {
-                val episode = viewState.episode
-                if (episode != null) {
-                    InfoPanes(episode)
-
-                    ExpandingText(
-                        text = episode.summary ?: "No summary",
-                        modifier = Modifier.padding(16.dp),
-                    )
-                }
-
-                Spacer(Modifier.height(8.dp))
-            }
+            EpisodeTrack()
         }
 
         SnackbarHost(hostState = snackbarHostState) { data ->
@@ -243,127 +174,212 @@ internal fun EpisodeTrack(
 }
 
 @Composable
-private fun EpisodeDetailsBackdrop(
-    season: Season,
+private fun EpisodeHeader(
     episode: Episode,
-    modifier: Modifier = Modifier,
+    season: Season?,
 ) {
-    TiviTheme(useDarkColors = true) {
-        Backdrop(
-            imageModel = if (episode.tmdbBackdropPath != null) episode else null,
-            shape = RectangleShape,
-            overline = {
-                val epNumber = episode.number
-                val seasonNumber = season.number
-                if (seasonNumber != null && epNumber != null) {
-                    @Suppress("DEPRECATION")
-                    Text(
-                        text = stringResource(
-                            UiR.string.season_episode_number,
-                            seasonNumber,
-                            epNumber,
-                        ).uppercase(LocalConfiguration.current.locale),
-                    )
-                }
-            },
-            title = { Text(text = episode.title ?: "No title") },
-            modifier = modifier,
-        )
-    }
-}
-
-@Composable
-private fun InfoPanes(episode: Episode) {
-    Row {
-        episode.traktRating?.let { rating ->
-            InfoPane(
-                imageVector = Icons.Default.Star,
-                label = stringResource(UiR.string.trakt_rating_text, rating * 10f),
-                contentDescription = stringResource(UiR.string.cd_trakt_rating, rating * 10f),
-                modifier = Modifier.weight(1f),
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(0.3f) // 30% of the width
+                .aspectRatio(16 / 11f),
+        ) {
+            AsyncImage(
+                model = episode,
+                requestBuilder = { crossfade(true) },
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
             )
         }
 
-        episode.firstAired?.let { firstAired ->
-            val formatter = LocalTiviDateFormatter.current
-            val formattedDate = formatter.formatShortRelativeTime(firstAired)
-            InfoPane(
-                imageVector = Icons.Default.CalendarToday,
-                label = formattedDate,
-                contentDescription = stringResource(
-                    UiR.string.cd_episode_first_aired,
-                    formattedDate,
+        Spacer(Modifier.width(16.dp))
+
+        Column(Modifier.weight(1f)) {
+            val textCreator = LocalTiviTextCreator.current
+
+            Text(
+                text = episode.title
+                    ?: textCreator.episodeNumberText(episode).toString(),
+            )
+            Text(
+                text = textCreator.seasonEpisodeTitleText(
+                    season = season,
+                    episode = episode,
                 ),
-                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }
 }
 
 @Composable
-private fun InfoPane(
-    imageVector: ImageVector,
-    contentDescription: String?,
-    label: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.padding(16.dp)) {
-        Icon(
-            imageVector = imageVector,
-            contentDescription = contentDescription,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-        )
+private fun EpisodeTrack() {
+    Column(Modifier.padding(top = 16.dp)) {
 
-        Spacer(modifier = Modifier.height(4.dp))
+        var now by remember { mutableStateOf(true) }
 
-        Text(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-        )
+        var date: LocalDate? by remember { mutableStateOf(null) }
+        var time: LocalTime? by remember { mutableStateOf(null) }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Finished watching",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f),
+            )
+
+            Text(
+                text = "Now?",
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.padding(horizontal = Layout.gutter),
+            )
+
+            Switch(
+                checked = now,
+                onCheckedChange = { now = it },
+            )
+        }
+
+        AnimatedVisibility(visible = !now) {
+            Row(Modifier.padding(top = Layout.gutter)) {
+                DateSelector(
+                    selectedDate = date,
+                    onDateSelected = { date = it },
+                    modifier = Modifier.fillMaxWidth(3 / 5f),
+                )
+
+                Spacer(Modifier.width(Layout.gutter))
+
+                TimeSelector(
+                    selectedTime = time,
+                    onTimeSelected = { time = it },
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EpisodeDetailsAppBar(
-    isRefreshing: Boolean,
-    navigateUp: () -> Unit,
-    refresh: () -> Unit,
+private fun DateSelector(
+    selectedDate: LocalDate?,
+    onDateSelected: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent,
-            actionIconContentColor = LocalContentColor.current,
-        ),
-        title = {},
-        navigationIcon = {
-            ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(UiR.string.cd_close),
-                )
-            }
-        },
-        actions = {
-            if (isRefreshing) {
-                AutoSizedCircularProgressIndicator(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .fillMaxHeight()
-                        .padding(14.dp),
-                )
-            } else {
-                ScrimmedIconButton(showScrim = true, onClick = refresh) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(UiR.string.cd_refresh),
-                    )
+    var showDateDialog by remember { mutableStateOf(false) }
+
+    Box(modifier.clickable { showDateDialog = true }) {
+        val dateFormatter = LocalTiviDateFormatter.current
+
+        OutlinedTextField(
+            value = selectedDate?.let { dateFormatter.formatShortDate(it) } ?: "",
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(text = "Date") },
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        if (showDateDialog) {
+            val datePickerState = rememberDatePickerState(
+                initialSelectedDateMillis = selectedDate?.let {
+                    val dt = LocalDateTime(it, LocalTime(0, 0, 0, 0))
+                    dt.toInstant(TimeZone.currentSystemDefault())
+                        .toEpochMilliseconds()
                 }
+            )
+
+            DatePickerDialog(
+                onDismissRequest = { showDateDialog = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showDateDialog = false
+
+                            datePickerState.selectedDateMillis?.let { millis ->
+                                val date = Instant.fromEpochMilliseconds(millis)
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                    .date
+                                onDateSelected(date)
+                            }
+                        },
+                    ) {
+                        Text("Confirm")
+                    }
+                },
+            ) {
+                DatePicker(
+                    state = datePickerState,
+                    dateValidator = { epoch ->
+                        // Only allow dates in the past
+                        epoch < System.currentTimeMillis()
+                    },
+                )
             }
-        },
-        windowInsets = WindowInsets.none,
-        modifier = modifier,
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TimeSelector(
+    selectedTime: LocalTime?,
+    onTimeSelected: (LocalTime) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var showPicker by remember { mutableStateOf(false) }
+
+    Box(modifier.clickable { showPicker = true }) {
+        val dateFormatter = LocalTiviDateFormatter.current
+
+        OutlinedTextField(
+            value = selectedTime?.let { dateFormatter.formatShortTime(it) } ?: "",
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(text = "Time") },
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        if (showPicker) {
+            val timePickerState = rememberTimePickerState()
+
+            TimePickerDialog(
+                onDismissRequest = { showPicker = false },
+                onConfirm = {
+                    showPicker = false
+
+                    onTimeSelected(
+                        LocalTime(
+                            hour = timePickerState.hour,
+                            minute = timePickerState.minute,
+                            second = 0,
+                            nanosecond = 0,
+                        ),
+                    )
+                },
+                content = { TimePicker(state = timePickerState) },
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewEpisodeTrack() {
+    EpisodeTrack(
+        viewState = EpisodeTrackViewState(
+            episode = Episode(seasonId = 0, title = "Episode 1", number = 1),
+            season = Season(showId = 0),
+        ),
+        navigateUp = {},
+        refresh = {},
+        onAddWatch = {},
+        onMessageShown = {},
     )
 }
