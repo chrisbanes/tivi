@@ -16,7 +16,6 @@
 
 
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.BasePlugin
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -118,34 +117,44 @@ allprojects {
     }
 
     // Configure kapt
-    plugins.withId(rootProject.libs.plugins.kotlin.kapt.get().pluginId) {
+    pluginManager.withPlugin(rootProject.libs.plugins.kotlin.kapt.get().pluginId) {
         extensions.getByType<KaptExtension>().correctErrorTypes = true
     }
 
     // Configure Android projects
-    plugins.withType<BasePlugin>().configureEach {
-        extensions.configure<BaseExtension> {
-            compileSdkVersion(libs.versions.compileSdk.get().toInt())
+    pluginManager.withPlugin("com.android.application") {
+        configureAndroidProject()
+    }
+    pluginManager.withPlugin("com.android.library") {
+        configureAndroidProject()
+    }
+    pluginManager.withPlugin("com.android.test") {
+        configureAndroidProject()
+    }
+}
 
-            defaultConfig {
-                minSdk = libs.versions.minSdk.get().toInt()
-                targetSdk = libs.versions.targetSdk.get().toInt()
-            }
+fun Project.configureAndroidProject() {
+    extensions.configure<BaseExtension> {
+        compileSdkVersion(libs.versions.compileSdk.get().toInt())
 
-            // Can remove this once https://issuetracker.google.com/issues/260059413 is fixed.
-            // See https://kotlinlang.org/docs/gradle-configure-project.html#gradle-java-toolchains-support
-            compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_11
-                targetCompatibility = JavaVersion.VERSION_11
-
-                // https://developer.android.com/studio/write/java8-support
-                isCoreLibraryDesugaringEnabled = true
-            }
+        defaultConfig {
+            minSdk = libs.versions.minSdk.get().toInt()
+            targetSdk = libs.versions.targetSdk.get().toInt()
         }
 
-        dependencies {
+        // Can remove this once https://issuetracker.google.com/issues/260059413 is fixed.
+        // See https://kotlinlang.org/docs/gradle-configure-project.html#gradle-java-toolchains-support
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_11
+            targetCompatibility = JavaVersion.VERSION_11
+
             // https://developer.android.com/studio/write/java8-support
-            "coreLibraryDesugaring"(libs.tools.desugarjdklibs)
+            isCoreLibraryDesugaringEnabled = true
         }
+    }
+
+    dependencies {
+        // https://developer.android.com/studio/write/java8-support
+        "coreLibraryDesugaring"(libs.tools.desugarjdklibs)
     }
 }
