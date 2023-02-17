@@ -37,12 +37,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import app.tivi.common.compose.ui.androidMinWidthDialogSize
-import app.tivi.home.library.Library
-import app.tivi.home.recommended.RecommendedShows
-import app.tivi.home.search.Search
-import app.tivi.home.upnext.UpNext
-import app.tivi.showdetails.details.ShowDetails
-import app.tivi.showdetails.seasons.ShowSeasons
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.material.BottomSheetNavigator
@@ -162,7 +156,7 @@ private fun NavGraphBuilder.addLibraryTopLevel(
         addShowDetails(navController, composeScreens, RootScreen.Library)
         addShowSeasons(navController, composeScreens, RootScreen.Library)
         addEpisodeDetails(navController, composeScreens, RootScreen.Library)
-        addEpisodeTrack(navController, composeScreens, RootScreen.Discover)
+        addEpisodeTrack(navController, composeScreens, RootScreen.Library)
     }
 }
 
@@ -181,7 +175,7 @@ private fun NavGraphBuilder.addUpNextTopLevel(
         addShowDetails(navController, composeScreens, RootScreen.UpNext)
         addShowSeasons(navController, composeScreens, RootScreen.UpNext)
         addEpisodeDetails(navController, composeScreens, RootScreen.UpNext)
-        addEpisodeTrack(navController, composeScreens, RootScreen.Discover)
+        addEpisodeTrack(navController, composeScreens, RootScreen.UpNext)
     }
 }
 
@@ -200,7 +194,7 @@ private fun NavGraphBuilder.addSearchTopLevel(
         addShowDetails(navController, composeScreens, RootScreen.Search)
         addShowSeasons(navController, composeScreens, RootScreen.Search)
         addEpisodeDetails(navController, composeScreens, RootScreen.Search)
-        addEpisodeTrack(navController, composeScreens, RootScreen.Discover)
+        addEpisodeTrack(navController, composeScreens, RootScreen.Search)
     }
 }
 
@@ -382,9 +376,6 @@ private fun NavGraphBuilder.addEpisodeTrack(
         ),
     ) {
         composeScreens.episodeTrack(
-            sheetState = navController.navigatorProvider
-                .getNavigator(BottomSheetNavigator::class.java)
-                .navigatorSheetState,
             navigateUp = navController::navigateUp,
         )
     }
