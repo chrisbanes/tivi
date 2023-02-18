@@ -37,12 +37,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import app.tivi.common.compose.ui.androidMinWidthDialogSize
-import app.tivi.home.library.Library
-import app.tivi.home.recommended.RecommendedShows
-import app.tivi.home.search.Search
-import app.tivi.home.upnext.UpNext
-import app.tivi.showdetails.details.ShowDetails
-import app.tivi.showdetails.seasons.ShowSeasons
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.material.BottomSheetNavigator
@@ -75,6 +69,12 @@ private sealed class Screen(
     object EpisodeDetails : Screen("episode/{episodeId}") {
         fun createRoute(root: RootScreen, episodeId: Long): String {
             return "${root.route}/episode/$episodeId"
+        }
+    }
+
+    object EpisodeTrack : Screen("episode/{episodeId}/track") {
+        fun createRoute(root: RootScreen, episodeId: Long): String {
+            return "${root.route}/episode/$episodeId/track"
         }
     }
 
@@ -134,6 +134,7 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
         addShowDetails(navController, composeScreens, RootScreen.Discover)
         addShowSeasons(navController, composeScreens, RootScreen.Discover)
         addEpisodeDetails(navController, composeScreens, RootScreen.Discover)
+        addEpisodeTrack(navController, composeScreens, RootScreen.Discover)
         addRecommendedShows(navController, composeScreens, RootScreen.Discover)
         addTrendingShows(navController, composeScreens, RootScreen.Discover)
         addPopularShows(navController, composeScreens, RootScreen.Discover)
@@ -155,6 +156,7 @@ private fun NavGraphBuilder.addLibraryTopLevel(
         addShowDetails(navController, composeScreens, RootScreen.Library)
         addShowSeasons(navController, composeScreens, RootScreen.Library)
         addEpisodeDetails(navController, composeScreens, RootScreen.Library)
+        addEpisodeTrack(navController, composeScreens, RootScreen.Library)
     }
 }
 
@@ -173,6 +175,7 @@ private fun NavGraphBuilder.addUpNextTopLevel(
         addShowDetails(navController, composeScreens, RootScreen.UpNext)
         addShowSeasons(navController, composeScreens, RootScreen.UpNext)
         addEpisodeDetails(navController, composeScreens, RootScreen.UpNext)
+        addEpisodeTrack(navController, composeScreens, RootScreen.UpNext)
     }
 }
 
@@ -191,6 +194,7 @@ private fun NavGraphBuilder.addSearchTopLevel(
         addShowDetails(navController, composeScreens, RootScreen.Search)
         addShowSeasons(navController, composeScreens, RootScreen.Search)
         addEpisodeDetails(navController, composeScreens, RootScreen.Search)
+        addEpisodeTrack(navController, composeScreens, RootScreen.Search)
     }
 }
 
@@ -339,11 +343,38 @@ private fun NavGraphBuilder.addEpisodeDetails(
         arguments = listOf(
             navArgument("episodeId") { type = NavType.LongType },
         ),
-    ) {
+    ) { backStackEntry ->
+        val episodeId = backStackEntry.arguments!!.getLong("episodeId")
+
         composeScreens.episodeDetails(
             sheetState = navController.navigatorProvider
                 .getNavigator(BottomSheetNavigator::class.java)
                 .navigatorSheetState,
+            navigateUp = navController::navigateUp,
+            navigateToTrack = {
+                navController.navigate(
+                    Screen.EpisodeTrack.createRoute(root, episodeId),
+                )
+            },
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialNavigationApi::class)
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.addEpisodeTrack(
+    navController: NavController,
+    composeScreens: ComposeScreens,
+    root: RootScreen,
+) {
+    bottomSheet(
+        route = Screen.EpisodeTrack.createRoute(root),
+        debugLabel = "EpisodeTrack()",
+        arguments = listOf(
+            navArgument("episodeId") { type = NavType.LongType },
+        ),
+    ) {
+        composeScreens.episodeTrack(
             navigateUp = navController::navigateUp,
         )
     }

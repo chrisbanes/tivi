@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "app.tivi.common.compose"
+    namespace = "app.tivi.episode.track"
 
     buildFeatures {
-        buildConfig = true
         compose = true
     }
 
@@ -35,29 +35,25 @@ android {
 }
 
 dependencies {
-    api(projects.data.models)
-    api(projects.core.preferences.api)
-    api(projects.common.imageloading)
+    implementation(projects.base)
+    implementation(projects.domain)
+    implementation(projects.common.ui.view)
+    implementation(projects.common.ui.compose)
 
-    api(projects.common.ui.resources)
-    api(projects.common.ui.view)
-
-    implementation(libs.androidx.core)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
-    api(platform(libs.compose.bom))
-    implementation(libs.compose.ui.ui)
-    implementation(libs.compose.ui.uitextfonts)
     implementation(libs.compose.foundation.foundation)
     implementation(libs.compose.foundation.layout)
     implementation(libs.compose.material.material)
-    implementation(libs.compose.material.iconsext)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material.iconsext)
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
 
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
+    api(libs.accompanist.navigation.material)
 
     implementation(libs.coil.compose)
+
+    ksp(libs.kotlininject.compiler)
 }

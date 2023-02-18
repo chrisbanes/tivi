@@ -274,7 +274,7 @@ private fun UpNextItem(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.3f) // 20% of the width
+                .fillMaxWidth(0.3f) // 30% of the width
                 .aspectRatio(16 / 11f),
         ) {
             AsyncImage(

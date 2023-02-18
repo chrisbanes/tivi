@@ -17,6 +17,7 @@
 package app.tivi
 
 import app.tivi.account.AccountUi
+import app.tivi.episode.track.EpisodeTrack
 import app.tivi.episodedetails.EpisodeDetails
 import app.tivi.home.discover.Discover
 import app.tivi.home.library.Library
@@ -36,6 +37,7 @@ class ComposeScreens(
     val accountUi: AccountUi,
     val discover: Discover,
     val episodeDetails: EpisodeDetails,
+    val episodeTrack: EpisodeTrack,
     val library: Library,
     val popularShows: PopularShows,
     val recommendedShows: RecommendedShows,

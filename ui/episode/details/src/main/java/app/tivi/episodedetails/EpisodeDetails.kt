@@ -123,6 +123,7 @@ import me.tatarka.inject.annotations.Inject
 typealias EpisodeDetails = @Composable (
     sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
+    navigateToTrack: () -> Unit,
 ) -> Unit
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -132,11 +133,13 @@ fun EpisodeDetails(
     viewModelFactory: (SavedStateHandle) -> EpisodeDetailsViewModel,
     @Assisted sheetState: BottomSheetNavigatorSheetState,
     @Assisted navigateUp: () -> Unit,
+    @Assisted navigateToTrack: () -> Unit,
 ) {
     EpisodeDetails(
         viewModel = viewModel(factory = viewModelFactory),
         sheetState = sheetState,
         navigateUp = navigateUp,
+        navigateToTrack = navigateToTrack,
     )
 }
 
@@ -146,6 +149,7 @@ internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
     sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
+    navigateToTrack: () -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -156,7 +160,7 @@ internal fun EpisodeDetails(
         refresh = viewModel::refresh,
         onRemoveAllWatches = viewModel::removeAllWatches,
         onRemoveWatch = viewModel::removeWatchEntry,
-        onAddWatch = viewModel::addWatch,
+        onAddWatch = navigateToTrack,
         onMessageShown = viewModel::clearMessage,
     )
 }
