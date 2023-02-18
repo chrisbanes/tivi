@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2019 Google LLC
+  ~ Copyright 2023 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -211,4 +211,10 @@
     <string name="cd_episode_watched">Watched</string>
     <string name="cd_episode_deleted">Removed</string>
 
+    <string name="episode_track_prompt">Finished watching…</string>
+    <string name="episode_track_now">Now?</string>
+    <string name="episode_track_set_first_aired">Set air date</string>
+
+    <string name="time_label">Time</string>
+    <string name="date_label">Date</string>
 </resources>

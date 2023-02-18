@@ -39,7 +39,7 @@ dependencies {
     api(projects.core.preferences.api)
     api(projects.common.imageloading)
 
-    // TODO: Remove this dependency
+    api(projects.common.ui.resources)
     api(projects.common.ui.view)
 
     implementation(libs.androidx.core)
