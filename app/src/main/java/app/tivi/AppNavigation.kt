@@ -353,13 +353,12 @@ private fun NavGraphBuilder.addEpisodeDetails(
             navigateUp = navController::navigateUp,
             navigateToTrack = {
                 navController.navigate(
-                    Screen.EpisodeTrack.createRoute(root, episodeId)
+                    Screen.EpisodeTrack.createRoute(root, episodeId),
                 )
             },
         )
     }
 }
-
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @ExperimentalAnimationApi

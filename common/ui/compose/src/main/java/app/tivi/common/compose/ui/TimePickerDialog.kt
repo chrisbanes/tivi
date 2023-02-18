@@ -16,61 +16,53 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerDialog(
     onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
+    confirmButton: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    dismissButton: @Composable (() -> Unit)? = null,
+    shape: Shape = MaterialTheme.shapes.extraLarge,
+    tonalElevation: Dp = DatePickerDefaults.TonalElevation,
+    properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     content: @Composable () -> Unit,
 ) {
-    Dialog(
+    AlertDialog(
         onDismissRequest = onDismissRequest,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+        properties = properties,
+        modifier = modifier,
     ) {
         Surface(
-            shape = MaterialTheme.shapes.extraLarge,
-            tonalElevation = 6.dp,
-            modifier = Modifier.androidMinWidthDialogSize(clampMaxWidth = true),
+            shape = shape,
+            tonalElevation = tonalElevation,
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                    text = "Select Time",
-                    style = MaterialTheme.typography.labelMedium,
-                )
-
+            Column {
                 content()
 
                 Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(bottom = 8.dp, end = 6.dp),
                 ) {
-                    TextButton(onClick = onDismissRequest) {
-                        Text("Cancel")
-                    }
-                    TextButton(onClick = onConfirm) {
-                        Text("Confirm")
-                    }
+                    dismissButton?.invoke()
+                    confirmButton()
                 }
             }
         }

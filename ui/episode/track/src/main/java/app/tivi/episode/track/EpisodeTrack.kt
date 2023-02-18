@@ -19,8 +19,6 @@
 package app.tivi.episode.track
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,13 +28,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -44,11 +39,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDismissState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -64,20 +55,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
-import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.ui.AsyncImage
-import app.tivi.common.compose.ui.TimePickerDialog
+import app.tivi.common.compose.ui.DateTextField
+import app.tivi.common.compose.ui.TimeTextField
 import app.tivi.common.compose.viewModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -221,7 +207,6 @@ private fun EpisodeHeader(
 @Composable
 private fun EpisodeTrack() {
     Column(Modifier.padding(top = 16.dp)) {
-
         var now by remember { mutableStateOf(true) }
 
         var date: LocalDate? by remember { mutableStateOf(null) }
@@ -248,7 +233,7 @@ private fun EpisodeTrack() {
 
         AnimatedVisibility(visible = !now) {
             Row(Modifier.padding(top = Layout.gutter)) {
-                DateSelector(
+                DateTextField(
                     selectedDate = date,
                     onDateSelected = { date = it },
                     modifier = Modifier.fillMaxWidth(3 / 5f),
@@ -256,115 +241,12 @@ private fun EpisodeTrack() {
 
                 Spacer(Modifier.width(Layout.gutter))
 
-                TimeSelector(
+                TimeTextField(
                     selectedTime = time,
                     onTimeSelected = { time = it },
                     modifier = Modifier.weight(1f),
                 )
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DateSelector(
-    selectedDate: LocalDate?,
-    onDateSelected: (LocalDate) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var showDateDialog by remember { mutableStateOf(false) }
-
-    Box(modifier.clickable { showDateDialog = true }) {
-        val dateFormatter = LocalTiviDateFormatter.current
-
-        OutlinedTextField(
-            value = selectedDate?.let { dateFormatter.formatShortDate(it) } ?: "",
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(text = "Date") },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        if (showDateDialog) {
-            val datePickerState = rememberDatePickerState(
-                initialSelectedDateMillis = selectedDate?.let {
-                    val dt = LocalDateTime(it, LocalTime(0, 0, 0, 0))
-                    dt.toInstant(TimeZone.currentSystemDefault())
-                        .toEpochMilliseconds()
-                }
-            )
-
-            DatePickerDialog(
-                onDismissRequest = { showDateDialog = false },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showDateDialog = false
-
-                            datePickerState.selectedDateMillis?.let { millis ->
-                                val date = Instant.fromEpochMilliseconds(millis)
-                                    .toLocalDateTime(TimeZone.currentSystemDefault())
-                                    .date
-                                onDateSelected(date)
-                            }
-                        },
-                    ) {
-                        Text("Confirm")
-                    }
-                },
-            ) {
-                DatePicker(
-                    state = datePickerState,
-                    dateValidator = { epoch ->
-                        // Only allow dates in the past
-                        epoch < System.currentTimeMillis()
-                    },
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TimeSelector(
-    selectedTime: LocalTime?,
-    onTimeSelected: (LocalTime) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var showPicker by remember { mutableStateOf(false) }
-
-    Box(modifier.clickable { showPicker = true }) {
-        val dateFormatter = LocalTiviDateFormatter.current
-
-        OutlinedTextField(
-            value = selectedTime?.let { dateFormatter.formatShortTime(it) } ?: "",
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(text = "Time") },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        if (showPicker) {
-            val timePickerState = rememberTimePickerState()
-
-            TimePickerDialog(
-                onDismissRequest = { showPicker = false },
-                onConfirm = {
-                    showPicker = false
-
-                    onTimeSelected(
-                        LocalTime(
-                            hour = timePickerState.hour,
-                            minute = timePickerState.minute,
-                            second = 0,
-                            nanosecond = 0,
-                        ),
-                    )
-                },
-                content = { TimePicker(state = timePickerState) },
-            )
         }
     }
 }
