@@ -283,6 +283,9 @@ private fun NavGraphBuilder.addUpNext(
             openUser = {
                 navController.navigate(Screen.Account.createRoute(root))
             },
+            openTrackEpisode = { episodeId ->
+                navController.navigate(Screen.EpisodeTrack.createRoute(root, episodeId))
+            },
         )
     }
 }
