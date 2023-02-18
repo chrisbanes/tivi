@@ -36,12 +36,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -51,6 +54,7 @@ import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -82,12 +86,15 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.trakt.TraktAuthState
+import me.saket.swipe.SwipeAction
+import me.saket.swipe.SwipeableActionsBox
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias UpNext = @Composable (
     openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
     openUser: () -> Unit,
+    openTrackEpisode: (episodeId: Long) -> Unit,
 ) -> Unit
 
 @Inject
@@ -96,10 +103,12 @@ fun UpNext(
     viewModelFactory: () -> UpNextViewModel,
     @Assisted openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
     @Assisted openUser: () -> Unit,
+    @Assisted openTrackEpisode: (episodeId: Long) -> Unit,
 ) {
     UpNext(
         viewModel = viewModel(factory = viewModelFactory),
         openShowDetails = openShowDetails,
+        openTrackEpisode = openTrackEpisode,
         openUser = openUser,
     )
 }
@@ -109,6 +118,7 @@ internal fun UpNext(
     viewModel: UpNextViewModel,
     openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
     openUser: () -> Unit,
+    openTrackEpisode: (episodeId: Long) -> Unit,
 ) {
     val viewState by viewModel.state.collectAsState()
     val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
@@ -117,6 +127,7 @@ internal fun UpNext(
         state = viewState,
         list = pagingItems,
         openShowDetails = openShowDetails,
+        openTrackEpisode = openTrackEpisode,
         onMessageShown = viewModel::clearMessage,
         openUser = openUser,
         refresh = viewModel::refresh,
@@ -130,6 +141,7 @@ internal fun UpNext(
     state: UpNextViewState,
     list: LazyPagingItems<UpNextEntry>,
     openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
+    openTrackEpisode: (episodeId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
     refresh: () -> Unit,
     openUser: () -> Unit,
@@ -229,18 +241,38 @@ internal fun UpNext(
                     key = { it.show.id },
                 ) { entry ->
                     if (entry != null) {
-                        UpNextItem(
-                            show = entry.show,
-                            season = entry.season,
-                            episode = entry.episode,
-                            onClick = {
-                                openShowDetails(entry.show.id, entry.season.id, entry.episode.id)
+                        val trackEpisode = SwipeAction(
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Outlined.Visibility,
+                                    contentDescription = null, // decorative
+                                    modifier = Modifier
+                                        .padding(vertical = 16.dp, horizontal = 24.dp),
+                                )
                             },
-                            contentPadding = PaddingValues(8.dp),
+                            background = MaterialTheme.colorScheme.secondary,
+                            onSwipe = { openTrackEpisode(entry.episode.id) },
+                        )
+
+                        SwipeableActionsBox(
+                            endActions = listOf(trackEpisode),
+                            swipeThreshold = 80.dp, // icon + padding + 8.dp
+                            backgroundUntilSwipeThreshold = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
                             modifier = Modifier
                                 .animateItemPlacement()
                                 .fillMaxWidth(),
-                        )
+                        ) {
+                            UpNextItem(
+                                show = entry.show,
+                                season = entry.season,
+                                episode = entry.episode,
+                                onClick = {
+                                    openShowDetails(entry.show.id, entry.season.id, entry.episode.id)
+                                },
+                                contentPadding = PaddingValues(8.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
                     }
                 }
             }

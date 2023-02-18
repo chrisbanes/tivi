@@ -142,6 +142,8 @@ retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref =
 
 robolectric = "org.robolectric:robolectric:4.9.2"
 
+swipe = "me.saket.swipe:swipe:1.1.1"
+
 store = "org.mobilenativefoundation.store:store5:5.0.0-alpha03"
 
 threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.4.4"

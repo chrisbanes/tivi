@@ -45,6 +45,8 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
 
+    implementation(libs.swipe)
+
     implementation(libs.androidx.core)
 
     implementation(libs.compose.foundation.foundation)
