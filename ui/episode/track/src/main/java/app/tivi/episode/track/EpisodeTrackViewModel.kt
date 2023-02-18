@@ -53,6 +53,7 @@ class EpisodeTrackViewModel(
     private val episodeId: Long = savedStateHandle["episodeId"]!!
 
     private val loadingState = ObservableLoadingCounter()
+    private val submittingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     private val selectedDate = MutableStateFlow<LocalDate?>(null)
@@ -65,8 +66,9 @@ class EpisodeTrackViewModel(
         selectedTime,
         selectedNow,
         loadingState.observable,
+        submittingState.observable,
         uiMessageManager.message,
-    ) { episodeDetails, selectedDate, selectedTime, selectedNow, refreshing, message ->
+    ) { episodeDetails, selectedDate, selectedTime, selectedNow, refreshing, submitting, message ->
         EpisodeTrackViewState(
             episode = episodeDetails.episode,
             season = episodeDetails.season,
@@ -76,7 +78,8 @@ class EpisodeTrackViewModel(
             selectedNow = selectedNow,
             refreshing = refreshing,
             message = message,
-            canSubmit = selectedNow || (selectedDate != null && selectedTime != null),
+            submitInProgress = submitting,
+            canSubmit = !submitting && (selectedNow || (selectedDate != null && selectedTime != null)),
         )
     }.stateIn(
         scope = viewModelScope,
@@ -116,7 +119,7 @@ class EpisodeTrackViewModel(
         if (instant != null) {
             viewModelScope.launch {
                 addEpisodeWatch(AddEpisodeWatch.Params(episodeId, instant))
-                    .collectStatus(loadingState, logger, uiMessageManager)
+                    .collectStatus(submittingState, logger, uiMessageManager)
             }
         } else {
             // TODO: display error message

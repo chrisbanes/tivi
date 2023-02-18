@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -56,6 +57,7 @@ import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.ui.AsyncImage
+import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.DateTextField
 import app.tivi.common.compose.ui.TimeTextField
 import app.tivi.common.compose.viewModel
@@ -159,6 +161,7 @@ internal fun EpisodeTrack(
                 onTimeSelected = onTimeSelected,
                 showSetFirstAired = viewState.showSetFirstAired,
                 onSetFirstAired = onSetFirstAired,
+                submitInProgress = viewState.submitInProgress,
                 canSubmitWatch = viewState.canSubmit,
                 submitWatch = onSubmit,
             )
@@ -230,6 +233,7 @@ private fun EpisodeTrack(
     onTimeSelected: (LocalTime) -> Unit,
     showSetFirstAired: Boolean,
     onSetFirstAired: () -> Unit,
+    submitInProgress: Boolean,
     canSubmitWatch: Boolean,
     submitWatch: () -> Unit,
     selectedDate: LocalDate? = null,
@@ -288,6 +292,16 @@ private fun EpisodeTrack(
             onClick = submitWatch,
             modifier = Modifier.fillMaxWidth(),
         ) {
+            AnimatedVisibility(
+                visible = submitInProgress,
+                modifier = Modifier.align(Alignment.CenterVertically),
+            ) {
+                AutoSizedCircularProgressIndicator(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(end = Layout.gutter),
+                )
+            }
             Text(text = "Submit")
         }
     }

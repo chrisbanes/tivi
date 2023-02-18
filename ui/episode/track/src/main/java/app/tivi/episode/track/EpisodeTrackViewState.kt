@@ -32,6 +32,7 @@ data class EpisodeTrackViewState(
     val message: UiMessage? = null,
 
     val canSubmit: Boolean = false,
+    val submitInProgress: Boolean = false,
 
     val showSetFirstAired: Boolean = false,
     val selectedDate: LocalDate? = null,
