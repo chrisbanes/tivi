@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Divider
@@ -39,19 +40,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
@@ -93,7 +92,11 @@ internal fun EpisodeTrack(
         viewState = viewState,
         navigateUp = navigateUp,
         refresh = viewModel::refresh,
-        onAddWatch = viewModel::addWatch,
+        onSubmit = viewModel::submitWatch,
+        onNowSelected = viewModel::selectNow,
+        onSetFirstAired = viewModel::selectEpisodeFirstAired,
+        onDateSelected = viewModel::selectDate,
+        onTimeSelected = viewModel::selectTime,
         onMessageShown = viewModel::clearMessage,
     )
 }
@@ -104,7 +107,11 @@ internal fun EpisodeTrack(
     viewState: EpisodeTrackViewState,
     navigateUp: () -> Unit,
     refresh: () -> Unit,
-    onAddWatch: () -> Unit,
+    onSubmit: () -> Unit,
+    onNowSelected: (Boolean) -> Unit,
+    onDateSelected: (LocalDate) -> Unit,
+    onTimeSelected: (LocalTime) -> Unit,
+    onSetFirstAired: () -> Unit,
     onMessageShown: (id: Long) -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -143,7 +150,17 @@ internal fun EpisodeTrack(
             }
             Divider()
 
-            EpisodeTrack()
+            EpisodeTrack(
+                selectedNow = viewState.selectedNow,
+                selectedDate = viewState.selectedDate,
+                selectedTime = viewState.selectedTime,
+                onNowSelected = onNowSelected,
+                onDateSelected = onDateSelected,
+                onTimeSelected = onTimeSelected,
+                showSetFirstAired = viewState.showSetFirstAired,
+                onSetFirstAired = onSetFirstAired,
+                submitWatch = onSubmit,
+            )
         }
 
         SnackbarHost(hostState = snackbarHostState) { data ->
@@ -205,13 +222,18 @@ private fun EpisodeHeader(
 }
 
 @Composable
-private fun EpisodeTrack() {
+private fun EpisodeTrack(
+    selectedNow: Boolean,
+    onNowSelected: (Boolean) -> Unit,
+    onDateSelected: (LocalDate) -> Unit,
+    onTimeSelected: (LocalTime) -> Unit,
+    showSetFirstAired: Boolean,
+    onSetFirstAired: () -> Unit,
+    submitWatch: () -> Unit,
+    selectedDate: LocalDate? = null,
+    selectedTime: LocalTime? = null,
+) {
     Column(Modifier.padding(top = 16.dp)) {
-        var now by remember { mutableStateOf(true) }
-
-        var date: LocalDate? by remember { mutableStateOf(null) }
-        var time: LocalTime? by remember { mutableStateOf(null) }
-
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "Finished watching",
@@ -226,42 +248,47 @@ private fun EpisodeTrack() {
             )
 
             Switch(
-                checked = now,
-                onCheckedChange = { now = it },
+                checked = selectedNow,
+                onCheckedChange = onNowSelected,
             )
         }
 
-        AnimatedVisibility(visible = !now) {
-            Row(Modifier.padding(top = Layout.gutter)) {
-                DateTextField(
-                    selectedDate = date,
-                    onDateSelected = { date = it },
-                    modifier = Modifier.fillMaxWidth(3 / 5f),
-                )
+        AnimatedVisibility(visible = !selectedNow) {
+            Column(Modifier.padding(top = Layout.gutter)) {
+                Row {
+                    DateTextField(
+                        selectedDate = selectedDate,
+                        onDateSelected = onDateSelected,
+                        modifier = Modifier.fillMaxWidth(3 / 5f),
+                    )
 
-                Spacer(Modifier.width(Layout.gutter))
+                    Spacer(Modifier.width(Layout.gutter))
 
-                TimeTextField(
-                    selectedTime = time,
-                    onTimeSelected = { time = it },
-                    modifier = Modifier.weight(1f),
-                )
+                    TimeTextField(
+                        selectedTime = selectedTime,
+                        onTimeSelected = onTimeSelected,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+
+                if (showSetFirstAired) {
+                    TextButton(onClick = onSetFirstAired) {
+                        Text(text = "Set release date")
+                    }
+                }
             }
         }
-    }
-}
 
-@Preview
-@Composable
-fun PreviewEpisodeTrack() {
-    EpisodeTrack(
-        viewState = EpisodeTrackViewState(
-            episode = Episode(seasonId = 0, title = "Episode 1", number = 1),
-            season = Season(showId = 0),
-        ),
-        navigateUp = {},
-        refresh = {},
-        onAddWatch = {},
-        onMessageShown = {},
-    )
+        Spacer(Modifier.padding(top = Layout.gutter))
+
+        Button(
+            onClick = {
+                submitWatch()
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+        ) {
+            Text(text = "Submit")
+        }
+    }
 }

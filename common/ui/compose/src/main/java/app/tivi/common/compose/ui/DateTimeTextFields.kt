@@ -17,25 +17,30 @@
 package app.tivi.common.compose.ui
 
 import android.text.format.DateFormat
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalTiviDateFormatter
@@ -54,23 +59,22 @@ fun DateTextField(
     onDateSelected: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showDateDialog by remember { mutableStateOf(false) }
+    var showPicker by remember { mutableStateOf(false) }
 
-    Box(modifier.clickable { showDateDialog = true }) {
+    Box(modifier) {
         val dateFormatter = LocalTiviDateFormatter.current
         val formattedDate = remember(dateFormatter, selectedDate) {
             selectedDate?.let { dateFormatter.formatShortDate(it) }
         }
 
-        OutlinedTextField(
+        ClickableReadOnlyOutlinedTextField(
             value = formattedDate.orEmpty(),
-            onValueChange = {},
-            readOnly = true,
             label = { Text(text = "Date") },
+            onClick = { showPicker = true },
             modifier = Modifier.fillMaxWidth(),
         )
 
-        if (showDateDialog) {
+        if (showPicker) {
             val datePickerState = rememberDatePickerState(
                 initialSelectedDateMillis = selectedDate?.let { date ->
                     remember { date.toEpochMillis() }
@@ -78,11 +82,11 @@ fun DateTextField(
             )
 
             DatePickerDialog(
-                onDismissRequest = { showDateDialog = false },
+                onDismissRequest = { showPicker = false },
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            showDateDialog = false
+                            showPicker = false
 
                             datePickerState.selectedDateMillis?.let { millis ->
                                 val date = Instant.fromEpochMilliseconds(millis)
@@ -126,17 +130,16 @@ fun TimeTextField(
 ) {
     var showPicker by remember { mutableStateOf(false) }
 
-    Box(modifier.clickable { showPicker = true }) {
+    Box(modifier) {
         val dateFormatter = LocalTiviDateFormatter.current
         val formattedTime = remember(dateFormatter, selectedTime) {
             selectedTime?.let { dateFormatter.formatShortTime(it) }
         }
 
-        OutlinedTextField(
+        ClickableReadOnlyOutlinedTextField(
             value = formattedTime.orEmpty(),
-            onValueChange = {},
-            readOnly = true,
             label = { Text(text = "Time") },
+            onClick = { showPicker = true },
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -182,4 +185,38 @@ object TimeTextFieldDefaults {
             val context = LocalContext.current
             return remember { DateFormat.is24HourFormat(context) }
         }
+}
+
+@ExperimentalMaterial3Api
+@Composable
+fun ClickableReadOnlyOutlinedTextField(
+    value: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    label: (@Composable () -> Unit)? = null,
+    shape: Shape = TextFieldDefaults.outlinedShape,
+) {
+    val borderColor = MaterialTheme.colorScheme.primary.copy(
+        alpha = if (value.isNotEmpty()) 1f else 0.4f,
+    )
+
+    Surface(
+        onClick = onClick,
+        border = BorderStroke(1.dp, borderColor),
+        shape = shape,
+        modifier = modifier,
+    ) {
+        Box(Modifier.padding(16.dp)) {
+            if (value.isNotEmpty()) {
+                Text(text = value)
+            } else {
+                val disabledText = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                CompositionLocalProvider(
+                    LocalTextStyle provides LocalTextStyle.current.copy(color = disabledText),
+                ) {
+                    label?.invoke()
+                }
+            }
+        }
+    }
 }

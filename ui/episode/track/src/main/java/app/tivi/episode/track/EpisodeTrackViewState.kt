@@ -20,6 +20,8 @@ import androidx.compose.runtime.Immutable
 import app.tivi.api.UiMessage
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 
 @Immutable
 data class EpisodeTrackViewState(
@@ -28,6 +30,11 @@ data class EpisodeTrackViewState(
     val showEpisodeInfo: Boolean = true,
     val refreshing: Boolean = false,
     val message: UiMessage? = null,
+
+    val showSetFirstAired: Boolean = false,
+    val selectedDate: LocalDate? = null,
+    val selectedTime: LocalTime? = null,
+    val selectedNow: Boolean = true,
 ) {
     companion object {
         val Empty = EpisodeTrackViewState()
