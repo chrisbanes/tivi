@@ -159,6 +159,7 @@ internal fun EpisodeTrack(
                 onTimeSelected = onTimeSelected,
                 showSetFirstAired = viewState.showSetFirstAired,
                 onSetFirstAired = onSetFirstAired,
+                canSubmitWatch = viewState.canSubmit,
                 submitWatch = onSubmit,
             )
         }
@@ -229,6 +230,7 @@ private fun EpisodeTrack(
     onTimeSelected: (LocalTime) -> Unit,
     showSetFirstAired: Boolean,
     onSetFirstAired: () -> Unit,
+    canSubmitWatch: Boolean,
     submitWatch: () -> Unit,
     selectedDate: LocalDate? = null,
     selectedTime: LocalTime? = null,
@@ -282,11 +284,9 @@ private fun EpisodeTrack(
         Spacer(Modifier.padding(top = Layout.gutter))
 
         Button(
-            onClick = {
-                submitWatch()
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
+            enabled = canSubmitWatch,
+            onClick = submitWatch,
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Text(text = "Submit")
         }

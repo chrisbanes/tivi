@@ -76,6 +76,7 @@ class EpisodeTrackViewModel(
             selectedNow = selectedNow,
             refreshing = refreshing,
             message = message,
+            canSubmit = selectedNow || (selectedDate != null && selectedTime != null),
         )
     }.stateIn(
         scope = viewModelScope,
