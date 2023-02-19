@@ -75,7 +75,7 @@ class EpisodeTrackViewModel(
         submittingState.observable,
         uiMessageManager.message,
     ) {
-        episodeDetails, selectedDate, selectedTime, selectedNow, dismiss,
+            episodeDetails, selectedDate, selectedTime, selectedNow, dismiss,
             refreshing, submitting, message,
         ->
         EpisodeTrackViewState(
