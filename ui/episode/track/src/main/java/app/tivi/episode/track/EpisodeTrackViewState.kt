@@ -38,6 +38,8 @@ data class EpisodeTrackViewState(
     val selectedDate: LocalDate? = null,
     val selectedTime: LocalTime? = null,
     val selectedNow: Boolean = true,
+
+    val shouldDismiss: Boolean = false,
 ) {
     companion object {
         val Empty = EpisodeTrackViewState()

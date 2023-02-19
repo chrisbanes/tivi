@@ -20,6 +20,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiMessageManager
+import app.tivi.base.InvokeSuccess
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
@@ -27,6 +28,7 @@ import app.tivi.extensions.combine
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
+import app.tivi.util.onEachStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -42,6 +44,7 @@ import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
+@Suppress("unused")
 @Inject
 class EpisodeTrackViewModel(
     @Assisted savedStateHandle: SavedStateHandle,
@@ -60,15 +63,21 @@ class EpisodeTrackViewModel(
     private val selectedTime = MutableStateFlow<LocalTime?>(null)
     private val selectedNow = MutableStateFlow(true)
 
+    private val dismiss = MutableStateFlow(false)
+
     val state: StateFlow<EpisodeTrackViewState> = combine(
         observeEpisodeDetails.flow,
         selectedDate,
         selectedTime,
         selectedNow,
+        dismiss,
         loadingState.observable,
         submittingState.observable,
         uiMessageManager.message,
-    ) { episodeDetails, selectedDate, selectedTime, selectedNow, refreshing, submitting, message ->
+    ) {
+        episodeDetails, selectedDate, selectedTime, selectedNow, dismiss,
+            refreshing, submitting, message,
+        ->
         EpisodeTrackViewState(
             episode = episodeDetails.episode,
             season = episodeDetails.season,
@@ -79,6 +88,7 @@ class EpisodeTrackViewModel(
             refreshing = refreshing,
             message = message,
             submitInProgress = submitting,
+            shouldDismiss = dismiss,
             canSubmit = !submitting && (selectedNow || (selectedDate != null && selectedTime != null)),
         )
     }.stateIn(
@@ -119,7 +129,12 @@ class EpisodeTrackViewModel(
         if (instant != null) {
             viewModelScope.launch {
                 addEpisodeWatch(AddEpisodeWatch.Params(episodeId, instant))
-                    .collectStatus(submittingState, logger, uiMessageManager)
+                    .onEachStatus(submittingState, logger, uiMessageManager)
+                    .collect { status ->
+                        if (status == InvokeSuccess) {
+                            dismiss.emit(true)
+                        }
+                    }
             }
         } else {
             // TODO: display error message
