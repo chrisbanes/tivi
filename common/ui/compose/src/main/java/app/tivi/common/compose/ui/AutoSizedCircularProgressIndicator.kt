@@ -46,7 +46,7 @@ fun AutoSizedCircularProgressIndicator(
         CircularProgressIndicator(
             strokeWidth = (diameter.value * StrokeDiameterFraction)
                 .roundToInt().dp
-                .coerceAtLeast(1.dp),
+                .coerceAtLeast(2.dp),
             color = color,
         )
     }

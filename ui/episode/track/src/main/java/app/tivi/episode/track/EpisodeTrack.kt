@@ -60,6 +60,7 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.DateTextField
+import app.tivi.common.compose.ui.LoadingButton
 import app.tivi.common.compose.ui.TimeTextField
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R
@@ -136,6 +137,12 @@ internal fun EpisodeTrack(
             snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
             onMessageShown(message.id)
+        }
+    }
+
+    LaunchedEffect(viewState.shouldDismiss) {
+        if (viewState.shouldDismiss) {
+            navigateUp()
         }
     }
 
@@ -290,21 +297,12 @@ private fun EpisodeTrack(
 
         Spacer(Modifier.padding(top = Layout.gutter))
 
-        Button(
+        LoadingButton(
+            showProgressIndicator = submitInProgress,
             enabled = canSubmitWatch,
             onClick = submitWatch,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            AnimatedVisibility(
-                visible = submitInProgress,
-                modifier = Modifier.align(Alignment.CenterVertically),
-            ) {
-                AutoSizedCircularProgressIndicator(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .padding(end = Layout.gutter),
-                )
-            }
             Text(text = stringResource(R.string.episode_mark_watched))
         }
     }
