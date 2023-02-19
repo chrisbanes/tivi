@@ -20,7 +20,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiMessageManager
-import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
 import app.tivi.domain.interactors.UpdateEpisodeDetails
@@ -34,7 +33,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -44,7 +42,6 @@ class EpisodeDetailsViewModel(
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
     observeEpisodeWatches: ObserveEpisodeWatches,
-    private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger,
@@ -94,13 +91,6 @@ class EpisodeDetailsViewModel(
             removeEpisodeWatch(
                 RemoveEpisodeWatch.Params(watchId),
             ).collectStatus(loadingState, logger, uiMessageManager)
-        }
-    }
-
-    fun addWatch() {
-        viewModelScope.launch {
-            addEpisodeWatch(AddEpisodeWatch.Params(episodeId, Clock.System.now()))
-                .collectStatus(loadingState, logger, uiMessageManager)
         }
     }
 
