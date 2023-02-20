@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalMaterialNavigationApi::class)
-
 package app.tivi.episodedetails
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,17 +36,15 @@ import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
@@ -84,10 +79,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -101,9 +93,7 @@ import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.TiviAlertDialog
-import app.tivi.common.compose.ui.boundsInParent
 import app.tivi.common.compose.ui.none
-import app.tivi.common.compose.ui.onPositionInParentChanged
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.imagemodels.asImageModel
@@ -111,44 +101,32 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.models.Season
-import app.tivi.ui.animations.lerp
-import com.google.accompanist.navigation.material.BottomSheetNavigatorSheetState
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import kotlin.math.absoluteValue
-import kotlin.math.hypot
-import kotlin.math.roundToInt
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias EpisodeDetails = @Composable (
-    sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
     navigateToTrack: () -> Unit,
 ) -> Unit
 
-@OptIn(ExperimentalMaterialApi::class)
 @Inject
 @Composable
 fun EpisodeDetails(
     viewModelFactory: (SavedStateHandle) -> EpisodeDetailsViewModel,
-    @Assisted sheetState: BottomSheetNavigatorSheetState,
     @Assisted navigateUp: () -> Unit,
     @Assisted navigateToTrack: () -> Unit,
 ) {
     EpisodeDetails(
         viewModel = viewModel(factory = viewModelFactory),
-        sheetState = sheetState,
         navigateUp = navigateUp,
         navigateToTrack = navigateToTrack,
     )
 }
 
-@ExperimentalMaterialApi
 @Composable
 internal fun EpisodeDetails(
     viewModel: EpisodeDetailsViewModel,
-    sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
     navigateToTrack: () -> Unit,
 ) {
@@ -156,7 +134,6 @@ internal fun EpisodeDetails(
 
     EpisodeDetails(
         viewState = viewState,
-        sheetState = sheetState,
         navigateUp = navigateUp,
         refresh = viewModel::refresh,
         onRemoveAllWatches = viewModel::removeAllWatches,
@@ -167,11 +144,9 @@ internal fun EpisodeDetails(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@ExperimentalMaterialApi
 @Composable
 internal fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
-    sheetState: BottomSheetNavigatorSheetState,
     navigateUp: () -> Unit,
     refresh: () -> Unit,
     onRemoveAllWatches: () -> Unit,
@@ -200,18 +175,10 @@ internal fun EpisodeDetails(
         }
     }
 
-    // I don't love this, but it's the only way currently to know where the modal sheet
-    // is laid out. https://issuetracker.google.com/issues/209825720
-    var bottomSheetY by remember { mutableStateOf(0) }
-
     Surface(
-        shadowElevation = 2.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("episode_details")
-            .onGloballyPositioned { coords ->
-                bottomSheetY = coords.positionInWindow().y.roundToInt()
-            },
+            .testTag("episode_details"),
     ) {
         Column {
             Surface {
@@ -221,22 +188,17 @@ internal fun EpisodeDetails(
                         episode = viewState.episode,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(16 / 9f),
+                            .aspectRatio(16 / 10f),
                     )
                 }
 
                 Column {
-                    val showScrim = sheetState.targetValue == ModalBottomSheetValue.Expanded &&
-                        bottomSheetY <= WindowInsets.statusBars.getBottom(LocalDensity.current)
-
-                    AnimatedVisibility(visible = showScrim) {
-                        Spacer(
-                            Modifier
-                                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.4f))
-                                .windowInsetsTopHeight(WindowInsets.statusBars)
-                                .fillMaxWidth(),
-                        )
-                    }
+                    Spacer(
+                        Modifier
+                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.35f))
+                            .windowInsetsTopHeight(WindowInsets.statusBars)
+                            .fillMaxWidth(),
+                    )
 
                     EpisodeDetailsAppBar(
                         isRefreshing = viewState.refreshing,
@@ -315,14 +277,14 @@ internal fun EpisodeDetails(
                             modifier = Modifier.padding(vertical = 4.dp),
                             directions = setOf(DismissDirection.EndToStart),
                             background = {
-                                val fraction = dismissState.progress
                                 EpisodeWatchSwipeBackground(
-                                    swipeProgress = fraction,
-                                    wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f,
+                                    targetValue = dismissState.targetValue,
                                     modifier = Modifier.fillMaxSize(),
                                 )
                             },
-                            dismissContent = { EpisodeWatch(episodeWatchEntry = watch) },
+                            dismissContent = {
+                                EpisodeWatch(episodeWatchEntry = watch)
+                            },
                         )
                     }
                 }
@@ -457,6 +419,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .sizeIn(minWidth = 40.dp, minHeight = 40.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             val formatter = LocalTiviDateFormatter.current
             Text(
@@ -467,73 +430,59 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 
             Spacer(Modifier.weight(1f))
 
-            if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
+            AnimatedVisibility(episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                 Icon(
                     imageVector = Icons.Default.Publish,
                     contentDescription = stringResource(UiR.string.cd_episode_syncing),
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .align(Alignment.CenterVertically),
+                    modifier = Modifier.padding(start = 8.dp),
                 )
             }
 
-            if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
+            AnimatedVisibility(episodeWatchEntry.pendingAction == PendingAction.DELETE) {
                 Icon(
                     imageVector = Icons.Default.VisibilityOff,
                     contentDescription = stringResource(UiR.string.cd_episode_deleted),
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .align(Alignment.CenterVertically),
+                    modifier = Modifier.padding(start = 8.dp),
                 )
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EpisodeWatchSwipeBackground(
-    swipeProgress: Float,
+    targetValue: DismissValue,
     modifier: Modifier = Modifier,
-    wouldCompleteOnRelease: Boolean = false,
 ) {
-    var iconCenter by remember { mutableStateOf(Offset(0f, 0f)) }
-    val maxRadius = hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
+    val error = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
+    val circleOverlayColor by animateColorAsState(
+        targetValue = when (targetValue != DismissValue.Default) {
+            true -> error
+            false -> Color.Transparent
+        },
+    )
 
-    val secondary = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
-    val default = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-
-    Box(
-        modifier
-            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), RectangleShape),
+    Surface(
+        tonalElevation = 4.dp,
+        modifier = modifier,
     ) {
-        // A simple box to draw the growing circle, which emanates from behind the icon
-        Spacer(
-            modifier = Modifier
-                .matchParentSize()
-                .drawGrowingCircle(
-                    color = animateColorAsState(
-                        targetValue = when (wouldCompleteOnRelease) {
-                            true -> secondary
-                            false -> default
-                        },
-                    ).value,
-                    center = iconCenter,
-                    radius = lerp(
-                        startValue = 0f,
-                        endValue = maxRadius.toFloat(),
-                        fraction = FastOutLinearInEasing.transform(swipeProgress),
-                    ),
-                ),
-        )
+        Box(Modifier.fillMaxSize()) {
+            Spacer(
+                modifier = Modifier
+                    .background(circleOverlayColor)
+                    .matchParentSize(),
+            )
 
-        Icon(
-            imageVector = Icons.Default.Delete,
-            contentDescription = stringResource(UiR.string.cd_delete),
-            modifier = Modifier
-                .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
-                .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                .align(Alignment.CenterEnd),
-        )
+            Icon(
+                imageVector = Icons.Outlined.Delete,
+                contentDescription = stringResource(UiR.string.cd_delete),
+                modifier = Modifier
+                    .padding(12.dp)
+                    .padding(end = 8.dp)
+                    .align(Alignment.CenterEnd),
+            )
+        }
     }
 }
 
@@ -611,8 +560,8 @@ private fun EpisodeDetailsAppBar(
         navigationIcon = {
             ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
                 Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(UiR.string.cd_close),
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = stringResource(UiR.string.cd_navigate_up),
                 )
             }
         },
@@ -663,9 +612,6 @@ fun PreviewEpisodeDetails() {
                     watchedAt = Clock.System.now(),
                 ),
             ),
-        ),
-        sheetState = BottomSheetNavigatorSheetState(
-            ModalBottomSheetState(ModalBottomSheetValue.HalfExpanded),
         ),
         navigateUp = {},
         refresh = {},

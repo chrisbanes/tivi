@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_PARAMETER")
-
 package app.tivi
 
 import androidx.compose.animation.AnimatedContentScope
@@ -39,7 +37,6 @@ import androidx.navigation.navArgument
 import app.tivi.common.compose.ui.androidMinWidthDialogSize
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.navigation
-import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 
 internal sealed class RootScreen(val route: String) {
@@ -333,14 +330,13 @@ private fun NavGraphBuilder.addShowDetails(
     }
 }
 
-@OptIn(ExperimentalMaterialNavigationApi::class)
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addEpisodeDetails(
     navController: NavController,
     composeScreens: ComposeScreens,
     root: RootScreen,
 ) {
-    bottomSheet(
+    composable(
         route = Screen.EpisodeDetails.createRoute(root),
         debugLabel = "EpisodeDetails()",
         arguments = listOf(
@@ -350,9 +346,6 @@ private fun NavGraphBuilder.addEpisodeDetails(
         val episodeId = backStackEntry.arguments!!.getLong("episodeId")
 
         composeScreens.episodeDetails(
-            sheetState = navController.navigatorProvider
-                .getNavigator(BottomSheetNavigator::class.java)
-                .navigatorSheetState,
             navigateUp = navController::navigateUp,
             navigateToTrack = {
                 navController.navigate(
