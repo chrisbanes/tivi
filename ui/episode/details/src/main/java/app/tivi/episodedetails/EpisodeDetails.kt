@@ -106,6 +106,7 @@ import app.tivi.common.compose.ui.none
 import app.tivi.common.compose.ui.onPositionInParentChanged
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
+import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
@@ -351,7 +352,7 @@ private fun EpisodeDetailsBackdrop(
 ) {
     TiviTheme(useDarkColors = true) {
         Backdrop(
-            imageModel = if (episode.tmdbBackdropPath != null) episode else null,
+            imageModel = episode.asImageModel(),
             shape = RectangleShape,
             overline = {
                 val epNumber = episode.number
