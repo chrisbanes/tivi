@@ -18,8 +18,6 @@ package app.tivi.data.daos
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.Transaction
-import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.models.TiviShow
 import kotlinx.coroutines.flow.Flow
 
@@ -36,14 +34,6 @@ abstract class RoomTiviShowDao : TiviShowDao, RoomEntityDao<TiviShow> {
 
     @Query("SELECT * FROM shows WHERE id = :id")
     abstract override fun getShowWithIdFlow(id: Long): Flow<TiviShow>
-
-    @Transaction
-    @Query("SELECT * FROM shows WHERE id = :id")
-    abstract override suspend fun getShowWithIdDetailed(id: Long): ShowDetailed?
-
-    @Transaction
-    @Query("SELECT * FROM shows WHERE id = :id")
-    abstract override fun getShowDetailedWithIdFlow(id: Long): Flow<ShowDetailed>
 
     @Query("SELECT * FROM shows WHERE id = :id")
     abstract override suspend fun getShowWithId(id: Long): TiviShow?

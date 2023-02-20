@@ -26,16 +26,18 @@ import okhttp3.OkHttpClient
 @Inject
 class CoilAppInitializer(
     private val application: Application,
+    private val showImageInterceptor: ShowCoilInterceptor,
+    private val episodeEntityInterceptor: EpisodeCoilInterceptor,
     private val tmdbImageEntityInterceptor: TmdbImageEntityCoilInterceptor,
-    private val episodeEntityInterceptor: EpisodeEntityCoilInterceptor,
     private val okHttpClient: OkHttpClient,
 ) : AppInitializer {
     override fun init() {
         Coil.setImageLoader {
             ImageLoader.Builder(application)
                 .components {
-                    add(tmdbImageEntityInterceptor)
+                    add(showImageInterceptor)
                     add(episodeEntityInterceptor)
+                    add(tmdbImageEntityInterceptor)
                 }
                 .okHttpClient(okHttpClient)
                 .build()

@@ -16,11 +16,12 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.daos.ShowFtsDao
+import app.tivi.data.models.TiviShow
 import app.tivi.data.search.SearchRepository
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -29,14 +30,17 @@ class SearchShows(
     private val searchRepository: SearchRepository,
     private val showFtsDao: ShowFtsDao,
     private val dispatchers: AppCoroutineDispatchers,
-) : SuspendingWorkInteractor<SearchShows.Params, List<ShowDetailed>>() {
-    override suspend fun doWork(params: Params): List<ShowDetailed> = withContext(dispatchers.io) {
+) : SuspendingWorkInteractor<SearchShows.Params, List<TiviShow>>() {
+    override suspend fun doWork(params: Params): List<TiviShow> = withContext(dispatchers.io) {
         val remoteResults = searchRepository.search(params.query)
         when {
             remoteResults.isNotEmpty() -> remoteResults
             params.query.isNotBlank() -> {
                 try {
                     showFtsDao.search("*$params.query*")
+                } catch (ce: CancellationException) {
+                    // Cancellation exceptions should be re-thrown
+                    throw ce
                 } catch (e: Exception) {
                     // Re-throw wrapped exception with the query
                     throw Exception("Error while searching database with query: ${params.query}", e)

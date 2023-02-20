@@ -90,7 +90,6 @@ import app.tivi.common.compose.ui.plus
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.LibraryShow
-import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.trakt.TraktAuthState
@@ -311,7 +310,6 @@ internal fun Library(
                     if (entry != null) {
                         LibraryItem(
                             show = entry.show,
-                            poster = entry.poster,
                             watchedEpisodeCount = entry.stats?.watchedEpisodeCount,
                             totalEpisodeCount = entry.stats?.episodeCount,
                             lastWatchedDate = entry.watchedEntry?.lastWatched,
@@ -367,7 +365,6 @@ private fun FilterSortPanel(
 @Composable
 private fun LibraryItem(
     show: TiviShow,
-    poster: ShowTmdbImage?,
     watchedEpisodeCount: Int?,
     totalEpisodeCount: Int?,
     lastWatchedDate: Instant?,
@@ -383,7 +380,6 @@ private fun LibraryItem(
     ) {
         PosterCard(
             show = show,
-            poster = poster,
             modifier = Modifier
                 .fillMaxWidth(0.2f) // 20% of the width
                 .aspectRatio(2 / 3f),

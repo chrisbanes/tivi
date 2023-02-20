@@ -124,6 +124,7 @@ import app.tivi.data.compoundmodels.numberAired
 import app.tivi.data.compoundmodels.numberAiredToWatch
 import app.tivi.data.compoundmodels.numberToAir
 import app.tivi.data.compoundmodels.numberWatched
+import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Genre
 import app.tivi.data.models.ImageType
@@ -131,7 +132,6 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import app.tivi.data.models.TmdbImageEntity
 import app.tivi.data.views.FollowedShowsWatchStats
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Assisted
@@ -274,8 +274,6 @@ internal fun ShowDetails(
         Surface(modifier = Modifier.bodyWidth()) {
             ShowDetailsScrollingContent(
                 show = viewState.show,
-                posterImage = viewState.posterImage,
-                backdropImage = viewState.backdropImage,
                 relatedShows = viewState.relatedShows,
                 nextEpisodeToWatch = viewState.nextEpisodeToWatch,
                 seasons = viewState.seasons,
@@ -301,8 +299,6 @@ internal fun ShowDetails(
 @Composable
 private fun ShowDetailsScrollingContent(
     show: TiviShow,
-    posterImage: TmdbImageEntity?,
-    backdropImage: TmdbImageEntity?,
     relatedShows: List<RelatedShowEntryWithShow>,
     nextEpisodeToWatch: EpisodeWithSeason?,
     seasons: List<SeasonWithEpisodesAndWatches>,
@@ -331,7 +327,7 @@ private fun ShowDetailsScrollingContent(
     ) {
         item {
             Backdrop(
-                imageModel = backdropImage,
+                imageModel = show.asImageModel(ImageType.BACKDROP),
                 modifier = Modifier
                     .padding(horizontal = bodyMargin, vertical = gutter)
                     .fillMaxWidth()
@@ -346,7 +342,6 @@ private fun ShowDetailsScrollingContent(
         item {
             PosterInfoRow(
                 show = show,
-                posterImage = posterImage,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -452,12 +447,11 @@ private fun ShowDetailsScrollingContent(
 @Composable
 private fun PosterInfoRow(
     show: TiviShow,
-    posterImage: TmdbImageEntity?,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier.padding(horizontal = Layout.bodyMargin)) {
         AsyncImage(
-            model = posterImage,
+            model = show.asImageModel(ImageType.POSTER),
             requestBuilder = { crossfade(true) },
             contentDescription = stringResource(UiR.string.cd_show_poster, show.title ?: ""),
             modifier = Modifier
@@ -721,7 +715,6 @@ private fun RelatedShows(
         ) { item ->
             PosterCard(
                 show = item.show,
-                poster = item.poster,
                 onClick = { openShowDetails(item.show.id) },
                 modifier = Modifier
                     .animateItemPlacement()

@@ -84,7 +84,6 @@ import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
-import app.tivi.data.models.TmdbImageEntity
 import app.tivi.trakt.TraktAuthState
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -227,7 +226,6 @@ internal fun Discover(
                     item {
                         NextEpisodeToWatch(
                             show = nextEpisodeToWatch.show,
-                            poster = nextEpisodeToWatch.poster,
                             season = nextEpisodeToWatch.season,
                             episode = nextEpisodeToWatch.episode,
                             onClick = {
@@ -303,7 +301,6 @@ internal fun Discover(
 @Composable
 private fun NextEpisodeToWatch(
     show: TiviShow,
-    poster: TmdbImageEntity?,
     season: Season,
     episode: Episode,
     modifier: Modifier = Modifier,
@@ -320,16 +317,13 @@ private fun NextEpisodeToWatch(
             )
 
             Row(Modifier.fillMaxWidth()) {
-                if (poster != null) {
-                    PosterCard(
-                        show = show,
-                        poster = poster,
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .width(64.dp)
-                            .aspectRatio(2 / 3f),
-                    )
-                }
+                PosterCard(
+                    show = show,
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .width(64.dp)
+                        .aspectRatio(2 / 3f),
+                )
 
                 Column(Modifier.align(Alignment.CenterVertically)) {
                     val textCreator = LocalTiviTextCreator.current
@@ -428,7 +422,6 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
         ) { item ->
             PosterCard(
                 show = item.show,
-                poster = item.poster,
                 onClick = { onItemClick(item.show) },
                 modifier = Modifier
                     .testTag("discover_carousel_item")

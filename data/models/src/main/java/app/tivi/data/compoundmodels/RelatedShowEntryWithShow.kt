@@ -17,14 +17,9 @@
 package app.tivi.data.compoundmodels
 
 import androidx.room.Embedded
-import androidx.room.Ignore
 import androidx.room.Relation
-import app.tivi.data.models.ImageType
 import app.tivi.data.models.RelatedShowEntry
-import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.findHighestRatedItem
-import app.tivi.extensions.unsafeLazy
 import java.util.Objects
 
 class RelatedShowEntryWithShow : EntryWithShow<RelatedShowEntry> {
@@ -34,26 +29,13 @@ class RelatedShowEntryWithShow : EntryWithShow<RelatedShowEntry> {
     @Relation(parentColumn = "other_show_id", entityColumn = "id")
     override lateinit var relations: List<TiviShow>
 
-    @Relation(parentColumn = "other_show_id", entityColumn = "show_id")
-    override lateinit var images: List<ShowTmdbImage>
-
-    @delegate:Ignore
-    val backdrop: ShowTmdbImage? by unsafeLazy {
-        findHighestRatedItem(images, ImageType.BACKDROP)
-    }
-
-    @delegate:Ignore
-    override val poster: ShowTmdbImage? by unsafeLazy {
-        findHighestRatedItem(images, ImageType.POSTER)
-    }
-
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
         other is RelatedShowEntryWithShow -> {
-            entry == other.entry && relations == other.relations && images == other.images
+            entry == other.entry && relations == other.relations
         }
         else -> false
     }
 
-    override fun hashCode(): Int = Objects.hash(entry, relations, images)
+    override fun hashCode(): Int = Objects.hash(entry, relations)
 }

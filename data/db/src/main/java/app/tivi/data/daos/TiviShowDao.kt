@@ -16,7 +16,6 @@
 
 package app.tivi.data.daos
 
-import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.models.TiviShow
 import app.tivi.data.util.mergeShows
 import kotlinx.coroutines.flow.Flow
@@ -30,10 +29,6 @@ interface TiviShowDao : EntityDao<TiviShow> {
     suspend fun getShowWithTmdbId(id: Int): TiviShow?
 
     fun getShowWithIdFlow(id: Long): Flow<TiviShow>
-
-    suspend fun getShowWithIdDetailed(id: Long): ShowDetailed?
-
-    fun getShowDetailedWithIdFlow(id: Long): Flow<ShowDetailed>
 
     suspend fun getShowWithId(id: Long): TiviShow?
 

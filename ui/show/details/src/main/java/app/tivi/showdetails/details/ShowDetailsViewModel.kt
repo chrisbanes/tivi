@@ -29,12 +29,10 @@ import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.domain.interactors.UpdateRelatedShows
 import app.tivi.domain.interactors.UpdateShowDetails
-import app.tivi.domain.interactors.UpdateShowImages
 import app.tivi.domain.interactors.UpdateShowSeasons
 import app.tivi.domain.observers.ObserveRelatedShows
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowFollowStatus
-import app.tivi.domain.observers.ObserveShowImages
 import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.domain.observers.ObserveShowViewStats
@@ -53,8 +51,6 @@ class ShowDetailsViewModel(
     @Assisted savedStateHandle: SavedStateHandle,
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
-    observeShowImages: ObserveShowImages,
-    private val updateShowImages: UpdateShowImages,
     private val updateRelatedShows: UpdateRelatedShows,
     observeRelatedShows: ObserveRelatedShows,
     private val updateShowSeasons: UpdateShowSeasons,
@@ -75,19 +71,16 @@ class ShowDetailsViewModel(
     val state = combine(
         observeShowFollowStatus.flow,
         observeShowDetails.flow,
-        observeShowImages.flow,
         loadingState.observable,
         observeRelatedShows.flow,
         observeNextEpisodeToWatch.flow,
         observeShowSeasons.flow,
         observeShowViewStats.flow,
         uiMessageManager.message,
-    ) { isFollowed, show, showImages, refreshing, relatedShows, nextEpisode, seasons, stats, message ->
+    ) { isFollowed, show, refreshing, relatedShows, nextEpisode, seasons, stats, message ->
         ShowDetailsViewState(
             isFollowed = isFollowed,
             show = show,
-            posterImage = showImages.poster,
-            backdropImage = showImages.backdrop,
             relatedShows = relatedShows,
             nextEpisodeToWatch = nextEpisode,
             seasons = seasons,
@@ -104,7 +97,6 @@ class ShowDetailsViewModel(
     init {
         observeShowFollowStatus(ObserveShowFollowStatus.Params(showId))
         observeShowDetails(ObserveShowDetails.Params(showId))
-        observeShowImages(ObserveShowImages.Params(showId))
         observeRelatedShows(ObserveRelatedShows.Params(showId))
         observeShowSeasons(ObserveShowSeasonsEpisodesWatches.Params(showId))
         observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(showId))
@@ -117,11 +109,6 @@ class ShowDetailsViewModel(
         viewModelScope.launch {
             updateShowDetails(
                 UpdateShowDetails.Params(showId, fromUser),
-            ).collectStatus(loadingState, logger, uiMessageManager)
-        }
-        viewModelScope.launch {
-            updateShowImages(
-                UpdateShowImages.Params(showId, fromUser),
             ).collectStatus(loadingState, logger, uiMessageManager)
         }
         viewModelScope.launch {

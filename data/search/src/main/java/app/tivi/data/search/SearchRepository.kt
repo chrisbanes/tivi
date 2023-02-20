@@ -17,12 +17,12 @@
 package app.tivi.data.search
 
 import androidx.collection.LruCache
-import app.tivi.data.compoundmodels.ShowDetailed
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.daos.saveImagesIfEmpty
 import app.tivi.data.db.DatabaseTransactionRunner
+import app.tivi.data.models.TiviShow
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Inject
 
@@ -36,7 +36,7 @@ class SearchRepository(
 ) {
     private val cache by lazy { LruCache<String, List<Long>>(20) }
 
-    suspend fun search(query: String): List<ShowDetailed> {
+    suspend fun search(query: String): List<TiviShow> {
         if (query.isBlank()) {
             return emptyList()
         }
@@ -44,7 +44,7 @@ class SearchRepository(
         val cacheValues = cache[query]
         if (cacheValues != null) {
             return cacheValues
-                .mapNotNull { showDao.getShowWithIdDetailed(it) }
+                .mapNotNull { showDao.getShowWithId(it) }
         }
 
         // We need to hit TMDb
@@ -54,7 +54,7 @@ class SearchRepository(
                     // We need to save the search results
                     cache.put(query, results)
                 }
-                .mapNotNull { showDao.getShowWithIdDetailed(it) }
+                .mapNotNull { showDao.getShowWithId(it) }
         }
         return remoteResult.getOrDefault(emptyList())
     }

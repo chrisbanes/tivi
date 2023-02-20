@@ -16,7 +16,6 @@
 
 package app.tivi.common.imageloading
 
-import app.tivi.data.models.ImageType
 import app.tivi.data.models.TmdbImageEntity
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.PowerController
@@ -27,7 +26,6 @@ import coil.size.Size
 import coil.size.pxOrElse
 import me.tatarka.inject.annotations.Inject
 import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @Inject
 class TmdbImageEntityCoilInterceptor(
@@ -53,12 +51,6 @@ class TmdbImageEntityCoilInterceptor(
             // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
             is SaveData.Enabled -> size.width.pxOrElse { 0 } / 2
         }
-
-        val urlProvider by tmdbImageUrlProvider
-        return when (data.type) {
-            ImageType.BACKDROP -> urlProvider.getBackdropUrl(data.path, width).toHttpUrl()
-            ImageType.POSTER -> urlProvider.getPosterUrl(data.path, width).toHttpUrl()
-            ImageType.LOGO -> urlProvider.getLogoUrl(data.path, width).toHttpUrl()
-        }
+        return tmdbImageUrlProvider.value.buildUrl(data, data.type, width)
     }
 }

@@ -19,7 +19,6 @@ package app.tivi.domain.interactors
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.followedshows.FollowedShowsRepository
-import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.data.watchedshows.WatchedShowsLastRequestStore
@@ -40,7 +39,6 @@ class UpdateLibraryShows(
     private val followedShowsRepository: FollowedShowsRepository,
     private val seasonEpisodeRepository: SeasonsEpisodesRepository,
     private val showStore: ShowStore,
-    private val showImagesStore: ShowImagesStore,
     private val watchedShowsLastRequestStore: WatchedShowsLastRequestStore,
     private val watchedShowsStore: WatchedShowsStore,
     private val watchedShowDao: WatchedShowDao,
@@ -68,12 +66,9 @@ class UpdateLibraryShows(
         // Finally sync the seasons/episodes and watches
         followedShowsRepository.getFollowedShows().parallelForEach { entry ->
             ensureActive()
-
             showStore.fetch(entry.showId)
-            showImagesStore.fetch(entry.showId)
 
             ensureActive()
-
             try {
                 with(seasonEpisodeRepository) {
                     val watchedEntry = watchedShowDao.entryWithShowId(entry.showId)

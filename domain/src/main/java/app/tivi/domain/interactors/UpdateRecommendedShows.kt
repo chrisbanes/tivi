@@ -17,7 +17,6 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.recommendedshows.RecommendedShowsStore
-import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
@@ -34,7 +33,6 @@ import me.tatarka.inject.annotations.Inject
 class UpdateRecommendedShows(
     private val recommendedShowsStore: RecommendedShowsStore,
     private val showStore: ShowStore,
-    private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
     private val traktManager: TraktManager,
     private val logger: Logger,
@@ -49,11 +47,6 @@ class UpdateRecommendedShows(
                     showStore.fetch(it.showId)
                 } catch (t: Throwable) {
                     logger.e(t, "Error while show info: ${it.showId}")
-                }
-                try {
-                    showImagesStore.fetch(it.showId)
-                } catch (t: Throwable) {
-                    logger.e(t, "Error while fetching images for show: ${it.showId}")
                 }
             }
         }

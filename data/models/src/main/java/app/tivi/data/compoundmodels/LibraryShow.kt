@@ -20,13 +20,9 @@ import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
 import app.tivi.data.models.FollowedShowEntry
-import app.tivi.data.models.ImageType
-import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
-import app.tivi.data.util.findHighestRatedItem
 import app.tivi.data.views.FollowedShowsWatchStats
-import app.tivi.extensions.unsafeLazy
 
 @Suppress("PropertyName")
 class LibraryShow {
@@ -40,9 +36,6 @@ class LibraryShow {
     lateinit var _watchedEntities: List<WatchedShowEntry>
 
     @Relation(parentColumn = "id", entityColumn = "show_id")
-    lateinit var images: List<ShowTmdbImage>
-
-    @Relation(parentColumn = "id", entityColumn = "show_id")
     lateinit var _stats: List<FollowedShowsWatchStats>
 
     @get:Ignore
@@ -54,16 +47,6 @@ class LibraryShow {
     @get:Ignore
     val stats: FollowedShowsWatchStats? get() = _stats.firstOrNull()
 
-    @delegate:Ignore
-    val backdrop: ShowTmdbImage? by unsafeLazy {
-        findHighestRatedItem(images, ImageType.BACKDROP)
-    }
-
-    @delegate:Ignore
-    val poster: ShowTmdbImage? by unsafeLazy {
-        findHighestRatedItem(images, ImageType.POSTER)
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -73,7 +56,6 @@ class LibraryShow {
         if (show != other.show) return false
         if (_followedEntities != other._followedEntities) return false
         if (_watchedEntities != other._watchedEntities) return false
-        if (images != other.images) return false
         if (_stats != other._stats) return false
 
         return true
@@ -83,7 +65,6 @@ class LibraryShow {
         var result = show.hashCode()
         result = 31 * result + _followedEntities.hashCode()
         result = 31 * result + _watchedEntities.hashCode()
-        result = 31 * result + images.hashCode()
         result = 31 * result + _stats.hashCode()
         return result
     }

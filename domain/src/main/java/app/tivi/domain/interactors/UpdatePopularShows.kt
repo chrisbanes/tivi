@@ -18,13 +18,11 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.popularshows.PopularShowsStore
-import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdatePopularShows.Params
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
 import app.tivi.util.parallelForEach
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -34,9 +32,7 @@ class UpdatePopularShows(
     private val popularShowStore: PopularShowsStore,
     private val popularDao: PopularDao,
     private val showStore: ShowStore,
-    private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
-    private val logger: Logger,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
@@ -52,11 +48,6 @@ class UpdatePopularShows(
 
             popularShowStore.fetch(page, forceFresh = params.forceRefresh).parallelForEach {
                 showStore.fetch(it.showId)
-                try {
-                    showImagesStore.fetch(it.showId)
-                } catch (t: Throwable) {
-                    logger.e(t, "Error while fetching images for show: ${it.showId}")
-                }
             }
         }
     }

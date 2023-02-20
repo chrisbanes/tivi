@@ -17,15 +17,10 @@
 package app.tivi.data.compoundmodels
 
 import androidx.room.Embedded
-import androidx.room.Ignore
 import androidx.room.Relation
 import app.tivi.data.models.FollowedShowEntry
-import app.tivi.data.models.ImageType
-import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.findHighestRatedItem
 import app.tivi.data.views.FollowedShowsWatchStats
-import app.tivi.extensions.unsafeLazy
 import java.util.Objects
 
 class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
@@ -35,9 +30,6 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
     @Relation(parentColumn = "show_id", entityColumn = "id")
     override lateinit var relations: List<TiviShow>
 
-    @Relation(parentColumn = "show_id", entityColumn = "show_id")
-    override lateinit var images: List<ShowTmdbImage>
-
     @Suppress("PropertyName")
     @Relation(parentColumn = "id", entityColumn = "id")
     lateinit var _stats: List<FollowedShowsWatchStats>
@@ -45,23 +37,13 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
     val stats: FollowedShowsWatchStats?
         get() = _stats.firstOrNull()
 
-    @delegate:Ignore
-    val backdrop: ShowTmdbImage? by unsafeLazy {
-        findHighestRatedItem(images, ImageType.BACKDROP)
-    }
-
-    @delegate:Ignore
-    override val poster: ShowTmdbImage? by unsafeLazy {
-        findHighestRatedItem(images, ImageType.POSTER)
-    }
-
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
         other is FollowedShowEntryWithShow -> {
-            entry == other.entry && relations == other.relations && stats == other.stats && images == other.images
+            entry == other.entry && relations == other.relations && stats == other.stats
         }
         else -> false
     }
 
-    override fun hashCode(): Int = Objects.hash(entry, relations, stats, images)
+    override fun hashCode(): Int = Objects.hash(entry, relations, stats)
 }

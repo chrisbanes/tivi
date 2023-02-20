@@ -163,7 +163,6 @@ fun <E : Entry> EntryGrid(
                     if (entry != null) {
                         PosterCard(
                             show = entry.show,
-                            poster = entry.poster,
                             onClick = { onOpenShowDetails(entry.show.id) },
                             modifier = mod,
                         )
