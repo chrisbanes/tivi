@@ -17,11 +17,11 @@
 package app.tivi.home.search
 
 import app.tivi.api.UiMessage
-import app.tivi.data.compoundmodels.ShowDetailed
+import app.tivi.data.models.TiviShow
 
 data class SearchViewState(
     val query: String = "",
-    val searchResults: List<ShowDetailed> = emptyList(),
+    val searchResults: List<TiviShow> = emptyList(),
     val refreshing: Boolean = false,
     val message: UiMessage? = null,
 ) {

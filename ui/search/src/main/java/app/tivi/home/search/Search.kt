@@ -63,8 +63,6 @@ import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
-import app.tivi.data.compoundmodels.ShowDetailed
-import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -179,7 +177,7 @@ internal fun Search(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SearchList(
-    results: List<ShowDetailed>,
+    results: List<TiviShow>,
     onShowClicked: (TiviShow) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -195,15 +193,14 @@ private fun SearchList(
     ) {
         items(
             items = results,
-            key = { it.show.id },
-        ) { item ->
+            key = { it.id },
+        ) { show ->
             SearchRow(
-                show = item.show,
-                posterImage = item.poster,
+                show = show,
                 modifier = Modifier
                     .animateItemPlacement()
                     .fillMaxWidth()
-                    .clickable { onShowClicked(item.show) },
+                    .clickable { onShowClicked(show) },
             )
         }
     }
@@ -212,13 +209,11 @@ private fun SearchList(
 @Composable
 private fun SearchRow(
     show: TiviShow,
-    posterImage: ShowTmdbImage?,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier.padding(vertical = 8.dp)) {
         PosterCard(
             show = show,
-            poster = posterImage,
             modifier = Modifier
                 .fillMaxWidth(0.2f) // 20% of width
                 .aspectRatio(2 / 3f),

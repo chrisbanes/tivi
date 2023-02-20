@@ -56,8 +56,8 @@ class ShowImagesStore(
                     // Store only treats null as 'no value', so convert to null
                     entries.isEmpty() -> null
                     // If the request is expired, our data is stale
-                    lastRequestStore.isRequestExpired(showId, 28.days) -> null
-                    // Otherwise, our data is fresh and valid
+                    lastRequestStore.isRequestExpired(showId, 180.days) -> null
+                    // Otherwise, our data is fresh (enough) and valid
                     else -> entries
                 }
             }

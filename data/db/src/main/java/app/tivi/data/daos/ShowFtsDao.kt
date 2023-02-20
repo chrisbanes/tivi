@@ -16,9 +16,9 @@
 
 package app.tivi.data.daos
 
-import app.tivi.data.compoundmodels.ShowDetailed
+import app.tivi.data.models.TiviShow
 
 interface ShowFtsDao {
 
-    suspend fun search(filter: String): List<ShowDetailed>
+    suspend fun search(filter: String): List<TiviShow>
 }

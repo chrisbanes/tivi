@@ -32,7 +32,7 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @Inject
-class EpisodeEntityCoilInterceptor(
+class EpisodeCoilInterceptor(
     private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
     private val repository: SeasonsEpisodesRepository,
 ) : Interceptor {

@@ -18,13 +18,11 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.followedshows.FollowedShowsRepository
-import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.tasks.ShowTasks
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
 import app.tivi.util.parallelForEach
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -34,10 +32,8 @@ class ChangeShowFollowStatus(
     private val followedShowsRepository: FollowedShowsRepository,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val showStore: ShowStore,
-    private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
     private val showTasks: ShowTasks,
-    private val logger: Logger,
 ) : Interactor<ChangeShowFollowStatus.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
@@ -60,11 +56,6 @@ class ChangeShowFollowStatus(
 
             result.added.parallelForEach {
                 showStore.fetch(it.showId)
-                try {
-                    showImagesStore.fetch(it.showId)
-                } catch (t: Throwable) {
-                    logger.e(t, "Error while fetching image")
-                }
             }
 
             if (params.deferDataFetch) {

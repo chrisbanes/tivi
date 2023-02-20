@@ -19,7 +19,7 @@ package app.tivi.data.daos
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import app.tivi.data.compoundmodels.ShowDetailed
+import app.tivi.data.models.TiviShow
 
 @Dao
 abstract class RoomShowFtsDao : ShowFtsDao {
@@ -31,5 +31,5 @@ abstract class RoomShowFtsDao : ShowFtsDao {
         WHERE fts.title MATCH :filter
         """,
     )
-    abstract override suspend fun search(filter: String): List<ShowDetailed>
+    abstract override suspend fun search(filter: String): List<TiviShow>
 }

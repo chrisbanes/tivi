@@ -17,19 +17,11 @@
 package app.tivi.data.compoundmodels
 
 import app.tivi.data.models.Episode
-import app.tivi.data.models.ImageType
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
-import app.tivi.data.models.TmdbImageEntity
-import app.tivi.data.util.findHighestRatedItem
-import app.tivi.extensions.unsafeLazy
 
 data class EpisodeWithSeasonWithShow(
     val episode: Episode,
     val season: Season,
     val show: TiviShow,
-    private val showImages: List<TmdbImageEntity>,
-) {
-    val backdrop by unsafeLazy { findHighestRatedItem(showImages, ImageType.BACKDROP) }
-    val poster by unsafeLazy { findHighestRatedItem(showImages, ImageType.POSTER) }
-}
+)

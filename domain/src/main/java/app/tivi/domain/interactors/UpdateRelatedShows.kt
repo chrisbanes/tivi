@@ -17,7 +17,6 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.relatedshows.RelatedShowsStore
-import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
@@ -32,7 +31,6 @@ import me.tatarka.inject.annotations.Inject
 class UpdateRelatedShows(
     private val relatedShowsStore: RelatedShowsStore,
     private val showsStore: ShowStore,
-    private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
 ) : Interactor<Params>() {
@@ -42,11 +40,6 @@ class UpdateRelatedShows(
                 showsStore.fetch(it.otherShowId)
             } catch (t: Throwable) {
                 logger.e(t, "Error while show info: ${it.otherShowId}")
-            }
-            try {
-                showImagesStore.fetch(it.otherShowId)
-            } catch (t: Throwable) {
-                logger.e(t, "Error while fetching images for show: ${it.showId}")
             }
         }
     }

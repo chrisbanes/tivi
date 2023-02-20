@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data.compoundmodels
+package app.tivi.data.imagemodels
 
-import app.tivi.data.models.Entry
+import app.tivi.data.models.ImageType
 import app.tivi.data.models.TiviShow
-import java.util.Objects
 
-interface EntryWithShow<ET : Entry> {
-    var entry: ET
-    var relations: List<TiviShow>
+data class ShowImageModel(
+    val id: Long,
+    val imageType: ImageType = ImageType.BACKDROP,
+)
 
-    val show: TiviShow
-        get() {
-            check(relations.size == 1)
-            return relations[0]
-        }
-
-    fun generateStableId(): Long {
-        return Objects.hash(entry::class.java.name, entry.showId).toLong()
-    }
-}
+fun TiviShow.asImageModel(
+    imageType: ImageType,
+): ShowImageModel = ShowImageModel(id = id, imageType = imageType)

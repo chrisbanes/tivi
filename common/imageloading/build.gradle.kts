@@ -33,7 +33,6 @@ dependencies {
 
     implementation(projects.data.models)
     implementation(projects.data.episodes)
-    implementation(projects.data.shows)
     implementation(projects.data.showimages)
 
     implementation(projects.common.ui.view)

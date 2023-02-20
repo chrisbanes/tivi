@@ -21,7 +21,6 @@ import app.tivi.api.UiMessage
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
-import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import app.tivi.data.views.FollowedShowsWatchStats
 
@@ -29,8 +28,6 @@ import app.tivi.data.views.FollowedShowsWatchStats
 data class ShowDetailsViewState(
     val isFollowed: Boolean = false,
     val show: TiviShow = TiviShow.EMPTY_SHOW,
-    val posterImage: ShowTmdbImage? = null,
-    val backdropImage: ShowTmdbImage? = null,
     val relatedShows: List<RelatedShowEntryWithShow> = emptyList(),
     val nextEpisodeToWatch: EpisodeWithSeason? = null,
     val watchStats: FollowedShowsWatchStats? = null,

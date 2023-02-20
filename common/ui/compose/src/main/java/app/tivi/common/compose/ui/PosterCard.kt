@@ -30,17 +30,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.common.ui.resources.R as UiR
+import app.tivi.data.imagemodels.asImageModel
+import app.tivi.data.models.ImageType
 import app.tivi.data.models.TiviShow
-import app.tivi.data.models.TmdbImageEntity
 
 @Composable
 fun PosterCard(
     show: TiviShow,
     modifier: Modifier = Modifier,
-    poster: TmdbImageEntity? = null,
 ) {
     Card(modifier = modifier) {
-        PosterCardContent(show = show, poster = poster)
+        PosterCardContent(show = show)
     }
 }
 
@@ -50,18 +50,14 @@ fun PosterCard(
     show: TiviShow,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    poster: TmdbImageEntity? = null,
 ) {
     Card(onClick = onClick, modifier = modifier) {
-        PosterCardContent(show = show, poster = poster)
+        PosterCardContent(show = show)
     }
 }
 
 @Composable
-private fun PosterCardContent(
-    show: TiviShow,
-    poster: TmdbImageEntity?,
-) {
+private fun PosterCardContent(show: TiviShow) {
     Box(modifier = Modifier.fillMaxSize()) {
         Text(
             text = show.title ?: "No title",
@@ -70,18 +66,16 @@ private fun PosterCardContent(
                 .padding(4.dp)
                 .align(Alignment.CenterStart),
         )
-        if (poster != null) {
-            AsyncImage(
-                model = poster,
-                requestBuilder = { crossfade(true) },
-                contentDescription = stringResource(
-                    UiR.string.cd_show_poster_image,
-                    show.title ?: "show",
-                ),
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-            )
-        }
+        AsyncImage(
+            model = show.asImageModel(ImageType.POSTER),
+            requestBuilder = { crossfade(true) },
+            contentDescription = stringResource(
+                UiR.string.cd_show_poster_image,
+                show.title ?: "show",
+            ),
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+        )
     }
 }
 
