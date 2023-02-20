@@ -81,6 +81,7 @@ import app.tivi.common.compose.ui.plus
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.UpNextEntry
+import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
@@ -310,7 +311,7 @@ private fun UpNextItem(
                 .aspectRatio(16 / 11f),
         ) {
             AsyncImage(
-                model = episode,
+                model = episode.asImageModel(),
                 requestBuilder = { crossfade(true) },
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),

@@ -30,7 +30,12 @@ dependencies {
     implementation(projects.base)
     implementation(projects.core.logging.api)
     implementation(projects.core.powercontroller.api)
+
     implementation(projects.data.models)
+    implementation(projects.data.episodes)
+    implementation(projects.data.shows)
+    implementation(projects.data.showimages)
+
     implementation(projects.common.ui.view)
     implementation(projects.api.tmdb)
 

@@ -61,6 +61,7 @@ import app.tivi.common.compose.ui.LoadingButton
 import app.tivi.common.compose.ui.TimeTextField
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R
+import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import kotlinx.datetime.LocalDate
@@ -204,7 +205,7 @@ private fun EpisodeHeader(
                 .aspectRatio(16 / 11f),
         ) {
             AsyncImage(
-                model = episode,
+                model = episode.asImageModel(),
                 requestBuilder = { crossfade(true) },
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),

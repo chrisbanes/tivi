@@ -16,12 +16,17 @@
 
 package app.tivi.common.imageloading
 
+import app.tivi.data.episodes.SeasonsEpisodesRepository
+import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.models.Episode
+import app.tivi.data.util.inPast
 import app.tivi.tmdb.TmdbImageUrlProvider
 import coil.intercept.Interceptor
+import coil.request.ImageRequest
 import coil.request.ImageResult
 import coil.size.Size
 import coil.size.pxOrElse
+import kotlin.time.Duration.Companion.days
 import me.tatarka.inject.annotations.Inject
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -29,22 +34,30 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 @Inject
 class EpisodeEntityCoilInterceptor(
     private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
+    private val repository: SeasonsEpisodesRepository,
 ) : Interceptor {
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
-        val data = chain.request.data
-        val request = when {
-            data is Episode && handles(data) -> {
-                chain.request.newBuilder()
-                    .data(map(data, chain.size))
-                    .build()
-            }
-
+        val request = when (val data = chain.request.data) {
+            is EpisodeImageModel -> handle(chain, data)
             else -> chain.request
         }
         return chain.proceed(request)
     }
 
-    private fun handles(data: Episode): Boolean = data.tmdbBackdropPath != null
+    private suspend fun handle(chain: Interceptor.Chain, model: EpisodeImageModel): ImageRequest {
+        if (repository.needEpisodeUpdate(model.id, expiry = 180.days.inPast)) {
+            repository.updateEpisode(model.id)
+        }
+
+        val episode = repository.getEpisode(model.id)
+        return if (episode?.tmdbBackdropPath != null) {
+            chain.request.newBuilder()
+                .data(map(episode, chain.size))
+                .build()
+        } else {
+            chain.request
+        }
+    }
 
     private fun map(data: Episode, size: Size): HttpUrl {
         return tmdbImageUrlProvider.value.getBackdropUrl(
