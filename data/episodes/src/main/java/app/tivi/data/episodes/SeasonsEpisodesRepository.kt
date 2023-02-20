@@ -176,11 +176,11 @@ class SeasonsEpisodesRepository(
         }
         check(trakt != null || tmdb != null)
 
-        val id = episodesDao.upsert(
+        episodesDao.upsert(
             mergeEpisode(local, trakt ?: Episode.EMPTY, tmdb ?: Episode.EMPTY),
         )
 
-        episodeLastRequestStore.updateLastRequest(id)
+        episodeLastRequestStore.updateLastRequest(episodeId)
     }
 
     suspend fun syncEpisodeWatchesForShow(showId: Long) {
