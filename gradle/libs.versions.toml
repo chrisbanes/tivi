@@ -40,7 +40,7 @@ accompanist-navigation-material = { module = "com.google.accompanist:accompanist
 
 androidx-activity-activity = { module = "androidx.activity:activity", version.ref = "androidxactivity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxactivity" }
-androidx-archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
+androidx-archCoreTesting = "androidx.arch.core:core-testing:2.2.0"
 androidx-browser = "androidx.browser:browser:1.5.0"
 androidx-collection = "androidx.collection:collection-ktx:1.2.0"
 androidx-core = "androidx.core:core-ktx:1.9.0"
