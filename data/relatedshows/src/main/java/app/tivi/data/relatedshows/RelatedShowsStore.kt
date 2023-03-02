@@ -33,7 +33,7 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 @ApplicationScope
 @Inject
 class RelatedShowsStore(
-    dataSource: TmdbRelatedShowsDataSource,
+    dataSource: TraktRelatedShowsDataSource,
     relatedShowsDao: RelatedShowsDao,
     showDao: TiviShowDao,
     lastRequestStore: RelatedShowsLastRequestStore,

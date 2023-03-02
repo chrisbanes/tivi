@@ -16,10 +16,9 @@
 
 package app.tivi.tmdb
 
+import app.moviebase.tmdb.Tmdb3
 import app.tivi.inject.ApplicationScope
-import com.uwetrottmann.tmdb2.Tmdb
 import me.tatarka.inject.annotations.Provides
-import okhttp3.OkHttpClient
 
 interface TmdbComponent {
     @ApplicationScope
@@ -31,11 +30,6 @@ interface TmdbComponent {
     @ApplicationScope
     @Provides
     fun provideTmdb(
-        client: OkHttpClient,
         tmdbOAuthInfo: TmdbOAuthInfo,
-    ): Tmdb = object : Tmdb(tmdbOAuthInfo.apiKey) {
-        override fun okHttpClient(): OkHttpClient = client.newBuilder()
-            .apply { setOkHttpClientDefaults(this) }
-            .build()
-    }
+    ): Tmdb3 = Tmdb3(tmdbApiKey = tmdbOAuthInfo.apiKey)
 }

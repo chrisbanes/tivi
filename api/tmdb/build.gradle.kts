@@ -30,6 +30,7 @@ dependencies {
     api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
 
     implementation(libs.okhttp.okhttp)
+    implementation("io.ktor:ktor-client-okhttp:2.2.4")
 
     implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)
