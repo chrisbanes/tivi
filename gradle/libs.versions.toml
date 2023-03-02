@@ -152,7 +152,7 @@ threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.4.4"
 
 timber = "com.jakewharton.timber:timber:5.0.1"
 
-tmdbJava = "app.moviebase:tmdb-api:0.6.8"
+tmdbJava = "app.moviebase:tmdb-api:0.7.0"
 
 traktJava = "com.uwetrottmann.trakt5:trakt-java:6.11.2"
 
