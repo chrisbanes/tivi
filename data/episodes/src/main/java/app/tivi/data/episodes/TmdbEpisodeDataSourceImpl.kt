@@ -18,7 +18,7 @@ package app.tivi.data.episodes
 
 import app.moviebase.tmdb.Tmdb3
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
-import app.tivi.data.mappers.TmdbEpisodeToEpisode
+import app.tivi.data.mappers.TmdbEpisodeDetailToEpisode
 import app.tivi.data.models.Episode
 import me.tatarka.inject.annotations.Inject
 
@@ -26,7 +26,7 @@ import me.tatarka.inject.annotations.Inject
 class TmdbEpisodeDataSourceImpl(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb3,
-    private val episodeMapper: TmdbEpisodeToEpisode,
+    private val episodeMapper: TmdbEpisodeDetailToEpisode,
 ) : EpisodeDataSource {
     override suspend fun getEpisode(
         showId: Long,
@@ -39,11 +39,6 @@ class TmdbEpisodeDataSourceImpl(
                 seasonNumber = seasonNumber,
                 episodeNumber = episodeNumber,
             )
-            .let { season ->
-                season.episodes!!.first {
-                    it.seasonNumber == seasonNumber && it.episodeNumber == episodeNumber
-                }
-            }
             .let { episodeMapper.map(it) }
     }
 }

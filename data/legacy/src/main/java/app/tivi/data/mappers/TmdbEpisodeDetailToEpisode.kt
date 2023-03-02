@@ -16,18 +16,18 @@
 
 package app.tivi.data.mappers
 
-import app.moviebase.tmdb.model.TmdbEpisode
+import app.moviebase.tmdb.model.TmdbEpisodeDetail
 import app.tivi.data.models.Episode
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TmdbEpisodeToEpisode : Mapper<TmdbEpisode, Episode> {
-    override suspend fun map(from: TmdbEpisode): Episode = Episode(
+class TmdbEpisodeDetailToEpisode : Mapper<TmdbEpisodeDetail, Episode> {
+    override suspend fun map(from: TmdbEpisodeDetail): Episode = Episode(
         seasonId = 0,
         tmdbId = from.id,
         title = from.name,
         number = from.episodeNumber,
-        summary = null, // FIXME
+        summary = from.overview,
         tmdbBackdropPath = from.stillPath,
     )
 }
