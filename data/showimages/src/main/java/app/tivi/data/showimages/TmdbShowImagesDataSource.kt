@@ -17,6 +17,7 @@
 package app.tivi.data.showimages
 
 import app.moviebase.tmdb.Tmdb3
+import app.moviebase.tmdb.model.AppendResponse
 import app.tivi.data.mappers.TmdbShowDetailToShowImages
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
@@ -31,7 +32,8 @@ class TmdbShowImagesDataSource(
         val tmdbId = show.tmdbId
             ?: throw IllegalArgumentException("TmdbId for show does not exist [$show]")
 
-        return tmdb.show.getDetails(tmdbId)
+        return tmdb.show
+            .getDetails(showId = tmdbId, appendResponses = listOf(AppendResponse.IMAGES))
             .let { mapper.map(it) }
     }
 }

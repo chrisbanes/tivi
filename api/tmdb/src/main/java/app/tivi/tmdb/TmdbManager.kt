@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-@file:Suppress("unused")
-
 package app.tivi.tmdb
 
 import app.moviebase.tmdb.Tmdb3
+import app.moviebase.tmdb.model.TmdbConfiguration
 import app.tivi.inject.ApplicationScope
-import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
 @Inject
 class TmdbManager(
-    private val dispatchers: AppCoroutineDispatchers,
     private val tmdbClient: Tmdb3,
 ) {
     private val imageProvider = MutableStateFlow(TmdbImageUrlProvider())
@@ -35,25 +31,19 @@ class TmdbManager(
     fun getLatestImageProvider() = imageProvider.value
 
     suspend fun refreshConfiguration() {
-//        try {
-//            val response = withContext(dispatchers.io) {
-//                tmdbClient.configurationService().configuration().awaitResponse()
-//            }
-//            onConfigurationLoaded(response.body()!!)
-//        } catch (t: Throwable) {
-//            // TODO
-//        }
+        val response = tmdbClient.configuration.getApiConfiguration()
+        onConfigurationLoaded(response)
     }
 
-//    private fun onConfigurationLoaded(configuration: Configuration) {
-//        configuration.images?.also { images ->
-//            val newProvider = TmdbImageUrlProvider(
-//                images.secure_base_url!!,
-//                images.poster_sizes ?: emptyList(),
-//                images.backdrop_sizes ?: emptyList(),
-//                images.logo_sizes ?: emptyList(),
-//            )
-//            imageProvider.value = newProvider
-//        }
-//    }
+    private fun onConfigurationLoaded(configuration: TmdbConfiguration) {
+        configuration.images.also { images ->
+            val newProvider = TmdbImageUrlProvider(
+                baseImageUrl = images.secureBaseUrl,
+                posterSizes = images.posterSizes,
+                backdropSizes = images.backdropSizes,
+                logoSizes = images.logoSizes,
+            )
+            imageProvider.value = newProvider
+        }
+    }
 }
