@@ -103,7 +103,7 @@ compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding" }
 
 google-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 google-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-google-firebase-bom = "com.google.firebase:firebase-bom:31.2.2"
+google-firebase-bom = "com.google.firebase:firebase-bom:31.2.3"
 
 debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
 debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retrofit", version.ref = "debugdrawer" }
