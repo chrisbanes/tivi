@@ -59,3 +59,7 @@
 
 # See https://issuetracker.google.com/issues/265188224
 -keep,allowshrinking class * extends androidx.compose.ui.node.ModifierNodeElement {}
+
+# Using ktor client in Android has missing proguard rule
+# See https://youtrack.jetbrains.com/issue/KTOR-5528
+-dontwarn org.slf4j.**
