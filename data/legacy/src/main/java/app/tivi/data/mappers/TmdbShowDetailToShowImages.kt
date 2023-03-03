@@ -16,6 +16,7 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.tmdb.model.TmdbFileImage
 import app.moviebase.tmdb.model.TmdbShowDetail
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.ShowTmdbImage
@@ -25,13 +26,12 @@ import me.tatarka.inject.annotations.Inject
 class TmdbShowDetailToShowImages : Mapper<TmdbShowDetail, List<ShowTmdbImage>> {
     override suspend fun map(from: TmdbShowDetail): List<ShowTmdbImage> {
         val results = ArrayList<ShowTmdbImage>()
-        // FIXME
-//        from.images?.posters?.mapTo(results) { image ->
-//            from.mapImage(image, ImageType.POSTER)
-//        }
-//        from.images?.backdrops?.mapTo(results) { image ->
-//            from.mapImage(image, ImageType.BACKDROP)
-//        }
+        from.images?.posters?.mapTo(results) { image ->
+            from.mapImage(image, ImageType.POSTER)
+        }
+        from.images?.backdrops?.mapTo(results) { image ->
+            from.mapImage(image, ImageType.BACKDROP)
+        }
 
         if (results.isEmpty()) {
             // If we have no images, we haven't been passed a result which has images. We'll
@@ -57,16 +57,16 @@ class TmdbShowDetailToShowImages : Mapper<TmdbShowDetail, List<ShowTmdbImage>> {
         return results
     }
 
-//    private fun TvShow.mapImage(image: Image, type: ImageType) = ShowTmdbImage(
-//        showId = 0,
-//        path = image.file_path!!,
-//        type = type,
-//        language = image.iso_639_1,
-//        rating = image.vote_average?.toFloat() ?: 0f,
-//        isPrimary = when (type) {
-//            ImageType.BACKDROP -> image.file_path == backdrop_path
-//            ImageType.POSTER -> image.file_path == poster_path
-//            else -> false
-//        },
-//    )
+    private fun TmdbShowDetail.mapImage(image: TmdbFileImage, type: ImageType) = ShowTmdbImage(
+        showId = 0,
+        path = image.filePath,
+        type = type,
+        language = image.iso639,
+        rating = image.voteAverage ?: 0f,
+        isPrimary = when (type) {
+            ImageType.BACKDROP -> image.filePath == backdropPath
+            ImageType.POSTER -> image.filePath == posterPath
+            else -> false
+        },
+    )
 }

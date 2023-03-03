@@ -24,13 +24,10 @@ plugins {
 dependencies {
     implementation(projects.base)
 
-    api(libs.tmdbJava) {
-        exclude(group = "org.threeten", module = "threetenbp")
-    }
-    api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
+    api(libs.tmdb.api)
 
     implementation(libs.okhttp.okhttp)
-    implementation("io.ktor:ktor-client-okhttp:2.2.4")
+    implementation(libs.ktor.client)
 
     implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)

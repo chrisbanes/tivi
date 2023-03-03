@@ -29,6 +29,6 @@ class TmdbShowDetailToTiviShow : Mapper<TmdbShowDetail, TiviShow> {
         summary = from.overview,
         homepage = from.homepage,
         network = from.networks.firstOrNull()?.name,
-        networkLogoPath = null, // FIXME from.networks.firstOrNull()?.logo_path,
+        networkLogoPath = from.networks.firstOrNull()?.logoPath,
     )
 }
