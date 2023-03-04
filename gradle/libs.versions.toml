@@ -1,5 +1,5 @@
 [versions]
-agp = "8.0.0-beta03"
+agp = "8.0.0-beta04"
 accompanist = "0.29.0-alpha"
 androidxlifecycle = "2.6.0-rc01"
 androidxactivity = "1.7.0-beta02"
@@ -104,7 +104,7 @@ compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding" }
 
 google-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 google-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-google-firebase-bom = "com.google.firebase:firebase-bom:31.2.2"
+google-firebase-bom = "com.google.firebase:firebase-bom:31.2.3"
 
 debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
 debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retrofit", version.ref = "debugdrawer" }
@@ -137,7 +137,7 @@ okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp"
 
 ktor-client = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 
-playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:16.1.0"
+playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:16.2.0"
 
 retrofit-gsonConverter = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 retrofit-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
