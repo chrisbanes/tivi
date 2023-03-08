@@ -42,8 +42,7 @@ enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 include(
     ":core:analytics",
     ":core:base",
-    ":core:logging:api",
-    ":core:logging:android",
+    ":core:logging",
     ":core:powercontroller:api",
     ":core:powercontroller:android",
     ":core:preferences:api",

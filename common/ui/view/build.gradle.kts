@@ -28,7 +28,7 @@ android {
 dependencies {
     api(projects.data.models)
     api(projects.common.ui.resources)
-    api(projects.core.logging.api)
+    api(projects.core.logging)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
