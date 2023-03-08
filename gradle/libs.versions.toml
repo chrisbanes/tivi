@@ -145,7 +145,7 @@ retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref =
 
 robolectric = "org.robolectric:robolectric:4.9.2"
 
-slack-lint-compose = "com.slack.lint.compose:compose-lint-checks:1.1.0"
+slack-lint-compose = "com.slack.lint.compose:compose-lint-checks:1.1.1"
 
 swipe = "me.saket.swipe:swipe:1.1.1"
 
