@@ -18,6 +18,7 @@ package app.tivi.tmdb
 
 import app.moviebase.tmdb.Tmdb3
 import app.tivi.inject.ApplicationScope
+import io.ktor.client.engine.okhttp.OkHttp
 import me.tatarka.inject.annotations.Provides
 
 interface TmdbComponent {
@@ -31,5 +32,17 @@ interface TmdbComponent {
     @Provides
     fun provideTmdb(
         tmdbOAuthInfo: TmdbOAuthInfo,
-    ): Tmdb3 = Tmdb3(tmdbApiKey = tmdbOAuthInfo.apiKey)
+    ): Tmdb3 = Tmdb3 {
+        tmdbApiKey = tmdbOAuthInfo.apiKey
+
+        useTimeout = true
+        useCache = true
+        maxRetriesOnException = 3
+
+        httpClient(OkHttp) {
+            engine {
+                // configure here your OkHttp
+            }
+        }
+    }
 }
