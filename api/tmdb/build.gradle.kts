@@ -16,24 +16,41 @@
 
 
 plugins {
-    id("kotlin")
+    kotlin("multiplatform")
     alias(libs.plugins.ksp)
-    alias(libs.plugins.android.lint)
+}
+
+kotlin {
+    jvm()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.core.base)
+
+                api(libs.tmdb.api)
+                implementation(libs.ktor.client.core)
+
+                api(libs.kotlin.coroutines.core)
+
+                api(libs.kotlininject.runtime)
+
+                // Manually depend on kotlinx-serialization. This changes the dependency from 'runtimeOnly'
+                // to 'compile', enabling R8 to properly pick-up the bundled rules at compile time.
+                // Can be removed once https://github.com/MoviebaseApp/tmdb-api/pull/51 lands
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+                implementation(libs.okhttp.okhttp)
+                implementation(libs.ktor.client.okhttp)
+            }
+        }
+    }
 }
 
 dependencies {
-    implementation(projects.core.base)
-
-    api(libs.tmdb.api)
-
-    implementation(libs.okhttp.okhttp)
-    implementation(libs.ktor.client)
-
-    // Manually depend on kotlinx-serialization. This changes the dependency from 'runtimeOnly'
-    // to 'compile', enabling R8 to properly pick-up the bundled rules at compile time.
-    // Can be removed once https://github.com/MoviebaseApp/tmdb-api/pull/51 lands
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-
-    implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
+    add("kspJvm", libs.kotlininject.compiler)
 }
