@@ -27,7 +27,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.base)
+    implementation(projects.core.base)
     implementation(projects.common.ui.resources)
     implementation(projects.common.ui.view)
     implementation(projects.core.powercontroller.android)

@@ -21,7 +21,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.base)
+    api(projects.core.base)
 
     api(libs.androidx.room.common) // Room annotations
     api(libs.kotlinx.datetime)

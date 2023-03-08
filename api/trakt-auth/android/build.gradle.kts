@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    api(projects.base)
+    api(projects.core.base)
     api(projects.core.logging.api)
     api(projects.api.traktAuth.api)
 

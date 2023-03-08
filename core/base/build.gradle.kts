@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,20 @@
 
 
 plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
+    kotlin("multiplatform")
 }
 
-dependencies {
-    api(libs.kotlin.coroutines.core)
-    api(libs.kotlininject.runtime)
+kotlin {
+    jvm()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                api(libs.kotlin.coroutines.core)
+                api(libs.kotlininject.runtime)
+            }
+        }
+
+        val jvmMain by getting
+    }
 }

@@ -27,7 +27,7 @@ android {
 }
 
 dependencies {
-    api(projects.base)
+    api(projects.core.base)
     api(projects.core.logging.api)
 
     implementation(platform(libs.google.firebase.bom))

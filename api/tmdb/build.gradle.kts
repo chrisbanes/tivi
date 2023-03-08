@@ -22,7 +22,7 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.base)
+    implementation(projects.core.base)
 
     api(libs.tmdbJava) {
         exclude(group = "org.threeten", module = "threetenbp")

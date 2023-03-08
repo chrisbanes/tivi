@@ -157,7 +157,7 @@ tasks.withType<KotlinCompilationTask<*>> {
 }
 
 dependencies {
-    implementation(projects.base)
+    implementation(projects.core.base)
     implementation(projects.core.analytics.android)
     implementation(projects.core.logging.android)
     implementation(projects.core.powercontroller.android)
