@@ -36,7 +36,7 @@ room {
 }
 
 dependencies {
-    implementation(projects.base)
+    implementation(projects.core.base)
     api(projects.data.db)
 
     api(libs.androidx.room.runtime)

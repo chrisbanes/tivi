@@ -43,8 +43,8 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.analytics.android)
-    implementation(projects.core.logging.android)
+    implementation(projects.core.analytics)
+    implementation(projects.core.logging)
 
     implementation(projects.data.followedshows)
     implementation(projects.data.episodes)

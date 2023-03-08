@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="base-jvm">
+    <output-path>$PROJECT_DIR$/core/base/build/libs</output-path>
+    <root id="archive" name="base-jvm.jar">
+      <element id="module-output" name="tivi.core.base.jvmMain" />
+    </root>
+  </artifact>
+</component>

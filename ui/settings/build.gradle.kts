@@ -27,11 +27,11 @@ android {
 }
 
 dependencies {
-    implementation(projects.base)
+    implementation(projects.core.base)
     implementation(projects.common.ui.resources)
     implementation(projects.common.ui.view)
-    implementation(projects.core.powercontroller.android)
-    implementation(projects.core.preferences.android)
+    implementation(projects.core.powercontroller)
+    implementation(projects.core.preferences)
 
     implementation(libs.androidx.activity.activity)
     implementation(libs.androidx.browser)

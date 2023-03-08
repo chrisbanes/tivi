@@ -40,15 +40,11 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 include(
-    ":base",
-    ":core:analytics:api",
-    ":core:analytics:android",
-    ":core:logging:api",
-    ":core:logging:android",
-    ":core:powercontroller:api",
-    ":core:powercontroller:android",
-    ":core:preferences:api",
-    ":core:preferences:android",
+    ":core:analytics",
+    ":core:base",
+    ":core:logging",
+    ":core:powercontroller",
+    ":core:preferences",
     ":common:ui:view",
     ":common:ui:resources",
     ":common:ui:compose",

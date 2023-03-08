@@ -27,7 +27,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>> {
 }
 
 dependencies {
-    implementation(projects.base)
+    implementation(projects.core.base)
 
     api(projects.data.models)
     implementation(projects.data.db) // remove this eventually

@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.base)
+    implementation(projects.core.base)
     implementation(projects.domain)
     api(projects.tasks.api)
 

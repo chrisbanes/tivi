@@ -22,10 +22,10 @@ plugins {
 }
 
 dependencies {
-    api(projects.base)
+    api(projects.core.base)
     api(projects.api.trakt)
     api(projects.api.tmdb)
-    api(projects.core.logging.api)
+    api(projects.core.logging)
     api(projects.data.models)
     implementation(projects.data.db)
 

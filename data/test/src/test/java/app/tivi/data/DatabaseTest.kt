@@ -21,6 +21,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.moviebase.tmdb.Tmdb3
+import app.tivi.core.analytics.AnalyticsComponent
 import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ApplicationScope
 import app.tivi.tmdb.TmdbComponent
@@ -28,7 +29,6 @@ import app.tivi.tmdb.TmdbOAuthInfo
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktComponent
 import app.tivi.trakt.TraktOAuthInfo
-import app.tivi.util.AnalyticsComponent
 import app.tivi.util.Logger
 import app.tivi.util.LoggerComponent
 import app.tivi.util.TiviLogger

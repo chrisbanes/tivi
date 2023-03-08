@@ -21,7 +21,7 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.base)
+    implementation(projects.core.base)
     api(projects.api.trakt)
     api(projects.tasks.api)
 }
