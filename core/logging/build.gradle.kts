@@ -49,5 +49,5 @@ dependencies {
 }
 
 android {
-    namespace = "app.tivi.core.analytics"
+    namespace = "app.tivi.core.logging"
 }
