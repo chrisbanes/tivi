@@ -87,6 +87,7 @@ abstract class TestApplicationComponent(
 
     @Provides
     override fun provideTmdb(
+        client: OkHttpClient,
         tmdbOAuthInfo: TmdbOAuthInfo,
     ): Tmdb3 = Tmdb3("fakefakefake")
 
