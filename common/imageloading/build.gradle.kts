@@ -28,7 +28,7 @@ android {
 
 dependencies {
     implementation(projects.core.base)
-    implementation(projects.core.logging.api)
+    implementation(projects.core.logging)
     implementation(projects.core.powercontroller.api)
 
     implementation(projects.data.models)
