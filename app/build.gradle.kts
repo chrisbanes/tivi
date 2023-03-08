@@ -24,7 +24,7 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-val appVersionCode = propOrDef("TIVI_VERSIONCODE", "17").toInt()
+val appVersionCode = propOrDef("TIVI_VERSIONCODE", "1000").toInt()
 println("APK version code: $appVersionCode")
 
 val useReleaseKeystore = rootProject.file("release/app-release.jks").exists()
