@@ -40,7 +40,7 @@ android {
 
 dependencies {
     api(projects.data.models)
-    api(projects.core.preferences.api)
+    api(projects.core.preferences)
     api(projects.common.imageloading)
 
     api(projects.common.ui.resources)
