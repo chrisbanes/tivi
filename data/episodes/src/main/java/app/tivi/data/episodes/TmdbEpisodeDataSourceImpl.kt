@@ -16,29 +16,29 @@
 
 package app.tivi.data.episodes
 
+import app.moviebase.tmdb.Tmdb3
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
-import app.tivi.data.mappers.TmdbEpisodeToEpisode
+import app.tivi.data.mappers.TmdbEpisodeDetailToEpisode
 import app.tivi.data.models.Episode
-import app.tivi.data.util.bodyOrThrow
-import app.tivi.data.util.withRetry
-import com.uwetrottmann.tmdb2.Tmdb
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TmdbEpisodeDataSourceImpl(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
-    private val tmdb: Tmdb,
-    private val episodeMapper: TmdbEpisodeToEpisode,
+    private val tmdb: Tmdb3,
+    private val episodeMapper: TmdbEpisodeDetailToEpisode,
 ) : EpisodeDataSource {
     override suspend fun getEpisode(
         showId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
-    ): Episode = withRetry {
-        tmdb.tvEpisodesService()
-            .episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber, null)
-            .awaitResponse()
-            .let { episodeMapper.map(it.bodyOrThrow()) }
+    ): Episode {
+        return tmdb.showEpisodes
+            .getDetails(
+                showId = tmdbIdMapper.map(showId),
+                seasonNumber = seasonNumber,
+                episodeNumber = episodeNumber,
+            )
+            .let { episodeMapper.map(it) }
     }
 }

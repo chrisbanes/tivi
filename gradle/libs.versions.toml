@@ -13,6 +13,7 @@ kotlin = "1.8.10"
 kotlininject = "0.6.1"
 ktlint = "0.48.1"
 okhttp = "4.10.0"
+ktor = "2.2.4"
 paging = "3.1.1"
 retrofit = "2.9.0"
 room = "2.5.0"
@@ -133,6 +134,8 @@ mockK = "io.mockk:mockk:1.13.4"
 okhttp-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 
+ktor-client = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+
 playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:16.2.0"
 
 retrofit-gsonConverter = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
@@ -151,7 +154,7 @@ threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.4.4"
 
 timber = "com.jakewharton.timber:timber:5.0.1"
 
-tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.8.1"
+tmdb-api = "app.moviebase:tmdb-api:0.9.0"
 
 traktJava = "com.uwetrottmann.trakt5:trakt-java:6.11.2"
 

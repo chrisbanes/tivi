@@ -16,19 +16,15 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.tmdb.model.TmdbShow
 import app.tivi.data.models.TiviShow
-import com.uwetrottmann.tmdb2.entities.TvShow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TmdbShowToTiviShow() : Mapper<TvShow, TiviShow> {
-    override suspend fun map(from: TvShow) = TiviShow(
+class TmdbShowToTiviShow : Mapper<TmdbShow, TiviShow> {
+    override suspend fun map(from: TmdbShow) = TiviShow(
         tmdbId = from.id,
-        imdbId = from.external_ids?.imdb_id,
         title = from.name,
         summary = from.overview,
-        homepage = from.homepage,
-        network = from.networks?.firstOrNull()?.name,
-        networkLogoPath = from.networks?.firstOrNull()?.logo_path,
     )
 }

@@ -18,9 +18,6 @@
 
 package app.tivi.data.mappers
 
-import com.uwetrottmann.tmdb2.entities.BaseTvShow
-import com.uwetrottmann.tmdb2.entities.TvShowResultsPage
-
 suspend inline fun <F, T> Mapper<F, T>.map(collection: Collection<F>) = collection.map { map(it) }
 
 inline fun <F, T1, T2> pairMapperOf(
@@ -39,10 +36,4 @@ inline fun <F, T1, T2> pairMapperOf(
     from.mapIndexed { index, value ->
         firstMapper.map(value) to secondMapper.map(index, value)
     }
-}
-
-inline fun <T> unwrapTmdbShowResults(
-    crossinline f: suspend (List<BaseTvShow>) -> List<T>,
-): suspend (TvShowResultsPage) -> List<T> = {
-    f(it.results ?: emptyList())
 }

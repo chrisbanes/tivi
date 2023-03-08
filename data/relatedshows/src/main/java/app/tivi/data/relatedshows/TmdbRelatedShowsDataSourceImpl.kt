@@ -16,37 +16,34 @@
 
 package app.tivi.data.relatedshows
 
+import app.moviebase.tmdb.Tmdb3
+import app.moviebase.tmdb.model.TmdbShow
 import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
-import app.tivi.data.mappers.TmdbBaseShowToTiviShow
+import app.tivi.data.mappers.TmdbShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
-import app.tivi.data.mappers.unwrapTmdbShowResults
 import app.tivi.data.models.RelatedShowEntry
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.bodyOrThrow
 import app.tivi.data.util.withRetry
-import com.uwetrottmann.tmdb2.Tmdb
-import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TmdbRelatedShowsDataSourceImpl(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
-    private val tmdb: Tmdb,
-    showMapper: TmdbBaseShowToTiviShow,
+    private val tmdb: Tmdb3,
+    showMapper: TmdbShowToTiviShow,
 ) : TmdbRelatedShowsDataSource {
-    private val entryMapper = IndexedMapper<BaseTvShow, RelatedShowEntry> { index, _ ->
+
+    private val entryMapper = IndexedMapper<TmdbShow, RelatedShowEntry> { index, _ ->
         RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
     }
-    private val resultMapper = unwrapTmdbShowResults(pairMapperOf(showMapper, entryMapper))
+    private val resultMapper = pairMapperOf(showMapper, entryMapper)
 
     override suspend operator fun invoke(
         showId: Long,
     ): List<Pair<TiviShow, RelatedShowEntry>> = withRetry {
-        tmdb.tvService()
-            .recommendations(tmdbIdMapper.map(showId), 1, null)
-            .awaitResponse()
-            .let { resultMapper(it.bodyOrThrow()) }
+        tmdb.show
+            .getRecommendations(tmdbIdMapper.map(showId), 1, null)
+            .let { resultMapper(it.results) }
     }
 }

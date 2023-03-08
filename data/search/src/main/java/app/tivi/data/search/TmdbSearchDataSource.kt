@@ -16,26 +16,22 @@
 
 package app.tivi.data.search
 
-import app.tivi.data.mappers.TmdbShowResultsPageToTiviShows
+import app.moviebase.tmdb.Tmdb3
+import app.tivi.data.mappers.TmdbShowPageResultToTiviShows
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.bodyOrThrow
-import app.tivi.data.util.withRetry
-import com.uwetrottmann.tmdb2.Tmdb
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TmdbSearchDataSource(
-    private val tmdb: Tmdb,
-    private val mapper: TmdbShowResultsPageToTiviShows,
+    private val tmdb: Tmdb3,
+    private val mapper: TmdbShowPageResultToTiviShows,
 ) : SearchDataSource {
     override suspend fun search(
         query: String,
-    ): List<Pair<TiviShow, List<ShowTmdbImage>>> = withRetry {
-        tmdb.searchService()
-            .tv(query, 1, null, null, false)
-            .awaitResponse()
-            .let { mapper.map(it.bodyOrThrow()) }
+    ): List<Pair<TiviShow, List<ShowTmdbImage>>> {
+        return tmdb.search
+            .findShows(query, 1)
+            .let { mapper.map(it) }
     }
 }

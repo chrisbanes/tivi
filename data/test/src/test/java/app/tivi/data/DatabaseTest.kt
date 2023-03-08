@@ -20,6 +20,7 @@ import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.moviebase.tmdb.Tmdb3
 import app.tivi.core.analytics.AnalyticsComponent
 import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ApplicationScope
@@ -31,7 +32,6 @@ import app.tivi.trakt.TraktOAuthInfo
 import app.tivi.util.Logger
 import app.tivi.util.LoggerComponent
 import app.tivi.util.TiviLogger
-import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.trakt5.TraktV2
 import io.mockk.mockk
 import me.tatarka.inject.annotations.Component
@@ -89,7 +89,7 @@ abstract class TestApplicationComponent(
     override fun provideTmdb(
         client: OkHttpClient,
         tmdbOAuthInfo: TmdbOAuthInfo,
-    ): Tmdb = Tmdb("fakefakefake")
+    ): Tmdb3 = Tmdb3("fakefakefake")
 
     @Provides
     override fun provideLogger(bind: TiviLogger): Logger = mockk(relaxUnitFun = true)

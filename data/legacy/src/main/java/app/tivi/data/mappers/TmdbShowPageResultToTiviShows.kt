@@ -16,33 +16,33 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.tmdb.model.TmdbShowPageResult
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import com.uwetrottmann.tmdb2.entities.TvShowResultsPage
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TmdbShowResultsPageToTiviShows(
-    private val tmdbShowMapper: TmdbBaseShowToTiviShow,
-) : Mapper<TvShowResultsPage, List<Pair<TiviShow, List<ShowTmdbImage>>>> {
-    override suspend fun map(from: TvShowResultsPage): List<Pair<TiviShow, List<ShowTmdbImage>>> {
-        return from.results.map {
-            val show = tmdbShowMapper.map(it)
+class TmdbShowPageResultToTiviShows(
+    private val tmdbShowMapper: TmdbShowToTiviShow,
+) : Mapper<TmdbShowPageResult, List<Pair<TiviShow, List<ShowTmdbImage>>>> {
+    override suspend fun map(from: TmdbShowPageResult): List<Pair<TiviShow, List<ShowTmdbImage>>> {
+        return from.results.map { result ->
+            val show = tmdbShowMapper.map(result)
 
             val images = ArrayList<ShowTmdbImage>()
-            if (it.poster_path != null) {
+            result.posterPath?.let { path ->
                 images += ShowTmdbImage(
                     showId = 0,
-                    path = it.poster_path,
+                    path = path,
                     isPrimary = true,
                     type = ImageType.POSTER,
                 )
             }
-            if (it.backdrop_path != null) {
+            result.backdropPath?.let { path ->
                 images += ShowTmdbImage(
                     showId = 0,
-                    path = it.backdrop_path,
+                    path = path,
                     isPrimary = true,
                     type = ImageType.BACKDROP,
                 )

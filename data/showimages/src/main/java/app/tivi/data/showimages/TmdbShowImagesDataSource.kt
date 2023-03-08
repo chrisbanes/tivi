@@ -16,29 +16,24 @@
 
 package app.tivi.data.showimages
 
-import app.tivi.data.mappers.TmdbImagesToShowImages
+import app.moviebase.tmdb.Tmdb3
+import app.moviebase.tmdb.model.AppendResponse
+import app.tivi.data.mappers.TmdbShowDetailToShowImages
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.bodyOrThrow
-import app.tivi.data.util.withRetry
-import com.uwetrottmann.tmdb2.Tmdb
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TmdbShowImagesDataSource(
-    private val tmdb: Tmdb,
-    private val mapper: TmdbImagesToShowImages,
+    private val tmdb: Tmdb3,
+    private val mapper: TmdbShowDetailToShowImages,
 ) : ShowImagesDataSource {
     override suspend fun getShowImages(show: TiviShow): List<ShowTmdbImage> {
         val tmdbId = show.tmdbId
             ?: throw IllegalArgumentException("TmdbId for show does not exist [$show]")
 
-        return withRetry {
-            tmdb.tvService()
-                .tv(tmdbId, null)
-                .awaitResponse()
-                .let { mapper.map(it.bodyOrThrow()) }
-        }
+        return tmdb.show
+            .getDetails(showId = tmdbId, appendResponses = listOf(AppendResponse.IMAGES))
+            .let { mapper.map(it) }
     }
 }
