@@ -40,13 +40,13 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.shouldUseDynamicColors
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.core.analytics.Analytics
 import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.ApplicationComponent
 import app.tivi.settings.SettingsActivity
 import app.tivi.settings.TiviPreferences
-import app.tivi.util.Analytics
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
 import me.tatarka.inject.annotations.Component

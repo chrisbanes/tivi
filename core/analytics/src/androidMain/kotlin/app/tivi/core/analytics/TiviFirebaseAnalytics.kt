@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.util
+package app.tivi.core.analytics
 
 import android.annotation.SuppressLint
 import android.app.Application

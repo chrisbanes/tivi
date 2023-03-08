@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+package app.tivi.core.analytics
 
-plugins {
-    id("kotlin")
-    alias(libs.plugins.cacheFixPlugin)
-}
+import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.Provides
 
-dependencies {
-    implementation(projects.core.base)
+interface AnalyticsComponent {
+    @ApplicationScope
+    @Provides
+    fun provideTiviFirebaseAnalytics(bind: TiviFirebaseAnalytics): Analytics = bind
 }
