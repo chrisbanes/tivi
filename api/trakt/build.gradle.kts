@@ -27,7 +27,7 @@ dependencies {
     }
     api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
 
-    implementation(projects.base)
+    implementation(projects.core.base)
 
     implementation(libs.okhttp.okhttp)
     implementation(libs.retrofit.retrofit)

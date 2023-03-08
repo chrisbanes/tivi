@@ -26,7 +26,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>> {
 }
 
 dependencies {
-    implementation(projects.base)
+    implementation(projects.core.base)
     api(projects.data.models)
     api(libs.cashapp.paging.common)
 }

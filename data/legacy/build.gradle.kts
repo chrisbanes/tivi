@@ -22,7 +22,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.base)
+    api(projects.core.base)
     api(projects.api.trakt)
     api(projects.api.tmdb)
     api(projects.core.logging.api)

@@ -21,5 +21,5 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.base)
+    implementation(projects.core.base)
 }
