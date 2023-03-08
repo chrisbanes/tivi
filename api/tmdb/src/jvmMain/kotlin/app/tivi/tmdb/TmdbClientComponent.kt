@@ -23,10 +23,10 @@ import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
 actual interface TmdbClientComponent {
-    @Provides
     @ApplicationScope
+    @Provides
     fun provideTmdb(
-        okHttpClient: OkHttpClient,
+        client: OkHttpClient,
         tmdbOAuthInfo: TmdbOAuthInfo,
     ): Tmdb3 = Tmdb3 {
         tmdbApiKey = tmdbOAuthInfo.apiKey
@@ -35,7 +35,7 @@ actual interface TmdbClientComponent {
         httpClient(OkHttp) {
             // Probably want to move to using Ktor's caching, timeouts, etc eventually
             engine {
-                preconfigured = okHttpClient
+                preconfigured = client
             }
         }
     }
