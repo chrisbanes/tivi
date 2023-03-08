@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,38 @@
 
 
 plugins {
+    kotlin("multiplatform")
     alias(libs.plugins.android.library)
     alias(libs.plugins.cacheFixPlugin)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
+}
+
+kotlin {
+    jvm()
+    android()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.core.base)
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                api(projects.core.preferences.api)
+                implementation(libs.androidx.core)
+
+                implementation(libs.kotlininject.runtime)
+            }
+        }
+    }
+}
+
+dependencies {
+    add("kspAndroid", libs.kotlininject.compiler)
 }
 
 android {
     namespace = "app.tivi.core.powercontroller"
-}
-
-dependencies {
-    api(projects.core.powercontroller.api)
-    api(projects.core.preferences.api)
-
-    implementation(libs.androidx.core)
-
-    implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
 }

@@ -160,7 +160,7 @@ dependencies {
     implementation(projects.core.base)
     implementation(projects.core.analytics)
     implementation(projects.core.logging)
-    implementation(projects.core.powercontroller.android)
+    implementation(projects.core.powercontroller)
     implementation(projects.core.preferences.android)
     implementation(projects.common.ui.view)
     implementation(projects.common.imageloading)
