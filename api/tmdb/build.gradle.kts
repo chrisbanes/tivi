@@ -29,6 +29,11 @@ dependencies {
     implementation(libs.okhttp.okhttp)
     implementation(libs.ktor.client)
 
+    // Manually depend on kotlinx-serialization. This changes the dependency from 'runtimeOnly'
+    // to 'compile', enabling R8 to properly pick-up the bundled rules at compile time.
+    // Can be removed once https://github.com/MoviebaseApp/tmdb-api/pull/51 lands
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+
     implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)
 }
