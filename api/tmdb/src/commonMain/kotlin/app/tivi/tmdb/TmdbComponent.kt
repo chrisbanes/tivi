@@ -16,33 +16,15 @@
 
 package app.tivi.tmdb
 
-import app.moviebase.tmdb.Tmdb3
 import app.tivi.inject.ApplicationScope
-import io.ktor.client.engine.okhttp.OkHttp
 import me.tatarka.inject.annotations.Provides
-import okhttp3.OkHttpClient
 
-interface TmdbComponent {
+interface TmdbComponent : TmdbClientComponent {
     @ApplicationScope
     @Provides
     fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
         return tmdbManager.getLatestImageProvider()
     }
-
-    @ApplicationScope
-    @Provides
-    fun provideTmdb(
-        client: OkHttpClient,
-        tmdbOAuthInfo: TmdbOAuthInfo,
-    ): Tmdb3 = Tmdb3 {
-        tmdbApiKey = tmdbOAuthInfo.apiKey
-        maxRetriesOnException = 3
-
-        httpClient(OkHttp) {
-            // Probably want to move to using Ktor's caching, timeouts, etc eventually
-            engine {
-                preconfigured = client
-            }
-        }
-    }
 }
+
+expect interface TmdbClientComponent
