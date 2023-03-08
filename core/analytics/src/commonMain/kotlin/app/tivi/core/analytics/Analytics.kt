@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
+package app.tivi.core.analytics
 
-plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.cacheFixPlugin)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
-}
-
-android {
-    namespace = "app.tivi.core.analytics"
-}
-
-dependencies {
-    api(projects.core.base)
-    api(projects.core.analytics.api)
-
-    implementation(platform(libs.google.firebase.bom))
-    implementation(libs.google.firebase.analytics)
-
-    implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
+interface Analytics {
+    fun trackScreenView(
+        label: String,
+        route: String?,
+        arguments: Any? = null,
+    )
 }

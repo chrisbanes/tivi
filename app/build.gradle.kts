@@ -158,7 +158,7 @@ tasks.withType<KotlinCompilationTask<*>> {
 
 dependencies {
     implementation(projects.core.base)
-    implementation(projects.core.analytics.android)
+    implementation(projects.core.analytics)
     implementation(projects.core.logging.android)
     implementation(projects.core.powercontroller.android)
     implementation(projects.core.preferences.android)
@@ -220,7 +220,6 @@ dependencies {
 
     ksp(libs.kotlininject.compiler)
 
-    implementation(platform(libs.google.firebase.bom))
     implementation(libs.google.firebase.crashlytics)
 
     "qaImplementation"(libs.chucker.library)

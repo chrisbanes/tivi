@@ -101,9 +101,8 @@ compose-ui-uitextfonts = { module = "androidx.compose.ui:ui-text-google-fonts" }
 compose-ui-util = { module = "androidx.compose.ui:ui-util" }
 compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding" }
 
-google-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
-google-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-google-firebase-bom = "com.google.firebase:firebase-bom:31.2.3"
+google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.2.0"
+google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.3.5"
 
 debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
 debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retrofit", version.ref = "debugdrawer" }

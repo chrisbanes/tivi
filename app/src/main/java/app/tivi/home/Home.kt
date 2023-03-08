@@ -78,8 +78,8 @@ import app.tivi.AppNavigation
 import app.tivi.ComposeScreens
 import app.tivi.RootScreen
 import app.tivi.common.ui.resources.R as UiR
+import app.tivi.core.analytics.Analytics
 import app.tivi.debugLabel
-import app.tivi.util.Analytics
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout

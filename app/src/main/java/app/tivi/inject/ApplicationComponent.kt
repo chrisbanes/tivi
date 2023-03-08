@@ -21,6 +21,7 @@ import android.content.Context
 import app.tivi.TiviApplication
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.common.imageloading.ImageLoadingComponent
+import app.tivi.core.analytics.AnalyticsComponent
 import app.tivi.data.RoomDatabaseComponent
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsBinds
@@ -40,7 +41,6 @@ import app.tivi.tasks.TiviWorkerFactory
 import app.tivi.tmdb.TmdbComponent
 import app.tivi.trakt.TraktAuthComponent
 import app.tivi.trakt.TraktComponent
-import app.tivi.util.AnalyticsComponent
 import app.tivi.util.LoggerComponent
 import app.tivi.util.PowerControllerComponent
 import me.tatarka.inject.annotations.Component
