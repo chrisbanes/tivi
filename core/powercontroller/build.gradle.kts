@@ -35,7 +35,7 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                api(projects.core.preferences.api)
+                api(projects.core.preferences)
                 implementation(libs.androidx.core)
 
                 implementation(libs.kotlininject.runtime)
