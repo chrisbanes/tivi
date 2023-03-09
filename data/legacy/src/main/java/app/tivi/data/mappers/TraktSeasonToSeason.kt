@@ -16,8 +16,8 @@
 
 package app.tivi.data.mappers
 
-import app.tivi.data.models.Season
 import app.moviebase.trakt.model.TraktSeason
+import app.tivi.data.models.Season
 import me.tatarka.inject.annotations.Inject
 
 @Inject

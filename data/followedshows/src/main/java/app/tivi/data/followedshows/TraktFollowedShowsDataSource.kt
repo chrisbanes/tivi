@@ -58,7 +58,7 @@ class TraktFollowedShowsDataSource(
     override suspend fun getFollowedListId(): TraktList =
         usersApi.value.getLists().find { it.name == LIST_NAME }
             ?: usersApi.value.createList(
-                list = TraktList(name = LIST_NAME, privacy = TraktListPrivacy.PRIVATE)
+                list = TraktList(name = LIST_NAME, privacy = TraktListPrivacy.PRIVATE),
             )
 
     private fun List<TiviShow>.toSyncItems() = TraktSyncItems(shows = map { it.toSyncItem() })

@@ -38,7 +38,7 @@ class TraktEpisodeDataSourceImpl(
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
 
         return service.value
-                .getSummary(traktId.toString(), seasonNumber, episodeNumber)
-                .let { episodeMapper.map(it) }
+            .getSummary(traktId.toString(), seasonNumber, episodeNumber)
+            .let { episodeMapper.map(it) }
     }
 }
