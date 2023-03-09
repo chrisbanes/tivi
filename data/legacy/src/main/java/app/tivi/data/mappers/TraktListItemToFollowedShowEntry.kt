@@ -16,13 +16,15 @@
 
 package app.tivi.data.mappers
 
-import app.tivi.data.models.TiviShow
-import com.uwetrottmann.trakt5.entities.BaseShow
+import app.moviebase.trakt.model.TraktUserListItem
+import app.tivi.data.models.FollowedShowEntry
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TraktBaseShowToTiviShow(
-    private val showMapper: TraktShowToTiviShow,
-) : Mapper<BaseShow, TiviShow> {
-    override suspend fun map(from: BaseShow): TiviShow = showMapper.map(from.show!!)
+class TraktListItemToFollowedShowEntry() : Mapper<TraktUserListItem, FollowedShowEntry> {
+    override suspend fun map(from: TraktUserListItem) = FollowedShowEntry(
+        showId = 0,
+        followedAt = from.listedAt,
+        traktId = from.id,
+    )
 }

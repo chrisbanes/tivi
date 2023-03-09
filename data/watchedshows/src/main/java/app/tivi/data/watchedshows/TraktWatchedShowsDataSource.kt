@@ -16,27 +16,20 @@
 
 package app.tivi.data.watchedshows
 
+import app.moviebase.trakt.TraktExtended
+import app.moviebase.trakt.api.TraktSyncApi
 import app.tivi.data.mappers.TraktBaseShowToWatchedShowEntry
 import app.tivi.data.mappers.map
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
-import app.tivi.data.util.bodyOrThrow
-import app.tivi.data.util.withRetry
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Sync
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TraktWatchedShowsDataSource(
-    private val syncService: Lazy<Sync>,
+    private val syncApi: Lazy<TraktSyncApi>,
     private val mapper: TraktBaseShowToWatchedShowEntry,
 ) : WatchedShowsDataSource {
 
-    override suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>> = withRetry {
-        syncService.value
-            .watchedShows(Extended.NOSEASONS)
-            .awaitResponse()
-            .let { mapper.map(it.bodyOrThrow()) }
-    }
+    override suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>> =
+        syncApi.value.getWatchedShows(extended = TraktExtended.NOSEASONS).let { mapper.map(it) }
 }

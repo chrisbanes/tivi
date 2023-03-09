@@ -20,7 +20,6 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.tasks.ShowTasks
 import app.tivi.trakt.store.AuthStore
 import app.tivi.util.AppCoroutineDispatchers
-import com.uwetrottmann.trakt5.TraktV2
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +35,6 @@ import me.tatarka.inject.annotations.Inject
 class TraktManager(
     private val dispatchers: AppCoroutineDispatchers,
     private val showTasks: ShowTasks,
-    private val traktClient: Lazy<TraktV2>,
     private val authStore: AuthStore,
 ) {
     private val authState = MutableStateFlow(AuthState.Empty)
@@ -49,11 +47,6 @@ class TraktManager(
         GlobalScope.launch(dispatchers.main) {
             authState.collect { authState ->
                 updateAuthState(authState)
-
-                traktClient.value.apply {
-                    accessToken(authState.accessToken)
-                    refreshToken(authState.refreshToken)
-                }
             }
         }
 

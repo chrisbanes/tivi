@@ -16,28 +16,24 @@
 
 package app.tivi.data.recommendedshows
 
+import app.moviebase.trakt.api.TraktRecommendationsApi
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.map
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.bodyOrThrow
-import app.tivi.data.util.withRetry
-import com.uwetrottmann.trakt5.services.Recommendations
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TraktRecommendedShowsDataSource(
-    private val recommendationsService: Lazy<Recommendations>,
+    private val recommendationsService: Lazy<TraktRecommendationsApi>,
     private val showMapper: TraktShowToTiviShow,
 ) : RecommendedShowsDataSource {
+
     override suspend operator fun invoke(
         page: Int,
         pageSize: Int,
-    ): List<TiviShow> = withRetry {
+    ): List<TiviShow> =
         recommendationsService.value
             // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
-            .shows(page + 1, pageSize, null)
-            .awaitResponse()
-            .let { showMapper.map(it.bodyOrThrow()) }
-    }
+            .getShows(page = page + 1, limit = pageSize)
+            .let { showMapper.map(it) }
 }

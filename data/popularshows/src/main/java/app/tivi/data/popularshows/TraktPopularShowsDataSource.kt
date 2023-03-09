@@ -16,25 +16,22 @@
 
 package app.tivi.data.popularshows
 
+import app.moviebase.trakt.TraktExtended
+import app.moviebase.trakt.api.TraktShowsApi
+import app.moviebase.trakt.model.TraktShow
 import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.models.PopularShowEntry
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.bodyOrThrow
-import app.tivi.data.util.withRetry
-import com.uwetrottmann.trakt5.entities.Show
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Shows
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TraktPopularShowsDataSource(
-    private val showService: Lazy<Shows>,
+    private val showService: Lazy<TraktShowsApi>,
     showMapper: TraktShowToTiviShow,
 ) : PopularShowsDataSource {
-    private val entryMapper = IndexedMapper<Show, PopularShowEntry> { index, _ ->
+    private val entryMapper = IndexedMapper<TraktShow, PopularShowEntry> { index, _ ->
         PopularShowEntry(showId = 0, pageOrder = index, page = 0)
     }
 
@@ -43,9 +40,8 @@ class TraktPopularShowsDataSource(
     override suspend operator fun invoke(
         page: Int,
         pageSize: Int,
-    ): List<Pair<TiviShow, PopularShowEntry>> = withRetry {
-        showService.value.popular(page + 1, pageSize, Extended.NOSEASONS)
-            .awaitResponse()
-            .let { resultsMapper(it.bodyOrThrow()) }
-    }
+    ): List<Pair<TiviShow, PopularShowEntry>> =
+        showService.value
+            .getPopular(page = page + 1, limit = pageSize, extended = TraktExtended.NOSEASONS)
+            .let { resultsMapper(it) }
 }

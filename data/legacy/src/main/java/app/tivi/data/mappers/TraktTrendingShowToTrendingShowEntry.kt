@@ -16,13 +16,14 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.trakt.model.TraktTrendingShow
 import app.tivi.data.models.TrendingShowEntry
-import com.uwetrottmann.trakt5.entities.TrendingShow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TraktTrendingShowToTrendingShowEntry() : Mapper<TrendingShow, TrendingShowEntry> {
-    override suspend fun map(from: TrendingShow): TrendingShowEntry {
+class TraktTrendingShowToTrendingShowEntry() : Mapper<TraktTrendingShow, TrendingShowEntry> {
+
+    override suspend fun map(from: TraktTrendingShow): TrendingShowEntry {
         return TrendingShowEntry(
             showId = 0,
             watchers = from.watchers ?: 0,

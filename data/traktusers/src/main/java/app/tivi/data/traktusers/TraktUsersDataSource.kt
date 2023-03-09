@@ -16,25 +16,21 @@
 
 package app.tivi.data.traktusers
 
+import app.moviebase.trakt.TraktExtended
+import app.moviebase.trakt.api.TraktUsersApi
+import app.moviebase.trakt.model.TraktUserSlug
 import app.tivi.data.mappers.UserToTraktUser
 import app.tivi.data.models.TraktUser
-import app.tivi.data.util.bodyOrThrow
-import app.tivi.data.util.withRetry
-import com.uwetrottmann.trakt5.entities.UserSlug
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Users
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TraktUsersDataSource(
-    private val usersService: Lazy<Users>,
+    private val usersService: Lazy<TraktUsersApi>,
     private val mapper: UserToTraktUser,
 ) : UsersDataSource {
-    override suspend fun getUser(slug: String): TraktUser = withRetry {
+
+    override suspend fun getUser(slug: String): TraktUser =
         usersService.value
-            .profile(UserSlug(slug), Extended.FULL)
-            .awaitResponse()
-            .let { mapper.map(it.bodyOrThrow()) }
-    }
+            .getProfile(TraktUserSlug(slug), TraktExtended.FULL)
+            .let { mapper.map(it) }
 }

@@ -16,13 +16,14 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.trakt.model.TraktHistoryItem
 import app.tivi.data.models.Episode
-import com.uwetrottmann.trakt5.entities.HistoryEntry
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktHistoryEntryToEpisode(
     private val mapper: TraktEpisodeToEpisode,
-) : Mapper<HistoryEntry, Episode> {
-    override suspend fun map(from: HistoryEntry) = mapper.map(from.episode)
+) : Mapper<TraktHistoryItem, Episode> {
+
+    override suspend fun map(from: TraktHistoryItem) = mapper.map(requireNotNull(from.episode))
 }

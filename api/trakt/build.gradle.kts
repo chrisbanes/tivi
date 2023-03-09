@@ -22,12 +22,12 @@ plugins {
 }
 
 dependencies {
-    api(libs.traktJava) {
-        exclude(group = "org.threeten", module = "threetenbp")
-    }
-    api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
-
     implementation(projects.core.base)
+
+    api(libs.trakt.api)
+    api(projects.api.traktAuth.api)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
 
     implementation(libs.okhttp.okhttp)
     implementation(libs.retrofit.retrofit)

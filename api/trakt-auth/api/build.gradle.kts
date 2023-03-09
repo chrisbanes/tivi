@@ -22,6 +22,5 @@ plugins {
 
 dependencies {
     implementation(projects.core.base)
-    api(projects.api.trakt)
     api(projects.tasks.api)
 }

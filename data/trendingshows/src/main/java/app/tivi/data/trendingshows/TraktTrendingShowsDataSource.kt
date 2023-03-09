@@ -16,34 +16,34 @@
 
 package app.tivi.data.trendingshows
 
+import app.moviebase.trakt.TraktExtended
+import app.moviebase.trakt.api.TraktShowsApi
 import app.tivi.data.mappers.TraktTrendingShowToTiviShow
 import app.tivi.data.mappers.TraktTrendingShowToTrendingShowEntry
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TrendingShowEntry
-import app.tivi.data.util.bodyOrThrow
-import app.tivi.data.util.withRetry
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Shows
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TraktTrendingShowsDataSource(
-    private val showService: Lazy<Shows>,
+    private val showsApi: Lazy<TraktShowsApi>,
     showMapper: TraktTrendingShowToTiviShow,
     entryMapper: TraktTrendingShowToTrendingShowEntry,
 ) : TrendingShowsDataSource {
+
     private val responseMapper = pairMapperOf(showMapper, entryMapper)
 
     override suspend operator fun invoke(
         page: Int,
         pageSize: Int,
-    ): List<Pair<TiviShow, TrendingShowEntry>> = withRetry {
-        showService.value
+    ): List<Pair<TiviShow, TrendingShowEntry>> =
+        showsApi.value
             // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
-            .trending(page + 1, pageSize, Extended.NOSEASONS)
-            .awaitResponse()
-            .let { responseMapper(it.bodyOrThrow()) }
-    }
+            .getTrending(
+                page = page + 1,
+                limit = pageSize,
+                extended = TraktExtended.NOSEASONS,
+            )
+            .let { responseMapper(it) }
 }
