@@ -16,9 +16,9 @@
 
 package app.tivi.data.followedshows
 
+import app.moviebase.trakt.model.TraktList
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.TiviShow
-import com.uwetrottmann.trakt5.entities.TraktList
 
 interface FollowedShowsDataSource {
     suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>>

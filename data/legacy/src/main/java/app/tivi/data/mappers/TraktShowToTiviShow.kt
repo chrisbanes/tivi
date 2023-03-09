@@ -16,9 +16,8 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.trakt.model.TraktShow
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.toKotlinInstant
-import com.uwetrottmann.trakt5.entities.Show
 import java.util.Locale
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -28,8 +27,9 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TraktShowToTiviShow(
     private val statusMapper: TraktStatusToShowStatus,
-) : Mapper<Show, TiviShow> {
-    override suspend fun map(from: Show) = TiviShow(
+) : Mapper<TraktShow, TiviShow> {
+
+    override suspend fun map(from: TraktShow) = TiviShow(
         traktId = from.ids?.trakt,
         tmdbId = from.ids?.tmdb,
         imdbId = from.ids?.imdb,
@@ -42,8 +42,8 @@ class TraktShowToTiviShow(
         runtime = from.runtime,
         network = from.network,
         country = from.country,
-        firstAired = from.first_aired?.toKotlinInstant(),
-        _genres = from.genres?.joinToString(","),
+        firstAired = from.firstAired,
+        _genres = from.genres.joinToString(","),
         status = from.status?.let { statusMapper.map(it) },
         airsDay = from.airs?.day?.let { airsDayString ->
             DayOfWeek.values().firstOrNull { day ->

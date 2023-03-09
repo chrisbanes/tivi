@@ -16,16 +16,18 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.trakt.model.TraktShowStatus
 import app.tivi.data.models.ShowStatus
-import com.uwetrottmann.trakt5.enums.Status
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TraktStatusToShowStatus() : Mapper<Status, ShowStatus> {
-    override suspend fun map(from: Status) = when (from) {
-        Status.ENDED -> ShowStatus.ENDED
-        Status.RETURNING -> ShowStatus.RETURNING
-        Status.CANCELED -> ShowStatus.CANCELED
-        Status.IN_PRODUCTION -> ShowStatus.IN_PRODUCTION
+class TraktStatusToShowStatus() : Mapper<TraktShowStatus, ShowStatus> {
+
+    override suspend fun map(from: TraktShowStatus) = when (from) {
+        TraktShowStatus.ENDED -> ShowStatus.ENDED
+        TraktShowStatus.RETURNING_SERIES -> ShowStatus.RETURNING
+        TraktShowStatus.CANCELED -> ShowStatus.CANCELED
+        TraktShowStatus.IN_PRODUCTION -> ShowStatus.IN_PRODUCTION
+        TraktShowStatus.PLANNED -> ShowStatus.PLANNED
     }
 }

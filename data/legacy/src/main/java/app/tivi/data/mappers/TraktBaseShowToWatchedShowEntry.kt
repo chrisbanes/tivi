@@ -16,21 +16,21 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.trakt.model.TraktMediaItem
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
-import app.tivi.data.util.toKotlinInstant
-import com.uwetrottmann.trakt5.entities.BaseShow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktBaseShowToWatchedShowEntry(
     private val showMapper: TraktShowToTiviShow,
-) : Mapper<BaseShow, Pair<TiviShow, WatchedShowEntry>> {
-    override suspend fun map(from: BaseShow): Pair<TiviShow, WatchedShowEntry> {
+) : Mapper<TraktMediaItem, Pair<TiviShow, WatchedShowEntry>> {
+
+    override suspend fun map(from: TraktMediaItem): Pair<TiviShow, WatchedShowEntry> {
         val watchedShowEntry = WatchedShowEntry(
             showId = 0,
-            lastWatched = from.last_watched_at!!.toKotlinInstant(),
-            lastUpdated = from.last_updated_at!!.toKotlinInstant(),
+            lastWatched = from.lastWatchedAt!!,
+            lastUpdated = from.lastUpdatedAt!!,
         )
         return showMapper.map(from.show!!) to watchedShowEntry
     }

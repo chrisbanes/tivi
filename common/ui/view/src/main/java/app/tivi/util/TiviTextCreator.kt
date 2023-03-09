@@ -192,9 +192,11 @@ class TiviTextCreator(
         )
     }
 
+    // TODO: change the string here, check if planned is still in Trakt
     fun showStatusText(status: ShowStatus): CharSequence = when (status) {
         ShowStatus.CANCELED, ShowStatus.ENDED -> context.getString(UiR.string.status_ended)
         ShowStatus.RETURNING -> context.getString(UiR.string.status_active)
         ShowStatus.IN_PRODUCTION -> context.getString(UiR.string.status_in_production)
+        ShowStatus.PLANNED -> ""
     }
 }

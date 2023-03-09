@@ -18,7 +18,7 @@ package app.tivi.data.mappers
 
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
-import com.uwetrottmann.trakt5.entities.Season as TraktSeason
+import app.moviebase.trakt.model.TraktSeason
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -26,6 +26,7 @@ class TraktSeasonToSeasonWithEpisodes(
     private val seasonMapper: TraktSeasonToSeason,
     private val episoderMapper: TraktEpisodeToEpisode,
 ) : Mapper<TraktSeason, Pair<Season, List<Episode>>> {
+
     override suspend fun map(from: TraktSeason): Pair<Season, List<Episode>> = Pair(
         seasonMapper.map(from),
         from.episodes?.map { episoderMapper.map(it) } ?: emptyList(),

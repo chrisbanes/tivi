@@ -16,39 +16,34 @@
 
 package app.tivi.data.relatedshows
 
+import app.moviebase.trakt.TraktExtended
+import app.moviebase.trakt.api.TraktShowsApi
+import app.moviebase.trakt.model.TraktShow
 import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.models.RelatedShowEntry
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.bodyOrThrow
-import app.tivi.data.util.withRetry
-import com.uwetrottmann.trakt5.entities.Show
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Shows
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TraktRelatedShowsDataSourceImpl(
     private val traktIdMapper: ShowIdToTraktIdMapper,
-    private val showService: Lazy<Shows>,
+    private val showService: Lazy<TraktShowsApi>,
     showMapper: TraktShowToTiviShow,
 ) : TraktRelatedShowsDataSource {
-    private val entryMapper = IndexedMapper<Show, RelatedShowEntry> { index, _ ->
+    private val entryMapper = IndexedMapper<TraktShow, RelatedShowEntry> { index, _ ->
         RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
     }
     private val resultMapper = pairMapperOf(showMapper, entryMapper)
 
     override suspend operator fun invoke(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
-        val traktId = traktIdMapper.map(showId)
+        val traktShowId = traktIdMapper.map(showId)
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
-        return withRetry {
-            showService.value
-                .related(traktId.toString(), 0, 10, Extended.NOSEASONS)
-                .awaitResponse()
-                .let { resultMapper(it.bodyOrThrow()) }
-        }
+
+        return showService.value
+                .getRelated(traktShowId.toString(), 0, 10, TraktExtended.NOSEASONS)
+                .let { resultMapper(it) }
     }
 }

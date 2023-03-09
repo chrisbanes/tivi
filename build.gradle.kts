@@ -38,6 +38,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
 
         // Need to use the 'dev' Compose Compiler for Kotlin 1.8.0 support
         // maven("https://androidx.dev/storage/compose-compiler/repository/")
@@ -46,7 +47,7 @@ allprojects {
         // maven("https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/")
 
         // Used for snapshots if needed
-        // maven("https://oss.sonatype.org/content/repositories/snapshots/")
+         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 
     apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
