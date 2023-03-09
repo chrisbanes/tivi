@@ -55,7 +55,7 @@ class TraktShowDataSourceImpl(
                 networks = show.network,
                 extended = TraktExtended.NOSEASONS,
                 page = 1,
-                limit = 1
+                limit = 1,
             )
             traktId = searchService.value
                 .searchTextQueryShow(searchQuery)

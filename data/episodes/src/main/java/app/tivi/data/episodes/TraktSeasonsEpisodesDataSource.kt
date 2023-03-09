@@ -108,7 +108,7 @@ class TraktSeasonsEpisodesDataSource(
             val traktEpisodeId = episodeIdToTraktIdMapper.map(it.episodeId)
             TraktSyncEpisode(
                 ids = TraktItemIds(trakt = traktEpisodeId),
-                watchedAt = it.watchedAt
+                watchedAt = it.watchedAt,
             )
         }
         val items = TraktSyncItems(episodes = episodes)

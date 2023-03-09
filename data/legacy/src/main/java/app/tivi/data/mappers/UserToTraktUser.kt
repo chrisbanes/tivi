@@ -16,10 +16,9 @@
 
 package app.tivi.data.mappers
 
-import app.tivi.data.models.TraktUser
-import app.tivi.data.util.toKotlinInstant
-import me.tatarka.inject.annotations.Inject
 import app.moviebase.trakt.model.TraktUser as ApiTraktUser
+import app.tivi.data.models.TraktUser
+import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UserToTraktUser() : Mapper<ApiTraktUser, TraktUser> {
