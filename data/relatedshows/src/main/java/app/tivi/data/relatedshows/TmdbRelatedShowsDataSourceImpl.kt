@@ -24,7 +24,6 @@ import app.tivi.data.mappers.TmdbShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.models.RelatedShowEntry
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.withRetry
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -41,8 +40,8 @@ class TmdbRelatedShowsDataSourceImpl(
 
     override suspend operator fun invoke(
         showId: Long,
-    ): List<Pair<TiviShow, RelatedShowEntry>> = withRetry {
-        tmdb.show
+    ): List<Pair<TiviShow, RelatedShowEntry>> {
+        return tmdb.show
             .getRecommendations(tmdbIdMapper.map(showId), 1, null)
             .let { resultMapper(it.results) }
     }

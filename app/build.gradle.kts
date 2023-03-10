@@ -225,8 +225,6 @@ dependencies {
     "qaImplementation"(libs.chucker.library)
 
     "qaImplementation"(libs.debugdrawer.debugdrawer)
-    "qaImplementation"(libs.debugdrawer.retrofit)
-    "qaImplementation"(libs.retrofit.mock)
     "qaImplementation"(libs.debugdrawer.timber)
     "qaImplementation"(libs.debugdrawer.okhttplogger)
 

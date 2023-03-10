@@ -29,7 +29,6 @@ dependencies {
     api(projects.api.trakt)
     api(projects.api.traktAuth.api)
     api(projects.api.tmdb)
-    implementation(libs.retrofit.retrofit)
 
     implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)
