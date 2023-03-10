@@ -31,8 +31,6 @@ dependencies {
 
     api(libs.store)
 
-    api("org.threeten:threetenbp:${libs.versions.threetenbp.get()}:no-tzdb")
-
     implementation(libs.kotlininject.runtime)
     ksp(libs.kotlininject.compiler)
 }

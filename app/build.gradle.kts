@@ -208,8 +208,6 @@ dependencies {
     implementation(libs.accompanist.navigation.animation)
     implementation(libs.accompanist.navigation.material)
 
-    implementation(libs.threeTenAbp)
-
     implementation(libs.timber)
 
     implementation(libs.kotlin.coroutines.android)

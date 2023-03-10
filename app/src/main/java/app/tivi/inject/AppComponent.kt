@@ -22,7 +22,6 @@ import app.tivi.app.ApplicationInfo
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.PreferencesInitializer
-import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
 import app.tivi.appinitializers.TmdbInitializer
 import app.tivi.tmdb.TmdbOAuthInfo
@@ -65,10 +64,6 @@ interface AppComponent {
     @Provides
     @IntoSet
     fun provideEmojiInitializer(bind: EmojiInitializer): AppInitializer = bind
-
-    @Provides
-    @IntoSet
-    fun provideThreeTenAbpInitializer(bind: ThreeTenBpInitializer): AppInitializer = bind
 
     @Provides
     @IntoSet
