@@ -64,7 +64,7 @@ class TraktShowDataSourceImpl(
 
         return if (traktId != null) {
             showService.value
-                .getSummary(traktSlug = traktId.toString(), extended = TraktExtended.FULL)
+                .getSummary(showId = traktId.toString(), extended = TraktExtended.FULL)
                 .let { mapper.map(it) }
         } else {
             throw IllegalArgumentException("Trakt ID for show does not exist: [$show]")
