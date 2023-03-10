@@ -17,6 +17,8 @@
 package app.tivi.data.repositories
 
 import androidx.test.core.app.ApplicationProvider
+import app.moviebase.trakt.model.TraktList
+import app.moviebase.trakt.model.TraktListIds
 import app.tivi.data.DatabaseTest
 import app.tivi.data.TestApplicationComponent
 import app.tivi.data.TiviRoomDatabase
@@ -37,8 +39,6 @@ import app.tivi.utils.insertShow
 import app.tivi.utils.show
 import app.tivi.utils.show2
 import com.google.common.truth.Truth.assertThat
-import com.uwetrottmann.trakt5.entities.ListIds
-import com.uwetrottmann.trakt5.entities.TraktList
 import io.mockk.coEvery
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -72,9 +72,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     @Test
     fun testSync() = runTest {
         coEvery { followedShowsDataSource.getFollowedListId() }
-            .returns(
-                TraktList().apply { ids = ListIds().apply { trakt = 0 } },
-            )
+            .returns(TraktList(ids = TraktListIds(trakt = 0)))
         coEvery { followedShowsDataSource.getListShows(0) }
             .returns(listOf(followedShow1Network to show))
 
@@ -90,9 +88,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     fun testSync_emptyResponse() = runTest {
         insertFollowedShow(database)
 
-        coEvery { followedShowsDataSource.getFollowedListId() } returns TraktList().apply {
-            ids = ListIds().apply { trakt = 0 }
-        }
+        coEvery { followedShowsDataSource.getFollowedListId() } returns
+            TraktList(ids = TraktListIds(trakt = 0))
 
         coEvery { followedShowsDataSource.getListShows(0) } returns emptyList()
 
@@ -107,9 +104,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     fun testSync_responseDifferentShow() = runTest {
         insertFollowedShow(database)
 
-        coEvery { followedShowsDataSource.getFollowedListId() } returns TraktList().apply {
-            ids = ListIds().apply { trakt = 0 }
-        }
+        coEvery { followedShowsDataSource.getFollowedListId() } returns
+            TraktList(ids = TraktListIds(trakt = 0))
         coEvery { followedShowsDataSource.getListShows(0) } returns listOf(followedShow2Network to show2)
 
         traktManager.onNewAuthState(AuthorizedAuthState)

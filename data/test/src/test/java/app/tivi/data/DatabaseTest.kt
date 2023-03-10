@@ -21,6 +21,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.moviebase.tmdb.Tmdb3
+import app.moviebase.trakt.Trakt
 import app.tivi.core.analytics.AnalyticsComponent
 import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ApplicationScope
@@ -29,10 +30,10 @@ import app.tivi.tmdb.TmdbOAuthInfo
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktComponent
 import app.tivi.trakt.TraktOAuthInfo
+import app.tivi.trakt.store.AuthStore
 import app.tivi.util.Logger
 import app.tivi.util.LoggerComponent
 import app.tivi.util.TiviLogger
-import com.uwetrottmann.trakt5.TraktV2
 import io.mockk.mockk
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
@@ -82,8 +83,9 @@ abstract class TestApplicationComponent(
     @Provides
     override fun provideTrakt(
         client: OkHttpClient,
+        authStore: AuthStore,
         oauthInfo: TraktOAuthInfo,
-    ): TraktV2 = TraktV2("fakefakefake")
+    ): Trakt = Trakt("fakefakefake")
 
     @Provides
     override fun provideTmdb(
