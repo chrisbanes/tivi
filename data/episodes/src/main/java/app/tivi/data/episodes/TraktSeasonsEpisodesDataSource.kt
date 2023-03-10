@@ -58,7 +58,7 @@ class TraktSeasonsEpisodesDataSource(
         requireNotNull(showTraktId) { "No Trakt ID for show with ID: $showId" }
 
         return seasonsService.value
-            .getSummary(showId = showTraktId.toString(), extended = TraktExtended.EPISODES)
+            .getSummary(showId = showTraktId.toString(), extended = TraktExtended.FULL_EPISODES)
             .let { seasonMapper.map(it) }
     }
 
@@ -72,7 +72,7 @@ class TraktSeasonsEpisodesDataSource(
         return usersService.value.getHistory(
             itemId = showTraktId,
             listType = TraktListMediaType.SHOWS,
-            extended = TraktExtended.NOSEASONS,
+            extended = TraktExtended.NO_SEASONS,
             startAt = since,
         ).let { showEpisodeWatchesMapper(it) }
     }
@@ -84,7 +84,7 @@ class TraktSeasonsEpisodesDataSource(
         usersService.value.getHistory(
             itemId = seasonIdToTraktIdMapper.map(seasonId),
             listType = TraktListMediaType.SEASONS,
-            extended = TraktExtended.NOSEASONS,
+            extended = TraktExtended.NO_SEASONS,
             startAt = since,
         ).let { pairMapperOf(episodeMapper, historyItemMapper).invoke(it) }
 
@@ -95,7 +95,7 @@ class TraktSeasonsEpisodesDataSource(
         usersService.value.getHistory(
             itemId = episodeIdToTraktIdMapper.map(episodeId),
             listType = TraktListMediaType.EPISODES,
-            extended = TraktExtended.NOSEASONS,
+            extended = TraktExtended.NO_SEASONS,
             startAt = since,
         ).let { historyItemMapper.map(it) }
 

@@ -42,7 +42,7 @@ class TraktShowDataSourceImpl(
                     idType = TraktIdType.TMDB,
                     id = show.tmdbId.toString(),
                     searchType = TraktSearchType.SHOW,
-                    extended = TraktExtended.NOSEASONS,
+                    extended = TraktExtended.NO_SEASONS,
                     page = 1,
                     limit = 1,
                 ).getOrNull(0)?.show?.ids?.trakt
@@ -53,7 +53,7 @@ class TraktShowDataSourceImpl(
                 query = show.title,
                 countries = show.country,
                 networks = show.network,
-                extended = TraktExtended.NOSEASONS,
+                extended = TraktExtended.NO_SEASONS,
                 page = 1,
                 limit = 1,
             )

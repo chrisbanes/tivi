@@ -43,7 +43,7 @@ class TraktRelatedShowsDataSourceImpl(
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
 
         return showService.value
-            .getRelated(traktShowId.toString(), 0, 10, TraktExtended.NOSEASONS)
+            .getRelated(traktShowId.toString(), 0, 10, TraktExtended.NO_SEASONS)
             .let { resultMapper(it) }
     }
 }

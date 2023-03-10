@@ -38,12 +38,10 @@ class TraktTrendingShowsDataSource(
         page: Int,
         pageSize: Int,
     ): List<Pair<TiviShow, TrendingShowEntry>> =
-        showsApi.value
+        showsApi.value.getTrending(
             // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
-            .getTrending(
-                page = page + 1,
-                limit = pageSize,
-                extended = TraktExtended.NOSEASONS,
-            )
-            .let { responseMapper(it) }
+            page = page + 1,
+            limit = pageSize,
+            extended = TraktExtended.NO_SEASONS,
+        ).let { responseMapper(it) }
 }

@@ -42,6 +42,6 @@ class TraktPopularShowsDataSource(
         pageSize: Int,
     ): List<Pair<TiviShow, PopularShowEntry>> =
         showService.value
-            .getPopular(page = page + 1, limit = pageSize, extended = TraktExtended.NOSEASONS)
+            .getPopular(page = page + 1, limit = pageSize, extended = TraktExtended.NO_SEASONS)
             .let { resultsMapper(it) }
 }

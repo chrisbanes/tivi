@@ -53,7 +53,7 @@ class TraktFollowedShowsDataSource(
     }
 
     override suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>> {
-        return usersApi.getListItems(listId = listId.toString(), extended = TraktExtended.NOSEASONS)
+        return usersApi.getListItems(listId = listId.toString(), extended = TraktExtended.NO_SEASONS)
             .filter { it.show != null }
             .let { listShowsMapper.invoke(it) }
     }

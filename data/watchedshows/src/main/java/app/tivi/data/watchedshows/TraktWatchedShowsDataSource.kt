@@ -31,5 +31,5 @@ class TraktWatchedShowsDataSource(
 ) : WatchedShowsDataSource {
 
     override suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>> =
-        syncApi.value.getWatchedShows(extended = TraktExtended.NOSEASONS).let { mapper.map(it) }
+        syncApi.value.getWatchedShows(extended = TraktExtended.NO_SEASONS).let { mapper.map(it) }
 }
