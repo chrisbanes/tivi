@@ -28,6 +28,7 @@ dependencies {
     api(projects.api.traktAuth.api)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.auth)
 
     api(libs.okhttp.okhttp)
 

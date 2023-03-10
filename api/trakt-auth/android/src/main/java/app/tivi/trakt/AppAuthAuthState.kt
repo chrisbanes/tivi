@@ -21,8 +21,8 @@ internal class AppAuthAuthState(
 ) : AuthState {
     constructor(json: String) : this(net.openid.appauth.AuthState.jsonDeserialize(json))
 
-    override val accessToken: String? get() = authState.accessToken
-    override val refreshToken: String? get() = authState.refreshToken
+    override val accessToken: String get() = authState.accessToken.orEmpty()
+    override val refreshToken: String get() = authState.refreshToken.orEmpty()
     override val isAuthorized: Boolean get() = authState.isAuthorized
     override fun serializeToJson(): String = authState.jsonSerializeString()
 }

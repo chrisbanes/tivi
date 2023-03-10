@@ -27,6 +27,9 @@ import app.moviebase.trakt.api.TraktUsersApi
 import app.tivi.inject.ApplicationScope
 import app.tivi.trakt.store.AuthStore
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
@@ -42,19 +45,26 @@ interface TraktComponent {
         traktApiKey = oauthInfo.clientId
         maxRetriesOnException = 3
 
-        userAuthentication {
-//            loadBearerTokens {
-//                val authState = authStore.get()
-//                authState?.accessToken
-//                authState?.refreshToken
-//                BearerTokens()
-//            }
-        }
-
         httpClient(OkHttp) {
             // Probably want to move to using Ktor's caching, timeouts, etc eventually
             engine {
                 preconfigured = client
+            }
+
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        authStore.get()?.let {
+                            BearerTokens(it.accessToken, it.refreshToken)
+                        }
+                    }
+
+                    // FIXME: Need to implement refreshTokens {}
+
+                    sendWithoutRequest { request ->
+                        request.url.host == "api.trakt.tv"
+                    }
+                }
             }
         }
     }

@@ -135,6 +135,7 @@ okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp"
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
 playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:16.2.0"
 
