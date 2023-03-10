@@ -25,9 +25,10 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
+import io.ktor.client.plugins.ResponseException
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import retrofit2.HttpException
 
 @Inject
 class MainActivityViewModel(
@@ -57,8 +58,8 @@ class MainActivityViewModel(
         viewModelScope.launch {
             try {
                 updateUserDetails.executeSync(UpdateUserDetails.Params("me", false))
-            } catch (e: HttpException) {
-                if (e.code() == 401) {
+            } catch (e: ResponseException) {
+                if (e.response.status == HttpStatusCode.Unauthorized) {
                     // If we got a 401 back from Trakt, we should clear out the auth state
                     clearTraktAuthState.executeSync()
                 }
