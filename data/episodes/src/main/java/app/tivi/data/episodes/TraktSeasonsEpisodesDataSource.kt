@@ -69,39 +69,35 @@ class TraktSeasonsEpisodesDataSource(
         val showTraktId = showIdToTraktIdMapper.map(showId)
         requireNotNull(showTraktId) { "No Trakt ID for show with ID: $showId" }
 
-        return usersService.value
-            .getHistory(
-                listType = TraktListMediaType.SHOWS,
-                extended = TraktExtended.NOSEASONS,
-                startAt = since,
-            ).let { showEpisodeWatchesMapper(it) }
+        return usersService.value.getHistory(
+            itemId = showTraktId,
+            listType = TraktListMediaType.SHOWS,
+            extended = TraktExtended.NOSEASONS,
+            startAt = since,
+        ).let { showEpisodeWatchesMapper(it) }
     }
 
     override suspend fun getSeasonWatches(
         seasonId: Long,
         since: Instant?,
     ): List<Pair<Episode, EpisodeWatchEntry>> =
-        usersService.value
-            .getHistory(
-                listType = TraktListMediaType.SEASONS,
-                extended = TraktExtended.NOSEASONS,
-                itemId = seasonIdToTraktIdMapper.map(seasonId),
-                startAt = since,
-            )
-            .let { pairMapperOf(episodeMapper, historyItemMapper).invoke(it) }
+        usersService.value.getHistory(
+            itemId = seasonIdToTraktIdMapper.map(seasonId),
+            listType = TraktListMediaType.SEASONS,
+            extended = TraktExtended.NOSEASONS,
+            startAt = since,
+        ).let { pairMapperOf(episodeMapper, historyItemMapper).invoke(it) }
 
     override suspend fun getEpisodeWatches(
         episodeId: Long,
         since: Instant?,
     ): List<EpisodeWatchEntry> =
-        usersService.value
-            .getHistory(
-                listType = TraktListMediaType.EPISODES,
-                extended = TraktExtended.NOSEASONS,
-                itemId = episodeIdToTraktIdMapper.map(episodeId),
-                startAt = since,
-            )
-            .let { historyItemMapper.map(it) }
+        usersService.value.getHistory(
+            itemId = episodeIdToTraktIdMapper.map(episodeId),
+            listType = TraktListMediaType.EPISODES,
+            extended = TraktExtended.NOSEASONS,
+            startAt = since,
+        ).let { historyItemMapper.map(it) }
 
     override suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>) {
         val episodes = watches.map {
