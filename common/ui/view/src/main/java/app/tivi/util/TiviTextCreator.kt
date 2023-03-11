@@ -197,6 +197,6 @@ class TiviTextCreator(
         ShowStatus.CANCELED, ShowStatus.ENDED -> context.getString(UiR.string.status_ended)
         ShowStatus.RETURNING -> context.getString(UiR.string.status_active)
         ShowStatus.IN_PRODUCTION -> context.getString(UiR.string.status_in_production)
-        ShowStatus.PLANNED -> ""
+        ShowStatus.PLANNED -> context.getString(UiR.string.status_planned)
     }
 }
