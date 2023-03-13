@@ -43,12 +43,11 @@ dependencies {
     api(projects.data.search)
     api(projects.data.showimages)
     api(projects.data.shows)
+    api(projects.data.traktauth)
     api(projects.data.traktusers)
     api(projects.data.trendingshows)
     api(projects.data.watchedshows)
 
-    api(projects.api.trakt) // TraktAuthState
-    implementation(projects.api.traktAuth.api)
     implementation(projects.api.tmdb)
 
     api(libs.cashapp.paging.common)

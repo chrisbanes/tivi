@@ -23,11 +23,11 @@ plugins {
 
 dependencies {
     api(projects.data.models)
+    api(projects.data.traktauth)
     implementation(projects.data.db)
     implementation(projects.data.legacy) // remove this eventually
 
     api(projects.api.trakt)
-    api(projects.api.traktAuth.api)
     api(projects.api.tmdb)
 
     implementation(libs.kotlininject.runtime)
