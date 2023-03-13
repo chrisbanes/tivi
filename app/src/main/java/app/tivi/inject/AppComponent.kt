@@ -24,9 +24,8 @@ import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.PreferencesInitializer
 import app.tivi.appinitializers.TimberInitializer
 import app.tivi.appinitializers.TmdbInitializer
+import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.tmdb.TmdbOAuthInfo
-import app.tivi.trakt.TraktConstants
-import app.tivi.trakt.TraktOAuthInfo
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.IntoSet
@@ -58,7 +57,7 @@ interface AppComponent {
     ): TraktOAuthInfo = TraktOAuthInfo(
         clientId = BuildConfig.TRAKT_CLIENT_ID,
         clientSecret = BuildConfig.TRAKT_CLIENT_SECRET,
-        redirectUri = "${appInfo.packageName}://${TraktConstants.URI_AUTH_CALLBACK_PATH}",
+        redirectUri = "${appInfo.packageName}://auth/oauth2callback",
     )
 
     @Provides

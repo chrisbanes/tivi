@@ -18,11 +18,11 @@ package app.tivi.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.tivi.data.traktauth.LoginToTraktInteractor
+import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.domain.interactors.ClearUserDetails
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
-import app.tivi.trakt.TraktAuthManager
-import app.tivi.trakt.TraktManager
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -33,12 +33,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AccountUiViewModel(
-    private val traktManager: TraktManager,
-    private val traktAuthManager: TraktAuthManager,
+    private val traktAuthRepository: TraktAuthRepository,
+    private val loginToTraktInteractor: LoginToTraktInteractor,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
     private val clearUserDetails: ClearUserDetails,
-) : ViewModel(), TraktAuthManager by traktAuthManager {
+) : ViewModel() {
 
     val state: StateFlow<AccountUiViewState> = combine(
         observeTraktAuthState.flow,
@@ -61,8 +61,14 @@ class AccountUiViewModel(
 
     fun logout() {
         viewModelScope.launch {
-            traktManager.clearAuth()
+            traktAuthRepository.clearAuth()
             clearUserDetails(ClearUserDetails.Params("me")).collect()
+        }
+    }
+
+    fun login() {
+        viewModelScope.launch {
+            loginToTraktInteractor.launch()
         }
     }
 }

@@ -22,13 +22,13 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.PendingAction
+import app.tivi.data.traktauth.TraktAuthRepository
+import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.data.util.ItemSyncerResult
 import app.tivi.data.util.inPast
 import app.tivi.data.util.syncerForEntity
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.ApplicationScope
-import app.tivi.trakt.TraktAuthState
-import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.flow.Flow
@@ -43,7 +43,7 @@ class FollowedShowsRepository(
     private val followedShowsDao: FollowedShowsDao,
     private val followedShowsLastRequestStore: FollowedShowsLastRequestStore,
     private val dataSource: FollowedShowsDataSource,
-    private val traktManager: TraktManager,
+    private val traktAuthRepository: TraktAuthRepository,
     private val logger: Logger,
     private val showDao: TiviShowDao,
 ) {
@@ -109,7 +109,7 @@ class FollowedShowsRepository(
     }
 
     suspend fun syncFollowedShows(): ItemSyncerResult<FollowedShowEntry> {
-        val listId = when (traktManager.state.value) {
+        val listId = when (traktAuthRepository.state.value) {
             TraktAuthState.LOGGED_IN -> getFollowedTraktListId()
             else -> null
         }
@@ -149,7 +149,7 @@ class FollowedShowsRepository(
             return
         }
 
-        if (listId != null && traktManager.state.value == TraktAuthState.LOGGED_IN) {
+        if (listId != null && traktAuthRepository.state.value == TraktAuthState.LOGGED_IN) {
             val shows = pending.mapNotNull { showDao.getShowWithId(it.showId) }
             logger.v("processPendingAdditions. Entries mapped: %s", shows)
 
@@ -178,7 +178,7 @@ class FollowedShowsRepository(
             return
         }
 
-        if (listId != null && traktManager.state.value == TraktAuthState.LOGGED_IN) {
+        if (listId != null && traktAuthRepository.state.value == TraktAuthState.LOGGED_IN) {
             val shows = pending.mapNotNull { showDao.getShowWithId(it.showId) }
             logger.v("processPendingDelete. Entries mapped: %s", shows)
 

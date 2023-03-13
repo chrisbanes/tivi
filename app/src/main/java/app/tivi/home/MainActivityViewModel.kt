@@ -18,12 +18,12 @@ package app.tivi.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ClearTraktAuthState
 import app.tivi.domain.interactors.UpdateUserDetails
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
-import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode

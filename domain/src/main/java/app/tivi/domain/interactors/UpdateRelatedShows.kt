@@ -16,8 +16,8 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.relatedshows.RelatedShowsStore
 import app.tivi.data.shows.ShowStore
+import app.tivi.data.traktauth.RelatedShowsStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params

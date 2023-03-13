@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="traktauth-jvm">
+    <output-path>$PROJECT_DIR$/data/traktauth/build/libs</output-path>
+    <root id="archive" name="traktauth-jvm.jar">
+      <element id="module-output" name="tivi.data.traktauth.jvmMain" />
+    </root>
+  </artifact>
+</component>

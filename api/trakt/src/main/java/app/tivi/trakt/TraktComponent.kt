@@ -24,8 +24,10 @@ import app.moviebase.trakt.api.TraktSeasonsApi
 import app.moviebase.trakt.api.TraktShowsApi
 import app.moviebase.trakt.api.TraktSyncApi
 import app.moviebase.trakt.api.TraktUsersApi
+import app.tivi.data.traktauth.RefreshTraktTokensInteractor
+import app.tivi.data.traktauth.TraktOAuthInfo
+import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
-import app.tivi.trakt.store.AuthStore
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
@@ -41,6 +43,7 @@ interface TraktComponent {
         client: OkHttpClient,
         authStore: AuthStore,
         oauthInfo: TraktOAuthInfo,
+        refreshTokens: Lazy<RefreshTraktTokensInteractor>,
     ): Trakt = Trakt {
         traktApiKey = oauthInfo.clientId
         maxRetriesOnException = 3
@@ -59,7 +62,11 @@ interface TraktComponent {
                         }
                     }
 
-                    // FIXME: Need to implement refreshTokens {}
+                    refreshTokens {
+                        refreshTokens.value.invoke()?.let {
+                            BearerTokens(it.accessToken, it.refreshToken)
+                        }
+                    }
 
                     sendWithoutRequest { request ->
                         request.url.host == "api.trakt.tv"

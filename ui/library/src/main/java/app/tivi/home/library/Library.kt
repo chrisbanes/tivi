@@ -92,7 +92,7 @@ import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
-import app.tivi.trakt.TraktAuthState
+import app.tivi.data.traktauth.TraktAuthState
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject

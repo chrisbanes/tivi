@@ -16,15 +16,15 @@
 
 package app.tivi.domain.interactors
 
+import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.domain.ResultInteractor
-import app.tivi.trakt.TraktManager
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ClearTraktAuthState(
-    private val traktManager: TraktManager,
+    private val traktAuthRepository: TraktAuthRepository,
 ) : ResultInteractor<Unit, Unit>() {
     override suspend fun doWork(params: Unit) {
-        traktManager.clearAuth()
+        traktAuthRepository.clearAuth()
     }
 }

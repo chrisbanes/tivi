@@ -23,7 +23,7 @@ import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import app.tivi.data.compoundmodels.TrendingEntryWithShow
 import app.tivi.data.models.TraktUser
-import app.tivi.trakt.TraktAuthState
+import app.tivi.data.traktauth.TraktAuthState
 
 @Immutable
 data class DiscoverViewState(
