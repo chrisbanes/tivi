@@ -28,6 +28,10 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        defaultConfig {
+            manifestPlaceholders += mapOf("appAuthRedirectScheme" to "empty")
+        }
     }
 
     testOptions {

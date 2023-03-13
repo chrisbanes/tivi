@@ -16,8 +16,8 @@
 
 package app.tivi.utils
 
-import app.tivi.trakt.AuthState
-import app.tivi.trakt.store.AuthStore
+import app.tivi.data.traktauth.AuthState
+import app.tivi.data.traktauth.store.AuthStore
 
 object AuthorizedAuthStore : AuthStore {
     override suspend fun get(): AuthState = AuthorizedAuthState

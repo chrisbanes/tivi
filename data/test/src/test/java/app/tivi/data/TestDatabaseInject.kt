@@ -38,9 +38,9 @@ import app.tivi.data.shows.TmdbShowDataSource
 import app.tivi.data.shows.TmdbShowDataSourceImpl
 import app.tivi.data.shows.TraktShowDataSource
 import app.tivi.data.shows.TraktShowDataSourceImpl
+import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
 import app.tivi.tasks.ShowTasks
-import app.tivi.trakt.store.AuthStore
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.utils.AuthorizedAuthStore
 import app.tivi.utils.SuccessFakeShowDataSource
