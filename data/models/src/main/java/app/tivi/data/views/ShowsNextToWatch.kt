@@ -21,29 +21,27 @@ import androidx.room.DatabaseView
 import app.tivi.data.models.Season
 
 @DatabaseView(
-    viewName = "followed_next_to_watch",
+    viewName = "shows_next_to_watch",
     value = """
         SELECT
-          fs.show_id AS show_id,
-          s.id AS season_id,
+          shows.id as show_id,
+          seasons.id AS season_id,
           eps.id AS episode_id,
-          MIN((1000 * s.number) + eps.number) AS next_ep_to_watch_abs_number
-        FROM
-          myshows_entries as fs
-          INNER JOIN seasons AS s ON fs.show_id = s.show_id
-          INNER JOIN episodes AS eps ON eps.season_id = s.id
-          LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-          LEFT JOIN followed_last_watched AS lw ON lw.id = fs.id
-        WHERE
-          s.number != ${Season.NUMBER_SPECIALS}
-          AND s.ignored = 0
+          MIN((1000 * seasons.number) + eps.number) AS next_ep_to_watch_abs_number
+        FROM shows
+        INNER JOIN seasons ON shows.id = seasons.show_id
+        INNER JOIN episodes AS eps ON eps.season_id = seasons.id
+        LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+        LEFT JOIN shows_last_watched AS lw ON lw.show_id = shows.id
+        WHERE seasons.number != ${Season.NUMBER_SPECIALS}
+          AND seasons.ignored = 0
           AND watched_at IS NULL
-          AND datetime(first_aired) < datetime('now')
-          AND ((1000 * s.number) + eps.number) > coalesce(last_watched_abs_number, 0)
-        GROUP BY fs.id
+          AND datetime(eps.first_aired) < datetime('now')
+          AND ((1000 * seasons.number) + eps.number) > coalesce(last_watched_abs_number, 0)
+        GROUP BY shows.id
     """,
 )
-data class FollowedShowsNextToWatch(
+data class ShowsNextToWatch(
     @ColumnInfo(name = "show_id") val showId: Long,
     @ColumnInfo(name = "season_id") val seasonId: Long,
     @ColumnInfo(name = "episode_id") val episodeId: Long,

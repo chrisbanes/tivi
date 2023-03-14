@@ -28,8 +28,8 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import app.tivi.util.parallelForEach
 import kotlin.time.Duration.Companion.hours
+import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -47,12 +47,14 @@ class UpdateLibraryShows(
 ) : Interactor<UpdateLibraryShows.Params>() {
 
     override suspend fun doWork(params: Params): Unit = withContext(dispatchers.io) {
-        val watchedShowsJob = launch {
-            if (params.forceRefresh || watchedShowsLastRequestStore.isRequestExpired(1.hours)) {
-                // We use a low threshold here as the data contains a 'last updated' value.
-                // It's a quick way to know whether to cascade the updates below
-                watchedShowsStore.fetch(Unit, true)
-            }
+        val watchedShowsDeferred = async {
+            // We use a low threshold here as the data contains a 'last updated' value.
+            // It's a quick way to know whether to cascade the updates below
+            watchedShowsStore.fetch(
+                key = Unit,
+                forceFresh = params.forceRefresh ||
+                    watchedShowsLastRequestStore.isRequestExpired(1.hours),
+            )
         }
         val followedShowsJob = launch {
             if (params.forceRefresh || followedShowsRepository.needFollowedShowsSync()) {
@@ -61,10 +63,9 @@ class UpdateLibraryShows(
         }
 
         // await the watched shows and followed shows update. We need both
-        joinAll(watchedShowsJob, followedShowsJob)
-
+        followedShowsJob.join()
         // Finally sync the seasons/episodes and watches
-        followedShowsRepository.getFollowedShows().parallelForEach { entry ->
+        watchedShowsDeferred.await().parallelForEach { entry ->
             ensureActive()
             showStore.fetch(entry.showId)
 

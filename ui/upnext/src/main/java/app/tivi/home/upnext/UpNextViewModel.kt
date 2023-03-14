@@ -64,7 +64,6 @@ class UpNextViewModel(
     private val availableSorts = listOf(
         SortOption.LAST_WATCHED,
         SortOption.AIR_DATE,
-        SortOption.DATE_ADDED,
     )
 
     private val sort = MutableStateFlow(SortOption.LAST_WATCHED)

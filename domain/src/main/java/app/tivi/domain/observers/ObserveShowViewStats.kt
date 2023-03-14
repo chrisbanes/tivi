@@ -16,19 +16,19 @@
 
 package app.tivi.domain.observers
 
-import app.tivi.data.followedshows.FollowedShowsRepository
-import app.tivi.data.views.FollowedShowsWatchStats
+import app.tivi.data.daos.WatchedShowDao
+import app.tivi.data.views.ShowsWatchStats
 import app.tivi.domain.SubjectInteractor
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObserveShowViewStats(
-    private val repository: FollowedShowsRepository,
-) : SubjectInteractor<ObserveShowViewStats.Params, FollowedShowsWatchStats?>() {
+    private val dao: WatchedShowDao,
+) : SubjectInteractor<ObserveShowViewStats.Params, ShowsWatchStats?>() {
 
-    override fun createObservable(params: Params): Flow<FollowedShowsWatchStats?> {
-        return repository.observeShowViewStats(params.showId)
+    override fun createObservable(params: Params): Flow<ShowsWatchStats?> {
+        return dao.entryShowViewStats(params.showId)
     }
 
     data class Params(val showId: Long)

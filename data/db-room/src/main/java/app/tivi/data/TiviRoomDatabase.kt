@@ -54,9 +54,9 @@ import app.tivi.data.models.TiviShowFts
 import app.tivi.data.models.TraktUser
 import app.tivi.data.models.TrendingShowEntry
 import app.tivi.data.models.WatchedShowEntry
-import app.tivi.data.views.FollowedShowsLastWatched
-import app.tivi.data.views.FollowedShowsNextToWatch
-import app.tivi.data.views.FollowedShowsWatchStats
+import app.tivi.data.views.ShowsLastWatched
+import app.tivi.data.views.ShowsNextToWatch
+import app.tivi.data.views.ShowsWatchStats
 
 @Database(
     entities = [
@@ -76,11 +76,11 @@ import app.tivi.data.views.FollowedShowsWatchStats
         RecommendedShowEntry::class,
     ],
     views = [
-        FollowedShowsWatchStats::class,
-        FollowedShowsLastWatched::class,
-        FollowedShowsNextToWatch::class,
+        ShowsWatchStats::class,
+        ShowsLastWatched::class,
+        ShowsNextToWatch::class,
     ],
-    version = 31,
+    version = 32,
     autoMigrations = [
         AutoMigration(from = 24, to = 25),
         AutoMigration(from = 25, to = 26),
@@ -90,6 +90,7 @@ import app.tivi.data.views.FollowedShowsWatchStats
         AutoMigration(from = 29, to = 30), // can remove this later
         AutoMigration(from = 27, to = 30),
         AutoMigration(from = 30, to = 31, spec = TiviRoomDatabase.AutoMigrationSpec31::class),
+        AutoMigration(from = 31, to = 32),
     ],
 )
 @TypeConverters(TiviTypeConverters::class, DateTimeTypeConverters::class)

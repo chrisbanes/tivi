@@ -46,7 +46,7 @@ class EpisodeCoilInterceptor(
 
     private suspend fun handle(chain: Interceptor.Chain, model: EpisodeImageModel): ImageRequest {
         if (repository.needEpisodeUpdate(model.id, expiry = 180.days.inPast)) {
-            repository.updateEpisode(model.id)
+            runCatching { repository.updateEpisode(model.id) }
         }
 
         val episode = repository.getEpisode(model.id)

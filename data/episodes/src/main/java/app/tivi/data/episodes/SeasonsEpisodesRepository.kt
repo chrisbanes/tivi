@@ -37,6 +37,7 @@ import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -85,7 +86,7 @@ class SeasonsEpisodesRepository(
     }
 
     fun observeEpisode(episodeId: Long): Flow<EpisodeWithSeason> {
-        return episodesDao.episodeWithIdObservable(episodeId)
+        return episodesDao.episodeWithIdObservable(episodeId).filterNotNull()
     }
 
     suspend fun getEpisode(episodeId: Long): Episode? {
@@ -161,7 +162,9 @@ class SeasonsEpisodesRepository(
             traktEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
         }
         val tmdbDeferred = async {
-            tmdbEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
+            runCatching {
+                tmdbEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
+            }.getOrNull()
         }
 
         val trakt = try {
