@@ -18,8 +18,14 @@ package app.tivi.data.daos
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.Transaction
+import app.cash.paging.PagingSource
+import app.tivi.data.compoundmodels.UpNextEntry
+import app.tivi.data.models.Season
+import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
+import app.tivi.data.views.ShowsWatchStats
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -38,6 +44,54 @@ abstract class RoomWatchedShowDao : WatchedShowDao, RoomEntityDao<WatchedShowEnt
 
     @Query("DELETE FROM watched_entries")
     abstract override suspend fun deleteAll()
+
+    @Transaction
+    @RewriteQueriesToDropUnusedColumns
+    @Query(
+        """
+        SELECT shows_next_to_watch.* FROM shows_next_to_watch
+        LEFT JOIN shows_last_watched ON shows_last_watched.show_id = shows_next_to_watch.show_id
+        LEFT JOIN episode_watch_entries ON episode_watch_entries.episode_id = shows_last_watched.episode_id
+        GROUP BY shows_next_to_watch.show_id
+        ORDER BY datetime(episode_watch_entries.watched_at) DESC
+        """,
+    )
+    abstract override fun pagedUpNextShowsLastWatched(): PagingSource<Int, UpNextEntry>
+
+    @Transaction
+    @RewriteQueriesToDropUnusedColumns
+    @Query(
+        """
+        SELECT shows_next_to_watch.* FROM shows_next_to_watch
+        INNER JOIN episodes ON episodes.id = shows_next_to_watch.episode_id
+        GROUP BY shows_next_to_watch.show_id
+        ORDER BY datetime(episodes.first_aired) DESC
+        """,
+    )
+    abstract override fun pagedUpNextShowsDateAired(): PagingSource<Int, UpNextEntry>
+
+    @Transaction
+    @RewriteQueriesToDropUnusedColumns
+    @Query("SELECT * FROM shows_next_to_watch")
+    abstract override suspend fun getUpNextShows(): List<UpNextEntry>
+
+    @Query("SELECT * FROM shows_view_watch_stats WHERE show_id = :showId")
+    abstract override fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats>
+
+    @Transaction
+    @Query(
+        """
+        SELECT shows.* FROM shows
+            INNER JOIN seasons AS s ON s.show_id = shows.id
+			INNER JOIN shows_next_to_watch AS next ON next.show_id = shows.id
+			INNER JOIN episodes AS eps ON eps.season_id = s.id
+            INNER JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
+            WHERE s.number != ${Season.NUMBER_SPECIALS} AND s.ignored = 0
+			ORDER BY datetime(ew.watched_at) DESC
+			LIMIT 1
+        """,
+    )
+    abstract override fun observeNextShowToWatch(): Flow<TiviShow?>
 
     companion object {
         private const val ENTRY_QUERY_ORDER_LAST_WATCHED = """

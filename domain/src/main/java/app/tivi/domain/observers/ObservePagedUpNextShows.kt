@@ -20,7 +20,7 @@ import app.cash.paging.Pager
 import app.cash.paging.PagingConfig
 import app.cash.paging.PagingData
 import app.tivi.data.compoundmodels.UpNextEntry
-import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.models.SortOption
 import app.tivi.domain.PagingInteractor
 import kotlinx.coroutines.flow.Flow
@@ -28,16 +28,15 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObservePagedUpNextShows(
-    private val followedShowsDao: FollowedShowsDao,
+    private val watchedShowsDao: WatchedShowDao,
 ) : PagingInteractor<ObservePagedUpNextShows.Parameters, UpNextEntry>() {
 
     override fun createObservable(
         params: Parameters,
     ): Flow<PagingData<UpNextEntry>> = Pager(config = params.pagingConfig) {
         when (params.sort) {
-            SortOption.AIR_DATE -> followedShowsDao.pagedUpNextShowsDateAired()
-            SortOption.DATE_ADDED -> followedShowsDao.pagedUpNextShowsDateAdded()
-            else -> followedShowsDao.pagedUpNextShowsLastWatched()
+            SortOption.AIR_DATE -> watchedShowsDao.pagedUpNextShowsDateAired()
+            else -> watchedShowsDao.pagedUpNextShowsLastWatched()
         }
     }.flow
 

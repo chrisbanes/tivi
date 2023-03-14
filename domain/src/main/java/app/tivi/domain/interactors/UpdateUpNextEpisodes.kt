@@ -16,7 +16,7 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
@@ -26,7 +26,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateUpNextEpisodes(
-    private val followedShowsDao: FollowedShowsDao,
+    private val watchedShowsDao: WatchedShowDao,
     private val seasonEpisodeRepository: SeasonsEpisodesRepository,
     private val updateLibraryShows: UpdateLibraryShows,
     private val dispatchers: AppCoroutineDispatchers,
@@ -39,7 +39,7 @@ class UpdateUpNextEpisodes(
 
         // Now update the next episodes, to fetch images, etc
         withContext(dispatchers.io) {
-            followedShowsDao.getUpNextShows().parallelForEach { entry ->
+            watchedShowsDao.getUpNextShows().parallelForEach { entry ->
                 if (seasonEpisodeRepository.needEpisodeUpdate(entry.episode.id)) {
                     seasonEpisodeRepository.updateEpisode(entry.episode.id)
                 }

@@ -132,7 +132,7 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
-import app.tivi.data.views.FollowedShowsWatchStats
+import app.tivi.data.views.ShowsWatchStats
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -302,7 +302,7 @@ private fun ShowDetailsScrollingContent(
     relatedShows: List<RelatedShowEntryWithShow>,
     nextEpisodeToWatch: EpisodeWithSeason?,
     seasons: List<SeasonWithEpisodesAndWatches>,
-    watchStats: FollowedShowsWatchStats?,
+    watchStats: ShowsWatchStats?,
     listState: LazyListState,
     openShowDetails: (showId: Long) -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,

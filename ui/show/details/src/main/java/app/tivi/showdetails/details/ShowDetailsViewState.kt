@@ -22,7 +22,7 @@ import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.TiviShow
-import app.tivi.data.views.FollowedShowsWatchStats
+import app.tivi.data.views.ShowsWatchStats
 
 @Immutable
 data class ShowDetailsViewState(
@@ -30,7 +30,7 @@ data class ShowDetailsViewState(
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val relatedShows: List<RelatedShowEntryWithShow> = emptyList(),
     val nextEpisodeToWatch: EpisodeWithSeason? = null,
-    val watchStats: FollowedShowsWatchStats? = null,
+    val watchStats: ShowsWatchStats? = null,
     val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val refreshing: Boolean = false,
     val message: UiMessage? = null,

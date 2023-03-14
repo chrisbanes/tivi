@@ -16,39 +16,22 @@
 
 package app.tivi.data.daos
 
-import app.cash.paging.PagingSource
 import app.tivi.data.compoundmodels.FollowedShowEntryWithShow
-import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.PendingAction
-import app.tivi.data.views.FollowedShowsWatchStats
 import kotlinx.coroutines.flow.Flow
 
 interface FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithShow> {
 
     suspend fun entries(): List<FollowedShowEntry>
 
-    fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?>
-
-    fun pagedUpNextShowsLastWatched(): PagingSource<Int, UpNextEntry>
-
-    fun pagedUpNextShowsDateAired(): PagingSource<Int, UpNextEntry>
-
-    fun pagedUpNextShowsDateAdded(): PagingSource<Int, UpNextEntry>
-
-    suspend fun getUpNextShows(): List<UpNextEntry>
-
     override suspend fun deleteAll()
-
-    suspend fun entryWithId(id: Long): FollowedShowEntryWithShow?
 
     suspend fun entryWithShowId(showId: Long): FollowedShowEntry?
 
     fun entryCountWithShowIdNotPendingDeleteObservable(showId: Long): Flow<Int>
 
     suspend fun entryCountWithShowId(showId: Long): Int
-
-    fun entryShowViewStats(showId: Long): Flow<FollowedShowsWatchStats>
 
     suspend fun entriesWithNoPendingAction(): List<FollowedShowEntry>
 
