@@ -51,6 +51,7 @@ class TiviPreferencesImpl(
         const val KEY_DATA_SAVER = "pref_data_saver"
         const val KEY_LIBRARY_FOLLOWED_ACTIVE = "pref_library_followed_active"
         const val KEY_LIBRARY_WATCHED_ACTIVE = "pref_library_watched_active"
+        const val KEY_UPNEXT_FOLLOWED_ONLY = "pref_upnext_followedonly_active"
     }
 
     override fun setup() {
@@ -107,6 +108,16 @@ class TiviPreferencesImpl(
         return createPreferenceFlow(KEY_LIBRARY_WATCHED_ACTIVE) {
             libraryWatchedActive
         }
+    }
+
+    override var upNextFollowedOnly: Boolean
+        get() = sharedPreferences.getBoolean(KEY_UPNEXT_FOLLOWED_ONLY, false)
+        set(value) = sharedPreferences.edit {
+            putBoolean(KEY_UPNEXT_FOLLOWED_ONLY, value)
+        }
+
+    override fun observeUpNextFollowedOnly(): Flow<Boolean> {
+        return createPreferenceFlow(KEY_UPNEXT_FOLLOWED_ONLY) { upNextFollowedOnly }
     }
 
     private inline fun <T> createPreferenceFlow(

@@ -34,9 +34,9 @@ interface WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> 
 
     override suspend fun deleteAll()
 
-    fun pagedUpNextShowsLastWatched(): PagingSource<Int, UpNextEntry>
+    fun pagedUpNextShowsLastWatched(followedOnly: Boolean = false): PagingSource<Int, UpNextEntry>
 
-    fun pagedUpNextShowsDateAired(): PagingSource<Int, UpNextEntry>
+    fun pagedUpNextShowsDateAired(followedOnly: Boolean = false): PagingSource<Int, UpNextEntry>
 
     suspend fun getUpNextShows(): List<UpNextEntry>
 

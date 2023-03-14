@@ -37,6 +37,9 @@ interface TiviPreferences {
     var libraryWatchedActive: Boolean
     fun observeLibraryWatchedActive(): Flow<Boolean>
 
+    var upNextFollowedOnly: Boolean
+    fun observeUpNextFollowedOnly(): Flow<Boolean>
+
     enum class Theme {
         LIGHT,
         DARK,
