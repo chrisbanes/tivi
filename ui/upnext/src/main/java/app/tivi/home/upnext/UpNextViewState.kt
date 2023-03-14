@@ -28,6 +28,7 @@ data class UpNextViewState(
     val availableSorts: List<SortOption> = emptyList(),
     val sort: SortOption = SortOption.LAST_WATCHED,
     val message: UiMessage? = null,
+    val followedShowsOnly: Boolean = false,
 ) {
     companion object {
         val Empty = UpNextViewState()

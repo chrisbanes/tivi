@@ -35,13 +35,14 @@ class ObservePagedUpNextShows(
         params: Parameters,
     ): Flow<PagingData<UpNextEntry>> = Pager(config = params.pagingConfig) {
         when (params.sort) {
-            SortOption.AIR_DATE -> watchedShowsDao.pagedUpNextShowsDateAired()
-            else -> watchedShowsDao.pagedUpNextShowsLastWatched()
+            SortOption.AIR_DATE -> watchedShowsDao.pagedUpNextShowsDateAired(params.followedOnly)
+            else -> watchedShowsDao.pagedUpNextShowsLastWatched(params.followedOnly)
         }
     }.flow
 
     data class Parameters(
         val sort: SortOption,
+        val followedOnly: Boolean,
         override val pagingConfig: PagingConfig,
     ) : PagingInteractor.Parameters<UpNextEntry>
 }

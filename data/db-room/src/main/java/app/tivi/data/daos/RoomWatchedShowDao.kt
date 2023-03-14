@@ -52,11 +52,13 @@ abstract class RoomWatchedShowDao : WatchedShowDao, RoomEntityDao<WatchedShowEnt
         SELECT shows_next_to_watch.* FROM shows_next_to_watch
         LEFT JOIN shows_last_watched ON shows_last_watched.show_id = shows_next_to_watch.show_id
         LEFT JOIN episode_watch_entries ON episode_watch_entries.episode_id = shows_last_watched.episode_id
+        LEFT JOIN myshows_entries ON shows_next_to_watch.show_id = myshows_entries.show_id
+        WHERE :followedOnly = 0 OR myshows_entries.id IS NOT NULL
         GROUP BY shows_next_to_watch.show_id
         ORDER BY datetime(episode_watch_entries.watched_at) DESC
         """,
     )
-    abstract override fun pagedUpNextShowsLastWatched(): PagingSource<Int, UpNextEntry>
+    abstract override fun pagedUpNextShowsLastWatched(followedOnly: Boolean): PagingSource<Int, UpNextEntry>
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
@@ -64,11 +66,13 @@ abstract class RoomWatchedShowDao : WatchedShowDao, RoomEntityDao<WatchedShowEnt
         """
         SELECT shows_next_to_watch.* FROM shows_next_to_watch
         INNER JOIN episodes ON episodes.id = shows_next_to_watch.episode_id
+        LEFT JOIN myshows_entries ON shows_next_to_watch.show_id = myshows_entries.show_id
+        WHERE :followedOnly = 0 OR myshows_entries.id IS NOT NULL
         GROUP BY shows_next_to_watch.show_id
         ORDER BY datetime(episodes.first_aired) DESC
         """,
     )
-    abstract override fun pagedUpNextShowsDateAired(): PagingSource<Int, UpNextEntry>
+    abstract override fun pagedUpNextShowsDateAired(followedOnly: Boolean): PagingSource<Int, UpNextEntry>
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
