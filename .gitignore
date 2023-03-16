@@ -18,6 +18,7 @@ captures
 .idea/jarRepositories.xml
 .idea/deploymentTargetDropDown.xml
 .idea/androidTestResultsUserPreferences.xml
+.idea/artifacts
 gradle.xml
 *.iml
 
