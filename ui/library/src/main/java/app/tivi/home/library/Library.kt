@@ -82,6 +82,7 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.items
+import app.tivi.common.compose.rememberLazyGridState
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortChip
@@ -127,7 +128,7 @@ internal fun Library(
 
     Library(
         state = viewState,
-        list = pagingItems,
+        lazyPagingItems = pagingItems,
         openShowDetails = openShowDetails,
         onMessageShown = viewModel::clearMessage,
         onToggleIncludeFollowedShows = viewModel::toggleFollowedShowsIncluded,
@@ -143,7 +144,7 @@ internal fun Library(
 @Composable
 internal fun Library(
     state: LibraryViewState,
-    list: LazyPagingItems<LibraryShow>,
+    lazyPagingItems: LazyPagingItems<LibraryShow>,
     openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
     onToggleIncludeFollowedShows: () -> Unit,
@@ -216,6 +217,7 @@ internal fun Library(
             var filterExpanded by remember { mutableStateOf(false) }
 
             LazyVerticalGrid(
+                state = rememberLazyGridState(lazyPagingItems.itemCount == 0),
                 columns = GridCells.Fixed(columns / 4),
                 contentPadding = paddingValues + PaddingValues(
                     horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
@@ -250,7 +252,7 @@ internal fun Library(
                                     filter = value
                                     onFilterChanged(value.text)
                                 },
-                                hint = stringResource(UiR.string.filter_shows, list.itemCount),
+                                hint = stringResource(UiR.string.filter_shows, lazyPagingItems.itemCount),
                                 modifier = Modifier.fillMaxWidth(),
                                 showClearButton = true,
                                 onCleared = {
@@ -304,7 +306,7 @@ internal fun Library(
                 }
 
                 items(
-                    items = list,
+                    items = lazyPagingItems,
                     key = { it.show.id },
                 ) { entry ->
                     if (entry != null) {

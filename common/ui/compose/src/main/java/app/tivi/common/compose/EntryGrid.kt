@@ -142,6 +142,7 @@ fun <E : Entry> EntryGrid(
             val gutter = Layout.gutter
 
             LazyVerticalGrid(
+                state = rememberLazyGridState(lazyPagingItems.itemCount == 0),
                 columns = GridCells.Fixed((columns / 1.5).roundToInt()),
                 contentPadding = paddingValues +
                     PaddingValues(horizontal = bodyMargin, vertical = gutter),
