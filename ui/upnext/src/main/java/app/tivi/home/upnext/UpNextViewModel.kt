@@ -70,8 +70,13 @@ class UpNextViewModel(
 
     private val sort = MutableStateFlow(SortOption.LAST_WATCHED)
 
-    private val followedOnly = preferences.observeUpNextFollowedOnly()
-        .stateIn(viewModelScope, WhileSubscribed(), false)
+    private val followedOnly = preferences
+        .observeUpNextFollowedOnly()
+        .stateIn(
+            scope = viewModelScope,
+            started = WhileSubscribed(),
+            initialValue = preferences.upNextFollowedOnly,
+        )
 
     val state: StateFlow<UpNextViewState> = combine(
         loadingState.observable,
