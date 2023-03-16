@@ -48,6 +48,7 @@ allprojects {
 
         // Used for snapshots if needed
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 
     apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)

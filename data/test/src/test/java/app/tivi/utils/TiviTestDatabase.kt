@@ -35,9 +35,9 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TraktUser
 import app.tivi.data.models.TrendingShowEntry
 import app.tivi.data.models.WatchedShowEntry
-import app.tivi.data.views.FollowedShowsLastWatched
-import app.tivi.data.views.FollowedShowsNextToWatch
-import app.tivi.data.views.FollowedShowsWatchStats
+import app.tivi.data.views.ShowsLastWatched
+import app.tivi.data.views.ShowsNextToWatch
+import app.tivi.data.views.ShowsWatchStats
 
 @Database(
     entities = [
@@ -57,9 +57,9 @@ import app.tivi.data.views.FollowedShowsWatchStats
         FakeTiviShowFts::class,
     ],
     views = [
-        FollowedShowsWatchStats::class,
-        FollowedShowsLastWatched::class,
-        FollowedShowsNextToWatch::class,
+        ShowsWatchStats::class,
+        ShowsLastWatched::class,
+        ShowsNextToWatch::class,
     ],
     version = 1,
     exportSchema = false,

@@ -16,12 +16,10 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
-import app.tivi.tasks.ShowTasks
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.parallelForEach
 import kotlinx.coroutines.withContext
@@ -30,10 +28,8 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class ChangeShowFollowStatus(
     private val followedShowsRepository: FollowedShowsRepository,
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val showStore: ShowStore,
     private val dispatchers: AppCoroutineDispatchers,
-    private val showTasks: ShowTasks,
 ) : Interactor<ChangeShowFollowStatus.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
@@ -43,11 +39,11 @@ class ChangeShowFollowStatus(
                         if (followedShowsRepository.isShowFollowed(showId)) {
                             unfollow(showId)
                         } else {
-                            follow(showId, params.deferDataFetch)
+                            follow(showId)
                         }
                     }
 
-                    Action.FOLLOW -> follow(showId, params.deferDataFetch)
+                    Action.FOLLOW -> follow(showId)
                     Action.UNFOLLOW -> unfollow(showId)
                 }
             }
@@ -57,32 +53,20 @@ class ChangeShowFollowStatus(
             result.added.parallelForEach {
                 showStore.fetch(it.showId)
             }
-
-            if (params.deferDataFetch) {
-                showTasks.syncLibraryShows()
-            }
         }
     }
 
     private suspend fun unfollow(showId: Long) {
         followedShowsRepository.removeFollowedShow(showId)
-        // Remove seasons, episodes and watches
-        seasonsEpisodesRepository.removeShowSeasonData(showId)
     }
 
-    private suspend fun follow(showId: Long, deferDataFetch: Boolean) {
+    private suspend fun follow(showId: Long) {
         followedShowsRepository.addFollowedShow(showId)
-        // Update seasons, episodes and watches now if we're not deferring the fetch
-        if (!deferDataFetch) {
-            seasonsEpisodesRepository.updateSeasonsEpisodes(showId)
-            seasonsEpisodesRepository.updateShowEpisodeWatches(showId)
-        }
     }
 
     data class Params(
         val showIds: Collection<Long>,
         val action: Action,
-        val deferDataFetch: Boolean = false,
     ) {
         constructor(showId: Long, action: Action) : this(listOf(showId), action)
     }

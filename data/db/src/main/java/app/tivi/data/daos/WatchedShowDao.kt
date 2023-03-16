@@ -16,8 +16,12 @@
 
 package app.tivi.data.daos
 
+import app.cash.paging.PagingSource
+import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.compoundmodels.WatchedShowEntryWithShow
+import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
+import app.tivi.data.views.ShowsWatchStats
 import kotlinx.coroutines.flow.Flow
 
 interface WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
@@ -29,4 +33,14 @@ interface WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> 
     fun entriesObservable(): Flow<List<WatchedShowEntry>>
 
     override suspend fun deleteAll()
+
+    fun pagedUpNextShowsLastWatched(followedOnly: Boolean = false): PagingSource<Int, UpNextEntry>
+
+    fun pagedUpNextShowsDateAired(followedOnly: Boolean = false): PagingSource<Int, UpNextEntry>
+
+    suspend fun getUpNextShows(): List<UpNextEntry>
+
+    fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats>
+
+    fun observeNextShowToWatch(): Flow<TiviShow?>
 }

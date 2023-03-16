@@ -32,7 +32,7 @@ kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = "com.google.devtools.ksp:1.8.10-1.0.9"
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.4"
-spotless = "com.diffplug.spotless:6.16.0"
+spotless = "com.diffplug.spotless:6.17.0"
 
 [libraries]
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }

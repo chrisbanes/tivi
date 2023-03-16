@@ -16,30 +16,27 @@
 
 package app.tivi.data.views
 
+import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
 import app.tivi.data.models.Season
 
 @DatabaseView(
-    viewName = "followed_last_watched",
+    viewName = "shows_view_watch_stats",
     value = """
-        SELECT
-          fs.id,
-          s.id AS season_id,
-          eps.id AS episode_id,
-          MAX((1000 * s.number) + eps.number) AS last_watched_abs_number
-        FROM myshows_entries as fs
-        INNER JOIN seasons AS s ON fs.show_id = s.show_id
+        SELECT shows.id AS show_id, COUNT(*) AS episode_count, COUNT(ew.watched_at) AS watched_episode_count
+        FROM shows
+        INNER JOIN seasons AS s ON shows.id = s.show_id
         INNER JOIN episodes AS eps ON eps.season_id = s.id
-        INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-        WHERE
-          s.number != ${Season.NUMBER_SPECIALS}
-          AND s.ignored = 0
-        GROUP BY fs.id
-        ORDER BY ew.watched_at DESC
+        LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+        WHERE eps.first_aired IS NOT NULL
+            AND datetime(eps.first_aired) < datetime('now')
+            AND s.number != ${Season.NUMBER_SPECIALS}
+            AND s.ignored = 0
+        GROUP BY shows.id
     """,
 )
-data class FollowedShowsLastWatched(
-    val id: Long,
-    val seasonId: Long,
-    val episodeId: Long,
+data class ShowsWatchStats(
+    @ColumnInfo(name = "show_id") val showId: Long,
+    @ColumnInfo(name = "episode_count") val episodeCount: Int,
+    @ColumnInfo(name = "watched_episode_count") val watchedEpisodeCount: Int,
 )

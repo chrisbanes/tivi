@@ -16,7 +16,6 @@
 
 package app.tivi.data.followedshows
 
-import app.tivi.data.compoundmodels.FollowedShowEntryWithShow
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
@@ -27,7 +26,6 @@ import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.data.util.ItemSyncerResult
 import app.tivi.data.util.inPast
 import app.tivi.data.util.syncerForEntity
-import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
@@ -56,17 +54,9 @@ class FollowedShowsRepository(
         logger = logger,
     )
 
-    fun observeShowViewStats(showId: Long): Flow<FollowedShowsWatchStats?> {
-        return followedShowsDao.entryShowViewStats(showId)
-    }
-
     fun observeIsShowFollowed(showId: Long): Flow<Boolean> {
         return followedShowsDao.entryCountWithShowIdNotPendingDeleteObservable(showId)
             .map { it > 0 }
-    }
-
-    fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?> {
-        return followedShowsDao.observeNextShowToWatch()
     }
 
     suspend fun isShowFollowed(showId: Long): Boolean {

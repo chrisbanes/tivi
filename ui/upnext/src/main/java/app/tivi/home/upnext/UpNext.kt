@@ -18,6 +18,7 @@
 
 package app.tivi.home.upnext
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +38,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -44,6 +46,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -133,6 +136,7 @@ internal fun UpNext(
         openUser = openUser,
         refresh = viewModel::refresh,
         onSortSelected = viewModel::setSort,
+        onToggleFollowedShowsOnly = viewModel::toggleFollowedShowsOnly,
     )
 }
 
@@ -147,6 +151,7 @@ internal fun UpNext(
     refresh: () -> Unit,
     openUser: () -> Unit,
     onSortSelected: (SortOption) -> Unit,
+    onToggleFollowedShowsOnly: () -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -229,6 +234,24 @@ internal fun UpNext(
                             .padding(vertical = 8.dp, horizontal = 8.dp)
                             .fillMaxWidth(),
                     ) {
+                        FilterChip(
+                            selected = state.followedShowsOnly,
+                            leadingIcon = {
+                                AnimatedVisibility(visible = state.followedShowsOnly) {
+                                    Icon(
+                                        imageVector = Icons.Default.Done,
+                                        contentDescription = null,
+                                    )
+                                }
+                            },
+                            onClick = onToggleFollowedShowsOnly,
+                            label = {
+                                Text(text = stringResource(UiR.string.upnext_filter_followed_shows_only_title))
+                            },
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
                         SortChip(
                             sortOptions = state.availableSorts,
                             currentSortOption = state.sort,

@@ -20,7 +20,6 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.TiviShow
-import app.tivi.data.views.FollowedShowsWatchStats
 import java.util.Objects
 
 class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
@@ -30,20 +29,13 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
     @Relation(parentColumn = "show_id", entityColumn = "id")
     override lateinit var relations: List<TiviShow>
 
-    @Suppress("PropertyName")
-    @Relation(parentColumn = "id", entityColumn = "id")
-    lateinit var _stats: List<FollowedShowsWatchStats>
-
-    val stats: FollowedShowsWatchStats?
-        get() = _stats.firstOrNull()
-
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
         other is FollowedShowEntryWithShow -> {
-            entry == other.entry && relations == other.relations && stats == other.stats
+            entry == other.entry && relations == other.relations
         }
         else -> false
     }
 
-    override fun hashCode(): Int = Objects.hash(entry, relations, stats)
+    override fun hashCode(): Int = Objects.hash(entry, relations)
 }

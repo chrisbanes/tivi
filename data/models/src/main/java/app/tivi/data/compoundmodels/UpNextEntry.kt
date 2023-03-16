@@ -22,12 +22,12 @@ import androidx.room.Relation
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
-import app.tivi.data.views.FollowedShowsNextToWatch
+import app.tivi.data.views.ShowsNextToWatch
 import app.tivi.extensions.unsafeLazy
 
 class UpNextEntry {
     @Embedded
-    lateinit var entity: FollowedShowsNextToWatch
+    lateinit var entity: ShowsNextToWatch
 
     @Relation(parentColumn = "show_id", entityColumn = "id")
     lateinit var _show: List<TiviShow>

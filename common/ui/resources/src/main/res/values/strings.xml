@@ -43,7 +43,7 @@
     <string name="discover_popular_title">Popular</string>
     <string name="discover_keep_watching_title">Up next</string>
 
-    <string name="following_shows_title">Following</string>
+    <string name="following_shows_title">Followed</string>
     <string name="cd_following_shows_title">@string/following_shows_title</string>
     <string name="watched_shows_title">Watched</string>
     <string name="cd_watched_shows_title">@string/watched_shows_title</string>
@@ -51,6 +51,8 @@
     <string name="cd_library_title">@string/library_title</string>
     <string name="upnext_title">Up Next</string>
     <string name="cd_upnext_title">@string/library_title</string>
+
+    <string name="upnext_filter_followed_shows_only_title">Followed only</string>
 
     <string name="login">Login</string>
     <string name="refresh_credentials">Refresh credentials</string>
