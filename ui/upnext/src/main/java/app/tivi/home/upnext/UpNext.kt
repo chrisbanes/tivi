@@ -79,6 +79,7 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.items
+import app.tivi.common.compose.rememberLazyGridState
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
@@ -134,7 +135,7 @@ internal fun UpNext(
 
     UpNext(
         state = viewState,
-        list = pagingItems,
+        lazyPagingItems = pagingItems,
         openShowDetails = openShowDetails,
         openTrackEpisode = openTrackEpisode,
         onMessageShown = viewModel::clearMessage,
@@ -149,7 +150,7 @@ internal fun UpNext(
 @Composable
 internal fun UpNext(
     state: UpNextViewState,
-    list: LazyPagingItems<UpNextEntry>,
+    lazyPagingItems: LazyPagingItems<UpNextEntry>,
     openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
     openTrackEpisode: (episodeId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
@@ -219,6 +220,7 @@ internal fun UpNext(
             val gutter = Layout.gutter
 
             LazyVerticalGrid(
+                state = rememberLazyGridState(lazyPagingItems.itemCount == 0),
                 columns = GridCells.Fixed(columns / 4),
                 contentPadding = paddingValues + PaddingValues(
                     horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
@@ -266,7 +268,7 @@ internal fun UpNext(
                 }
 
                 items(
-                    items = list,
+                    items = lazyPagingItems,
                     key = { it.show.id },
                 ) { entry ->
                     if (entry != null) {
