@@ -19,7 +19,6 @@ package app.tivi.data.traktusers
 import app.tivi.data.daos.UserDao
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.TraktUser
-import app.tivi.data.util.withRetry
 import app.tivi.inject.ApplicationScope
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.flow.Flow
@@ -40,9 +39,7 @@ class TraktUsersRepository(
     }
 
     suspend fun updateUser(username: String) {
-        var user = withRetry {
-            dataSource.getUser(username)
-        }.let {
+        var user = dataSource.getUser(username).let {
             // Tag the user as 'me' if that's what we're requesting
             if (username == "me") {
                 it.copy(isMe = true)

@@ -19,7 +19,7 @@ package app.tivi.home.upnext
 import app.tivi.api.UiMessage
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TraktUser
-import app.tivi.trakt.TraktAuthState
+import app.tivi.data.traktauth.TraktAuthState
 
 data class UpNextViewState(
     val user: TraktUser? = null,

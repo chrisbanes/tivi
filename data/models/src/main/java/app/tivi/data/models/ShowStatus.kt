@@ -21,4 +21,5 @@ enum class ShowStatus(val storageKey: String) {
     RETURNING("returning"),
     CANCELED("canceled"),
     IN_PRODUCTION("inproduction"),
+    PLANNED("planned"),
 }

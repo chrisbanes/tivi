@@ -27,10 +27,11 @@ import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsBinds
 import app.tivi.data.popularshows.PopularShowsBinds
 import app.tivi.data.recommendedshows.RecommendedShowsBinds
-import app.tivi.data.relatedshows.RelatedShowsBinds
 import app.tivi.data.search.SearchBinds
 import app.tivi.data.showimages.ShowImagesBinds
 import app.tivi.data.shows.ShowsBinds
+import app.tivi.data.traktauth.RelatedShowsBinds
+import app.tivi.data.traktauth.TraktAuthComponent
 import app.tivi.data.traktusers.TraktUsersBinds
 import app.tivi.data.trendingshows.TrendingShowsBinds
 import app.tivi.data.watchedshows.WatchedShowsBinds
@@ -39,7 +40,6 @@ import app.tivi.settings.PreferencesComponent
 import app.tivi.tasks.TasksComponent
 import app.tivi.tasks.TiviWorkerFactory
 import app.tivi.tmdb.TmdbComponent
-import app.tivi.trakt.TraktAuthComponent
 import app.tivi.trakt.TraktComponent
 import app.tivi.util.LoggerComponent
 import app.tivi.util.PowerControllerComponent

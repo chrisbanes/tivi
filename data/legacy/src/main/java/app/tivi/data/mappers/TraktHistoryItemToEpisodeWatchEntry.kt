@@ -16,16 +16,15 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.trakt.model.TraktHistoryItem
 import app.tivi.data.models.EpisodeWatchEntry
-import app.tivi.data.util.toKotlinInstant
-import com.uwetrottmann.trakt5.entities.HistoryEntry
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TraktHistoryItemToEpisodeWatchEntry() : Mapper<HistoryEntry, EpisodeWatchEntry> {
-    override suspend fun map(from: HistoryEntry) = EpisodeWatchEntry(
+class TraktHistoryItemToEpisodeWatchEntry() : Mapper<TraktHistoryItem, EpisodeWatchEntry> {
+    override suspend fun map(from: TraktHistoryItem) = EpisodeWatchEntry(
         episodeId = 0,
-        traktId = from.id,
-        watchedAt = from.watched_at!!.toKotlinInstant(),
+        traktId = from.id?.toLong(),
+        watchedAt = requireNotNull(from.watchedAt),
     )
 }

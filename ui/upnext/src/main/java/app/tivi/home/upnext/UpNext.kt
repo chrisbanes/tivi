@@ -89,7 +89,7 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
-import app.tivi.trakt.TraktAuthState
+import app.tivi.data.traktauth.TraktAuthState
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 import me.tatarka.inject.annotations.Assisted

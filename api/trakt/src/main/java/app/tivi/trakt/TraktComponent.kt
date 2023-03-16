@@ -16,52 +16,84 @@
 
 package app.tivi.trakt
 
+import app.moviebase.trakt.Trakt
+import app.moviebase.trakt.api.TraktEpisodesApi
+import app.moviebase.trakt.api.TraktRecommendationsApi
+import app.moviebase.trakt.api.TraktSearchApi
+import app.moviebase.trakt.api.TraktSeasonsApi
+import app.moviebase.trakt.api.TraktShowsApi
+import app.moviebase.trakt.api.TraktSyncApi
+import app.moviebase.trakt.api.TraktUsersApi
+import app.tivi.data.traktauth.RefreshTraktTokensInteractor
+import app.tivi.data.traktauth.TraktOAuthInfo
+import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
-import com.uwetrottmann.trakt5.TraktV2
-import com.uwetrottmann.trakt5.services.Episodes
-import com.uwetrottmann.trakt5.services.Recommendations
-import com.uwetrottmann.trakt5.services.Search
-import com.uwetrottmann.trakt5.services.Seasons
-import com.uwetrottmann.trakt5.services.Shows
-import com.uwetrottmann.trakt5.services.Sync
-import com.uwetrottmann.trakt5.services.Users
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
 interface TraktComponent {
+
     @ApplicationScope
     @Provides
     fun provideTrakt(
         client: OkHttpClient,
+        authStore: AuthStore,
         oauthInfo: TraktOAuthInfo,
-    ): TraktV2 = object : TraktV2(
-        oauthInfo.clientId,
-        oauthInfo.clientSecret,
-        oauthInfo.redirectUri,
-    ) {
-        override fun okHttpClient(): OkHttpClient = client.newBuilder()
-            .apply { setOkHttpClientDefaults(this) }
-            .build()
+        refreshTokens: Lazy<RefreshTraktTokensInteractor>,
+    ): Trakt = Trakt {
+        traktApiKey = oauthInfo.clientId
+        maxRetriesOnException = 3
+
+        httpClient(OkHttp) {
+            // Probably want to move to using Ktor's caching, timeouts, etc eventually
+            engine {
+                preconfigured = client
+            }
+
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        authStore.get()?.let {
+                            BearerTokens(it.accessToken, it.refreshToken)
+                        }
+                    }
+
+                    refreshTokens {
+                        refreshTokens.value.invoke()?.let {
+                            BearerTokens(it.accessToken, it.refreshToken)
+                        }
+                    }
+
+                    sendWithoutRequest { request ->
+                        request.url.host == "api.trakt.tv"
+                    }
+                }
+            }
+        }
     }
 
     @Provides
-    fun provideTraktUsersService(traktV2: TraktV2): Users = traktV2.users()
+    fun provideTraktUsersService(trakt: Trakt): TraktUsersApi = trakt.users
 
     @Provides
-    fun provideTraktShowsService(traktV2: TraktV2): Shows = traktV2.shows()
+    fun provideTraktShowsService(trakt: Trakt): TraktShowsApi = trakt.shows
 
     @Provides
-    fun provideTraktEpisodesService(traktV2: TraktV2): Episodes = traktV2.episodes()
+    fun provideTraktEpisodesService(trakt: Trakt): TraktEpisodesApi = trakt.episodes
 
     @Provides
-    fun provideTraktSeasonsService(traktV2: TraktV2): Seasons = traktV2.seasons()
+    fun provideTraktSeasonsService(trakt: Trakt): TraktSeasonsApi = trakt.seasons
 
     @Provides
-    fun provideTraktSyncService(traktV2: TraktV2): Sync = traktV2.sync()
+    fun provideTraktSyncService(trakt: Trakt): TraktSyncApi = trakt.sync
 
     @Provides
-    fun provideTraktSearchService(traktV2: TraktV2): Search = traktV2.search()
+    fun provideTraktSearchService(trakt: Trakt): TraktSearchApi = trakt.search
 
     @Provides
-    fun provideTraktRecommendationsService(traktV2: TraktV2): Recommendations = traktV2.recommendations()
+    fun provideTraktRecommendationsService(trakt: Trakt): TraktRecommendationsApi = trakt.recommendations
 }

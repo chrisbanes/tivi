@@ -16,21 +16,20 @@
 
 package app.tivi.data.shows
 
+import app.moviebase.trakt.TraktExtended
+import app.moviebase.trakt.api.TraktSearchApi
+import app.moviebase.trakt.api.TraktShowsApi
+import app.moviebase.trakt.model.TraktIdType
+import app.moviebase.trakt.model.TraktSearchQuery
+import app.moviebase.trakt.model.TraktSearchType
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.models.TiviShow
-import app.tivi.data.util.bodyOrThrow
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.enums.IdType
-import com.uwetrottmann.trakt5.enums.Type
-import com.uwetrottmann.trakt5.services.Search
-import com.uwetrottmann.trakt5.services.Shows
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TraktShowDataSourceImpl(
-    private val showService: Lazy<Shows>,
-    private val searchService: Lazy<Search>,
+    private val showService: Lazy<TraktShowsApi>,
+    private val searchService: Lazy<TraktSearchApi>,
     private val mapper: TraktShowToTiviShow,
 ) : ShowDataSource {
     override suspend fun getShow(show: TiviShow): TiviShow {
@@ -38,35 +37,35 @@ class TraktShowDataSourceImpl(
 
         if (traktId == null && show.tmdbId != null) {
             // We need to fetch the search for the trakt id
-            traktId = searchService.value.idLookup(
-                IdType.TMDB,
-                show.tmdbId.toString(),
-                Type.SHOW,
-                Extended.NOSEASONS,
-                1,
-                1,
-            )
-                .awaitResponse()
-                .let { it.body()?.getOrNull(0)?.show?.ids?.trakt }
+            traktId = searchService.value
+                .searchIdLookup(
+                    idType = TraktIdType.TMDB,
+                    id = show.tmdbId.toString(),
+                    searchType = TraktSearchType.SHOW,
+                    extended = TraktExtended.NO_SEASONS,
+                    page = 1,
+                    limit = 1,
+                ).getOrNull(0)?.show?.ids?.trakt
         }
 
         if (traktId == null) {
+            val searchQuery = TraktSearchQuery(
+                query = show.title,
+                countries = show.country,
+                networks = show.network,
+                extended = TraktExtended.NO_SEASONS,
+                page = 1,
+                limit = 1,
+            )
             traktId = searchService.value
-                .textQueryShow(
-                    show.title, null, /* years */ null, /* genres */
-                    null, /* lang */ show.country, /* countries */ null, /* runtime */ null, /* ratings */
-                    null, /* certs */ show.network, /* networks */ null, /* status */
-                    Extended.NOSEASONS, 1, 1,
-                )
-                .awaitResponse()
-                .let { it.body()?.firstOrNull()?.show?.ids?.trakt }
+                .searchTextQueryShow(searchQuery)
+                .firstOrNull()?.show?.ids?.trakt
         }
 
         return if (traktId != null) {
             showService.value
-                .summary(traktId.toString(), Extended.FULL)
-                .awaitResponse()
-                .let { mapper.map(it.bodyOrThrow()) }
+                .getSummary(showId = traktId.toString(), extended = TraktExtended.FULL)
+                .let { mapper.map(it) }
         } else {
             throw IllegalArgumentException("Trakt ID for show does not exist: [$show]")
         }

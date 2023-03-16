@@ -16,20 +16,20 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.trakt.model.TraktUser as ApiTraktUser
 import app.tivi.data.models.TraktUser
-import app.tivi.data.util.toKotlinInstant
-import com.uwetrottmann.trakt5.entities.User
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class UserToTraktUser() : Mapper<User, TraktUser> {
-    override suspend fun map(from: User) = TraktUser(
-        username = from.username!!,
+class UserToTraktUser() : Mapper<ApiTraktUser, TraktUser> {
+
+    override suspend fun map(from: ApiTraktUser) = TraktUser(
+        username = from.userName!!,
         name = from.name,
         location = from.location,
         about = from.about,
         avatarUrl = from.images?.avatar?.full,
-        joined = from.joined_at?.toKotlinInstant(),
+        joined = from.joinedAt,
         vip = from.vip,
     )
 }

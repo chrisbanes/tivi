@@ -16,16 +16,16 @@
 
 package app.tivi.domain.interactors
 
+import app.tivi.data.traktauth.TraktAuthRepository
+import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.ResultInteractor
-import app.tivi.trakt.TraktAuthState
-import app.tivi.trakt.TraktManager
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class GetTraktAuthState(
-    private val traktManager: TraktManager,
+    private val traktAuthRepository: TraktAuthRepository,
 ) : ResultInteractor<Unit, TraktAuthState>() {
     override suspend fun doWork(params: Unit): TraktAuthState {
-        return traktManager.state.value
+        return traktAuthRepository.state.value
     }
 }

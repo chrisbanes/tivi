@@ -16,12 +16,13 @@
 
 package app.tivi.data.mappers
 
+import app.moviebase.trakt.model.TraktSeason
 import app.tivi.data.models.Season
-import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktSeasonToSeason() : Mapper<TraktSeason, Season> {
+
     override suspend fun map(from: TraktSeason) = Season(
         showId = 0,
         traktId = from.ids?.trakt,
@@ -31,8 +32,8 @@ class TraktSeasonToSeason() : Mapper<TraktSeason, Season> {
         summary = from.overview,
         traktRating = from.rating?.toFloat() ?: 0f,
         traktRatingVotes = from.votes ?: 0,
-        episodeCount = from.episode_count,
-        episodesAired = from.aired_episodes,
+        episodeCount = from.episodeCount,
+        episodesAired = from.airedEpisodes,
         network = from.network,
     )
 }

@@ -167,7 +167,6 @@ dependencies {
     implementation(projects.common.ui.compose)
     implementation(projects.data.dbRoom)
     implementation(projects.api.trakt)
-    implementation(projects.api.traktAuth.android)
     implementation(projects.api.tmdb)
     implementation(projects.domain)
     implementation(projects.tasks.android)
@@ -208,8 +207,6 @@ dependencies {
     implementation(libs.accompanist.navigation.animation)
     implementation(libs.accompanist.navigation.material)
 
-    implementation(libs.threeTenAbp)
-
     implementation(libs.timber)
 
     implementation(libs.kotlin.coroutines.android)
@@ -225,8 +222,6 @@ dependencies {
     "qaImplementation"(libs.chucker.library)
 
     "qaImplementation"(libs.debugdrawer.debugdrawer)
-    "qaImplementation"(libs.debugdrawer.retrofit)
-    "qaImplementation"(libs.retrofit.mock)
     "qaImplementation"(libs.debugdrawer.timber)
     "qaImplementation"(libs.debugdrawer.okhttplogger)
 

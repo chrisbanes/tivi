@@ -21,8 +21,6 @@ import au.com.gridstone.debugdrawer.DebugDrawer
 import au.com.gridstone.debugdrawer.DeviceInfoModule
 import au.com.gridstone.debugdrawer.okhttplogs.HttpLogger
 import au.com.gridstone.debugdrawer.okhttplogs.OkHttpLoggerModule
-import au.com.gridstone.debugdrawer.retrofit.DebugRetrofitConfig
-import au.com.gridstone.debugdrawer.retrofit.RetrofitModule
 import au.com.gridstone.debugdrawer.timber.TimberModule
 import me.tatarka.inject.annotations.Provides
 
@@ -30,11 +28,8 @@ interface ContentViewSetterComponent {
     @Provides
     fun provideContentViewSetter(
         httpLogger: HttpLogger,
-        debugRetrofitConfig: DebugRetrofitConfig,
     ): ContentViewSetter = ContentViewSetter { activity, view ->
         DebugDrawer.with(activity)
-            .addSectionTitle("Network")
-            .addModule(RetrofitModule(debugRetrofitConfig))
             .addSectionTitle("Logs")
             .addModule(OkHttpLoggerModule(httpLogger))
             .addModule(TimberModule())

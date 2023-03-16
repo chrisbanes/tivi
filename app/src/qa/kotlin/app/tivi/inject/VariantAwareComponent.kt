@@ -17,16 +17,12 @@
 package app.tivi.inject
 
 import android.app.Application
-import app.tivi.NetworkBehaviorSimulatorInterceptor
 import au.com.gridstone.debugdrawer.okhttplogs.HttpLogger
-import au.com.gridstone.debugdrawer.retrofit.DebugRetrofitConfig
-import au.com.gridstone.debugdrawer.retrofit.Endpoint
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.mock.NetworkBehavior
 
 interface VariantAwareComponent {
     @ApplicationScope
@@ -55,26 +51,4 @@ interface VariantAwareComponent {
     @Provides
     @IntoSet
     fun provideHttpLoggerInterceptor(httpLogger: HttpLogger): Interceptor = httpLogger.interceptor
-
-    @ApplicationScope
-    @Provides
-    fun provideNetworkBehavior(): NetworkBehavior = NetworkBehavior.create()
-
-    @Provides
-    @IntoSet
-    @ApplicationScope
-    fun provideNetworkBehaviorInterceptor(networkBehavior: NetworkBehavior): Interceptor {
-        return NetworkBehaviorSimulatorInterceptor(networkBehavior)
-    }
-
-    @ApplicationScope
-    @Provides
-    fun provideDebugRetrofitConfig(
-        application: Application,
-        networkBehavior: NetworkBehavior,
-    ): DebugRetrofitConfig = DebugRetrofitConfig(
-        context = application,
-        endpoints = listOf(Endpoint(name = "Default", url = "blah", isMock = true)),
-        networkBehavior = networkBehavior,
-    )
 }

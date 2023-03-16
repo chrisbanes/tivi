@@ -24,6 +24,7 @@ import androidx.paging.cachedIn
 import app.tivi.api.UiMessageManager
 import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.SortOption
+import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.interactors.UpdateUpNextEpisodes
@@ -32,7 +33,6 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.extensions.combine
 import app.tivi.settings.TiviPreferences
-import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus

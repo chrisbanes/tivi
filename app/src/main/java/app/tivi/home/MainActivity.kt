@@ -41,6 +41,8 @@ import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.shouldUseDynamicColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.core.analytics.Analytics
+import app.tivi.data.traktauth.LoginToTraktInteractor
+import app.tivi.data.traktauth.TraktAuthActivityComponent
 import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
@@ -83,6 +85,9 @@ class MainActivity : TiviActivity() {
         // Copied from setContent {} ext-fun
         setOwners()
 
+        // Register for Login activity results
+        component.login.register()
+
         component.contentViewSetter.setContentView(this, composeView)
     }
 
@@ -115,13 +120,15 @@ class MainActivity : TiviActivity() {
 abstract class MainActivityComponent(
     @get:Provides val activity: Activity,
     @Component val applicationComponent: ApplicationComponent = ApplicationComponent.from(activity),
-) : ActivityComponent {
+) : ActivityComponent,
+    TraktAuthActivityComponent {
     abstract val tiviDateFormatter: TiviDateFormatter
     abstract val textCreator: TiviTextCreator
     abstract val preferences: TiviPreferences
     abstract val analytics: Analytics
     abstract val contentViewSetter: ContentViewSetter
     abstract val screens: ComposeScreens
+    abstract val login: LoginToTraktInteractor
     abstract val viewModel: () -> MainActivityViewModel
 }
 

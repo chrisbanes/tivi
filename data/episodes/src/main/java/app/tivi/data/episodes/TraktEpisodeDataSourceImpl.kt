@@ -16,22 +16,19 @@
 
 package app.tivi.data.episodes
 
+import app.moviebase.trakt.api.TraktEpisodesApi
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktEpisodeToEpisode
 import app.tivi.data.models.Episode
-import app.tivi.data.util.bodyOrThrow
-import app.tivi.data.util.withRetry
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Episodes
 import me.tatarka.inject.annotations.Inject
-import retrofit2.awaitResponse
 
 @Inject
 class TraktEpisodeDataSourceImpl(
     private val traktIdMapper: ShowIdToTraktIdMapper,
-    private val service: Lazy<Episodes>,
+    private val service: Lazy<TraktEpisodesApi>,
     private val episodeMapper: TraktEpisodeToEpisode,
 ) : EpisodeDataSource {
+
     override suspend fun getEpisode(
         showId: Long,
         seasonNumber: Int,
@@ -39,11 +36,9 @@ class TraktEpisodeDataSourceImpl(
     ): Episode {
         val traktId = traktIdMapper.map(showId)
             ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
-        return withRetry {
-            service.value
-                .summary(traktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
-                .awaitResponse()
-                .let { episodeMapper.map(it.bodyOrThrow()) }
-        }
+
+        return service.value
+            .getSummary(traktId.toString(), seasonNumber, episodeNumber)
+            .let { episodeMapper.map(it) }
     }
 }

@@ -17,7 +17,6 @@ ktor = "2.2.4"
 paging = "3.1.1"
 retrofit = "2.9.0"
 room = "2.5.0"
-threetenbp = "1.6.2"
 compileSdk = "33"
 minSdk = "23"
 targetSdk = "31"
@@ -106,7 +105,6 @@ google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.2.0"
 google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.3.5"
 
 debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
-debugdrawer-retrofit = { module = "au.com.gridstone.debugdrawer:debugdrawer-retrofit", version.ref = "debugdrawer" }
 debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber", version.ref = "debugdrawer" }
 debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-okhttp-logger", version.ref = "debugdrawer" }
 
@@ -136,12 +134,9 @@ okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp"
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
 playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:16.2.0"
-
-retrofit-gsonConverter = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
-retrofit-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofit" }
 
 robolectric = "org.robolectric:robolectric:4.9.2"
 
@@ -151,12 +146,9 @@ swipe = "me.saket.swipe:swipe:1.1.1"
 
 store = "org.mobilenativefoundation.store:store5:5.0.0-alpha03"
 
-threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.4.4"
-
 timber = "com.jakewharton.timber:timber:5.0.1"
 
 tmdb-api = "app.moviebase:tmdb-api:0.9.2-SNAPSHOT"
-
-traktJava = "com.uwetrottmann.trakt5:trakt-java:6.11.2"
+trakt-api = "app.moviebase:trakt-api:0.4.0-SNAPSHOT"
 
 truth = "com.google.truth:truth:1.1.3"

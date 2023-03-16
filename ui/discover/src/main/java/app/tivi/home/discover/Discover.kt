@@ -84,7 +84,7 @@ import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
-import app.tivi.trakt.TraktAuthState
+import app.tivi.data.traktauth.TraktAuthState
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 

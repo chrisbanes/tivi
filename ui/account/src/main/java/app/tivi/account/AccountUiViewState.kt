@@ -18,7 +18,7 @@ package app.tivi.account
 
 import androidx.compose.runtime.Immutable
 import app.tivi.data.models.TraktUser
-import app.tivi.trakt.TraktAuthState
+import app.tivi.data.traktauth.TraktAuthState
 
 @Immutable
 data class AccountUiViewState(

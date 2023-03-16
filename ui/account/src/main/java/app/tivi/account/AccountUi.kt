@@ -16,7 +16,6 @@
 
 package app.tivi.account
 
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -55,7 +54,7 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.models.TraktUser
-import app.tivi.trakt.TraktAuthState
+import app.tivi.data.traktauth.TraktAuthState
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
@@ -89,19 +88,11 @@ internal fun AccountUi(
 ) {
     val viewState by viewModel.state.collectAsState()
 
-    val loginLauncher = rememberLauncherForActivityResult(
-        viewModel.buildLoginActivityResult(),
-    ) { result ->
-        if (result != null) {
-            viewModel.onLoginResult(result)
-        }
-    }
-
     AccountUi(
         viewState = viewState,
         openSettings = openSettings,
-        login = { loginLauncher.launch(Unit) },
-        logout = { viewModel.logout() },
+        login = viewModel::login,
+        logout = viewModel::logout,
         modifier = modifier,
     )
 }

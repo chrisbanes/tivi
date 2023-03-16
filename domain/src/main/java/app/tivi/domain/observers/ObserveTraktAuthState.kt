@@ -16,17 +16,17 @@
 
 package app.tivi.domain.observers
 
+import app.tivi.data.traktauth.TraktAuthRepository
+import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.SubjectInteractor
-import app.tivi.trakt.TraktAuthState
-import app.tivi.trakt.TraktManager
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObserveTraktAuthState(
-    private val traktManager: TraktManager,
+    private val traktAuthRepository: TraktAuthRepository,
 ) : SubjectInteractor<Unit, TraktAuthState>() {
     override fun createObservable(params: Unit): Flow<TraktAuthState> {
-        return traktManager.state
+        return traktAuthRepository.state
     }
 }
