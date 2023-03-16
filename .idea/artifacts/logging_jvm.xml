@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="logging-jvm">
-    <output-path>$PROJECT_DIR$/core/logging/build/libs</output-path>
-    <root id="archive" name="logging-jvm.jar">
-      <element id="module-output" name="tivi.core.logging.jvmMain" />
-    </root>
-  </artifact>
-</component>

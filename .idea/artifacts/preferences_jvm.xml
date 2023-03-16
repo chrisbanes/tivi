@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="preferences-jvm">
-    <output-path>$PROJECT_DIR$/core/preferences/build/libs</output-path>
-    <root id="archive" name="preferences-jvm.jar">
-      <element id="module-output" name="tivi.core.preferences.jvmMain" />
-    </root>
-  </artifact>
-</component>
