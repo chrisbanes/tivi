@@ -18,7 +18,6 @@ package app.tivi.common.imageloading
 
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.imagemodels.EpisodeImageModel
-import app.tivi.data.models.Episode
 import app.tivi.data.util.inPast
 import app.tivi.tmdb.TmdbImageUrlProvider
 import coil.intercept.Interceptor
@@ -49,19 +48,16 @@ class EpisodeCoilInterceptor(
             runCatching { repository.updateEpisode(model.id) }
         }
 
-        val episode = repository.getEpisode(model.id)
-        return if (episode?.tmdbBackdropPath != null) {
+        return repository.getEpisode(model.id)?.tmdbBackdropPath?.let { backdropPath ->
             chain.request.newBuilder()
-                .data(map(episode, chain.size))
+                .data(map(backdropPath, chain.size))
                 .build()
-        } else {
-            chain.request
-        }
+        } ?: chain.request
     }
 
-    private fun map(data: Episode, size: Size): HttpUrl {
+    private fun map(backdropPath: String, size: Size): HttpUrl {
         return tmdbImageUrlProvider.value.getBackdropUrl(
-            path = data.tmdbBackdropPath!!,
+            path = backdropPath,
             imageWidth = size.width.pxOrElse { 0 },
         ).toHttpUrl()
     }

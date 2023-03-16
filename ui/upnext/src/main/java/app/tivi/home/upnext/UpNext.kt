@@ -62,7 +62,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -84,12 +86,15 @@ import app.tivi.common.compose.ui.plus
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.UpNextEntry
+import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
+import app.tivi.data.models.ImageType
 import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import coil.compose.AsyncImagePainter
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 import me.tatarka.inject.annotations.Assisted
@@ -333,9 +338,19 @@ private fun UpNextItem(
                 .fillMaxWidth(0.3f) // 30% of the width
                 .aspectRatio(16 / 11f),
         ) {
+            var model: Any by remember { mutableStateOf(episode.asImageModel()) }
+
             AsyncImage(
-                model = episode.asImageModel(),
+                model = model,
                 requestBuilder = { crossfade(true) },
+                onState = { state ->
+                    if (state is AsyncImagePainter.State.Error) {
+                        if (state.result.request.data is EpisodeImageModel) {
+                            // If the episode backdrop request failed, fallback to the show backdrop
+                            model = show.asImageModel(ImageType.BACKDROP)
+                        }
+                    }
+                },
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
