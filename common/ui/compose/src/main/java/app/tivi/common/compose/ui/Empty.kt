@@ -41,14 +41,12 @@ fun EmptyContent(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-        ) {
+        Column(modifier = Modifier.align(Alignment.Center)) {
             val density = LocalDensity.current
             val emojiHeaderGraphicTextStyle = remember(density) {
                 TextStyle(
                     // We don't want font scaling to affect this size
-                    fontSize = 140.dp.asEm(density),
+                    fontSize = 112.dp.asEm(density),
                     // Any opaque color will work here
                     color = Color.Magenta,
                 )

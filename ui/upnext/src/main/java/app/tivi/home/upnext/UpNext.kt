@@ -23,6 +23,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -80,6 +81,7 @@ import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.items
 import app.tivi.common.compose.rememberLazyGridState
 import app.tivi.common.compose.ui.AsyncImage
+import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
@@ -235,34 +237,22 @@ internal fun UpNext(
                     .fillMaxHeight(),
             ) {
                 fullSpanItem {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                        modifier = Modifier
-                            .padding(vertical = 8.dp, horizontal = 8.dp)
-                            .fillMaxWidth(),
-                    ) {
-                        FilterChip(
-                            selected = state.followedShowsOnly,
-                            leadingIcon = {
-                                AnimatedVisibility(visible = state.followedShowsOnly) {
-                                    Icon(
-                                        imageVector = Icons.Default.Done,
-                                        contentDescription = null,
-                                    )
-                                }
-                            },
-                            onClick = onToggleFollowedShowsOnly,
-                            label = {
-                                Text(text = stringResource(MR.strings.upnext_filter_followed_shows_only_title))
-                            },
-                        )
+                    UpNextFilterRow(
+                        followedShowsOnly = state.followedShowsOnly,
+                        onToggleFollowedShowsOnly = onToggleFollowedShowsOnly,
+                        availableSorts = state.availableSorts,
+                        currentSort = state.sort,
+                        onSortSelected = onSortSelected,
+                    )
+                }
 
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        SortChip(
-                            sortOptions = state.availableSorts,
-                            currentSortOption = state.sort,
-                            onSortSelected = onSortSelected,
+                if (lazyPagingItems.itemCount == 0) {
+                    fullSpanItem {
+                        EmptyContent(
+                            title = { Text(text = stringResource(MR.strings.upnext_empty_title)) },
+                            prompt = { Text(text = stringResource(UiR.string.upnext_empty_prompt)) },
+                            graphic = { Text(text = "\uD83D\uDC7B") },
+                            modifier = Modifier.fillMaxSize(),
                         )
                     }
                 }
@@ -272,23 +262,8 @@ internal fun UpNext(
                     key = { it.show.id },
                 ) { entry ->
                     if (entry != null) {
-                        val trackEpisode = SwipeAction(
-                            icon = {
-                                Icon(
-                                    imageVector = Icons.Outlined.Visibility,
-                                    contentDescription = null, // decorative
-                                    modifier = Modifier
-                                        .padding(vertical = 16.dp, horizontal = 24.dp),
-                                )
-                            },
-                            background = MaterialTheme.colorScheme.secondary,
+                        SwipeUpNextItem(
                             onSwipe = { openTrackEpisode(entry.episode.id) },
-                        )
-
-                        SwipeableActionsBox(
-                            endActions = listOf(trackEpisode),
-                            swipeThreshold = 80.dp, // icon + padding + 8.dp
-                            backgroundUntilSwipeThreshold = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
                             modifier = Modifier
                                 .animateItemPlacement()
                                 .fillMaxWidth(),
@@ -318,6 +293,77 @@ internal fun UpNext(
             )
         }
     }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun UpNextFilterRow(
+    followedShowsOnly: Boolean,
+    onToggleFollowedShowsOnly: () -> Unit,
+    availableSorts: List<SortOption>,
+    currentSort: SortOption,
+    onSortSelected: (SortOption) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+        modifier = modifier
+            .padding(vertical = 8.dp, horizontal = 8.dp),
+    ) {
+        FilterChip(
+            selected = followedShowsOnly,
+            leadingIcon = {
+                AnimatedVisibility(visible = followedShowsOnly) {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = null,
+                    )
+                }
+            },
+            onClick = onToggleFollowedShowsOnly,
+            label = {
+                Text(
+                    text = stringResource(UiR.string.upnext_filter_followed_shows_only_title),
+                )
+            },
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        SortChip(
+            sortOptions = availableSorts,
+            currentSortOption = currentSort,
+            onSortSelected = onSortSelected,
+        )
+    }
+}
+
+@Composable
+private fun SwipeUpNextItem(
+    onSwipe: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    val trackEpisode = SwipeAction(
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.Visibility,
+                contentDescription = null, // decorative
+                modifier = Modifier
+                    .padding(vertical = 16.dp, horizontal = 24.dp),
+            )
+        },
+        background = MaterialTheme.colorScheme.secondary,
+        onSwipe = onSwipe,
+    )
+
+    SwipeableActionsBox(
+        endActions = listOf(trackEpisode),
+        swipeThreshold = 80.dp, // icon + padding + 8.dp
+        backgroundUntilSwipeThreshold = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+        modifier = modifier,
+        content = content,
+    )
 }
 
 @Composable

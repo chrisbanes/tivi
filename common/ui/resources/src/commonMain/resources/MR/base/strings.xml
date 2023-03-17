@@ -55,6 +55,8 @@
     <string name="upnext_title">Up Next</string>
     <string name="cd_upnext_title">@string/library_title</string>
     <string name="upnext_filter_followed_shows_only_title">Followed only</string>
+    <string name="upnext_empty_title">No episodes left</string>
+    <string name="upnext_empty_prompt">You\'ve been busy</string>
 
     <string name="login">Login</string>
     <string name="refresh_credentials">Refresh credentials</string>
