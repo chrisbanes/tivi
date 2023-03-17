@@ -82,6 +82,7 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.items
 import app.tivi.common.compose.rememberLazyGridState
+import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortChip
@@ -210,119 +211,28 @@ internal fun Library(
             onRefresh = refresh,
         )
         Box(modifier = Modifier.pullRefresh(state = refreshState)) {
-            val columns = Layout.columns
-            val bodyMargin = Layout.bodyMargin
-            val gutter = Layout.gutter
-
-            var filterExpanded by remember { mutableStateOf(false) }
-
-            LazyVerticalGrid(
-                state = rememberLazyGridState(lazyPagingItems.itemCount == 0),
-                columns = GridCells.Fixed(columns / 4),
-                contentPadding = paddingValues + PaddingValues(
-                    horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
-                ),
-                // We minus 8.dp off the grid padding, as we use content padding on the items below
-                horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
-                verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
-                modifier = Modifier
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-                    .bodyWidth()
-                    .fillMaxHeight(),
-            ) {
-                fullSpanItem {
-                    var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-                        mutableStateOf(TextFieldValue(state.filter ?: ""))
-                    }
-
-                    FilterSortPanel(
-                        filterIcon = {
-                            IconButton(onClick = { filterExpanded = true }) {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = null, // FIXME
-                                )
-                            }
-                        },
-                        filterTextField = {
-                            SearchTextField(
-                                value = filter,
-                                onValueChange = { value ->
-                                    filter = value
-                                    onFilterChanged(value.text)
-                                },
-                                hint = stringResource(MR.strings.filter_shows, lazyPagingItems.itemCount),
-                                modifier = Modifier.fillMaxWidth(),
-                                showClearButton = true,
-                                onCleared = {
-                                    filter = TextFieldValue()
-                                    onFilterChanged("")
-                                    filterExpanded = false
-                                },
-                            )
-                        },
-                        filterExpanded = filterExpanded,
-                        modifier = Modifier.padding(vertical = 8.dp),
-                    ) {
-                        FilterChip(
-                            selected = state.followedShowsIncluded,
-                            leadingIcon = {
-                                AnimatedVisibility(visible = state.followedShowsIncluded) {
-                                    Icon(
-                                        imageVector = Icons.Default.Done,
-                                        contentDescription = null,
-                                    )
-                                }
-                            },
-                            onClick = onToggleIncludeFollowedShows,
-                            label = {
-                                Text(text = stringResource(MR.strings.following_shows_title))
-                            },
-                        )
-
-                        FilterChip(
-                            selected = state.watchedShowsIncluded,
-                            leadingIcon = {
-                                AnimatedVisibility(visible = state.watchedShowsIncluded) {
-                                    Icon(
-                                        imageVector = Icons.Default.Done,
-                                        contentDescription = null,
-                                    )
-                                }
-                            },
-                            onClick = onToggleIncludeWatchedShows,
-                            label = {
-                                Text(text = stringResource(MR.strings.watched_shows_title))
-                            },
-                        )
-
-                        SortChip(
-                            sortOptions = state.availableSorts,
-                            currentSortOption = state.sort,
-                            onSortSelected = onSortSelected,
-                        )
-                    }
-                }
-
-                items(
-                    items = lazyPagingItems,
-                    key = { it.show.id },
-                ) { entry ->
-                    if (entry != null) {
-                        LibraryItem(
-                            show = entry.show,
-                            watchedEpisodeCount = entry.stats?.watchedEpisodeCount,
-                            totalEpisodeCount = entry.stats?.episodeCount,
-                            lastWatchedDate = entry.watchedEntry?.lastWatched,
-                            onClick = { openShowDetails(entry.show.id) },
-                            contentPadding = PaddingValues(8.dp),
-                            modifier = Modifier
-                                .animateItemPlacement()
-                                .fillMaxWidth(),
-                        )
-                    }
-                }
+            if (lazyPagingItems.itemCount == 0) {
+                EmptyContent(
+                    title = { Text(text = stringResource(UiR.string.library_empty_title)) },
+                    prompt = { Text(text = stringResource(UiR.string.library_empty_prompt)) },
+                    graphic = { Text(text = "\uD83D\uDCFC") },
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else {
+                LibraryGrid(
+                    state = state,
+                    lazyPagingItems = lazyPagingItems,
+                    paddingValues = paddingValues,
+                    onFilterChanged = onFilterChanged,
+                    onToggleIncludeFollowedShows = onToggleIncludeFollowedShows,
+                    onToggleIncludeWatchedShows = onToggleIncludeWatchedShows,
+                    onSortSelected = onSortSelected,
+                    openShowDetails = openShowDetails,
+                    modifier = Modifier
+                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                        .bodyWidth()
+                        .fillMaxHeight(),
+                )
             }
 
             PullRefreshIndicator(
@@ -333,6 +243,132 @@ internal fun Library(
                     .padding(paddingValues),
                 scale = true,
             )
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+private fun LibraryGrid(
+    state: LibraryViewState,
+    lazyPagingItems: LazyPagingItems<LibraryShow>,
+    paddingValues: PaddingValues,
+    onFilterChanged: (String) -> Unit,
+    onToggleIncludeFollowedShows: () -> Unit,
+    onToggleIncludeWatchedShows: () -> Unit,
+    onSortSelected: (SortOption) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val columns = Layout.columns
+    val bodyMargin = Layout.bodyMargin
+    val gutter = Layout.gutter
+
+    var filterExpanded by remember { mutableStateOf(false) }
+
+    LazyVerticalGrid(
+        state = rememberLazyGridState(lazyPagingItems.itemCount == 0),
+        columns = GridCells.Fixed(columns / 4),
+        contentPadding = paddingValues + PaddingValues(
+            horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
+            vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+        ),
+        // We minus 8.dp off the grid padding, as we use content padding on the items below
+        horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
+        verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
+        modifier = modifier,
+    ) {
+        fullSpanItem {
+            var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+                mutableStateOf(TextFieldValue(state.filter ?: ""))
+            }
+
+            FilterSortPanel(
+                filterIcon = {
+                    IconButton(onClick = { filterExpanded = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null, // FIXME
+                        )
+                    }
+                },
+                filterTextField = {
+                    SearchTextField(
+                        value = filter,
+                        onValueChange = { value ->
+                            filter = value
+                            onFilterChanged(value.text)
+                        },
+                        hint = stringResource(MR.strings.filter_shows, lazyPagingItems.itemCount),
+                        modifier = Modifier.fillMaxWidth(),
+                        showClearButton = true,
+                        onCleared = {
+                            filter = TextFieldValue()
+                            onFilterChanged("")
+                            filterExpanded = false
+                        },
+                    )
+                },
+                filterExpanded = filterExpanded,
+                modifier = Modifier.padding(vertical = 8.dp),
+            ) {
+                FilterChip(
+                    selected = state.followedShowsIncluded,
+                    leadingIcon = {
+                        AnimatedVisibility(visible = state.followedShowsIncluded) {
+                            Icon(
+                                imageVector = Icons.Default.Done,
+                                contentDescription = null,
+                            )
+                        }
+                    },
+                    onClick = onToggleIncludeFollowedShows,
+                    label = {
+                        Text(text = stringResource(MR.strings.following_shows_title))
+                    },
+                )
+
+                FilterChip(
+                    selected = state.watchedShowsIncluded,
+                    leadingIcon = {
+                        AnimatedVisibility(visible = state.watchedShowsIncluded) {
+                            Icon(
+                                imageVector = Icons.Default.Done,
+                                contentDescription = null,
+                            )
+                        }
+                    },
+                    onClick = onToggleIncludeWatchedShows,
+                    label = {
+                        Text(text = stringResource(MR.strings.watched_shows_title))
+                    },
+                )
+
+                SortChip(
+                    sortOptions = state.availableSorts,
+                    currentSortOption = state.sort,
+                    onSortSelected = onSortSelected,
+                )
+            }
+        }
+
+        items(
+            items = lazyPagingItems,
+            key = { it.show.id },
+        ) { entry ->
+            if (entry != null) {
+                LibraryItem(
+                    show = entry.show,
+                    watchedEpisodeCount = entry.stats?.watchedEpisodeCount,
+                    totalEpisodeCount = entry.stats?.episodeCount,
+                    lastWatchedDate = entry.watchedEntry?.lastWatched,
+                    onClick = { openShowDetails(entry.show.id) },
+                    contentPadding = PaddingValues(8.dp),
+                    modifier = Modifier
+                        .animateItemPlacement()
+                        .fillMaxWidth(),
+                )
+            }
         }
     }
 }
