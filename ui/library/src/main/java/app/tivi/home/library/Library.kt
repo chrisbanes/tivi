@@ -211,29 +211,20 @@ internal fun Library(
             onRefresh = refresh,
         )
         Box(modifier = Modifier.pullRefresh(state = refreshState)) {
-            if (lazyPagingItems.itemCount == 0) {
-                EmptyContent(
-                    title = { Text(text = stringResource(UiR.string.library_empty_title)) },
-                    prompt = { Text(text = stringResource(UiR.string.library_empty_prompt)) },
-                    graphic = { Text(text = "\uD83D\uDCFC") },
-                    modifier = Modifier.fillMaxSize(),
-                )
-            } else {
-                LibraryGrid(
-                    state = state,
-                    lazyPagingItems = lazyPagingItems,
-                    paddingValues = paddingValues,
-                    onFilterChanged = onFilterChanged,
-                    onToggleIncludeFollowedShows = onToggleIncludeFollowedShows,
-                    onToggleIncludeWatchedShows = onToggleIncludeWatchedShows,
-                    onSortSelected = onSortSelected,
-                    openShowDetails = openShowDetails,
-                    modifier = Modifier
-                        .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .bodyWidth()
-                        .fillMaxHeight(),
-                )
-            }
+            LibraryGrid(
+                state = state,
+                lazyPagingItems = lazyPagingItems,
+                paddingValues = paddingValues,
+                onFilterChanged = onFilterChanged,
+                onToggleIncludeFollowedShows = onToggleIncludeFollowedShows,
+                onToggleIncludeWatchedShows = onToggleIncludeWatchedShows,
+                onSortSelected = onSortSelected,
+                openShowDetails = openShowDetails,
+                modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .bodyWidth()
+                    .fillMaxHeight(),
+            )
 
             PullRefreshIndicator(
                 refreshing = state.isLoading,
@@ -281,6 +272,15 @@ private fun LibraryGrid(
         fullSpanItem {
             var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
                 mutableStateOf(TextFieldValue(state.filter ?: ""))
+            }
+
+            if (lazyPagingItems.itemCount == 0) {
+                EmptyContent(
+                    title = { Text(text = stringResource(UiR.string.library_empty_title)) },
+                    prompt = { Text(text = stringResource(UiR.string.library_empty_prompt)) },
+                    graphic = { Text(text = "\uD83D\uDCFC") },
+                    modifier = Modifier.fillMaxSize(),
+                )
             }
 
             FilterSortPanel(
