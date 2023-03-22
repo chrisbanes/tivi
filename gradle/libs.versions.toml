@@ -2,7 +2,7 @@
 agp = "8.0.0-beta05"
 accompanist = "0.29.0-alpha"
 androidxlifecycle = "2.6.1"
-androidxactivity = "1.7.0-rc01"
+androidxactivity = "1.7.0"
 chucker = "3.5.2"
 coil = "2.2.2"
 compose-bom = "2023.02.00-rc02"
