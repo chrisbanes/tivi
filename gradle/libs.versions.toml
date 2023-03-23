@@ -75,7 +75,7 @@ androidx-test-runner = "androidx.test:runner:1.5.2"
 androidx-benchmark-macro = "androidx.benchmark:benchmark-macro-junit4:1.2.0-alpha12"
 androidx-uiautomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 
-androidx-work-runtime = "androidx.work:work-runtime-ktx:2.8.0"
+androidx-work-runtime = "androidx.work:work-runtime-ktx:2.8.1"
 
 appauth = "net.openid:appauth:0.8.1"
 
