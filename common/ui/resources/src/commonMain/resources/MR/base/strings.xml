@@ -69,6 +69,10 @@
     <string name="cd_search_navigation_title">@string/search_navigation_title</string>
     <string name="search_hint">Search for shows</string>
 
+    <string name="search_empty_title">Enter a query above</string>
+    <string name="search_noresults_title">No results found</string>
+    <string name="search_noresults_prompt">Made a typo?</string>
+
     <string name="account_title">Trakt Account</string>
     <string name="account_name_unknown">Hi there!</string>
 

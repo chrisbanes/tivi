@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
@@ -57,16 +56,15 @@ class SearchViewModel(
     init {
         viewModelScope.launch {
             searchQuery.debounce(300)
-                .onEach { query ->
-                    val job = launch {
+                .catch { throwable -> uiMessageManager.emitMessage(UiMessage(throwable)) }
+                .collect { query ->
+                    launch {
                         loadingState.addLoader()
                         searchShows(SearchShows.Params(query))
+                    }.invokeOnCompletion {
+                        loadingState.removeLoader()
                     }
-                    job.invokeOnCompletion { loadingState.removeLoader() }
-                    job.join()
                 }
-                .catch { throwable -> uiMessageManager.emitMessage(UiMessage(throwable)) }
-                .collect()
         }
     }
 

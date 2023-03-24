@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -57,6 +58,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.bodyWidth
+import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.plus
@@ -165,12 +167,31 @@ internal fun Search(
             }
         },
     ) { padding ->
-        SearchList(
-            results = state.searchResults,
-            contentPadding = padding + PaddingValues(horizontal = Layout.bodyMargin),
-            onShowClicked = { openShowDetails(it.id) },
-            modifier = Modifier.bodyWidth(),
-        )
+        if (state.searchResults.isEmpty() && !state.refreshing) {
+            EmptyContent(
+                title = {
+                    if (state.query.isEmpty()) {
+                        Text(text = stringResource(UiR.string.search_empty_title))
+                    } else {
+                        Text(text = stringResource(UiR.string.search_noresults_title))
+                    }
+                },
+                prompt = {
+                    if (state.query.isNotEmpty()) {
+                        Text(text = stringResource(UiR.string.search_noresults_prompt))
+                    }
+                },
+                graphic = { Text(text = "\uD83D\uDD75️\u200D♂️") },
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else {
+            SearchList(
+                results = state.searchResults,
+                contentPadding = padding + PaddingValues(horizontal = Layout.bodyMargin),
+                onShowClicked = { openShowDetails(it.id) },
+                modifier = Modifier.bodyWidth(),
+            )
+        }
     }
 }
 
