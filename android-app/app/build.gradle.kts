@@ -126,6 +126,18 @@ android {
             versionCode = (android.defaultConfig.versionCode ?: 0) + 1
         }
     }
+
+    testOptions {
+        managedDevices {
+            devices {
+                create<com.android.build.api.dsl.ManagedVirtualDevice>("api31") {
+                    device = "Pixel 6"
+                    apiLevel = 31
+                    systemImageSource = "aosp"
+                }
+            }
+        }
+    }
 }
 
 androidComponents {
@@ -202,10 +214,11 @@ dependencies {
 
     qaImplementation(libs.leakCanary)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.robolectric)
-    testImplementation(libs.androidx.test.core)
-    testImplementation(libs.androidx.test.rules)
+    androidTestImplementation(projects.androidApp.commonTest)
+    androidTestImplementation(libs.androidx.uiautomator)
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.rules)
 }
 
 if (file("google-services.json").exists()) {

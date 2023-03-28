@@ -49,16 +49,34 @@ jobs:
       - name: Build Android App (skipping benchmark variant)
         run: |
           ./gradlew spotlessCheck \
-              :android-app:app:bundle \
-              :android-app:app:build \
-              jvmTest \
-              lint \
-              -x :android-app:app:assembleStandardBenchmark \
-              -x :android-app:app:bundleStandardBenchmark
+            :android-app:app:bundle \
+            :android-app:app:build \
+            jvmTest \
+            lint \
+            -x :android-app:app:assembleStandardBenchmark \
+            -x :android-app:app:bundleStandardBenchmark
+
+      - name: Run smoke tests on Gradle Managed Device
+        # --info used to add a repro to https://issuetracker.google.com/issues/193118030
+        # config cache is disabled due to https://issuetracker.google.com/issues/262270582
+        run: |
+          ./gradlew api31QaDebugAndroidTest \
+            -Dorg.gradle.workers.max=1 \
+            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect" \
+            --info \
+            --no-configuration-cache
 
       - name: Clean secrets
         if: always()
         run: ./release/clean-secrets.sh
+
+      - name: Sanitize output file names (https://issuetracker.google.com/issues/263305468)
+        run: |
+          sanitizefilename() {
+              mv "${1}" "${1//[^A-Za-z0-9._-]/_}"
+          }
+          export -f sanitizefilename
+          find android-app/app/build/outputs -type f -exec bash -c 'sanitizefilename "$0"' {} \;
 
       - name: Upload build outputs
         if: always()

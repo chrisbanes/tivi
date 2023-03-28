@@ -98,4 +98,5 @@ include(
     ":ui:upnext",
     ":android-app:app",
     ":android-app:benchmark",
+    ":android-app:common-test",
 )
