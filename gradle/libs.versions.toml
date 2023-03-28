@@ -1,5 +1,5 @@
 [versions]
-agp = "8.0.0-beta05"
+agp = "8.0.0-rc01"
 accompanist = "0.30.0"
 androidxlifecycle = "2.6.1"
 androidxactivity = "1.7.0"
