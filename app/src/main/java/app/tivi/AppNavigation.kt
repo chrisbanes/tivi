@@ -16,7 +16,7 @@
 
 package app.tivi
 
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -483,7 +483,7 @@ private fun NavGraphBuilder.addShowSeasons(
 }
 
 @ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultTiviEnterTransition(
+private fun AnimatedContentTransitionScope<*>.defaultTiviEnterTransition(
     initial: NavBackStackEntry,
     target: NavBackStackEntry,
 ): EnterTransition {
@@ -494,11 +494,11 @@ private fun AnimatedContentScope<*>.defaultTiviEnterTransition(
         return fadeIn()
     }
     // Otherwise we're in the same nav graph, we can imply a direction
-    return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.Start)
+    return fadeIn() + slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start)
 }
 
 @ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultTiviExitTransition(
+private fun AnimatedContentTransitionScope<*>.defaultTiviExitTransition(
     initial: NavBackStackEntry,
     target: NavBackStackEntry,
 ): ExitTransition {
@@ -509,18 +509,18 @@ private fun AnimatedContentScope<*>.defaultTiviExitTransition(
         return fadeOut()
     }
     // Otherwise we're in the same nav graph, we can imply a direction
-    return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.Start)
+    return fadeOut() + slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start)
 }
 
 private val NavDestination.hostNavGraph: NavGraph
     get() = hierarchy.first { it is NavGraph } as NavGraph
 
 @ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultTiviPopEnterTransition(): EnterTransition {
-    return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.End)
+private fun AnimatedContentTransitionScope<*>.defaultTiviPopEnterTransition(): EnterTransition {
+    return fadeIn() + slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End)
 }
 
 @ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultTiviPopExitTransition(): ExitTransition {
-    return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.End)
+private fun AnimatedContentTransitionScope<*>.defaultTiviPopExitTransition(): ExitTransition {
+    return fadeOut() + slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End)
 }
