@@ -46,6 +46,8 @@ dependencies {
     implementation(libs.androidx.uiautomator)
     implementation(libs.androidx.test.junit)
     implementation(libs.kotlin.coroutines.android)
+
+    implementation(projects.androidApp.commonTest)
 }
 
 androidComponents {
