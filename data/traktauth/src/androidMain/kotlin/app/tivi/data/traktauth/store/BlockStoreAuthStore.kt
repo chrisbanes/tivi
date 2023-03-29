@@ -25,6 +25,7 @@ import com.google.android.gms.auth.blockstore.RetrieveBytesRequest
 import com.google.android.gms.auth.blockstore.StoreBytesData
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.api.AvailabilityException
 import kotlinx.coroutines.tasks.await
 import me.tatarka.inject.annotations.Inject
 
@@ -32,11 +33,7 @@ import me.tatarka.inject.annotations.Inject
 class BlockStoreAuthStore(
     private val context: Application,
 ) : AuthStore {
-    private val client by lazy { Blockstore.getClient(context) }
-
-    private val playServicesAvailable: Boolean
-        get() = GoogleApiAvailability.getInstance()
-            .isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS
+    private val blockStore by lazy { Blockstore.getClient(context) }
 
     override suspend fun get(): AuthState? = runCatching {
         // For new clients, we store using our app's key
@@ -60,7 +57,7 @@ class BlockStoreAuthStore(
     }
 
     private suspend fun get(key: String): AuthState? {
-        val response = client.retrieveBytes(
+        val response = blockStore.retrieveBytes(
             RetrieveBytesRequest.Builder()
                 .setKeys(listOf(key))
                 .build(),
@@ -79,10 +76,23 @@ class BlockStoreAuthStore(
             .setBytes(bytes)
             .build()
 
-        client.storeBytes(data).await()
+        blockStore.storeBytes(data).await()
     }
 
-    override suspend fun isAvailable(): Boolean = playServicesAvailable
+    override suspend fun isAvailable(): Boolean = with(GoogleApiAvailability.getInstance()) {
+        if (isGooglePlayServicesAvailable(context) != ConnectionResult.SUCCESS) {
+            // If Play Services isn't available, Block Store definitely isn't available
+            return false
+        }
+
+        try {
+            checkApiAvailability(blockStore).await()
+            return true
+        } catch (e: AvailabilityException) {
+            // Block Store isn't available so return false
+            return false
+        }
+    }
 
     private companion object {
         const val TRAKT_AUTH_KEY = "app.tivi.blockstore.trakt_auth"
