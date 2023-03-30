@@ -44,8 +44,8 @@ jobs:
         env:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
-      - name: Build
-        run: ./gradlew build bundle
+      - name: Build (skipping benchmark type)
+        run: ./gradlew build bundle -x :app:assembleStandardBenchmark -x :app:bundleStandardBenchmark
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
