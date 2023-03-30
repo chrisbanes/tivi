@@ -18,7 +18,6 @@
 
 package app.tivi.home.discover
 
-import app.tivi.common.ui.resources.R as UiR
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -79,6 +78,7 @@ import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.viewModel
+import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
