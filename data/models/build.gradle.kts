@@ -16,13 +16,21 @@
 
 
 plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
+    kotlin("multiplatform")
+    alias(libs.plugins.cacheFixPlugin)
 }
 
-dependencies {
-    api(projects.core.base)
+kotlin {
+    jvm()
 
-    api(libs.androidx.room.common) // Room annotations
-    api(libs.kotlinx.datetime)
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                api(projects.core.base)
+
+                api(libs.androidx.room.common) // Room annotations
+                api(libs.kotlinx.datetime)
+            }
+        }
+    }
 }
