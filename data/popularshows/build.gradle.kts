@@ -38,7 +38,6 @@ kotlin {
                 implementation(libs.kotlinx.atomicfu)
 
                 implementation(libs.kotlininject.runtime)
-                ksp(libs.kotlininject.compiler)
             }
         }
     }
