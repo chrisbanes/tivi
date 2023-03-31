@@ -25,7 +25,6 @@ import coil.request.ImageResult
 import coil.size.Size
 import coil.size.pxOrElse
 import me.tatarka.inject.annotations.Inject
-import okhttp3.HttpUrl
 
 @Inject
 class TmdbImageEntityCoilInterceptor(
@@ -45,7 +44,7 @@ class TmdbImageEntityCoilInterceptor(
         return chain.proceed(request)
     }
 
-    private fun map(data: TmdbImageEntity, size: Size): HttpUrl {
+    private fun map(data: TmdbImageEntity, size: Size): String {
         val width = when (powerController.shouldSaveData()) {
             is SaveData.Disabled -> size.width.pxOrElse { 0 }
             // If we can't download hi-res images, we load half-width images (so ~1/4 in size)

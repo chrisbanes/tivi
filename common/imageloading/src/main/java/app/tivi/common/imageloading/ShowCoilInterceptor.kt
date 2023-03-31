@@ -28,14 +28,12 @@ import coil.request.ImageRequest
 import coil.request.ImageResult
 import coil.size.pxOrElse
 import me.tatarka.inject.annotations.Inject
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.mobilenativefoundation.store.store5.get
 
 @Inject
 class ShowCoilInterceptor(
     private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
-    private val repository: ShowImagesStore,
+    private val showImagesStore: ShowImagesStore,
     private val powerController: PowerController,
 ) : Interceptor {
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
@@ -50,16 +48,17 @@ class ShowCoilInterceptor(
         chain: Interceptor.Chain,
         model: ShowImageModel,
     ): ImageRequest {
-        val images = repository.get(model.id)
-        val entity = findHighestRatedForType(images, model.imageType)
-
-        val width = when (powerController.shouldSaveData()) {
-            is SaveData.Disabled -> chain.size.width.pxOrElse { 0 }
-            // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
-            is SaveData.Enabled -> chain.size.width.pxOrElse { 0 } / 2
-        }
+        val entity = runCatching {
+            findHighestRatedForType(showImagesStore.get(model.id), model.imageType)
+        }.getOrNull()
 
         return if (entity != null) {
+            val width = when (powerController.shouldSaveData()) {
+                is SaveData.Disabled -> chain.size.width.pxOrElse { 0 }
+                // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
+                is SaveData.Enabled -> chain.size.width.pxOrElse { 0 } / 2
+            }
+
             chain.request.newBuilder()
                 .data(tmdbImageUrlProvider.value.buildUrl(entity, model.imageType, width))
                 .build()
@@ -80,8 +79,8 @@ internal fun TmdbImageUrlProvider.buildUrl(
     data: TmdbImageEntity,
     imageType: ImageType,
     width: Int,
-): HttpUrl = when (imageType) {
-    ImageType.BACKDROP -> getBackdropUrl(data.path, width).toHttpUrl()
-    ImageType.POSTER -> getPosterUrl(data.path, width).toHttpUrl()
-    ImageType.LOGO -> getLogoUrl(data.path, width).toHttpUrl()
+): String = when (imageType) {
+    ImageType.BACKDROP -> getBackdropUrl(data.path, width)
+    ImageType.POSTER -> getPosterUrl(data.path, width)
+    ImageType.LOGO -> getLogoUrl(data.path, width)
 }
