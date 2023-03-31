@@ -18,6 +18,7 @@
 
 package app.tivi.home.discover
 
+import android.os.Build
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -174,8 +175,8 @@ internal fun Discover(
         }
     }
 
-    runCatching {
-        // ReportDrawnWhen routinely causes crashes on older platforms:
+    if (Build.VERSION.SDK_INT >= 25) {
+        // ReportDrawnWhen routinely causes crashes on API < 25:
         // https://issuetracker.google.com/issues/260506820
         ReportDrawnWhen {
             !state.popularRefreshing &&
