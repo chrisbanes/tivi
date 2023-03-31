@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,36 @@
  * limitations under the License.
  */
 
-
 plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
+    kotlin("multiplatform")
+    alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.ksp)
 }
 
+kotlin {
+    jvm()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                api(projects.data.models)
+                implementation(projects.data.db)
+                implementation(projects.data.legacy) // remove this eventually
+
+                implementation(projects.api.trakt)
+                implementation(projects.api.tmdb)
+
+                api(libs.store)
+                implementation(libs.kotlinx.atomicfu)
+
+                implementation(libs.androidx.collection) // LruCache
+
+                implementation(libs.kotlininject.runtime)
+            }
+        }
+    }
+}
+
 dependencies {
-    api(projects.data.models)
-    implementation(projects.data.db)
-    implementation(projects.data.legacy) // remove this eventually
-
-    implementation(projects.api.trakt)
-    implementation(projects.api.tmdb)
-
-    api(libs.store)
-    implementation(libs.kotlinx.atomicfu)
-
-    implementation(libs.androidx.collection) // LruCache
-
-    implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
+    add("kspJvm", libs.kotlininject.compiler)
 }
