@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS `watched_entries` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `show_id` INTEGER NOT NULL,
+    `last_watched` TEXT NOT NULL,
+    `last_updated` TEXT NOT NULL DEFAULT '2000-01-01T00:00:00.000000Z',
+    FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_watched_entries_show_id` ON `watched_entries` (`show_id`);
+

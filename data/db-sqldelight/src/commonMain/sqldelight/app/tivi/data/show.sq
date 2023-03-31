@@ -1,0 +1,34 @@
+CREATE TABLE IF NOT EXISTS `shows` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `title` TEXT,
+    `original_title` TEXT,
+    `trakt_id` INTEGER,
+    `tmdb_id` INTEGER,
+    `imdb_id` TEXT,
+    `overview` TEXT,
+    `homepage` TEXT,
+    `trakt_rating` REAL,
+    `trakt_votes` INTEGER,
+    `certification` TEXT,
+    `first_aired` TEXT,
+    `country` TEXT,
+    `network` TEXT,
+    `network_logo_path` TEXT,
+    `runtime` INTEGER,
+    `genres` TEXT,
+    `status` TEXT,
+    `airs_day` INTEGER,
+    `airs_time` TEXT,
+    `airs_tz` TEXT
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_shows_trakt_id` ON `shows` (`trakt_id`);
+
+CREATE INDEX IF NOT EXISTS `index_shows_tmdb_id` ON `shows` (`tmdb_id`);
+
+-- queries
+
+getShowWithTraktId:
+SELECT * FROM shows WHERE trakt_id = :id;

@@ -1,0 +1,6 @@
+CREATE VIRTUAL TABLE IF NOT EXISTS `shows_fts` USING FTS4(
+    `title` TEXT,
+    `original_title` TEXT,
+    content=`shows`
+);
+

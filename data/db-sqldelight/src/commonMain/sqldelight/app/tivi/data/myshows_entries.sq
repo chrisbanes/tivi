@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS `myshows_entries` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `show_id` INTEGER NOT NULL,
+    `followed_at` TEXT,
+    `pending_action` TEXT NOT NULL,
+    `trakt_id` INTEGER,
+    FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_myshows_entries_show_id` ON `myshows_entries` (`show_id`);
+

@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS `related_shows` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `show_id` INTEGER NOT NULL,
+    `other_show_id` INTEGER NOT NULL,
+    `order_index` INTEGER NOT NULL,
+    FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE ,
+    FOREIGN KEY(`other_show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE INDEX IF NOT EXISTS `index_related_shows_show_id` ON `related_shows` (`show_id`);
+
+CREATE INDEX IF NOT EXISTS `index_related_shows_other_show_id` ON `related_shows` (`other_show_id`);
+

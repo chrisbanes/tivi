@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS `last_requests` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `request` TEXT NOT NULL, `entity_id` INTEGER NOT NULL,
+    `timestamp` INTEGER NOT NULL
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_last_requests_request_entity_id` ON `last_requests` (`request`, `entity_id`);
+

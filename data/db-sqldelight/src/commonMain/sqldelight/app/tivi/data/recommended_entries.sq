@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS `recommended_entries` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `show_id` INTEGER NOT NULL,
+    `page` INTEGER NOT NULL,
+    FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_recommended_entries_show_id` ON `recommended_entries` (`show_id`);
+

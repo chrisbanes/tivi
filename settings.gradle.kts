@@ -54,6 +54,7 @@ include(
     ":common:imageloading",
     ":data:db",
     ":data:db-room",
+    ":data:db-sqldelight",
     ":data:legacy",
     ":data:models",
     ":data:test",
