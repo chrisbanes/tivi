@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS `trending_shows` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `show_id` INTEGER NOT NULL,
+    `page` INTEGER NOT NULL,
+    `watchers` INTEGER NOT NULL,
+    FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_trending_shows_show_id` ON `trending_shows` (`show_id`);
+

@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS `episode_watch_entries`(
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `episode_id` INTEGER NOT NULL,
+    `trakt_id` INTEGER,
+    `watched_at` TEXT NOT NULL,
+    `pending_action` TEXT NOT NULL,
+    FOREIGN KEY(`episode_id`) REFERENCES `episodes`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE INDEX IF NOT EXISTS `index_episode_watch_entries_episode_id` ON `episode_watch_entries` (`episode_id`);
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_episode_watch_entries_trakt_id` ON `episode_watch_entries` (`trakt_id`);

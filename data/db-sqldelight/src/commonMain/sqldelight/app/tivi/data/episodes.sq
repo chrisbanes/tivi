@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS `episodes` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `season_id` INTEGER NOT NULL,
+    `trakt_id` INTEGER,
+    `tmdb_id` INTEGER,
+    `title` TEXT,
+    `overview` TEXT,
+    `number` INTEGER,
+    `first_aired` TEXT,
+    `trakt_rating` REAL,
+    `trakt_rating_votes` INTEGER,
+    `tmdb_backdrop_path` TEXT,
+    FOREIGN KEY(`season_id`) REFERENCES `seasons`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_episodes_trakt_id` ON `episodes` (`trakt_id`);
+
+CREATE INDEX IF NOT EXISTS `index_episodes_season_id` ON `episodes` (`season_id`);
+

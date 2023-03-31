@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS `users` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `username` TEXT NOT NULL,
+    `name` TEXT,
+    `joined_date` TEXT,
+    `location` TEXT,
+    `about` TEXT,
+    `avatar_url` TEXT,
+    `vip` INTEGER,
+    `is_me` INTEGER NOT NULL
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_users_username` ON `users` (`username`);
+

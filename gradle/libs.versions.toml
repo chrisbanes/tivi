@@ -18,6 +18,7 @@ ktor = "2.3.0"
 paging = "3.1.1"
 retrofit = "2.9.0"
 room = "2.5.1"
+sqldelight = "2.0.0-alpha05"
 compileSdk = "33"
 minSdk = "23"
 targetSdk = "31"
@@ -33,6 +34,7 @@ kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = "com.google.devtools.ksp:1.8.21-1.0.11"
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.5"
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = "com.diffplug.spotless:6.18.0"
 
 [libraries]
@@ -156,6 +158,11 @@ slack-lint-compose = "com.slack.lint.compose:compose-lint-checks:1.2.0"
 swipe = "me.saket.swipe:swipe:1.1.1"
 
 store = "org.mobilenativefoundation.store:store5:5.0.0-alpha03"
+
+sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+sqldelight-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 
 timber = "com.jakewharton.timber:timber:5.0.1"
 
