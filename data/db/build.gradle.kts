@@ -16,17 +16,25 @@
 
 
 plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
+    kotlin("multiplatform")
+    alias(libs.plugins.cacheFixPlugin)
+}
+
+kotlin {
+    jvm()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.core.base)
+                api(projects.data.models)
+                api(libs.cashapp.paging.common)
+            }
+        }
+    }
 }
 
 // https://github.com/cashapp/multiplatform-paging/issues/6
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>> {
     compilerOptions.freeCompilerArgs.add("-opt-in=androidx.paging.ExperimentalPagingApi")
-}
-
-dependencies {
-    implementation(projects.core.base)
-    api(projects.data.models)
-    api(libs.cashapp.paging.common)
 }
