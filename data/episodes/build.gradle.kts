@@ -16,20 +16,27 @@
 
 
 plugins {
-    id("kotlin")
-    alias(libs.plugins.android.lint)
+    kotlin("multiplatform")
+    alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.ksp)
 }
 
-dependencies {
-    api(projects.data.models)
-    api(projects.data.traktauth)
-    implementation(projects.data.db)
-    implementation(projects.data.legacy) // remove this eventually
+kotlin {
+    jvm()
 
-    api(projects.api.trakt)
-    api(projects.api.tmdb)
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                api(projects.data.models)
+                api(projects.data.traktauth)
+                implementation(projects.data.db)
+                implementation(projects.data.legacy) // remove this eventually
 
-    implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
+                api(projects.api.trakt)
+                api(projects.api.tmdb)
+
+                implementation(libs.kotlininject.runtime)
+            }
+        }
+    }
 }
