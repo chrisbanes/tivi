@@ -32,8 +32,13 @@ class TmdbManager(
     fun getLatestImageProvider() = imageProvider.value
 
     suspend fun refreshConfiguration() {
-        val response = tmdbClient.configuration.getApiConfiguration()
-        onConfigurationLoaded(response)
+        val response = runCatching {
+            tmdbClient.configuration.getApiConfiguration()
+        }
+
+        if (response.isSuccess) {
+            onConfigurationLoaded(response.getOrThrow())
+        }
     }
 
     private fun onConfigurationLoaded(configuration: TmdbConfiguration) {
