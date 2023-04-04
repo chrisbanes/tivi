@@ -1,6 +1,6 @@
 [versions]
 agp = "8.0.0-rc01"
-accompanist = "0.30.0"
+accompanist = "0.30.1"
 androidxlifecycle = "2.6.1"
 androidxactivity = "1.7.0"
 chucker = "3.5.2"
