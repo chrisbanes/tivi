@@ -127,7 +127,7 @@ kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", ver
 
 leakCanary = "com.squareup.leakcanary:leakcanary-android:2.10"
 
-mockK = "io.mockk:mockk:1.13.4"
+mockK = "io.mockk:mockk:1.13.5"
 
 okhttp-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
