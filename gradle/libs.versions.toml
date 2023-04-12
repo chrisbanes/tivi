@@ -9,7 +9,7 @@ compose-bom = "2023.03.00"
 composecompiler = "1.4.4"
 coroutines = "1.6.4"
 debugdrawer = "0.9.8"
-kotlin = "1.8.10"
+kotlin = "1.8.20"
 kotlininject = "0.6.1"
 ktlint = "0.48.1"
 okhttp = "4.10.0"
@@ -29,7 +29,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.0" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:1.8.10-1.0.9"
+ksp = "com.google.devtools.ksp:1.8.20-1.0.10"
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.4"
 spotless = "com.diffplug.spotless:6.18.0"
@@ -114,7 +114,7 @@ androidx-hilt-work = "androidx.hilt:hilt-work:1.0.0"
 
 junit = "junit:junit:4.13.2"
 
-kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.20.1"
+kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.20.2"
 kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
