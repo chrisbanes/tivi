@@ -35,9 +35,12 @@ kotlin {
 
                 api(libs.androidx.paging.runtime)
 
+                api(libs.kotlinx.datetime)
+
                 implementation(libs.kotlininject.runtime)
 
                 implementation(libs.sqldelight.coroutines)
+                implementation(libs.sqldelight.primitive)
             }
         }
 

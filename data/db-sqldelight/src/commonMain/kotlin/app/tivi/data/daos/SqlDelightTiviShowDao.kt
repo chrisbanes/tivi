@@ -16,94 +16,74 @@
 
 package app.tivi.data.daos
 
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import app.tivi.data.Database
+import app.tivi.data.awaitAsNull
 import app.tivi.data.models.TiviShow
+import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 
 class SqlDelightTiviShowDao(
-    private val db: Database
-): TiviShowDao {
-
-    private fun mapToTiviShow(
-        id: Long,
-        title: String?,
-        original_title: String?,
-        trakt_id: Long?,
-        tmdb_id: Long?,
-        imdb_id: String?,
-        overview: String?,
-        homepage: String?,
-        trakt_rating: Double?,
-        trakt_votes: Long?,
-        certification: String?,
-        first_aired: String?,
-        country: String?,
-        network: String?,
-        network_logo_path: String?,
-        runtime: Long?,
-        genres: String?,
-        status: String?,
-        airs_day: Long?,
-        airs_time: String?,
-        airs_tz: String?,
-    ): TiviShow = TiviShow(
-        id,
-        title,
-        original_title,
-        trakt_id?.toInt(),
-        tmdb_id?.toInt(),
-        imdb_id,
-        overview,
-        homepage,
-        trakt_rating?.toFloat(),
-        trakt_votes?.toInt(),
-        certification,
-        first_aired,
-
-    )
+    private val db: Database,
+    private val dispatchers: AppCoroutineDispatchers,
+) : TiviShowDao {
 
     override suspend fun getShowWithTraktId(id: Int): TiviShow? {
-        return db.showsQueries.getShowWithTraktId(id.toLong(), ::TiviShow).executeAsOneOrNull()
+        return db.showQueries.getShowWithTraktId(id, ::TiviShow)
+            .awaitAsNull(dispatchers.io)
     }
 
     override fun getShowsWithIds(ids: List<Long>): Flow<List<TiviShow>> {
-        TODO("Not yet implemented")
+        return db.showQueries.getShowsWithIds(ids, ::TiviShow)
+            .asFlow()
+            .mapToList(dispatchers.io)
     }
 
     override suspend fun getShowWithTmdbId(id: Int): TiviShow? {
-        TODO("Not yet implemented")
+        return db.showQueries.getShowWithTmdbId(id, ::TiviShow)
+            .awaitAsNull(dispatchers.io)
     }
 
     override fun getShowWithIdFlow(id: Long): Flow<TiviShow> {
-        TODO("Not yet implemented")
+        return db.showQueries.getShowWithId(id, ::TiviShow)
+            .asFlow()
+            .mapToOne(dispatchers.io)
     }
 
     override suspend fun getShowWithId(id: Long): TiviShow? {
-        TODO("Not yet implemented")
+        return db.showQueries.getShowWithId(id, ::TiviShow)
+            .awaitAsNull(dispatchers.io)
     }
 
     override suspend fun getTraktIdForShowId(id: Long): Int? {
-        TODO("Not yet implemented")
+        return db.showQueries.getTraktIdForShowId(id)
+            .awaitAsNull(dispatchers.io)?.trakt_id
     }
 
     override suspend fun getTmdbIdForShowId(id: Long): Int? {
-        TODO("Not yet implemented")
+        return db.showQueries.getTmdbIdForShowId(id)
+            .awaitAsNull(dispatchers.io)?.tmdb_id
     }
 
     override suspend fun getIdForTraktId(traktId: Int): Long? {
-        TODO("Not yet implemented")
+        return db.showQueries.getIdForTraktId(traktId)
+            .awaitAsNull(dispatchers.io)
     }
 
     override suspend fun getIdForTmdbId(tmdbId: Int): Long? {
-        TODO("Not yet implemented")
+        return db.showQueries.getIdForTmdbId(tmdbId)
+            .awaitAsNull(dispatchers.io)
     }
 
-    override suspend fun delete(id: Long) {
-        TODO("Not yet implemented")
+    override suspend fun delete(id: Long) = withContext(dispatchers.io) {
+        db.showQueries.delete(id)
     }
 
-    override suspend fun deleteAll() {
-        TODO("Not yet implemented")
+    override suspend fun deleteAll() = withContext(dispatchers.io) {
+        db.showQueries.deleteAll()
     }
 
     override suspend fun upsert(entity: TiviShow): Long {

@@ -16,10 +16,30 @@
 
 package app.tivi.data
 
+import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
+import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
+import app.tivi.data.columnadaptors.DayOfWeekColumnAdapter
+import app.tivi.data.columnadaptors.InstantColumnAdapter
+import app.tivi.data.columnadaptors.LocalTimeColumnAdapter
+import app.tivi.data.columnadaptors.ShowStatusColumnAdapter
+import app.tivi.data.columnadaptors.TimeZoneColumnAdapter
+
 class DatabaseFactory(
     driverFactory: DriverFactory,
 ) {
     val database: Database = Database(
         driver = driverFactory.createDriver(),
+        showsAdapter = Shows.Adapter(
+            trakt_idAdapter = IntColumnAdapter,
+            tmdb_idAdapter = IntColumnAdapter,
+            trakt_ratingAdapter = FloatColumnAdapter,
+            trakt_votesAdapter = IntColumnAdapter,
+            runtimeAdapter = IntColumnAdapter,
+            first_airedAdapter = InstantColumnAdapter,
+            statusAdapter = ShowStatusColumnAdapter,
+            airs_dayAdapter = DayOfWeekColumnAdapter,
+            airs_timeAdapter = LocalTimeColumnAdapter,
+            airs_tzAdapter = TimeZoneColumnAdapter,
+        ),
     )
 }
