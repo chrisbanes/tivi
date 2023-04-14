@@ -38,7 +38,6 @@ import app.tivi.data.daos.RoomTrendingDao
 import app.tivi.data.daos.RoomUserDao
 import app.tivi.data.daos.RoomWatchedShowDao
 import app.tivi.data.db.DateTimeTypeConverters
-import app.tivi.data.db.TiviDatabase
 import app.tivi.data.db.TiviTypeConverters
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -94,26 +93,26 @@ import app.tivi.data.views.ShowsWatchStats
     ],
 )
 @TypeConverters(TiviTypeConverters::class, DateTimeTypeConverters::class)
-abstract class TiviRoomDatabase : RoomDatabase(), TiviDatabase {
+abstract class TiviRoomDatabase : RoomDatabase() {
 
     @DeleteColumn.Entries(
         DeleteColumn(tableName = "shows", columnName = "last_trakt_data_update"),
     )
     class AutoMigrationSpec31 : AutoMigrationSpec
 
-    abstract override fun showDao(): RoomTiviShowDao
-    abstract override fun showFtsDao(): RoomShowFtsDao
-    abstract override fun showImagesDao(): RoomShowTmdbImagesDao
-    abstract override fun trendingDao(): RoomTrendingDao
-    abstract override fun popularDao(): RoomPopularDao
-    abstract override fun userDao(): RoomUserDao
-    abstract override fun watchedShowsDao(): RoomWatchedShowDao
-    abstract override fun followedShowsDao(): RoomFollowedShowsDao
-    abstract override fun seasonsDao(): RoomSeasonsDao
-    abstract override fun episodesDao(): RoomEpisodesDao
-    abstract override fun relatedShowsDao(): RoomRelatedShowsDao
-    abstract override fun episodeWatchesDao(): RoomEpisodeWatchEntryDao
-    abstract override fun lastRequestDao(): RoomLastRequestDao
-    abstract override fun recommendedShowsDao(): RoomRecommendedDao
-    abstract override fun libraryShowsDao(): RoomLibraryShowsDao
+    abstract fun showDao(): RoomTiviShowDao
+    abstract fun showFtsDao(): RoomShowFtsDao
+    abstract fun showImagesDao(): RoomShowTmdbImagesDao
+    abstract fun trendingDao(): RoomTrendingDao
+    abstract fun popularDao(): RoomPopularDao
+    abstract fun userDao(): RoomUserDao
+    abstract fun watchedShowsDao(): RoomWatchedShowDao
+    abstract fun followedShowsDao(): RoomFollowedShowsDao
+    abstract fun seasonsDao(): RoomSeasonsDao
+    abstract fun episodesDao(): RoomEpisodesDao
+    abstract fun relatedShowsDao(): RoomRelatedShowsDao
+    abstract fun episodeWatchesDao(): RoomEpisodeWatchEntryDao
+    abstract fun lastRequestDao(): RoomLastRequestDao
+    abstract fun recommendedShowsDao(): RoomRecommendedDao
+    abstract fun libraryShowsDao(): RoomLibraryShowsDao
 }

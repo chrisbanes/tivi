@@ -23,13 +23,13 @@ import app.tivi.data.TestApplicationComponent
 import app.tivi.data.create
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
-import app.tivi.data.db.TiviDatabase
-import app.tivi.utils.insertShow
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1e1
 import app.tivi.utils.s1e2
 import app.tivi.utils.s1e3
+import app.tivi.utils.show
 import app.tivi.utils.showId
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -42,20 +42,20 @@ import org.junit.Before
 import org.junit.Test
 
 class EpisodesTest : DatabaseTest() {
-    private lateinit var database: TiviDatabase
+    private lateinit var showsDao: TiviShowDao
     private lateinit var episodeDao: EpisodesDao
     private lateinit var seasonsDao: SeasonsDao
 
     @Before
     fun setup() {
         val component = EpisodesTestComponent::class.create()
-        database = component.database
+        showsDao = component.showsDao
         seasonsDao = component.seasonsDao
         episodeDao = component.episodeDao
 
         runBlocking {
             // We'll assume that there's a show and season in the db
-            insertShow(database)
+            showsDao.upsert(show)
             seasonsDao.upsert(s1)
         }
     }
@@ -130,7 +130,7 @@ abstract class EpisodesTestComponent(
     @Component val testApplicationComponent: TestApplicationComponent =
         TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext()),
 ) {
-    abstract val database: TiviDatabase
+    abstract val showsDao: TiviShowDao
     abstract val episodeDao: EpisodesDao
     abstract val seasonsDao: SeasonsDao
 }

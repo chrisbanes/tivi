@@ -23,14 +23,13 @@ import app.tivi.data.create
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.upsertAll
-import app.tivi.data.db.TiviDatabase
 import app.tivi.data.episodes.EpisodeWatchStore
 import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.utils.AuthorizedAuthState
-import app.tivi.utils.insertShow
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1_id
@@ -42,6 +41,7 @@ import app.tivi.utils.s2
 import app.tivi.utils.s2_episodes
 import app.tivi.utils.s2_id
 import app.tivi.utils.s2e1
+import app.tivi.utils.show
 import app.tivi.utils.showId
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -56,7 +56,7 @@ import org.junit.Before
 import org.junit.Test
 
 class SeasonsEpisodesRepositoryTest : DatabaseTest() {
-    private lateinit var database: TiviDatabase
+    private lateinit var showsDao: TiviShowDao
     private lateinit var episodeWatchDao: EpisodeWatchEntryDao
     private lateinit var seasonsDao: SeasonsDao
     private lateinit var episodesDao: EpisodesDao
@@ -68,7 +68,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     @Before
     fun setup() {
         val component = SeasonsEpisodesRepositoryTestComponent::class.create()
-        database = component.database
+        showsDao = component.showsDao
         episodeWatchDao = component.episodeWatchDao
         seasonsDao = component.seasonsDao
         episodesDao = component.episodesDao
@@ -79,7 +79,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
 
         runBlocking {
             // We'll assume that there's a show in the db
-            insertShow(database)
+            showsDao.upsert(show)
         }
     }
 
@@ -250,7 +250,7 @@ abstract class SeasonsEpisodesRepositoryTestComponent(
     @Component val testApplicationComponent: TestApplicationComponent =
         TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext()),
 ) {
-    abstract val database: TiviDatabase
+    abstract val showsDao: TiviShowDao
     abstract val episodeWatchDao: EpisodeWatchEntryDao
     abstract val seasonsDao: SeasonsDao
     abstract val episodesDao: EpisodesDao
