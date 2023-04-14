@@ -36,7 +36,6 @@ import app.tivi.data.daos.UserDao
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.db.RoomTransactionRunner
-import app.tivi.data.db.TiviDatabase
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
@@ -55,52 +54,49 @@ interface RoomDatabaseComponent {
     }
 
     @Provides
-    fun provideTiviDatabase(bind: TiviRoomDatabase): TiviDatabase = bind
+    fun provideTiviShowDao(db: TiviRoomDatabase): TiviShowDao = db.showDao()
 
     @Provides
-    fun provideTiviShowDao(db: TiviDatabase): TiviShowDao = db.showDao()
+    fun provideUserDao(db: TiviRoomDatabase): UserDao = db.userDao()
 
     @Provides
-    fun provideUserDao(db: TiviDatabase): UserDao = db.userDao()
+    fun provideTrendingDao(db: TiviRoomDatabase): TrendingDao = db.trendingDao()
 
     @Provides
-    fun provideTrendingDao(db: TiviDatabase): TrendingDao = db.trendingDao()
+    fun providePopularDao(db: TiviRoomDatabase): PopularDao = db.popularDao()
 
     @Provides
-    fun providePopularDao(db: TiviDatabase): PopularDao = db.popularDao()
+    fun provideWatchedDao(db: TiviRoomDatabase): WatchedShowDao = db.watchedShowsDao()
 
     @Provides
-    fun provideWatchedDao(db: TiviDatabase): WatchedShowDao = db.watchedShowsDao()
+    fun provideFollowedShowsDao(db: TiviRoomDatabase): FollowedShowsDao = db.followedShowsDao()
 
     @Provides
-    fun provideFollowedShowsDao(db: TiviDatabase): FollowedShowsDao = db.followedShowsDao()
+    fun provideSeasonsDao(db: TiviRoomDatabase): SeasonsDao = db.seasonsDao()
 
     @Provides
-    fun provideSeasonsDao(db: TiviDatabase): SeasonsDao = db.seasonsDao()
+    fun provideEpisodesDao(db: TiviRoomDatabase): EpisodesDao = db.episodesDao()
 
     @Provides
-    fun provideEpisodesDao(db: TiviDatabase): EpisodesDao = db.episodesDao()
+    fun provideRelatedShowsDao(db: TiviRoomDatabase): RelatedShowsDao = db.relatedShowsDao()
 
     @Provides
-    fun provideRelatedShowsDao(db: TiviDatabase): RelatedShowsDao = db.relatedShowsDao()
+    fun provideEpisodeWatchesDao(db: TiviRoomDatabase): EpisodeWatchEntryDao = db.episodeWatchesDao()
 
     @Provides
-    fun provideEpisodeWatchesDao(db: TiviDatabase): EpisodeWatchEntryDao = db.episodeWatchesDao()
+    fun provideLastRequestsDao(db: TiviRoomDatabase): LastRequestDao = db.lastRequestDao()
 
     @Provides
-    fun provideLastRequestsDao(db: TiviDatabase): LastRequestDao = db.lastRequestDao()
+    fun provideShowImagesDao(db: TiviRoomDatabase): ShowTmdbImagesDao = db.showImagesDao()
 
     @Provides
-    fun provideShowImagesDao(db: TiviDatabase): ShowTmdbImagesDao = db.showImagesDao()
+    fun provideShowFtsDao(db: TiviRoomDatabase): ShowFtsDao = db.showFtsDao()
 
     @Provides
-    fun provideShowFtsDao(db: TiviDatabase): ShowFtsDao = db.showFtsDao()
+    fun provideRecommendedShowsDao(db: TiviRoomDatabase): RecommendedDao = db.recommendedShowsDao()
 
     @Provides
-    fun provideRecommendedShowsDao(db: TiviDatabase): RecommendedDao = db.recommendedShowsDao()
-
-    @Provides
-    fun provideLibraryShowsDao(db: TiviDatabase): LibraryShowsDao = db.libraryShowsDao()
+    fun provideLibraryShowsDao(db: TiviRoomDatabase): LibraryShowsDao = db.libraryShowsDao()
 
     @Provides
     fun provideDatabaseTransactionRunner(runner: RoomTransactionRunner): DatabaseTransactionRunner = runner

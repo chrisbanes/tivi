@@ -24,16 +24,16 @@ import app.tivi.data.create
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.upsertAll
-import app.tivi.data.db.TiviDatabase
 import app.tivi.utils.episodeWatch2PendingDelete
 import app.tivi.utils.episodeWatch2PendingSend
-import app.tivi.utils.insertShow
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1e1
 import app.tivi.utils.s1e1w
 import app.tivi.utils.s1e1w_id
+import app.tivi.utils.show
 import app.tivi.utils.showId
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -45,7 +45,7 @@ import org.junit.Before
 import org.junit.Test
 
 class EpisodeWatchEntryTest : DatabaseTest() {
-    private lateinit var database: TiviDatabase
+    private lateinit var showsDao: TiviShowDao
     private lateinit var episodesDao: EpisodesDao
     private lateinit var seasonsDao: SeasonsDao
     private lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
@@ -53,14 +53,14 @@ class EpisodeWatchEntryTest : DatabaseTest() {
     @Before
     fun setup() {
         val component = EpisodeWatchEntryTestComponent::class.create()
-        database = component.database
+        showsDao = component.showsDao
         seasonsDao = component.seasonsDao
         episodesDao = component.episodesDao
         episodeWatchEntryDao = component.episodeWatchEntryDao
 
         runBlocking {
             // We'll assume that there's a show, season and s1_episodes in the db
-            insertShow(database)
+            showsDao.upsert(show)
             seasonsDao.upsert(s1)
             episodesDao.upsertAll(s1_episodes)
         }
@@ -119,7 +119,7 @@ abstract class EpisodeWatchEntryTestComponent(
     @Component val testApplicationComponent: TestApplicationComponent =
         TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext()),
 ) {
-    abstract val database: TiviDatabase
+    abstract val showsDao: TiviShowDao
     abstract val episodesDao: EpisodesDao
     abstract val seasonsDao: SeasonsDao
     abstract val episodeWatchEntryDao: EpisodeWatchEntryDao

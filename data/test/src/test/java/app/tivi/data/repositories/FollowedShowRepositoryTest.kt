@@ -24,6 +24,7 @@ import app.tivi.data.TestApplicationComponent
 import app.tivi.data.TiviRoomDatabase
 import app.tivi.data.create
 import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.followedshows.FollowedShowsDataSource
 import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.traktauth.TraktAuthRepository
@@ -34,8 +35,6 @@ import app.tivi.utils.followedShow1PendingDelete
 import app.tivi.utils.followedShow1PendingUpload
 import app.tivi.utils.followedShow2Local
 import app.tivi.utils.followedShow2Network
-import app.tivi.utils.insertFollowedShow
-import app.tivi.utils.insertShow
 import app.tivi.utils.show
 import app.tivi.utils.show2
 import com.google.common.truth.Truth.assertThat
@@ -48,6 +47,7 @@ import org.junit.Before
 import org.junit.Test
 
 class FollowedShowRepositoryTest : DatabaseTest() {
+    private lateinit var showsDao: TiviShowDao
     private lateinit var followShowsDao: FollowedShowsDao
     private lateinit var followedShowsRepository: FollowedShowsRepository
     private lateinit var followedShowsDataSource: FollowedShowsDataSource
@@ -57,6 +57,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     @Before
     fun setup() {
         val component = FollowedShowsRepositoryTestComponent::class.create()
+        showsDao = component.showsDao
         followShowsDao = component.followShowsDao
         followedShowsRepository = component.followedShowsRepository
         database = component.database
@@ -65,7 +66,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
         runBlocking {
             // We'll assume that there's a show in the db
-            insertShow(database)
+            showsDao.upsert(show)
         }
     }
 
@@ -86,7 +87,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync_emptyResponse() = runTest {
-        insertFollowedShow(database)
+        followShowsDao.upsert(followedShow1Local)
 
         coEvery { followedShowsDataSource.getFollowedListId() } returns
             TraktList(ids = TraktListIds(trakt = 0))
@@ -102,7 +103,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync_responseDifferentShow() = runTest {
-        insertFollowedShow(database)
+        followShowsDao.upsert(followedShow1Local)
 
         coEvery { followedShowsDataSource.getFollowedListId() } returns
             TraktList(ids = TraktListIds(trakt = 0))
@@ -156,6 +157,7 @@ abstract class FollowedShowsRepositoryTestComponent(
     @Component val testApplicationComponent: TestApplicationComponent =
         TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext()),
 ) {
+    abstract val showsDao: TiviShowDao
     abstract val followShowsDao: FollowedShowsDao
     abstract val followedShowsRepository: FollowedShowsRepository
     abstract val followedShowsDataSource: FollowedShowsDataSource
