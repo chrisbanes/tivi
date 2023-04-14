@@ -19,6 +19,7 @@ package app.tivi.data
 import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.tivi.data.columnadaptors.DayOfWeekColumnAdapter
+import app.tivi.data.columnadaptors.ImageTypeColumnAdapter
 import app.tivi.data.columnadaptors.InstantColumnAdapter
 import app.tivi.data.columnadaptors.LocalTimeColumnAdapter
 import app.tivi.data.columnadaptors.ShowStatusColumnAdapter
@@ -42,6 +43,10 @@ class DatabaseFactory(
             airs_dayAdapter = DayOfWeekColumnAdapter,
             airs_timeAdapter = LocalTimeColumnAdapter,
             airs_tzAdapter = TimeZoneColumnAdapter,
+        ),
+        show_imagesAdapter = Show_images.Adapter(
+            typeAdapter = ImageTypeColumnAdapter,
+            ratingAdapter = FloatColumnAdapter,
         ),
     )
 }
