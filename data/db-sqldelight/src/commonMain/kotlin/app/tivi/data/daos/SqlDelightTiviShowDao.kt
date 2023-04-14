@@ -25,7 +25,9 @@ import app.tivi.data.models.TiviShow
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class SqlDelightTiviShowDao(
     private val db: Database,
     private val dispatchers: AppCoroutineDispatchers,

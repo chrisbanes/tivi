@@ -23,11 +23,13 @@ import app.tivi.data.columnadaptors.InstantColumnAdapter
 import app.tivi.data.columnadaptors.LocalTimeColumnAdapter
 import app.tivi.data.columnadaptors.ShowStatusColumnAdapter
 import app.tivi.data.columnadaptors.TimeZoneColumnAdapter
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class DatabaseFactory(
-    driverFactory: DriverFactory,
+    private val driverFactory: DriverFactory,
 ) {
-    val database: Database = Database(
+    fun build(): Database = Database(
         driver = driverFactory.createDriver(),
         showsAdapter = Shows.Adapter(
             trakt_idAdapter = IntColumnAdapter,
