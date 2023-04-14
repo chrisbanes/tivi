@@ -2,24 +2,24 @@ CREATE TABLE IF NOT EXISTS `shows` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `title` TEXT,
     `original_title` TEXT,
-    `trakt_id` INTEGER,
-    `tmdb_id` INTEGER,
+    `trakt_id` INTEGER AS kotlin.Int,
+    `tmdb_id` INTEGER AS kotlin.Int,
     `imdb_id` TEXT,
     `overview` TEXT,
     `homepage` TEXT,
-    `trakt_rating` REAL,
-    `trakt_votes` INTEGER,
+    `trakt_rating` REAL AS kotlin.Float,
+    `trakt_votes` INTEGER AS kotlin.Int,
     `certification` TEXT,
-    `first_aired` TEXT,
+    `first_aired` TEXT AS kotlinx.datetime.Instant,
     `country` TEXT,
     `network` TEXT,
     `network_logo_path` TEXT,
-    `runtime` INTEGER,
+    `runtime` INTEGER AS kotlin.Int,
     `genres` TEXT,
-    `status` TEXT,
-    `airs_day` INTEGER,
-    `airs_time` TEXT,
-    `airs_tz` TEXT
+    `status` TEXT AS app.tivi.data.models.ShowStatus,
+    `airs_day` INTEGER AS kotlinx.datetime.DayOfWeek,
+    `airs_time` TEXT AS kotlinx.datetime.LocalTime,
+    `airs_tz` TEXT AS kotlinx.datetime.TimeZone
 );
 
 -- indices
@@ -30,5 +30,32 @@ CREATE INDEX IF NOT EXISTS `index_shows_tmdb_id` ON `shows` (`tmdb_id`);
 
 -- queries
 
+getShowWithId:
+SELECT * FROM shows WHERE id = :id;
+
 getShowWithTraktId:
 SELECT * FROM shows WHERE trakt_id = :id;
+
+getShowsWithIds:
+SELECT * FROM shows WHERE id IN :ids;
+
+getShowWithTmdbId:
+SELECT * FROM shows WHERE tmdb_id = :id;
+
+getTraktIdForShowId:
+SELECT trakt_id FROM shows WHERE id = :id;
+
+getTmdbIdForShowId:
+SELECT tmdb_id FROM shows WHERE id = :id;
+
+getIdForTraktId:
+SELECT id FROM shows WHERE trakt_id = :id;
+
+getIdForTmdbId:
+SELECT id FROM shows WHERE tmdb_id = :id;
+
+delete:
+DELETE FROM shows WHERE id = :id;
+
+deleteAll:
+DELETE FROM shows;
