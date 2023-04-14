@@ -86,23 +86,46 @@ class SqlDelightTiviShowDao(
         db.showQueries.deleteAll()
     }
 
-    override suspend fun upsert(entity: TiviShow): Long {
-        TODO("Not yet implemented")
+    override suspend fun upsert(entity: TiviShow): Long = withContext(dispatchers.io) {
+        db.transactionWithResult {
+            upsertShowBlocking(entity)
+            db.showQueries.lastInsertRowId().executeAsOne()
+        }
     }
 
-    override suspend fun upsertAll(vararg entity: TiviShow) {
-        TODO("Not yet implemented")
+    override suspend fun upsertAll(entities: List<TiviShow>) = withContext(dispatchers.io) {
+        db.transaction {
+            entities.forEach(::upsertShowBlocking)
+        }
     }
 
-    override suspend fun upsertAll(entities: List<TiviShow>) {
-        TODO("Not yet implemented")
+    override suspend fun deleteEntity(entity: TiviShow) = withContext(dispatchers.io) {
+        db.showQueries.delete(entity.id)
     }
 
-    override suspend fun update(entity: TiviShow) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun deleteEntity(entity: TiviShow): Int {
-        TODO("Not yet implemented")
+    private fun upsertShowBlocking(entity: TiviShow) {
+        db.showQueries.upsertShow(
+            id = entity.id,
+            title = entity.title,
+            original_title = entity.originalTitle,
+            trakt_id = entity.traktId,
+            tmdb_id = entity.tmdbId,
+            imdb_id = entity.imdbId,
+            overview = entity.summary,
+            homepage = entity.homepage,
+            trakt_rating = entity.traktRating,
+            trakt_votes = entity.traktVotes,
+            certification = entity.certification,
+            first_aired = entity.firstAired,
+            country = entity.country,
+            network = entity.network,
+            network_logo_path = entity.networkLogoPath,
+            runtime = entity.runtime,
+            genres = entity._genres,
+            status = entity.status,
+            airs_day = entity.airsDay,
+            airs_time = entity.airsTime,
+            airs_tz = entity.airsTimeZone,
+        )
     }
 }

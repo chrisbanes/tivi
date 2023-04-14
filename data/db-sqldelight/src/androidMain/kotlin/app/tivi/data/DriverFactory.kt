@@ -35,7 +35,7 @@ actual class DriverFactory(
                     db.enableWriteAheadLogging()
                     db.setForeignKeyConstraintsEnabled(true)
                 }
-            }
+            },
         )
     }
 }

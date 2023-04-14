@@ -20,7 +20,7 @@ import app.cash.sqldelight.ColumnAdapter
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
 
-internal object LocalDateColumnAdapter: ColumnAdapter<LocalDate, String> {
+internal object LocalDateColumnAdapter : ColumnAdapter<LocalDate, String> {
     override fun decode(databaseValue: String): LocalDate = databaseValue.toLocalDate()
     override fun encode(value: LocalDate): String = value.toString()
 }

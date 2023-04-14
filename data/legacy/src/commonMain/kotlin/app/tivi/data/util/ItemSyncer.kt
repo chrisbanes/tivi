@@ -27,7 +27,7 @@ import app.tivi.util.Logger
  */
 class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
     private val upsertEntity: suspend (LocalType) -> Long,
-    private val deleteEntity: suspend (LocalType) -> Int,
+    private val deleteEntity: suspend (LocalType) -> Unit,
     private val localEntityToKey: suspend (LocalType) -> Key?,
     private val networkEntityToKey: suspend (NetworkType) -> Key,
     private val networkEntityToLocalEntity: suspend (networkEntity: NetworkType, currentEntity: LocalType?) -> LocalType,

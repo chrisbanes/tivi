@@ -20,7 +20,7 @@ import app.cash.sqldelight.ColumnAdapter
 import app.tivi.data.models.ShowStatus
 import app.tivi.extensions.unsafeLazy
 
-internal object ShowStatusColumnAdapter: ColumnAdapter<ShowStatus, String> {
+internal object ShowStatusColumnAdapter : ColumnAdapter<ShowStatus, String> {
     private val showStatusValues by unsafeLazy { ShowStatus.values() }
 
     override fun decode(databaseValue: String): ShowStatus {

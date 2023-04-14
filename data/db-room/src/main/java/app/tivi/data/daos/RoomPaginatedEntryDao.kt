@@ -28,8 +28,5 @@ interface RoomPaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> :
     override suspend fun upsert(entity: EC): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    override suspend fun upsertAll(vararg entity: EC)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun upsertAll(entities: List<EC>)
 }

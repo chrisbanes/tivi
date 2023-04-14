@@ -43,9 +43,9 @@ interface EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
 
     suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: String): Int
 
-    suspend fun deleteWithId(id: Long): Int
+    suspend fun deleteWithId(id: Long)
 
-    suspend fun deleteWithIds(ids: List<Long>): Int
+    suspend fun deleteWithIds(ids: List<Long>)
 
-    suspend fun deleteWithTraktId(traktId: Long): Int
+    suspend fun deleteWithTraktId(traktId: Long)
 }
