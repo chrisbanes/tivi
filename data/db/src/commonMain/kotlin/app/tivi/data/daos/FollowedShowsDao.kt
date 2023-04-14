@@ -43,5 +43,5 @@ interface FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithSh
 
     suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction): Int
 
-    suspend fun deleteWithIds(ids: List<Long>): Int
+    suspend fun deleteWithIds(ids: List<Long>)
 }

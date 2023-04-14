@@ -20,7 +20,7 @@ import app.cash.sqldelight.ColumnAdapter
 import app.tivi.extensions.unsafeLazy
 import kotlinx.datetime.DayOfWeek
 
-internal object DayOfWeekColumnAdapter: ColumnAdapter<DayOfWeek, Long> {
+internal object DayOfWeekColumnAdapter : ColumnAdapter<DayOfWeek, Long> {
     private val dayOfWeekValues by unsafeLazy { DayOfWeek.values() }
 
     override fun decode(databaseValue: Long): DayOfWeek {

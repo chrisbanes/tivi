@@ -58,5 +58,5 @@ abstract class RoomFollowedShowsDao : FollowedShowsDao, RoomEntityDao<FollowedSh
     abstract override suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction): Int
 
     @Query("DELETE FROM myshows_entries WHERE id IN (:ids)")
-    abstract override suspend fun deleteWithIds(ids: List<Long>): Int
+    abstract override suspend fun deleteWithIds(ids: List<Long>)
 }

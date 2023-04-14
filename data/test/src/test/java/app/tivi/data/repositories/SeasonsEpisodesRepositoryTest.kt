@@ -23,6 +23,7 @@ import app.tivi.data.create
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.daos.upsertAll
 import app.tivi.data.db.TiviDatabase
 import app.tivi.data.episodes.EpisodeWatchStore
 import app.tivi.data.episodes.SeasonsEpisodesDataSource

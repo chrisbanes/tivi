@@ -21,20 +21,11 @@ import app.tivi.data.models.TiviEntity
 interface EntityDao<in E : TiviEntity> {
     suspend fun upsert(entity: E): Long
 
-    suspend fun upsertAll(vararg entity: E)
-
     suspend fun upsertAll(entities: List<E>)
 
-    suspend fun update(entity: E)
-
-    suspend fun deleteEntity(entity: E): Int
+    suspend fun deleteEntity(entity: E)
 }
 
-suspend fun <E : TiviEntity> EntityDao<E>.insertOrUpdate(entity: E): Long {
-    return if (entity.id == 0L) {
-        upsert(entity)
-    } else {
-        update(entity)
-        entity.id
-    }
+suspend inline fun <E : TiviEntity> EntityDao<E>.upsertAll(vararg entities: E) {
+    upsertAll(entities.toList())
 }
