@@ -98,9 +98,9 @@ class SqlDelightTrendingShowsDao(
             count = count,
             offset = offset,
             mapper = { id, show_id, page, watchers, id_, title, original_title,
-                trakt_id, tmdb_id, imdb_id, overview, homepage, trakt_rating, trakt_votes,
-                certification, first_aired, country, network, network_logo_path, runtime, genres,
-                status, airs_day, airs_time, airs_tz, ->
+                    trakt_id, tmdb_id, imdb_id, overview, homepage, trakt_rating, trakt_votes,
+                    certification, first_aired, country, network, network_logo_path, runtime, genres,
+                    status, airs_day, airs_time, airs_tz, ->
 
                 val show = TiviShow(
                     id_, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
