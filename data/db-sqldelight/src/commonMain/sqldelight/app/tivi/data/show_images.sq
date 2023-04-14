@@ -2,10 +2,10 @@ CREATE TABLE IF NOT EXISTS `show_images` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `show_id` INTEGER NOT NULL,
     `path` TEXT NOT NULL,
-    `type` TEXT NOT NULL,
+    `type` TEXT AS app.tivi.data.models.ImageType NOT NULL,
     `lang` TEXT,
-    `rating` REAL NOT NULL,
-    `is_primary` INTEGER NOT NULL,
+    `rating` REAL AS kotlin.Float NOT NULL,
+    `is_primary` INTEGER AS kotlin.Boolean NOT NULL,
     FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -13,3 +13,51 @@ CREATE TABLE IF NOT EXISTS `show_images` (
 
 CREATE INDEX IF NOT EXISTS `index_show_images_show_id` ON `show_images` (`show_id`);
 
+-- queries
+
+getImageCountForShowId:
+SELECT COUNT(*) FROM show_images WHERE show_id = :showId;
+
+getImagesForShowId:
+SELECT * FROM show_images WHERE show_id = :showId;
+
+deleteForShowId:
+DELETE FROM show_images WHERE show_id = :showId;
+
+delete:
+DELETE FROM show_images WHERE id = :id;
+
+deleteAll:
+DELETE FROM show_images;
+
+upsert {
+    UPDATE show_images SET
+        `show_id` = :show_id,
+        `path` = :path,
+        `type` = :type,
+        `lang` = :lang,
+        `rating` = :rating,
+        `is_primary` = :is_primary
+    WHERE id = :id;
+
+    INSERT OR IGNORE INTO show_images (
+        `id`,
+        `show_id`,
+        `path`,
+        `type`,
+        `lang`,
+        `rating`,
+        `is_primary`
+    ) VALUES (
+        :id,
+        :show_id,
+        :path,
+        :type,
+        :lang,
+        :rating,
+        :is_primary
+    );
+}
+
+lastInsertRowId:
+SELECT last_insert_rowid();
