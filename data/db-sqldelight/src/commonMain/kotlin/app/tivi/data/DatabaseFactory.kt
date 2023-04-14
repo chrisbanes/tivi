@@ -48,5 +48,9 @@ class DatabaseFactory(
             typeAdapter = ImageTypeColumnAdapter,
             ratingAdapter = FloatColumnAdapter,
         ),
+        trending_showsAdapter = Trending_shows.Adapter(
+            pageAdapter = IntColumnAdapter,
+            watchersAdapter = IntColumnAdapter,
+        ),
     )
 }

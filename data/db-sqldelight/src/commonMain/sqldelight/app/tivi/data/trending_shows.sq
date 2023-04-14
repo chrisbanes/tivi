@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS `trending_shows` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `show_id` INTEGER NOT NULL,
-    `page` INTEGER NOT NULL,
-    `watchers` INTEGER NOT NULL,
+    `page` INTEGER AS kotlin.Int NOT NULL,
+    `watchers` INTEGER AS kotlin.Int NOT NULL,
     FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -10,3 +10,52 @@ CREATE TABLE IF NOT EXISTS `trending_shows` (
 
 CREATE UNIQUE INDEX IF NOT EXISTS `index_trending_shows_show_id` ON `trending_shows` (`show_id`);
 
+-- queries
+
+entries:
+SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC LIMIT :count OFFSET :offset;
+
+entriesWithShow:
+SELECT * FROM trending_shows
+INNER JOIN shows ON shows.id = trending_shows.show_id
+ORDER BY page ASC, watchers DESC, trending_shows.id ASC
+LIMIT :count OFFSET :offset;
+
+entriesInPage:
+SELECT * FROM trending_shows WHERE page = :page ORDER BY page ASC, watchers DESC, id ASC;
+
+count:
+SELECT count(*) FROM trending_shows;
+
+deletePage:
+DELETE FROM trending_shows WHERE page = :page;
+
+deleteAll:
+DELETE FROM trending_shows;
+
+delete:
+DELETE FROM trending_shows WHERE id = :id;
+
+getLastPage:
+SELECT MAX(page) FROM trending_shows;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+upsertShow {
+    UPDATE trending_shows SET
+        `show_id` = :show_id,
+        `page` = :page,
+        `watchers` = :watchers
+    WHERE id = :id;
+
+    INSERT OR IGNORE INTO trending_shows (
+         `show_id`,
+         `page`,
+         `watchers`
+    ) VALUES (
+       :id,
+       :page,
+       :watchers
+    );
+}

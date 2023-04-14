@@ -20,8 +20,6 @@ import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.PaginatedEntry
 
 interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI> {
-    override suspend fun upsert(entity: EC): Long
-    override suspend fun upsertAll(entities: List<EC>)
     suspend fun deletePage(page: Int)
     suspend fun getLastPage(): Int?
 }
