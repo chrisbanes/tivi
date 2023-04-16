@@ -50,12 +50,14 @@ upsertShow {
     WHERE id = :id;
 
     INSERT OR IGNORE INTO trending_shows (
-         `show_id`,
-         `page`,
-         `watchers`
+        `id`,
+        `show_id`,
+        `page`,
+        `watchers`
     ) VALUES (
-       :id,
-       :page,
-       :watchers
+        nullif(:id, 0),
+        :show_id,
+        :page,
+        :watchers
     );
 }

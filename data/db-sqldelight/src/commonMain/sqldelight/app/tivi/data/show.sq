@@ -107,7 +107,7 @@ upsertShow {
         `airs_time`,
         `airs_tz`
     ) VALUES (
-        :id,
+        nullif(:id, 0),
         :title,
         :original_title,
         :trakt_id,
