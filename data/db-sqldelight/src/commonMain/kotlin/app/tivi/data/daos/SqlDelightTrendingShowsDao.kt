@@ -26,6 +26,7 @@ import app.tivi.data.await
 import app.tivi.data.compoundmodels.TrendingEntryWithShow
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TrendingShowEntry
+import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -68,10 +69,7 @@ class SqlDelightTrendingShowsDao(
     }
 
     override suspend fun upsert(entity: TrendingShowEntry): Long = withContext(dispatchers.io) {
-        db.transactionWithResult {
-            upsertBlocking(entity)
-            db.trending_showsQueries.lastInsertRowId().executeAsOne()
-        }
+        upsertBlocking(entity)
     }
 
     override suspend fun upsertAll(entities: List<TrendingShowEntry>) = withContext(dispatchers.io) {
@@ -84,23 +82,37 @@ class SqlDelightTrendingShowsDao(
         db.trending_showsQueries.delete(entity.id)
     }
 
-    private fun upsertBlocking(entity: TrendingShowEntry) {
-        db.trending_showsQueries.upsertShow(
-            id = entity.id,
-            show_id = entity.showId,
-            page = entity.page,
-            watchers = entity.watchers,
-        )
-    }
+    private fun upsertBlocking(entity: TrendingShowEntry): Long = db.trending_showsQueries.upsert(
+        entity = entity,
+        insert = { entry ->
+            insert(
+                id = entry.id,
+                show_id = entry.showId,
+                page = entry.page,
+                watchers = entry.watchers,
+            )
+        },
+        update = { entry ->
+            update(
+                id = entry.id,
+                show_id = entry.showId,
+                page = entry.page,
+                watchers = entry.watchers,
+            )
+        },
+        lastInsertRowId = { lastInsertRowId().executeAsOne() },
+    )
 
     private fun entriesWithShow(count: Long, offset: Long): Query<TrendingEntryWithShow> {
         return db.trending_showsQueries.entriesWithShow(
             count = count,
             offset = offset,
-            mapper = { id, show_id, page, watchers, id_, title, original_title,
+            mapper = {
+                    id, show_id, page, watchers, id_, title, original_title,
                     trakt_id, tmdb_id, imdb_id, overview, homepage, trakt_rating, trakt_votes,
                     certification, first_aired, country, network, network_logo_path, runtime, genres,
-                    status, airs_day, airs_time, airs_tz, ->
+                    status, airs_day, airs_time, airs_tz,
+                ->
 
                 val show = TiviShow(
                     id_, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,

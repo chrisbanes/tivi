@@ -30,34 +30,34 @@ DELETE FROM show_images WHERE id = :id;
 deleteAll:
 DELETE FROM show_images;
 
-upsert {
-    UPDATE show_images SET
-        `show_id` = :show_id,
-        `path` = :path,
-        `type` = :type,
-        `lang` = :lang,
-        `rating` = :rating,
-        `is_primary` = :is_primary
-    WHERE id = :id;
+update:
+UPDATE show_images SET
+    `show_id` = :show_id,
+    `path` = :path,
+    `type` = :type,
+    `lang` = :lang,
+    `rating` = :rating,
+    `is_primary` = :is_primary
+WHERE id = :id;
 
-    INSERT INTO show_images (
-        `id`,
-        `show_id`,
-        `path`,
-        `type`,
-        `lang`,
-        `rating`,
-        `is_primary`
-    ) VALUES (
-        nullif(:id, 0),
-        :show_id,
-        :path,
-        :type,
-        :lang,
-        :rating,
-        :is_primary
-    );
-}
+insert:
+INSERT INTO show_images (
+    `id`,
+    `show_id`,
+    `path`,
+    `type`,
+    `lang`,
+    `rating`,
+    `is_primary`
+) VALUES (
+    nullif(:id, 0),
+    :show_id,
+    :path,
+    :type,
+    :lang,
+    :rating,
+    :is_primary
+);
 
 lastInsertRowId:
 SELECT last_insert_rowid();

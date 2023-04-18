@@ -42,22 +42,22 @@ SELECT MAX(page) FROM trending_shows;
 lastInsertRowId:
 SELECT last_insert_rowid();
 
-upsertShow {
-    UPDATE trending_shows SET
-        `show_id` = :show_id,
-        `page` = :page,
-        `watchers` = :watchers
-    WHERE id = :id;
+update:
+UPDATE trending_shows SET
+    `show_id` = :show_id,
+    `page` = :page,
+    `watchers` = :watchers
+WHERE id = :id;
 
-    INSERT OR IGNORE INTO trending_shows (
-        `id`,
-        `show_id`,
-        `page`,
-        `watchers`
-    ) VALUES (
-        nullif(:id, 0),
-        :show_id,
-        :page,
-        :watchers
-    );
-}
+insert:
+INSERT INTO trending_shows (
+    `id`,
+    `show_id`,
+    `page`,
+    `watchers`
+) VALUES (
+    nullif(:id, 0),
+    :show_id,
+    :page,
+    :watchers
+);

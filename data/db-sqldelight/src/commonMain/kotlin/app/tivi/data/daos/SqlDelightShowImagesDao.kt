@@ -21,6 +21,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.tivi.data.Database
 import app.tivi.data.await
 import app.tivi.data.models.ShowTmdbImage
+import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -52,10 +53,7 @@ class SqlDelightShowImagesDao(
     }
 
     override suspend fun upsert(entity: ShowTmdbImage): Long = withContext(dispatchers.io) {
-        db.transactionWithResult {
-            upsertBlocking(entity)
-            db.show_imagesQueries.lastInsertRowId().executeAsOne()
-        }
+        upsertBlocking(entity)
     }
 
     override suspend fun upsertAll(entities: List<ShowTmdbImage>) = withContext(dispatchers.io) {
@@ -68,15 +66,30 @@ class SqlDelightShowImagesDao(
         db.show_imagesQueries.delete(entity.id)
     }
 
-    private fun upsertBlocking(entity: ShowTmdbImage) {
-        db.show_imagesQueries.upsert(
-            id = entity.id,
-            show_id = entity.showId,
-            path = entity.path,
-            type = entity.type,
-            lang = entity.language,
-            rating = entity.rating,
-            is_primary = entity.isPrimary,
-        )
-    }
+    private fun upsertBlocking(entity: ShowTmdbImage): Long = db.show_imagesQueries.upsert(
+        entity = entity,
+        insert = { entry ->
+            insert(
+                id = entry.id,
+                show_id = entry.showId,
+                path = entry.path,
+                type = entry.type,
+                lang = entry.language,
+                rating = entry.rating,
+                is_primary = entry.isPrimary,
+            )
+        },
+        update = { entry ->
+            update(
+                id = entry.id,
+                show_id = entry.showId,
+                path = entry.path,
+                type = entry.type,
+                lang = entry.language,
+                rating = entry.rating,
+                is_primary = entry.isPrimary,
+            )
+        },
+        lastInsertRowId = { lastInsertRowId().executeAsOne() },
+    )
 }
