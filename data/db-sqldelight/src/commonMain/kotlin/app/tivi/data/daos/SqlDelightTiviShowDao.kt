@@ -22,6 +22,7 @@ import app.cash.sqldelight.coroutines.mapToOne
 import app.tivi.data.Database
 import app.tivi.data.awaitAsNull
 import app.tivi.data.models.TiviShow
+import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -89,15 +90,14 @@ class SqlDelightTiviShowDao(
     }
 
     override suspend fun upsert(entity: TiviShow): Long = withContext(dispatchers.io) {
-        db.transactionWithResult {
-            upsertShowBlocking(entity)
-            db.showQueries.lastInsertRowId().executeAsOne()
-        }
+        upsertShow(entity)
     }
 
     override suspend fun upsertAll(entities: List<TiviShow>) = withContext(dispatchers.io) {
         db.transaction {
-            entities.forEach(::upsertShowBlocking)
+            for (entity in entities) {
+                upsertShow(entity)
+            }
         }
     }
 
@@ -105,29 +105,58 @@ class SqlDelightTiviShowDao(
         db.showQueries.delete(entity.id)
     }
 
-    private fun upsertShowBlocking(entity: TiviShow) {
-        db.showQueries.upsertShow(
-            id = entity.id,
-            title = entity.title,
-            original_title = entity.originalTitle,
-            trakt_id = entity.traktId,
-            tmdb_id = entity.tmdbId,
-            imdb_id = entity.imdbId,
-            overview = entity.summary,
-            homepage = entity.homepage,
-            trakt_rating = entity.traktRating,
-            trakt_votes = entity.traktVotes,
-            certification = entity.certification,
-            first_aired = entity.firstAired,
-            country = entity.country,
-            network = entity.network,
-            network_logo_path = entity.networkLogoPath,
-            runtime = entity.runtime,
-            genres = entity._genres,
-            status = entity.status,
-            airs_day = entity.airsDay,
-            airs_time = entity.airsTime,
-            airs_tz = entity.airsTimeZone,
-        )
-    }
+    private fun upsertShow(entity: TiviShow): Long = db.showQueries.upsert(
+        entity = entity,
+        insert = { show ->
+            insert(
+                id = show.id,
+                title = show.title,
+                original_title = show.originalTitle,
+                trakt_id = show.traktId,
+                tmdb_id = show.tmdbId,
+                imdb_id = show.imdbId,
+                overview = show.summary,
+                homepage = show.homepage,
+                trakt_rating = show.traktRating,
+                trakt_votes = show.traktVotes,
+                certification = show.certification,
+                first_aired = show.firstAired,
+                country = show.country,
+                network = show.network,
+                network_logo_path = show.networkLogoPath,
+                runtime = show.runtime,
+                genres = show._genres,
+                status = show.status,
+                airs_day = show.airsDay,
+                airs_time = show.airsTime,
+                airs_tz = show.airsTimeZone,
+            )
+        },
+        update = { show ->
+            update(
+                id = show.id,
+                title = show.title,
+                original_title = show.originalTitle,
+                trakt_id = show.traktId,
+                tmdb_id = show.tmdbId,
+                imdb_id = show.imdbId,
+                overview = show.summary,
+                homepage = show.homepage,
+                trakt_rating = show.traktRating,
+                trakt_votes = show.traktVotes,
+                certification = show.certification,
+                first_aired = show.firstAired,
+                country = show.country,
+                network = show.network,
+                network_logo_path = show.networkLogoPath,
+                runtime = show.runtime,
+                genres = show._genres,
+                status = show.status,
+                airs_day = show.airsDay,
+                airs_time = show.airsTime,
+                airs_tz = show.airsTimeZone,
+            )
+        },
+        lastInsertRowId = { lastInsertRowId().executeAsOne() },
+    )
 }
