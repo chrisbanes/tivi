@@ -140,7 +140,7 @@ playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:
 
 robolectric = "org.robolectric:robolectric:4.10"
 
-slack-lint-compose = "com.slack.lint.compose:compose-lint-checks:1.1.1"
+slack-lint-compose = "com.slack.lint.compose:compose-lint-checks:1.2.0"
 
 swipe = "me.saket.swipe:swipe:1.1.1"
 
