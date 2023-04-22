@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.ui.animations
+package app.tivi.animations
 
 fun lerp(
     startValue: Float,
