@@ -32,6 +32,10 @@ class DatabaseFactory(
 ) {
     fun build(): Database = Database(
         driver = driverFactory.createDriver(),
+        popular_showsAdapter = Popular_shows.Adapter(
+            pageAdapter = IntColumnAdapter,
+            page_orderAdapter = IntColumnAdapter,
+        ),
         showsAdapter = Shows.Adapter(
             trakt_idAdapter = IntColumnAdapter,
             tmdb_idAdapter = IntColumnAdapter,

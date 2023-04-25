@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS `popular_shows` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `show_id` INTEGER NOT NULL,
-    `page` INTEGER NOT NULL,
-    `page_order` INTEGER NOT NULL,
+    `page` INTEGER AS kotlin.Int NOT NULL,
+    `page_order` INTEGER AS kotlin.Int NOT NULL,
     FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -10,3 +10,58 @@ CREATE TABLE IF NOT EXISTS `popular_shows` (
 
 CREATE UNIQUE INDEX IF NOT EXISTS `index_popular_shows_show_id` ON `popular_shows` (`show_id`);
 
+-- queries
+
+entries:
+SELECT * FROM popular_shows
+ORDER BY page ASC, page_order ASC
+LIMIT :count OFFSET :offset;
+
+entriesWithShow:
+SELECT * FROM popular_shows
+INNER JOIN shows ON shows.id = popular_shows.show_id
+ORDER BY page ASC, page_order ASC, popular_shows.id ASC
+LIMIT :count OFFSET :offset;
+
+entriesInPage:
+SELECT * FROM popular_shows
+WHERE page = :page
+ORDER BY page ASC, page_order ASC, popular_shows.id ASC;
+
+count:
+SELECT count(*) FROM popular_shows;
+
+deletePage:
+DELETE FROM popular_shows WHERE page = :page;
+
+deleteAll:
+DELETE FROM popular_shows;
+
+delete:
+DELETE FROM popular_shows WHERE id = :id;
+
+getLastPage:
+SELECT MAX(page) FROM popular_shows;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE popular_shows SET
+    `show_id` = :show_id,
+    `page` = :page,
+    `page_order` = :page_order
+WHERE id = :id;
+
+insert:
+INSERT INTO popular_shows (
+    `id`,
+    `show_id`,
+    `page`,
+    `page_order`
+) VALUES (
+    nullif(:id, 0),
+    :show_id,
+    :page,
+    :page_order
+);
