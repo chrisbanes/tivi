@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `recommended_entries` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `show_id` INTEGER NOT NULL,
-    `page` INTEGER NOT NULL,
+    `page` INTEGER AS kotlin.Int NOT NULL,
     FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -9,3 +9,53 @@ CREATE TABLE IF NOT EXISTS `recommended_entries` (
 
 CREATE UNIQUE INDEX IF NOT EXISTS `index_recommended_entries_show_id` ON `recommended_entries` (`show_id`);
 
+entries:
+SELECT * FROM recommended_entries
+ORDER BY page ASC, id ASC
+LIMIT :count OFFSET :offset;
+
+entriesWithShow:
+SELECT * FROM recommended_entries
+INNER JOIN shows ON shows.id = recommended_entries.show_id
+ORDER BY page ASC, recommended_entries.id ASC
+LIMIT :count OFFSET :offset;
+
+entriesInPage:
+SELECT * FROM recommended_entries
+WHERE page = :page
+ORDER BY page ASC, id ASC;
+
+count:
+SELECT count(*) FROM recommended_entries;
+
+deletePage:
+DELETE FROM recommended_entries WHERE page = :page;
+
+deleteAll:
+DELETE FROM recommended_entries;
+
+delete:
+DELETE FROM recommended_entries WHERE id = :id;
+
+getLastPage:
+SELECT MAX(page) FROM recommended_entries;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE recommended_entries SET
+    `show_id` = :show_id,
+    `page` = :page
+WHERE id = :id;
+
+insert:
+INSERT INTO recommended_entries (
+    `id`,
+    `show_id`,
+    `page`
+) VALUES (
+    nullif(:id, 0),
+    :show_id,
+    :page
+);
