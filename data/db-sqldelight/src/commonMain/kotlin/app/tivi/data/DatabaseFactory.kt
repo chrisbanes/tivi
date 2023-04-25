@@ -36,6 +36,9 @@ class DatabaseFactory(
             pageAdapter = IntColumnAdapter,
             page_orderAdapter = IntColumnAdapter,
         ),
+        recommended_entriesAdapter = Recommended_entries.Adapter(
+            pageAdapter = IntColumnAdapter,
+        ),
         showsAdapter = Shows.Adapter(
             trakt_idAdapter = IntColumnAdapter,
             tmdb_idAdapter = IntColumnAdapter,
