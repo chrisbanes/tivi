@@ -128,6 +128,9 @@ kotlin-extensions = { module = "org.jetbrains.kotlin:kotlin-android-extensions",
 kotlininject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
 kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
 
+# This isn't strictly used, but allows Renovate to see us using the ktlint artifact
+ktlint = { module = "com.pinterest:ktlint", version.ref = "ktlint" }
+
 leakCanary = "com.squareup.leakcanary:leakcanary-android:2.10"
 
 mockK = "io.mockk:mockk:1.13.5"
