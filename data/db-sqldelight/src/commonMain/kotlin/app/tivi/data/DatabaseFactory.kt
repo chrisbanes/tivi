@@ -59,5 +59,9 @@ class DatabaseFactory(
             pageAdapter = IntColumnAdapter,
             watchersAdapter = IntColumnAdapter,
         ),
+        watched_entriesAdapter = Watched_entries.Adapter(
+            last_watchedAdapter = InstantColumnAdapter,
+            last_updatedAdapter = InstantColumnAdapter,
+        ),
     )
 }

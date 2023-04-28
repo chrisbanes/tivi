@@ -40,3 +40,12 @@ data class ShowsWatchStats(
     @ColumnInfo(name = "episode_count") val episodeCount: Int,
     @ColumnInfo(name = "watched_episode_count") val watchedEpisodeCount: Int,
 )
+
+/**
+ * Only exists to make it easier to map from SqlDelight
+ */
+fun ShowsWatchStats(
+    showId: Long,
+    episodeCount: Long,
+    watchedEpisodeCount: Long,
+): ShowsWatchStats = ShowsWatchStats(showId, episodeCount.toInt(), watchedEpisodeCount.toInt())
