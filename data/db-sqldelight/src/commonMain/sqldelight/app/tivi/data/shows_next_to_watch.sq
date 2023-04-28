@@ -1,16 +1,28 @@
-CREATE VIEW `shows_next_to_watch` AS SELECT
-    shows.id AS show_id,
-    seasons.id AS season_id,
-    eps.id AS episode_id,
-    MIN((1000 * seasons.number) + eps.number) AS next_ep_to_watch_abs_number
-    FROM shows
-    INNER JOIN seasons ON shows.id = seasons.show_id
-    INNER JOIN episodes AS eps ON eps.season_id = seasons.id
-    LEFT JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
-    LEFT JOIN shows_last_watched AS lw ON lw.show_id = shows.id
-    WHERE seasons.number != 0
-      AND seasons.ignored = 0
-      AND watched_at IS NULL
-      AND datetime(eps.first_aired) < datetime('now')
-      AND ((1000 * seasons.number) + eps.number) > coalesce(last_watched_abs_number, 0)
-    GROUP BY shows.id;
+CREATE VIEW `shows_next_to_watch` AS
+SELECT shows.id AS show_id,
+seasons.id AS season_id,
+eps.id AS episode_id,
+MIN((1000 * seasons.number) + eps.number) AS next_ep_to_watch_abs_number
+FROM shows
+INNER JOIN seasons ON shows.id = seasons.show_id
+INNER JOIN episodes AS eps ON eps.season_id = seasons.id
+LEFT JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
+LEFT JOIN shows_last_watched AS lw ON lw.show_id = shows.id
+WHERE seasons.number != 0
+  AND seasons.ignored = 0
+  AND watched_at IS NULL
+  AND datetime(eps.first_aired) < datetime('now')
+  AND ((1000 * seasons.number) + eps.number) > coalesce(last_watched_abs_number, 0)
+GROUP BY shows.id;
+
+-- queries
+
+nextShowToWatch:
+SELECT shows.* FROM shows
+INNER JOIN seasons AS s ON s.show_id = shows.id
+INNER JOIN shows_next_to_watch AS next ON next.show_id = shows.id
+INNER JOIN episodes AS eps ON eps.season_id = s.id
+INNER JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
+WHERE s.number > 0 AND s.ignored = 0
+ORDER BY datetime(ew.watched_at) DESC
+LIMIT 1;

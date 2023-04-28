@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS `watched_entries` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `show_id` INTEGER NOT NULL,
-    `last_watched` TEXT NOT NULL,
-    `last_updated` TEXT NOT NULL DEFAULT '2000-01-01T00:00:00.000000Z',
+    `last_watched` TEXT AS kotlinx.datetime.Instant NOT NULL,
+    `last_updated` TEXT AS kotlinx.datetime.Instant NOT NULL DEFAULT '2000-01-01T00:00:00.000000Z',
     FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -10,3 +10,47 @@ CREATE TABLE IF NOT EXISTS `watched_entries` (
 
 CREATE UNIQUE INDEX IF NOT EXISTS `index_watched_entries_show_id` ON `watched_entries` (`show_id`);
 
+-- queries
+
+entries:
+SELECT * FROM watched_entries
+ORDER BY datetime(last_watched) DESC;
+
+entryWithShowId:
+SELECT * FROM watched_entries
+WHERE show_id = :showId;
+
+entriesWithShow:
+SELECT * FROM watched_entries
+INNER JOIN shows ON shows.id = watched_entries.show_id
+ORDER BY datetime(last_watched) DESC
+LIMIT :count OFFSET :offset;
+
+deleteAll:
+DELETE FROM watched_entries;
+
+delete:
+DELETE FROM watched_entries WHERE id = :id;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE watched_entries SET
+    `show_id` = :show_id,
+    `last_watched` = :last_watched,
+    `last_updated` = :last_updated
+WHERE id = :id;
+
+insert:
+INSERT INTO watched_entries (
+    `id`,
+    `show_id`,
+    `last_watched`,
+    `last_updated`
+) VALUES (
+    nullif(:id, 0),
+    :show_id,
+    :last_watched,
+    :last_updated
+);

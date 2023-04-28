@@ -19,6 +19,7 @@ package app.tivi.data
 import app.cash.sqldelight.Query
 import app.cash.sqldelight.Transacter
 import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.tivi.data.models.TiviEntity
@@ -32,6 +33,10 @@ internal suspend inline fun <T : Any> Query<T>.awaitAsNull(context: CoroutineCon
 
 internal suspend inline fun <T : Any> Query<T>.await(context: CoroutineContext): T {
     return asFlow().mapToOne(context).first()
+}
+
+internal suspend inline fun <T : Any> Query<T>.awaitList(context: CoroutineContext): List<T> {
+    return asFlow().mapToList(context).first()
 }
 
 internal fun <TX : Transacter, ET : TiviEntity> TX.upsert(
