@@ -21,11 +21,9 @@ import app.tivi.extensions.unsafeLazy
 import kotlinx.datetime.DayOfWeek
 
 internal object DayOfWeekColumnAdapter : ColumnAdapter<DayOfWeek, Long> {
-    private val dayOfWeekValues by unsafeLazy { DayOfWeek.values() }
+    private val values by unsafeLazy { DayOfWeek.values().associateBy { it.value } }
 
-    override fun decode(databaseValue: Long): DayOfWeek {
-        return dayOfWeekValues.first { it.value == databaseValue.toInt() }
-    }
+    override fun decode(databaseValue: Long): DayOfWeek = values.getValue(databaseValue.toInt())
 
     override fun encode(value: DayOfWeek): Long = value.value.toLong()
 }

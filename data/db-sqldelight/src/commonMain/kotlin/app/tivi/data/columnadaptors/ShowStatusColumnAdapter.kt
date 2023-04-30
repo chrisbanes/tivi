@@ -21,11 +21,9 @@ import app.tivi.data.models.ShowStatus
 import app.tivi.extensions.unsafeLazy
 
 internal object ShowStatusColumnAdapter : ColumnAdapter<ShowStatus, String> {
-    private val showStatusValues by unsafeLazy { ShowStatus.values() }
+    private val values by unsafeLazy { ShowStatus.values().associateBy(ShowStatus::storageKey) }
 
-    override fun decode(databaseValue: String): ShowStatus {
-        return showStatusValues.first { it.storageKey == databaseValue }
-    }
+    override fun decode(databaseValue: String): ShowStatus = values.getValue(databaseValue)
 
     override fun encode(value: ShowStatus): String = value.storageKey
 }
