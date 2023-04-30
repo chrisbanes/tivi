@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS `related_shows` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `show_id` INTEGER NOT NULL,
     `other_show_id` INTEGER NOT NULL,
-    `order_index` INTEGER NOT NULL,
+    `order_index` INTEGER AS kotlin.Int NOT NULL,
     FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE ,
     FOREIGN KEY(`other_show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -13,3 +13,49 @@ CREATE INDEX IF NOT EXISTS `index_related_shows_show_id` ON `related_shows` (`sh
 
 CREATE INDEX IF NOT EXISTS `index_related_shows_other_show_id` ON `related_shows` (`other_show_id`);
 
+-- queries
+
+entries:
+SELECT * FROM related_shows
+WHERE show_id = :showId
+ORDER BY order_index;
+
+entriesWithShows:
+SELECT related_shows.*, shows.* FROM related_shows
+INNER JOIN shows ON shows.id = related_shows.other_show_id
+WHERE show_id = :showId
+ORDER BY order_index;
+
+deleteWithShowId:
+DELETE FROM related_shows
+WHERE show_id = :showId;
+
+delete:
+DELETE FROM related_shows
+WHERE id = :id;
+
+deleteAll:
+DELETE FROM related_shows;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE related_shows SET
+    `show_id` = :show_id,
+    `other_show_id` = :other_show_id,
+    `order_index` = :order_index
+WHERE id = :id;
+
+insert:
+INSERT INTO related_shows (
+    `id`,
+    `show_id`,
+    `other_show_id`,
+    `order_index`
+) VALUES (
+    nullif(:id, 0),
+    :show_id,
+    :other_show_id,
+    :order_index
+);
