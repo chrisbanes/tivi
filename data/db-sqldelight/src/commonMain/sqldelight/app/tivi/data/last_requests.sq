@@ -1,10 +1,46 @@
 CREATE TABLE IF NOT EXISTS `last_requests` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    `request` TEXT NOT NULL, `entity_id` INTEGER NOT NULL,
-    `timestamp` INTEGER NOT NULL
+    `request` TEXT AS app.tivi.data.models.Request NOT NULL,
+    `entity_id` INTEGER NOT NULL,
+    `timestamp` INTEGER AS kotlinx.datetime.Instant NOT NULL
 );
 
 -- indices
 
 CREATE UNIQUE INDEX IF NOT EXISTS `index_last_requests_request_entity_id` ON `last_requests` (`request`, `entity_id`);
 
+-- queries
+
+requestCount:
+SELECT COUNT(*) FROM last_requests
+WHERE request = :request AND entity_id = :entityId;
+
+getLastRequestForId:
+SELECT * FROM last_requests
+WHERE request = :request AND entity_id = :entityId;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE last_requests SET
+    `entity_id` = :entity_id,
+    `request` = :request,
+    `timestamp` = :timestamp
+WHERE id = :id;
+
+insert:
+INSERT INTO last_requests (
+    `id`,
+    `entity_id`,
+    `request`,
+    `timestamp`
+) VALUES (
+    nullif(:id, 0),
+    :entity_id,
+    :request,
+    :timestamp
+);
+
+delete:
+DELETE FROM trending_shows WHERE id = :id;

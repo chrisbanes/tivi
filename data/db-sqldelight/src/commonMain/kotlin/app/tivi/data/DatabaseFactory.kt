@@ -20,8 +20,10 @@ import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.tivi.data.columnadaptors.DayOfWeekColumnAdapter
 import app.tivi.data.columnadaptors.ImageTypeColumnAdapter
+import app.tivi.data.columnadaptors.InstantLongColumnAdapter
 import app.tivi.data.columnadaptors.InstantStringColumnAdapter
 import app.tivi.data.columnadaptors.LocalTimeColumnAdapter
+import app.tivi.data.columnadaptors.RequestColumnAdapter
 import app.tivi.data.columnadaptors.ShowStatusColumnAdapter
 import app.tivi.data.columnadaptors.TimeZoneColumnAdapter
 import me.tatarka.inject.annotations.Inject
@@ -35,6 +37,10 @@ class DatabaseFactory(
         popular_showsAdapter = Popular_shows.Adapter(
             pageAdapter = IntColumnAdapter,
             page_orderAdapter = IntColumnAdapter,
+        ),
+        last_requestsAdapter = Last_requests.Adapter(
+            requestAdapter = RequestColumnAdapter,
+            timestampAdapter = InstantLongColumnAdapter,
         ),
         recommended_entriesAdapter = Recommended_entries.Adapter(
             pageAdapter = IntColumnAdapter,
