@@ -34,9 +34,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightRecommendedShowsDao(
-    private val db: Database,
-    private val dispatchers: AppCoroutineDispatchers,
-) : RecommendedDao {
+    override val db: Database,
+    override val dispatchers: AppCoroutineDispatchers,
+) : RecommendedDao, SqlDelightEntityDao<RecommendedShowEntry> {
     override fun entriesForPage(page: Int): Flow<List<RecommendedShowEntry>> {
         return db.recommended_entriesQueries.entriesInPage(page, ::RecommendedShowEntry)
             .asFlow()
@@ -68,21 +68,11 @@ class SqlDelightRecommendedShowsDao(
         return db.recommended_entriesQueries.getLastPage().await(dispatchers.io).MAX?.toInt()
     }
 
-    override suspend fun upsert(entity: RecommendedShowEntry): Long = withContext(dispatchers.io) {
-        upsertBlocking(entity)
-    }
-
-    override suspend fun upsertAll(entities: List<RecommendedShowEntry>) = withContext(dispatchers.io) {
-        db.transaction {
-            entities.forEach(::upsertBlocking)
-        }
-    }
-
     override suspend fun deleteEntity(entity: RecommendedShowEntry) = withContext(dispatchers.io) {
         db.recommended_entriesQueries.delete(entity.id)
     }
 
-    private fun upsertBlocking(entity: RecommendedShowEntry): Long = db.recommended_entriesQueries.upsert(
+    override fun upsertBlocking(entity: RecommendedShowEntry): Long = db.recommended_entriesQueries.upsert(
         entity = entity,
         insert = { entry ->
             insert(

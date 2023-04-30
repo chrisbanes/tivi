@@ -30,9 +30,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightTiviShowDao(
-    private val db: Database,
-    private val dispatchers: AppCoroutineDispatchers,
-) : TiviShowDao {
+    override val db: Database,
+    override val dispatchers: AppCoroutineDispatchers,
+) : TiviShowDao, SqlDelightEntityDao<TiviShow> {
 
     override suspend fun getShowWithTraktId(id: Int): TiviShow? {
         return db.showQueries.getShowWithTraktId(id, ::TiviShow)
@@ -89,23 +89,11 @@ class SqlDelightTiviShowDao(
         db.showQueries.deleteAll()
     }
 
-    override suspend fun upsert(entity: TiviShow): Long = withContext(dispatchers.io) {
-        upsertShow(entity)
-    }
-
-    override suspend fun upsertAll(entities: List<TiviShow>) = withContext(dispatchers.io) {
-        db.transaction {
-            for (entity in entities) {
-                upsertShow(entity)
-            }
-        }
-    }
-
     override suspend fun deleteEntity(entity: TiviShow) = withContext(dispatchers.io) {
         db.showQueries.delete(entity.id)
     }
 
-    private fun upsertShow(entity: TiviShow): Long = db.showQueries.upsert(
+    override fun upsertBlocking(entity: TiviShow): Long = db.showQueries.upsert(
         entity = entity,
         insert = { show ->
             insert(

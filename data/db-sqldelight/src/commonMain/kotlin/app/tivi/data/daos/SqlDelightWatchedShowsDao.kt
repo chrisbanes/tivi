@@ -37,6 +37,10 @@ import app.tivi.data.views.ShowsWatchStats
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import me.tatarka.inject.annotations.Inject
 
@@ -172,7 +176,7 @@ class SqlDelightWatchedShowsDao(
             trakt_rating_votes: Long?, tmdb_backdrop_path_: String?, ->
 
         val show = TiviShow(
-            id = id_,
+            id = id,
             title = title,
             originalTitle = original_title,
             traktId = trakt_id,
