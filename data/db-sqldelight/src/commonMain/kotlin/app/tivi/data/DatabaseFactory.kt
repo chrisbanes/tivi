@@ -20,7 +20,7 @@ import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.tivi.data.columnadaptors.DayOfWeekColumnAdapter
 import app.tivi.data.columnadaptors.ImageTypeColumnAdapter
-import app.tivi.data.columnadaptors.InstantColumnAdapter
+import app.tivi.data.columnadaptors.InstantStringColumnAdapter
 import app.tivi.data.columnadaptors.LocalTimeColumnAdapter
 import app.tivi.data.columnadaptors.ShowStatusColumnAdapter
 import app.tivi.data.columnadaptors.TimeZoneColumnAdapter
@@ -45,7 +45,7 @@ class DatabaseFactory(
             trakt_ratingAdapter = FloatColumnAdapter,
             trakt_votesAdapter = IntColumnAdapter,
             runtimeAdapter = IntColumnAdapter,
-            first_airedAdapter = InstantColumnAdapter,
+            first_airedAdapter = InstantStringColumnAdapter,
             statusAdapter = ShowStatusColumnAdapter,
             airs_dayAdapter = DayOfWeekColumnAdapter,
             airs_timeAdapter = LocalTimeColumnAdapter,
@@ -60,8 +60,8 @@ class DatabaseFactory(
             watchersAdapter = IntColumnAdapter,
         ),
         watched_entriesAdapter = Watched_entries.Adapter(
-            last_watchedAdapter = InstantColumnAdapter,
-            last_updatedAdapter = InstantColumnAdapter,
+            last_watchedAdapter = InstantStringColumnAdapter,
+            last_updatedAdapter = InstantStringColumnAdapter,
         ),
     )
 }
