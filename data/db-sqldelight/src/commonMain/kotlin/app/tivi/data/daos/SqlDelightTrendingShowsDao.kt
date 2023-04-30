@@ -34,9 +34,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightTrendingShowsDao(
-    private val db: Database,
-    private val dispatchers: AppCoroutineDispatchers,
-) : TrendingDao {
+    override val db: Database,
+    override val dispatchers: AppCoroutineDispatchers,
+) : TrendingDao, SqlDelightEntityDao<TrendingShowEntry> {
     override fun entriesObservable(page: Int): Flow<List<TrendingShowEntry>> {
         return db.trending_showsQueries.entriesInPage(page, ::TrendingShowEntry)
             .asFlow()
@@ -68,21 +68,11 @@ class SqlDelightTrendingShowsDao(
         return db.trending_showsQueries.getLastPage().await(dispatchers.io).MAX?.toInt()
     }
 
-    override suspend fun upsert(entity: TrendingShowEntry): Long = withContext(dispatchers.io) {
-        upsertBlocking(entity)
-    }
-
-    override suspend fun upsertAll(entities: List<TrendingShowEntry>) = withContext(dispatchers.io) {
-        db.transaction {
-            entities.forEach(::upsertBlocking)
-        }
-    }
-
     override suspend fun deleteEntity(entity: TrendingShowEntry) = withContext(dispatchers.io) {
         db.trending_showsQueries.delete(entity.id)
     }
 
-    private fun upsertBlocking(entity: TrendingShowEntry): Long = db.trending_showsQueries.upsert(
+    override fun upsertBlocking(entity: TrendingShowEntry): Long = db.trending_showsQueries.upsert(
         entity = entity,
         insert = { entry ->
             insert(

@@ -29,9 +29,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightShowImagesDao(
-    private val db: Database,
-    private val dispatchers: AppCoroutineDispatchers,
-) : ShowTmdbImagesDao {
+    override val db: Database,
+    override val dispatchers: AppCoroutineDispatchers,
+) : ShowTmdbImagesDao, SqlDelightEntityDao<ShowTmdbImage> {
     override suspend fun deleteForShowId(showId: Long) = withContext(dispatchers.io) {
         db.show_imagesQueries.deleteForShowId(showId)
     }
@@ -52,21 +52,11 @@ class SqlDelightShowImagesDao(
         db.show_imagesQueries.deleteAll()
     }
 
-    override suspend fun upsert(entity: ShowTmdbImage): Long = withContext(dispatchers.io) {
-        upsertBlocking(entity)
-    }
-
-    override suspend fun upsertAll(entities: List<ShowTmdbImage>) = withContext(dispatchers.io) {
-        db.transaction {
-            entities.forEach(::upsertBlocking)
-        }
-    }
-
     override suspend fun deleteEntity(entity: ShowTmdbImage) = withContext(dispatchers.io) {
         db.show_imagesQueries.delete(entity.id)
     }
 
-    private fun upsertBlocking(entity: ShowTmdbImage): Long = db.show_imagesQueries.upsert(
+    override fun upsertBlocking(entity: ShowTmdbImage): Long = db.show_imagesQueries.upsert(
         entity = entity,
         insert = { entry ->
             insert(
