@@ -39,6 +39,13 @@ data class LastRequest(
     // same type converter for pre-existing data.
     @ColumnInfo(name = "timestamp") internal val _timestamp: Long,
 ) : TiviEntity {
+    constructor(
+        id: Long = 0,
+        request: Request,
+        entityId: Long,
+        timestamp: Instant,
+    ) : this(id, request, entityId, timestamp.toEpochMilliseconds())
+
     @delegate:Ignore
     val timestamp: Instant by lazy { Instant.fromEpochMilliseconds(_timestamp) }
 }

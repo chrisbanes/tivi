@@ -1,13 +1,3 @@
--- upNextShowsLastWatched:
--- SELECT shows_next_to_watch.* FROM shows_next_to_watch
--- LEFT JOIN shows_last_watched ON shows_last_watched.show_id = shows_next_to_watch.show_id
--- LEFT JOIN episode_watch_entries ON episode_watch_entries.episode_id = shows_last_watched.episode_id
--- LEFT JOIN myshows_entries ON shows_next_to_watch.show_id = myshows_entries.show_id
--- WHERE :followedOnly = 0 OR myshows_entries.id IS NOT NULL
--- GROUP BY shows_next_to_watch.show_id
--- ORDER BY datetime(episode_watch_entries.watched_at) DESC
--- LIMIT :count OFFSET :offset;
-
 upNextShows:
 SELECT shows.*, seasons.*, episodes.* FROM shows_next_to_watch
 INNER JOIN shows ON shows.id = shows_next_to_watch.show_id

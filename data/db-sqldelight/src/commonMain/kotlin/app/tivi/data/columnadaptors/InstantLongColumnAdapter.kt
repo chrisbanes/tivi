@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package app.tivi.data.daos
+package app.tivi.data.columnadaptors
 
-import app.tivi.data.models.LastRequest
-import app.tivi.data.models.Request
+import app.cash.sqldelight.ColumnAdapter
+import kotlinx.datetime.Instant
 
-interface LastRequestDao : EntityDao<LastRequest> {
-
-    suspend fun lastRequest(request: Request, entityId: Long): LastRequest?
-
-    suspend fun requestCount(request: Request, entityId: Long): Int
+internal object InstantLongColumnAdapter : ColumnAdapter<Instant, Long> {
+    override fun decode(databaseValue: Long): Instant = Instant.fromEpochMilliseconds(databaseValue)
+    override fun encode(value: Instant): Long = value.toEpochMilliseconds()
 }

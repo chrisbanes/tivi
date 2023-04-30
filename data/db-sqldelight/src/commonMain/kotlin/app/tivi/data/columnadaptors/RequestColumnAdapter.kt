@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package app.tivi.data.daos
+package app.tivi.data.columnadaptors
 
-import app.tivi.data.models.LastRequest
+import app.cash.sqldelight.ColumnAdapter
 import app.tivi.data.models.Request
+import app.tivi.extensions.unsafeLazy
 
-interface LastRequestDao : EntityDao<LastRequest> {
+internal object RequestColumnAdapter : ColumnAdapter<Request, String> {
+    private val values by unsafeLazy { Request.values().associateBy(Request::tag) }
 
-    suspend fun lastRequest(request: Request, entityId: Long): LastRequest?
-
-    suspend fun requestCount(request: Request, entityId: Long): Int
+    override fun decode(databaseValue: String): Request = values.getValue(databaseValue)
+    override fun encode(value: Request): String = value.tag
 }
