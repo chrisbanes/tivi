@@ -23,10 +23,9 @@ import app.cash.paging.PagingSource
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
-import app.tivi.data.models.TiviShow
 
 @Dao
-abstract class RoomLibraryShowsDao : LibraryShowsDao, RoomEntityDao<TiviShow> {
+abstract class RoomLibraryShowsDao : LibraryShowsDao {
 
     @Transaction
     @Query(QUERY_LAST_WATCHED)

@@ -1,0 +1,37 @@
+entries:
+SELECT shows.*, watched_entries.*, shows_view_watch_stats.* FROM shows
+INNER JOIN shows_fts ON shows.id = shows_fts.docid
+LEFT JOIN myshows_entries ON shows.id = myshows_entries.show_id
+LEFT JOIN watched_entries ON shows.id = watched_entries.show_id
+LEFT JOIN shows_view_watch_stats ON shows.id = shows_view_watch_stats.show_id
+LEFT JOIN seasons AS s ON shows.id = s.show_id
+LEFT JOIN episodes AS eps ON eps.season_id = s.id
+LEFT JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
+WHERE
+    (s.number IS NULL OR s.number != 0)
+    AND (
+        (:includeWatched = 1 AND watched_entries.id IS NOT NULL) OR
+        (:includeFollowed = 1 AND myshows_entries.id IS NOT NULL)
+    )
+    AND (:filter IS NULL OR (shows_fts.title MATCH :filter))
+GROUP BY shows.id
+ORDER BY CASE
+    WHEN :sort = 2 THEN (
+        CASE WHEN MAX(datetime(watched_entries.last_watched)) IS NULL
+        OR MAX(datetime(ew.watched_at)) > MAX(datetime(watched_entries.last_watched))
+        THEN MAX(datetime(ew.watched_at))
+        ELSE MAX(datetime(watched_entries.last_watched)) END
+    ) END DESC,
+    shows.title ASC
+LIMIT :limit OFFSET :offset;
+
+count:
+SELECT COUNT(DISTINCT shows.id) FROM shows
+INNER JOIN shows_fts ON shows.id = shows_fts.docid
+LEFT JOIN myshows_entries ON shows.id = myshows_entries.show_id
+LEFT JOIN watched_entries ON shows.id = watched_entries.show_id
+WHERE (
+    (:includeWatched = 1 AND watched_entries.id IS NOT NULL) OR
+    (:includeFollowed = 1 AND myshows_entries.id IS NOT NULL)
+)
+AND (:filter IS NULL OR (shows_fts.title MATCH :filter));
