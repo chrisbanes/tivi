@@ -24,7 +24,7 @@ import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
 
 @Inject
-class TiviLogger() : Logger {
+class TiviLogger : Logger {
     override fun setup(debugMode: Boolean) {
         if (debugMode) {
             Timber.plant(TiviDebugTree())

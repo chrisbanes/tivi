@@ -16,11 +16,4 @@
 
 package app.tivi.util
 
-import app.tivi.inject.ApplicationScope
-import me.tatarka.inject.annotations.Provides
-
-actual interface LoggerComponent {
-    @ApplicationScope
-    @Provides
-    fun provideLogger(bind: TiviLogger): Logger = bind
-}
+expect interface LoggerComponent
