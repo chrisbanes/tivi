@@ -20,7 +20,6 @@ import app.cash.paging.PagingSource
 import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.cash.sqldelight.paging3.QueryPagingSource
 import app.tivi.data.Database
@@ -105,10 +104,10 @@ class SqlDelightWatchedShowsDao(
         ).awaitList(dispatchers.io)
     }
 
-    override fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats> {
+    override fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats?> {
         return db.shows_view_watch_statsQueries.watchStatsForShowId(showId, ::ShowsWatchStats)
             .asFlow()
-            .mapToOne(dispatchers.io)
+            .mapToOneOrNull(dispatchers.io)
     }
 
     override fun observeNextShowToWatch(): Flow<TiviShow?> {

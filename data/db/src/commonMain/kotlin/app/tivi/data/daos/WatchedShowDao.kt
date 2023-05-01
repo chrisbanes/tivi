@@ -40,7 +40,7 @@ interface WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> 
 
     suspend fun getUpNextShows(): List<UpNextEntry>
 
-    fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats>
+    fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats?>
 
     fun observeNextShowToWatch(): Flow<TiviShow?>
 }
