@@ -55,7 +55,7 @@ pending_action = :pendingAction
 WHERE id IN ?;
 
 deleteWithId:
-SELECT * FROM episode_watch_entries WHERE id = :id;
+DELETE FROM episode_watch_entries WHERE id = :id;
 
 deleteWithIds:
 DELETE FROM episode_watch_entries WHERE id IN ?;

@@ -16,12 +16,10 @@
 
 package app.tivi.data.repositories
 
-import androidx.test.core.app.ApplicationProvider
 import app.moviebase.trakt.model.TraktList
 import app.moviebase.trakt.model.TraktListIds
 import app.tivi.data.DatabaseTest
 import app.tivi.data.TestApplicationComponent
-import app.tivi.data.TiviRoomDatabase
 import app.tivi.data.create
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
@@ -42,7 +40,6 @@ import io.mockk.coEvery
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import me.tatarka.inject.annotations.Component
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
@@ -51,7 +48,6 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     private lateinit var followShowsDao: FollowedShowsDao
     private lateinit var followedShowsRepository: FollowedShowsRepository
     private lateinit var followedShowsDataSource: FollowedShowsDataSource
-    private lateinit var database: TiviRoomDatabase
     private lateinit var traktAuthRepository: TraktAuthRepository
 
     @Before
@@ -60,7 +56,6 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         showsDao = component.showsDao
         followShowsDao = component.followShowsDao
         followedShowsRepository = component.followedShowsRepository
-        database = component.database
         followedShowsDataSource = component.followedShowsDataSource
         traktAuthRepository = component.traktAuthRepository
 
@@ -145,22 +140,16 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         assertThat(followedShowsRepository.getFollowedShows())
             .containsExactly(followedShow1Local)
     }
-
-    @After
-    fun after() {
-        database.close()
-    }
 }
 
 @Component
 abstract class FollowedShowsRepositoryTestComponent(
     @Component val testApplicationComponent: TestApplicationComponent =
-        TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext()),
+        TestApplicationComponent::class.create(),
 ) {
     abstract val showsDao: TiviShowDao
     abstract val followShowsDao: FollowedShowsDao
     abstract val followedShowsRepository: FollowedShowsRepository
     abstract val followedShowsDataSource: FollowedShowsDataSource
-    abstract val database: TiviRoomDatabase
     abstract val traktAuthRepository: TraktAuthRepository
 }

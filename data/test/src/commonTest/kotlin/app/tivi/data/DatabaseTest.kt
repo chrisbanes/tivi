@@ -16,13 +16,8 @@
 
 package app.tivi.data
 
-import android.app.Application
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.moviebase.tmdb.Tmdb3
 import app.moviebase.trakt.Trakt
-import app.tivi.core.analytics.AnalyticsComponent
 import app.tivi.data.traktauth.RefreshTraktTokensInteractor
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.data.traktauth.TraktOAuthInfo
@@ -33,33 +28,22 @@ import app.tivi.tmdb.TmdbComponent
 import app.tivi.tmdb.TmdbOAuthInfo
 import app.tivi.trakt.TraktComponent
 import app.tivi.util.Logger
-import app.tivi.util.LoggerComponent
-import app.tivi.util.TiviLogger
 import io.mockk.mockk
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
-import org.junit.Rule
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 abstract class DatabaseTest {
-    @get:Rule(order = 1)
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
-
     val component: TestApplicationComponent by unsafeLazy {
-        TestApplicationComponent::class.create(ApplicationProvider.getApplicationContext())
+        TestApplicationComponent::class.create()
     }
 }
 
 @Component
 @ApplicationScope
-abstract class TestApplicationComponent(
-    @get:Provides val application: Application,
-) : TmdbComponent,
+abstract class TestApplicationComponent :
+    TmdbComponent,
     TraktComponent,
-    AnalyticsComponent,
-    LoggerComponent,
     TestDataSourceComponent(),
     TestRoomDatabaseComponent {
 
@@ -101,5 +85,5 @@ abstract class TestApplicationComponent(
     ): Tmdb3 = Tmdb3("fakefakefake")
 
     @Provides
-    override fun provideLogger(bind: TiviLogger): Logger = mockk(relaxUnitFun = true)
+    fun provideLogger(): Logger = mockk(relaxUnitFun = true)
 }
