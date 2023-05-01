@@ -57,6 +57,15 @@ class DatabaseFactory(
         related_showsAdapter = Related_shows.Adapter(
             order_indexAdapter = IntColumnAdapter,
         ),
+        seasonsAdapter = Seasons.Adapter(
+            trakt_idAdapter = IntColumnAdapter,
+            tmdb_idAdapter = IntColumnAdapter,
+            numberAdapter = IntColumnAdapter,
+            ep_countAdapter = IntColumnAdapter,
+            ep_airedAdapter = IntColumnAdapter,
+            trakt_ratingAdapter = FloatColumnAdapter,
+            trakt_votesAdapter = IntColumnAdapter,
+        ),
         showsAdapter = Shows.Adapter(
             trakt_idAdapter = IntColumnAdapter,
             tmdb_idAdapter = IntColumnAdapter,

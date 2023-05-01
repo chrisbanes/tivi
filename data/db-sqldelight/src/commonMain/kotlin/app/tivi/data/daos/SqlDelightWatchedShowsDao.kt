@@ -29,7 +29,6 @@ import app.tivi.data.awaitList
 import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
-import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
@@ -38,10 +37,6 @@ import app.tivi.data.views.ShowsWatchStats
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import me.tatarka.inject.annotations.Inject
 
@@ -160,21 +155,17 @@ class SqlDelightWatchedShowsDao(
         sort = sort.sqlValue,
         limit = limit,
         offset = offset,
-    ) { id: Long, title: String?, original_title: String?, trakt_id: Int?,
-            tmdb_id: Int?, imdb_id: String?, overview: String?, homepage: String?, trakt_rating: Float?,
-            trakt_votes: Int?, certification: String?, first_aired: Instant?, country: String?,
-            network: String?, network_logo_path: String?,
-            runtime: Int?, genres: String?, status: ShowStatus?, airs_day: DayOfWeek?,
-            airs_time: LocalTime?, airs_tz: TimeZone?,
+    ) {
+            // show
+            id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage, trakt_rating,
+            trakt_votes, certification, first_aired, country, network, network_logo_path, runtime,
+            genres, status, airs_day, airs_time, airs_tz,
             // season
-            id_: Long, show_id: Long, trakt_id_: Long?, tmdb_id_: Long?, title_: String?,
-            overview_: String?, number: Long?, network_: String?, ep_count: Long?, ep_aired: Long?,
-            trakt_rating_: Double?, trakt_votes_: Long?, tmdb_poster_path: String?,
-            tmdb_backdrop_path: String?, ignored: Long,
+            id_, show_id, trakt_id_, tmdb_id_, title_, overview_, number, network_, ep_count,
+            ep_aired, trakt_rating_, trakt_votes_, tmdb_poster_path, tmdb_backdrop_path, ignored,
             // episode
-            id__: Long, season_id: Long, trakt_id__: Long?, tmdb_id__: Long?, title__: String?,
-            overview__: String?, number_: Long?, first_aired_: String?, trakt_rating__: Double?,
-            trakt_rating_votes: Long?, tmdb_backdrop_path_: String?, ->
+            id__, season_id, trakt_id__, tmdb_id__, title__, overview__, number_, first_aired_,
+            trakt_rating__, trakt_rating_votes, tmdb_backdrop_path_, ->
 
         val show = TiviShow(
             id = id,
@@ -203,19 +194,19 @@ class SqlDelightWatchedShowsDao(
         val season = Season(
             id = id_,
             showId = show_id,
-            traktId = trakt_id_?.toInt(),
-            tmdbId = tmdb_id_?.toInt(),
+            traktId = trakt_id_,
+            tmdbId = tmdb_id_,
             title = title_,
             summary = overview_,
-            number = number?.toInt(),
+            number = number,
             network = network_,
-            episodeCount = ep_count?.toInt(),
-            episodesAired = ep_aired?.toInt(),
-            traktRating = trakt_rating_?.toFloat(),
-            traktRatingVotes = trakt_votes_?.toInt(),
+            episodeCount = ep_count,
+            episodesAired = ep_aired,
+            traktRating = trakt_rating_,
+            traktRatingVotes = trakt_votes_,
             tmdbPosterPath = tmdb_poster_path,
             tmdbBackdropPath = tmdb_backdrop_path,
-            ignored = ignored > 0,
+            ignored = ignored,
         )
 
         val episode = Episode(

@@ -1,19 +1,19 @@
 CREATE TABLE IF NOT EXISTS `seasons` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `show_id` INTEGER NOT NULL,
-    `trakt_id` INTEGER,
-    `tmdb_id` INTEGER,
+    `trakt_id` INTEGER AS kotlin.Int,
+    `tmdb_id` INTEGER AS kotlin.Int,
     `title` TEXT,
     `overview` TEXT,
-    `number` INTEGER,
+    `number` INTEGER AS kotlin.Int,
     `network` TEXT,
-    `ep_count` INTEGER,
-    `ep_aired` INTEGER,
-    `trakt_rating` REAL,
-    `trakt_votes` INTEGER,
+    `ep_count` INTEGER AS kotlin.Int,
+    `ep_aired` INTEGER AS kotlin.Int,
+    `trakt_rating` REAL AS kotlin.Float,
+    `trakt_votes` INTEGER AS kotlin.Int,
     `tmdb_poster_path` TEXT,
     `tmdb_backdrop_path` TEXT,
-    `ignored` INTEGER NOT NULL,
+    `ignored` INTEGER AS kotlin.Boolean NOT NULL,
     FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -23,3 +23,94 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_seasons_trakt_id` ON `seasons` (`trakt_
 
 CREATE INDEX IF NOT EXISTS `index_seasons_show_id` ON `seasons` (`show_id`);
 
+-- queries
+
+seasonsForShowId:
+SELECT * FROM seasons
+WHERE show_id = :showId
+ORDER BY seasons.number=0, seasons.number;
+
+seasonForShowIdAndNumber:
+SELECT * FROM seasons
+WHERE show_id = :showId AND number = :number;
+
+deleteWithShowId:
+DELETE FROM seasons WHERE show_id = :showId;
+
+deleteWithId:
+DELETE FROM seasons WHERE id = :id;
+
+seasonWithId:
+SELECT * FROM seasons WHERE id = :id;
+
+traktIdForId:
+SELECT trakt_id FROM seasons WHERE id = :id;
+
+seasonWithTraktId:
+SELECT * FROM seasons WHERE trakt_id = :traktId;
+
+previousSeasonsForShowId:
+SELECT id FROM seasons
+WHERE
+  number != 0
+  AND show_id = (SELECT show_id FROM seasons WHERE id = :seasonId)
+  AND number < (SELECT number FROM seasons WHERE id = :seasonId);
+
+updateSeasonIgnored:
+UPDATE seasons SET ignored = :ignored WHERE id = :seasonId;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE seasons SET
+    `show_id` = :show_id,
+    `trakt_id` = :trakt_id,
+    `tmdb_id` = :tmdb_id,
+    `title` = :title,
+    `overview` = :overview,
+    `number` = :number,
+    `network` = :network,
+    `ep_count` = :ep_count,
+    `ep_aired` = :ep_aired,
+    `trakt_rating` = :trakt_rating,
+    `trakt_votes` = :trakt_votes,
+    `tmdb_poster_path` = :tmdb_poster_path,
+    `tmdb_backdrop_path` = :tmdb_backdrop_path,
+    `ignored` = :ignored
+WHERE id = :id;
+
+insert:
+INSERT INTO seasons (
+    `id`,
+    `show_id`,
+    `trakt_id`,
+    `tmdb_id`,
+    `title`,
+    `overview`,
+    `number`,
+    `network`,
+    `ep_count`,
+    `ep_aired`,
+    `trakt_rating`,
+    `trakt_votes`,
+    `tmdb_poster_path`,
+    `tmdb_backdrop_path`,
+    `ignored`
+) VALUES (
+    nullif(:id, 0),
+    :show_id,
+    :trakt_id,
+    :tmdb_id,
+    :title,
+    :overview,
+    :number,
+    :network,
+    :ep_count,
+    :ep_aired,
+    :trakt_rating,
+    :trakt_votes,
+    :tmdb_poster_path,
+    :tmdb_backdrop_path,
+    :ignored
+);

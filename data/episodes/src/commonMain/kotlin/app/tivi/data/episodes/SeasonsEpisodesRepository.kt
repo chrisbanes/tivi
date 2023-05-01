@@ -116,7 +116,7 @@ class SeasonsEpisodesRepository(
     )
 
     suspend fun removeShowSeasonData(showId: Long) {
-        seasonsDao.deleteSeasonsForShowId(showId)
+        seasonsDao.deleteWithShowId(showId)
     }
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
