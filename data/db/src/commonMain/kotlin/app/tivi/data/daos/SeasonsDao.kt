@@ -24,13 +24,9 @@ interface SeasonsDao : EntityDao<Season> {
 
     fun seasonsWithEpisodesForShowId(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>>
 
-    fun observeSeasonsForShowId(showId: Long): Flow<List<Season>>
-
     fun observeSeasonWithId(id: Long): Flow<Season>
 
     suspend fun seasonsForShowId(showId: Long): List<Season>
-
-    fun seasonWithEpisodes(seasonId: Long): Flow<SeasonWithEpisodesAndWatches>
 
     suspend fun deleteWithShowId(showId: Long)
 

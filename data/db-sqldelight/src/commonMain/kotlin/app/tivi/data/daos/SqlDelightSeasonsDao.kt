@@ -17,7 +17,6 @@
 package app.tivi.data.daos
 
 import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import app.tivi.data.Database
 import app.tivi.data.awaitAsNull
@@ -79,28 +78,10 @@ class SqlDelightSeasonsDao(
     )
 
     override fun seasonsWithEpisodesForShowId(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
-        TODO("Not yet implemented")
+        TODO()
 //        return db.seasonsQueries.seasonsForShowId(showId)
 //            .asFlow()
 //            .mapToList(dispatchers.io)
-//            .map {
-//                it.map {
-//                    merge(flowOf(it)
-//                }
-//            }
-//            .map {
-//                SeasonWithEpisodesAndWatches().apply {  }
-//            }
-    }
-
-    override fun seasonWithEpisodes(seasonId: Long): Flow<SeasonWithEpisodesAndWatches> {
-        TODO("Not yet implemented")
-    }
-
-    override fun observeSeasonsForShowId(showId: Long): Flow<List<Season>> {
-        return db.seasonsQueries.seasonsForShowId(showId, ::Season)
-            .asFlow()
-            .mapToList(dispatchers.io)
     }
 
     override fun observeSeasonWithId(id: Long): Flow<Season> {
