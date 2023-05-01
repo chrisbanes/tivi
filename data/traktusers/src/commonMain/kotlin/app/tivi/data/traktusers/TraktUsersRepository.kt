@@ -59,7 +59,7 @@ class TraktUsersRepository(
     }
 
     suspend fun needUpdate(username: String): Boolean {
-        return userDao.getIdForUsername(username)?.let { userId ->
+        return userDao.getId(username)?.let { userId ->
             lastRequestStore.isRequestExpired(userId, 7.days)
         } ?: true
     }

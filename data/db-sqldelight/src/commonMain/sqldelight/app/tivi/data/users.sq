@@ -2,15 +2,78 @@ CREATE TABLE IF NOT EXISTS `users` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `username` TEXT NOT NULL,
     `name` TEXT,
-    `joined_date` TEXT,
+    `joined_date` TEXT AS kotlinx.datetime.Instant,
     `location` TEXT,
     `about` TEXT,
     `avatar_url` TEXT,
-    `vip` INTEGER,
-    `is_me` INTEGER NOT NULL
+    `vip` INTEGER AS kotlin.Boolean,
+    `is_me` INTEGER AS kotlin.Boolean NOT NULL
 );
 
 -- indices
 
 CREATE UNIQUE INDEX IF NOT EXISTS `index_users_username` ON `users` (`username`);
 
+-- queries
+
+getEntryForMe:
+SELECT * FROM users WHERE is_me != 0;
+
+getEntryForUsername:
+SELECT * FROM users WHERE username = :username;
+
+idForMe:
+SELECT id FROM users WHERE is_me != 0;
+
+idForUsername:
+SELECT id FROM users WHERE username = :username;
+
+deleteAll:
+DELETE FROM users;
+
+deleteMe:
+DELETE FROM users WHERE is_me != 0;
+
+deleteWithId:
+DELETE FROM users WHERE id = :id;
+
+deleteWithUsername:
+DELETE FROM users WHERE username = :username;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE users SET
+    `username` = :username,
+    `name` = :name,
+    `joined_date` = :joined_date,
+    `location` = :location,
+    `about` = :about,
+    `avatar_url` = :avatar_url,
+    `vip` = :vip,
+    `is_me` = :is_me
+WHERE id = :id;
+
+insert:
+INSERT INTO users (
+    `id`,
+    `username`,
+    `name`,
+    `joined_date`,
+    `location`,
+    `about`,
+    `avatar_url`,
+    `vip`,
+    `is_me`
+) VALUES (
+    nullif(:id, 0),
+    :username,
+    :name,
+    :joined_date,
+    :location,
+    :about,
+    :avatar_url,
+    :vip,
+    :is_me
+);

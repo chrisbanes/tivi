@@ -81,5 +81,8 @@ class DatabaseFactory(
             last_watchedAdapter = InstantStringColumnAdapter,
             last_updatedAdapter = InstantStringColumnAdapter,
         ),
+        usersAdapter = Users.Adapter(
+            joined_dateAdapter = InstantStringColumnAdapter,
+        ),
     )
 }

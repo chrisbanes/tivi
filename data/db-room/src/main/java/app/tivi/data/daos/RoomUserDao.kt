@@ -32,10 +32,10 @@ abstract class RoomUserDao : UserDao, RoomEntityDao<TraktUser> {
     abstract override fun observeTraktUser(username: String): Flow<TraktUser?>
 
     @Query("SELECT * FROM users WHERE username = :username")
-    abstract override suspend fun getTraktUser(username: String): TraktUser?
+    abstract suspend fun getTraktUser(username: String): TraktUser?
 
     @Query("SELECT * FROM users WHERE is_me != 0")
-    abstract override suspend fun getMe(): TraktUser?
+    abstract suspend fun getMe(): TraktUser?
 
     override suspend fun getUser(username: String): TraktUser? = when (username) {
         "me" -> getMe()
@@ -46,12 +46,12 @@ abstract class RoomUserDao : UserDao, RoomEntityDao<TraktUser> {
     @Query("SELECT id FROM users WHERE username = :username")
     internal abstract suspend fun _getIdForUsername(username: String): Long?
 
-    override suspend fun getIdForUsername(username: String): Long? {
+    override suspend fun getId(username: String): Long? {
         return if (username == "me") getIdForMe() else _getIdForUsername(username)
     }
 
     @Query("SELECT id FROM users WHERE is_me != 0")
-    abstract override suspend fun getIdForMe(): Long?
+    abstract suspend fun getIdForMe(): Long?
 
     @Query("DELETE FROM users WHERE username = :username")
     abstract override suspend fun deleteWithUsername(username: String)
