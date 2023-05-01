@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories
 
+import app.cash.turbine.test
 import app.tivi.data.DatabaseTest
 import app.tivi.data.TestApplicationComponent
 import app.tivi.data.create
@@ -44,10 +45,8 @@ import app.tivi.utils.show
 import app.tivi.utils.showId
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Component
 import org.junit.Assert.assertEquals
@@ -223,24 +222,16 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         seasonsDao.upsertAll(s1)
         episodesDao.upsertAll(s1_episodes)
 
-        val results = repository.observeNextEpisodeToWatch(showId).produceIn(this)
+        repository.observeNextEpisodeToWatch(showId).test {
+            assertEquals(s1e1, awaitItem()?.episode)
 
-        // Receive the first emission
-        withTimeout(10_000) {
-            assertEquals(s1e1, results.receive()?.episode)
+            // Now mark s1e1 as watched
+            coEvery { seasonsDataSource.addEpisodeWatches(any()) } returns Unit
+            coEvery { seasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns listOf(s1e1w)
+            repository.addEpisodeWatch(s1e1.id, Clock.System.now())
+
+            assertEquals(s1e2, awaitItem()?.episode)
         }
-
-        // Now mark s1e1 as watched
-        coEvery { seasonsDataSource.addEpisodeWatches(any()) } returns Unit
-        coEvery { seasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns listOf(s1e1w)
-        repository.addEpisodeWatch(s1e1.id, Clock.System.now())
-
-        // Receive the second emission
-        withTimeout(10_000) {
-            assertEquals(s1e2, results.receive()?.episode)
-        }
-
-        results.cancel()
     }
 }
 

@@ -26,7 +26,7 @@ deleteWithIds:
 DELETE FROM myshows_entries WHERE id IN ?;
 
 deleteWithId:
-SELECT * FROM myshows_entries WHERE id = :id;
+DELETE FROM myshows_entries WHERE id = :id;
 
 entryWithShowId:
 SELECT * FROM myshows_entries WHERE show_id = :showId;

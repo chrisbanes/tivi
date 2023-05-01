@@ -27,8 +27,7 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.tmdb.TmdbComponent
 import app.tivi.tmdb.TmdbOAuthInfo
 import app.tivi.trakt.TraktComponent
-import app.tivi.util.Logger
-import io.mockk.mockk
+import app.tivi.util.LoggerComponent
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
@@ -44,6 +43,7 @@ abstract class DatabaseTest {
 abstract class TestApplicationComponent :
     TmdbComponent,
     TraktComponent,
+    LoggerComponent,
     TestDataSourceComponent(),
     TestRoomDatabaseComponent {
 
@@ -83,7 +83,4 @@ abstract class TestApplicationComponent :
         client: OkHttpClient,
         tmdbOAuthInfo: TmdbOAuthInfo,
     ): Tmdb3 = Tmdb3("fakefakefake")
-
-    @Provides
-    fun provideLogger(): Logger = mockk(relaxUnitFun = true)
 }

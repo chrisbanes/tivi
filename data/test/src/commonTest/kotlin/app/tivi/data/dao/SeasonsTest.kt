@@ -59,7 +59,7 @@ class SeasonsTest : DatabaseTest() {
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(s1))
     }
 
-    @Test(/*expected = SQLiteConstraintException::class*/)
+    @Test
     fun insert_withSameTraktId() = runTest {
         seasonsDao.upsert(s1)
 
