@@ -16,65 +16,46 @@
 
 
 plugins {
-    alias(libs.plugins.android.library)
+    kotlin("multiplatform")
     alias(libs.plugins.cacheFixPlugin)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
 }
 
-android {
-    namespace = "app.tivi.data.test"
+kotlin {
+    jvm()
 
-    defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.core.analytics)
+                implementation(projects.core.logging)
 
-        defaultConfig {
-            manifestPlaceholders += mapOf("appAuthRedirectScheme" to "empty")
+                implementation(projects.data.dbSqldelight)
+
+                implementation(projects.data.followedshows)
+                implementation(projects.data.episodes)
+                implementation(projects.data.showimages)
+                implementation(projects.data.shows)
+
+                implementation(libs.kotlininject.runtime)
+            }
         }
-    }
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
+        val commonTest by getting {
+            dependencies {
+                implementation(projects.data.legacy)
 
-            all {
-                it.minHeapSize = "64m"
-                it.maxHeapSize = "128m"
+                implementation(libs.junit)
+                implementation(libs.mockK)
+
+                implementation(libs.truth)
+                implementation(libs.kotlin.coroutines.test)
             }
         }
     }
 }
 
 dependencies {
-    implementation(projects.core.analytics)
-    implementation(projects.core.logging)
-
-    implementation(projects.data.followedshows)
-    implementation(projects.data.episodes)
-    implementation(projects.data.showimages)
-    implementation(projects.data.shows)
-
-    implementation(libs.kotlininject.runtime)
-
-    testImplementation(projects.data.legacy)
-    testImplementation(projects.data.dbRoom)
-
-    testImplementation(libs.junit)
-    testImplementation(libs.robolectric)
-    testImplementation(libs.mockK)
-
-    testImplementation(libs.androidx.archCoreTesting)
-    testImplementation(libs.androidx.test.core)
-    testImplementation(libs.androidx.test.junit)
-    testImplementation(libs.androidx.room.testing)
-    testImplementation(libs.truth)
-    testImplementation(libs.kotlin.coroutines.test)
-
-    kaptTest(libs.androidx.room.compiler)
-
-    kspTest(libs.kotlininject.compiler)
-
-    // Needed for Main dispatcher to work
-    testImplementation(libs.kotlin.coroutines.android)
+    add("kspJvm", libs.kotlininject.compiler)
+    add("kspJvmTest", libs.kotlininject.compiler)
 }

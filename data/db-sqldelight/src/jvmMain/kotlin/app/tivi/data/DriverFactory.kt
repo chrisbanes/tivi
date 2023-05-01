@@ -21,8 +21,10 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 
 actual class DriverFactory {
     actual fun createDriver(): SqlDriver {
-        return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also {
-            Database.Schema.create(it)
+        return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also { db ->
+            Database.Schema.create(db)
+
+            db.execute(null, "PRAGMA foreign_keys=ON", 0)
         }
     }
 }

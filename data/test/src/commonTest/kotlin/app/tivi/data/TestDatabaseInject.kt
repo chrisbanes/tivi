@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package app.tivi.data
 
-import android.app.Application
-import androidx.room.Room
-import app.tivi.data.db.DatabaseTransactionRunner
-import app.tivi.data.db.RoomTransactionRunner
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.TmdbEpisodeDataSource
@@ -45,10 +43,9 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.utils.AuthorizedAuthStore
 import app.tivi.utils.SuccessFakeShowDataSource
 import app.tivi.utils.SuccessFakeShowImagesDataSource
-import app.tivi.utils.TestTransactionRunner
-import app.tivi.utils.TiviTestDatabase
 import io.mockk.mockk
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import me.tatarka.inject.annotations.Provides
 
 abstract class TestDataSourceComponent :
@@ -101,11 +98,14 @@ abstract class TestDataSourceComponent :
 
     @ApplicationScope
     @Provides
-    fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
-        io = StandardTestDispatcher(),
-        computation = StandardTestDispatcher(),
-        main = StandardTestDispatcher(),
-    )
+    fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers {
+        val testDispatcher = UnconfinedTestDispatcher()
+        return AppCoroutineDispatchers(
+            io = testDispatcher,
+            computation = testDispatcher,
+            main = testDispatcher,
+        )
+    }
 
     @ApplicationScope
     @Provides
@@ -115,20 +115,8 @@ abstract class TestDataSourceComponent :
     fun provideAuthStore(): AuthStore = AuthorizedAuthStore
 }
 
-interface TestRoomDatabaseComponent : RoomDatabaseComponent {
-    @ApplicationScope
-    @Provides
-    override fun provideTiviRoomDatabase(
-        application: Application,
-    ): TiviRoomDatabase {
-        return Room.inMemoryDatabaseBuilder(application, TiviTestDatabase::class.java)
-            .allowMainThreadQueries()
-            .build()
-    }
+interface TestRoomDatabaseComponent : SqlDelightDatabaseComponent {
 
-    @ApplicationScope
     @Provides
-    override fun provideDatabaseTransactionRunner(
-        runner: RoomTransactionRunner,
-    ): DatabaseTransactionRunner = TestTransactionRunner
+    fun provideDriverFactory(): DriverFactory = DriverFactory()
 }
