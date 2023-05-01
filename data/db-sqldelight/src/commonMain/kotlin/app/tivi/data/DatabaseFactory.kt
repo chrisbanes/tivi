@@ -35,6 +35,14 @@ class DatabaseFactory(
 ) {
     fun build(): Database = Database(
         driver = driverFactory.createDriver(),
+        episodesAdapter = Episodes.Adapter(
+            trakt_idAdapter = IntColumnAdapter,
+            tmdb_idAdapter = IntColumnAdapter,
+            numberAdapter = IntColumnAdapter,
+            first_airedAdapter = InstantStringColumnAdapter,
+            trakt_ratingAdapter = FloatColumnAdapter,
+            trakt_rating_votesAdapter = IntColumnAdapter,
+        ),
         episode_watch_entriesAdapter = Episode_watch_entries.Adapter(
             watched_atAdapter = InstantStringColumnAdapter,
             pending_actionAdapter = PendingActionColumnAdapter,

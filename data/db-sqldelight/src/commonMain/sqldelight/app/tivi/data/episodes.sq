@@ -1,14 +1,14 @@
 CREATE TABLE IF NOT EXISTS `episodes` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `season_id` INTEGER NOT NULL,
-    `trakt_id` INTEGER,
-    `tmdb_id` INTEGER,
+    `trakt_id` INTEGER AS kotlin.Int,
+    `tmdb_id` INTEGER AS kotlin.Int,
     `title` TEXT,
     `overview` TEXT,
-    `number` INTEGER,
-    `first_aired` TEXT,
-    `trakt_rating` REAL,
-    `trakt_rating_votes` INTEGER,
+    `number` INTEGER AS kotlin.Int,
+    `first_aired` TEXT AS kotlinx.datetime.Instant,
+    `trakt_rating` REAL AS kotlin.Float,
+    `trakt_rating_votes` INTEGER AS kotlin.Int,
     `tmdb_backdrop_path` TEXT,
     FOREIGN KEY(`season_id`) REFERENCES `seasons`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -19,3 +19,119 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_episodes_trakt_id` ON `episodes` (`trak
 
 CREATE INDEX IF NOT EXISTS `index_episodes_season_id` ON `episodes` (`season_id`);
 
+-- queries
+
+episodesWithSeasonId:
+SELECT * FROM episodes WHERE season_id = :seasonId ORDER BY number;
+
+episodeWithId:
+SELECT * FROM episodes WHERE id = :id;
+
+episodeWithTraktId:
+SELECT * FROM episodes WHERE trakt_id = :traktId;
+
+episodeWithTmdbId:
+SELECT * FROM episodes WHERE tmdb_id = :tmdbId;
+
+traktIdForId:
+SELECT trakt_id FROM episodes WHERE id = :id;
+
+idForTraktId:
+SELECT id FROM episodes WHERE trakt_id = :traktId;
+
+showIdForEpisodeId:
+SELECT shows.id FROM episodes
+INNER JOIN seasons ON seasons.id = episodes.season_id
+INNER JOIN shows ON seasons.show_id = shows.id
+WHERE episodes.id = :episodeId;
+
+latestWatchedEpisodeForShowId:
+SELECT episodes.*
+FROM shows
+INNER JOIN seasons ON shows.id = seasons.show_id
+INNER JOIN episodes ON episodes.season_id = seasons.id
+INNER JOIN episode_watch_entries AS ew ON ew.episode_id = episodes.id
+WHERE seasons.number != 0
+    AND seasons.ignored = 0
+    AND shows.id = :showId
+ORDER BY ((1000 * seasons.number) + episodes.number) DESC
+LIMIT 1;
+
+nextEpisodeForShowIdAfter:
+SELECT episodes.*
+FROM shows
+INNER JOIN seasons ON shows.id = seasons.show_id
+INNER JOIN episodes ON episodes.season_id = seasons.id
+WHERE seasons.number != 0
+    AND seasons.ignored = 0
+    AND shows.id = :showId
+    AND ((1000 * seasons.number) + episodes.number) > ((1000 * :seasonNumber) + :episodeNumber)
+ORDER BY ((1000 * seasons.number) + episodes.number) ASC
+LIMIT 1;
+
+nextAiredEpisodeForShowIdAfter:
+SELECT episodes.*
+FROM shows
+INNER JOIN seasons ON shows.id = seasons.show_id
+INNER JOIN episodes ON episodes.season_id = seasons.id
+WHERE seasons.number != 0
+    AND seasons.ignored = 0
+    AND shows.id = :showId
+    AND ((1000 * seasons.number) + episodes.number) > ((1000 * :seasonNumber) + :episodeNumber)
+    AND episodes.first_aired IS NOT NULL
+    AND datetime(episodes.first_aired) < datetime('now')
+ORDER BY ((1000 * seasons.number) + episodes.number) ASC
+LIMIT 1;
+
+deleteAll:
+DELETE FROM episodes;
+
+delete:
+DELETE FROM episodes WHERE id = :id;
+
+deleteWithSeasonId:
+DELETE FROM episodes WHERE season_id = :seasonId;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE episodes SET
+    `season_id` = :season_id,
+    `trakt_id` = :trakt_id,
+    `tmdb_id` = :tmdb_id,
+    `title` = :title,
+    `overview` = :overview,
+    `number` = :number,
+    `first_aired` = :first_aired,
+    `trakt_rating` = :trakt_rating,
+    `trakt_rating_votes` = :trakt_rating_votes,
+    `tmdb_backdrop_path` = :tmdb_backdrop_path
+WHERE id = :id;
+
+insert:
+INSERT INTO episodes (
+    `id`,
+    `season_id`,
+    `trakt_id`,
+    `tmdb_id`,
+    `title`,
+    `overview`,
+    `number`,
+    `first_aired`,
+    `trakt_rating`,
+    `trakt_rating_votes`,
+    `tmdb_backdrop_path`
+) VALUES (
+    nullif(:id, 0),
+    :season_id,
+    :trakt_id,
+    :tmdb_id,
+    :title,
+    :overview,
+    :number,
+    :first_aired,
+    :trakt_rating,
+    :trakt_rating_votes,
+    :tmdb_backdrop_path
+);

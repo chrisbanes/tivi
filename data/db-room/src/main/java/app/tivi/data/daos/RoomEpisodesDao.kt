@@ -26,7 +26,7 @@ import app.tivi.data.models.Season
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class RoomEpisodesDao : EpisodesDao(), RoomEntityDao<Episode> {
+abstract class RoomEpisodesDao : EpisodesDao, RoomEntityDao<Episode> {
     @Query("SELECT * from episodes WHERE season_id = :seasonId ORDER BY number")
     abstract override suspend fun episodesWithSeasonId(seasonId: Long): List<Episode>
 
