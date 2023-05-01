@@ -37,7 +37,6 @@ import app.tivi.data.views.ShowsWatchStats
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.toInstant
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -212,14 +211,14 @@ class SqlDelightWatchedShowsDao(
         val episode = Episode(
             id = id__,
             seasonId = season_id,
-            traktId = trakt_id__?.toInt(),
-            tmdbId = tmdb_id__?.toInt(),
+            traktId = trakt_id__,
+            tmdbId = tmdb_id__,
             title = title__,
             summary = overview__,
-            number = number_?.toInt(),
-            firstAired = first_aired_?.toInstant(),
-            traktRating = trakt_rating__?.toFloat(),
-            traktRatingVotes = trakt_rating_votes?.toInt(),
+            number = number_,
+            firstAired = first_aired_,
+            traktRating = trakt_rating__,
+            traktRatingVotes = trakt_rating_votes,
             tmdbBackdropPath = tmdb_backdrop_path_,
         )
 

@@ -33,6 +33,10 @@ abstract class RoomSeasonsDao : SeasonsDao, RoomEntityDao<Season> {
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
     abstract override fun observeSeasonsForShowId(showId: Long): Flow<List<Season>>
 
+    override fun observeSeasonWithId(id: Long): Flow<Season> {
+        TODO("Not yet implemented")
+    }
+
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
     abstract override suspend fun seasonsForShowId(showId: Long): List<Season>
 

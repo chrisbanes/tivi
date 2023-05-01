@@ -20,35 +20,35 @@ import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.models.Episode
 import kotlinx.coroutines.flow.Flow
 
-abstract class EpisodesDao : EntityDao<Episode> {
+interface EpisodesDao : EntityDao<Episode> {
 
-    abstract suspend fun episodesWithSeasonId(seasonId: Long): List<Episode>
+    suspend fun episodesWithSeasonId(seasonId: Long): List<Episode>
 
-    abstract suspend fun deleteWithSeasonId(seasonId: Long)
+    suspend fun deleteWithSeasonId(seasonId: Long)
 
-    abstract suspend fun episodeWithTraktId(traktId: Int): Episode?
+    suspend fun episodeWithTraktId(traktId: Int): Episode?
 
-    abstract suspend fun episodeWithTmdbId(tmdbId: Int): Episode?
+    suspend fun episodeWithTmdbId(tmdbId: Int): Episode?
 
-    abstract suspend fun episodeWithId(id: Long): Episode?
+    suspend fun episodeWithId(id: Long): Episode?
 
-    abstract suspend fun episodeTraktIdForId(id: Long): Int?
+    suspend fun episodeTraktIdForId(id: Long): Int?
 
-    abstract suspend fun episodeIdWithTraktId(traktId: Int): Long?
+    suspend fun episodeIdWithTraktId(traktId: Int): Long?
 
-    abstract fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason>
+    fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason>
 
-    abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
+    suspend fun showIdForEpisodeId(episodeId: Long): Long
 
-    abstract fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
+    fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
 
-    abstract fun observeNextEpisodeForShowAfter(
+    fun observeNextEpisodeForShowAfter(
         showId: Long,
         seasonNumber: Int,
         episodeNumber: Int,
     ): Flow<EpisodeWithSeason?>
 
-    abstract fun observeNextAiredEpisodeForShowAfter(
+    fun observeNextAiredEpisodeForShowAfter(
         showId: Long,
         seasonNumber: Int,
         episodeNumber: Int,

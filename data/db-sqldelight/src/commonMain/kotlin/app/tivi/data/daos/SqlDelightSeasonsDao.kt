@@ -18,6 +18,7 @@ package app.tivi.data.daos
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import app.tivi.data.Database
 import app.tivi.data.awaitAsNull
 import app.tivi.data.awaitList
@@ -34,50 +35,48 @@ class SqlDelightSeasonsDao(
     override val db: Database,
     override val dispatchers: AppCoroutineDispatchers,
 ) : SeasonsDao, SqlDelightEntityDao<Season> {
-    override fun upsertBlocking(entity: Season): Long {
-        return db.seasonsQueries.upsert(
-            entity = entity,
-            insert = { entity ->
-                insert(
-                    id = entity.id,
-                    show_id = entity.showId,
-                    trakt_id = entity.traktId,
-                    tmdb_id = entity.tmdbId,
-                    title = entity.title,
-                    overview = entity.summary,
-                    number = entity.number,
-                    network = entity.network,
-                    ep_count = entity.episodeCount,
-                    ep_aired = entity.episodesAired,
-                    trakt_rating = entity.traktRating,
-                    trakt_votes = entity.traktRatingVotes,
-                    tmdb_poster_path = entity.tmdbPosterPath,
-                    tmdb_backdrop_path = entity.tmdbBackdropPath,
-                    ignored = entity.ignored,
-                )
-            },
-            update = { entity ->
-                update(
-                    id = entity.id,
-                    show_id = entity.showId,
-                    trakt_id = entity.traktId,
-                    tmdb_id = entity.tmdbId,
-                    title = entity.title,
-                    overview = entity.summary,
-                    number = entity.number,
-                    network = entity.network,
-                    ep_count = entity.episodeCount,
-                    ep_aired = entity.episodesAired,
-                    trakt_rating = entity.traktRating,
-                    trakt_votes = entity.traktRatingVotes,
-                    tmdb_poster_path = entity.tmdbPosterPath,
-                    tmdb_backdrop_path = entity.tmdbBackdropPath,
-                    ignored = entity.ignored,
-                )
-            },
-            lastInsertRowId = { lastInsertRowId().executeAsOne() },
-        )
-    }
+    override fun upsertBlocking(entity: Season): Long = db.seasonsQueries.upsert(
+        entity = entity,
+        insert = { entity ->
+            insert(
+                id = entity.id,
+                show_id = entity.showId,
+                trakt_id = entity.traktId,
+                tmdb_id = entity.tmdbId,
+                title = entity.title,
+                overview = entity.summary,
+                number = entity.number,
+                network = entity.network,
+                ep_count = entity.episodeCount,
+                ep_aired = entity.episodesAired,
+                trakt_rating = entity.traktRating,
+                trakt_votes = entity.traktRatingVotes,
+                tmdb_poster_path = entity.tmdbPosterPath,
+                tmdb_backdrop_path = entity.tmdbBackdropPath,
+                ignored = entity.ignored,
+            )
+        },
+        update = { entity ->
+            update(
+                id = entity.id,
+                show_id = entity.showId,
+                trakt_id = entity.traktId,
+                tmdb_id = entity.tmdbId,
+                title = entity.title,
+                overview = entity.summary,
+                number = entity.number,
+                network = entity.network,
+                ep_count = entity.episodeCount,
+                ep_aired = entity.episodesAired,
+                trakt_rating = entity.traktRating,
+                trakt_votes = entity.traktRatingVotes,
+                tmdb_poster_path = entity.tmdbPosterPath,
+                tmdb_backdrop_path = entity.tmdbBackdropPath,
+                ignored = entity.ignored,
+            )
+        },
+        lastInsertRowId = { lastInsertRowId().executeAsOne() },
+    )
 
     override fun seasonsWithEpisodesForShowId(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
         TODO("Not yet implemented")
@@ -102,6 +101,12 @@ class SqlDelightSeasonsDao(
         return db.seasonsQueries.seasonsForShowId(showId, ::Season)
             .asFlow()
             .mapToList(dispatchers.io)
+    }
+
+    override fun observeSeasonWithId(id: Long): Flow<Season> {
+        return db.seasonsQueries.seasonWithId(id, ::Season)
+            .asFlow()
+            .mapToOne(dispatchers.io)
     }
 
     override suspend fun seasonsForShowId(showId: Long): List<Season> {
