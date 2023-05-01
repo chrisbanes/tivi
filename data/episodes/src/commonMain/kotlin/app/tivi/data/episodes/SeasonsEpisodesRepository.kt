@@ -73,16 +73,8 @@ class SeasonsEpisodesRepository(
         logger = logger,
     )
 
-    fun observeSeasonsForShow(showId: Long): Flow<List<Season>> {
-        return seasonsDao.observeSeasonsForShowId(showId)
-    }
-
     fun observeSeasonsWithEpisodesWatchedForShow(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
         return seasonsDao.seasonsWithEpisodesForShowId(showId)
-    }
-
-    fun observeSeason(seasonId: Long): Flow<SeasonWithEpisodesAndWatches> {
-        return seasonsDao.seasonWithEpisodes(seasonId)
     }
 
     fun observeEpisode(episodeId: Long): Flow<EpisodeWithSeason> {
