@@ -24,7 +24,7 @@ entriesWithShow:
 SELECT * FROM watched_entries
 INNER JOIN shows ON shows.id = watched_entries.show_id
 ORDER BY datetime(last_watched) DESC
-LIMIT :count OFFSET :offset;
+LIMIT :limit OFFSET :offset;
 
 deleteAll:
 DELETE FROM watched_entries;

@@ -15,13 +15,13 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_popular_shows_show_id` ON `popular_show
 entries:
 SELECT * FROM popular_shows
 ORDER BY page ASC, page_order ASC
-LIMIT :count OFFSET :offset;
+LIMIT :limit OFFSET :offset;
 
 entriesWithShow:
 SELECT * FROM popular_shows
 INNER JOIN shows ON shows.id = popular_shows.show_id
 ORDER BY page ASC, page_order ASC, popular_shows.id ASC
-LIMIT :count OFFSET :offset;
+LIMIT :limit OFFSET :offset;
 
 entriesInPage:
 SELECT * FROM popular_shows

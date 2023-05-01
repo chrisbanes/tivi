@@ -93,9 +93,9 @@ class SqlDelightPopularShowsDao(
         lastInsertRowId = { lastInsertRowId().executeAsOne() },
     )
 
-    private fun entriesWithShow(count: Long, offset: Long): Query<PopularEntryWithShow> {
+    private fun entriesWithShow(limit: Long, offset: Long): Query<PopularEntryWithShow> {
         return db.popular_showsQueries.entriesWithShow(
-            count = count,
+            limit = limit,
             offset = offset,
             mapper = {
                     id, show_id, page, page_order, id_, title, original_title,

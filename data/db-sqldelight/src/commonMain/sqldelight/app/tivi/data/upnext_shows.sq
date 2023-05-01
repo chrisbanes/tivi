@@ -9,10 +9,10 @@ LEFT JOIN episode_watch_entries ON episode_watch_entries.episode_id = shows_last
 WHERE :followedOnly = 0 OR myshows_entries.id IS NOT NULL
 GROUP BY shows_next_to_watch.show_id
 ORDER BY CASE
-    WHEN :sort = 1 THEN datetime(episodes.first_aired)
+    WHEN :sort = "recently_aired" THEN datetime(episodes.first_aired)
     ELSE datetime(episode_watch_entries.watched_at)
 END DESC
-LIMIT :count OFFSET :offset;
+LIMIT :limit OFFSET :offset;
 
 upNextShowsCount:
 SELECT count(*) FROM shows_next_to_watch

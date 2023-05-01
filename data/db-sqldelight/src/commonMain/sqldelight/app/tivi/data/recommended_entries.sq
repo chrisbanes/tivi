@@ -12,13 +12,13 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_recommended_entries_show_id` ON `recomm
 entries:
 SELECT * FROM recommended_entries
 ORDER BY page ASC, id ASC
-LIMIT :count OFFSET :offset;
+LIMIT :limit OFFSET :offset;
 
 entriesWithShow:
 SELECT * FROM recommended_entries
 INNER JOIN shows ON shows.id = recommended_entries.show_id
 ORDER BY page ASC, recommended_entries.id ASC
-LIMIT :count OFFSET :offset;
+LIMIT :limit OFFSET :offset;
 
 entriesInPage:
 SELECT * FROM recommended_entries

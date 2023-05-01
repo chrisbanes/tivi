@@ -93,9 +93,9 @@ class SqlDelightTrendingShowsDao(
         lastInsertRowId = { lastInsertRowId().executeAsOne() },
     )
 
-    private fun entriesWithShow(count: Long, offset: Long): Query<TrendingEntryWithShow> {
+    private fun entriesWithShow(limit: Long, offset: Long): Query<TrendingEntryWithShow> {
         return db.trending_showsQueries.entriesWithShow(
-            count = count,
+            limit = limit,
             offset = offset,
             mapper = {
                     id, show_id, page, watchers, id_, title, original_title,
