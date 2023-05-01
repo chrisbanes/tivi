@@ -52,10 +52,10 @@ abstract class RoomFollowedShowsDao : FollowedShowsDao, RoomEntityDao<FollowedSh
     }
 
     @Query("SELECT * FROM myshows_entries WHERE pending_action = :pendingAction")
-    abstract override suspend fun entriesWithPendingAction(pendingAction: PendingAction): List<FollowedShowEntry>
+    abstract suspend fun entriesWithPendingAction(pendingAction: PendingAction): List<FollowedShowEntry>
 
     @Query("UPDATE myshows_entries SET pending_action = :pendingAction WHERE id IN (:ids)")
-    abstract override suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction): Int
+    abstract override suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction)
 
     @Query("DELETE FROM myshows_entries WHERE id IN (:ids)")
     abstract override suspend fun deleteWithIds(ids: List<Long>)

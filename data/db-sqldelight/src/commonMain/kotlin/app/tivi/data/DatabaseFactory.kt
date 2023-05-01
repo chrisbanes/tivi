@@ -23,6 +23,7 @@ import app.tivi.data.columnadaptors.ImageTypeColumnAdapter
 import app.tivi.data.columnadaptors.InstantLongColumnAdapter
 import app.tivi.data.columnadaptors.InstantStringColumnAdapter
 import app.tivi.data.columnadaptors.LocalTimeColumnAdapter
+import app.tivi.data.columnadaptors.PendingActionColumnAdapter
 import app.tivi.data.columnadaptors.RequestColumnAdapter
 import app.tivi.data.columnadaptors.ShowStatusColumnAdapter
 import app.tivi.data.columnadaptors.TimeZoneColumnAdapter
@@ -41,6 +42,10 @@ class DatabaseFactory(
         last_requestsAdapter = Last_requests.Adapter(
             requestAdapter = RequestColumnAdapter,
             timestampAdapter = InstantLongColumnAdapter,
+        ),
+        myshows_entriesAdapter = Myshows_entries.Adapter(
+            followed_atAdapter = InstantStringColumnAdapter,
+            pending_actionAdapter = PendingActionColumnAdapter,
         ),
         recommended_entriesAdapter = Recommended_entries.Adapter(
             pageAdapter = IntColumnAdapter,
