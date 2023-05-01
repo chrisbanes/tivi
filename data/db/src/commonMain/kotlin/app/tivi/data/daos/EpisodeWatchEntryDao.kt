@@ -17,6 +17,7 @@
 package app.tivi.data.daos
 
 import app.tivi.data.models.EpisodeWatchEntry
+import app.tivi.data.models.PendingAction
 import kotlinx.coroutines.flow.Flow
 
 interface EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
@@ -41,7 +42,7 @@ interface EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
 
     suspend fun entriesForShowId(showId: Long): List<EpisodeWatchEntry>
 
-    suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: String): Int
+    suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction)
 
     suspend fun deleteWithId(id: Long)
 

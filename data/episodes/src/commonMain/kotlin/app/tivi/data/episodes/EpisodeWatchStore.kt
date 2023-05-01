@@ -60,8 +60,8 @@ class EpisodeWatchStore(
 
     suspend fun deleteEntriesWithIds(ids: List<Long>) = episodeWatchEntryDao.deleteWithIds(ids)
 
-    suspend fun updateEntriesWithAction(ids: List<Long>, action: PendingAction): Int {
-        return episodeWatchEntryDao.updateEntriesToPendingAction(ids, action.value)
+    suspend fun updateEntriesWithAction(ids: List<Long>, action: PendingAction) {
+        episodeWatchEntryDao.updateEntriesToPendingAction(ids, action)
     }
 
     suspend fun addNewShowWatchEntries(

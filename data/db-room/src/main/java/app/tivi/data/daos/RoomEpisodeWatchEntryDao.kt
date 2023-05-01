@@ -79,8 +79,12 @@ abstract class RoomEpisodeWatchEntryDao : EpisodeWatchEntryDao, RoomEntityDao<Ep
     )
     abstract override suspend fun entriesForShowId(showId: Long): List<EpisodeWatchEntry>
 
+    override suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction) {
+        updateEntriesToPendingAction(ids, pendingAction.value)
+    }
+
     @Query("UPDATE episode_watch_entries SET pending_action = :pendingAction WHERE id IN (:ids)")
-    abstract override suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: String): Int
+    abstract suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: String)
 
     @Query("DELETE FROM episode_watch_entries WHERE id = :id")
     abstract override suspend fun deleteWithId(id: Long)
