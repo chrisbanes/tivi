@@ -50,6 +50,8 @@ kotlin {
 
                 implementation(libs.truth)
                 implementation(libs.kotlin.coroutines.test)
+
+                implementation(libs.turbine)
             }
         }
     }

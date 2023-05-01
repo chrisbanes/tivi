@@ -172,3 +172,5 @@ tmdb-api = "app.moviebase:tmdb-api:1.0.0"
 trakt-api = "app.moviebase:trakt-api:0.4.0"
 
 truth = "com.google.truth:truth:1.1.3"
+
+turbine = "app.cash.turbine:turbine:0.12.3"

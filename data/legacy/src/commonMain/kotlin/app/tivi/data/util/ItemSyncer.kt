@@ -80,7 +80,7 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
             // Anything left in the set needs to be deleted from the database
             currentDbEntities.forEach {
                 deleteEntity(it)
-                logger.v("Deleted entry: ", it)
+                logger.v("Deleted entry: %s", it)
                 removed += it
             }
         }
