@@ -13,6 +13,7 @@ kotlin = "1.8.20"
 kotlininject = "0.6.1"
 ktlint = "0.48.1"
 okhttp = "4.11.0"
+kermit = "2.0.0-RC4"
 ktor = "2.3.0"
 paging = "3.1.1"
 retrofit = "2.9.0"
@@ -116,6 +117,9 @@ androidx-hilt-navigationcompose = "androidx.hilt:hilt-navigation-compose:1.0.0"
 androidx-hilt-work = "androidx.hilt:hilt-work:1.0.0"
 
 junit = "junit:junit:4.13.2"
+
+kermit-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+kermit-crashlytics = { module = "co.touchlab:kermit-crashlytics", version.ref = "kermit" }
 
 kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.20.2"
 kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"

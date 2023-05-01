@@ -30,6 +30,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(projects.core.base)
+                implementation(libs.kermit.kermit)
+                implementation(libs.kotlininject.runtime)
             }
         }
 
@@ -37,14 +39,13 @@ kotlin {
             dependencies {
                 implementation(libs.google.firebase.crashlytics)
                 implementation(libs.timber)
-
-                implementation(libs.kotlininject.runtime)
             }
         }
     }
 }
 
 dependencies {
+    add("kspJvm", libs.kotlininject.compiler)
     add("kspAndroid", libs.kotlininject.compiler)
 }
 
