@@ -23,7 +23,7 @@ import app.tivi.appinitializers.AppInitializers
 import app.tivi.common.imageloading.ImageLoadingComponent
 import app.tivi.core.analytics.AnalyticsComponent
 import app.tivi.core.perf.PerformanceComponent
-import app.tivi.data.SqlDelightDatabaseComponent
+import app.tivi.data.AndroidSqlDelightDatabaseComponent
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsBinds
 import app.tivi.data.popularshows.PopularShowsBinds
@@ -51,7 +51,7 @@ import me.tatarka.inject.annotations.Provides
 @ApplicationScope
 abstract class ApplicationComponent(
     @get:Provides val application: Application,
-) : SqlDelightDatabaseComponent,
+) : AndroidSqlDelightDatabaseComponent,
     TraktAuthComponent,
     TmdbComponent,
     TraktComponent,

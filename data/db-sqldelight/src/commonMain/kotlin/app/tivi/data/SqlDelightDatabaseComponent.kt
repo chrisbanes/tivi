@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package app.tivi.data
 
-import android.app.Application
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.FollowedShowsDao
@@ -57,14 +56,6 @@ interface SqlDelightDatabaseComponent {
     fun provideSqlDelightDatabase(
         factory: DatabaseFactory,
     ): Database = factory.build()
-
-    @Provides
-    fun provideDriverFactory(
-        application: Application,
-    ): DriverFactory = DriverFactory(
-        context = application,
-        databaseFilename = "shows.db",
-    )
 
     @ApplicationScope
     @Provides
