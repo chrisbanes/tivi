@@ -73,7 +73,7 @@ class SqlDelightLibraryShowsDao(
             includeWatched = if (includeWatched) 1L else 0L,
             includeFollowed = if (includeFollowed) 1L else 0L,
             filter = filter,
-            sort = sort.dbKey,
+            sort = sort.sqlValue,
             limit = limit,
             offset = offset,
         ) { id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
@@ -108,12 +108,3 @@ class SqlDelightLibraryShowsDao(
         }
     }
 }
-
-internal val SortOption.dbKey: Long
-    get() = when (this) {
-        SortOption.ALPHABETICAL -> 0
-        SortOption.DATE_ADDED -> 1
-        SortOption.LAST_WATCHED -> 2
-        SortOption.AIR_DATE -> 3
-        else -> 0
-    }

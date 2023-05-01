@@ -30,6 +30,7 @@ import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.ShowStatus
+import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
 import app.tivi.data.upsert
@@ -78,8 +79,8 @@ class SqlDelightWatchedShowsDao(
         queryProvider = { count, offset ->
             provideUpNextShowsQuery(
                 followedOnly = followedOnly,
-                sort = 0,
-                count = count,
+                sort = SortOption.LAST_WATCHED,
+                limit = count,
                 offset = offset,
             )
         },
@@ -94,8 +95,8 @@ class SqlDelightWatchedShowsDao(
         queryProvider = { count, offset ->
             provideUpNextShowsQuery(
                 followedOnly = followedOnly,
-                sort = 1,
-                count = count,
+                sort = SortOption.AIR_DATE,
+                limit = count,
                 offset = offset,
             )
         },
@@ -104,8 +105,8 @@ class SqlDelightWatchedShowsDao(
     override suspend fun getUpNextShows(): List<UpNextEntry> {
         return provideUpNextShowsQuery(
             followedOnly = false,
-            sort = 0,
-            count = Long.MAX_VALUE,
+            sort = SortOption.LAST_WATCHED,
+            limit = Long.MAX_VALUE,
             offset = 0,
         ).awaitList(dispatchers.io)
     }
@@ -151,13 +152,13 @@ class SqlDelightWatchedShowsDao(
 
     private fun provideUpNextShowsQuery(
         followedOnly: Boolean,
-        sort: Long,
-        count: Long,
+        sort: SortOption,
+        limit: Long,
         offset: Long,
     ): Query<UpNextEntry> = db.upnext_showsQueries.upNextShows(
         followedOnly = if (followedOnly) 1 else 0,
-        sort = sort,
-        count = count,
+        sort = sort.sqlValue,
+        limit = limit,
         offset = offset,
     ) { id: Long, title: String?, original_title: String?, trakt_id: Int?,
             tmdb_id: Int?, imdb_id: String?, overview: String?, homepage: String?, trakt_rating: Float?,
