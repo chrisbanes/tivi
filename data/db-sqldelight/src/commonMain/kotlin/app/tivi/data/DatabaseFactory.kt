@@ -46,7 +46,7 @@ class DatabaseFactory(
             pageAdapter = IntColumnAdapter,
         ),
         related_showsAdapter = Related_shows.Adapter(
-            order_indexAdapter = IntColumnAdapter
+            order_indexAdapter = IntColumnAdapter,
         ),
         showsAdapter = Shows.Adapter(
             trakt_idAdapter = IntColumnAdapter,
