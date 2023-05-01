@@ -32,8 +32,6 @@ interface SeasonsDao : EntityDao<Season> {
 
     suspend fun deleteWithShowId(showId: Long)
 
-    suspend fun deleteSeasonsForShowId(showId: Long): Int
-
     suspend fun seasonWithId(id: Long): Season?
 
     suspend fun traktIdForId(id: Long): Int?

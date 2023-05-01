@@ -43,9 +43,6 @@ abstract class RoomSeasonsDao : SeasonsDao, RoomEntityDao<Season> {
     @Query("DELETE FROM seasons WHERE show_id = :showId")
     abstract override suspend fun deleteWithShowId(showId: Long)
 
-    @Query("DELETE FROM seasons WHERE show_id = :showId")
-    abstract override suspend fun deleteSeasonsForShowId(showId: Long): Int
-
     @Query("SELECT * FROM seasons WHERE id = :id")
     abstract override suspend fun seasonWithId(id: Long): Season?
 
