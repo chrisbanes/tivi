@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS `myshows_entries` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `show_id` INTEGER NOT NULL,
-    `followed_at` TEXT,
-    `pending_action` TEXT NOT NULL,
+    `followed_at` TEXT AS kotlinx.datetime.Instant,
+    `pending_action` TEXT AS app.tivi.data.models.PendingAction NOT NULL,
     `trakt_id` INTEGER,
     FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -11,3 +11,57 @@ CREATE TABLE IF NOT EXISTS `myshows_entries` (
 
 CREATE UNIQUE INDEX IF NOT EXISTS `index_myshows_entries_show_id` ON `myshows_entries` (`show_id`);
 
+-- queries
+
+entries:
+SELECT * FROM myshows_entries;
+
+entriesWithPendingAction:
+SELECT * FROM myshows_entries WHERE pending_action = :pendingAction;
+
+deleteAll:
+DELETE FROM myshows_entries;
+
+deleteWithIds:
+DELETE FROM myshows_entries WHERE id IN ?;
+
+deleteWithId:
+SELECT * FROM myshows_entries WHERE id = :id;
+
+entryWithShowId:
+SELECT * FROM myshows_entries WHERE show_id = :showId;
+
+countOfShowIdNotPendingDeletion:
+SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId AND pending_action != 'delete';
+
+countOfShowId:
+SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId;
+
+updatePendingActionsForIds:
+UPDATE myshows_entries SET pending_action = :pendingAction WHERE id IN ?;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE myshows_entries SET
+    `show_id` = :show_id,
+    `followed_at` = :followed_at,
+    `pending_action` = :pending_action,
+    `trakt_id` = :trakt_id
+WHERE id = :id;
+
+insert:
+INSERT INTO myshows_entries (
+    `id`,
+    `show_id`,
+    `followed_at`,
+    `pending_action`,
+    `trakt_id`
+) VALUES (
+    nullif(:id, 0),
+    :show_id,
+    :followed_at,
+    :pending_action,
+    :trakt_id
+);
