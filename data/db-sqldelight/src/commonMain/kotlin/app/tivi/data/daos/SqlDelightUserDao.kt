@@ -17,7 +17,7 @@
 package app.tivi.data.daos
 
 import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToOne
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.tivi.data.Database
 import app.tivi.data.awaitAsNull
 import app.tivi.data.models.TraktUser
@@ -66,12 +66,15 @@ class SqlDelightUserDao(
     }
 
     override fun observeMe(): Flow<TraktUser?> {
-        return db.usersQueries.getEntryForMe(::TraktUser).asFlow().mapToOne(dispatchers.io)
+        return db.usersQueries.getEntryForMe(::TraktUser)
+            .asFlow()
+            .mapToOneOrNull(dispatchers.io)
     }
 
     override fun observeTraktUser(username: String): Flow<TraktUser?> {
         return db.usersQueries.getEntryForUsername(username, ::TraktUser)
-            .asFlow().mapToOne(dispatchers.io)
+            .asFlow()
+            .mapToOneOrNull(dispatchers.io)
     }
 
     override suspend fun getUser(username: String): TraktUser? = when (username) {
