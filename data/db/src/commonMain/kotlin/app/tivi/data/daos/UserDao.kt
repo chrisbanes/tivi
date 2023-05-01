@@ -25,21 +25,13 @@ interface UserDao : EntityDao<TraktUser> {
 
     fun observeTraktUser(username: String): Flow<TraktUser?>
 
-    suspend fun getTraktUser(username: String): TraktUser?
-
     suspend fun getUser(username: String): TraktUser?
 
-    suspend fun getMe(): TraktUser?
-
-    suspend fun getIdForMe(): Long?
-
-    suspend fun getIdForUsername(username: String): Long?
+    suspend fun getId(username: String): Long?
 
     suspend fun deleteWithUsername(username: String)
 
     suspend fun deleteMe()
-
-    override suspend fun upsert(entity: TraktUser): Long
 
     suspend fun deleteAll()
 }
