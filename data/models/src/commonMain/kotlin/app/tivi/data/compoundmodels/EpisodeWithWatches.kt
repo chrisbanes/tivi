@@ -19,14 +19,11 @@ package app.tivi.data.compoundmodels
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
-import java.util.Objects
 
-class EpisodeWithWatches {
-
-    lateinit var episode: Episode
-
-    lateinit var watches: List<EpisodeWatchEntry>
-
+data class EpisodeWithWatches(
+    val episode: Episode,
+    val watches: List<EpisodeWatchEntry>,
+) {
     val hasWatches by lazy { watches.isNotEmpty() }
 
     val isWatched by lazy {
@@ -42,12 +39,4 @@ class EpisodeWithWatches {
     }
 
     val hasAired: Boolean get() = episode.hasAired
-
-    override fun equals(other: Any?): Boolean = when {
-        other === this -> true
-        other is EpisodeWithWatches -> watches == other.watches && episode == other.episode
-        else -> false
-    }
-
-    override fun hashCode(): Int = Objects.hash(episode, watches)
 }

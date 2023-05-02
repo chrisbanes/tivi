@@ -83,28 +83,19 @@ class SqlDelightLibraryShowsDao(
                 id_, show_id, last_watched, last_updated,
                 // show stats
                 show_id_, episode_count, watched_episode_count, ->
-
-            val show = TiviShow(
-                id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
-                trakt_rating, trakt_votes, certification, first_aired, country, network,
-                network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
+            LibraryShow(
+                show = TiviShow(
+                    id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
+                    trakt_rating, trakt_votes, certification, first_aired, country, network,
+                    network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
+                ),
+                stats = show_id_?.let {
+                    ShowsWatchStats(show_id_, episode_count!!, watched_episode_count!!)
+                },
+                watchedEntry = id_?.let {
+                    WatchedShowEntry(id_, show_id!!, last_watched!!, last_updated!!)
+                },
             )
-
-            val watchedShowEntry: WatchedShowEntry? = id_?.let {
-                WatchedShowEntry(id_, show_id!!, last_watched!!, last_updated!!)
-            }
-
-            val stats = if (show_id_ != null) {
-                ShowsWatchStats(show_id_, episode_count!!, watched_episode_count!!)
-            } else {
-                null
-            }
-
-            LibraryShow().apply {
-                this.show = show
-                this._stats = stats?.let { listOf(stats) } ?: emptyList()
-                this._watchedEntities = watchedShowEntry?.let { listOf(it) } ?: emptyList()
-            }
         }
     }
 }

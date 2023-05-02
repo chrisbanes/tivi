@@ -17,20 +17,22 @@
 package app.tivi.data.compoundmodels
 
 import app.tivi.data.models.Entry
+import app.tivi.data.models.FollowedShowEntry
+import app.tivi.data.models.PopularShowEntry
+import app.tivi.data.models.RecommendedShowEntry
+import app.tivi.data.models.RelatedShowEntry
 import app.tivi.data.models.TiviShow
-import java.util.Objects
+import app.tivi.data.models.TrendingShowEntry
+import app.tivi.data.models.WatchedShowEntry
 
-interface EntryWithShow<ET : Entry> {
-    var entry: ET
-    var relations: List<TiviShow>
+data class EntryWithShow<ET : Entry>(
+    val entry: ET,
+    val show: TiviShow,
+)
 
-    val show: TiviShow
-        get() {
-            check(relations.size == 1)
-            return relations[0]
-        }
-
-    fun generateStableId(): Long {
-        return Objects.hash(entry::class.java.name, entry.showId).toLong()
-    }
-}
+typealias FollowedShowEntryWithShow = EntryWithShow<FollowedShowEntry>
+typealias PopularEntryWithShow = EntryWithShow<PopularShowEntry>
+typealias RecommendedEntryWithShow = EntryWithShow<RecommendedShowEntry>
+typealias RelatedShowEntryWithShow = EntryWithShow<RelatedShowEntry>
+typealias TrendingEntryWithShow = EntryWithShow<TrendingShowEntry>
+typealias WatchedShowEntryWithShow = EntryWithShow<WatchedShowEntry>

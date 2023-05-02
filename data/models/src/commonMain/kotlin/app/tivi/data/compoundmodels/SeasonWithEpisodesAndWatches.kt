@@ -18,36 +18,30 @@ package app.tivi.data.compoundmodels
 
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
-import java.util.Objects
 
-class SeasonWithEpisodesAndWatches {
-
-    lateinit var season: Season
-
-    var episodes: List<EpisodeWithWatches> = emptyList()
-
-    override fun equals(other: Any?): Boolean = when {
-        other === this -> true
-        other is SeasonWithEpisodesAndWatches -> season == other.season && episodes == other.episodes
-        else -> false
+data class SeasonWithEpisodesAndWatches(
+    val season: Season,
+    val episodes: List<EpisodeWithWatches> = emptyList(),
+) {
+    val numberAiredToWatch: Int by lazy {
+        episodes.count { !it.isWatched && it.episode.hasAired }
     }
 
-    override fun hashCode(): Int = Objects.hash(season, episodes)
+    val numberWatched: Int by lazy {
+        episodes.count { it.isWatched }
+    }
+
+    val numberToAir: Int by lazy {
+        episodes.size - numberAired
+    }
+
+    val numberAired: Int by lazy {
+        episodes.count { it.episode.hasAired }
+    }
+
+    val nextToAir: Episode? by lazy {
+        episodes.firstOrNull {
+            it.episode.let { ep -> !ep.hasAired && ep.firstAired != null }
+        }?.episode
+    }
 }
-
-val List<EpisodeWithWatches>.numberAiredToWatch: Int
-    get() = count { !it.isWatched && it.episode.hasAired }
-
-val List<EpisodeWithWatches>.numberWatched: Int
-    get() = count { it.isWatched }
-
-val List<EpisodeWithWatches>.numberToAir: Int
-    get() = size - numberAired
-
-val List<EpisodeWithWatches>.numberAired: Int
-    get() = count { it.episode.hasAired }
-
-val List<EpisodeWithWatches>.nextToAir: Episode?
-    get() = firstOrNull {
-        it.episode.let { ep -> !ep.hasAired && ep.firstAired != null }
-    }?.episode

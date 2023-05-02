@@ -98,23 +98,21 @@ class SqlDelightRecommendedShowsDao(
             mapper = {
                     id, show_id, page, id_, title, original_title,
                     trakt_id, tmdb_id, imdb_id, overview, homepage, trakt_rating, trakt_votes,
-                    certification, first_aired, country, network, network_logo_path, runtime, genres,
-                    status, airs_day, airs_time, airs_tz, ->
-
-                val show = TiviShow(
-                    id_, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
-                    trakt_rating, trakt_votes, certification, first_aired, country, network,
-                    network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
-                )
-
-                RecommendedEntryWithShow().apply {
-                    this.entry = RecommendedShowEntry(
+                    certification, first_aired, country, network, network_logo_path, runtime,
+                    genres, status, airs_day, airs_time, airs_tz,
+                ->
+                RecommendedEntryWithShow(
+                    entry = RecommendedShowEntry(
                         id = id,
                         showId = show_id,
                         page = page,
-                    )
-                    this.relations = listOf(show)
-                }
+                    ),
+                    show = TiviShow(
+                        id_, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
+                        trakt_rating, trakt_votes, certification, first_aired, country, network,
+                        network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
+                    ),
+                )
             },
         )
     }

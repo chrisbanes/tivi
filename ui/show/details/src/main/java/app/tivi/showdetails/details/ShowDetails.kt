@@ -119,11 +119,6 @@ import app.tivi.common.ui.resources.R as UiR
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
-import app.tivi.data.compoundmodels.nextToAir
-import app.tivi.data.compoundmodels.numberAired
-import app.tivi.data.compoundmodels.numberAiredToWatch
-import app.tivi.data.compoundmodels.numberToAir
-import app.tivi.data.compoundmodels.numberWatched
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Genre
@@ -369,7 +364,7 @@ private fun ShowDetailsScrollingContent(
             }
         }
 
-        if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
+        if (nextEpisodeToWatch?.episode != null) {
             gutterSpacer()
 
             item {
@@ -377,9 +372,9 @@ private fun ShowDetailsScrollingContent(
             }
             item {
                 NextEpisodeToWatch(
-                    season = nextEpisodeToWatch.season!!,
-                    episode = nextEpisodeToWatch.episode!!,
-                    onClick = { openEpisodeDetails(nextEpisodeToWatch.episode!!.id) },
+                    season = nextEpisodeToWatch.season,
+                    episode = nextEpisodeToWatch.episode,
+                    onClick = { openEpisodeDetails(nextEpisodeToWatch.episode.id) },
                 )
             }
         }
@@ -420,11 +415,11 @@ private fun ShowDetailsScrollingContent(
             items(items = seasons) { season ->
                 SeasonRow(
                     season = season.season,
-                    episodesAired = season.episodes.numberAired,
-                    episodesWatched = season.episodes.numberWatched,
-                    episodesToWatch = season.episodes.numberAiredToWatch,
-                    episodesToAir = season.episodes.numberToAir,
-                    nextToAirDate = season.episodes.nextToAir?.firstAired,
+                    episodesAired = season.numberAired,
+                    episodesWatched = season.numberWatched,
+                    episodesToWatch = season.numberAiredToWatch,
+                    episodesToAir = season.numberToAir,
+                    nextToAirDate = season.nextToAir?.firstAired,
                     contentPadding = PaddingValues(horizontal = bodyMargin, vertical = gutter),
                     openSeason = openSeason,
                     onSeasonFollowed = onSeasonFollowed,

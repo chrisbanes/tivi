@@ -21,16 +21,11 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.tivi.data.Database
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.models.RelatedShowEntry
-import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.TiviShow
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -47,26 +42,18 @@ class SqlDelightRelatedShowsDao(
 
     override fun entriesWithShowsObservable(showId: Long): Flow<List<RelatedShowEntryWithShow>> {
         return db.related_showsQueries.entriesWithShows(showId) {
-                id: Long, show_id: Long, other_show_id: Long, order_index: Int,
-                id_: Long, title: String?, original_title: String?, trakt_id: Int?, tmdb_id: Int?,
-                imdb_id: String?, overview: String?, homepage: String?, trakt_rating: Float?,
-                trakt_votes: Int?, certification: String?, first_aired: Instant?, country: String?,
-                network: String?, network_logo_path: String?, runtime: Int?, genres: String?,
-                status: ShowStatus?, airs_day: DayOfWeek?, airs_time: LocalTime?,
-                airs_tz: TimeZone?,
-            ->
-
-            val entry = RelatedShowEntry(id, show_id, other_show_id, order_index)
-            val show = TiviShow(
+                id, show_id, other_show_id, order_index,
                 id_, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
                 trakt_rating, trakt_votes, certification, first_aired, country, network,
-                network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
+                network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz, ->
+            RelatedShowEntryWithShow(
+                entry = RelatedShowEntry(id, show_id, other_show_id, order_index),
+                show = TiviShow(
+                    id_, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
+                    trakt_rating, trakt_votes, certification, first_aired, country, network,
+                    network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
+                ),
             )
-
-            RelatedShowEntryWithShow().apply {
-                this.entry = entry
-                relations = listOf(show)
-            }
         }.asFlow().mapToList(dispatchers.io)
     }
 
