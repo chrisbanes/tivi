@@ -18,19 +18,8 @@ package app.tivi.data.compoundmodels
 
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
-import java.util.Objects
 
-class SeasonWithEpisodes {
-
-    var season: Season? = null
-
-    var episodes: List<Episode> = emptyList()
-
-    override fun equals(other: Any?): Boolean = when {
-        other === this -> true
-        other is SeasonWithEpisodes -> season == other.season && episodes == other.episodes
-        else -> false
-    }
-
-    override fun hashCode(): Int = Objects.hash(season, episodes)
-}
+data class SeasonWithEpisodes(
+    val season: Season,
+    val episodes: List<Episode> = emptyList(),
+)

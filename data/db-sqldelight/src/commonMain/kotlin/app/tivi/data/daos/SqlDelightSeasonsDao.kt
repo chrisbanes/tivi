@@ -110,16 +110,16 @@ class SqlDelightSeasonsDao(
 
                             combine(watchFlows) { combined ->
                                 combined.map { (episode, watches) ->
-                                    EpisodeWithWatches().apply {
-                                        this.episode = episode
-                                        this.watches = watches
-                                    }
+                                    EpisodeWithWatches(
+                                        episode = episode,
+                                        watches = watches,
+                                    )
                                 }
                             }.map { episodesWithWatches ->
-                                SeasonWithEpisodesAndWatches().apply {
-                                    this.season = season
-                                    this.episodes = episodesWithWatches
-                                }
+                                SeasonWithEpisodesAndWatches(
+                                    season = season,
+                                    episodes = episodesWithWatches,
+                                )
                             }
                         }
                 }

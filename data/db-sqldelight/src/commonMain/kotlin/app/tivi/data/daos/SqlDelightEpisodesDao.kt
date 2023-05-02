@@ -163,23 +163,17 @@ class SqlDelightEpisodesDao(
         tmdb_poster_path: String?,
         tmdb_backdrop_path_: String?,
         ignored: Boolean,
-    ): EpisodeWithSeason {
-        val episode = Episode(
+    ): EpisodeWithSeason = EpisodeWithSeason(
+        episode = Episode(
             id, season_id, trakt_id, tmdb_id, title, overview, number, first_aired,
             trakt_rating, trakt_rating_votes, tmdb_backdrop_path,
-        )
-
-        val season = Season(
+        ),
+        season = Season(
             id_, show_id, trakt_id_, tmdb_id_, title_, overview_, number_, network, ep_count,
             ep_aired, trakt_rating_, trakt_votes, tmdb_poster_path, tmdb_backdrop_path_,
             ignored,
-        )
-
-        return EpisodeWithSeason().apply {
-            this.episode = episode
-            this._seasons = listOf(season)
-        }
-    }
+        ),
+    )
 
     override suspend fun deleteEntity(entity: Episode) = withContext(dispatchers.io) {
         db.episodesQueries.delete(entity.id)

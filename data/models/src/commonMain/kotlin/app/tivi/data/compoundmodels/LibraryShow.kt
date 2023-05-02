@@ -20,36 +20,8 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
 import app.tivi.data.views.ShowsWatchStats
 
-@Suppress("PropertyName")
-class LibraryShow {
-
-    lateinit var show: TiviShow
-
-    lateinit var _watchedEntities: List<WatchedShowEntry>
-
-    lateinit var _stats: List<ShowsWatchStats>
-
-    val watchedEntry: WatchedShowEntry? get() = _watchedEntities.firstOrNull()
-
-    val stats: ShowsWatchStats? get() = _stats.firstOrNull()
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as LibraryShow
-
-        if (show != other.show) return false
-        if (_watchedEntities != other._watchedEntities) return false
-        if (_stats != other._stats) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = show.hashCode()
-        result = 31 * result + _watchedEntities.hashCode()
-        result = 31 * result + _stats.hashCode()
-        return result
-    }
-}
+data class LibraryShow(
+    val show: TiviShow,
+    val stats: ShowsWatchStats?,
+    val watchedEntry: WatchedShowEntry?,
+)

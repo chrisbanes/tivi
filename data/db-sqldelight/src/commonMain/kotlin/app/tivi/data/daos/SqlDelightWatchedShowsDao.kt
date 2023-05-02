@@ -221,10 +221,10 @@ class SqlDelightWatchedShowsDao(
             tmdbBackdropPath = tmdb_backdrop_path_,
         )
 
-        UpNextEntry().apply {
-            _show = listOf(show)
-            _season = listOf(season)
-            _episode = listOf(episode)
-        }
+        UpNextEntry(
+            show = show,
+            season = season,
+            episode = episode,
+        )
     }
 }

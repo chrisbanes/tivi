@@ -98,26 +98,24 @@ class SqlDelightPopularShowsDao(
             limit = limit,
             offset = offset,
             mapper = {
-                    id, show_id, page, page_order, id_, title, original_title,
-                    trakt_id, tmdb_id, imdb_id, overview, homepage, trakt_rating, trakt_votes,
-                    certification, first_aired, country, network, network_logo_path, runtime, genres,
-                    status, airs_day, airs_time, airs_tz, ->
-
-                val show = TiviShow(
-                    id_, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
-                    trakt_rating, trakt_votes, certification, first_aired, country, network,
-                    network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
-                )
-
-                PopularEntryWithShow().apply {
-                    this.entry = PopularShowEntry(
+                    id, show_id, page, page_order, id_, title, original_title, trakt_id, tmdb_id,
+                    imdb_id, overview, homepage, trakt_rating, trakt_votes, certification,
+                    first_aired, country, network, network_logo_path, runtime, genres,
+                    status, airs_day, airs_time, airs_tz,
+                ->
+                PopularEntryWithShow(
+                    entry = PopularShowEntry(
                         id = id,
                         showId = show_id,
                         page = page,
                         pageOrder = page_order,
-                    )
-                    this.relations = listOf(show)
-                }
+                    ),
+                    show = TiviShow(
+                        id_, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
+                        trakt_rating, trakt_votes, certification, first_aired, country, network,
+                        network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
+                    ),
+                )
             },
         )
     }
