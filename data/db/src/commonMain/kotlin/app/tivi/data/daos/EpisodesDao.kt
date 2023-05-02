@@ -19,6 +19,7 @@ package app.tivi.data.daos
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.models.Episode
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 interface EpisodesDao : EntityDao<Episode> {
 
@@ -40,11 +41,5 @@ interface EpisodesDao : EntityDao<Episode> {
 
     suspend fun showIdForEpisodeId(episodeId: Long): Long
 
-    fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
-
-    fun observeNextAiredEpisodeForShowAfter(
-        showId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int,
-    ): Flow<EpisodeWithSeason?>
+    fun observeNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> = emptyFlow()
 }

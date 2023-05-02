@@ -18,11 +18,9 @@ package app.tivi.data.daos
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.Transaction
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.models.Episode
-import app.tivi.data.models.Season
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -59,64 +57,4 @@ abstract class RoomEpisodesDao : EpisodesDao, RoomEntityDao<Episode> {
             " WHERE eps.id = :episodeId",
     )
     abstract override suspend fun showIdForEpisodeId(episodeId: Long): Long
-
-    @Transaction
-    @RewriteQueriesToDropUnusedColumns
-    @Query(latestWatchedEpisodeForShowId)
-    abstract override fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
-
-    @Transaction
-    @RewriteQueriesToDropUnusedColumns
-    @Query(nextAiredEpisodeForShowIdAfter)
-    abstract override fun observeNextAiredEpisodeForShowAfter(
-        showId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int,
-    ): Flow<EpisodeWithSeason?>
-
-    companion object {
-        const val latestWatchedEpisodeForShowId =
-            """
-            SELECT eps.*, (100 * s.number) + eps.number AS computed_abs_number
-            FROM shows
-            INNER JOIN seasons AS s ON shows.id = s.show_id
-            INNER JOIN episodes AS eps ON eps.season_id = s.id
-            INNER JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
-            WHERE s.number != ${Season.NUMBER_SPECIALS}
-                AND s.ignored = 0
-                AND shows.id = :showId
-            ORDER BY computed_abs_number DESC
-            LIMIT 1
-            """
-
-        const val nextEpisodeForShowIdAfter =
-            """
-            SELECT eps.*, (1000 * s.number) + eps.number AS computed_abs_number
-            FROM shows
-            INNER JOIN seasons AS s ON shows.id = s.show_id
-            INNER JOIN episodes AS eps ON eps.season_id = s.id
-            WHERE s.number != ${Season.NUMBER_SPECIALS}
-                AND s.ignored = 0
-                AND shows.id = :showId
-                AND computed_abs_number > ((1000 * :seasonNumber) + :episodeNumber)
-            ORDER BY computed_abs_number ASC
-            LIMIT 1
-        """
-
-        const val nextAiredEpisodeForShowIdAfter =
-            """
-            SELECT eps.*, (1000 * s.number) + eps.number AS computed_abs_number
-            FROM shows
-            INNER JOIN seasons AS s ON shows.id = s.show_id
-            INNER JOIN episodes AS eps ON eps.season_id = s.id
-            WHERE s.number != ${Season.NUMBER_SPECIALS}
-                AND s.ignored = 0
-                AND shows.id = :showId
-                AND computed_abs_number > ((1000 * :seasonNumber) + :episodeNumber)
-                AND eps.first_aired IS NOT NULL
-                AND datetime(eps.first_aired) < datetime('now')
-            ORDER BY computed_abs_number ASC
-            LIMIT 1
-        """
-    }
 }
