@@ -16,53 +16,37 @@
 
 package app.tivi.data.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.Index
-import androidx.room.PrimaryKey
 import app.tivi.extensions.unsafeLazy
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 
-@Entity(
-    tableName = "shows",
-    indices = [
-        Index(value = ["trakt_id"], unique = true),
-        Index(value = ["tmdb_id"]),
-    ],
-)
 data class TiviShow(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
     override val id: Long = 0,
-    @ColumnInfo(name = "title") val title: String? = null,
-    @ColumnInfo(name = "original_title") val originalTitle: String? = null,
-    @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,
-    @ColumnInfo(name = "tmdb_id") override val tmdbId: Int? = null,
-    @ColumnInfo(name = "imdb_id") val imdbId: String? = null,
-    @ColumnInfo(name = "overview") val summary: String? = null,
-    @ColumnInfo(name = "homepage") val homepage: String? = null,
-    @ColumnInfo(name = "trakt_rating") val traktRating: Float? = null,
-    @ColumnInfo(name = "trakt_votes") val traktVotes: Int? = null,
-    @ColumnInfo(name = "certification") val certification: String? = null,
-    @ColumnInfo(name = "first_aired") val firstAired: Instant? = null,
-    @ColumnInfo(name = "country") val country: String? = null,
-    @ColumnInfo(name = "network") val network: String? = null,
-    @ColumnInfo(name = "network_logo_path") val networkLogoPath: String? = null,
-    @ColumnInfo(name = "runtime") val runtime: Int? = null,
-    @ColumnInfo(name = "genres") val _genres: String? = null,
-    @ColumnInfo(name = "status") val status: ShowStatus? = null,
-    @ColumnInfo(name = "airs_day") val airsDay: DayOfWeek? = null,
-    @ColumnInfo(name = "airs_time") val airsTime: LocalTime? = null,
-    @ColumnInfo(name = "airs_tz") val airsTimeZone: TimeZone? = null,
+    val title: String? = null,
+    val originalTitle: String? = null,
+    override val traktId: Int? = null,
+    override val tmdbId: Int? = null,
+    val imdbId: String? = null,
+    val summary: String? = null,
+    val homepage: String? = null,
+    val traktRating: Float? = null,
+    val traktVotes: Int? = null,
+    val certification: String? = null,
+    val firstAired: Instant? = null,
+    val country: String? = null,
+    val network: String? = null,
+    val networkLogoPath: String? = null,
+    val runtime: Int? = null,
+    val _genres: String? = null,
+    val status: ShowStatus? = null,
+    val airsDay: DayOfWeek? = null,
+    val airsTime: LocalTime? = null,
+    val airsTimeZone: TimeZone? = null,
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
-    @Ignore
     constructor() : this(0)
 
-    @delegate:Ignore
     val genres by unsafeLazy {
         _genres?.split(",")?.mapNotNull { Genre.fromTraktValue(it.trim()) } ?: emptyList()
     }

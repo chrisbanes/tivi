@@ -16,17 +16,14 @@
 
 package app.tivi.data.compoundmodels
 
-import androidx.room.Embedded
-import androidx.room.Relation
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import java.util.Objects
 
 class SeasonWithEpisodesAndWatches {
-    @Embedded
+
     lateinit var season: Season
 
-    @Relation(parentColumn = "id", entityColumn = "season_id", entity = Episode::class)
     var episodes: List<EpisodeWithWatches> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {

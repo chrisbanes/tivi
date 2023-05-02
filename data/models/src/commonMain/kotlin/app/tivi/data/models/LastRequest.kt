@@ -16,28 +16,17 @@
 
 package app.tivi.data.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.Index
-import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 
-@Entity(
-    tableName = "last_requests",
-    indices = [Index(value = ["request", "entity_id"], unique = true)],
-)
 data class LastRequest(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
     override val id: Long = 0,
-    @ColumnInfo(name = "request") val request: Request,
-    @ColumnInfo(name = "entity_id") val entityId: Long,
+    val request: Request,
+    val entityId: Long,
     // We have to use a raw Long type here rather than Timestamp. This is because Timestamp is
     // currently mapped to a string (by type converters) for legacy reasons. For the same reason,
     // the old Instant type converter mapped to an int sql type, meaning that we can use the
     // same type converter for pre-existing data.
-    @ColumnInfo(name = "timestamp") internal val _timestamp: Long,
+    internal val _timestamp: Long,
 ) : TiviEntity {
     constructor(
         id: Long = 0,
@@ -46,6 +35,5 @@ data class LastRequest(
         timestamp: Instant,
     ) : this(id, request, entityId, timestamp.toEpochMilliseconds())
 
-    @delegate:Ignore
     val timestamp: Instant by lazy { Instant.fromEpochMilliseconds(_timestamp) }
 }

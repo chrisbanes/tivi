@@ -17,7 +17,6 @@
 
 import com.android.build.gradle.BaseExtension
 import com.diffplug.gradle.spotless.SpotlessExtension
-import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
@@ -27,7 +26,6 @@ plugins {
     alias(libs.plugins.android.lint) apply false
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.gms.googleServices) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
@@ -116,11 +114,6 @@ allprojects {
                 )
             }
         }
-    }
-
-    // Configure kapt
-    pluginManager.withPlugin(rootProject.libs.plugins.kotlin.kapt.get().pluginId) {
-        extensions.getByType<KaptExtension>().correctErrorTypes = true
     }
 
     // Configure Android projects

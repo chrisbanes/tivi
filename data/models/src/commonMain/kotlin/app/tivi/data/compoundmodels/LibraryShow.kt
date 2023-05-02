@@ -16,28 +16,21 @@
 
 package app.tivi.data.compoundmodels
 
-import androidx.room.Embedded
-import androidx.room.Ignore
-import androidx.room.Relation
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
 import app.tivi.data.views.ShowsWatchStats
 
 @Suppress("PropertyName")
 class LibraryShow {
-    @Embedded
+
     lateinit var show: TiviShow
 
-    @Relation(parentColumn = "id", entityColumn = "show_id")
     lateinit var _watchedEntities: List<WatchedShowEntry>
 
-    @Relation(parentColumn = "id", entityColumn = "show_id")
     lateinit var _stats: List<ShowsWatchStats>
 
-    @get:Ignore
     val watchedEntry: WatchedShowEntry? get() = _watchedEntities.firstOrNull()
 
-    @get:Ignore
     val stats: ShowsWatchStats? get() = _stats.firstOrNull()
 
     override fun equals(other: Any?): Boolean {

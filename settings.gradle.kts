@@ -53,7 +53,6 @@ include(
     ":common:ui:compose",
     ":common:imageloading",
     ":data:db",
-    ":data:db-room",
     ":data:db-sqldelight",
     ":data:legacy",
     ":data:models",

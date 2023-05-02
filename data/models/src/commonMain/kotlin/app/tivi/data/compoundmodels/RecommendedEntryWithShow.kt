@@ -16,17 +16,14 @@
 
 package app.tivi.data.compoundmodels
 
-import androidx.room.Embedded
-import androidx.room.Relation
 import app.tivi.data.models.RecommendedShowEntry
 import app.tivi.data.models.TiviShow
 import java.util.Objects
 
 class RecommendedEntryWithShow : EntryWithShow<RecommendedShowEntry> {
-    @Embedded
+
     override lateinit var entry: RecommendedShowEntry
 
-    @Relation(parentColumn = "show_id", entityColumn = "id")
     override lateinit var relations: List<TiviShow>
 
     override fun equals(other: Any?): Boolean = when {
@@ -34,6 +31,7 @@ class RecommendedEntryWithShow : EntryWithShow<RecommendedShowEntry> {
         other is RecommendedEntryWithShow -> {
             entry == other.entry && relations == other.relations
         }
+
         else -> false
     }
 

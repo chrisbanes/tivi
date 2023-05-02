@@ -16,18 +16,14 @@
 
 package app.tivi.data.compoundmodels
 
-import androidx.room.Embedded
-import androidx.room.Relation
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import java.util.Objects
 
 class EpisodeWithSeason {
-    @Embedded
     var episode: Episode? = null
 
     @Suppress("PropertyName")
-    @Relation(parentColumn = "season_id", entityColumn = "id")
     var _seasons: List<Season> = emptyList()
 
     val season: Season?
