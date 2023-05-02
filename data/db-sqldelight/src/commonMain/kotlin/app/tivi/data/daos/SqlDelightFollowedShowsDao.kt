@@ -40,22 +40,22 @@ class SqlDelightFollowedShowsDao(
     override fun upsertBlocking(entity: FollowedShowEntry): Long {
         return db.myshows_entriesQueries.upsert(
             entity = entity,
-            insert = { entity ->
+            insert = {
                 insert(
-                    id = entity.id,
-                    show_id = entity.showId,
-                    followed_at = entity.followedAt,
-                    pending_action = entity.pendingAction,
-                    trakt_id = entity.traktId,
+                    id = it.id,
+                    show_id = it.showId,
+                    followed_at = it.followedAt,
+                    pending_action = it.pendingAction,
+                    trakt_id = it.traktId,
                 )
             },
-            update = { entity ->
+            update = {
                 update(
-                    id = entity.id,
-                    show_id = entity.showId,
-                    followed_at = entity.followedAt,
-                    pending_action = entity.pendingAction,
-                    trakt_id = entity.traktId,
+                    id = it.id,
+                    show_id = it.showId,
+                    followed_at = it.followedAt,
+                    pending_action = it.pendingAction,
+                    trakt_id = it.traktId,
                 )
             },
             lastInsertRowId = { db.myshows_entriesQueries.lastInsertRowId().executeAsOne() },

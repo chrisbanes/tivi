@@ -81,7 +81,7 @@ class EpisodeTrackViewModel(
         EpisodeTrackViewState(
             episode = episodeDetails.episode,
             season = episodeDetails.season,
-            showSetFirstAired = episodeDetails.episode?.firstAired != null,
+            showSetFirstAired = episodeDetails.episode.firstAired != null,
             selectedDate = selectedDate,
             selectedTime = selectedTime,
             selectedNow = selectedNow,

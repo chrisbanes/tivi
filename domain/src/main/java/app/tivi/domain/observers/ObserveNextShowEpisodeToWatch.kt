@@ -34,7 +34,7 @@ class ObserveNextShowEpisodeToWatch(
     override fun createObservable(params: Unit): Flow<EpisodeWithSeasonWithShow?> {
         return watchedShowDao.observeNextShowToWatch().flatMapLatestNullable { nextShow ->
             seasonsEpisodesRepository.observeNextEpisodeToWatch(nextShow.id).mapNullable {
-                EpisodeWithSeasonWithShow(it.episode!!, it.season!!, nextShow)
+                EpisodeWithSeasonWithShow(it.episode, it.season, nextShow)
             }
         }
     }

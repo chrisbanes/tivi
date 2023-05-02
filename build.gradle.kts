@@ -93,7 +93,7 @@ allprojects {
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions {
             // Treat all Kotlin warnings as errors
-            // FIXME allWarningsAsErrors.set(true)
+            allWarningsAsErrors.set(true)
 
             // Enable experimental coroutines APIs, including Flow
             freeCompilerArgs.addAll(

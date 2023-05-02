@@ -43,34 +43,34 @@ class SqlDelightEpisodesDao(
 ) : EpisodesDao, SqlDelightEntityDao<Episode> {
     override fun upsertBlocking(entity: Episode): Long = db.episodesQueries.upsert(
         entity = entity,
-        insert = { entity ->
+        insert = {
             insert(
-                id = entity.id,
-                season_id = entity.seasonId,
-                trakt_id = entity.traktId,
-                tmdb_id = entity.tmdbId,
-                title = entity.title,
-                overview = entity.summary,
-                number = entity.number,
-                first_aired = entity.firstAired,
-                trakt_rating = entity.traktRating,
-                trakt_rating_votes = entity.traktRatingVotes,
-                tmdb_backdrop_path = entity.tmdbBackdropPath,
+                id = it.id,
+                season_id = it.seasonId,
+                trakt_id = it.traktId,
+                tmdb_id = it.tmdbId,
+                title = it.title,
+                overview = it.summary,
+                number = it.number,
+                first_aired = it.firstAired,
+                trakt_rating = it.traktRating,
+                trakt_rating_votes = it.traktRatingVotes,
+                tmdb_backdrop_path = it.tmdbBackdropPath,
             )
         },
-        update = { entity ->
+        update = {
             update(
-                id = entity.id,
-                season_id = entity.seasonId,
-                trakt_id = entity.traktId,
-                tmdb_id = entity.tmdbId,
-                title = entity.title,
-                overview = entity.summary,
-                number = entity.number,
-                first_aired = entity.firstAired,
-                trakt_rating = entity.traktRating,
-                trakt_rating_votes = entity.traktRatingVotes,
-                tmdb_backdrop_path = entity.tmdbBackdropPath,
+                id = it.id,
+                season_id = it.seasonId,
+                trakt_id = it.traktId,
+                tmdb_id = it.tmdbId,
+                title = it.title,
+                overview = it.summary,
+                number = it.number,
+                first_aired = it.firstAired,
+                trakt_rating = it.traktRating,
+                trakt_rating_votes = it.traktRatingVotes,
+                tmdb_backdrop_path = it.tmdbBackdropPath,
             )
         },
         lastInsertRowId = { lastInsertRowId().executeAsOne() },

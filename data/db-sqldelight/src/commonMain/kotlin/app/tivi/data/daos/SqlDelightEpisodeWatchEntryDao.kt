@@ -38,22 +38,22 @@ class SqlDelightEpisodeWatchEntryDao(
     override fun upsertBlocking(entity: EpisodeWatchEntry): Long {
         return db.episode_watch_entriesQueries.upsert(
             entity = entity,
-            insert = { entity ->
+            insert = {
                 insert(
-                    id = entity.id,
-                    episode_id = entity.episodeId,
-                    trakt_id = entity.traktId,
-                    watched_at = entity.watchedAt,
-                    pending_action = entity.pendingAction,
+                    id = it.id,
+                    episode_id = it.episodeId,
+                    trakt_id = it.traktId,
+                    watched_at = it.watchedAt,
+                    pending_action = it.pendingAction,
                 )
             },
-            update = { entity ->
+            update = {
                 update(
-                    id = entity.id,
-                    episode_id = entity.episodeId,
-                    trakt_id = entity.traktId,
-                    watched_at = entity.watchedAt,
-                    pending_action = entity.pendingAction,
+                    id = it.id,
+                    episode_id = it.episodeId,
+                    trakt_id = it.traktId,
+                    watched_at = it.watchedAt,
+                    pending_action = it.pendingAction,
                 )
             },
             lastInsertRowId = { lastInsertRowId().executeAsOne() },
