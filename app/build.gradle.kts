@@ -166,7 +166,6 @@ dependencies {
     implementation(projects.common.ui.view)
     implementation(projects.common.imageloading)
     implementation(projects.common.ui.compose)
-    implementation(projects.data.dbRoom)
     implementation(projects.data.dbSqldelight)
     implementation(projects.api.trakt)
     implementation(projects.api.tmdb)

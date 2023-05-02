@@ -16,26 +16,16 @@
 
 package app.tivi.data.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 
-@Entity(
-    tableName = "users",
-    indices = [Index(value = ["username"], unique = true)],
-)
 data class TraktUser(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
     override val id: Long = 0,
-    @ColumnInfo(name = "username") val username: String,
-    @ColumnInfo(name = "name") val name: String? = null,
-    @ColumnInfo(name = "joined_date") val joined: Instant? = null,
-    @ColumnInfo(name = "location") val location: String? = null,
-    @ColumnInfo(name = "about") val about: String? = null,
-    @ColumnInfo(name = "avatar_url") val avatarUrl: String? = null,
-    @ColumnInfo(name = "vip") val vip: Boolean? = null,
-    @ColumnInfo(name = "is_me") val isMe: Boolean = false,
+    val username: String,
+    val name: String? = null,
+    val joined: Instant? = null,
+    val location: String? = null,
+    val about: String? = null,
+    val avatarUrl: String? = null,
+    val vip: Boolean? = null,
+    val isMe: Boolean = false,
 ) : TiviEntity

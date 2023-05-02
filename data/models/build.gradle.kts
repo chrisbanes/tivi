@@ -27,8 +27,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(projects.core.base)
-
-                api(libs.androidx.room.common) // Room annotations
                 api(libs.kotlinx.datetime)
             }
         }

@@ -16,40 +16,31 @@
 
 package app.tivi.data.compoundmodels
 
-import androidx.room.Embedded
-import androidx.room.Ignore
-import androidx.room.Relation
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import java.util.Objects
 
 class EpisodeWithWatches {
-    @Embedded
+
     lateinit var episode: Episode
 
-    @Relation(parentColumn = "id", entityColumn = "episode_id")
     lateinit var watches: List<EpisodeWatchEntry>
 
-    @delegate:Ignore
     val hasWatches by lazy { watches.isNotEmpty() }
 
-    @delegate:Ignore
     val isWatched by lazy {
         watches.any { it.pendingAction != PendingAction.DELETE }
     }
 
-    @delegate:Ignore
     val hasPending by lazy {
         watches.any { it.pendingAction != PendingAction.NOTHING }
     }
 
-    @delegate:Ignore
     val onlyPendingDeletes by lazy {
         watches.all { it.pendingAction == PendingAction.DELETE }
     }
 
-    @get:Ignore
     val hasAired: Boolean get() = episode.hasAired
 
     override fun equals(other: Any?): Boolean = when {

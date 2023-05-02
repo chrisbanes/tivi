@@ -16,9 +16,6 @@
 
 package app.tivi.data.compoundmodels
 
-import androidx.room.Embedded
-import androidx.room.Ignore
-import androidx.room.Relation
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
@@ -26,25 +23,19 @@ import app.tivi.data.views.ShowsNextToWatch
 import app.tivi.extensions.unsafeLazy
 
 class UpNextEntry {
-    @Embedded
+
     lateinit var entity: ShowsNextToWatch
 
-    @Relation(parentColumn = "show_id", entityColumn = "id")
     lateinit var _show: List<TiviShow>
 
-    @delegate:Ignore
     val show: TiviShow by unsafeLazy { _show.first() }
 
-    @Relation(parentColumn = "season_id", entityColumn = "id")
     lateinit var _season: List<Season>
 
-    @delegate:Ignore
     val season: Season by unsafeLazy { _season.first() }
 
-    @Relation(parentColumn = "episode_id", entityColumn = "id")
     lateinit var _episode: List<Episode>
 
-    @delegate:Ignore
     val episode: Episode by unsafeLazy { _episode.first() }
 
     override fun equals(other: Any?): Boolean {

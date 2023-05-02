@@ -16,50 +16,25 @@
 
 package app.tivi.data.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Ignore
-import androidx.room.Index
-import androidx.room.PrimaryKey
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-@Entity(
-    tableName = "episodes",
-    indices = [
-        Index(value = ["trakt_id"], unique = true),
-        Index(value = ["season_id"]),
-    ],
-    foreignKeys = [
-        ForeignKey(
-            entity = Season::class,
-            parentColumns = arrayOf("id"),
-            childColumns = arrayOf("season_id"),
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE,
-        ),
-    ],
-)
 data class Episode(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
     override val id: Long = 0,
-    @ColumnInfo(name = "season_id") val seasonId: Long,
-    @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,
-    @ColumnInfo(name = "tmdb_id") override val tmdbId: Int? = null,
-    @ColumnInfo(name = "title") val title: String? = null,
-    @ColumnInfo(name = "overview") val summary: String? = null,
-    @ColumnInfo(name = "number") val number: Int? = null,
-    @ColumnInfo(name = "first_aired") val firstAired: Instant? = null,
-    @ColumnInfo(name = "trakt_rating") val traktRating: Float? = null,
-    @ColumnInfo(name = "trakt_rating_votes") val traktRatingVotes: Int? = null,
-    @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
+    val seasonId: Long,
+    override val traktId: Int? = null,
+    override val tmdbId: Int? = null,
+    val title: String? = null,
+    val summary: String? = null,
+    val number: Int? = null,
+    val firstAired: Instant? = null,
+    val traktRating: Float? = null,
+    val traktRatingVotes: Int? = null,
+    val tmdbBackdropPath: String? = null,
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
     companion object {
         val EMPTY = Episode(seasonId = 0)
     }
 
-    @get:Ignore
     val hasAired: Boolean get() = firstAired?.let { it < Clock.System.now() } ?: false
 }
