@@ -23,13 +23,9 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.utils.s1
-import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1e1
-import app.tivi.utils.s1e2
-import app.tivi.utils.s1e3
 import app.tivi.utils.show
 import app.tivi.utils.showId
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import me.tatarka.inject.annotations.Component
@@ -91,35 +87,6 @@ class EpisodesTest : DatabaseTest() {
     fun showIdForEpisodeId() = runTest {
         episodeDao.upsert(s1e1)
         assertThat(episodeDao.showIdForEpisodeId(s1e1.id), `is`(showId))
-    }
-
-    @Test
-    fun nextAiredEpisodeAfter() = runTest {
-        episodeDao.upsertAll(s1_episodes)
-
-        assertThat(
-            episodeDao.observeNextEpisodeForShowAfter(showId, 0, 0)
-                .first()?.episode,
-            `is`(s1e1),
-        )
-
-        assertThat(
-            episodeDao.observeNextEpisodeForShowAfter(showId, 1, 0)
-                .first()?.episode,
-            `is`(s1e2),
-        )
-
-        assertThat(
-            episodeDao.observeNextEpisodeForShowAfter(showId, 1, 1)
-                .first()?.episode,
-            `is`(s1e3),
-        )
-
-        assertThat(
-            episodeDao.observeNextEpisodeForShowAfter(showId, 1, 2)
-                .first()?.episode,
-            nullValue(),
-        )
     }
 }
 

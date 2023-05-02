@@ -67,15 +67,6 @@ abstract class RoomEpisodesDao : EpisodesDao, RoomEntityDao<Episode> {
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
-    @Query(nextEpisodeForShowIdAfter)
-    abstract override fun observeNextEpisodeForShowAfter(
-        showId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int,
-    ): Flow<EpisodeWithSeason?>
-
-    @Transaction
-    @RewriteQueriesToDropUnusedColumns
     @Query(nextAiredEpisodeForShowIdAfter)
     abstract override fun observeNextAiredEpisodeForShowAfter(
         showId: Long,

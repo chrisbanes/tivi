@@ -42,12 +42,6 @@ interface EpisodesDao : EntityDao<Episode> {
 
     fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
 
-    fun observeNextEpisodeForShowAfter(
-        showId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int,
-    ): Flow<EpisodeWithSeason?>
-
     fun observeNextAiredEpisodeForShowAfter(
         showId: Long,
         seasonNumber: Int,
