@@ -25,14 +25,13 @@ import app.tivi.data.awaitAsNull
 import app.tivi.data.awaitList
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.models.Episode
+import app.tivi.data.models.Season
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -115,10 +114,12 @@ class SqlDelightEpisodesDao(
     }
 
     override fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason> {
-        return db.episodesQueries.episodeWithId(id, ::Episode)
+        return db.episodesQueries.episodeWithIdWithSeason(
+            id = id,
+            mapper = ::mapperForEpisodeWithSeason,
+        )
             .asFlow()
             .mapToOne(dispatchers.io)
-            .flatMapWithSeason()
     }
 
     override suspend fun showIdForEpisodeId(episodeId: Long): Long {
@@ -126,54 +127,61 @@ class SqlDelightEpisodesDao(
             .await(dispatchers.io)
     }
 
-    override fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?> {
-        return db.episodesQueries.latestWatchedEpisodeForShowId(showId, ::Episode)
+    override fun observeNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> {
+        return db.episodesQueries.nextWatchedEpisodeForShowId(
+            showId = showId,
+            mapper = ::mapperForEpisodeWithSeason,
+        )
             .asFlow()
             .mapToOneOrNull(dispatchers.io)
-            .flatMapWithSeasonNullable()
     }
 
-    override fun observeNextAiredEpisodeForShowAfter(
-        showId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int,
-    ): Flow<EpisodeWithSeason?> = db.episodesQueries.nextAiredEpisodeForShowIdAfter(
-        showId = showId,
-        seasonNumber = seasonNumber.toLong(),
-        episodeNumber = episodeNumber.toLong(),
-        mapper = ::Episode,
-    )
-        .asFlow()
-        .mapToOneOrNull(dispatchers.io)
-        .flatMapWithSeasonNullable()
+    private fun mapperForEpisodeWithSeason(
+        id: Long,
+        season_id: Long,
+        trakt_id: Int?,
+        tmdb_id: Int?,
+        title: String?,
+        overview: String?,
+        number: Int?,
+        first_aired: Instant?,
+        trakt_rating: Float?,
+        trakt_rating_votes: Int?,
+        tmdb_backdrop_path: String?,
+        id_: Long,
+        show_id: Long,
+        trakt_id_: Int?,
+        tmdb_id_: Int?,
+        title_: String?,
+        overview_: String?,
+        number_: Int?,
+        network: String?,
+        ep_count: Int?,
+        ep_aired: Int?,
+        trakt_rating_: Float?,
+        trakt_votes: Int?,
+        tmdb_poster_path: String?,
+        tmdb_backdrop_path_: String?,
+        ignored: Boolean,
+    ): EpisodeWithSeason {
+        val episode = Episode(
+            id, season_id, trakt_id, tmdb_id, title, overview, number, first_aired,
+            trakt_rating, trakt_rating_votes, tmdb_backdrop_path,
+        )
+
+        val season = Season(
+            id_, show_id, trakt_id_, tmdb_id_, title_, overview_, number_, network, ep_count,
+            ep_aired, trakt_rating_, trakt_votes, tmdb_poster_path, tmdb_backdrop_path_,
+            ignored,
+        )
+
+        return EpisodeWithSeason().apply {
+            this.episode = episode
+            this._seasons = listOf(season)
+        }
+    }
 
     override suspend fun deleteEntity(entity: Episode) = withContext(dispatchers.io) {
         db.episodesQueries.delete(entity.id)
-    }
-
-    private fun Flow<Episode>.flatMapWithSeason(): Flow<EpisodeWithSeason> {
-        return flatMapLatest { episode ->
-            seasonsDao.observeSeasonWithId(episode.seasonId).map { season ->
-                EpisodeWithSeason().apply {
-                    this.episode = episode
-                    _seasons = listOf(season)
-                }
-            }
-        }
-    }
-
-    private fun Flow<Episode?>.flatMapWithSeasonNullable(): Flow<EpisodeWithSeason?> {
-        return flatMapLatest { episode ->
-            if (episode == null) {
-                flowOf(null)
-            } else {
-                seasonsDao.observeSeasonWithId(episode.seasonId).map { season ->
-                    EpisodeWithSeason().apply {
-                        this.episode = episode
-                        _seasons = listOf(season)
-                    }
-                }
-            }
-        }
     }
 }

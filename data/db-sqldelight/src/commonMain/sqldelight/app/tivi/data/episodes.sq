@@ -27,6 +27,11 @@ SELECT * FROM episodes WHERE season_id = :seasonId ORDER BY number;
 episodeWithId:
 SELECT * FROM episodes WHERE id = :id;
 
+episodeWithIdWithSeason:
+SELECT episodes.*, seasons.* FROM episodes
+INNER JOIN seasons ON episodes.season_id = seasons.id
+WHERE episodes.id = :id;
+
 episodeWithTraktId:
 SELECT * FROM episodes WHERE trakt_id = :traktId;
 
@@ -45,43 +50,11 @@ INNER JOIN seasons ON seasons.id = episodes.season_id
 INNER JOIN shows ON seasons.show_id = shows.id
 WHERE episodes.id = :episodeId;
 
-latestWatchedEpisodeForShowId:
-SELECT episodes.*
-FROM shows
-INNER JOIN seasons ON shows.id = seasons.show_id
-INNER JOIN episodes ON episodes.season_id = seasons.id
-INNER JOIN episode_watch_entries AS ew ON ew.episode_id = episodes.id
-WHERE seasons.number != 0
-    AND seasons.ignored = 0
-    AND shows.id = :showId
-ORDER BY ((1000 * seasons.number) + episodes.number) DESC
-LIMIT 1;
-
-nextEpisodeForShowIdAfter:
-SELECT episodes.*
-FROM shows
-INNER JOIN seasons ON shows.id = seasons.show_id
-INNER JOIN episodes ON episodes.season_id = seasons.id
-WHERE seasons.number != 0
-    AND seasons.ignored = 0
-    AND shows.id = :showId
-    AND ((1000 * seasons.number) + episodes.number) > ((1000 * :seasonNumber) + :episodeNumber)
-ORDER BY ((1000 * seasons.number) + episodes.number) ASC
-LIMIT 1;
-
-nextAiredEpisodeForShowIdAfter:
-SELECT episodes.*
-FROM shows
-INNER JOIN seasons ON shows.id = seasons.show_id
-INNER JOIN episodes ON episodes.season_id = seasons.id
-WHERE seasons.number != 0
-    AND seasons.ignored = 0
-    AND shows.id = :showId
-    AND ((1000 * seasons.number) + episodes.number) > ((1000 * :seasonNumber) + :episodeNumber)
-    AND episodes.first_aired IS NOT NULL
-    AND datetime(episodes.first_aired) < datetime('now')
-ORDER BY ((1000 * seasons.number) + episodes.number) ASC
-LIMIT 1;
+nextWatchedEpisodeForShowId:
+SELECT episodes.*, seasons.* FROM shows_next_to_watch
+INNER JOIN episodes ON shows_next_to_watch.episode_id = episodes.id
+INNER JOIN seasons ON shows_next_to_watch.season_id = seasons.id
+WHERE shows_next_to_watch.show_id = :showId;
 
 deleteAll:
 DELETE FROM episodes;
