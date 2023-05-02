@@ -133,20 +133,6 @@ class SqlDelightEpisodesDao(
             .flatMapWithSeasonNullable()
     }
 
-    override fun observeNextEpisodeForShowAfter(
-        showId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int,
-    ): Flow<EpisodeWithSeason?> = db.episodesQueries.nextEpisodeForShowIdAfter(
-        showId = showId,
-        seasonNumber = seasonNumber.toLong(),
-        episodeNumber = episodeNumber.toLong(),
-        mapper = ::Episode,
-    )
-        .asFlow()
-        .mapToOneOrNull(dispatchers.io)
-        .flatMapWithSeasonNullable()
-
     override fun observeNextAiredEpisodeForShowAfter(
         showId: Long,
         seasonNumber: Int,
