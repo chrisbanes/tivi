@@ -61,7 +61,7 @@ class EpisodeDetailsViewModel(
             episode = episodeDetails.episode,
             season = episodeDetails.season,
             watches = episodeWatches,
-            canAddEpisodeWatch = episodeDetails.episode?.hasAired ?: true,
+            canAddEpisodeWatch = episodeDetails.episode.hasAired,
             refreshing = refreshing,
             message = message,
         )

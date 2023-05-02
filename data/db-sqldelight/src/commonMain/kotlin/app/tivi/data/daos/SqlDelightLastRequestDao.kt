@@ -54,20 +54,20 @@ class SqlDelightLastRequestDao(
     override fun upsertBlocking(entity: LastRequest): Long {
         return db.last_requestsQueries.upsert(
             entity = entity,
-            insert = { entity ->
+            insert = {
                 insert(
-                    id = entity.id,
-                    entity_id = entity.entityId,
-                    request = entity.request,
-                    timestamp = entity.timestamp,
+                    id = it.id,
+                    entity_id = it.entityId,
+                    request = it.request,
+                    timestamp = it.timestamp,
                 )
             },
             update = {
                 update(
-                    id = entity.id,
-                    entity_id = entity.entityId,
-                    request = entity.request,
-                    timestamp = entity.timestamp,
+                    id = it.id,
+                    entity_id = it.entityId,
+                    request = it.request,
+                    timestamp = it.timestamp,
                 )
             },
             lastInsertRowId = { lastInsertRowId().executeAsOne() },

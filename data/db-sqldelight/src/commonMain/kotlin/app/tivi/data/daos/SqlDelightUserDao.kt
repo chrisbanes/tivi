@@ -35,30 +35,30 @@ class SqlDelightUserDao(
     override fun upsertBlocking(entity: TraktUser): Long {
         return db.usersQueries.upsert(
             entity = entity,
-            insert = { entity ->
+            insert = {
                 insert(
-                    id = entity.id,
-                    username = entity.username,
-                    name = entity.name,
-                    joined_date = entity.joined,
-                    location = entity.location,
-                    about = entity.about,
-                    avatar_url = entity.avatarUrl,
-                    vip = entity.vip,
-                    is_me = entity.isMe,
+                    id = it.id,
+                    username = it.username,
+                    name = it.name,
+                    joined_date = it.joined,
+                    location = it.location,
+                    about = it.about,
+                    avatar_url = it.avatarUrl,
+                    vip = it.vip,
+                    is_me = it.isMe,
                 )
             },
-            update = { entity ->
+            update = {
                 update(
-                    id = entity.id,
-                    username = entity.username,
-                    name = entity.name,
-                    joined_date = entity.joined,
-                    location = entity.location,
-                    about = entity.about,
-                    avatar_url = entity.avatarUrl,
-                    vip = entity.vip,
-                    is_me = entity.isMe,
+                    id = it.id,
+                    username = it.username,
+                    name = it.name,
+                    joined_date = it.joined,
+                    location = it.location,
+                    about = it.about,
+                    avatar_url = it.avatarUrl,
+                    vip = it.vip,
+                    is_me = it.isMe,
                 )
             },
             lastInsertRowId = { lastInsertRowId().executeAsOne() },
