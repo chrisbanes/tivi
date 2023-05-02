@@ -106,7 +106,7 @@ compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding" }
 compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composecompiler" }
 
 google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.2.2"
-google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.3.6"
+google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.3.7"
 
 debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
 debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber", version.ref = "debugdrawer" }
