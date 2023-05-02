@@ -29,8 +29,8 @@ import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -165,7 +165,7 @@ class SqlDelightEpisodesDao(
     private fun Flow<Episode?>.flatMapWithSeasonNullable(): Flow<EpisodeWithSeason?> {
         return flatMapLatest { episode ->
             if (episode == null) {
-                emptyFlow()
+                flowOf(null)
             } else {
                 seasonsDao.observeSeasonWithId(episode.seasonId).map { season ->
                     EpisodeWithSeason().apply {

@@ -34,9 +34,11 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.datetime.Clock
@@ -89,14 +91,18 @@ class SeasonsEpisodesRepository(
         return episodeWatchStore.observeEpisodeWatches(episodeId)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun observeNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> {
-        return episodesDao.observeLatestWatchedEpisodeForShowId(showId).flatMapLatest {
-            episodesDao.observeNextAiredEpisodeForShowAfter(
-                showId,
-                it?.season?.number ?: 0,
-                it?.episode?.number ?: 0,
-            )
-        }
+        return episodesDao.observeLatestWatchedEpisodeForShowId(showId)
+            .distinctUntilChanged()
+            .flatMapLatest {
+                episodesDao.observeNextAiredEpisodeForShowAfter(
+                    showId = showId,
+                    seasonNumber = it?.season?.number ?: 0,
+                    episodeNumber = it?.episode?.number ?: 0,
+                )
+            }
+            .distinctUntilChanged()
     }
 
     suspend fun needShowSeasonsUpdate(
