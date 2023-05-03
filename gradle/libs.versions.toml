@@ -6,10 +6,10 @@ androidxactivity = "1.7.1"
 chucker = "3.5.2"
 coil = "2.3.0"
 compose-bom = "2023.03.00"
-composecompiler = "1.4.5"
+composecompiler = "1.4.7"
 coroutines = "1.6.4"
 debugdrawer = "0.9.8"
-kotlin = "1.8.20"
+kotlin = "1.8.21"
 kotlininject = "0.6.1"
 ktlint = "0.48.1"
 okhttp = "4.11.0"
@@ -30,7 +30,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:1.8.20-1.0.11"
+ksp = "com.google.devtools.ksp:1.8.21-1.0.11"
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.5"
 spotless = "com.diffplug.spotless:6.18.0"
