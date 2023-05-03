@@ -1,0 +1,941 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 19,
+    "identityHash": "ce65bd053b179df39daca5df7a07d3d6",
+    "entities": [
+      {
+        "tableName": "shows",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT, `last_trakt_data_update` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "originalTitle",
+            "columnName": "original_title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "traktId",
+            "columnName": "trakt_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tmdbId",
+            "columnName": "tmdb_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "imdbId",
+            "columnName": "imdb_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tmdbPosterPath",
+            "columnName": "tmdb_poster_path",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tmdbBackdropPath",
+            "columnName": "tmdb_backdrop_path",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "summary",
+            "columnName": "overview",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "homepage",
+            "columnName": "homepage",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "traktRating",
+            "columnName": "trakt_rating",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "certification",
+            "columnName": "certification",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "firstAired",
+            "columnName": "first_aired",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "country",
+            "columnName": "country",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "network",
+            "columnName": "network",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "runtime",
+            "columnName": "runtime",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "_genres",
+            "columnName": "genres",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "traktDataUpdate",
+            "columnName": "last_trakt_data_update",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_shows_trakt_id",
+            "unique": true,
+            "columnNames": [
+              "trakt_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_shows_trakt_id` ON `${TABLE_NAME}` (`trakt_id`)"
+          },
+          {
+            "name": "index_shows_tmdb_id",
+            "unique": true,
+            "columnNames": [
+              "tmdb_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_shows_tmdb_id` ON `${TABLE_NAME}` (`tmdb_id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "shows",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_shows_fts_BEFORE_UPDATE BEFORE UPDATE ON `shows` BEGIN DELETE FROM `shows_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_shows_fts_BEFORE_DELETE BEFORE DELETE ON `shows` BEGIN DELETE FROM `shows_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_shows_fts_AFTER_UPDATE AFTER UPDATE ON `shows` BEGIN INSERT INTO `shows_fts`(`docid`, `title`, `original_title`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`original_title`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_shows_fts_AFTER_INSERT AFTER INSERT ON `shows` BEGIN INSERT INTO `shows_fts`(`docid`, `title`, `original_title`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`original_title`); END"
+        ],
+        "tableName": "shows_fts",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`title` TEXT, `original_title` TEXT, content=`shows`)",
+        "fields": [
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "originalTitle",
+            "columnName": "original_title",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "trending_shows",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `page` INTEGER NOT NULL, `watchers` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "showId",
+            "columnName": "show_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "page",
+            "columnName": "page",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "watchers",
+            "columnName": "watchers",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_trending_shows_show_id",
+            "unique": true,
+            "columnNames": [
+              "show_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_trending_shows_show_id` ON `${TABLE_NAME}` (`show_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "shows",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "show_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "popular_shows",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `page` INTEGER NOT NULL, `page_order` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "showId",
+            "columnName": "show_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "page",
+            "columnName": "page",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pageOrder",
+            "columnName": "page_order",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_popular_shows_show_id",
+            "unique": true,
+            "columnNames": [
+              "show_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_popular_shows_show_id` ON `${TABLE_NAME}` (`show_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "shows",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "show_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "users",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `username` TEXT NOT NULL, `name` TEXT NOT NULL, `joined_date` TEXT, `location` TEXT, `about` TEXT, `avatar_url` TEXT, `vip` INTEGER, `is_me` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "joined",
+            "columnName": "joined_date",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "about",
+            "columnName": "about",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "avatarUrl",
+            "columnName": "avatar_url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "vip",
+            "columnName": "vip",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isMe",
+            "columnName": "is_me",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_users_username",
+            "unique": true,
+            "columnNames": [
+              "username"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_users_username` ON `${TABLE_NAME}` (`username`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "watched_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `last_watched` TEXT NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "showId",
+            "columnName": "show_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastWatched",
+            "columnName": "last_watched",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_watched_entries_show_id",
+            "unique": true,
+            "columnNames": [
+              "show_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_watched_entries_show_id` ON `${TABLE_NAME}` (`show_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "shows",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "show_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "myshows_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `followed_at` TEXT, `pending_action` TEXT NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "showId",
+            "columnName": "show_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "followedAt",
+            "columnName": "followed_at",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pendingAction",
+            "columnName": "pending_action",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_myshows_entries_show_id",
+            "unique": true,
+            "columnNames": [
+              "show_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_myshows_entries_show_id` ON `${TABLE_NAME}` (`show_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "shows",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "show_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "seasons",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER, `network` TEXT, `ep_count` INTEGER, `ep_aired` INTEGER, `trakt_rating` REAL, `trakt_votes` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "showId",
+            "columnName": "show_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "traktId",
+            "columnName": "trakt_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tmdbId",
+            "columnName": "tmdb_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "summary",
+            "columnName": "overview",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "number",
+            "columnName": "number",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "network",
+            "columnName": "network",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "episodeCount",
+            "columnName": "ep_count",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "episodesAired",
+            "columnName": "ep_aired",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "traktRating",
+            "columnName": "trakt_rating",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "traktRatingVotes",
+            "columnName": "trakt_votes",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tmdbPosterPath",
+            "columnName": "tmdb_poster_path",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tmdbBackdropPath",
+            "columnName": "tmdb_backdrop_path",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_seasons_trakt_id",
+            "unique": true,
+            "columnNames": [
+              "trakt_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_seasons_trakt_id` ON `${TABLE_NAME}` (`trakt_id`)"
+          },
+          {
+            "name": "index_seasons_show_id",
+            "unique": false,
+            "columnNames": [
+              "show_id"
+            ],
+            "createSql": "CREATE  INDEX `index_seasons_show_id` ON `${TABLE_NAME}` (`show_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "shows",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "show_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "episodes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `season_id` INTEGER NOT NULL, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER, `first_aired` TEXT, `trakt_rating` REAL, `trakt_rating_votes` INTEGER, `tmdb_backdrop_path` TEXT, FOREIGN KEY(`season_id`) REFERENCES `seasons`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seasonId",
+            "columnName": "season_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "traktId",
+            "columnName": "trakt_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tmdbId",
+            "columnName": "tmdb_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "summary",
+            "columnName": "overview",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "number",
+            "columnName": "number",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "firstAired",
+            "columnName": "first_aired",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "traktRating",
+            "columnName": "trakt_rating",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "traktRatingVotes",
+            "columnName": "trakt_rating_votes",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tmdbBackdropPath",
+            "columnName": "tmdb_backdrop_path",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_episodes_trakt_id",
+            "unique": true,
+            "columnNames": [
+              "trakt_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_episodes_trakt_id` ON `${TABLE_NAME}` (`trakt_id`)"
+          },
+          {
+            "name": "index_episodes_season_id",
+            "unique": false,
+            "columnNames": [
+              "season_id"
+            ],
+            "createSql": "CREATE  INDEX `index_episodes_season_id` ON `${TABLE_NAME}` (`season_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "seasons",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "season_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "related_shows",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `other_show_id` INTEGER NOT NULL, `order_index` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`other_show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "showId",
+            "columnName": "show_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "otherShowId",
+            "columnName": "other_show_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "orderIndex",
+            "columnName": "order_index",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_related_shows_show_id",
+            "unique": false,
+            "columnNames": [
+              "show_id"
+            ],
+            "createSql": "CREATE  INDEX `index_related_shows_show_id` ON `${TABLE_NAME}` (`show_id`)"
+          },
+          {
+            "name": "index_related_shows_other_show_id",
+            "unique": false,
+            "columnNames": [
+              "other_show_id"
+            ],
+            "createSql": "CREATE  INDEX `index_related_shows_other_show_id` ON `${TABLE_NAME}` (`other_show_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "shows",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "show_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "shows",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "other_show_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "episode_watch_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `episode_id` INTEGER NOT NULL, `trakt_id` INTEGER, `watched_at` TEXT NOT NULL, `pending_action` TEXT NOT NULL, FOREIGN KEY(`episode_id`) REFERENCES `episodes`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "episodeId",
+            "columnName": "episode_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "traktId",
+            "columnName": "trakt_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "watchedAt",
+            "columnName": "watched_at",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pendingAction",
+            "columnName": "pending_action",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_episode_watch_entries_episode_id",
+            "unique": false,
+            "columnNames": [
+              "episode_id"
+            ],
+            "createSql": "CREATE  INDEX `index_episode_watch_entries_episode_id` ON `${TABLE_NAME}` (`episode_id`)"
+          },
+          {
+            "name": "index_episode_watch_entries_trakt_id",
+            "unique": true,
+            "columnNames": [
+              "trakt_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_episode_watch_entries_trakt_id` ON `${TABLE_NAME}` (`trakt_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "episodes",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "episode_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "last_requests",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `request` TEXT NOT NULL, `entity_id` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "request",
+            "columnName": "request",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "entityId",
+            "columnName": "entity_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_last_requests_request_entity_id",
+            "unique": true,
+            "columnNames": [
+              "request",
+              "entity_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_last_requests_request_entity_id` ON `${TABLE_NAME}` (`request`, `entity_id`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [
+      {
+        "viewName": "FollowedShowsWatchStats",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT fs.id, COUNT(*) as episodeCount, COUNT(ew.watched_at) as watchedEpisodeCount\n    FROM myshows_entries as fs\n    INNER JOIN seasons AS s ON fs.show_id = s.show_id\n    INNER JOIN episodes AS eps ON eps.season_id = s.id\n    LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id\n    WHERE eps.first_aired IS NOT NULL AND datetime(eps.first_aired) < datetime('now') AND s.number != 0\n    GROUP BY fs.id"
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ce65bd053b179df39daca5df7a07d3d6\")"
+    ]
+  }
+}
