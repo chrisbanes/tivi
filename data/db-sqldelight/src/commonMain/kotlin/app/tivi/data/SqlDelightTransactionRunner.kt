@@ -17,17 +17,15 @@
 package app.tivi.data
 
 import app.tivi.data.db.DatabaseTransactionRunner
-import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightTransactionRunner(private val db: Database) : DatabaseTransactionRunner {
     override suspend fun <T> invoke(block: suspend () -> T): T {
-        return db.transactionWithResult {
-            // TODO not sure on this
-            runBlocking {
-                block()
-            }
-        }
+        return block()
+//            // FIXME
+//            runBlocking {
+//                block()
+//            }
     }
 }
