@@ -26,19 +26,19 @@ interface SeasonsDao : EntityDao<Season> {
 
     fun observeSeasonWithId(id: Long): Flow<Season>
 
-    suspend fun seasonsForShowId(showId: Long): List<Season>
+    fun seasonsForShowId(showId: Long): List<Season>
 
-    suspend fun deleteWithShowId(showId: Long)
+    fun deleteWithShowId(showId: Long)
 
-    suspend fun seasonWithId(id: Long): Season?
+    fun seasonWithId(id: Long): Season?
 
-    suspend fun traktIdForId(id: Long): Int?
+    fun traktIdForId(id: Long): Int?
 
-    suspend fun seasonWithTraktId(traktId: Int): Season?
+    fun seasonWithTraktId(traktId: Int): Season?
 
-    suspend fun showPreviousSeasonIds(seasonId: Long): LongArray
+    fun showPreviousSeasonIds(seasonId: Long): LongArray
 
-    suspend fun updateSeasonIgnoreFlag(seasonId: Long, ignored: Boolean)
+    fun updateSeasonIgnoreFlag(seasonId: Long, ignored: Boolean)
 
-    suspend fun seasonWithShowIdAndNumber(showId: Long, number: Int): Season?
+    fun seasonWithShowIdAndNumber(showId: Long, number: Int): Season?
 }

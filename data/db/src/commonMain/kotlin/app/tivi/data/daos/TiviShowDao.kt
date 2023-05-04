@@ -22,35 +22,35 @@ import kotlinx.coroutines.flow.Flow
 
 interface TiviShowDao : EntityDao<TiviShow> {
 
-    suspend fun getShowWithTraktId(id: Int): TiviShow?
+    fun getShowWithTraktId(id: Int): TiviShow?
 
     fun getShowsWithIds(ids: List<Long>): Flow<List<TiviShow>>
 
-    suspend fun getShowWithTmdbId(id: Int): TiviShow?
+    fun getShowWithTmdbId(id: Int): TiviShow?
 
     fun getShowWithIdFlow(id: Long): Flow<TiviShow>
 
-    suspend fun getShowWithId(id: Long): TiviShow?
+    fun getShowWithId(id: Long): TiviShow?
 
-    suspend fun getTraktIdForShowId(id: Long): Int?
+    fun getTraktIdForShowId(id: Long): Int?
 
-    suspend fun getTmdbIdForShowId(id: Long): Int?
+    fun getTmdbIdForShowId(id: Long): Int?
 
-    suspend fun getIdForTraktId(traktId: Int): Long?
+    fun getIdForTraktId(traktId: Int): Long?
 
-    suspend fun getIdForTmdbId(tmdbId: Int): Long?
+    fun getIdForTmdbId(tmdbId: Int): Long?
 
-    suspend fun delete(id: Long)
+    fun delete(id: Long)
 
-    suspend fun deleteAll()
+    fun deleteAll()
 }
 
-suspend fun TiviShowDao.getShowWithIdOrThrow(id: Long): TiviShow {
+fun TiviShowDao.getShowWithIdOrThrow(id: Long): TiviShow {
     return getShowWithId(id)
         ?: throw IllegalArgumentException("No show with id $id in database")
 }
 
-suspend fun TiviShowDao.getIdOrSavePlaceholder(show: TiviShow): Long {
+fun TiviShowDao.getIdOrSavePlaceholder(show: TiviShow): Long {
     val idForTraktId: Long? = show.traktId?.let { getIdForTraktId(it) }
     val idForTmdbId: Long? = show.tmdbId?.let { getIdForTmdbId(it) }
     return when {

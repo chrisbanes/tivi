@@ -26,14 +26,14 @@ import app.tivi.util.Logger
  * @param Key Network ID type
  */
 class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
-    private val upsertEntity: suspend (LocalType) -> Long,
-    private val deleteEntity: suspend (LocalType) -> Unit,
-    private val localEntityToKey: suspend (LocalType) -> Key?,
-    private val networkEntityToKey: suspend (NetworkType) -> Key,
-    private val networkEntityToLocalEntity: suspend (networkEntity: NetworkType, currentEntity: LocalType?) -> LocalType,
+    private val upsertEntity: (LocalType) -> Long,
+    private val deleteEntity: (LocalType) -> Unit,
+    private val localEntityToKey: (LocalType) -> Key?,
+    private val networkEntityToKey: (NetworkType) -> Key,
+    private val networkEntityToLocalEntity: (networkEntity: NetworkType, currentEntity: LocalType?) -> LocalType,
     private val logger: Logger,
 ) {
-    suspend fun sync(
+    fun sync(
         currentValues: Collection<LocalType>,
         networkValues: Collection<NetworkType>,
         removeNotMatched: Boolean = true,
@@ -102,9 +102,9 @@ data class ItemSyncerResult<ET : TiviEntity>(
 
 fun <LocalType : TiviEntity, NetworkType, Key> syncerForEntity(
     entityDao: EntityDao<LocalType>,
-    localEntityToKey: suspend (LocalType) -> Key?,
-    networkEntityToKey: suspend (NetworkType) -> Key,
-    networkEntityToLocalEntity: suspend (networkEntity: NetworkType, currentEntity: LocalType?) -> LocalType,
+    localEntityToKey: (LocalType) -> Key?,
+    networkEntityToKey: (NetworkType) -> Key,
+    networkEntityToLocalEntity: (networkEntity: NetworkType, currentEntity: LocalType?) -> LocalType,
     logger: Logger,
 ) = ItemSyncer(
     entityDao::upsert,
@@ -117,8 +117,8 @@ fun <LocalType : TiviEntity, NetworkType, Key> syncerForEntity(
 
 fun <Type : TiviEntity, Key> syncerForEntity(
     entityDao: EntityDao<Type>,
-    entityToKey: suspend (Type) -> Key?,
-    mapper: suspend (Type, Type?) -> Type,
+    entityToKey: (Type) -> Key?,
+    mapper: (Type, Type?) -> Type,
     logger: Logger,
 ) = ItemSyncer(
     entityDao::upsert,

@@ -33,7 +33,6 @@ import app.tivi.utils.s1e1w
 import app.tivi.utils.s1e1w_id
 import app.tivi.utils.show
 import app.tivi.utils.showId
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import me.tatarka.inject.annotations.Component
 import org.hamcrest.CoreMatchers.`is`
@@ -56,12 +55,10 @@ class EpisodeWatchEntryTest : DatabaseTest() {
         episodesDao = component.episodesDao
         episodeWatchEntryDao = component.episodeWatchEntryDao
 
-        runBlocking {
-            // We'll assume that there's a show, season and s1_episodes in the db
-            showsDao.upsert(show)
-            seasonsDao.upsert(s1)
-            episodesDao.upsertAll(s1_episodes)
-        }
+        // We'll assume that there's a show, season and s1_episodes in the db
+        showsDao.upsert(show)
+        seasonsDao.upsert(s1)
+        episodesDao.upsertAll(s1_episodes)
     }
 
     @Test

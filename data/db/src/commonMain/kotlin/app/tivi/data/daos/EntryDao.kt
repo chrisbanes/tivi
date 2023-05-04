@@ -23,5 +23,5 @@ import app.tivi.data.models.Entry
  * This interface represents a DAO which contains entities which are part of a single collective list.
  */
 interface EntryDao<EC : Entry, LI : EntryWithShow<EC>> : EntityDao<EC> {
-    suspend fun deleteAll()
+    fun deleteAll()
 }

@@ -20,23 +20,21 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import app.tivi.data.Database
-import app.tivi.data.awaitAsNull
 import app.tivi.data.models.TiviShow
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightTiviShowDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : TiviShowDao, SqlDelightEntityDao<TiviShow> {
 
-    override suspend fun getShowWithTraktId(id: Int): TiviShow? {
+    override fun getShowWithTraktId(id: Int): TiviShow? {
         return db.showQueries.getShowWithTraktId(id, ::TiviShow)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
     override fun getShowsWithIds(ids: List<Long>): Flow<List<TiviShow>> {
@@ -45,9 +43,9 @@ class SqlDelightTiviShowDao(
             .mapToList(dispatchers.io)
     }
 
-    override suspend fun getShowWithTmdbId(id: Int): TiviShow? {
+    override fun getShowWithTmdbId(id: Int): TiviShow? {
         return db.showQueries.getShowWithTmdbId(id, ::TiviShow)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
     override fun getShowWithIdFlow(id: Long): Flow<TiviShow> {
@@ -56,44 +54,44 @@ class SqlDelightTiviShowDao(
             .mapToOne(dispatchers.io)
     }
 
-    override suspend fun getShowWithId(id: Long): TiviShow? {
+    override fun getShowWithId(id: Long): TiviShow? {
         return db.showQueries.getShowWithId(id, ::TiviShow)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun getTraktIdForShowId(id: Long): Int? {
+    override fun getTraktIdForShowId(id: Long): Int? {
         return db.showQueries.getTraktIdForShowId(id)
-            .awaitAsNull(dispatchers.io)?.trakt_id
+            .executeAsOneOrNull()?.trakt_id
     }
 
-    override suspend fun getTmdbIdForShowId(id: Long): Int? {
+    override fun getTmdbIdForShowId(id: Long): Int? {
         return db.showQueries.getTmdbIdForShowId(id)
-            .awaitAsNull(dispatchers.io)?.tmdb_id
+            .executeAsOneOrNull()?.tmdb_id
     }
 
-    override suspend fun getIdForTraktId(traktId: Int): Long? {
+    override fun getIdForTraktId(traktId: Int): Long? {
         return db.showQueries.getIdForTraktId(traktId)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun getIdForTmdbId(tmdbId: Int): Long? {
+    override fun getIdForTmdbId(tmdbId: Int): Long? {
         return db.showQueries.getIdForTmdbId(tmdbId)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun delete(id: Long) = withContext(dispatchers.io) {
+    override fun delete(id: Long) {
         db.showQueries.delete(id)
     }
 
-    override suspend fun deleteAll() = withContext(dispatchers.io) {
+    override fun deleteAll() {
         db.showQueries.deleteAll()
     }
 
-    override suspend fun deleteEntity(entity: TiviShow) = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: TiviShow) {
         db.showQueries.delete(entity.id)
     }
 
-    override fun upsertBlocking(entity: TiviShow): Long = db.showQueries.upsert(
+    override fun upsert(entity: TiviShow): Long = db.showQueries.upsert(
         entity = entity,
         insert = { show ->
             insert(

@@ -20,8 +20,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import app.tivi.data.Database
-import app.tivi.data.awaitAsNull
-import app.tivi.data.awaitList
 import app.tivi.data.compoundmodels.EpisodeWithWatches
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.Episode
@@ -34,16 +32,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class SqlDelightSeasonsDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : SeasonsDao, SqlDelightEntityDao<Season> {
-    override fun upsertBlocking(entity: Season): Long = db.seasonsQueries.upsert(
+    override fun upsert(entity: Season): Long = db.seasonsQueries.upsert(
         entity = entity,
         insert = {
             insert(
@@ -135,47 +132,47 @@ class SqlDelightSeasonsDao(
             .mapToOne(dispatchers.io)
     }
 
-    override suspend fun seasonsForShowId(showId: Long): List<Season> {
-        return db.seasonsQueries.seasonsForShowId(showId, ::Season).awaitList(dispatchers.io)
+    override fun seasonsForShowId(showId: Long): List<Season> {
+        return db.seasonsQueries.seasonsForShowId(showId, ::Season).executeAsList()
     }
 
-    override suspend fun deleteWithShowId(showId: Long): Unit = withContext(dispatchers.io) {
+    override fun deleteWithShowId(showId: Long) {
         db.seasonsQueries.deleteWithShowId(showId)
     }
 
-    override suspend fun seasonWithId(id: Long): Season? {
-        return db.seasonsQueries.seasonWithId(id, ::Season).awaitAsNull(dispatchers.io)
+    override fun seasonWithId(id: Long): Season? {
+        return db.seasonsQueries.seasonWithId(id, ::Season).executeAsOneOrNull()
     }
 
-    override suspend fun traktIdForId(id: Long): Int? {
-        return db.seasonsQueries.traktIdForId(id).awaitAsNull(dispatchers.io)?.trakt_id
+    override fun traktIdForId(id: Long): Int? {
+        return db.seasonsQueries.traktIdForId(id).executeAsOneOrNull()?.trakt_id
     }
 
-    override suspend fun seasonWithTraktId(traktId: Int): Season? {
+    override fun seasonWithTraktId(traktId: Int): Season? {
         return db.seasonsQueries.seasonWithTraktId(traktId, ::Season)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun showPreviousSeasonIds(seasonId: Long): LongArray {
+    override fun showPreviousSeasonIds(seasonId: Long): LongArray {
         // TODO: Return a List instead
         return db.seasonsQueries.previousSeasonsForShowId(seasonId)
-            .awaitList(dispatchers.io)
+            .executeAsList()
             .toLongArray()
     }
 
-    override suspend fun updateSeasonIgnoreFlag(
+    override fun updateSeasonIgnoreFlag(
         seasonId: Long,
         ignored: Boolean,
-    ): Unit = withContext(dispatchers.io) {
+    ) {
         db.seasonsQueries.updateSeasonIgnored(ignored = ignored, seasonId = seasonId)
     }
 
-    override suspend fun seasonWithShowIdAndNumber(showId: Long, number: Int): Season? {
+    override fun seasonWithShowIdAndNumber(showId: Long, number: Int): Season? {
         return db.seasonsQueries.seasonForShowIdAndNumber(showId, number, ::Season)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun deleteEntity(entity: Season) = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: Season) {
         db.seasonsQueries.deleteWithId(entity.id)
     }
 }

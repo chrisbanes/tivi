@@ -20,28 +20,21 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.tivi.data.Database
-import app.tivi.data.await
-import app.tivi.data.awaitAsNull
-import app.tivi.data.awaitList
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class SqlDelightEpisodesDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
-    private val seasonsDao: SeasonsDao,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : EpisodesDao, SqlDelightEntityDao<Episode> {
-    override fun upsertBlocking(entity: Episode): Long = db.episodesQueries.upsert(
+    override fun upsert(entity: Episode): Long = db.episodesQueries.upsert(
         entity = entity,
         insert = {
             insert(
@@ -76,41 +69,39 @@ class SqlDelightEpisodesDao(
         lastInsertRowId = { lastInsertRowId().executeAsOne() },
     )
 
-    override suspend fun episodesWithSeasonId(seasonId: Long): List<Episode> {
+    override fun episodesWithSeasonId(seasonId: Long): List<Episode> {
         return db.episodesQueries.episodesWithSeasonId(seasonId, ::Episode)
-            .awaitList(dispatchers.io)
+            .executeAsList()
     }
 
-    override suspend fun deleteWithSeasonId(seasonId: Long) {
-        withContext(dispatchers.io) {
-            db.episodesQueries.deleteWithSeasonId(seasonId)
-        }
+    override fun deleteWithSeasonId(seasonId: Long) {
+        db.episodesQueries.deleteWithSeasonId(seasonId)
     }
 
-    override suspend fun episodeWithTraktId(traktId: Int): Episode? {
+    override fun episodeWithTraktId(traktId: Int): Episode? {
         return db.episodesQueries.episodeWithTraktId(traktId, ::Episode)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun episodeWithTmdbId(tmdbId: Int): Episode? {
+    override fun episodeWithTmdbId(tmdbId: Int): Episode? {
         return db.episodesQueries.episodeWithTmdbId(tmdbId, ::Episode)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun episodeWithId(id: Long): Episode? {
+    override fun episodeWithId(id: Long): Episode? {
         return db.episodesQueries.episodeWithId(id, ::Episode)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun episodeTraktIdForId(id: Long): Int? {
+    override fun episodeTraktIdForId(id: Long): Int? {
         return db.episodesQueries.traktIdForId(id)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
             ?.trakt_id
     }
 
-    override suspend fun episodeIdWithTraktId(traktId: Int): Long? {
+    override fun episodeIdWithTraktId(traktId: Int): Long? {
         return db.episodesQueries.idForTraktId(traktId)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
     override fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason> {
@@ -122,9 +113,9 @@ class SqlDelightEpisodesDao(
             .mapToOne(dispatchers.io)
     }
 
-    override suspend fun showIdForEpisodeId(episodeId: Long): Long {
+    override fun showIdForEpisodeId(episodeId: Long): Long {
         return db.episodesQueries.showIdForEpisodeId(episodeId)
-            .await(dispatchers.io)
+            .executeAsOne()
     }
 
     override fun observeNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> {
@@ -175,7 +166,7 @@ class SqlDelightEpisodesDao(
         ),
     )
 
-    override suspend fun deleteEntity(entity: Episode) = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: Episode) {
         db.episodesQueries.delete(entity.id)
     }
 }

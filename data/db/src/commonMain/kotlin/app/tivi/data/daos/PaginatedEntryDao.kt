@@ -20,11 +20,11 @@ import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.PaginatedEntry
 
 interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI> {
-    suspend fun deletePage(page: Int)
-    suspend fun getLastPage(): Int?
+    fun deletePage(page: Int)
+    fun getLastPage(): Int?
 }
 
-suspend fun <EC : PaginatedEntry, LI : EntryWithShow<EC>> PaginatedEntryDao<EC, LI>.updatePage(
+fun <EC : PaginatedEntry, LI : EntryWithShow<EC>> PaginatedEntryDao<EC, LI>.updatePage(
     page: Int,
     entities: List<EC>,
 ) {

@@ -19,23 +19,19 @@ package app.tivi.data.daos
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.tivi.data.Database
-import app.tivi.data.await
-import app.tivi.data.awaitAsNull
-import app.tivi.data.awaitList
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightEpisodeWatchEntryDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : EpisodeWatchEntryDao, SqlDelightEntityDao<EpisodeWatchEntry> {
-    override fun upsertBlocking(entity: EpisodeWatchEntry): Long {
+    override fun upsert(entity: EpisodeWatchEntry): Long {
         return db.episode_watch_entriesQueries.upsert(
             entity = entity,
             insert = {
@@ -60,14 +56,14 @@ class SqlDelightEpisodeWatchEntryDao(
         )
     }
 
-    override suspend fun watchesForEpisode(episodeId: Long): List<EpisodeWatchEntry> {
+    override fun watchesForEpisode(episodeId: Long): List<EpisodeWatchEntry> {
         return db.episode_watch_entriesQueries.watchesForEpisodeId(episodeId, ::EpisodeWatchEntry)
-            .awaitList(dispatchers.io)
+            .executeAsList()
     }
 
-    override suspend fun watchCountForEpisode(episodeId: Long): Int {
+    override fun watchCountForEpisode(episodeId: Long): Int {
         return db.episode_watch_entriesQueries.watchCountForEpisodeId(episodeId)
-            .await(dispatchers.io)
+            .executeAsOne()
             .toInt()
     }
 
@@ -77,69 +73,69 @@ class SqlDelightEpisodeWatchEntryDao(
             .mapToList(dispatchers.io)
     }
 
-    override suspend fun entryWithId(id: Long): EpisodeWatchEntry? {
+    override fun entryWithId(id: Long): EpisodeWatchEntry? {
         return db.episode_watch_entriesQueries.entryWithId(id, ::EpisodeWatchEntry)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun entryWithTraktId(traktId: Long): EpisodeWatchEntry? {
+    override fun entryWithTraktId(traktId: Long): EpisodeWatchEntry? {
         return db.episode_watch_entriesQueries.entryWithTraktId(traktId, ::EpisodeWatchEntry)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun entryIdWithTraktId(traktId: Long): Long? {
-        return db.episode_watch_entriesQueries.idForTraktId(traktId).awaitAsNull(dispatchers.io)
+    override fun entryIdWithTraktId(traktId: Long): Long? {
+        return db.episode_watch_entriesQueries.idForTraktId(traktId).executeAsOneOrNull()
     }
 
-    override suspend fun entriesForShowIdWithNoPendingAction(showId: Long): List<EpisodeWatchEntry> {
+    override fun entriesForShowIdWithNoPendingAction(showId: Long): List<EpisodeWatchEntry> {
         return db.episode_watch_entriesQueries.entriesForShowIdWithPendingAction(
             showId = showId,
             pendingAction = PendingAction.NOTHING,
             mapper = ::EpisodeWatchEntry,
-        ).awaitList(dispatchers.io)
+        ).executeAsList()
     }
 
-    override suspend fun entriesForShowIdWithSendPendingActions(showId: Long): List<EpisodeWatchEntry> {
+    override fun entriesForShowIdWithSendPendingActions(showId: Long): List<EpisodeWatchEntry> {
         return db.episode_watch_entriesQueries.entriesForShowIdWithPendingAction(
             showId = showId,
             pendingAction = PendingAction.UPLOAD,
             mapper = ::EpisodeWatchEntry,
-        ).awaitList(dispatchers.io)
+        ).executeAsList()
     }
 
-    override suspend fun entriesForShowIdWithDeletePendingActions(showId: Long): List<EpisodeWatchEntry> {
+    override fun entriesForShowIdWithDeletePendingActions(showId: Long): List<EpisodeWatchEntry> {
         return db.episode_watch_entriesQueries.entriesForShowIdWithPendingAction(
             showId = showId,
             pendingAction = PendingAction.DELETE,
             mapper = ::EpisodeWatchEntry,
-        ).awaitList(dispatchers.io)
+        ).executeAsList()
     }
 
-    override suspend fun entriesForShowId(showId: Long): List<EpisodeWatchEntry> {
+    override fun entriesForShowId(showId: Long): List<EpisodeWatchEntry> {
         return db.episode_watch_entriesQueries.entriesForShowId(showId, ::EpisodeWatchEntry)
-            .awaitList(dispatchers.io)
+            .executeAsList()
     }
 
-    override suspend fun updateEntriesToPendingAction(
+    override fun updateEntriesToPendingAction(
         ids: List<Long>,
         pendingAction: PendingAction,
-    ): Unit = withContext(dispatchers.io) {
+    ) {
         db.episode_watch_entriesQueries.updatePendingActionForIds(pendingAction, ids)
     }
 
-    override suspend fun deleteWithId(id: Long): Unit = withContext(dispatchers.io) {
+    override fun deleteWithId(id: Long) {
         db.episode_watch_entriesQueries.deleteWithId(id)
     }
 
-    override suspend fun deleteWithIds(ids: List<Long>): Unit = withContext(dispatchers.io) {
+    override fun deleteWithIds(ids: List<Long>) {
         db.episode_watch_entriesQueries.deleteWithIds(ids)
     }
 
-    override suspend fun deleteWithTraktId(traktId: Long): Unit = withContext(dispatchers.io) {
+    override fun deleteWithTraktId(traktId: Long) {
         db.episode_watch_entriesQueries.deleteWithTraktId(traktId)
     }
 
-    override suspend fun deleteEntity(entity: EpisodeWatchEntry) {
+    override fun deleteEntity(entity: EpisodeWatchEntry) {
         deleteWithId(entity.id)
     }
 }

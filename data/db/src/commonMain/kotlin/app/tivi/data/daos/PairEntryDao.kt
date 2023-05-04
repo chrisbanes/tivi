@@ -25,5 +25,5 @@ import kotlinx.coroutines.flow.Flow
  */
 interface PairEntryDao<EC : MultipleEntry, LI : EntryWithShow<EC>> : EntityDao<EC> {
     fun entriesWithShowsObservable(showId: Long): Flow<List<LI>>
-    suspend fun deleteWithShowId(showId: Long)
+    fun deleteWithShowId(showId: Long)
 }

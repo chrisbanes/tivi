@@ -29,9 +29,9 @@ interface RecommendedDao : PaginatedEntryDao<RecommendedShowEntry, RecommendedEn
 
     fun entriesPagingSource(): PagingSource<Int, RecommendedEntryWithShow>
 
-    override suspend fun deletePage(page: Int)
+    override fun deletePage(page: Int)
 
-    override suspend fun deleteAll()
+    override fun deleteAll()
 
-    override suspend fun getLastPage(): Int?
+    override fun getLastPage(): Int?
 }
