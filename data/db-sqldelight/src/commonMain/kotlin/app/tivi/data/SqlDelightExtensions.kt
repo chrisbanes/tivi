@@ -24,6 +24,7 @@ import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.tivi.data.models.TiviEntity
 import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -44,13 +45,21 @@ internal fun <TX : Transacter, ET : TiviEntity> TX.upsert(
     insert: TX.(ET) -> Unit,
     update: TX.(ET) -> Unit,
     lastInsertRowId: TX.() -> Long,
+    onConflict: (TX.(ET, Throwable) -> Long)? = null,
 ): Long = transactionWithResult {
     try {
-        insert(entity)
-        lastInsertRowId()
-    } catch (e: Exception) {
-        // TODO: make this exception more granular (just on SQL Constraints errors?)
-        update(entity)
-        entity.id
+        if (entity.id != 0L) {
+            update(entity)
+            entity.id
+        } else {
+            insert(entity)
+            lastInsertRowId()
+        }
+    } catch (t: Throwable) {
+        when {
+            t is CancellationException -> throw t
+            onConflict != null -> onConflict(entity, t)
+            else -> throw t
+        }
     }
 }
