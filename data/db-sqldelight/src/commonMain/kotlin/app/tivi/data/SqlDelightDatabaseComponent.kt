@@ -26,7 +26,6 @@ import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.SeasonsDao
-import app.tivi.data.daos.ShowFtsDao
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.SqlDelightEpisodeWatchEntryDao
 import app.tivi.data.daos.SqlDelightEpisodesDao
@@ -37,7 +36,6 @@ import app.tivi.data.daos.SqlDelightPopularShowsDao
 import app.tivi.data.daos.SqlDelightRecommendedShowsDao
 import app.tivi.data.daos.SqlDelightRelatedShowsDao
 import app.tivi.data.daos.SqlDelightSeasonsDao
-import app.tivi.data.daos.SqlDelightShowFtsDao
 import app.tivi.data.daos.SqlDelightShowImagesDao
 import app.tivi.data.daos.SqlDelightTiviShowDao
 import app.tivi.data.daos.SqlDelightTrendingShowsDao
@@ -110,10 +108,6 @@ interface SqlDelightDatabaseComponent {
     @ApplicationScope
     @Provides
     fun bindShowTmdbImagesDao(dao: SqlDelightShowImagesDao): ShowTmdbImagesDao = dao
-
-    @ApplicationScope
-    @Provides
-    fun bindShowFtsDao(dao: SqlDelightShowFtsDao): ShowFtsDao = dao
 
     @ApplicationScope
     @Provides

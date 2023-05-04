@@ -142,4 +142,8 @@ class SqlDelightTiviShowDao(
             airs_tz = entity.airsTimeZone,
         )
     }
+
+    override fun search(query: String): List<TiviShow> {
+        return db.showQueries.search(query, ::TiviShow).executeAsList()
+    }
 }

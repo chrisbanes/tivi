@@ -43,6 +43,8 @@ interface TiviShowDao : EntityDao<TiviShow> {
     fun delete(id: Long)
 
     fun deleteAll()
+
+    fun search(query: String): List<TiviShow>
 }
 
 fun TiviShowDao.getShowWithIdOrThrow(id: Long): TiviShow {

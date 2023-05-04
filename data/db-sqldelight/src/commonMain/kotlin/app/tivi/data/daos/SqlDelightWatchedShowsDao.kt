@@ -29,6 +29,7 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
+import app.tivi.data.sqlValue
 import app.tivi.data.views.ShowsWatchStats
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
@@ -63,7 +64,7 @@ class SqlDelightWatchedShowsDao(
         followedOnly: Boolean,
         sort: SortOption,
     ): PagingSource<Int, UpNextEntry> = QueryPagingSource(
-        countQuery = db.upnext_showsQueries.upNextShowsCount(if (followedOnly) 1 else 0),
+        countQuery = db.upnext_showsQueries.upNextShowsCount(followedOnly.sqlValue),
         transacter = db.watched_entriesQueries,
         context = dispatchers.io,
         queryProvider = { count, offset ->
@@ -126,7 +127,7 @@ class SqlDelightWatchedShowsDao(
         limit: Long,
         offset: Long,
     ): Query<UpNextEntry> = db.upnext_showsQueries.upNextShows(
-        followedOnly = if (followedOnly) 1 else 0,
+        followedOnly = followedOnly.sqlValue,
         sort = sort.sqlValue,
         limit = limit,
         offset = offset,
