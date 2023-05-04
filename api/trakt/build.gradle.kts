@@ -16,22 +16,41 @@
 
 
 plugins {
-    id("kotlin")
+    kotlin("multiplatform")
     alias(libs.plugins.ksp)
-    alias(libs.plugins.android.lint)
+    alias(libs.plugins.cacheFixPlugin)
+}
+
+kotlin {
+    jvm()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.core.base)
+
+                api(libs.trakt.api)
+                api(projects.data.traktauth)
+
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.ktor.client.auth)
+
+                api(libs.kotlin.coroutines.core)
+
+                api(libs.kotlininject.runtime)
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+                implementation(libs.okhttp.okhttp)
+                implementation(libs.ktor.client.okhttp)
+            }
+        }
+    }
 }
 
 dependencies {
-    implementation(projects.core.base)
-
-    api(libs.trakt.api)
-    api(projects.data.traktauth)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.ktor.client.auth)
-
-    api(libs.okhttp.okhttp)
-
-    implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
+    add("kspJvm", libs.kotlininject.compiler)
 }
