@@ -1,0 +1,60 @@
+-- pulled out of Room auto migration
+
+DROP VIEW myshows_view_watch_stats;
+DROP VIEW followed_last_watched;
+DROP VIEW followed_next_to_watch;
+
+ALTER TABLE `watched_entries` ADD COLUMN `last_updated` TEXT NOT NULL DEFAULT '2000-01-01T00:00:00.000000Z';
+
+CREATE TABLE IF NOT EXISTS `_new_shows` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `trakt_votes` INTEGER, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `network_logo_path` TEXT, `runtime` INTEGER, `genres` TEXT, `status` TEXT, `airs_day` INTEGER, `airs_time` TEXT, `airs_tz` TEXT);
+
+INSERT INTO `_new_shows` (`id`,`title`,`original_title`,`trakt_id`,`tmdb_id`,`imdb_id`,`overview`,`homepage`,`trakt_rating`,`trakt_votes`,`certification`,`first_aired`,`country`,`network`,`network_logo_path`,`runtime`,`genres`,`status`,`airs_day`,`airs_time`,`airs_tz`) SELECT `id`,`title`,`original_title`,`trakt_id`,`tmdb_id`,`imdb_id`,`overview`,`homepage`,`trakt_rating`,`trakt_votes`,`certification`,`first_aired`,`country`,`network`,`network_logo_path`,`runtime`,`genres`,`status`,`airs_day`,`airs_time`,`airs_tz` FROM `shows`;
+DROP TABLE `shows`;
+ALTER TABLE `_new_shows` RENAME TO `shows`;
+CREATE UNIQUE INDEX IF NOT EXISTS `index_shows_trakt_id` ON `shows` (`trakt_id`);
+CREATE INDEX IF NOT EXISTS `index_shows_tmdb_id` ON `shows` (`tmdb_id`);
+
+CREATE VIEW `myshows_view_watch_stats` AS SELECT fs.id AS id, fs.show_id AS show_id, COUNT(*) AS episode_count, COUNT(ew.watched_at) AS watched_episode_count
+FROM myshows_entries AS fs
+INNER JOIN seasons AS s ON fs.show_id = s.show_id
+INNER JOIN episodes AS eps ON eps.season_id = s.id
+LEFT JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
+WHERE eps.first_aired IS NOT NULL
+    AND datetime(eps.first_aired) < datetime('now')
+    AND s.number != 0
+    AND s.ignored = 0
+GROUP BY fs.id;
+
+CREATE VIEW `followed_last_watched` AS SELECT
+  fs.id,
+  s.id AS season_id,
+  eps.id AS episode_id,
+  MAX((1000 * s.number) + eps.number) AS last_watched_abs_number
+FROM myshows_entries AS fs
+INNER JOIN seasons AS s ON fs.show_id = s.show_id
+INNER JOIN episodes AS eps ON eps.season_id = s.id
+INNER JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
+WHERE
+  s.number != 0
+  AND s.ignored = 0
+GROUP BY fs.id
+ORDER BY ew.watched_at DESC;
+
+CREATE VIEW `followed_next_to_watch` AS SELECT
+  fs.show_id AS show_id,
+  s.id AS season_id,
+  eps.id AS episode_id,
+  MIN((1000 * s.number) + eps.number) AS next_ep_to_watch_abs_number
+FROM
+  myshows_entries AS fs
+  INNER JOIN seasons AS s ON fs.show_id = s.show_id
+  INNER JOIN episodes AS eps ON eps.season_id = s.id
+  LEFT JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
+  LEFT JOIN followed_last_watched AS lw ON lw.id = fs.id
+WHERE
+  s.number != 0
+  AND s.ignored = 0
+  AND watched_at IS NULL
+  AND datetime(first_aired) < datetime('now')
+  AND ((1000 * s.number) + eps.number) > coalesce(last_watched_abs_number, 0)
+GROUP BY fs.id;
