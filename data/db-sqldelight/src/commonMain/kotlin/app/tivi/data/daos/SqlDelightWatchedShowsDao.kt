@@ -59,8 +59,9 @@ class SqlDelightWatchedShowsDao(
         db.watched_entriesQueries.deleteAll()
     }
 
-    override fun pagedUpNextShowsLastWatched(
+    override fun pagedUpNextShows(
         followedOnly: Boolean,
+        sort: SortOption,
     ): PagingSource<Int, UpNextEntry> = QueryPagingSource(
         countQuery = db.upnext_showsQueries.upNextShowsCount(if (followedOnly) 1 else 0),
         transacter = db.watched_entriesQueries,
@@ -68,23 +69,7 @@ class SqlDelightWatchedShowsDao(
         queryProvider = { count, offset ->
             provideUpNextShowsQuery(
                 followedOnly = followedOnly,
-                sort = SortOption.LAST_WATCHED,
-                limit = count,
-                offset = offset,
-            )
-        },
-    )
-
-    override fun pagedUpNextShowsDateAired(
-        followedOnly: Boolean,
-    ): PagingSource<Int, UpNextEntry> = QueryPagingSource(
-        countQuery = db.upnext_showsQueries.upNextShowsCount(if (followedOnly) 1 else 0),
-        transacter = db.watched_entriesQueries,
-        context = dispatchers.io,
-        queryProvider = { count, offset ->
-            provideUpNextShowsQuery(
-                followedOnly = followedOnly,
-                sort = SortOption.AIR_DATE,
+                sort = sort,
                 limit = count,
                 offset = offset,
             )

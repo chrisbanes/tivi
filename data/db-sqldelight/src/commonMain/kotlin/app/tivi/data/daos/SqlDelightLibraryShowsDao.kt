@@ -34,29 +34,6 @@ class SqlDelightLibraryShowsDao(
 ) : LibraryShowsDao {
     override fun pagedListLastWatched(
         sort: SortOption,
-        includeWatched: Boolean,
-        includeFollowed: Boolean,
-    ): PagingSource<Int, LibraryShow> = internalPagedListLastWatched(
-        sort = sort,
-        filter = null,
-        includeWatched = includeWatched,
-        includeFollowed = includeFollowed,
-    )
-
-    override fun pagedListLastWatchedFilter(
-        sort: SortOption,
-        filter: String,
-        includeWatched: Boolean,
-        includeFollowed: Boolean,
-    ): PagingSource<Int, LibraryShow> = internalPagedListLastWatched(
-        sort = sort,
-        filter = filter,
-        includeWatched = includeWatched,
-        includeFollowed = includeFollowed,
-    )
-
-    private fun internalPagedListLastWatched(
-        sort: SortOption,
         filter: String?,
         includeWatched: Boolean,
         includeFollowed: Boolean,

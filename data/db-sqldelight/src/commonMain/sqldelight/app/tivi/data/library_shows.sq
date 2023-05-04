@@ -16,7 +16,7 @@ WHERE
     AND (:filter IS NULL OR (shows_fts.title MATCH :filter))
 GROUP BY shows.id
 ORDER BY CASE
-    WHEN :sort = "last_watched" THEN (
+    WHEN :sort = 'last_watched' THEN (
         CASE WHEN MAX(datetime(watched_entries.last_watched)) IS NULL
         OR MAX(datetime(ew.watched_at)) > MAX(datetime(watched_entries.last_watched))
         THEN MAX(datetime(ew.watched_at))

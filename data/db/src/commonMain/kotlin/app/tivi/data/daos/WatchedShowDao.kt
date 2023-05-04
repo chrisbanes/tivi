@@ -19,6 +19,7 @@ package app.tivi.data.daos
 import app.cash.paging.PagingSource
 import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.compoundmodels.WatchedShowEntryWithShow
+import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
 import app.tivi.data.views.ShowsWatchStats
@@ -34,9 +35,7 @@ interface WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> 
 
     override fun deleteAll()
 
-    fun pagedUpNextShowsLastWatched(followedOnly: Boolean = false): PagingSource<Int, UpNextEntry>
-
-    fun pagedUpNextShowsDateAired(followedOnly: Boolean = false): PagingSource<Int, UpNextEntry>
+    fun pagedUpNextShows(followedOnly: Boolean = false, sort: SortOption): PagingSource<Int, UpNextEntry>
 
     fun getUpNextShows(): List<UpNextEntry>
 

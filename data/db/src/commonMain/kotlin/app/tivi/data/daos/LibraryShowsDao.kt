@@ -23,13 +23,7 @@ import app.tivi.data.models.SortOption
 interface LibraryShowsDao {
     fun pagedListLastWatched(
         sort: SortOption,
-        includeWatched: Boolean,
-        includeFollowed: Boolean,
-    ): PagingSource<Int, LibraryShow>
-
-    fun pagedListLastWatchedFilter(
-        sort: SortOption,
-        filter: String,
+        filter: String?,
         includeWatched: Boolean,
         includeFollowed: Boolean,
     ): PagingSource<Int, LibraryShow>
