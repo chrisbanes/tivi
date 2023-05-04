@@ -107,6 +107,7 @@ compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref 
 
 google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.2.2"
 google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.3.7"
+google-firebase-perf = "com.google.firebase:firebase-perf-ktx:20.3.2"
 
 debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
 debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber", version.ref = "debugdrawer" }
