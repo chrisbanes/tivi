@@ -21,6 +21,7 @@ import app.cash.paging.PagingState
 import app.cash.paging.RemoteMediator
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.PaginatedEntry
+import kotlinx.coroutines.CancellationException
 
 /**
  * A [RemoteMediator] which works on [PaginatedEntry] entities. [fetch] will be called with the
@@ -46,6 +47,8 @@ internal class PaginatedEntryRemoteMediator<LI, ET>(
         return try {
             fetch(nextPage)
             MediatorResult.Success(endOfPaginationReached = false)
+        } catch (e: CancellationException) {
+            throw e
         } catch (t: Throwable) {
             MediatorResult.Error(t)
         }
