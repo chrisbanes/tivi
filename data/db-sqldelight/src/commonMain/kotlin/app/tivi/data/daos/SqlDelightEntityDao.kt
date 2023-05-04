@@ -18,22 +18,15 @@ package app.tivi.data.daos
 
 import app.tivi.data.Database
 import app.tivi.data.models.TiviEntity
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.withContext
 
 interface SqlDelightEntityDao<in E : TiviEntity> : EntityDao<E> {
     val db: Database
-    val dispatchers: AppCoroutineDispatchers
 
-    override suspend fun upsert(entity: E): Long = withContext(dispatchers.io) {
-        upsertBlocking(entity)
-    }
-
-    override suspend fun upsertAll(entities: List<E>) = withContext(dispatchers.io) {
+    override fun upsertAll(entities: List<E>) {
         db.transaction {
-            entities.forEach { upsertBlocking(it) }
+            for (entity in entities) {
+                upsert(entity)
+            }
         }
     }
-
-    fun upsertBlocking(entity: E): Long
 }

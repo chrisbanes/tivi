@@ -27,7 +27,6 @@ import app.tivi.utils.s1_id
 import app.tivi.utils.s2
 import app.tivi.utils.show
 import app.tivi.utils.showId
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import me.tatarka.inject.annotations.Component
 import org.hamcrest.CoreMatchers.`is`
@@ -46,10 +45,8 @@ class SeasonsTest : DatabaseTest() {
         showsDao = component.showsDao
         seasonsDao = component.seasonsDao
 
-        runBlocking {
-            // We'll assume that there's a show in the db
-            showsDao.upsert(show)
-        }
+        // We'll assume that there's a show in the db
+        showsDao.upsert(show)
     }
 
     @Test

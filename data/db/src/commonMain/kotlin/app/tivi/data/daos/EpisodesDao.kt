@@ -23,23 +23,23 @@ import kotlinx.coroutines.flow.emptyFlow
 
 interface EpisodesDao : EntityDao<Episode> {
 
-    suspend fun episodesWithSeasonId(seasonId: Long): List<Episode>
+    fun episodesWithSeasonId(seasonId: Long): List<Episode>
 
-    suspend fun deleteWithSeasonId(seasonId: Long)
+    fun deleteWithSeasonId(seasonId: Long)
 
-    suspend fun episodeWithTraktId(traktId: Int): Episode?
+    fun episodeWithTraktId(traktId: Int): Episode?
 
-    suspend fun episodeWithTmdbId(tmdbId: Int): Episode?
+    fun episodeWithTmdbId(tmdbId: Int): Episode?
 
-    suspend fun episodeWithId(id: Long): Episode?
+    fun episodeWithId(id: Long): Episode?
 
-    suspend fun episodeTraktIdForId(id: Long): Int?
+    fun episodeTraktIdForId(id: Long): Int?
 
-    suspend fun episodeIdWithTraktId(traktId: Int): Long?
+    fun episodeIdWithTraktId(traktId: Int): Long?
 
     fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason>
 
-    suspend fun showIdForEpisodeId(episodeId: Long): Long
+    fun showIdForEpisodeId(episodeId: Long): Long
 
     fun observeNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> = emptyFlow()
 }

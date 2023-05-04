@@ -17,7 +17,6 @@
 package app.tivi.data.daos
 
 import app.tivi.data.Database
-import app.tivi.data.awaitList
 import app.tivi.data.models.TiviShow
 import app.tivi.util.AppCoroutineDispatchers
 import me.tatarka.inject.annotations.Inject
@@ -27,7 +26,7 @@ class SqlDelightShowFtsDao(
     private val db: Database,
     private val dispatchers: AppCoroutineDispatchers,
 ) : ShowFtsDao {
-    override suspend fun search(filter: String): List<TiviShow> {
-        return db.shows_ftsQueries.search(filter, ::TiviShow).awaitList(dispatchers.io)
+    override fun search(filter: String): List<TiviShow> {
+        return db.shows_ftsQueries.search(filter, ::TiviShow).executeAsList()
     }
 }

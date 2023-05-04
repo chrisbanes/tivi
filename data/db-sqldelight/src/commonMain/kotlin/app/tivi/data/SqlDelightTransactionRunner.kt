@@ -21,11 +21,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightTransactionRunner(private val db: Database) : DatabaseTransactionRunner {
-    override suspend fun <T> invoke(block: suspend () -> T): T {
-        return block()
-//            // FIXME
-//            runBlocking {
-//                block()
-//            }
+    override fun <T> invoke(block: () -> T): T {
+        return db.transactionWithResult {
+            block()
+        }
     }
 }

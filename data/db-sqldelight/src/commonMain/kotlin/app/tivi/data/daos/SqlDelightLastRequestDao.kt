@@ -17,41 +17,38 @@
 package app.tivi.data.daos
 
 import app.tivi.data.Database
-import app.tivi.data.await
-import app.tivi.data.awaitAsNull
 import app.tivi.data.models.LastRequest
 import app.tivi.data.models.Request
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightLastRequestDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : LastRequestDao, SqlDelightEntityDao<LastRequest> {
-    override suspend fun lastRequest(
+    override fun lastRequest(
         request: Request,
         entityId: Long,
     ): LastRequest? {
         return db.last_requestsQueries.getLastRequestForId(request, entityId, ::LastRequest)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun requestCount(
+    override fun requestCount(
         request: Request,
         entityId: Long,
     ): Int {
         return db.last_requestsQueries.requestCount(request, entityId)
-            .await(dispatchers.io).toInt()
+            .executeAsOne().toInt()
     }
 
-    override suspend fun deleteEntity(entity: LastRequest) = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: LastRequest) {
         db.last_requestsQueries.delete(entity.id)
     }
 
-    override fun upsertBlocking(entity: LastRequest): Long {
+    override fun upsert(entity: LastRequest): Long {
         return db.last_requestsQueries.upsert(
             entity = entity,
             insert = {

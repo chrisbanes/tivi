@@ -22,20 +22,18 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.paging3.QueryPagingSource
 import app.tivi.data.Database
-import app.tivi.data.await
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import app.tivi.data.models.RecommendedShowEntry
 import app.tivi.data.models.TiviShow
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightRecommendedShowsDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : RecommendedDao, SqlDelightEntityDao<RecommendedShowEntry> {
     override fun entriesForPage(page: Int): Flow<List<RecommendedShowEntry>> {
         return db.recommended_entriesQueries.entriesInPage(page, ::RecommendedShowEntry)
@@ -56,23 +54,23 @@ class SqlDelightRecommendedShowsDao(
         )
     }
 
-    override suspend fun deletePage(page: Int) = withContext(dispatchers.io) {
+    override fun deletePage(page: Int) {
         db.recommended_entriesQueries.deletePage(page)
     }
 
-    override suspend fun deleteAll() = withContext(dispatchers.io) {
+    override fun deleteAll() {
         db.recommended_entriesQueries.deleteAll()
     }
 
-    override suspend fun getLastPage(): Int? {
-        return db.recommended_entriesQueries.getLastPage().await(dispatchers.io).MAX?.toInt()
+    override fun getLastPage(): Int? {
+        return db.recommended_entriesQueries.getLastPage().executeAsOne().MAX?.toInt()
     }
 
-    override suspend fun deleteEntity(entity: RecommendedShowEntry) = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: RecommendedShowEntry) {
         db.recommended_entriesQueries.delete(entity.id)
     }
 
-    override fun upsertBlocking(entity: RecommendedShowEntry): Long = db.recommended_entriesQueries.upsert(
+    override fun upsert(entity: RecommendedShowEntry): Long = db.recommended_entriesQueries.upsert(
         entity = entity,
         insert = { entry ->
             insert(

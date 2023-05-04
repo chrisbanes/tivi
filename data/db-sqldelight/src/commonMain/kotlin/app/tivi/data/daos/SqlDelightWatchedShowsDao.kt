@@ -23,8 +23,6 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.cash.sqldelight.paging3.QueryPagingSource
 import app.tivi.data.Database
-import app.tivi.data.awaitAsNull
-import app.tivi.data.awaitList
 import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
@@ -35,22 +33,21 @@ import app.tivi.data.upsert
 import app.tivi.data.views.ShowsWatchStats
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightWatchedShowsDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : WatchedShowDao, SqlDelightEntityDao<WatchedShowEntry> {
-    override suspend fun entryWithShowId(showId: Long): WatchedShowEntry? {
+    override fun entryWithShowId(showId: Long): WatchedShowEntry? {
         return db.watched_entriesQueries.entryWithShowId(showId, ::WatchedShowEntry)
-            .awaitAsNull(dispatchers.io)
+            .executeAsOneOrNull()
     }
 
-    override suspend fun entries(): List<WatchedShowEntry> {
+    override fun entries(): List<WatchedShowEntry> {
         return db.watched_entriesQueries.entries(::WatchedShowEntry)
-            .awaitList(dispatchers.io)
+            .executeAsList()
     }
 
     override fun entriesObservable(): Flow<List<WatchedShowEntry>> {
@@ -59,7 +56,7 @@ class SqlDelightWatchedShowsDao(
             .mapToList(dispatchers.io)
     }
 
-    override suspend fun deleteAll() = withContext(dispatchers.io) {
+    override fun deleteAll() {
         db.watched_entriesQueries.deleteAll()
     }
 
@@ -95,13 +92,13 @@ class SqlDelightWatchedShowsDao(
         },
     )
 
-    override suspend fun getUpNextShows(): List<UpNextEntry> {
+    override fun getUpNextShows(): List<UpNextEntry> {
         return provideUpNextShowsQuery(
             followedOnly = false,
             sort = SortOption.LAST_WATCHED,
             limit = Long.MAX_VALUE,
             offset = 0,
-        ).awaitList(dispatchers.io)
+        ).executeAsList()
     }
 
     override fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats?> {
@@ -116,7 +113,7 @@ class SqlDelightWatchedShowsDao(
             .mapToOneOrNull(dispatchers.io)
     }
 
-    override fun upsertBlocking(entity: WatchedShowEntry): Long {
+    override fun upsert(entity: WatchedShowEntry): Long {
         return db.watched_entriesQueries.upsert(
             entity = entity,
             insert = {
@@ -139,7 +136,7 @@ class SqlDelightWatchedShowsDao(
         )
     }
 
-    override suspend fun deleteEntity(entity: WatchedShowEntry) = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: WatchedShowEntry) {
         db.watched_entriesQueries.delete(entity.id)
     }
 
@@ -163,7 +160,8 @@ class SqlDelightWatchedShowsDao(
             ep_aired, trakt_rating_, trakt_votes_, tmdb_poster_path, tmdb_backdrop_path, ignored,
             // episode
             id__, season_id, trakt_id__, tmdb_id__, title__, overview__, number_, first_aired_,
-            trakt_rating__, trakt_rating_votes, tmdb_backdrop_path_, ->
+            trakt_rating__, trakt_rating_votes, tmdb_backdrop_path_,
+        ->
 
         val show = TiviShow(
             id = id,

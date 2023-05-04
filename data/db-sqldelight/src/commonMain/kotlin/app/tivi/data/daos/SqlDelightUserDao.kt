@@ -19,20 +19,18 @@ package app.tivi.data.daos
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.tivi.data.Database
-import app.tivi.data.awaitAsNull
 import app.tivi.data.models.TraktUser
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightUserDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : UserDao, SqlDelightEntityDao<TraktUser> {
-    override fun upsertBlocking(entity: TraktUser): Long {
+    override fun upsert(entity: TraktUser): Long {
         return db.usersQueries.upsert(
             entity = entity,
             insert = {
@@ -77,32 +75,32 @@ class SqlDelightUserDao(
             .mapToOneOrNull(dispatchers.io)
     }
 
-    override suspend fun getUser(username: String): TraktUser? = when (username) {
-        "me" -> db.usersQueries.getEntryForMe(::TraktUser).awaitAsNull(dispatchers.io)
+    override fun getUser(username: String): TraktUser? = when (username) {
+        "me" -> db.usersQueries.getEntryForMe(::TraktUser).executeAsOneOrNull()
         else -> {
             db.usersQueries.getEntryForUsername(username, ::TraktUser)
-                .awaitAsNull(dispatchers.io)
+                .executeAsOneOrNull()
         }
     }
 
-    override suspend fun getId(username: String): Long? = when (username) {
-        "me" -> db.usersQueries.idForMe().awaitAsNull(dispatchers.io)
-        else -> db.usersQueries.idForUsername(username).awaitAsNull(dispatchers.io)
+    override fun getId(username: String): Long? = when (username) {
+        "me" -> db.usersQueries.idForMe().executeAsOneOrNull()
+        else -> db.usersQueries.idForUsername(username).executeAsOneOrNull()
     }
 
-    override suspend fun deleteWithUsername(username: String): Unit = withContext(dispatchers.io) {
+    override fun deleteWithUsername(username: String) {
         db.usersQueries.deleteWithUsername(username)
     }
 
-    override suspend fun deleteMe(): Unit = withContext(dispatchers.io) {
+    override fun deleteMe() {
         db.usersQueries.deleteMe()
     }
 
-    override suspend fun deleteAll(): Unit = withContext(dispatchers.io) {
+    override fun deleteAll() {
         db.usersQueries.deleteAll()
     }
 
-    override suspend fun deleteEntity(entity: TraktUser): Unit = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: TraktUser) {
         db.usersQueries.deleteWithId(entity.id)
     }
 }

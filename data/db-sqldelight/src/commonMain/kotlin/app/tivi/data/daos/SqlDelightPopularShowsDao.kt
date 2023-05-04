@@ -22,20 +22,18 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.paging3.QueryPagingSource
 import app.tivi.data.Database
-import app.tivi.data.await
 import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.data.models.PopularShowEntry
 import app.tivi.data.models.TiviShow
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightPopularShowsDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : PopularDao, SqlDelightEntityDao<PopularShowEntry> {
     override fun entriesObservable(page: Int): Flow<List<PopularShowEntry>> {
         return db.popular_showsQueries.entriesInPage(page, ::PopularShowEntry)
@@ -56,23 +54,23 @@ class SqlDelightPopularShowsDao(
         )
     }
 
-    override suspend fun deletePage(page: Int) = withContext(dispatchers.io) {
+    override fun deletePage(page: Int) {
         db.popular_showsQueries.deletePage(page)
     }
 
-    override suspend fun deleteAll() = withContext(dispatchers.io) {
+    override fun deleteAll() {
         db.popular_showsQueries.deleteAll()
     }
 
-    override suspend fun getLastPage(): Int? {
-        return db.popular_showsQueries.getLastPage().await(dispatchers.io).MAX?.toInt()
+    override fun getLastPage(): Int? {
+        return db.popular_showsQueries.getLastPage().executeAsOne().MAX?.toInt()
     }
 
-    override suspend fun deleteEntity(entity: PopularShowEntry) = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: PopularShowEntry) {
         db.popular_showsQueries.delete(entity.id)
     }
 
-    override fun upsertBlocking(entity: PopularShowEntry): Long = db.popular_showsQueries.upsert(
+    override fun upsert(entity: PopularShowEntry): Long = db.popular_showsQueries.upsert(
         entity = entity,
         insert = { entry ->
             insert(

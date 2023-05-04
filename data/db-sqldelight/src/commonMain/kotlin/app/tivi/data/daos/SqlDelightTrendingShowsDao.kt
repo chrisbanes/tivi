@@ -22,20 +22,18 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.paging3.QueryPagingSource
 import app.tivi.data.Database
-import app.tivi.data.await
 import app.tivi.data.compoundmodels.TrendingEntryWithShow
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TrendingShowEntry
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightTrendingShowsDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : TrendingDao, SqlDelightEntityDao<TrendingShowEntry> {
     override fun entriesObservable(page: Int): Flow<List<TrendingShowEntry>> {
         return db.trending_showsQueries.entriesInPage(page, ::TrendingShowEntry)
@@ -56,23 +54,23 @@ class SqlDelightTrendingShowsDao(
         )
     }
 
-    override suspend fun deletePage(page: Int) = withContext(dispatchers.io) {
+    override fun deletePage(page: Int) {
         db.trending_showsQueries.deletePage(page)
     }
 
-    override suspend fun deleteAll() = withContext(dispatchers.io) {
+    override fun deleteAll() {
         db.trending_showsQueries.deleteAll()
     }
 
-    override suspend fun getLastPage(): Int? {
-        return db.trending_showsQueries.getLastPage().await(dispatchers.io).MAX?.toInt()
+    override fun getLastPage(): Int? {
+        return db.trending_showsQueries.getLastPage().executeAsOne().MAX?.toInt()
     }
 
-    override suspend fun deleteEntity(entity: TrendingShowEntry) = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: TrendingShowEntry) {
         db.trending_showsQueries.delete(entity.id)
     }
 
-    override fun upsertBlocking(entity: TrendingShowEntry): Long = db.trending_showsQueries.upsert(
+    override fun upsert(entity: TrendingShowEntry): Long = db.trending_showsQueries.upsert(
         entity = entity,
         insert = { entry ->
             insert(

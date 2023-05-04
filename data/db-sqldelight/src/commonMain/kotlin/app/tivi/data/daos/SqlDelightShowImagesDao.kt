@@ -19,26 +19,24 @@ package app.tivi.data.daos
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.tivi.data.Database
-import app.tivi.data.await
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightShowImagesDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : ShowTmdbImagesDao, SqlDelightEntityDao<ShowTmdbImage> {
-    override suspend fun deleteForShowId(showId: Long) = withContext(dispatchers.io) {
+    override fun deleteForShowId(showId: Long) {
         db.show_imagesQueries.deleteForShowId(showId)
     }
 
-    override suspend fun imageCountForShowId(showId: Long): Int {
+    override fun imageCountForShowId(showId: Long): Int {
         return db.show_imagesQueries.getImageCountForShowId(showId)
-            .await(dispatchers.io)
+            .executeAsOne()
             .toInt()
     }
 
@@ -48,15 +46,15 @@ class SqlDelightShowImagesDao(
             .mapToList(dispatchers.io)
     }
 
-    override suspend fun deleteAll() = withContext(dispatchers.io) {
+    override fun deleteAll() {
         db.show_imagesQueries.deleteAll()
     }
 
-    override suspend fun deleteEntity(entity: ShowTmdbImage) = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: ShowTmdbImage) {
         db.show_imagesQueries.delete(entity.id)
     }
 
-    override fun upsertBlocking(entity: ShowTmdbImage): Long = db.show_imagesQueries.upsert(
+    override fun upsert(entity: ShowTmdbImage): Long = db.show_imagesQueries.upsert(
         entity = entity,
         insert = { entry ->
             insert(

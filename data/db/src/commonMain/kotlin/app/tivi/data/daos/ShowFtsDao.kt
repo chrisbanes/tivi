@@ -20,5 +20,5 @@ import app.tivi.data.models.TiviShow
 
 interface ShowFtsDao {
 
-    suspend fun search(filter: String): List<TiviShow>
+    fun search(filter: String): List<TiviShow>
 }

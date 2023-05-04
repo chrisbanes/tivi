@@ -22,31 +22,31 @@ import kotlinx.coroutines.flow.Flow
 
 interface EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
 
-    suspend fun watchesForEpisode(episodeId: Long): List<EpisodeWatchEntry>
+    fun watchesForEpisode(episodeId: Long): List<EpisodeWatchEntry>
 
-    suspend fun watchCountForEpisode(episodeId: Long): Int
+    fun watchCountForEpisode(episodeId: Long): Int
 
     fun watchesForEpisodeObservable(episodeId: Long): Flow<List<EpisodeWatchEntry>>
 
-    suspend fun entryWithId(id: Long): EpisodeWatchEntry?
+    fun entryWithId(id: Long): EpisodeWatchEntry?
 
-    suspend fun entryWithTraktId(traktId: Long): EpisodeWatchEntry?
+    fun entryWithTraktId(traktId: Long): EpisodeWatchEntry?
 
-    suspend fun entryIdWithTraktId(traktId: Long): Long?
+    fun entryIdWithTraktId(traktId: Long): Long?
 
-    suspend fun entriesForShowIdWithNoPendingAction(showId: Long): List<EpisodeWatchEntry>
+    fun entriesForShowIdWithNoPendingAction(showId: Long): List<EpisodeWatchEntry>
 
-    suspend fun entriesForShowIdWithSendPendingActions(showId: Long): List<EpisodeWatchEntry>
+    fun entriesForShowIdWithSendPendingActions(showId: Long): List<EpisodeWatchEntry>
 
-    suspend fun entriesForShowIdWithDeletePendingActions(showId: Long): List<EpisodeWatchEntry>
+    fun entriesForShowIdWithDeletePendingActions(showId: Long): List<EpisodeWatchEntry>
 
-    suspend fun entriesForShowId(showId: Long): List<EpisodeWatchEntry>
+    fun entriesForShowId(showId: Long): List<EpisodeWatchEntry>
 
-    suspend fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction)
+    fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction)
 
-    suspend fun deleteWithId(id: Long)
+    fun deleteWithId(id: Long)
 
-    suspend fun deleteWithIds(ids: List<Long>)
+    fun deleteWithIds(ids: List<Long>)
 
-    suspend fun deleteWithTraktId(traktId: Long)
+    fun deleteWithTraktId(traktId: Long)
 }

@@ -21,21 +21,21 @@ import kotlinx.coroutines.flow.Flow
 
 interface ShowTmdbImagesDao : EntityDao<ShowTmdbImage> {
 
-    suspend fun deleteForShowId(showId: Long)
+    fun deleteForShowId(showId: Long)
 
-    suspend fun imageCountForShowId(showId: Long): Int
+    fun imageCountForShowId(showId: Long): Int
 
     fun getImagesForShowId(showId: Long): Flow<List<ShowTmdbImage>>
 
-    suspend fun deleteAll()
+    fun deleteAll()
 }
 
-suspend fun ShowTmdbImagesDao.saveImages(showId: Long, images: List<ShowTmdbImage>) {
+fun ShowTmdbImagesDao.saveImages(showId: Long, images: List<ShowTmdbImage>) {
     deleteForShowId(showId)
     upsertAll(images)
 }
 
-suspend fun ShowTmdbImagesDao.saveImagesIfEmpty(showId: Long, images: List<ShowTmdbImage>) {
+fun ShowTmdbImagesDao.saveImagesIfEmpty(showId: Long, images: List<ShowTmdbImage>) {
     if (imageCountForShowId(showId) <= 0) {
         upsertAll(images)
     }

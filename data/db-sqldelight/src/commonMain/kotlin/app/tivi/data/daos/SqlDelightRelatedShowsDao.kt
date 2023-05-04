@@ -25,13 +25,12 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightRelatedShowsDao(
     override val db: Database,
-    override val dispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : RelatedShowsDao, SqlDelightEntityDao<RelatedShowEntry> {
 
     override fun entriesObservable(showId: Long): Flow<List<RelatedShowEntry>> {
@@ -45,7 +44,8 @@ class SqlDelightRelatedShowsDao(
                 id, show_id, other_show_id, order_index,
                 id_, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
                 trakt_rating, trakt_votes, certification, first_aired, country, network,
-                network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz, ->
+                network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
+            ->
             RelatedShowEntryWithShow(
                 entry = RelatedShowEntry(id, show_id, other_show_id, order_index),
                 show = TiviShow(
@@ -57,11 +57,11 @@ class SqlDelightRelatedShowsDao(
         }.asFlow().mapToList(dispatchers.io)
     }
 
-    override suspend fun deleteWithShowId(showId: Long) = withContext(dispatchers.io) {
+    override fun deleteWithShowId(showId: Long) {
         db.related_showsQueries.deleteWithShowId(showId)
     }
 
-    override fun upsertBlocking(entity: RelatedShowEntry): Long = db.related_showsQueries.upsert(
+    override fun upsert(entity: RelatedShowEntry): Long = db.related_showsQueries.upsert(
         entity = entity,
         insert = { entry ->
             insert(
@@ -82,11 +82,11 @@ class SqlDelightRelatedShowsDao(
         lastInsertRowId = { lastInsertRowId().executeAsOne() },
     )
 
-    override suspend fun deleteEntity(entity: RelatedShowEntry) = withContext(dispatchers.io) {
+    override fun deleteEntity(entity: RelatedShowEntry) {
         db.related_showsQueries.delete(entity.id)
     }
 
-    override suspend fun deleteAll() = withContext(dispatchers.io) {
+    override fun deleteAll() {
         db.related_showsQueries.deleteAll()
     }
 }

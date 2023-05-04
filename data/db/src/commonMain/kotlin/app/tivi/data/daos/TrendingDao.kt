@@ -29,9 +29,9 @@ interface TrendingDao : PaginatedEntryDao<TrendingShowEntry, TrendingEntryWithSh
 
     fun entriesPagingSource(): PagingSource<Int, TrendingEntryWithShow>
 
-    override suspend fun deletePage(page: Int)
+    override fun deletePage(page: Int)
 
-    override suspend fun deleteAll()
+    override fun deleteAll()
 
-    override suspend fun getLastPage(): Int?
+    override fun getLastPage(): Int?
 }

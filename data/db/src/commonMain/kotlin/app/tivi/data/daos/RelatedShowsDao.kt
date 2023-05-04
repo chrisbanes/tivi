@@ -22,5 +22,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowEntryWithShow> {
     fun entriesObservable(showId: Long): Flow<List<RelatedShowEntry>>
-    suspend fun deleteAll()
+    fun deleteAll()
 }

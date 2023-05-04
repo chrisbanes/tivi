@@ -21,7 +21,7 @@ import app.tivi.data.models.Request
 
 interface LastRequestDao : EntityDao<LastRequest> {
 
-    suspend fun lastRequest(request: Request, entityId: Long): LastRequest?
+    fun lastRequest(request: Request, entityId: Long): LastRequest?
 
-    suspend fun requestCount(request: Request, entityId: Long): Int
+    fun requestCount(request: Request, entityId: Long): Int
 }

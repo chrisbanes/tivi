@@ -76,13 +76,15 @@ class SqlDelightLibraryShowsDao(
             sort = sort.sqlValue,
             limit = limit,
             offset = offset,
-        ) { id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
+        ) {
+                id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
                 trakt_rating, trakt_votes, certification, first_aired, country, network,
                 network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
                 // watched show
                 id_, show_id, last_watched, last_updated,
                 // show stats
-                show_id_, episode_count, watched_episode_count, ->
+                show_id_, episode_count, watched_episode_count,
+            ->
             LibraryShow(
                 show = TiviShow(
                     id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,

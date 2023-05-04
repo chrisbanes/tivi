@@ -29,9 +29,9 @@ interface PopularDao : PaginatedEntryDao<PopularShowEntry, PopularEntryWithShow>
 
     fun entriesPagingSource(): PagingSource<Int, PopularEntryWithShow>
 
-    override suspend fun deletePage(page: Int)
+    override fun deletePage(page: Int)
 
-    override suspend fun deleteAll()
+    override fun deleteAll()
 
-    override suspend fun getLastPage(): Int?
+    override fun getLastPage(): Int?
 }

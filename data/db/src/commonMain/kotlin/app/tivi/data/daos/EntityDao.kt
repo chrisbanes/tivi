@@ -19,13 +19,13 @@ package app.tivi.data.daos
 import app.tivi.data.models.TiviEntity
 
 interface EntityDao<in E : TiviEntity> {
-    suspend fun upsert(entity: E): Long
+    fun upsert(entity: E): Long
 
-    suspend fun upsertAll(entities: List<E>)
+    fun upsertAll(entities: List<E>)
 
-    suspend fun deleteEntity(entity: E)
+    fun deleteEntity(entity: E)
 }
 
-suspend inline fun <E : TiviEntity> EntityDao<E>.upsertAll(vararg entities: E) {
+fun <E : TiviEntity> EntityDao<E>.upsertAll(vararg entities: E) {
     upsertAll(entities.toList())
 }
