@@ -36,7 +36,7 @@ interface SeasonsDao : EntityDao<Season> {
 
     fun seasonWithTraktId(traktId: Int): Season?
 
-    fun showPreviousSeasonIds(seasonId: Long): LongArray
+    fun showPreviousSeasonIds(seasonId: Long): List<Long>
 
     fun updateSeasonIgnoreFlag(seasonId: Long, ignored: Boolean)
 

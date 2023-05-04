@@ -151,11 +151,9 @@ class SqlDelightSeasonsDao(
             .executeAsOneOrNull()
     }
 
-    override fun showPreviousSeasonIds(seasonId: Long): LongArray {
-        // TODO: Return a List instead
+    override fun showPreviousSeasonIds(seasonId: Long): List<Long> {
         return db.seasonsQueries.previousSeasonsForShowId(seasonId)
             .executeAsList()
-            .toLongArray()
     }
 
     override fun updateSeasonIgnoreFlag(
