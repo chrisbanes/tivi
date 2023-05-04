@@ -29,5 +29,5 @@ fun <EC : PaginatedEntry, LI : EntryWithShow<EC>> PaginatedEntryDao<EC, LI>.upda
     entities: List<EC>,
 ) {
     deletePage(page)
-    upsertAll(entities)
+    upsert(entities)
 }

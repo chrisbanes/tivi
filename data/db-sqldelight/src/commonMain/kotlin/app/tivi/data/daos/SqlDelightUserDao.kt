@@ -20,7 +20,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.tivi.data.Database
 import app.tivi.data.models.TraktUser
-import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -30,36 +29,33 @@ class SqlDelightUserDao(
     override val db: Database,
     private val dispatchers: AppCoroutineDispatchers,
 ) : UserDao, SqlDelightEntityDao<TraktUser> {
-    override fun upsert(entity: TraktUser): Long {
-        return db.usersQueries.upsert(
-            entity = entity,
-            insert = {
-                insert(
-                    id = it.id,
-                    username = it.username,
-                    name = it.name,
-                    joined_date = it.joined,
-                    location = it.location,
-                    about = it.about,
-                    avatar_url = it.avatarUrl,
-                    vip = it.vip,
-                    is_me = it.isMe,
-                )
-            },
-            update = {
-                update(
-                    id = it.id,
-                    username = it.username,
-                    name = it.name,
-                    joined_date = it.joined,
-                    location = it.location,
-                    about = it.about,
-                    avatar_url = it.avatarUrl,
-                    vip = it.vip,
-                    is_me = it.isMe,
-                )
-            },
-            lastInsertRowId = { lastInsertRowId().executeAsOne() },
+
+    override fun insert(entity: TraktUser): Long {
+        db.usersQueries.insert(
+            id = entity.id,
+            username = entity.username,
+            name = entity.name,
+            joined_date = entity.joined,
+            location = entity.location,
+            about = entity.about,
+            avatar_url = entity.avatarUrl,
+            vip = entity.vip,
+            is_me = entity.isMe,
+        )
+        return db.usersQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: TraktUser) {
+        db.usersQueries.update(
+            id = entity.id,
+            username = entity.username,
+            name = entity.name,
+            joined_date = entity.joined,
+            location = entity.location,
+            about = entity.about,
+            avatar_url = entity.avatarUrl,
+            vip = entity.vip,
+            is_me = entity.isMe,
         )
     }
 

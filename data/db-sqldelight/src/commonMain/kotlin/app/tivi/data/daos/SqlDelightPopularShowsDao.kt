@@ -25,7 +25,6 @@ import app.tivi.data.Database
 import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.data.models.PopularShowEntry
 import app.tivi.data.models.TiviShow
-import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -70,26 +69,24 @@ class SqlDelightPopularShowsDao(
         db.popular_showsQueries.delete(entity.id)
     }
 
-    override fun upsert(entity: PopularShowEntry): Long = db.popular_showsQueries.upsert(
-        entity = entity,
-        insert = { entry ->
-            insert(
-                id = entry.id,
-                show_id = entry.showId,
-                page = entry.page,
-                page_order = entry.pageOrder,
-            )
-        },
-        update = { entry ->
-            update(
-                id = entry.id,
-                show_id = entry.showId,
-                page = entry.page,
-                page_order = entry.pageOrder,
-            )
-        },
-        lastInsertRowId = { lastInsertRowId().executeAsOne() },
-    )
+    override fun insert(entity: PopularShowEntry): Long {
+        db.popular_showsQueries.insert(
+            id = entity.id,
+            show_id = entity.showId,
+            page = entity.page,
+            page_order = entity.pageOrder,
+        )
+        return db.popular_showsQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: PopularShowEntry) {
+        db.popular_showsQueries.update(
+            id = entity.id,
+            show_id = entity.showId,
+            page = entity.page,
+            page_order = entity.pageOrder,
+        )
+    }
 
     private fun entriesWithShow(limit: Long, offset: Long): Query<PopularEntryWithShow> {
         return db.popular_showsQueries.entriesWithShow(

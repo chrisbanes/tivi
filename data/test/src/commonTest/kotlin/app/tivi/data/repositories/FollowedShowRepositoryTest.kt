@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories
 
+import app.cash.sqldelight.db.SqlDriver
 import app.moviebase.trakt.model.TraktList
 import app.moviebase.trakt.model.TraktListIds
 import app.tivi.data.DatabaseTest
@@ -37,7 +38,6 @@ import app.tivi.utils.show
 import app.tivi.utils.show2
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import me.tatarka.inject.annotations.Component
 import org.junit.Before
@@ -59,10 +59,9 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followedShowsDataSource = component.followedShowsDataSource
         traktAuthRepository = component.traktAuthRepository
 
-        runBlocking {
-            // We'll assume that there's a show in the db
-            showsDao.upsert(show)
-        }
+        // We'll assume that there's a show in the db
+        showsDao.insert(show)
+        showsDao.insert(show2)
     }
 
     @Test
@@ -82,7 +81,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync_emptyResponse() = runTest {
-        followShowsDao.upsert(followedShow1Local)
+        followShowsDao.insert(followedShow1Local)
 
         coEvery { followedShowsDataSource.getFollowedListId() } returns
             TraktList(ids = TraktListIds(trakt = 0))
@@ -98,7 +97,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync_responseDifferentShow() = runTest {
-        followShowsDao.upsert(followedShow1Local)
+        followShowsDao.insert(followedShow1Local)
 
         coEvery { followedShowsDataSource.getFollowedListId() } returns
             TraktList(ids = TraktListIds(trakt = 0))
@@ -114,7 +113,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync_pendingDelete() = runTest {
-        followShowsDao.upsert(followedShow1PendingDelete)
+        followShowsDao.insert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
         coEvery { followedShowsDataSource.getFollowedListId() } throws IllegalArgumentException()
@@ -128,7 +127,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync_pendingAdd() = runTest {
-        followShowsDao.upsert(followedShow1PendingUpload)
+        followShowsDao.insert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
         coEvery { followedShowsDataSource.getFollowedListId() } throws IllegalArgumentException()
@@ -152,4 +151,6 @@ abstract class FollowedShowsRepositoryTestComponent(
     abstract val followedShowsRepository: FollowedShowsRepository
     abstract val followedShowsDataSource: FollowedShowsDataSource
     abstract val traktAuthRepository: TraktAuthRepository
+
+    abstract val sqlDriver: SqlDriver
 }

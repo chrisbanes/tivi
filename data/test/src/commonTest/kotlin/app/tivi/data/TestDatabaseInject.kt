@@ -115,7 +115,7 @@ abstract class TestDataSourceComponent :
     fun provideAuthStore(): AuthStore = AuthorizedAuthStore
 }
 
-interface TestRoomDatabaseComponent : SqlDelightDatabaseComponent {
+interface TestDatabaseComponent : SqlDelightDatabaseComponent {
 
     @Provides
     fun provideDriverFactory(): DriverFactory = DriverFactory()

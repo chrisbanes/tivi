@@ -45,7 +45,7 @@ abstract class TestApplicationComponent :
     TraktComponent,
     LoggerComponent,
     TestDataSourceComponent(),
-    TestRoomDatabaseComponent {
+    TestDatabaseComponent {
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()

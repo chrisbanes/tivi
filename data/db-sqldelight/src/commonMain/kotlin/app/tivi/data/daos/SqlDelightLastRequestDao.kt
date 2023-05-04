@@ -19,15 +19,55 @@ package app.tivi.data.daos
 import app.tivi.data.Database
 import app.tivi.data.models.LastRequest
 import app.tivi.data.models.Request
-import app.tivi.data.upsert
-import app.tivi.util.AppCoroutineDispatchers
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightLastRequestDao(
     override val db: Database,
-    private val dispatchers: AppCoroutineDispatchers,
 ) : LastRequestDao, SqlDelightEntityDao<LastRequest> {
+    override fun insert(entity: LastRequest): Long {
+        db.last_requestsQueries.insert(
+            id = entity.id,
+            entity_id = entity.entityId,
+            request = entity.request,
+            timestamp = entity.timestamp,
+        )
+        return db.last_requestsQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: LastRequest) {
+        db.last_requestsQueries.update(
+            id = entity.id,
+            entity_id = entity.entityId,
+            request = entity.request,
+            timestamp = entity.timestamp,
+        )
+    }
+
+    override fun upsert(entity: LastRequest): Long = upsert(
+        entity = entity,
+        insert = ::insert,
+        update = ::update,
+        onConflict = { e, throwable ->
+            val id = db.last_requestsQueries.getLastRequestForId(
+                entity.request,
+                entity.entityId,
+            ).executeAsOneOrNull()?.id
+
+            if (id != null) {
+                db.last_requestsQueries.update(
+                    id = id,
+                    entity_id = e.entityId,
+                    request = e.request,
+                    timestamp = e.timestamp,
+                )
+                id
+            } else {
+                throw throwable
+            }
+        },
+    )
+
     override fun lastRequest(
         request: Request,
         entityId: Long,
@@ -46,46 +86,5 @@ class SqlDelightLastRequestDao(
 
     override fun deleteEntity(entity: LastRequest) {
         db.last_requestsQueries.delete(entity.id)
-    }
-
-    override fun upsert(entity: LastRequest): Long {
-        return db.last_requestsQueries.upsert(
-            entity = entity,
-            insert = {
-                insert(
-                    id = it.id,
-                    entity_id = it.entityId,
-                    request = it.request,
-                    timestamp = it.timestamp,
-                )
-            },
-            update = {
-                update(
-                    id = it.id,
-                    entity_id = it.entityId,
-                    request = it.request,
-                    timestamp = it.timestamp,
-                )
-            },
-            lastInsertRowId = { lastInsertRowId().executeAsOne() },
-            onConflict = { e, throwable ->
-                val id = db.last_requestsQueries.getLastRequestForId(
-                    entity.request,
-                    entity.entityId,
-                ).executeAsOneOrNull()?.id
-
-                if (id != null) {
-                    update(
-                        id = id,
-                        entity_id = e.entityId,
-                        request = e.request,
-                        timestamp = e.timestamp,
-                    )
-                    id
-                } else {
-                    throw throwable
-                }
-            },
-        )
     }
 }

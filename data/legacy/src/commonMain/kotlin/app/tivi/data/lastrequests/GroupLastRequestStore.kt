@@ -27,19 +27,19 @@ open class GroupLastRequestStore(
     private val request: Request,
     private val dao: LastRequestDao,
 ) {
-    suspend fun getRequestInstant(): Instant? {
+    fun getRequestInstant(): Instant? {
         return dao.lastRequest(request, DEFAULT_ID)?.timestamp
     }
 
-    suspend fun isRequestExpired(threshold: Duration): Boolean {
+    fun isRequestExpired(threshold: Duration): Boolean {
         return isRequestBefore(Clock.System.now() - threshold)
     }
 
-    suspend fun isRequestBefore(instant: Instant): Boolean {
+    fun isRequestBefore(instant: Instant): Boolean {
         return getRequestInstant()?.let { it < instant } ?: true
     }
 
-    suspend fun updateLastRequest(timestamp: Instant = Clock.System.now()) {
+    fun updateLastRequest(timestamp: Instant = Clock.System.now()) {
         dao.upsert(
             LastRequest(
                 request = request,
@@ -49,7 +49,7 @@ open class GroupLastRequestStore(
         )
     }
 
-    suspend fun invalidateLastRequest() = updateLastRequest(Instant.DISTANT_PAST)
+    fun invalidateLastRequest() = updateLastRequest(Instant.DISTANT_PAST)
 
     companion object {
         private const val DEFAULT_ID = 0L

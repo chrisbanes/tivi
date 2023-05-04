@@ -29,7 +29,6 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
-import app.tivi.data.upsert
 import app.tivi.data.views.ShowsWatchStats
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
@@ -113,26 +112,22 @@ class SqlDelightWatchedShowsDao(
             .mapToOneOrNull(dispatchers.io)
     }
 
-    override fun upsert(entity: WatchedShowEntry): Long {
-        return db.watched_entriesQueries.upsert(
-            entity = entity,
-            insert = {
-                insert(
-                    id = it.id,
-                    show_id = it.showId,
-                    last_watched = it.lastWatched,
-                    last_updated = it.lastUpdated,
-                )
-            },
-            update = {
-                update(
-                    id = it.id,
-                    show_id = it.showId,
-                    last_watched = it.lastWatched,
-                    last_updated = it.lastUpdated,
-                )
-            },
-            lastInsertRowId = { lastInsertRowId().executeAsOne() },
+    override fun insert(entity: WatchedShowEntry): Long {
+        db.watched_entriesQueries.insert(
+            id = entity.id,
+            show_id = entity.showId,
+            last_watched = entity.lastWatched,
+            last_updated = entity.lastUpdated,
+        )
+        return db.watched_entriesQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: WatchedShowEntry) {
+        db.watched_entriesQueries.update(
+            id = entity.id,
+            show_id = entity.showId,
+            last_watched = entity.lastWatched,
+            last_updated = entity.lastUpdated,
         )
     }
 

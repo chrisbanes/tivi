@@ -21,7 +21,6 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import app.tivi.data.Database
 import app.tivi.data.models.TiviShow
-import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -91,58 +90,56 @@ class SqlDelightTiviShowDao(
         db.showQueries.delete(entity.id)
     }
 
-    override fun upsert(entity: TiviShow): Long = db.showQueries.upsert(
-        entity = entity,
-        insert = { show ->
-            insert(
-                id = show.id,
-                title = show.title,
-                original_title = show.originalTitle,
-                trakt_id = show.traktId,
-                tmdb_id = show.tmdbId,
-                imdb_id = show.imdbId,
-                overview = show.summary,
-                homepage = show.homepage,
-                trakt_rating = show.traktRating,
-                trakt_votes = show.traktVotes,
-                certification = show.certification,
-                first_aired = show.firstAired,
-                country = show.country,
-                network = show.network,
-                network_logo_path = show.networkLogoPath,
-                runtime = show.runtime,
-                genres = show._genres,
-                status = show.status,
-                airs_day = show.airsDay,
-                airs_time = show.airsTime,
-                airs_tz = show.airsTimeZone,
-            )
-        },
-        update = { show ->
-            update(
-                id = show.id,
-                title = show.title,
-                original_title = show.originalTitle,
-                trakt_id = show.traktId,
-                tmdb_id = show.tmdbId,
-                imdb_id = show.imdbId,
-                overview = show.summary,
-                homepage = show.homepage,
-                trakt_rating = show.traktRating,
-                trakt_votes = show.traktVotes,
-                certification = show.certification,
-                first_aired = show.firstAired,
-                country = show.country,
-                network = show.network,
-                network_logo_path = show.networkLogoPath,
-                runtime = show.runtime,
-                genres = show._genres,
-                status = show.status,
-                airs_day = show.airsDay,
-                airs_time = show.airsTime,
-                airs_tz = show.airsTimeZone,
-            )
-        },
-        lastInsertRowId = { lastInsertRowId().executeAsOne() },
-    )
+    override fun insert(entity: TiviShow): Long {
+        db.showQueries.insert(
+            id = entity.id,
+            title = entity.title,
+            original_title = entity.originalTitle,
+            trakt_id = entity.traktId,
+            tmdb_id = entity.tmdbId,
+            imdb_id = entity.imdbId,
+            overview = entity.summary,
+            homepage = entity.homepage,
+            trakt_rating = entity.traktRating,
+            trakt_votes = entity.traktVotes,
+            certification = entity.certification,
+            first_aired = entity.firstAired,
+            country = entity.country,
+            network = entity.network,
+            network_logo_path = entity.networkLogoPath,
+            runtime = entity.runtime,
+            genres = entity._genres,
+            status = entity.status,
+            airs_day = entity.airsDay,
+            airs_time = entity.airsTime,
+            airs_tz = entity.airsTimeZone,
+        )
+        return db.showQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: TiviShow) {
+        db.showQueries.update(
+            id = entity.id,
+            title = entity.title,
+            original_title = entity.originalTitle,
+            trakt_id = entity.traktId,
+            tmdb_id = entity.tmdbId,
+            imdb_id = entity.imdbId,
+            overview = entity.summary,
+            homepage = entity.homepage,
+            trakt_rating = entity.traktRating,
+            trakt_votes = entity.traktVotes,
+            certification = entity.certification,
+            first_aired = entity.firstAired,
+            country = entity.country,
+            network = entity.network,
+            network_logo_path = entity.networkLogoPath,
+            runtime = entity.runtime,
+            genres = entity._genres,
+            status = entity.status,
+            airs_day = entity.airsDay,
+            airs_time = entity.airsTime,
+            airs_tz = entity.airsTimeZone,
+        )
+    }
 }

@@ -27,21 +27,21 @@ abstract class EntityLastRequestStore(
     private val request: Request,
     private val dao: LastRequestDao,
 ) {
-    private suspend fun getRequestInstant(entityId: Long): Instant? {
+    private fun getRequestInstant(entityId: Long): Instant? {
         return dao.lastRequest(request, entityId)?.timestamp
     }
 
-    suspend fun isRequestExpired(entityId: Long, threshold: Duration): Boolean {
+    fun isRequestExpired(entityId: Long, threshold: Duration): Boolean {
         return isRequestBefore(entityId, Clock.System.now() - threshold)
     }
 
-    suspend fun hasBeenRequested(entityId: Long): Boolean = dao.requestCount(request, entityId) > 0
+    fun hasBeenRequested(entityId: Long): Boolean = dao.requestCount(request, entityId) > 0
 
-    suspend fun isRequestBefore(entityId: Long, instant: Instant): Boolean {
+    fun isRequestBefore(entityId: Long, instant: Instant): Boolean {
         return getRequestInstant(entityId)?.let { it < instant } ?: true
     }
 
-    suspend fun updateLastRequest(entityId: Long, timestamp: Instant = Clock.System.now()) {
+    fun updateLastRequest(entityId: Long, timestamp: Instant = Clock.System.now()) {
         dao.upsert(
             LastRequest(
                 request = request,
@@ -51,5 +51,5 @@ abstract class EntityLastRequestStore(
         )
     }
 
-    private suspend fun invalidateLastRequest(entityId: Long) = updateLastRequest(entityId, Instant.DISTANT_PAST)
+    private fun invalidateLastRequest(entityId: Long) = updateLastRequest(entityId, Instant.DISTANT_PAST)
 }

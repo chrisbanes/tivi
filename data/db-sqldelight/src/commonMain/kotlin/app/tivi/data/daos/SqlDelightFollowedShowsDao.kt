@@ -21,7 +21,6 @@ import app.cash.sqldelight.coroutines.mapToOne
 import app.tivi.data.Database
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.PendingAction
-import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -33,28 +32,24 @@ class SqlDelightFollowedShowsDao(
     private val dispatchers: AppCoroutineDispatchers,
 ) : FollowedShowsDao, SqlDelightEntityDao<FollowedShowEntry> {
 
-    override fun upsert(entity: FollowedShowEntry): Long {
-        return db.myshows_entriesQueries.upsert(
-            entity = entity,
-            insert = {
-                insert(
-                    id = it.id,
-                    show_id = it.showId,
-                    followed_at = it.followedAt,
-                    pending_action = it.pendingAction,
-                    trakt_id = it.traktId,
-                )
-            },
-            update = {
-                update(
-                    id = it.id,
-                    show_id = it.showId,
-                    followed_at = it.followedAt,
-                    pending_action = it.pendingAction,
-                    trakt_id = it.traktId,
-                )
-            },
-            lastInsertRowId = { db.myshows_entriesQueries.lastInsertRowId().executeAsOne() },
+    override fun insert(entity: FollowedShowEntry): Long {
+        db.myshows_entriesQueries.insert(
+            id = entity.id,
+            show_id = entity.showId,
+            followed_at = entity.followedAt,
+            pending_action = entity.pendingAction,
+            trakt_id = entity.traktId,
+        )
+        return db.myshows_entriesQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: FollowedShowEntry) {
+        db.myshows_entriesQueries.update(
+            id = entity.id,
+            show_id = entity.showId,
+            followed_at = entity.followedAt,
+            pending_action = entity.pendingAction,
+            trakt_id = entity.traktId,
         )
     }
 

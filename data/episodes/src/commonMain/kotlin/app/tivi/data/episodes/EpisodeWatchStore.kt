@@ -44,7 +44,7 @@ class EpisodeWatchStore(
 
     suspend fun save(watch: EpisodeWatchEntry): Long = episodeWatchEntryDao.upsert(watch)
 
-    suspend fun save(watches: List<EpisodeWatchEntry>): Unit = episodeWatchEntryDao.upsertAll(watches)
+    suspend fun save(watches: List<EpisodeWatchEntry>): Unit = episodeWatchEntryDao.upsert(watches)
 
     suspend fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
 

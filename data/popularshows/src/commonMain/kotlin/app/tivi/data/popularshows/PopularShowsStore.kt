@@ -67,7 +67,7 @@ class PopularShowsStore(
                 if (page == 0) {
                     // If we've requested page 0, remove any existing entries first
                     popularShowsDao.deleteAll()
-                    popularShowsDao.upsertAll(entries)
+                    popularShowsDao.upsert(entries)
                 } else {
                     popularShowsDao.updatePage(page, entries)
                 }
