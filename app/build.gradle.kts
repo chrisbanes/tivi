@@ -160,6 +160,7 @@ dependencies {
     implementation(projects.core.base)
     implementation(projects.core.analytics)
     implementation(projects.core.logging)
+    implementation(projects.core.performance)
     implementation(projects.core.powercontroller)
     implementation(projects.core.preferences)
     implementation(projects.common.ui.view)
@@ -218,7 +219,6 @@ dependencies {
     ksp(libs.kotlininject.compiler)
 
     implementation(libs.google.firebase.crashlytics)
-    implementation(libs.google.firebase.perf)
 
     "qaImplementation"(libs.chucker.library)
 
