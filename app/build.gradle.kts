@@ -218,6 +218,7 @@ dependencies {
     ksp(libs.kotlininject.compiler)
 
     implementation(libs.google.firebase.crashlytics)
+    implementation(libs.google.firebase.perf)
 
     "qaImplementation"(libs.chucker.library)
 
