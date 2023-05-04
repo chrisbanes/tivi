@@ -16,9 +16,18 @@
 
 
 plugins {
-    id("kotlin")
+    kotlin("multiplatform")
+    alias(libs.plugins.cacheFixPlugin)
 }
 
-dependencies {
-    implementation(projects.core.base)
+kotlin {
+    jvm()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.core.base)
+            }
+        }
+    }
 }
