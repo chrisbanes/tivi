@@ -18,6 +18,7 @@
 plugins {
     kotlin("multiplatform")
     alias(libs.plugins.ksp)
+    alias(libs.plugins.cacheFixPlugin)
 }
 
 kotlin {
