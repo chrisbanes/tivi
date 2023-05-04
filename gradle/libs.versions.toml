@@ -155,7 +155,7 @@ slack-lint-compose = "com.slack.lint.compose:compose-lint-checks:1.2.0"
 
 swipe = "me.saket.swipe:swipe:1.1.1"
 
-store = "org.mobilenativefoundation.store:store5:5.0.0-alpha03"
+store = "org.mobilenativefoundation.store:store5:5.0.0-alpha05"
 
 timber = "com.jakewharton.timber:timber:5.0.1"
 
