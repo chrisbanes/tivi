@@ -45,6 +45,7 @@ include(
     ":core:analytics",
     ":core:base",
     ":core:logging",
+    ":core:performance",
     ":core:powercontroller",
     ":core:preferences",
     ":common:ui:view",

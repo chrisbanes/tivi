@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.appinitializers
+package app.tivi.core.perf
 
-import app.tivi.core.perf.Tracer
-import me.tatarka.inject.annotations.Inject
+import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.Provides
 
-@Inject
-class AppInitializers(
-    private val initializers: Set<AppInitializer>,
-    private val tracer: Tracer,
-) {
-    fun init() {
-        tracer.trace("AppInitializers") {
-            for (initializer in initializers) {
-                initializer.init()
-            }
-        }
-    }
+interface PerformanceComponent {
+    @ApplicationScope
+    @Provides
+    fun provideTracer(bind: AndroidTracer): Tracer = bind
 }

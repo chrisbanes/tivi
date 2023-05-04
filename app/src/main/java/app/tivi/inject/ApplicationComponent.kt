@@ -22,6 +22,7 @@ import app.tivi.TiviApplication
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.common.imageloading.ImageLoadingComponent
 import app.tivi.core.analytics.AnalyticsComponent
+import app.tivi.core.perf.PerformanceComponent
 import app.tivi.data.RoomDatabaseComponent
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsBinds
@@ -60,6 +61,7 @@ abstract class ApplicationComponent(
     PowerControllerComponent,
     ImageLoadingComponent,
     AnalyticsComponent,
+    PerformanceComponent,
     PreferencesComponent,
     EpisodeBinds,
     FollowedShowsBinds,
