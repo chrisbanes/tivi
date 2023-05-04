@@ -1,6 +1,5 @@
 entries:
 SELECT shows.*, watched_entries.*, shows_view_watch_stats.* FROM shows
-INNER JOIN shows_fts ON shows.id = shows_fts.docid
 LEFT JOIN myshows_entries ON shows.id = myshows_entries.show_id
 LEFT JOIN watched_entries ON shows.id = watched_entries.show_id
 LEFT JOIN shows_view_watch_stats ON shows.id = shows_view_watch_stats.show_id
@@ -13,7 +12,7 @@ WHERE
         (:includeWatched = 1 AND watched_entries.id IS NOT NULL) OR
         (:includeFollowed = 1 AND myshows_entries.id IS NOT NULL)
     )
-    AND (:filter IS NULL OR (shows_fts.title MATCH :filter))
+    AND (:filter IS NULL OR shows.title LIKE :filter)
 GROUP BY shows.id
 ORDER BY CASE
     WHEN :sort = 'last_watched' THEN (
@@ -27,11 +26,10 @@ LIMIT :limit OFFSET :offset;
 
 count:
 SELECT COUNT(DISTINCT shows.id) FROM shows
-INNER JOIN shows_fts ON shows.id = shows_fts.docid
 LEFT JOIN myshows_entries ON shows.id = myshows_entries.show_id
 LEFT JOIN watched_entries ON shows.id = watched_entries.show_id
 WHERE (
     (:includeWatched = 1 AND watched_entries.id IS NOT NULL) OR
     (:includeFollowed = 1 AND myshows_entries.id IS NOT NULL)
 )
-AND (:filter IS NULL OR (shows_fts.title MATCH :filter));
+AND (:filter IS NULL OR shows.title LIKE :filter);

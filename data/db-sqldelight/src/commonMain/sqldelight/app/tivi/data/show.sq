@@ -133,3 +133,7 @@ INSERT INTO shows (
 
 lastInsertRowId:
 SELECT last_insert_rowid();
+
+search:
+SELECT shows.* FROM shows
+WHERE shows.title LIKE :query;

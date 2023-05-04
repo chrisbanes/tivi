@@ -14,19 +14,6 @@
  * limitations under the License.
  */
 
-package app.tivi.data.daos
+package app.tivi.data
 
-import app.tivi.data.Database
-import app.tivi.data.models.TiviShow
-import app.tivi.util.AppCoroutineDispatchers
-import me.tatarka.inject.annotations.Inject
-
-@Inject
-class SqlDelightShowFtsDao(
-    private val db: Database,
-    private val dispatchers: AppCoroutineDispatchers,
-) : ShowFtsDao {
-    override fun search(filter: String): List<TiviShow> {
-        return db.shows_ftsQueries.search(filter, ::TiviShow).executeAsList()
-    }
-}
+internal val Boolean.sqlValue: Long get() = if (this) 1 else 0

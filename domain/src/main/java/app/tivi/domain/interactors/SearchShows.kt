@@ -16,7 +16,7 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.daos.ShowFtsDao
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.models.TiviShow
 import app.tivi.data.search.SearchRepository
 import app.tivi.domain.SuspendingWorkInteractor
@@ -28,7 +28,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class SearchShows(
     private val searchRepository: SearchRepository,
-    private val showFtsDao: ShowFtsDao,
+    private val showDao: TiviShowDao,
     private val dispatchers: AppCoroutineDispatchers,
 ) : SuspendingWorkInteractor<SearchShows.Params, List<TiviShow>>() {
     override suspend fun doWork(params: Params): List<TiviShow> = withContext(dispatchers.io) {
@@ -37,7 +37,7 @@ class SearchShows(
             remoteResults.isNotEmpty() -> remoteResults
             params.query.isNotBlank() -> {
                 try {
-                    showFtsDao.search("*$params.query*")
+                    showDao.search("%$params.query%")
                 } catch (ce: CancellationException) {
                     // Cancellation exceptions should be re-thrown
                     throw ce
