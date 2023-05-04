@@ -19,12 +19,14 @@ package app.tivi.tmdb
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface TmdbComponent : TmdbClientComponent {
+interface TmdbComponent : TmdbCommonComponent, TmdbPlatformComponent
+
+expect interface TmdbPlatformComponent
+
+interface TmdbCommonComponent {
     @ApplicationScope
     @Provides
     fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
         return tmdbManager.getLatestImageProvider()
     }
 }
-
-expect interface TmdbClientComponent

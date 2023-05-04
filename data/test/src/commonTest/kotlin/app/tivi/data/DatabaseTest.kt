@@ -20,17 +20,13 @@ import app.moviebase.tmdb.Tmdb3
 import app.moviebase.trakt.Trakt
 import app.tivi.data.traktauth.RefreshTraktTokensInteractor
 import app.tivi.data.traktauth.TraktAuthState
-import app.tivi.data.traktauth.TraktOAuthInfo
-import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ApplicationScope
-import app.tivi.tmdb.TmdbComponent
-import app.tivi.tmdb.TmdbOAuthInfo
-import app.tivi.trakt.TraktComponent
+import app.tivi.tmdb.TmdbCommonComponent
+import app.tivi.trakt.TraktCommonComponent
 import app.tivi.util.LoggerComponent
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
-import okhttp3.OkHttpClient
 
 abstract class DatabaseTest {
     val component: TestApplicationComponent by unsafeLazy {
@@ -41,26 +37,11 @@ abstract class DatabaseTest {
 @Component
 @ApplicationScope
 abstract class TestApplicationComponent :
-    TmdbComponent,
-    TraktComponent,
+    TmdbCommonComponent,
+    TraktCommonComponent,
     LoggerComponent,
     TestDataSourceComponent(),
     TestDatabaseComponent {
-
-    @Provides
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
-
-    @Provides
-    fun provideTraktOAuthInfo(): TraktOAuthInfo = TraktOAuthInfo(
-        clientId = "",
-        clientSecret = "",
-        redirectUri = "",
-    )
-
-    @Provides
-    fun provideTmdbOAuthInfo(): TmdbOAuthInfo = TmdbOAuthInfo(
-        apiKey = "",
-    )
 
     @Provides
     fun provideTraktAuthState(): TraktAuthState = TraktAuthState.LOGGED_IN
@@ -71,16 +52,8 @@ abstract class TestApplicationComponent :
     }
 
     @Provides
-    override fun provideTrakt(
-        client: OkHttpClient,
-        authStore: AuthStore,
-        oauthInfo: TraktOAuthInfo,
-        refreshTokens: Lazy<RefreshTraktTokensInteractor>,
-    ): Trakt = Trakt("fakefakefake")
+    fun provideTrakt(): Trakt = Trakt("fakefakefake")
 
     @Provides
-    override fun provideTmdb(
-        client: OkHttpClient,
-        tmdbOAuthInfo: TmdbOAuthInfo,
-    ): Tmdb3 = Tmdb3("fakefakefake")
+    fun provideTmdb(): Tmdb3 = Tmdb3("fakefakefake")
 }

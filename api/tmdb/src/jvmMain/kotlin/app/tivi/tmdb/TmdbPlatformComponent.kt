@@ -22,7 +22,7 @@ import io.ktor.client.engine.okhttp.OkHttp
 import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
-actual interface TmdbClientComponent {
+actual interface TmdbPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideTmdb(
