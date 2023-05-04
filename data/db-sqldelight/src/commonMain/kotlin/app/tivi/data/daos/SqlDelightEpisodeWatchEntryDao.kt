@@ -21,7 +21,6 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.tivi.data.Database
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
-import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -31,28 +30,25 @@ class SqlDelightEpisodeWatchEntryDao(
     override val db: Database,
     private val dispatchers: AppCoroutineDispatchers,
 ) : EpisodeWatchEntryDao, SqlDelightEntityDao<EpisodeWatchEntry> {
-    override fun upsert(entity: EpisodeWatchEntry): Long {
-        return db.episode_watch_entriesQueries.upsert(
-            entity = entity,
-            insert = {
-                insert(
-                    id = it.id,
-                    episode_id = it.episodeId,
-                    trakt_id = it.traktId,
-                    watched_at = it.watchedAt,
-                    pending_action = it.pendingAction,
-                )
-            },
-            update = {
-                update(
-                    id = it.id,
-                    episode_id = it.episodeId,
-                    trakt_id = it.traktId,
-                    watched_at = it.watchedAt,
-                    pending_action = it.pendingAction,
-                )
-            },
-            lastInsertRowId = { lastInsertRowId().executeAsOne() },
+
+    override fun insert(entity: EpisodeWatchEntry): Long {
+        db.episode_watch_entriesQueries.insert(
+            id = entity.id,
+            episode_id = entity.episodeId,
+            trakt_id = entity.traktId,
+            watched_at = entity.watchedAt,
+            pending_action = entity.pendingAction,
+        )
+        return db.episode_watch_entriesQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: EpisodeWatchEntry) {
+        db.episode_watch_entriesQueries.update(
+            id = entity.id,
+            episode_id = entity.episodeId,
+            trakt_id = entity.traktId,
+            watched_at = entity.watchedAt,
+            pending_action = entity.pendingAction,
         )
     }
 

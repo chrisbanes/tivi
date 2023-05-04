@@ -23,7 +23,6 @@ import app.tivi.data.Database
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
-import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
@@ -34,40 +33,39 @@ class SqlDelightEpisodesDao(
     override val db: Database,
     private val dispatchers: AppCoroutineDispatchers,
 ) : EpisodesDao, SqlDelightEntityDao<Episode> {
-    override fun upsert(entity: Episode): Long = db.episodesQueries.upsert(
-        entity = entity,
-        insert = {
-            insert(
-                id = it.id,
-                season_id = it.seasonId,
-                trakt_id = it.traktId,
-                tmdb_id = it.tmdbId,
-                title = it.title,
-                overview = it.summary,
-                number = it.number,
-                first_aired = it.firstAired,
-                trakt_rating = it.traktRating,
-                trakt_rating_votes = it.traktRatingVotes,
-                tmdb_backdrop_path = it.tmdbBackdropPath,
-            )
-        },
-        update = {
-            update(
-                id = it.id,
-                season_id = it.seasonId,
-                trakt_id = it.traktId,
-                tmdb_id = it.tmdbId,
-                title = it.title,
-                overview = it.summary,
-                number = it.number,
-                first_aired = it.firstAired,
-                trakt_rating = it.traktRating,
-                trakt_rating_votes = it.traktRatingVotes,
-                tmdb_backdrop_path = it.tmdbBackdropPath,
-            )
-        },
-        lastInsertRowId = { lastInsertRowId().executeAsOne() },
-    )
+
+    override fun insert(entity: Episode): Long {
+        db.episodesQueries.insert(
+            id = entity.id,
+            season_id = entity.seasonId,
+            trakt_id = entity.traktId,
+            tmdb_id = entity.tmdbId,
+            title = entity.title,
+            overview = entity.summary,
+            number = entity.number,
+            first_aired = entity.firstAired,
+            trakt_rating = entity.traktRating,
+            trakt_rating_votes = entity.traktRatingVotes,
+            tmdb_backdrop_path = entity.tmdbBackdropPath,
+        )
+        return db.episodesQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: Episode) {
+        db.episodesQueries.update(
+            id = entity.id,
+            season_id = entity.seasonId,
+            trakt_id = entity.traktId,
+            tmdb_id = entity.tmdbId,
+            title = entity.title,
+            overview = entity.summary,
+            number = entity.number,
+            first_aired = entity.firstAired,
+            trakt_rating = entity.traktRating,
+            trakt_rating_votes = entity.traktRatingVotes,
+            tmdb_backdrop_path = entity.tmdbBackdropPath,
+        )
+    }
 
     override fun episodesWithSeasonId(seasonId: Long): List<Episode> {
         return db.episodesQueries.episodesWithSeasonId(seasonId, ::Episode)

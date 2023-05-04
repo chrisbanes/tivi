@@ -20,7 +20,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.tivi.data.Database
 import app.tivi.data.models.ShowTmdbImage
-import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -54,30 +53,28 @@ class SqlDelightShowImagesDao(
         db.show_imagesQueries.delete(entity.id)
     }
 
-    override fun upsert(entity: ShowTmdbImage): Long = db.show_imagesQueries.upsert(
-        entity = entity,
-        insert = { entry ->
-            insert(
-                id = entry.id,
-                show_id = entry.showId,
-                path = entry.path,
-                type = entry.type,
-                lang = entry.language,
-                rating = entry.rating,
-                is_primary = entry.isPrimary,
-            )
-        },
-        update = { entry ->
-            update(
-                id = entry.id,
-                show_id = entry.showId,
-                path = entry.path,
-                type = entry.type,
-                lang = entry.language,
-                rating = entry.rating,
-                is_primary = entry.isPrimary,
-            )
-        },
-        lastInsertRowId = { lastInsertRowId().executeAsOne() },
-    )
+    override fun insert(entity: ShowTmdbImage): Long {
+        db.show_imagesQueries.insert(
+            id = entity.id,
+            show_id = entity.showId,
+            path = entity.path,
+            type = entity.type,
+            lang = entity.language,
+            rating = entity.rating,
+            is_primary = entity.isPrimary,
+        )
+        return db.show_imagesQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: ShowTmdbImage) {
+        db.show_imagesQueries.update(
+            id = entity.id,
+            show_id = entity.showId,
+            path = entity.path,
+            type = entity.type,
+            lang = entity.language,
+            rating = entity.rating,
+            is_primary = entity.isPrimary,
+        )
+    }
 }

@@ -18,6 +18,7 @@ package app.tivi.data
 
 import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
+import app.cash.sqldelight.db.SqlDriver
 import app.tivi.data.columnadaptors.DayOfWeekColumnAdapter
 import app.tivi.data.columnadaptors.ImageTypeColumnAdapter
 import app.tivi.data.columnadaptors.InstantLongColumnAdapter
@@ -31,10 +32,10 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DatabaseFactory(
-    private val driverFactory: DriverFactory,
+    private val driver: SqlDriver,
 ) {
     fun build(): Database = Database(
-        driver = driverFactory.createDriver(),
+        driver = driver,
         episodesAdapter = Episodes.Adapter(
             trakt_idAdapter = IntColumnAdapter,
             tmdb_idAdapter = IntColumnAdapter,

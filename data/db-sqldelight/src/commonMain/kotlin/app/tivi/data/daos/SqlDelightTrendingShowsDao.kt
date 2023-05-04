@@ -25,7 +25,6 @@ import app.tivi.data.Database
 import app.tivi.data.compoundmodels.TrendingEntryWithShow
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TrendingShowEntry
-import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -70,26 +69,24 @@ class SqlDelightTrendingShowsDao(
         db.trending_showsQueries.delete(entity.id)
     }
 
-    override fun upsert(entity: TrendingShowEntry): Long = db.trending_showsQueries.upsert(
-        entity = entity,
-        insert = { entry ->
-            insert(
-                id = entry.id,
-                show_id = entry.showId,
-                page = entry.page,
-                watchers = entry.watchers,
-            )
-        },
-        update = { entry ->
-            update(
-                id = entry.id,
-                show_id = entry.showId,
-                page = entry.page,
-                watchers = entry.watchers,
-            )
-        },
-        lastInsertRowId = { lastInsertRowId().executeAsOne() },
-    )
+    override fun insert(entity: TrendingShowEntry): Long {
+        db.trending_showsQueries.insert(
+            id = entity.id,
+            show_id = entity.showId,
+            page = entity.page,
+            watchers = entity.watchers,
+        )
+        return db.trending_showsQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: TrendingShowEntry) {
+        db.trending_showsQueries.update(
+            id = entity.id,
+            show_id = entity.showId,
+            page = entity.page,
+            watchers = entity.watchers,
+        )
+    }
 
     private fun entriesWithShow(limit: Long, offset: Long): Query<TrendingEntryWithShow> {
         return db.trending_showsQueries.entriesWithShow(

@@ -22,7 +22,6 @@ import app.tivi.data.Database
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.models.RelatedShowEntry
 import app.tivi.data.models.TiviShow
-import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -61,26 +60,24 @@ class SqlDelightRelatedShowsDao(
         db.related_showsQueries.deleteWithShowId(showId)
     }
 
-    override fun upsert(entity: RelatedShowEntry): Long = db.related_showsQueries.upsert(
-        entity = entity,
-        insert = { entry ->
-            insert(
-                id = entry.id,
-                show_id = entry.showId,
-                other_show_id = entry.otherShowId,
-                order_index = entry.orderIndex,
-            )
-        },
-        update = { entry ->
-            update(
-                id = entry.id,
-                show_id = entry.showId,
-                other_show_id = entry.otherShowId,
-                order_index = entry.orderIndex,
-            )
-        },
-        lastInsertRowId = { lastInsertRowId().executeAsOne() },
-    )
+    override fun insert(entity: RelatedShowEntry): Long {
+        db.related_showsQueries.insert(
+            id = entity.id,
+            show_id = entity.showId,
+            other_show_id = entity.otherShowId,
+            order_index = entity.orderIndex,
+        )
+        return db.related_showsQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: RelatedShowEntry) {
+        db.related_showsQueries.update(
+            id = entity.id,
+            show_id = entity.showId,
+            other_show_id = entity.otherShowId,
+            order_index = entity.orderIndex,
+        )
+    }
 
     override fun deleteEntity(entity: RelatedShowEntry) {
         db.related_showsQueries.delete(entity.id)

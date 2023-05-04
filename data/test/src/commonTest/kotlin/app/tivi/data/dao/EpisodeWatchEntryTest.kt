@@ -23,7 +23,7 @@ import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.daos.upsertAll
+import app.tivi.data.daos.insert
 import app.tivi.utils.episodeWatch2PendingDelete
 import app.tivi.utils.episodeWatch2PendingSend
 import app.tivi.utils.s1
@@ -33,7 +33,6 @@ import app.tivi.utils.s1e1w
 import app.tivi.utils.s1e1w_id
 import app.tivi.utils.show
 import app.tivi.utils.showId
-import kotlinx.coroutines.test.runTest
 import me.tatarka.inject.annotations.Component
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -56,28 +55,28 @@ class EpisodeWatchEntryTest : DatabaseTest() {
         episodeWatchEntryDao = component.episodeWatchEntryDao
 
         // We'll assume that there's a show, season and s1_episodes in the db
-        showsDao.upsert(show)
-        seasonsDao.upsert(s1)
-        episodesDao.upsertAll(s1_episodes)
+        showsDao.insert(show)
+        seasonsDao.insert(s1)
+        episodesDao.insert(s1_episodes)
     }
 
     @Test
-    fun insert() = runTest {
-        episodeWatchEntryDao.upsert(s1e1w)
+    fun insert() {
+        episodeWatchEntryDao.insert(s1e1w)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(s1e1w))
     }
 
     @Test(expected = Exception::class) // Can't be more granular
-    fun insert_withSameTraktId() = runTest {
-        episodeWatchEntryDao.upsert(s1e1w)
+    fun insert_withSameTraktId() {
+        episodeWatchEntryDao.insert(s1e1w)
         // Make a copy with a 0 id
         val copy = s1e1w.copy(id = 0)
-        episodeWatchEntryDao.upsert(copy)
+        episodeWatchEntryDao.insert(copy)
     }
 
     @Test
-    fun fetchEntries_WithPendingSendAction() = runTest {
-        episodeWatchEntryDao.upsertAll(s1e1w, episodeWatch2PendingSend)
+    fun fetchEntries_WithPendingSendAction() {
+        episodeWatchEntryDao.insert(s1e1w, episodeWatch2PendingSend)
         assertThat(
             episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
             `is`(listOf(episodeWatch2PendingSend)),
@@ -85,8 +84,8 @@ class EpisodeWatchEntryTest : DatabaseTest() {
     }
 
     @Test
-    fun fetchEntries_WithPendingDeleteAction() = runTest {
-        episodeWatchEntryDao.upsertAll(s1e1w, episodeWatch2PendingDelete)
+    fun fetchEntries_WithPendingDeleteAction() {
+        episodeWatchEntryDao.insert(s1e1w, episodeWatch2PendingDelete)
         assertThat(
             episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
             `is`(listOf(episodeWatch2PendingDelete)),
@@ -94,15 +93,15 @@ class EpisodeWatchEntryTest : DatabaseTest() {
     }
 
     @Test
-    fun delete() = runTest {
-        episodeWatchEntryDao.upsert(s1e1w)
+    fun delete() {
+        episodeWatchEntryDao.insert(s1e1w)
         episodeWatchEntryDao.deleteEntity(s1e1w)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))
     }
 
     @Test
-    fun deleteEpisode_deletesWatch() = runTest {
-        episodeWatchEntryDao.upsert(s1e1w)
+    fun deleteEpisode_deletesWatch() {
+        episodeWatchEntryDao.insert(s1e1w)
         // Now delete episode
         episodesDao.deleteEntity(s1e1)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))

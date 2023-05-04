@@ -32,11 +32,11 @@ interface ShowTmdbImagesDao : EntityDao<ShowTmdbImage> {
 
 fun ShowTmdbImagesDao.saveImages(showId: Long, images: List<ShowTmdbImage>) {
     deleteForShowId(showId)
-    upsertAll(images)
+    upsert(images)
 }
 
 fun ShowTmdbImagesDao.saveImagesIfEmpty(showId: Long, images: List<ShowTmdbImage>) {
     if (imageCountForShowId(showId) <= 0) {
-        upsertAll(images)
+        upsert(images)
     }
 }

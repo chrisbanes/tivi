@@ -27,7 +27,6 @@ import app.tivi.utils.s1_id
 import app.tivi.utils.s2
 import app.tivi.utils.show
 import app.tivi.utils.showId
-import kotlinx.coroutines.test.runTest
 import me.tatarka.inject.annotations.Component
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -46,31 +45,31 @@ class SeasonsTest : DatabaseTest() {
         seasonsDao = component.seasonsDao
 
         // We'll assume that there's a show in the db
-        showsDao.upsert(show)
+        showsDao.insert(show)
     }
 
     @Test
-    fun insertSeason() = runTest {
-        seasonsDao.upsert(s1)
+    fun insertSeason() {
+        seasonsDao.insert(s1)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(s1))
     }
 
-    @Test
-    fun insert_withSameTraktId() = runTest {
-        seasonsDao.upsert(s1)
+    @Test(expected = Throwable::class) // Can't be any more granular
+    fun insert_withSameTraktId() {
+        seasonsDao.insert(s1)
 
         // Make a copy with a 0 id
         val copy = s1.copy(id = 0)
 
-        seasonsDao.upsert(copy)
+        seasonsDao.insert(copy)
     }
 
     @Test
-    fun specialsOrder() = runTest {
-        seasonsDao.upsert(s0)
-        seasonsDao.upsert(s1)
-        seasonsDao.upsert(s2)
+    fun specialsOrder() {
+        seasonsDao.insert(s0)
+        seasonsDao.insert(s1)
+        seasonsDao.insert(s2)
 
         // Specials should always be last
         assertThat(
@@ -80,16 +79,16 @@ class SeasonsTest : DatabaseTest() {
     }
 
     @Test
-    fun deleteSeason() = runTest {
-        seasonsDao.upsert(s1)
+    fun deleteSeason() {
+        seasonsDao.insert(s1)
         seasonsDao.deleteEntity(s1)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
     }
 
     @Test
-    fun deleteShow_deletesSeason() = runTest {
-        seasonsDao.upsert(s1)
+    fun deleteShow_deletesSeason() {
+        seasonsDao.insert(s1)
         // Now delete show
         showsDao.deleteEntity(show)
 

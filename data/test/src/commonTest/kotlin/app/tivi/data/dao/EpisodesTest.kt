@@ -26,8 +26,6 @@ import app.tivi.utils.s1
 import app.tivi.utils.s1e1
 import app.tivi.utils.show
 import app.tivi.utils.showId
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 import me.tatarka.inject.annotations.Component
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -47,45 +45,43 @@ class EpisodesTest : DatabaseTest() {
         seasonsDao = component.seasonsDao
         episodeDao = component.episodeDao
 
-        runBlocking {
-            // We'll assume that there's a show and season in the db
-            showsDao.upsert(show)
-            seasonsDao.upsert(s1)
-        }
+        // We'll assume that there's a show and season in the db
+        showsDao.insert(show)
+        seasonsDao.insert(s1)
     }
 
     @Test
-    fun insert() = runTest {
-        episodeDao.upsert(s1e1)
+    fun insert() {
+        episodeDao.insert(s1e1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(s1e1))
     }
 
     @Test(expected = Exception::class) // Can't be more granular
-    fun insert_withSameTraktId() = runTest {
-        episodeDao.upsert(s1e1)
+    fun insert_withSameTraktId() {
+        episodeDao.insert(s1e1)
         // Make a copy with a 0 id
         val copy = s1e1.copy(id = 0)
-        episodeDao.upsert(copy)
+        episodeDao.insert(copy)
     }
 
     @Test
-    fun delete() = runTest {
-        episodeDao.upsert(s1e1)
+    fun delete() {
+        episodeDao.insert(s1e1)
         episodeDao.deleteEntity(s1e1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
     }
 
     @Test
-    fun deleteSeason_deletesEpisode() = runTest {
-        episodeDao.upsert(s1e1)
+    fun deleteSeason_deletesEpisode() {
+        episodeDao.insert(s1e1)
         // Now delete season
         seasonsDao.deleteEntity(s1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
     }
 
     @Test
-    fun showIdForEpisodeId() = runTest {
-        episodeDao.upsert(s1e1)
+    fun showIdForEpisodeId() {
+        episodeDao.insert(s1e1)
         assertThat(episodeDao.showIdForEpisodeId(s1e1.id), `is`(showId))
     }
 }

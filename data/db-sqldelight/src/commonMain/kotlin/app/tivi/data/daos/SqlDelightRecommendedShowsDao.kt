@@ -25,7 +25,6 @@ import app.tivi.data.Database
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import app.tivi.data.models.RecommendedShowEntry
 import app.tivi.data.models.TiviShow
-import app.tivi.data.upsert
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -70,24 +69,22 @@ class SqlDelightRecommendedShowsDao(
         db.recommended_entriesQueries.delete(entity.id)
     }
 
-    override fun upsert(entity: RecommendedShowEntry): Long = db.recommended_entriesQueries.upsert(
-        entity = entity,
-        insert = { entry ->
-            insert(
-                id = entry.id,
-                show_id = entry.showId,
-                page = entry.page,
-            )
-        },
-        update = { entry ->
-            update(
-                id = entry.id,
-                show_id = entry.showId,
-                page = entry.page,
-            )
-        },
-        lastInsertRowId = { lastInsertRowId().executeAsOne() },
-    )
+    override fun insert(entity: RecommendedShowEntry): Long {
+        db.recommended_entriesQueries.insert(
+            id = entity.id,
+            show_id = entity.showId,
+            page = entity.page,
+        )
+        return db.recommended_entriesQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun update(entity: RecommendedShowEntry) {
+        db.recommended_entriesQueries.update(
+            id = entity.id,
+            show_id = entity.showId,
+            page = entity.page,
+        )
+    }
 
     private fun entriesWithShow(limit: Long, offset: Long): Query<RecommendedEntryWithShow> {
         return db.recommended_entriesQueries.entriesWithShow(

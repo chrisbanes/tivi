@@ -22,7 +22,15 @@ import app.tivi.data.models.TiviEntity
 interface SqlDelightEntityDao<in E : TiviEntity> : EntityDao<E> {
     val db: Database
 
-    override fun upsertAll(entities: List<E>) {
+    override fun insert(entities: List<E>) {
+        db.transaction {
+            for (entity in entities) {
+                insert(entity)
+            }
+        }
+    }
+
+    override fun upsert(entities: List<E>) {
         db.transaction {
             for (entity in entities) {
                 upsert(entity)

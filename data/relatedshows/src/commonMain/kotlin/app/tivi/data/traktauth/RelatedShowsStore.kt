@@ -65,7 +65,7 @@ class RelatedShowsStore(
                     )
                 }
                 relatedShowsDao.deleteWithShowId(showId)
-                relatedShowsDao.upsertAll(entries)
+                relatedShowsDao.upsert(entries)
             }
         },
         delete = relatedShowsDao::deleteWithShowId,
