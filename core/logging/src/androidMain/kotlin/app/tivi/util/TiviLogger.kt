@@ -19,7 +19,6 @@ package app.tivi.util
 import android.os.Build
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import java.util.regex.Pattern
 import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
 
@@ -147,7 +146,7 @@ private class TiviDebugTree : Timber.DebugTree() {
     companion object {
         private const val MAX_TAG_LENGTH = 23
         private const val CALL_STACK_INDEX = 7
-        private val ANONYMOUS_CLASS by lazy { Pattern.compile("(\\$\\d+)+$") }
+        private val ANONYMOUS_CLASS by lazy { "(\\$\\d+)+$".toPattern() }
     }
 }
 
@@ -160,5 +159,8 @@ private class CrashlyticsTree(
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         firebaseCrashlytics.log(message)
+        if (t != null) {
+            firebaseCrashlytics.recordException(t)
+        }
     }
 }

@@ -42,7 +42,6 @@ class UpdatePopularShows(
                     val lastPage = popularDao.getLastPage()
                     if (lastPage != null) lastPage + 1 else 0
                 }
-
                 else -> 0
             }
 
