@@ -1,0 +1,7 @@
+-- drop FTS table (for existing Room generated DBs)
+
+DROP TRIGGER IF EXISTS room_fts_content_sync_shows_fts_BEFORE_UPDATE;
+DROP TRIGGER IF EXISTS room_fts_content_sync_shows_fts_BEFORE_DELETE;
+DROP TRIGGER IF EXISTS room_fts_content_sync_shows_fts_AFTER_UPDATE;
+DROP TRIGGER IF EXISTS room_fts_content_sync_shows_fts_AFTER_INSERT;
+DROP TABLE IF EXISTS `shows_fts`;
