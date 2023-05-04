@@ -70,7 +70,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(s1e1w))
     }
 
-    @Test(/*expected = SQLiteConstraintException::class*/)
+    @Test(expected = Exception::class) // Can't be more granular
     fun insert_withSameTraktId() = runTest {
         episodeWatchEntryDao.upsert(s1e1w)
         // Make a copy with a 0 id
