@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ShowTasksImpl(
+class AndroidShowTasks(
     private val workManager: WorkManager,
 ) : ShowTasks {
     override fun syncLibraryShows(deferUntilIdle: Boolean) {

@@ -37,8 +37,6 @@ kotlin {
                 implementation(projects.data.db) // remove this eventually
                 api(projects.data.legacy) // remove this eventually
 
-                api(projects.tasks.api)
-
                 api(projects.data.episodes)
                 api(projects.data.followedshows)
                 api(projects.data.popularshows)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
+package app.tivi.tasks
 
-plugins {
-    id("app.tivi.multiplatform")
-}
+import android.app.Application
+import androidx.work.WorkManager
+import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.Provides
 
-kotlin {
-    jvm()
+actual interface TasksPlatformComponent {
+    @ApplicationScope
+    @Provides
+    fun provideShowTasks(bind: AndroidShowTasks): ShowTasks = bind
 
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.core.base)
-            }
-        }
+    @ApplicationScope
+    @Provides
+    fun provideWorkManager(application: Application): WorkManager {
+        return WorkManager.getInstance(application)
     }
 }
