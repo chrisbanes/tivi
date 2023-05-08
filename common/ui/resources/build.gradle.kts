@@ -17,20 +17,21 @@
 
 plugins {
     kotlin("multiplatform")
-    alias(libs.plugins.moko.resources)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.moko.resources) // needs to be enabled after AGP
 }
 
 kotlin {
-    jvm()
+    jvm("desktop")
     android()
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("dev.icerock.moko:resources:0.22.0")
-//                api("dev.icerock.moko:resources-compose:0.22.0") // for compose multiplatform
+                implementation(libs.kotlin.coroutines.core)
+
+                api(libs.moko.resources)
             }
         }
     }
@@ -42,4 +43,8 @@ multiplatformResources {
 
 android {
     namespace = "app.tivi.common.ui.resources"
+}
+
+tasks.withType(com.android.build.gradle.tasks.MergeResources::class).configureEach {
+    dependsOn(tasks.getByPath("generateMRandroidMain"))
 }

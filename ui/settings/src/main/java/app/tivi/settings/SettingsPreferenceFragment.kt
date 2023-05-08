@@ -27,10 +27,11 @@ import android.preference.SwitchPreference
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.net.toUri
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.util.SaveData
 import app.tivi.util.SaveDataReason
+import dev.icerock.moko.resources.format
 
 internal class SettingsPreferenceFragment : PreferenceFragment() {
     internal var saveData: SaveData? = null
@@ -45,10 +46,10 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
 
             if (pref.isEnabled) {
                 pref.summary = null
-                pref.setSummaryOn(UiR.string.settings_data_saver_summary_on)
+                pref.summaryOn = MR.strings.settings_data_saver_summary_on.getString(context)
             } else {
                 pref.summaryOn = null
-                pref.setSummary(UiR.string.settings_data_saver_summary_system)
+                pref.summary = MR.strings.settings_data_saver_summary_system.getString(context)
             }
 
             field = value
@@ -63,18 +64,18 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
             CustomTabsIntent.Builder()
                 .setToolbarColor(context.resolveThemeColor(android.R.attr.colorPrimary))
                 .build()
-                .launchUrl(context, getString(UiR.string.privacy_policy_url).toUri())
+                .launchUrl(context, MR.strings.privacy_policy_url.getString(context).toUri())
             true
         }
 
         findPreference("version")?.apply {
             val pkgManager: PackageManager = context.packageManager
             val pkgInfo = pkgManager.getPackageInfo(context.packageName, 0)
-            summary = getString(
-                UiR.string.settings_app_version_summary,
-                pkgInfo.versionName,
-                PackageInfoCompat.getLongVersionCode(pkgInfo),
-            )
+            summary = MR.strings.settings_app_version_summary
+                .format(
+                    pkgInfo.versionName,
+                    PackageInfoCompat.getLongVersionCode(pkgInfo),
+                ).toString(context)
         }
 
         if (Build.VERSION.SDK_INT < 31) {

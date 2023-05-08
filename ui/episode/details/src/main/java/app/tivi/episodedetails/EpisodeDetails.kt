@@ -81,7 +81,6 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
@@ -95,12 +94,13 @@ import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.TiviAlertDialog
 import app.tivi.common.compose.ui.none
 import app.tivi.common.compose.viewModel
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.models.Season
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -323,7 +323,7 @@ private fun EpisodeDetailsBackdrop(
                     @Suppress("DEPRECATION")
                     Text(
                         text = stringResource(
-                            UiR.string.season_episode_number,
+                            MR.strings.season_episode_number,
                             seasonNumber,
                             epNumber,
                         ).uppercase(LocalConfiguration.current.locale),
@@ -342,8 +342,8 @@ private fun InfoPanes(episode: Episode) {
         episode.traktRating?.let { rating ->
             InfoPane(
                 imageVector = Icons.Default.Star,
-                label = stringResource(UiR.string.trakt_rating_text, rating * 10f),
-                contentDescription = stringResource(UiR.string.cd_trakt_rating, rating * 10f),
+                label = stringResource(MR.strings.trakt_rating_text, rating * 10f),
+                contentDescription = stringResource(MR.strings.cd_trakt_rating, rating * 10f),
                 modifier = Modifier.weight(1f),
             )
         }
@@ -355,7 +355,7 @@ private fun InfoPanes(episode: Episode) {
                 imageVector = Icons.Default.CalendarToday,
                 label = formattedDate,
                 contentDescription = stringResource(
-                    UiR.string.cd_episode_first_aired,
+                    MR.strings.cd_episode_first_aired,
                     formattedDate,
                 ),
                 modifier = Modifier.weight(1f),
@@ -395,7 +395,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .align(Alignment.CenterVertically),
-            text = stringResource(UiR.string.episode_watches),
+            text = stringResource(MR.strings.episode_watches),
             style = MaterialTheme.typography.titleMedium,
         )
 
@@ -406,7 +406,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.Default.DeleteSweep,
-                contentDescription = stringResource(UiR.string.cd_delete),
+                contentDescription = stringResource(MR.strings.cd_delete),
             )
         }
     }
@@ -433,7 +433,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             AnimatedVisibility(episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                 Icon(
                     imageVector = Icons.Default.Publish,
-                    contentDescription = stringResource(UiR.string.cd_episode_syncing),
+                    contentDescription = stringResource(MR.strings.cd_episode_syncing),
                     modifier = Modifier.padding(start = 8.dp),
                 )
             }
@@ -441,7 +441,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             AnimatedVisibility(episodeWatchEntry.pendingAction == PendingAction.DELETE) {
                 Icon(
                     imageVector = Icons.Default.VisibilityOff,
-                    contentDescription = stringResource(UiR.string.cd_episode_deleted),
+                    contentDescription = stringResource(MR.strings.cd_episode_deleted),
                     modifier = Modifier.padding(start = 8.dp),
                 )
             }
@@ -476,7 +476,7 @@ private fun EpisodeWatchSwipeBackground(
 
             Icon(
                 imageVector = Icons.Outlined.Delete,
-                contentDescription = stringResource(UiR.string.cd_delete),
+                contentDescription = stringResource(MR.strings.cd_delete),
                 modifier = Modifier
                     .padding(12.dp)
                     .padding(end = 8.dp)
@@ -511,7 +511,7 @@ private fun MarkWatchedButton(
         onClick = onClick,
         modifier = modifier,
     ) {
-        Text(text = stringResource(UiR.string.episode_mark_watched))
+        Text(text = stringResource(MR.strings.episode_mark_watched))
     }
 }
 
@@ -524,7 +524,7 @@ private fun AddWatchButton(
         onClick = onClick,
         modifier = modifier,
     ) {
-        Text(text = stringResource(UiR.string.episode_add_watch))
+        Text(text = stringResource(MR.strings.episode_add_watch))
     }
 }
 
@@ -534,11 +534,11 @@ private fun RemoveAllWatchesDialog(
     onDismiss: () -> Unit,
 ) {
     TiviAlertDialog(
-        title = stringResource(UiR.string.episode_remove_watches_dialog_title),
-        message = stringResource(UiR.string.episode_remove_watches_dialog_message),
-        confirmText = stringResource(UiR.string.episode_remove_watches_dialog_confirm),
+        title = stringResource(MR.strings.episode_remove_watches_dialog_title),
+        message = stringResource(MR.strings.episode_remove_watches_dialog_message),
+        confirmText = stringResource(MR.strings.episode_remove_watches_dialog_confirm),
         onConfirm = { onConfirm() },
-        dismissText = stringResource(UiR.string.dialog_dismiss),
+        dismissText = stringResource(MR.strings.dialog_dismiss),
         onDismissRequest = { onDismiss() },
     )
 }
@@ -561,7 +561,7 @@ private fun EpisodeDetailsAppBar(
             ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(UiR.string.cd_navigate_up),
+                    contentDescription = stringResource(MR.strings.cd_navigate_up),
                 )
             }
         },
@@ -577,7 +577,7 @@ private fun EpisodeDetailsAppBar(
                 ScrimmedIconButton(showScrim = true, onClick = refresh) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(UiR.string.cd_refresh),
+                        contentDescription = stringResource(MR.strings.cd_refresh),
                     )
                 }
             }

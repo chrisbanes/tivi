@@ -30,9 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import app.tivi.common.compose.Layout
-import app.tivi.common.ui.resources.R
+import app.tivi.common.ui.resources.MR
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun Backdrop(
@@ -55,7 +55,7 @@ fun Backdrop(
                 AsyncImage(
                     model = imageModel,
                     requestBuilder = { crossfade(true) },
-                    contentDescription = stringResource(R.string.cd_show_poster),
+                    contentDescription = stringResource(MR.strings.cd_show_poster),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()

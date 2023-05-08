@@ -31,9 +31,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
+import dev.icerock.moko.resources.compose.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +65,7 @@ fun SearchTextField(
                 IconButton(onClick = onCleared) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = stringResource(UiR.string.cd_clear_text),
+                        contentDescription = stringResource(MR.strings.cd_clear_text),
                     )
                 }
             }

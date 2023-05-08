@@ -71,7 +71,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
@@ -89,11 +88,12 @@ import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.compose.viewModel
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -180,7 +180,7 @@ internal fun Library(
     Scaffold(
         topBar = {
             TiviStandardAppBar(
-                title = stringResource(UiR.string.library_title),
+                title = stringResource(MR.strings.library_title),
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 scrollBehavior = scrollBehavior,
@@ -252,7 +252,7 @@ internal fun Library(
                                     filter = value
                                     onFilterChanged(value.text)
                                 },
-                                hint = stringResource(UiR.string.filter_shows, lazyPagingItems.itemCount),
+                                hint = stringResource(MR.strings.filter_shows, lazyPagingItems.itemCount),
                                 modifier = Modifier.fillMaxWidth(),
                                 showClearButton = true,
                                 onCleared = {
@@ -277,7 +277,7 @@ internal fun Library(
                             },
                             onClick = onToggleIncludeFollowedShows,
                             label = {
-                                Text(text = stringResource(UiR.string.following_shows_title))
+                                Text(text = stringResource(MR.strings.following_shows_title))
                             },
                         )
 
@@ -293,7 +293,7 @@ internal fun Library(
                             },
                             onClick = onToggleIncludeWatchedShows,
                             label = {
-                                Text(text = stringResource(UiR.string.watched_shows_title))
+                                Text(text = stringResource(MR.strings.watched_shows_title))
                             },
                         )
 
@@ -420,7 +420,7 @@ private fun LibraryItem(
             } else if (lastWatchedDate != null) {
                 Text(
                     text = stringResource(
-                        UiR.string.library_last_watched,
+                        MR.strings.library_last_watched,
                         LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatchedDate),
                     ),
                     style = MaterialTheme.typography.bodySmall,

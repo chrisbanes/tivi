@@ -27,12 +27,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.TiviShow
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun PosterCard(
@@ -70,7 +70,7 @@ private fun PosterCardContent(show: TiviShow) {
             model = show.asImageModel(ImageType.POSTER),
             requestBuilder = { crossfade(true) },
             contentDescription = stringResource(
-                UiR.string.cd_show_poster_image,
+                MR.strings.cd_show_poster_image,
                 show.title ?: "show",
             ),
             modifier = Modifier.fillMaxSize(),
