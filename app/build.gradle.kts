@@ -138,15 +138,23 @@ android {
             versionCode = (android.defaultConfig.versionCode ?: 0) + 1
         }
     }
+}
 
-    variantFilter {
-        // Ignore the standardDebug variant, QA == debug
-        val isQa = flavors.any { it.name.contains("qa") }
-        if (!isQa && buildType.name == "debug") {
-            ignore = true
-        } else if (isQa && buildType.name == "benchmark") {
-            ignore = true
-        }
+androidComponents {
+    // Ignore the QA Benchmark variant
+    val qaBenchmark = selector()
+        .withBuildType("benchmark")
+        .withFlavor("mode" to "qa")
+    beforeVariants(qaBenchmark) { variant ->
+        variant.enable = false
+    }
+
+    // Ignore the standardDebug variant
+    val standard = selector()
+        .withBuildType("debug")
+        .withFlavor("mode" to "standard")
+    beforeVariants(standard) { variant ->
+        variant.enable = false
     }
 }
 
