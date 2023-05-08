@@ -39,7 +39,7 @@ class UpdateRelatedShows(
             try {
                 showsStore.fetch(it.otherShowId)
             } catch (t: Throwable) {
-                logger.e(t, "Error while show info: ${it.otherShowId}")
+                logger.e("Error while show info: ${it.otherShowId}")
             }
         }
     }

@@ -40,7 +40,7 @@ class TraktRelatedShowsDataSourceImpl(
 
     override suspend operator fun invoke(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
         val traktShowId = traktIdMapper.map(showId)
-            ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
+        require(traktShowId != null) { "No Trakt ID for show with ID: $showId" }
 
         return showService.value
             .getRelated(traktShowId.toString(), 0, 10, TraktExtended.NO_SEASONS)

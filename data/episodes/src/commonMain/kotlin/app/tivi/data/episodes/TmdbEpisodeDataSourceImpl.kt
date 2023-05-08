@@ -33,12 +33,13 @@ class TmdbEpisodeDataSourceImpl(
         seasonNumber: Int,
         episodeNumber: Int,
     ): Episode {
-        return tmdb.showEpisodes
-            .getDetails(
-                showId = tmdbIdMapper.map(showId),
-                seasonNumber = seasonNumber,
-                episodeNumber = episodeNumber,
-            )
-            .let { episodeMapper.map(it) }
+        val tmdbShowId = tmdbIdMapper.map(showId)
+        require(tmdbShowId != null) { "No Tmdb ID for show with ID: $showId" }
+
+        return tmdb.showEpisodes.getDetails(
+            showId = tmdbShowId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+        ).let { episodeMapper.map(it) }
     }
 }
