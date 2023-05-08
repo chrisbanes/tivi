@@ -48,3 +48,7 @@ android {
 tasks.withType(com.android.build.gradle.tasks.MergeResources::class).configureEach {
     dependsOn(tasks.getByPath("generateMRandroidMain"))
 }
+
+tasks.withType(com.android.build.gradle.tasks.MapSourceSetPathsTask::class).configureEach {
+    dependsOn(tasks.getByPath("generateMRandroidMain"))
+}
