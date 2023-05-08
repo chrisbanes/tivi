@@ -50,6 +50,7 @@ include(
     ":core:preferences",
     ":common:ui:view",
     ":common:ui:resources",
+    ":common:ui:resources-compose",
     ":common:ui:compose",
     ":common:imageloading",
     ":data:db",
