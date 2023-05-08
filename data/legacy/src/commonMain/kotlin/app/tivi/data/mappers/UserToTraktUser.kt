@@ -21,9 +21,9 @@ import app.tivi.data.models.TraktUser
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class UserToTraktUser() : Mapper<ApiTraktUser, TraktUser> {
+class UserToTraktUser : Mapper<ApiTraktUser, TraktUser> {
 
-    override suspend fun map(from: ApiTraktUser) = TraktUser(
+    override fun map(from: ApiTraktUser) = TraktUser(
         username = from.userName!!,
         name = from.name,
         location = from.location,

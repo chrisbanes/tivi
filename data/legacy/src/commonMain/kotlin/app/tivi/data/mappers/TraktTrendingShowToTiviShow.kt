@@ -24,5 +24,5 @@ import me.tatarka.inject.annotations.Inject
 class TraktTrendingShowToTiviShow(
     private val showMapper: TraktShowToTiviShow,
 ) : Mapper<TraktTrendingShow, TiviShow> {
-    override suspend fun map(from: TraktTrendingShow) = showMapper.map(from.show!!)
+    override fun map(from: TraktTrendingShow) = showMapper.map(from.show!!)
 }

@@ -21,8 +21,8 @@ import app.tivi.data.models.FollowedShowEntry
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TraktListItemToFollowedShowEntry() : Mapper<TraktUserListItem, FollowedShowEntry> {
-    override suspend fun map(from: TraktUserListItem) = FollowedShowEntry(
+class TraktListItemToFollowedShowEntry : Mapper<TraktUserListItem, FollowedShowEntry> {
+    override fun map(from: TraktUserListItem) = FollowedShowEntry(
         showId = 0,
         followedAt = from.listedAt,
         traktId = from.id,

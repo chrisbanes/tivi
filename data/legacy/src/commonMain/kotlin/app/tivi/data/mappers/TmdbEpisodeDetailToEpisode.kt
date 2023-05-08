@@ -22,7 +22,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbEpisodeDetailToEpisode : Mapper<TmdbEpisodeDetail, Episode> {
-    override suspend fun map(from: TmdbEpisodeDetail): Episode = Episode(
+    override fun map(from: TmdbEpisodeDetail): Episode = Episode(
         seasonId = 0,
         tmdbId = from.id,
         title = from.name,

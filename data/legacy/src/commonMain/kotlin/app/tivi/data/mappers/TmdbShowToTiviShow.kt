@@ -22,7 +22,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbShowToTiviShow : Mapper<TmdbShow, TiviShow> {
-    override suspend fun map(from: TmdbShow) = TiviShow(
+    override fun map(from: TmdbShow) = TiviShow(
         tmdbId = from.id,
         title = from.name,
         summary = from.overview,

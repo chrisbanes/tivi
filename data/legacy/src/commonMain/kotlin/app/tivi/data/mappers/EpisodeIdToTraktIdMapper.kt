@@ -23,7 +23,7 @@ import me.tatarka.inject.annotations.Inject
 class EpisodeIdToTraktIdMapper(
     private val dao: EpisodesDao,
 ) : Mapper<Long, Int> {
-    override suspend fun map(from: Long): Int {
+    override fun map(from: Long): Int {
         return dao.episodeTraktIdForId(from)
             ?: throw IllegalArgumentException("Episode with id $from does not exist")
     }

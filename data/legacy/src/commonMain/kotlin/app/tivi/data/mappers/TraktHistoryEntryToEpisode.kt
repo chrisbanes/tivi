@@ -25,5 +25,5 @@ class TraktHistoryEntryToEpisode(
     private val mapper: TraktEpisodeToEpisode,
 ) : Mapper<TraktHistoryItem, Episode> {
 
-    override suspend fun map(from: TraktHistoryItem) = mapper.map(requireNotNull(from.episode))
+    override fun map(from: TraktHistoryItem) = mapper.map(requireNotNull(from.episode))
 }
