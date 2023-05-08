@@ -52,7 +52,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,8 +61,9 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.compose.viewModel
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
 import app.tivi.data.models.TiviShow
+import dev.icerock.moko.resources.compose.stringResource
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -146,7 +146,7 @@ internal fun Search(
                             searchQuery = value
                             onSearchQueryChanged(value.text)
                         },
-                        hint = stringResource(UiR.string.search_hint),
+                        hint = stringResource(MR.strings.search_hint),
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }

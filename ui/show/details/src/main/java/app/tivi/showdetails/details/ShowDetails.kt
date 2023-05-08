@@ -96,7 +96,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -115,7 +114,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.viewModel
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
@@ -128,6 +127,7 @@ import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import app.tivi.data.views.ShowsWatchStats
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -344,7 +344,7 @@ private fun ShowDetailsScrollingContent(
         gutterSpacer()
 
         item {
-            Header(stringResource(UiR.string.details_about))
+            Header(stringResource(MR.strings.details_about))
         }
 
         if (show.summary != null) {
@@ -368,7 +368,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(id = UiR.string.details_next_episode_to_watch))
+                Header(stringResource(MR.strings.details_next_episode_to_watch))
             }
             item {
                 NextEpisodeToWatch(
@@ -383,7 +383,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(UiR.string.details_related))
+                Header(stringResource(MR.strings.details_related))
             }
             item {
                 RelatedShows(
@@ -398,7 +398,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(UiR.string.details_view_stats))
+                Header(stringResource(MR.strings.details_view_stats))
             }
             item {
                 WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
@@ -409,7 +409,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(UiR.string.show_details_seasons))
+                Header(stringResource(MR.strings.show_details_seasons))
             }
 
             items(items = seasons) { season ->
@@ -448,7 +448,7 @@ private fun PosterInfoRow(
         AsyncImage(
             model = show.asImageModel(ImageType.POSTER),
             requestBuilder = { crossfade(true) },
-            contentDescription = stringResource(UiR.string.cd_show_poster, show.title ?: ""),
+            contentDescription = stringResource(MR.strings.cd_show_poster, show.title ?: ""),
             modifier = Modifier
                 .weight(1f)
                 .aspectRatio(2 / 3f)
@@ -473,7 +473,7 @@ private fun NetworkInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(UiR.string.network_title),
+            text = stringResource(MR.strings.network_title),
             style = MaterialTheme.typography.titleSmall,
         )
 
@@ -490,7 +490,7 @@ private fun NetworkInfoPanel(
                     crossfade(true)
                     transformations(TrimTransparentEdgesTransformation)
                 },
-                contentDescription = stringResource(UiR.string.cd_network_logo),
+                contentDescription = stringResource(MR.strings.cd_network_logo),
                 modifier = Modifier.sizeIn(maxWidth = 72.dp, maxHeight = 32.dp),
                 alignment = Alignment.TopStart,
                 contentScale = ContentScale.Fit,
@@ -515,14 +515,14 @@ private fun RuntimeInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(UiR.string.runtime_title),
+            text = stringResource(MR.strings.runtime_title),
             style = MaterialTheme.typography.titleSmall,
         )
 
         Spacer(Modifier.height(4.dp))
 
         Text(
-            text = stringResource(UiR.string.minutes_format, runtime),
+            text = stringResource(MR.strings.minutes_format, runtime),
             style = MaterialTheme.typography.bodyMedium,
         )
     }
@@ -535,7 +535,7 @@ private fun ShowStatusPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(UiR.string.status_title),
+            text = stringResource(MR.strings.status_title),
             style = MaterialTheme.typography.titleSmall,
         )
 
@@ -556,7 +556,7 @@ private fun AirsInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(UiR.string.airs_title),
+            text = stringResource(MR.strings.airs_title),
             style = MaterialTheme.typography.titleSmall,
         )
 
@@ -577,7 +577,7 @@ private fun CertificateInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(UiR.string.certificate_title),
+            text = stringResource(MR.strings.certificate_title),
             style = MaterialTheme.typography.titleSmall,
         )
 
@@ -605,7 +605,7 @@ private fun TraktRatingInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(UiR.string.trakt_rating_title),
+            text = stringResource(MR.strings.trakt_rating_title),
             style = MaterialTheme.typography.titleSmall,
         )
 
@@ -625,7 +625,7 @@ private fun TraktRatingInfoPanel(
             Column {
                 Text(
                     text = stringResource(
-                        UiR.string.trakt_rating_text,
+                        MR.strings.trakt_rating_text,
                         rating * 10f,
                     ),
                     style = MaterialTheme.typography.bodyMedium,
@@ -633,7 +633,7 @@ private fun TraktRatingInfoPanel(
 
                 Text(
                     text = stringResource(
-                        UiR.string.trakt_rating_votes,
+                        MR.strings.trakt_rating_votes,
                         votes / 1000f,
                     ),
                     style = MaterialTheme.typography.bodySmall,
@@ -744,7 +744,7 @@ private fun NextEpisodeToWatch(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            episode.title ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
+            episode.title ?: stringResource(MR.strings.episode_title_fallback, episode.number!!),
             style = MaterialTheme.typography.bodyLarge,
         )
     }
@@ -859,7 +859,7 @@ private fun SeasonRow(
 
             Text(
                 text = season.title
-                    ?: stringResource(UiR.string.season_title_fallback, season.number!!),
+                    ?: stringResource(MR.strings.season_title_fallback, season.number!!),
                 style = MaterialTheme.typography.bodyLarge,
             )
 
@@ -891,7 +891,7 @@ private fun SeasonRow(
             IconButton(onClick = { showMenu = true }) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
-                    contentDescription = stringResource(UiR.string.cd_open_overflow),
+                    contentDescription = stringResource(MR.strings.cd_open_overflow),
                 )
             }
 
@@ -932,7 +932,7 @@ private fun SeasonDropdownMenu(
     ) {
         if (season.ignored) {
             DropdownMenuItem(
-                text = { Text(text = stringResource(UiR.string.popup_season_follow)) },
+                text = { Text(text = stringResource(MR.strings.popup_season_follow)) },
                 onClick = {
                     onSeasonFollowed(season.id)
                     onDismissRequest()
@@ -940,7 +940,7 @@ private fun SeasonDropdownMenu(
             )
         } else {
             DropdownMenuItem(
-                text = { Text(text = stringResource(UiR.string.popup_season_ignore)) },
+                text = { Text(text = stringResource(MR.strings.popup_season_ignore)) },
                 onClick = {
                     onSeasonUnfollowed(season.id)
                     onDismissRequest()
@@ -951,7 +951,7 @@ private fun SeasonDropdownMenu(
         // Season number starts from 1, rather than 0
         if ((season.number ?: -100) >= 2) {
             DropdownMenuItem(
-                text = { Text(text = stringResource(UiR.string.popup_season_ignore_previous)) },
+                text = { Text(text = stringResource(MR.strings.popup_season_ignore_previous)) },
                 onClick = {
                     unfollowPreviousSeasons(season.id)
                     onDismissRequest()
@@ -961,7 +961,7 @@ private fun SeasonDropdownMenu(
 
         if (episodesWatched > 0) {
             DropdownMenuItem(
-                text = { Text(text = stringResource(UiR.string.popup_season_mark_all_unwatched)) },
+                text = { Text(text = stringResource(MR.strings.popup_season_mark_all_unwatched)) },
                 onClick = {
                     onMarkSeasonUnwatched(season.id)
                     onDismissRequest()
@@ -974,9 +974,9 @@ private fun SeasonDropdownMenu(
                 text = {
                     Text(
                         text = if (episodesToAir == 0) {
-                            stringResource(id = UiR.string.popup_season_mark_watched_all)
+                            stringResource(MR.strings.popup_season_mark_watched_all)
                         } else {
-                            stringResource(id = UiR.string.popup_season_mark_watched_aired)
+                            stringResource(MR.strings.popup_season_mark_watched_aired)
                         },
                     )
                 },
@@ -1006,7 +1006,7 @@ private fun ShowDetailsAppBar(
             IconButton(onClick = onNavigateUp) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(UiR.string.cd_navigate_up),
+                    contentDescription = stringResource(MR.strings.cd_navigate_up),
                 )
             }
         },
@@ -1040,16 +1040,16 @@ private fun ToggleShowFollowFloatingActionButton(
                     else -> Icons.Default.FavoriteBorder
                 },
                 contentDescription = when {
-                    isFollowed -> stringResource(UiR.string.cd_follow_show_remove)
-                    else -> stringResource(UiR.string.cd_follow_show_add)
+                    isFollowed -> stringResource(MR.strings.cd_follow_show_remove)
+                    else -> stringResource(MR.strings.cd_follow_show_add)
                 },
             )
         },
         text = {
             Text(
                 when {
-                    isFollowed -> stringResource(UiR.string.follow_show_remove)
-                    else -> stringResource(UiR.string.follow_show_add)
+                    isFollowed -> stringResource(MR.strings.follow_show_remove)
+                    else -> stringResource(MR.strings.follow_show_add)
                 },
             )
         },

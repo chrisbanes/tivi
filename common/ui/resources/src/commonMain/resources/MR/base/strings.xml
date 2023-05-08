@@ -101,10 +101,6 @@
     <string name="rating_content_description_format">Rating: %1$d%%</string>
     <string name="network_content_description_format">Network: %1$s</string>
     <string name="certificate_content_description_format">Certificate: %1$s</string>
-    <plurals name="runtime_content_description_format">
-        <item quantity="one">Runtime: %1$d minute</item>
-        <item quantity="other">Runtime: %1$d minutes</item>
-    </plurals>
 
     <string name="details_view_stats">View stats</string>
 
@@ -150,11 +146,6 @@
     <string name="next_prefix">Next: %s</string>
     <string name="filter_shows">Filter %1$d shows</string>
 
-    <plurals name="header_show_count">
-        <item quantity="one">%d show</item>
-        <item quantity="other">%d shows</item>
-    </plurals>
-
     <string name="selection_title">%d selected</string>
 
     <string name="episode_number">#%d</string>
@@ -163,11 +154,6 @@
 
     <string name="season_title_fallback">Season %1$d</string>
     <string name="episode_title_fallback">Episode %1$d</string>
-
-    <plurals name="header_show_count_filtered">
-        <item quantity="one">%d show &lt;small>(filtered)&lt;/small></item>
-        <item quantity="other">%d shows &lt;small>(filtered)&lt;/small></item>
-    </plurals>
 
     <string name="followed_watch_stats_to_watch">&lt;b>%d&lt;/b> episodes to watch</string>
     <string name="followed_watch_stats_complete">Watched all</string>

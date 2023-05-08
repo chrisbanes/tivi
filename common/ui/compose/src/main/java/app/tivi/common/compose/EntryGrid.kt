@@ -54,7 +54,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -62,9 +61,10 @@ import app.tivi.common.compose.ui.PlaceholderPosterCard
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
+import dev.icerock.moko.resources.compose.stringResource
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -212,7 +212,7 @@ private fun EntryGridAppBar(
             IconButton(onClick = onNavigateUp) {
                 Icon(
                     Icons.Default.ArrowBack,
-                    contentDescription = stringResource(UiR.string.cd_navigate_up),
+                    contentDescription = stringResource(MR.strings.cd_navigate_up),
                 )
             }
         },

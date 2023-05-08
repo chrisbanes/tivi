@@ -50,7 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
@@ -60,10 +59,11 @@ import app.tivi.common.compose.ui.DateTextField
 import app.tivi.common.compose.ui.LoadingButton
 import app.tivi.common.compose.ui.TimeTextField
 import app.tivi.common.compose.viewModel
-import app.tivi.common.ui.resources.R
+import app.tivi.common.ui.resources.MR
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import me.tatarka.inject.annotations.Assisted
@@ -250,13 +250,13 @@ private fun EpisodeTrack(
     Column(Modifier.padding(top = 16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = stringResource(R.string.episode_track_prompt),
+                text = stringResource(MR.strings.episode_track_prompt),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
             )
 
             Text(
-                text = stringResource(R.string.episode_track_now),
+                text = stringResource(MR.strings.episode_track_now),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(horizontal = Layout.gutter),
             )
@@ -287,7 +287,7 @@ private fun EpisodeTrack(
 
                 if (showSetFirstAired) {
                     TextButton(onClick = onSetFirstAired) {
-                        Text(text = stringResource(R.string.episode_track_set_first_aired))
+                        Text(text = stringResource(MR.strings.episode_track_set_first_aired))
                     }
                 }
             }
@@ -301,7 +301,7 @@ private fun EpisodeTrack(
             onClick = submitWatch,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(text = stringResource(R.string.episode_mark_watched))
+            Text(text = stringResource(MR.strings.episode_mark_watched))
         }
     }
 }

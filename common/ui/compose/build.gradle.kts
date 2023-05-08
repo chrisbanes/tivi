@@ -44,6 +44,7 @@ dependencies {
     api(projects.common.imageloading)
 
     api(projects.common.ui.resources)
+    api(projects.common.ui.resourcesCompose)
     api(projects.common.ui.view)
 
     implementation(libs.androidx.core)

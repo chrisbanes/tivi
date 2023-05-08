@@ -12,6 +12,7 @@ debugdrawer = "0.9.8"
 kotlin = "1.8.21"
 kotlininject = "0.6.1"
 ktlint = "0.48.1"
+moko-resources = "0.22.0"
 okhttp = "4.11.0"
 kermit = "2.0.0-RC4"
 ktor = "2.3.0"
@@ -30,7 +31,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = "com.google.devtools.ksp:1.8.21-1.0.11"
-moko-resources = "dev.icerock.mobile.multiplatform-resources:0.22.0"
+moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.5"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
@@ -133,6 +134,8 @@ ktlint = { module = "com.pinterest:ktlint", version.ref = "ktlint" }
 leakCanary = "com.squareup.leakcanary:leakcanary-android:2.10"
 
 mockK = "io.mockk:mockk:1.13.5"
+
+moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
 
 okhttp-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }

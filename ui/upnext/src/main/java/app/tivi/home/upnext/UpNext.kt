@@ -70,7 +70,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -85,7 +84,7 @@ import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.compose.viewModel
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
@@ -96,6 +95,7 @@ import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
 import coil.compose.AsyncImagePainter
+import dev.icerock.moko.resources.compose.stringResource
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 import me.tatarka.inject.annotations.Assisted
@@ -185,7 +185,7 @@ internal fun UpNext(
     Scaffold(
         topBar = {
             TiviStandardAppBar(
-                title = stringResource(UiR.string.upnext_title),
+                title = stringResource(MR.strings.upnext_title),
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 scrollBehavior = scrollBehavior,
@@ -253,7 +253,7 @@ internal fun UpNext(
                             },
                             onClick = onToggleFollowedShowsOnly,
                             label = {
-                                Text(text = stringResource(UiR.string.upnext_filter_followed_shows_only_title))
+                                Text(text = stringResource(MR.strings.upnext_filter_followed_shows_only_title))
                             },
                         )
 

@@ -19,7 +19,6 @@
 package app.tivi.home
 
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Row
@@ -67,7 +66,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
@@ -77,13 +75,15 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import app.tivi.AppNavigation
 import app.tivi.ComposeScreens
 import app.tivi.RootScreen
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
 import app.tivi.core.analytics.Analytics
 import app.tivi.debugLabel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
+import dev.icerock.moko.resources.StringResource
+import dev.icerock.moko.resources.compose.stringResource
 
 @OptIn(
     ExperimentalAnimationApi::class,
@@ -251,7 +251,7 @@ internal fun HomeNavigationBar(
                         selected = selectedNavigation == item.screen,
                     )
                 },
-                label = { Text(text = stringResource(item.labelResId)) },
+                label = { Text(text = stringResource(item.labelResource)) },
                 selected = selectedNavigation == item.screen,
                 onClick = { onNavigationSelected(item.screen) },
             )
@@ -275,7 +275,7 @@ internal fun HomeNavigationRail(
                     )
                 },
                 alwaysShowLabel = false,
-                label = { Text(text = stringResource(item.labelResId)) },
+                label = { Text(text = stringResource(item.labelResource)) },
                 selected = selectedNavigation == item.screen,
                 onClick = { onNavigationSelected(item.screen) },
             )
@@ -298,64 +298,64 @@ private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) 
         Crossfade(targetState = selected) {
             Icon(
                 painter = if (it) selectedPainter else painter,
-                contentDescription = stringResource(item.contentDescriptionResId),
+                contentDescription = stringResource(item.contentDescriptionResource),
             )
         }
     } else {
         Icon(
             painter = painter,
-            contentDescription = stringResource(item.contentDescriptionResId),
+            contentDescription = stringResource(item.contentDescriptionResource),
         )
     }
 }
 
 private sealed class HomeNavigationItem(
     val screen: RootScreen,
-    @StringRes val labelResId: Int,
-    @StringRes val contentDescriptionResId: Int,
+    val labelResource: StringResource,
+    val contentDescriptionResource: StringResource,
 ) {
     class ResourceIcon(
         screen: RootScreen,
-        @StringRes labelResId: Int,
-        @StringRes contentDescriptionResId: Int,
+        labelResource: StringResource,
+        contentDescriptionResource: StringResource,
         @DrawableRes val iconResId: Int,
         @DrawableRes val selectedIconResId: Int? = null,
-    ) : HomeNavigationItem(screen, labelResId, contentDescriptionResId)
+    ) : HomeNavigationItem(screen, labelResource, contentDescriptionResource)
 
     class ImageVectorIcon(
         screen: RootScreen,
-        @StringRes labelResId: Int,
-        @StringRes contentDescriptionResId: Int,
+        labelResource: StringResource,
+        contentDescriptionResource: StringResource,
         val iconImageVector: ImageVector,
         val selectedImageVector: ImageVector? = null,
-    ) : HomeNavigationItem(screen, labelResId, contentDescriptionResId)
+    ) : HomeNavigationItem(screen, labelResource, contentDescriptionResource)
 }
 
 private val HomeNavigationItems = listOf(
     HomeNavigationItem.ImageVectorIcon(
         screen = RootScreen.Discover,
-        labelResId = UiR.string.discover_title,
-        contentDescriptionResId = UiR.string.cd_discover_title,
+        labelResource = MR.strings.discover_title,
+        contentDescriptionResource = MR.strings.cd_discover_title,
         iconImageVector = Icons.Outlined.Weekend,
         selectedImageVector = Icons.Default.Weekend,
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = RootScreen.UpNext,
-        labelResId = UiR.string.upnext_title,
-        contentDescriptionResId = UiR.string.cd_upnext_title,
+        labelResource = MR.strings.upnext_title,
+        contentDescriptionResource = MR.strings.cd_upnext_title,
         iconImageVector = Icons.Default.Subscriptions,
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = RootScreen.Library,
-        labelResId = UiR.string.library_title,
-        contentDescriptionResId = UiR.string.cd_library_title,
+        labelResource = MR.strings.library_title,
+        contentDescriptionResource = MR.strings.cd_library_title,
         iconImageVector = Icons.Outlined.VideoLibrary,
         selectedImageVector = Icons.Default.VideoLibrary,
     ),
     HomeNavigationItem.ImageVectorIcon(
         screen = RootScreen.Search,
-        labelResId = UiR.string.search_navigation_title,
-        contentDescriptionResId = UiR.string.cd_search_navigation_title,
+        labelResource = MR.strings.search_navigation_title,
+        contentDescriptionResource = MR.strings.cd_search_navigation_title,
         iconImageVector = Icons.Default.Search,
     ),
 )

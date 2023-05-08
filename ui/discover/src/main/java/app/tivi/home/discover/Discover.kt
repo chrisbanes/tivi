@@ -69,7 +69,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.Layout
@@ -79,12 +78,13 @@ import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.viewModel
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import dev.icerock.moko.resources.compose.stringResource
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -189,7 +189,7 @@ internal fun Discover(
     Scaffold(
         topBar = {
             TiviStandardAppBar(
-                title = stringResource(UiR.string.discover_title),
+                title = stringResource(MR.strings.discover_title),
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.refreshing,
@@ -249,7 +249,7 @@ internal fun Discover(
                 item {
                     CarouselWithHeader(
                         items = state.trendingItems,
-                        title = stringResource(UiR.string.discover_trending_title),
+                        title = stringResource(MR.strings.discover_trending_title),
                         refreshing = state.trendingRefreshing,
                         onItemClick = {
                             openShowDetails(it.id, null, null)
@@ -261,7 +261,7 @@ internal fun Discover(
                 item {
                     CarouselWithHeader(
                         items = state.recommendedItems,
-                        title = stringResource(UiR.string.discover_recommended_title),
+                        title = stringResource(MR.strings.discover_recommended_title),
                         refreshing = state.recommendedRefreshing,
                         onItemClick = {
                             openShowDetails(it.id, null, null)
@@ -273,7 +273,7 @@ internal fun Discover(
                 item {
                     CarouselWithHeader(
                         items = state.popularItems,
-                        title = stringResource(UiR.string.discover_popular_title),
+                        title = stringResource(MR.strings.discover_popular_title),
                         refreshing = state.popularRefreshing,
                         onItemClick = { openShowDetails(it.id, null, null) },
                         onMoreClick = openPopularShows,
@@ -312,7 +312,7 @@ private fun NextEpisodeToWatch(
     ) {
         Column(Modifier.padding(Layout.bodyMargin)) {
             Header(
-                title = stringResource(UiR.string.discover_keep_watching_title),
+                title = stringResource(MR.strings.discover_keep_watching_title),
                 modifier = Modifier.padding(bottom = 16.dp),
             )
 
@@ -336,7 +336,7 @@ private fun NextEpisodeToWatch(
 
                     Text(
                         text = episode.title
-                            ?: stringResource(UiR.string.episode_title_fallback, episode.number!!),
+                            ?: stringResource(MR.strings.episode_title_fallback, episode.number!!),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
@@ -375,7 +375,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                     ),
                     modifier = Modifier.alignBy(FirstBaseline),
                 ) {
-                    Text(text = stringResource(UiR.string.header_more))
+                    Text(text = stringResource(MR.strings.header_more))
                 }
             }
         }

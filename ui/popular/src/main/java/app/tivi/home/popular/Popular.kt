@@ -17,11 +17,11 @@
 package app.tivi.home.popular
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.viewModel
-import app.tivi.common.ui.resources.R as UiR
+import app.tivi.common.ui.resources.MR
+import dev.icerock.moko.resources.compose.stringResource
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -52,7 +52,7 @@ internal fun PopularShows(
 ) {
     EntryGrid(
         lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
-        title = stringResource(UiR.string.discover_popular_title),
+        title = stringResource(MR.strings.discover_popular_title),
         onOpenShowDetails = openShowDetails,
         onNavigateUp = navigateUp,
     )
