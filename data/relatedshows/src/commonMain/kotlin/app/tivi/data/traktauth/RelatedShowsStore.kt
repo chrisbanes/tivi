@@ -33,15 +33,25 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 @ApplicationScope
 @Inject
 class RelatedShowsStore(
-    dataSource: TraktRelatedShowsDataSource,
+    traktDataSource: TraktRelatedShowsDataSource,
+    tmdbDataSource: TmdbRelatedShowsDataSource,
     relatedShowsDao: RelatedShowsDao,
     showDao: TiviShowDao,
     lastRequestStore: RelatedShowsLastRequestStore,
     transactionRunner: DatabaseTransactionRunner,
 ) : Store<Long, List<RelatedShowEntry>> by StoreBuilder.from(
     fetcher = Fetcher.of { showId: Long ->
-        dataSource(showId)
-            .also { lastRequestStore.updateLastRequest(showId) }
+        val tmdbResult = runCatching { tmdbDataSource(showId) }
+        if (tmdbResult.isSuccess) {
+            lastRequestStore.updateLastRequest(showId)
+            return@of tmdbResult.getOrThrow()
+        }
+
+        val traktResult = runCatching { traktDataSource(showId) }
+        if (traktResult.isSuccess) {
+            lastRequestStore.updateLastRequest(showId)
+        }
+        traktResult.getOrThrow()
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { showId ->
