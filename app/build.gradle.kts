@@ -87,8 +87,8 @@ android {
         }
     }
 
-    packagingOptions {
-        packagingOptions.resources.excludes += setOf(
+    packaging {
+        resources.excludes += setOf(
             // Exclude AndroidX version files
             "META-INF/*.version",
             // Exclude consumer proguard files
