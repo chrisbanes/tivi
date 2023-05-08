@@ -30,6 +30,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = "com.google.devtools.ksp:1.8.21-1.0.11"
+moko-resources = "dev.icerock.mobile.multiplatform-resources:0.22.0"
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.5"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

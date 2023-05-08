@@ -16,8 +16,28 @@
 
 
 plugins {
-    alias(libs.plugins.android.library)
+    kotlin("multiplatform")
+    alias(libs.plugins.moko.resources)
     alias(libs.plugins.cacheFixPlugin)
+    alias(libs.plugins.android.library)
+}
+
+kotlin {
+    jvm()
+    android()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                api("dev.icerock.moko:resources:0.22.0")
+//                api("dev.icerock.moko:resources-compose:0.22.0") // for compose multiplatform
+            }
+        }
+    }
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "app.tivi.common.ui.resources"
 }
 
 android {
