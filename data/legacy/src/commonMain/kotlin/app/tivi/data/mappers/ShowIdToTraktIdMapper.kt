@@ -23,7 +23,7 @@ import me.tatarka.inject.annotations.Inject
 class ShowIdToTraktIdMapper(
     private val showDao: TiviShowDao,
 ) : Mapper<Long, Int?> {
-    override suspend fun map(from: Long): Int? {
+    override fun map(from: Long): Int? {
         return showDao.getTraktIdForShowId(from)
     }
 }

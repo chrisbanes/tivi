@@ -26,7 +26,7 @@ class TraktBaseShowToWatchedShowEntry(
     private val showMapper: TraktShowToTiviShow,
 ) : Mapper<TraktMediaItem, Pair<TiviShow, WatchedShowEntry>> {
 
-    override suspend fun map(from: TraktMediaItem): Pair<TiviShow, WatchedShowEntry> {
+    override fun map(from: TraktMediaItem): Pair<TiviShow, WatchedShowEntry> {
         val watchedShowEntry = WatchedShowEntry(
             showId = 0,
             lastWatched = from.lastWatchedAt!!,

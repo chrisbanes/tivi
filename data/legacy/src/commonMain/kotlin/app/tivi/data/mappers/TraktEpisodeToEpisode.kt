@@ -21,9 +21,9 @@ import app.tivi.data.models.Episode
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TraktEpisodeToEpisode() : Mapper<TraktEpisode, Episode> {
+class TraktEpisodeToEpisode : Mapper<TraktEpisode, Episode> {
 
-    override suspend fun map(from: TraktEpisode) = Episode(
+    override fun map(from: TraktEpisode) = Episode(
         seasonId = 0,
         traktId = from.ids?.trakt,
         tmdbId = from.ids?.tmdb,

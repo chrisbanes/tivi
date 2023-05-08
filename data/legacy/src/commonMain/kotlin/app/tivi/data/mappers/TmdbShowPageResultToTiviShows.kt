@@ -26,7 +26,7 @@ import me.tatarka.inject.annotations.Inject
 class TmdbShowPageResultToTiviShows(
     private val tmdbShowMapper: TmdbShowToTiviShow,
 ) : Mapper<TmdbShowPageResult, List<Pair<TiviShow, List<ShowTmdbImage>>>> {
-    override suspend fun map(from: TmdbShowPageResult): List<Pair<TiviShow, List<ShowTmdbImage>>> {
+    override fun map(from: TmdbShowPageResult): List<Pair<TiviShow, List<ShowTmdbImage>>> {
         return from.results.map { result ->
             val show = tmdbShowMapper.map(result)
 

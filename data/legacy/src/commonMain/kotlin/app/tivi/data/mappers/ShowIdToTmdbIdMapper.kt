@@ -23,6 +23,6 @@ import me.tatarka.inject.annotations.Inject
 class ShowIdToTmdbIdMapper(
     private val showDao: TiviShowDao,
 ) : Mapper<Long, Int> {
-    override suspend fun map(from: Long) = showDao.getTmdbIdForShowId(from)
+    override fun map(from: Long) = showDao.getTmdbIdForShowId(from)
         ?: throw IllegalArgumentException("Show with id $from does not exist")
 }

@@ -27,7 +27,7 @@ class TraktSeasonToSeasonWithEpisodes(
     private val episoderMapper: TraktEpisodeToEpisode,
 ) : Mapper<TraktSeason, Pair<Season, List<Episode>>> {
 
-    override suspend fun map(from: TraktSeason): Pair<Season, List<Episode>> = Pair(
+    override fun map(from: TraktSeason): Pair<Season, List<Episode>> = Pair(
         seasonMapper.map(from),
         from.episodes?.map { episoderMapper.map(it) } ?: emptyList(),
     )

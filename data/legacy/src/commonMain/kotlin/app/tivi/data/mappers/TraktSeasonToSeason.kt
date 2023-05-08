@@ -21,9 +21,9 @@ import app.tivi.data.models.Season
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TraktSeasonToSeason() : Mapper<TraktSeason, Season> {
+class TraktSeasonToSeason : Mapper<TraktSeason, Season> {
 
-    override suspend fun map(from: TraktSeason) = Season(
+    override fun map(from: TraktSeason) = Season(
         showId = 0,
         traktId = from.ids?.trakt,
         tmdbId = from.ids?.tmdb,

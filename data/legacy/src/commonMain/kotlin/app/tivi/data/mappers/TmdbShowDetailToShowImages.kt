@@ -24,7 +24,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbShowDetailToShowImages : Mapper<TmdbShowDetail, List<ShowTmdbImage>> {
-    override suspend fun map(from: TmdbShowDetail): List<ShowTmdbImage> {
+    override fun map(from: TmdbShowDetail): List<ShowTmdbImage> {
         val results = ArrayList<ShowTmdbImage>()
         from.images?.posters?.mapTo(results) { image ->
             from.mapImage(image, ImageType.POSTER)

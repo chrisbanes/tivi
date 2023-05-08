@@ -21,9 +21,9 @@ import app.tivi.data.models.TrendingShowEntry
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TraktTrendingShowToTrendingShowEntry() : Mapper<TraktTrendingShow, TrendingShowEntry> {
+class TraktTrendingShowToTrendingShowEntry : Mapper<TraktTrendingShow, TrendingShowEntry> {
 
-    override suspend fun map(from: TraktTrendingShow): TrendingShowEntry {
+    override fun map(from: TraktTrendingShow): TrendingShowEntry {
         return TrendingShowEntry(
             showId = 0,
             watchers = from.watchers ?: 0,

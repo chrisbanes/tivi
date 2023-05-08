@@ -23,7 +23,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TraktStatusToShowStatus : Mapper<TraktShowStatus, ShowStatus> {
 
-    override suspend fun map(from: TraktShowStatus): ShowStatus = when (from) {
+    override fun map(from: TraktShowStatus): ShowStatus = when (from) {
         TraktShowStatus.ENDED -> ShowStatus.ENDED
         TraktShowStatus.RETURNING_SERIES -> ShowStatus.RETURNING
         TraktShowStatus.CANCELED -> ShowStatus.CANCELED

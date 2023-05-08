@@ -29,7 +29,7 @@ class TraktShowToTiviShow(
     private val statusMapper: TraktStatusToShowStatus,
 ) : Mapper<TraktShow, TiviShow> {
 
-    override suspend fun map(from: TraktShow) = TiviShow(
+    override fun map(from: TraktShow) = TiviShow(
         traktId = from.ids?.trakt,
         tmdbId = from.ids?.tmdb,
         imdbId = from.ids?.imdb,
