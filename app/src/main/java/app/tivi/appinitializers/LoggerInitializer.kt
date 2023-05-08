@@ -21,8 +21,16 @@ import app.tivi.util.Logger
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TimberInitializer(
+class LoggerInitializer(
     private val logger: Logger,
 ) : AppInitializer {
-    override fun init() = logger.setup(BuildConfig.DEBUG)
+    @Suppress("KotlinConstantConditions")
+    override fun init() {
+        val debugMode = when {
+            BuildConfig.DEBUG -> true
+            BuildConfig.FLAVOR == "qa" -> true
+            else -> false
+        }
+        logger.setup(debugMode)
+    }
 }
