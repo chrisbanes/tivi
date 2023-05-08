@@ -41,8 +41,11 @@ class TmdbRelatedShowsDataSourceImpl(
     override suspend operator fun invoke(
         showId: Long,
     ): List<Pair<TiviShow, RelatedShowEntry>> {
+        val tmdbShowId = tmdbIdMapper.map(showId)
+        require(tmdbShowId != null) { "No Tmdb ID for show with ID: $showId" }
+
         return tmdb.show
-            .getRecommendations(tmdbIdMapper.map(showId), 1, null)
+            .getRecommendations(tmdbShowId, 1, null)
             .let { resultMapper(it.results) }
     }
 }
