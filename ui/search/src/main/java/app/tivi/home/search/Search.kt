@@ -171,14 +171,14 @@ internal fun Search(
             EmptyContent(
                 title = {
                     if (state.query.isEmpty()) {
-                        Text(text = stringResource(UiR.string.search_empty_title))
+                        Text(text = stringResource(MR.strings.search_empty_title))
                     } else {
-                        Text(text = stringResource(UiR.string.search_noresults_title))
+                        Text(text = stringResource(MR.strings.search_noresults_title))
                     }
                 },
                 prompt = {
                     if (state.query.isNotEmpty()) {
-                        Text(text = stringResource(UiR.string.search_noresults_prompt))
+                        Text(text = stringResource(MR.strings.search_noresults_prompt))
                     }
                 },
                 graphic = { Text(text = "\uD83D\uDD75️\u200D♂️") },
