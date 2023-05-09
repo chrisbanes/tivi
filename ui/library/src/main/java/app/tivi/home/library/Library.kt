@@ -75,6 +75,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import app.cash.paging.LoadStateLoading
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
@@ -274,17 +275,6 @@ private fun LibraryGrid(
                 mutableStateOf(TextFieldValue(state.filter ?: ""))
             }
 
-            if (lazyPagingItems.itemCount == 0 &&
-                lazyPagingItems.loadState.refresh != LoadStateLoading
-            ) {
-                EmptyContent(
-                    title = { Text(text = stringResource(MR.strings.library_empty_title)) },
-                    prompt = { Text(text = stringResource(MR.strings.library_empty_prompt)) },
-                    graphic = { Text(text = "\uD83D\uDCFC") },
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-
             FilterSortPanel(
                 filterIcon = {
                     IconButton(onClick = { filterExpanded = true }) {
@@ -350,6 +340,21 @@ private fun LibraryGrid(
                     sortOptions = state.availableSorts,
                     currentSortOption = state.sort,
                     onSortSelected = onSortSelected,
+                )
+            }
+        }
+
+        fullSpanItem {
+            if (lazyPagingItems.itemCount == 0 &&
+                lazyPagingItems.loadState.refresh != LoadStateLoading
+            ) {
+                EmptyContent(
+                    title = { Text(text = stringResource(MR.strings.library_empty_title)) },
+                    prompt = { Text(text = stringResource(MR.strings.library_empty_prompt)) },
+                    graphic = { Text(text = "\uD83D\uDCFC") },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 64.dp),
                 )
             }
         }

@@ -255,7 +255,9 @@ internal fun UpNext(
                             title = { Text(text = stringResource(MR.strings.upnext_empty_title)) },
                             prompt = { Text(text = stringResource(MR.strings.upnext_empty_prompt)) },
                             graphic = { Text(text = "\uD83D\uDC7B") },
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(vertical = 64.dp),
                         )
                     }
                 }
