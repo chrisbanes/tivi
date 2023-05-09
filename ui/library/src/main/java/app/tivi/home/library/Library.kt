@@ -274,7 +274,9 @@ private fun LibraryGrid(
                 mutableStateOf(TextFieldValue(state.filter ?: ""))
             }
 
-            if (lazyPagingItems.itemCount == 0) {
+            if (lazyPagingItems.itemCount == 0 &&
+                lazyPagingItems.loadState.refresh != LoadStateLoading
+            ) {
                 EmptyContent(
                     title = { Text(text = stringResource(MR.strings.library_empty_title)) },
                     prompt = { Text(text = stringResource(MR.strings.library_empty_prompt)) },

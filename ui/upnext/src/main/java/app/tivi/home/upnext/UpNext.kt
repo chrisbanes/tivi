@@ -74,6 +74,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import app.cash.paging.LoadStateLoading
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
@@ -246,7 +247,9 @@ internal fun UpNext(
                     )
                 }
 
-                if (lazyPagingItems.itemCount == 0) {
+                if (lazyPagingItems.itemCount == 0 &&
+                    lazyPagingItems.loadState.refresh != LoadStateLoading
+                ) {
                     fullSpanItem {
                         EmptyContent(
                             title = { Text(text = stringResource(MR.strings.upnext_empty_title)) },
