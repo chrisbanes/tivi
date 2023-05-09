@@ -46,7 +46,7 @@ fun EmptyContent(
             val emojiHeaderGraphicTextStyle = remember(density) {
                 TextStyle(
                     // We don't want font scaling to affect this size
-                    fontSize = 112.dp.asEm(density),
+                    fontSize = 96.dp.asEm(density),
                     // Any opaque color will work here
                     color = Color.Magenta,
                 )
@@ -57,7 +57,7 @@ fun EmptyContent(
                     graphic()
                 }
             }
-            ProvideTextStyle(MaterialTheme.typography.headlineLarge) {
+            ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
                 title()
             }
             ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
