@@ -250,7 +250,7 @@ internal fun UpNext(
                     fullSpanItem {
                         EmptyContent(
                             title = { Text(text = stringResource(MR.strings.upnext_empty_title)) },
-                            prompt = { Text(text = stringResource(UiR.string.upnext_empty_prompt)) },
+                            prompt = { Text(text = stringResource(MR.strings.upnext_empty_prompt)) },
                             graphic = { Text(text = "\uD83D\uDC7B") },
                             modifier = Modifier.fillMaxSize(),
                         )
@@ -323,7 +323,7 @@ private fun UpNextFilterRow(
             onClick = onToggleFollowedShowsOnly,
             label = {
                 Text(
-                    text = stringResource(UiR.string.upnext_filter_followed_shows_only_title),
+                    text = stringResource(MR.strings.upnext_filter_followed_shows_only_title),
                 )
             },
         )

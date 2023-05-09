@@ -276,8 +276,8 @@ private fun LibraryGrid(
 
             if (lazyPagingItems.itemCount == 0) {
                 EmptyContent(
-                    title = { Text(text = stringResource(UiR.string.library_empty_title)) },
-                    prompt = { Text(text = stringResource(UiR.string.library_empty_prompt)) },
+                    title = { Text(text = stringResource(MR.strings.library_empty_title)) },
+                    prompt = { Text(text = stringResource(MR.strings.library_empty_prompt)) },
                     graphic = { Text(text = "\uD83D\uDCFC") },
                     modifier = Modifier.fillMaxSize(),
                 )
