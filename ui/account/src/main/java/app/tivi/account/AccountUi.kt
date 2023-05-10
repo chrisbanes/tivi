@@ -41,7 +41,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,13 +85,13 @@ internal fun AccountUi(
     openSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState = viewModel.presenter()
 
     AccountUi(
         viewState = viewState,
         openSettings = openSettings,
-        login = viewModel::login,
-        logout = viewModel::logout,
+        login = { viewState.eventSink(AccountUiViewState.AccountUiEvent.Login) },
+        logout = { viewState.eventSink(AccountUiViewState.AccountUiEvent.Logout) },
         modifier = modifier,
     )
 }
