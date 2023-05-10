@@ -57,8 +57,8 @@ class AccountUiViewModel(
             authState = authState,
         ) { event ->
             when (event) {
-                AccountUiViewState.AccountUiEvent.Login -> loginToTraktInteractor.launch()
-                AccountUiViewState.AccountUiEvent.Logout -> {
+                AccountUiEvent.Login -> loginToTraktInteractor.launch()
+                AccountUiEvent.Logout -> {
                     scope.launch {
                         traktAuthRepository.clearAuth()
                         clearUserDetails(ClearUserDetails.Params("me")).collect()
