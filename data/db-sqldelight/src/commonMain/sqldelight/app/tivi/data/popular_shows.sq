@@ -54,7 +54,7 @@ UPDATE popular_shows SET
 WHERE id = :id;
 
 insert:
-INSERT INTO popular_shows (
+INSERT OR REPLACE INTO popular_shows (
     `id`,
     `show_id`,
     `page`,

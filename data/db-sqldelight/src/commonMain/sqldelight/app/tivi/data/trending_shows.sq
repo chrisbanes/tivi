@@ -50,7 +50,7 @@ UPDATE trending_shows SET
 WHERE id = :id;
 
 insert:
-INSERT INTO trending_shows (
+INSERT OR REPLACE INTO trending_shows (
     `id`,
     `show_id`,
     `page`,

@@ -50,7 +50,7 @@ UPDATE recommended_entries SET
 WHERE id = :id;
 
 insert:
-INSERT INTO recommended_entries (
+INSERT OR REPLACE INTO recommended_entries (
     `id`,
     `show_id`,
     `page`
