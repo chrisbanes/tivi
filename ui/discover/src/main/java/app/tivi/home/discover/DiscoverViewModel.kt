@@ -16,9 +16,18 @@
 
 package app.tivi.home.discover
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.neverEqualPolicy
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiMessageManager
+import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
@@ -28,101 +37,117 @@ import app.tivi.domain.observers.ObserveRecommendedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.domain.observers.ObserveUserDetails
-import app.tivi.extensions.combine
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DiscoverViewModel(
     private val updatePopularShows: UpdatePopularShows,
-    observePopularShows: ObservePopularShows,
+    private val observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
-    observeTrendingShows: ObserveTrendingShows,
+    private val observeTrendingShows: ObserveTrendingShows,
     private val updateRecommendedShows: UpdateRecommendedShows,
-    observeRecommendedShows: ObserveRecommendedShows,
-    observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
-    observeTraktAuthState: ObserveTraktAuthState,
-    observeUserDetails: ObserveUserDetails,
+    private val observeRecommendedShows: ObserveRecommendedShows,
+    private val observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
+    private val observeTraktAuthState: ObserveTraktAuthState,
+    private val observeUserDetails: ObserveUserDetails,
     private val logger: Logger,
 ) : ViewModel() {
-    private val trendingLoadingState = ObservableLoadingCounter()
-    private val popularLoadingState = ObservableLoadingCounter()
-    private val recommendedLoadingState = ObservableLoadingCounter()
-    private val uiMessageManager = UiMessageManager()
 
-    val state: StateFlow<DiscoverViewState> = combine(
-        trendingLoadingState.observable,
-        popularLoadingState.observable,
-        recommendedLoadingState.observable,
-        observeTrendingShows.flow,
-        observePopularShows.flow,
-        observeRecommendedShows.flow,
-        observeNextShowEpisodeToWatch.flow,
-        observeTraktAuthState.flow,
-        observeUserDetails.flow,
-        uiMessageManager.message,
-    ) { trendingLoad, popularLoad, recommendLoad, trending, popular, recommended, nextShow,
-            authState, user, message,
-        ->
-        DiscoverViewState(
+    @Composable
+    fun presenter(): DiscoverViewState {
+        val scope = rememberCoroutineScope()
+
+        val trendingLoadingState = remember { ObservableLoadingCounter() }
+        val popularLoadingState = remember { ObservableLoadingCounter() }
+        val recommendedLoadingState = remember { ObservableLoadingCounter() }
+        val uiMessageManager = remember { UiMessageManager() }
+
+        val trendingLoading by trendingLoadingState.observable.collectAsState(false)
+        val trendingItems by observeTrendingShows.flow.collectAsState(emptyList())
+
+        val popularItems by observePopularShows.flow.collectAsState(emptyList())
+        val popularLoading by popularLoadingState.observable.collectAsState(false)
+
+        val recommendedItems by observeRecommendedShows.flow.collectAsState(emptyList())
+        val recommendedLoading by recommendedLoadingState.observable.collectAsState(false)
+
+        val nextShow by observeNextShowEpisodeToWatch.flow.collectAsState(null)
+        val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
+        val user by observeUserDetails.flow.collectAsState(null)
+
+        val message by uiMessageManager.message.collectAsState(null)
+
+        var refreshSignal by remember {
+            // use neverEqual so that every set triggers a refresh
+            mutableStateOf(DiscoverUiEvent.Refresh(), neverEqualPolicy())
+        }
+
+        LaunchedEffect(Unit) {
+            observeTrendingShows(ObserveTrendingShows.Params(10))
+            observePopularShows(ObservePopularShows.Params(10))
+            observeRecommendedShows(ObserveRecommendedShows.Params(10))
+            observeNextShowEpisodeToWatch(Unit)
+            observeTraktAuthState(Unit)
+            observeUserDetails(ObserveUserDetails.Params("me"))
+        }
+
+        LaunchedEffect(observeTraktAuthState) {
+            // Each time the auth state changes, tickle the refresh signal...
+            observeTraktAuthState.flow.collect {
+                refreshSignal = DiscoverUiEvent.Refresh()
+            }
+        }
+
+        LaunchedEffect(refreshSignal) {
+            launch {
+                updatePopularShows(
+                    UpdatePopularShows.Params(
+                        page = UpdatePopularShows.Page.REFRESH,
+                        forceRefresh = refreshSignal.fromUser,
+                    ),
+                ).collectStatus(popularLoadingState, logger, uiMessageManager)
+            }
+            launch {
+                updateTrendingShows(
+                    UpdateTrendingShows.Params(
+                        page = UpdateTrendingShows.Page.REFRESH,
+                        forceRefresh = refreshSignal.fromUser,
+                    ),
+                ).collectStatus(trendingLoadingState, logger, uiMessageManager)
+            }
+            launch {
+                updateRecommendedShows(
+                    UpdateRecommendedShows.Params(forceRefresh = refreshSignal.fromUser),
+                ).collectStatus(recommendedLoadingState, logger, uiMessageManager)
+            }
+        }
+
+        return DiscoverViewState(
             user = user,
             authState = authState,
-            trendingItems = trending,
-            trendingRefreshing = trendingLoad,
-            popularItems = popular,
-            popularRefreshing = popularLoad,
-            recommendedItems = recommended,
-            recommendedRefreshing = recommendLoad,
-            nextEpisodeWithShowToWatched = nextShow,
+            trendingItems = trendingItems,
+            trendingRefreshing = trendingLoading,
+            popularItems = popularItems,
+            popularRefreshing = popularLoading,
+            recommendedItems = recommendedItems,
+            recommendedRefreshing = recommendedLoading,
+            nextEpisodeWithShowToWatch = nextShow,
             message = message,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = DiscoverViewState.Empty,
-    )
-
-    init {
-        observeTrendingShows(ObserveTrendingShows.Params(10))
-        observePopularShows(ObservePopularShows.Params(10))
-        observeRecommendedShows(ObserveRecommendedShows.Params(10))
-        observeNextShowEpisodeToWatch(Unit)
-        observeTraktAuthState(Unit)
-        observeUserDetails(ObserveUserDetails.Params("me"))
-
-        viewModelScope.launch {
-            // Each time the auth state changes, refresh...
-            observeTraktAuthState.flow.collect { refresh(false) }
-        }
-    }
-
-    fun refresh(fromUser: Boolean = true) {
-        viewModelScope.launch {
-            updatePopularShows(
-                UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser),
-            ).collectStatus(popularLoadingState, logger, uiMessageManager)
-        }
-        viewModelScope.launch {
-            updateTrendingShows(
-                UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH, fromUser),
-            ).collectStatus(trendingLoadingState, logger, uiMessageManager)
-        }
-        viewModelScope.launch {
-            updateRecommendedShows(
-                UpdateRecommendedShows.Params(forceRefresh = fromUser),
-            ).collectStatus(recommendedLoadingState, logger, uiMessageManager)
-        }
-    }
-
-    fun clearMessage(id: Long) {
-        viewModelScope.launch {
-            uiMessageManager.clearMessage(id)
+        ) { event ->
+            when (event) {
+                is DiscoverUiEvent.ClearMessage -> {
+                    scope.launch {
+                        uiMessageManager.clearMessage(event.id)
+                    }
+                }
+                is DiscoverUiEvent.Refresh -> {
+                    refreshSignal = event
+                }
+            }
         }
     }
 }

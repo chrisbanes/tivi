@@ -62,7 +62,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -128,17 +127,17 @@ internal fun Discover(
     openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
     openUser: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState = viewModel.presenter()
 
     Discover(
         state = viewState,
-        refresh = viewModel::refresh,
+        refresh = { viewState.eventSink(DiscoverUiEvent.Refresh(true)) },
         openUser = openUser,
         openShowDetails = openShowDetails,
         openTrendingShows = openTrendingShows,
         openRecommendedShows = openRecommendedShows,
         openPopularShows = openPopularShows,
-        onMessageShown = viewModel::clearMessage,
+        onMessageShown = { viewState.eventSink(DiscoverUiEvent.ClearMessage(it)) },
     )
 }
 
@@ -222,7 +221,7 @@ internal fun Discover(
                     Spacer(Modifier.height(Layout.gutter))
                 }
 
-                state.nextEpisodeWithShowToWatched?.let { nextEpisodeToWatch ->
+                state.nextEpisodeWithShowToWatch?.let { nextEpisodeToWatch ->
                     item {
                         NextEpisodeToWatch(
                             show = nextEpisodeToWatch.show,
