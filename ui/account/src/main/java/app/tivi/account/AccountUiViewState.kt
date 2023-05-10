@@ -24,8 +24,10 @@ import app.tivi.data.traktauth.TraktAuthState
 data class AccountUiViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
+    val eventSink: (AccountUiEvent) -> Unit,
 ) {
-    companion object {
-        val Empty = AccountUiViewState()
+    sealed interface AccountUiEvent {
+        object Login : AccountUiEvent
+        object Logout : AccountUiEvent
     }
 }
