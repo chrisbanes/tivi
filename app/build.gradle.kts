@@ -232,13 +232,13 @@ dependencies {
 
     implementation(libs.google.firebase.crashlytics)
 
-    "qaImplementation"(libs.chucker.library)
+    qaImplementation(libs.chucker.library)
 
-    "qaImplementation"(libs.debugdrawer.debugdrawer)
-    "qaImplementation"(libs.debugdrawer.timber)
-    "qaImplementation"(libs.debugdrawer.okhttplogger)
+    qaImplementation(libs.debugdrawer.debugdrawer)
+    qaImplementation(libs.debugdrawer.timber)
+    qaImplementation(libs.debugdrawer.okhttplogger)
 
-    "qaImplementation"(libs.leakCanary)
+    qaImplementation(libs.leakCanary)
 
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
@@ -282,3 +282,6 @@ fun <T : Any> propOrDef(propertyName: String, fallbackProperty: String, defaultV
         ?: project.properties[fallbackProperty] as T?
         ?: defaultValue
 }
+
+fun DependencyHandler.qaImplementation(dependencyNotation: Any) =
+    add("qaImplementation", dependencyNotation)
