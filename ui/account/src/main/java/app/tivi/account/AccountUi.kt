@@ -90,8 +90,8 @@ internal fun AccountUi(
     AccountUi(
         viewState = viewState,
         openSettings = openSettings,
-        login = { viewState.eventSink(AccountUiViewState.AccountUiEvent.Login) },
-        logout = { viewState.eventSink(AccountUiViewState.AccountUiEvent.Logout) },
+        login = { viewState.eventSink(AccountUiEvent.Login) },
+        logout = { viewState.eventSink(AccountUiEvent.Logout) },
         modifier = modifier,
     )
 }

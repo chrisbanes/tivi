@@ -25,9 +25,9 @@ data class AccountUiViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
     val eventSink: (AccountUiEvent) -> Unit,
-) {
-    sealed interface AccountUiEvent {
-        object Login : AccountUiEvent
-        object Logout : AccountUiEvent
-    }
+)
+
+sealed interface AccountUiEvent {
+    object Login : AccountUiEvent
+    object Logout : AccountUiEvent
 }
