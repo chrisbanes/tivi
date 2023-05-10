@@ -16,7 +16,7 @@
 
 
 plugins {
-    kotlin("multiplatform")
+    id("app.tivi.multiplatform")
 }
 
 kotlin {

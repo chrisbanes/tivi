@@ -18,7 +18,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
-    alias(libs.plugins.android.application)
+    id("app.tivi.android.application")
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.ksp)

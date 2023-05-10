@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,17 @@
  */
 
 
-plugins {
-    id("app.tivi.multiplatform")
-    alias(libs.plugins.cacheFixPlugin)
-}
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
 
-kotlin {
-    jvm()
-
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.core.base)
-            }
+    versionCatalogs {
+        create("libs") {
+            from(files("../libs.versions.toml"))
         }
     }
 }
+
+include(":convention")
