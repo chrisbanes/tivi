@@ -35,13 +35,15 @@ data class DiscoverViewState(
     val popularRefreshing: Boolean = false,
     val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
     val recommendedRefreshing: Boolean = false,
-    val nextEpisodeWithShowToWatched: EpisodeWithSeasonWithShow? = null,
+    val nextEpisodeWithShowToWatch: EpisodeWithSeasonWithShow? = null,
     val message: UiMessage? = null,
+    val eventSink: (DiscoverUiEvent) -> Unit,
 ) {
     val refreshing: Boolean
         get() = trendingRefreshing || popularRefreshing || recommendedRefreshing
+}
 
-    companion object {
-        val Empty = DiscoverViewState()
-    }
+sealed interface DiscoverUiEvent {
+    data class Refresh(val fromUser: Boolean = false) : DiscoverUiEvent
+    data class ClearMessage(val id: Long) : DiscoverUiEvent
 }
