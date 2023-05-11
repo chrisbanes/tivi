@@ -22,9 +22,11 @@ import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.http.HttpStatusCode
 import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
@@ -44,6 +46,16 @@ actual interface TraktPlatformComponent {
             // Probably want to move to using Ktor's caching, timeouts, etc eventually
             engine {
                 preconfigured = client
+            }
+
+            install(HttpRequestRetry) {
+                retryIf { _, httpResponse ->
+                    when {
+                        httpResponse.status.value in 500..599 -> true
+                        httpResponse.status == HttpStatusCode.TooManyRequests -> true
+                        else -> false
+                    }
+                }
             }
 
             install(Auth) {
