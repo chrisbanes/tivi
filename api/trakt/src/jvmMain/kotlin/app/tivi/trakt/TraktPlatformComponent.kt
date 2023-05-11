@@ -49,7 +49,7 @@ actual interface TraktPlatformComponent {
             }
 
             install(HttpRequestRetry) {
-                retryIf { _, httpResponse ->
+                retryIf(5) { _, httpResponse ->
                     when {
                         httpResponse.status.value in 500..599 -> true
                         httpResponse.status == HttpStatusCode.TooManyRequests -> true
