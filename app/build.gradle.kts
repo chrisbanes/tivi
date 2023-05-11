@@ -100,7 +100,6 @@ android {
         debug {
             signingConfig = signingConfigs["debug"]
             versionNameSuffix = "-dev"
-            applicationIdSuffix = ".debug"
 
             buildConfigField("String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_DEBUG_TRAKT_CLIENT_ID", "TIVI_TRAKT_CLIENT_ID", "") + "\"")
             buildConfigField("String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_DEBUG_TRAKT_CLIENT_SECRET", "TIVI_TRAKT_CLIENT_SECRET", "") + "\"")
@@ -133,6 +132,7 @@ android {
             // This is a build with Chucker enabled
             proguardFiles("proguard-rules-chucker.pro")
             versionNameSuffix = "-qa"
+            applicationIdSuffix = ".qa"
         }
 
         create("standard") {
