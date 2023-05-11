@@ -22,5 +22,5 @@ import me.tatarka.inject.annotations.Provides
 actual interface LoggerComponent {
     @ApplicationScope
     @Provides
-    fun provideLogger(bind: TiviLogger): Logger = bind
+    fun provideLogger(bind: TimberLogger): Logger = bind
 }
