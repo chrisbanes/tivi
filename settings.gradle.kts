@@ -23,6 +23,26 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+
+        // Needed when using the 'dev' Compose Compiler
+        // maven("https://androidx.dev/storage/compose-compiler/repository/")
+
+        // Jetpack Compose SNAPSHOTs if needed
+        // maven("https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/")
+
+        // Used for snapshots if needed
+        // maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        // maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+
 plugins {
     id("com.gradle.enterprise") version "3.13.2"
 }
