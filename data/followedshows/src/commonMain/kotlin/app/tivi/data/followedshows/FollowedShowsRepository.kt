@@ -19,6 +19,7 @@ package app.tivi.data.followedshows
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
+import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.traktauth.TraktAuthRepository
@@ -44,6 +45,7 @@ class FollowedShowsRepository(
     private val traktAuthRepository: TraktAuthRepository,
     private val logger: Logger,
     private val showDao: TiviShowDao,
+    private val transactionRunner: DatabaseTransactionRunner,
 ) {
     private var traktListId: Int? = null
 
@@ -59,19 +61,19 @@ class FollowedShowsRepository(
             .map { it > 0 }
     }
 
-    suspend fun isShowFollowed(showId: Long): Boolean {
+    fun isShowFollowed(showId: Long): Boolean {
         return followedShowsDao.entryCountWithShowId(showId) > 0
     }
 
-    suspend fun getFollowedShows(): List<FollowedShowEntry> {
+    fun getFollowedShows(): List<FollowedShowEntry> {
         return followedShowsDao.entries()
     }
 
-    suspend fun needFollowedShowsSync(expiry: Instant = 3.hours.inPast): Boolean {
+    fun needFollowedShowsSync(expiry: Instant = 3.hours.inPast): Boolean {
         return followedShowsLastRequestStore.isRequestBefore(expiry)
     }
 
-    suspend fun addFollowedShow(showId: Long) {
+    fun addFollowedShow(showId: Long) {
         val entry = followedShowsDao.entryWithShowId(showId)
 
         logger.d("addFollowedShow. Current entry: %s", entry)
@@ -90,7 +92,7 @@ class FollowedShowsRepository(
         }
     }
 
-    suspend fun removeFollowedShow(showId: Long) {
+    fun removeFollowedShow(showId: Long) = transactionRunner {
         // Update the followed show to be deleted
         followedShowsDao.entryWithShowId(showId)?.also {
             // Mark the show as pending deletion
@@ -120,14 +122,16 @@ class FollowedShowsRepository(
     ): ItemSyncerResult<FollowedShowEntry> {
         val response = dataSource.getListShows(listId)
         logger.d("pullDownTraktFollowedList. Response: %s", response)
-        return response.map { (entry, show) ->
-            // Grab the show id if it exists, or save the show and use it's generated ID
-            val showId = showDao.getIdOrSavePlaceholder(show)
-            // Create a followed show entry with the show id
-            entry.copy(showId = showId)
-        }.let { entries ->
-            // Save the show entries
-            syncer.sync(followedShowsDao.entries(), entries)
+        return transactionRunner {
+            response.map { (entry, show) ->
+                // Grab the show id if it exists, or save the show and use it's generated ID
+                val showId = showDao.getIdOrSavePlaceholder(show)
+                // Create a followed show entry with the show id
+                entry.copy(showId = showId)
+            }.let { entries ->
+                // Save the show entries
+                syncer.sync(followedShowsDao.entries(), entries)
+            }
         }
     }
 

@@ -42,37 +42,31 @@ class EpisodeWatchStore(
         return episodeWatchEntryDao.watchesForEpisodeObservable(episodeId)
     }
 
-    suspend fun save(watch: EpisodeWatchEntry): Long = episodeWatchEntryDao.upsert(watch)
+    fun save(watch: EpisodeWatchEntry): Long = episodeWatchEntryDao.upsert(watch)
 
-    suspend fun save(watches: List<EpisodeWatchEntry>): Unit = episodeWatchEntryDao.upsert(watches)
+    fun save(watches: List<EpisodeWatchEntry>): Unit = episodeWatchEntryDao.upsert(watches)
 
-    suspend fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
+    fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
 
-    suspend fun getWatchesForEpisode(episodeId: Long) = episodeWatchEntryDao.watchesForEpisode(episodeId)
+    fun getWatchesForEpisode(episodeId: Long) = episodeWatchEntryDao.watchesForEpisode(episodeId)
 
-    suspend fun getEpisodeWatch(watchId: Long) = episodeWatchEntryDao.entryWithId(watchId)
+    fun getEpisodeWatch(watchId: Long) = episodeWatchEntryDao.entryWithId(watchId)
 
-    suspend fun hasEpisodeBeenWatched(episodeId: Long) = episodeWatchEntryDao.watchCountForEpisode(episodeId) > 0
+    fun hasEpisodeBeenWatched(episodeId: Long) = episodeWatchEntryDao.watchCountForEpisode(episodeId) > 0
 
-    suspend fun getEntriesWithAddAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
+    fun getEntriesWithAddAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
 
-    suspend fun getEntriesWithDeleteAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
+    fun getEntriesWithDeleteAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
 
-    suspend fun deleteEntriesWithIds(ids: List<Long>) = episodeWatchEntryDao.deleteWithIds(ids)
+    fun deleteEntriesWithIds(ids: List<Long>) = transactionRunner {
+        episodeWatchEntryDao.deleteWithIds(ids)
+    }
 
-    suspend fun updateEntriesWithAction(ids: List<Long>, action: PendingAction) {
+    fun updateEntriesWithAction(ids: List<Long>, action: PendingAction) = transactionRunner {
         episodeWatchEntryDao.updateEntriesToPendingAction(ids, action)
     }
 
-    suspend fun addNewShowWatchEntries(
-        showId: Long,
-        watches: List<EpisodeWatchEntry>,
-    ) = transactionRunner {
-        val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
-        episodeWatchSyncer.sync(currentWatches, watches, removeNotMatched = false)
-    }
-
-    suspend fun syncShowWatchEntries(
+    fun syncShowWatchEntries(
         showId: Long,
         watches: List<EpisodeWatchEntry>,
     ) = transactionRunner {
@@ -80,7 +74,7 @@ class EpisodeWatchStore(
         episodeWatchSyncer.sync(currentWatches, watches)
     }
 
-    suspend fun syncEpisodeWatchEntries(
+    fun syncEpisodeWatchEntries(
         episodeId: Long,
         watches: List<EpisodeWatchEntry>,
     ) = transactionRunner {
