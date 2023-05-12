@@ -57,7 +57,7 @@ class SqlDelightFollowedShowsDao(
         return db.myshows_entriesQueries.entries(::FollowedShowEntry).executeAsList()
     }
 
-    override fun deleteAll() {
+    override fun deleteAll() = db.myshows_entriesQueries.transaction {
         db.myshows_entriesQueries.deleteAll()
     }
 
@@ -102,14 +102,20 @@ class SqlDelightFollowedShowsDao(
         ids: List<Long>,
         pendingAction: PendingAction,
     ) {
-        db.myshows_entriesQueries.updatePendingActionsForIds(pendingAction, ids)
+        db.myshows_entriesQueries.transaction {
+            db.myshows_entriesQueries.updatePendingActionsForIds(pendingAction, ids)
+        }
     }
 
     override fun deleteWithIds(ids: List<Long>) {
-        db.myshows_entriesQueries.deleteWithIds(ids)
+        db.myshows_entriesQueries.transaction {
+            db.myshows_entriesQueries.deleteWithIds(ids)
+        }
     }
 
     override fun deleteEntity(entity: FollowedShowEntry) {
-        db.myshows_entriesQueries.deleteWithId(entity.id)
+        db.myshows_entriesQueries.transaction {
+            db.myshows_entriesQueries.deleteWithId(entity.id)
+        }
     }
 }
