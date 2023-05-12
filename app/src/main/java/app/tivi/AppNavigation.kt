@@ -34,7 +34,19 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import app.tivi.account.AccountUi
 import app.tivi.common.compose.ui.androidMinWidthDialogSize
+import app.tivi.episode.track.EpisodeTrack
+import app.tivi.episodedetails.EpisodeDetails
+import app.tivi.home.discover.Discover
+import app.tivi.home.library.Library
+import app.tivi.home.popular.PopularShows
+import app.tivi.home.recommended.RecommendedShows
+import app.tivi.home.search.Search
+import app.tivi.home.trending.TrendingShows
+import app.tivi.home.upnext.UpNext
+import app.tivi.showdetails.details.ShowDetails
+import app.tivi.showdetails.seasons.ShowSeasons
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -126,15 +138,15 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
         route = RootScreen.Discover.route,
         startDestination = Screen.Discover.createRoute(RootScreen.Discover),
     ) {
-        addDiscover(navController, composeScreens, RootScreen.Discover)
-        addAccount(RootScreen.Discover, composeScreens, openSettings)
-        addShowDetails(navController, composeScreens, RootScreen.Discover)
-        addShowSeasons(navController, composeScreens, RootScreen.Discover)
-        addEpisodeDetails(navController, composeScreens, RootScreen.Discover)
-        addEpisodeTrack(navController, composeScreens, RootScreen.Discover)
-        addRecommendedShows(navController, composeScreens, RootScreen.Discover)
-        addTrendingShows(navController, composeScreens, RootScreen.Discover)
-        addPopularShows(navController, composeScreens, RootScreen.Discover)
+        addDiscover(navController, RootScreen.Discover, composeScreens.discover)
+        addAccount(RootScreen.Search, composeScreens.accountUi, openSettings)
+        addShowDetails(navController, RootScreen.Search, composeScreens.showDetails)
+        addShowSeasons(navController, RootScreen.Search, composeScreens.showSeasons)
+        addEpisodeDetails(navController, RootScreen.Search, composeScreens.episodeDetails)
+        addEpisodeTrack(navController, RootScreen.Search, composeScreens.episodeTrack)
+        addRecommendedShows(navController, RootScreen.Discover, composeScreens.recommendedShows)
+        addTrendingShows(navController, RootScreen.Discover, composeScreens.trendingShows)
+        addPopularShows(navController, RootScreen.Discover, composeScreens.popularShows)
     }
 }
 
@@ -148,12 +160,12 @@ private fun NavGraphBuilder.addLibraryTopLevel(
         route = RootScreen.Library.route,
         startDestination = Screen.Library.createRoute(RootScreen.Library),
     ) {
-        addLibrary(navController, composeScreens, RootScreen.Library)
-        addAccount(RootScreen.Library, composeScreens, openSettings)
-        addShowDetails(navController, composeScreens, RootScreen.Library)
-        addShowSeasons(navController, composeScreens, RootScreen.Library)
-        addEpisodeDetails(navController, composeScreens, RootScreen.Library)
-        addEpisodeTrack(navController, composeScreens, RootScreen.Library)
+        addLibrary(navController, RootScreen.Library, composeScreens.library)
+        addAccount(RootScreen.Search, composeScreens.accountUi, openSettings)
+        addShowDetails(navController, RootScreen.Search, composeScreens.showDetails)
+        addShowSeasons(navController, RootScreen.Search, composeScreens.showSeasons)
+        addEpisodeDetails(navController, RootScreen.Search, composeScreens.episodeDetails)
+        addEpisodeTrack(navController, RootScreen.Search, composeScreens.episodeTrack)
     }
 }
 
@@ -167,12 +179,12 @@ private fun NavGraphBuilder.addUpNextTopLevel(
         route = RootScreen.UpNext.route,
         startDestination = Screen.UpNext.createRoute(RootScreen.UpNext),
     ) {
-        addUpNext(navController, composeScreens, RootScreen.UpNext)
-        addAccount(RootScreen.UpNext, composeScreens, openSettings)
-        addShowDetails(navController, composeScreens, RootScreen.UpNext)
-        addShowSeasons(navController, composeScreens, RootScreen.UpNext)
-        addEpisodeDetails(navController, composeScreens, RootScreen.UpNext)
-        addEpisodeTrack(navController, composeScreens, RootScreen.UpNext)
+        addUpNext(navController, RootScreen.UpNext, composeScreens.upNext)
+        addAccount(RootScreen.Search, composeScreens.accountUi, openSettings)
+        addShowDetails(navController, RootScreen.Search, composeScreens.showDetails)
+        addShowSeasons(navController, RootScreen.Search, composeScreens.showSeasons)
+        addEpisodeDetails(navController, RootScreen.Search, composeScreens.episodeDetails)
+        addEpisodeTrack(navController, RootScreen.Search, composeScreens.episodeTrack)
     }
 }
 
@@ -186,26 +198,26 @@ private fun NavGraphBuilder.addSearchTopLevel(
         route = RootScreen.Search.route,
         startDestination = Screen.Search.createRoute(RootScreen.Search),
     ) {
-        addSearch(navController, composeScreens, RootScreen.Search)
-        addAccount(RootScreen.Search, composeScreens, openSettings)
-        addShowDetails(navController, composeScreens, RootScreen.Search)
-        addShowSeasons(navController, composeScreens, RootScreen.Search)
-        addEpisodeDetails(navController, composeScreens, RootScreen.Search)
-        addEpisodeTrack(navController, composeScreens, RootScreen.Search)
+        addSearch(navController, RootScreen.Search, composeScreens.search)
+        addAccount(RootScreen.Search, composeScreens.accountUi, openSettings)
+        addShowDetails(navController, RootScreen.Search, composeScreens.showDetails)
+        addShowSeasons(navController, RootScreen.Search, composeScreens.showSeasons)
+        addEpisodeDetails(navController, RootScreen.Search, composeScreens.episodeDetails)
+        addEpisodeTrack(navController, RootScreen.Search, composeScreens.episodeTrack)
     }
 }
 
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addDiscover(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    discover: Discover,
 ) {
     composable(
         route = Screen.Discover.createRoute(root),
         debugLabel = "Discover()",
     ) {
-        composeScreens.discover(
+        discover(
             openTrendingShows = {
                 navController.navigate(Screen.Trending.createRoute(root))
             },
@@ -245,14 +257,14 @@ private fun NavController.navigateToShow(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addLibrary(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    library: Library,
 ) {
     composable(
         route = Screen.Library.createRoute(root),
         debugLabel = "Library()",
     ) {
-        composeScreens.library(
+        library(
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
             },
@@ -266,14 +278,14 @@ private fun NavGraphBuilder.addLibrary(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addUpNext(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    upNext: UpNext,
 ) {
     composable(
         route = Screen.UpNext.createRoute(root),
         debugLabel = "UpNext()",
     ) {
-        composeScreens.upNext(
+        upNext(
             openShowDetails = { showId, seasonId, episodeId ->
                 navController.navigateToShow(root, showId, seasonId, episodeId)
             },
@@ -290,11 +302,11 @@ private fun NavGraphBuilder.addUpNext(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addSearch(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    search: Search,
 ) {
     composable(Screen.Search.createRoute(root)) {
-        composeScreens.search(
+        search(
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
             },
@@ -305,8 +317,8 @@ private fun NavGraphBuilder.addSearch(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addShowDetails(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    showDetails: ShowDetails,
 ) {
     composable(
         route = Screen.ShowDetails.createRoute(root),
@@ -315,7 +327,7 @@ private fun NavGraphBuilder.addShowDetails(
             navArgument("showId") { type = NavType.LongType },
         ),
     ) {
-        composeScreens.showDetails(
+        showDetails(
             navigateUp = navController::navigateUp,
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
@@ -333,8 +345,8 @@ private fun NavGraphBuilder.addShowDetails(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addEpisodeDetails(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    episodeDetails: EpisodeDetails,
 ) {
     composable(
         route = Screen.EpisodeDetails.createRoute(root),
@@ -345,7 +357,7 @@ private fun NavGraphBuilder.addEpisodeDetails(
     ) { backStackEntry ->
         val episodeId = backStackEntry.arguments!!.getLong("episodeId")
 
-        composeScreens.episodeDetails(
+        episodeDetails(
             navigateUp = navController::navigateUp,
             navigateToTrack = {
                 navController.navigate(
@@ -360,8 +372,8 @@ private fun NavGraphBuilder.addEpisodeDetails(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addEpisodeTrack(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    episodeTrack: EpisodeTrack,
 ) {
     bottomSheet(
         route = Screen.EpisodeTrack.createRoute(root),
@@ -370,7 +382,7 @@ private fun NavGraphBuilder.addEpisodeTrack(
             navArgument("episodeId") { type = NavType.LongType },
         ),
     ) {
-        composeScreens.episodeTrack(
+        episodeTrack(
             navigateUp = navController::navigateUp,
         )
     }
@@ -379,14 +391,14 @@ private fun NavGraphBuilder.addEpisodeTrack(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addRecommendedShows(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    recommendedShows: RecommendedShows,
 ) {
     composable(
         route = Screen.RecommendedShows.createRoute(root),
         debugLabel = "RecommendedShows()",
     ) {
-        composeScreens.recommendedShows(
+        recommendedShows(
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
             },
@@ -398,14 +410,14 @@ private fun NavGraphBuilder.addRecommendedShows(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addTrendingShows(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    trendingShows: TrendingShows,
 ) {
     composable(
         route = Screen.Trending.createRoute(root),
         debugLabel = "TrendingShows()",
     ) {
-        composeScreens.trendingShows(
+        trendingShows(
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
             },
@@ -417,14 +429,14 @@ private fun NavGraphBuilder.addTrendingShows(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addPopularShows(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    popularShows: PopularShows,
 ) {
     composable(
         route = Screen.Popular.createRoute(root),
         debugLabel = "PopularShows()",
     ) {
-        composeScreens.popularShows(
+        popularShows(
             openShowDetails = { showId ->
                 navController.navigateToShow(root, showId)
             },
@@ -435,7 +447,7 @@ private fun NavGraphBuilder.addPopularShows(
 
 private fun NavGraphBuilder.addAccount(
     root: RootScreen,
-    composeScreens: ComposeScreens,
+    accountUi: AccountUi,
     onOpenSettings: () -> Unit,
 ) {
     dialog(
@@ -444,7 +456,7 @@ private fun NavGraphBuilder.addAccount(
         // Required due to https://issuetracker.google.com/issues/221643630
         dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-        composeScreens.accountUi(
+        accountUi(
             openSettings = onOpenSettings,
             modifier = Modifier
                 // Required due to `usePlatformDefaultWidth = false` above
@@ -456,8 +468,8 @@ private fun NavGraphBuilder.addAccount(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.addShowSeasons(
     navController: NavController,
-    composeScreens: ComposeScreens,
     root: RootScreen,
+    showSeasons: ShowSeasons,
 ) {
     composable(
         route = Screen.ShowSeasons.createRoute(root),
@@ -472,7 +484,7 @@ private fun NavGraphBuilder.addShowSeasons(
             },
         ),
     ) {
-        composeScreens.showSeasons(
+        showSeasons(
             navigateUp = navController::navigateUp,
             openEpisodeDetails = { episodeId ->
                 navController.navigate(Screen.EpisodeDetails.createRoute(root, episodeId))
