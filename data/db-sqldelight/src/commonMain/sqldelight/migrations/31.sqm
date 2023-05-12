@@ -1,8 +1,8 @@
 -- pulled out of Room auto migration
 
-DROP VIEW myshows_view_watch_stats;
-DROP VIEW followed_last_watched;
-DROP VIEW followed_next_to_watch;
+DROP VIEW IF EXISTS myshows_view_watch_stats;
+DROP VIEW IF EXISTS followed_last_watched;
+DROP VIEW IF EXISTS followed_next_to_watch;
 
 CREATE VIEW `shows_view_watch_stats` AS SELECT shows.id AS show_id, COUNT(*) AS episode_count, COUNT(ew.watched_at) AS watched_episode_count
 FROM shows

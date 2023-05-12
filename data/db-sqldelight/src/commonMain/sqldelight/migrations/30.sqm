@@ -1,8 +1,8 @@
 -- pulled out of Room auto migration
 
-DROP VIEW myshows_view_watch_stats;
-DROP VIEW followed_last_watched;
-DROP VIEW followed_next_to_watch;
+DROP VIEW IF EXISTS myshows_view_watch_stats;
+DROP VIEW IF EXISTS followed_last_watched;
+DROP VIEW IF EXISTS followed_next_to_watch;
 
 ALTER TABLE `watched_entries` ADD COLUMN `last_updated` TEXT NOT NULL DEFAULT '2000-01-01T00:00:00.000000Z';
 
