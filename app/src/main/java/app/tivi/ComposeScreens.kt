@@ -28,11 +28,9 @@ import app.tivi.home.trending.TrendingShows
 import app.tivi.home.upnext.UpNext
 import app.tivi.showdetails.details.ShowDetails
 import app.tivi.showdetails.seasons.ShowSeasons
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-@OptIn(ExperimentalMaterialNavigationApi::class)
 class ComposeScreens(
     val accountUi: AccountUi,
     val discover: Discover,
