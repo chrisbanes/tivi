@@ -27,6 +27,7 @@ import app.moviebase.trakt.model.TraktSyncItems
 import app.tivi.data.mappers.EpisodeIdToTraktIdMapper
 import app.tivi.data.mappers.SeasonIdToTraktIdMapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
+import app.tivi.data.mappers.ShowIdToTraktOrImdbIdMapper
 import app.tivi.data.mappers.TraktHistoryEntryToEpisode
 import app.tivi.data.mappers.TraktHistoryItemToEpisodeWatchEntry
 import app.tivi.data.mappers.TraktSeasonToSeasonWithEpisodes
@@ -40,6 +41,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktSeasonsEpisodesDataSource(
+    private val showIdToAnyIdMapper: ShowIdToTraktOrImdbIdMapper,
     private val showIdToTraktIdMapper: ShowIdToTraktIdMapper,
     private val seasonIdToTraktIdMapper: SeasonIdToTraktIdMapper,
     private val episodeIdToTraktIdMapper: EpisodeIdToTraktIdMapper,
@@ -55,7 +57,7 @@ class TraktSeasonsEpisodesDataSource(
 
     override suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>> {
         return seasonsService.value.getSummary(
-            showId = showIdToTraktIdMapper.map(showId)?.toString()
+            showId = showIdToAnyIdMapper.map(showId)
                 ?: error("No Trakt ID for show with ID: $showId"),
             extended = TraktExtended.FULL_EPISODES,
         ).let { seasonMapper.map(it) }

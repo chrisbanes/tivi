@@ -45,6 +45,9 @@ SELECT * FROM shows WHERE tmdb_id = :id;
 getTraktIdForShowId:
 SELECT trakt_id FROM shows WHERE id = :id;
 
+getImdbIdForShowId:
+SELECT imdb_id FROM shows WHERE id = :id;
+
 getTmdbIdForShowId:
 SELECT tmdb_id FROM shows WHERE id = :id;
 

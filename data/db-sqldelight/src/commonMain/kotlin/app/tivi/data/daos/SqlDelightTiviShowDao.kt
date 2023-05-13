@@ -68,6 +68,11 @@ class SqlDelightTiviShowDao(
             .executeAsOneOrNull()?.tmdb_id
     }
 
+    override fun getImdbIdForShowId(id: Long): String? {
+        return db.showQueries.getImdbIdForShowId(id)
+            .executeAsOneOrNull()?.imdb_id
+    }
+
     override fun getIdForTraktId(traktId: Int): Long? {
         return db.showQueries.getIdForTraktId(traktId)
             .executeAsOneOrNull()
