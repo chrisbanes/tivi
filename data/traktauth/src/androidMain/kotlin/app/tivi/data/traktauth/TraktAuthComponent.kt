@@ -19,20 +19,16 @@ package app.tivi.data.traktauth
 import android.app.Application
 import android.content.Context
 import android.net.Uri
-import androidx.core.net.toUri
-import app.tivi.app.ApplicationInfo
 import app.tivi.data.traktauth.store.AuthSharedPreferences
 import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.data.traktauth.store.TiviAuthStore
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
-import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
-import net.openid.appauth.ResponseTypeValues
 
 interface TraktAuthComponent {
     @ApplicationScope
@@ -42,23 +38,6 @@ interface TraktAuthComponent {
             Uri.parse("https://trakt.tv/oauth/authorize"),
             Uri.parse("https://trakt.tv/oauth/token"),
         )
-    }
-
-    @Provides
-    fun provideAuthRequest(
-        serviceConfig: AuthorizationServiceConfiguration,
-        oauthInfo: TraktOAuthInfo,
-        appInfo: ApplicationInfo,
-    ): AuthorizationRequest {
-        return AuthorizationRequest.Builder(
-            serviceConfig,
-            oauthInfo.clientId,
-            ResponseTypeValues.CODE,
-            oauthInfo.redirectUri.toUri(),
-        ).apply {
-            // Disable PKCE since Trakt does not support it
-            setCodeVerifier(null)
-        }.build()
     }
 
     @ApplicationScope
@@ -83,7 +62,7 @@ interface TraktAuthComponent {
 
     @ApplicationScope
     @Provides
-    fun provideRefreshTraktTokensInteractor(impl: RefreshTraktTokensInteractorImpl): RefreshTraktTokensInteractor = impl
+    fun provideRefreshTraktTokensInteractor(impl: AndroidRefreshTraktTokensInteractor): RefreshTraktTokensInteractor = impl
 
     @ApplicationScope
     @Provides
@@ -93,5 +72,5 @@ interface TraktAuthComponent {
 interface TraktAuthActivityComponent {
     @ActivityScope
     @Provides
-    fun provideLoginToTraktInteractor(impl: LoginToTraktInteractorImpl): LoginToTraktInteractor = impl
+    fun provideLoginToTraktInteractor(impl: AndroidLoginToTraktInteractor): LoginToTraktInteractor = impl
 }
