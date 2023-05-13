@@ -36,6 +36,8 @@ interface TiviShowDao : EntityDao<TiviShow> {
 
     fun getTmdbIdForShowId(id: Long): Int?
 
+    fun getImdbIdForShowId(id: Long): String?
+
     fun getIdForTraktId(traktId: Int): Long?
 
     fun getIdForTmdbId(tmdbId: Int): Long?

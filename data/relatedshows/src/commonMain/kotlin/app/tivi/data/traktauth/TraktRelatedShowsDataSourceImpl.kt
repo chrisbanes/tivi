@@ -20,7 +20,7 @@ import app.moviebase.trakt.TraktExtended
 import app.moviebase.trakt.api.TraktShowsApi
 import app.moviebase.trakt.model.TraktShow
 import app.tivi.data.mappers.IndexedMapper
-import app.tivi.data.mappers.ShowIdToTraktIdMapper
+import app.tivi.data.mappers.ShowIdToTraktOrImdbIdMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.models.RelatedShowEntry
@@ -29,7 +29,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktRelatedShowsDataSourceImpl(
-    private val traktIdMapper: ShowIdToTraktIdMapper,
+    private val idMapper: ShowIdToTraktOrImdbIdMapper,
     private val showService: Lazy<TraktShowsApi>,
     showMapper: TraktShowToTiviShow,
 ) : TraktRelatedShowsDataSource {
@@ -39,11 +39,10 @@ class TraktRelatedShowsDataSourceImpl(
     private val resultMapper = pairMapperOf(showMapper, entryMapper)
 
     override suspend operator fun invoke(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
-        val traktShowId = traktIdMapper.map(showId)
-        require(traktShowId != null) { "No Trakt ID for show with ID: $showId" }
+        val id = idMapper.map(showId) ?: error("No Trakt allowed ID for show with ID: $showId")
 
         return showService.value
-            .getRelated(traktShowId.toString(), 0, 10, TraktExtended.NO_SEASONS)
+            .getRelated(id, 0, 10, TraktExtended.NO_SEASONS)
             .let { resultMapper(it) }
     }
 }

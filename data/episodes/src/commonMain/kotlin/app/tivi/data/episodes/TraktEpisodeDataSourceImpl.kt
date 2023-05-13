@@ -17,14 +17,14 @@
 package app.tivi.data.episodes
 
 import app.moviebase.trakt.api.TraktEpisodesApi
-import app.tivi.data.mappers.ShowIdToTraktIdMapper
+import app.tivi.data.mappers.ShowIdToTraktOrImdbIdMapper
 import app.tivi.data.mappers.TraktEpisodeToEpisode
 import app.tivi.data.models.Episode
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktEpisodeDataSourceImpl(
-    private val traktIdMapper: ShowIdToTraktIdMapper,
+    private val idMapper: ShowIdToTraktOrImdbIdMapper,
     private val service: Lazy<TraktEpisodesApi>,
     private val episodeMapper: TraktEpisodeToEpisode,
 ) : EpisodeDataSource {
@@ -34,11 +34,10 @@ class TraktEpisodeDataSourceImpl(
         seasonNumber: Int,
         episodeNumber: Int,
     ): Episode {
-        val traktId = traktIdMapper.map(showId)
-            ?: throw IllegalArgumentException("No Trakt ID for show with ID: $showId")
+        val id = idMapper.map(showId) ?: error("No Trakt allowed ID for show with ID: $showId")
 
         return service.value
-            .getSummary(traktId.toString(), seasonNumber, episodeNumber)
+            .getSummary(id, seasonNumber, episodeNumber)
             .let { episodeMapper.map(it) }
     }
 }
