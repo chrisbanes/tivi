@@ -26,10 +26,10 @@ import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
 
 @Inject
-class LoginToTraktInteractorImpl(
+class AndroidLoginToTraktInteractor(
     private val activity: Activity,
-    private val loginTraktActivityResultContract: LoginTraktActivityResultContract,
-    private val traktAuthRepository: TraktAuthRepository,
+    private val loginTraktActivityResultContract: Lazy<LoginTraktActivityResultContract>,
+    private val traktAuthRepository: Lazy<TraktAuthRepository>,
     private val clientAuth: Lazy<ClientAuthentication>,
     private val logger: Logger,
     private val authService: Lazy<AuthorizationService>,
@@ -40,7 +40,9 @@ class LoginToTraktInteractorImpl(
     override fun register() {
         require(activity is ComponentActivity)
 
-        launcher = activity.registerForActivityResult(loginTraktActivityResultContract) { result ->
+        launcher = activity.registerForActivityResult(
+            loginTraktActivityResultContract.value,
+        ) { result ->
             if (result != null) {
                 onLoginResult(result)
             }
@@ -60,7 +62,7 @@ class LoginToTraktInteractorImpl(
                     val state = AuthState()
                         .apply { update(tokenResponse, ex) }
                         .let(::AppAuthAuthStateWrapper)
-                    traktAuthRepository.onNewAuthState(state)
+                    traktAuthRepository.value.onNewAuthState(state)
                 }
             }
 
