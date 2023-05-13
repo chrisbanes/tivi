@@ -133,20 +133,21 @@ private fun NavGraphBuilder.addDiscoverTopLevel(
     navController: NavController,
     composeScreens: ComposeScreens,
     openSettings: () -> Unit,
+    rootScreen: RootScreen = RootScreen.Discover,
 ) {
     navigation(
-        route = RootScreen.Discover.route,
-        startDestination = Screen.Discover.createRoute(RootScreen.Discover),
+        route = rootScreen.route,
+        startDestination = Screen.Discover.createRoute(rootScreen),
     ) {
-        addDiscover(navController, RootScreen.Discover, composeScreens.discover)
-        addAccount(RootScreen.Search, composeScreens.accountUi, openSettings)
-        addShowDetails(navController, RootScreen.Search, composeScreens.showDetails)
-        addShowSeasons(navController, RootScreen.Search, composeScreens.showSeasons)
-        addEpisodeDetails(navController, RootScreen.Search, composeScreens.episodeDetails)
-        addEpisodeTrack(navController, RootScreen.Search, composeScreens.episodeTrack)
-        addRecommendedShows(navController, RootScreen.Discover, composeScreens.recommendedShows)
-        addTrendingShows(navController, RootScreen.Discover, composeScreens.trendingShows)
-        addPopularShows(navController, RootScreen.Discover, composeScreens.popularShows)
+        addDiscover(navController, rootScreen, composeScreens.discover)
+        addAccount(rootScreen, composeScreens.accountUi, openSettings)
+        addShowDetails(navController, rootScreen, composeScreens.showDetails)
+        addShowSeasons(navController, rootScreen, composeScreens.showSeasons)
+        addEpisodeDetails(navController, rootScreen, composeScreens.episodeDetails)
+        addEpisodeTrack(navController, rootScreen, composeScreens.episodeTrack)
+        addRecommendedShows(navController, rootScreen, composeScreens.recommendedShows)
+        addTrendingShows(navController, rootScreen, composeScreens.trendingShows)
+        addPopularShows(navController, rootScreen, composeScreens.popularShows)
     }
 }
 
@@ -155,17 +156,18 @@ private fun NavGraphBuilder.addLibraryTopLevel(
     navController: NavController,
     composeScreens: ComposeScreens,
     openSettings: () -> Unit,
+    rootScreen: RootScreen = RootScreen.Library,
 ) {
     navigation(
-        route = RootScreen.Library.route,
-        startDestination = Screen.Library.createRoute(RootScreen.Library),
+        route = rootScreen.route,
+        startDestination = Screen.Library.createRoute(rootScreen),
     ) {
-        addLibrary(navController, RootScreen.Library, composeScreens.library)
-        addAccount(RootScreen.Search, composeScreens.accountUi, openSettings)
-        addShowDetails(navController, RootScreen.Search, composeScreens.showDetails)
-        addShowSeasons(navController, RootScreen.Search, composeScreens.showSeasons)
-        addEpisodeDetails(navController, RootScreen.Search, composeScreens.episodeDetails)
-        addEpisodeTrack(navController, RootScreen.Search, composeScreens.episodeTrack)
+        addLibrary(navController, rootScreen, composeScreens.library)
+        addAccount(rootScreen, composeScreens.accountUi, openSettings)
+        addShowDetails(navController, rootScreen, composeScreens.showDetails)
+        addShowSeasons(navController, rootScreen, composeScreens.showSeasons)
+        addEpisodeDetails(navController, rootScreen, composeScreens.episodeDetails)
+        addEpisodeTrack(navController, rootScreen, composeScreens.episodeTrack)
     }
 }
 
@@ -174,17 +176,18 @@ private fun NavGraphBuilder.addUpNextTopLevel(
     navController: NavController,
     composeScreens: ComposeScreens,
     openSettings: () -> Unit,
+    rootScreen: RootScreen = RootScreen.UpNext,
 ) {
     navigation(
-        route = RootScreen.UpNext.route,
-        startDestination = Screen.UpNext.createRoute(RootScreen.UpNext),
+        route = rootScreen.route,
+        startDestination = Screen.UpNext.createRoute(rootScreen),
     ) {
-        addUpNext(navController, RootScreen.UpNext, composeScreens.upNext)
-        addAccount(RootScreen.Search, composeScreens.accountUi, openSettings)
-        addShowDetails(navController, RootScreen.Search, composeScreens.showDetails)
-        addShowSeasons(navController, RootScreen.Search, composeScreens.showSeasons)
-        addEpisodeDetails(navController, RootScreen.Search, composeScreens.episodeDetails)
-        addEpisodeTrack(navController, RootScreen.Search, composeScreens.episodeTrack)
+        addUpNext(navController, rootScreen, composeScreens.upNext)
+        addAccount(rootScreen, composeScreens.accountUi, openSettings)
+        addShowDetails(navController, rootScreen, composeScreens.showDetails)
+        addShowSeasons(navController, rootScreen, composeScreens.showSeasons)
+        addEpisodeDetails(navController, rootScreen, composeScreens.episodeDetails)
+        addEpisodeTrack(navController, rootScreen, composeScreens.episodeTrack)
     }
 }
 
@@ -193,17 +196,18 @@ private fun NavGraphBuilder.addSearchTopLevel(
     navController: NavController,
     composeScreens: ComposeScreens,
     openSettings: () -> Unit,
+    rootScreen: RootScreen = RootScreen.Search,
 ) {
     navigation(
-        route = RootScreen.Search.route,
-        startDestination = Screen.Search.createRoute(RootScreen.Search),
+        route = rootScreen.route,
+        startDestination = Screen.Search.createRoute(rootScreen),
     ) {
-        addSearch(navController, RootScreen.Search, composeScreens.search)
-        addAccount(RootScreen.Search, composeScreens.accountUi, openSettings)
-        addShowDetails(navController, RootScreen.Search, composeScreens.showDetails)
-        addShowSeasons(navController, RootScreen.Search, composeScreens.showSeasons)
-        addEpisodeDetails(navController, RootScreen.Search, composeScreens.episodeDetails)
-        addEpisodeTrack(navController, RootScreen.Search, composeScreens.episodeTrack)
+        addSearch(navController, rootScreen, composeScreens.search)
+        addAccount(rootScreen, composeScreens.accountUi, openSettings)
+        addShowDetails(navController, rootScreen, composeScreens.showDetails)
+        addShowSeasons(navController, rootScreen, composeScreens.showSeasons)
+        addEpisodeDetails(navController, rootScreen, composeScreens.episodeDetails)
+        addEpisodeTrack(navController, rootScreen, composeScreens.episodeTrack)
     }
 }
 
