@@ -17,7 +17,6 @@
 
 plugins {
     id("app.tivi.multiplatform")
-    alias(libs.plugins.cacheFixPlugin)
     id("app.tivi.android.library")
     alias(libs.plugins.moko.resources) // needs to be enabled after AGP
 }

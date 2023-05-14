@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 plugins {
     id("app.tivi.multiplatform")
     id("app.tivi.android.library")
-    alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sqldelight)
 }

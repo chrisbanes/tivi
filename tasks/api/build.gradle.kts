@@ -17,7 +17,6 @@
 
 plugins {
     id("app.tivi.multiplatform")
-    alias(libs.plugins.cacheFixPlugin)
 }
 
 kotlin {

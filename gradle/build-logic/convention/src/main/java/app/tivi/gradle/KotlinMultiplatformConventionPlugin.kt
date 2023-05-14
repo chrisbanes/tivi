@@ -24,6 +24,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("org.jetbrains.kotlin.multiplatform")
+                apply("org.gradle.android.cache-fix")
             }
         }
     }
