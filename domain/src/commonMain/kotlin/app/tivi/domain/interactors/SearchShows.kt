@@ -21,7 +21,6 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.search.SearchRepository
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -37,10 +36,7 @@ class SearchShows(
             remoteResults.isNotEmpty() -> remoteResults
             params.query.isNotBlank() -> {
                 try {
-                    showDao.search("%$params.query%")
-                } catch (ce: CancellationException) {
-                    // Cancellation exceptions should be re-thrown
-                    throw ce
+                    showDao.search("%${params.query}%")
                 } catch (e: Exception) {
                     // Re-throw wrapped exception with the query
                     throw Exception("Error while searching database with query: ${params.query}", e)
