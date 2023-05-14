@@ -45,7 +45,7 @@ jobs:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
       - name: Build (skipping benchmark type)
-        run: ./gradlew build bundle -x :app:assembleStandardBenchmark -x :app:bundleStandardBenchmark
+        run: ./gradlew build bundle -x :android-app:app:assembleStandardBenchmark -x :android-app:app:bundleStandardBenchmark
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
@@ -53,7 +53,7 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            app/build/outputs/apk/standard/release/app-standard-release.apk
+            android-app/app/build/outputs/apk/standard/release/app-standard-release.apk
 
       - name: Publish QA build to internal track
         if: github.ref == 'refs/heads/main'
@@ -62,8 +62,8 @@ jobs:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
           track: internal
-          releaseFiles: app/build/outputs/bundle/qaRelease/app-qa-release.aab
-          mappingFile: app/build/outputs/mapping/qaRelease/mapping.txt
+          releaseFiles: android-app/app/build/outputs/bundle/qaRelease/app-qa-release.aab
+          mappingFile: android-app/app/build/outputs/mapping/qaRelease/mapping.txt
 
       - name: Publish build to alpha track
         if: github.ref == 'refs/heads/main'
@@ -72,8 +72,8 @@ jobs:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
           track: alpha
-          releaseFiles: app/build/outputs/bundle/standardRelease/app-standard-release.aab
-          mappingFile: app/build/outputs/mapping/standardRelease/mapping.txt
+          releaseFiles: android-app/app/build/outputs/bundle/standardRelease/app-standard-release.aab
+          mappingFile: android-app/app/build/outputs/mapping/standardRelease/mapping.txt
 
       - name: Build changelog for beta release
         id: build_changelog
@@ -106,8 +106,8 @@ jobs:
           packageName: app.tivi
           track: beta
           whatsNewDirectory: playwhatsnew
-          releaseFiles: app/build/outputs/bundle/standardRelease/app-standard-release.aab
-          mappingFile: app/build/outputs/mapping/standardRelease/mapping.txt
+          releaseFiles: android-app/app/build/outputs/bundle/standardRelease/app-standard-release.aab
+          mappingFile: android-app/app/build/outputs/mapping/standardRelease/mapping.txt
 
       - name: Clean secrets
         if: always()
@@ -118,7 +118,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-outputs
-          path: app/build/outputs
+          path: android-app/app/build/outputs
 
       - name: Upload reports
         if: always()
