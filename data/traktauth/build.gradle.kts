@@ -36,7 +36,6 @@ import org.gradle.android.Versions.android
 plugins {
     id("app.tivi.multiplatform")
     id("app.tivi.android.library")
-    alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.ksp)
 }
 

@@ -17,7 +17,6 @@
 
 plugins {
     id("app.tivi.android.library")
-    alias(libs.plugins.cacheFixPlugin)
     alias(libs.plugins.kotlin.android)
 }
 
