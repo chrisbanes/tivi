@@ -108,6 +108,6 @@ include(
     ":ui:library",
     ":ui:account",
     ":ui:upnext",
-    ":app",
-    ":benchmark",
+    ":android-app:app",
+    ":android-app:benchmark",
 )

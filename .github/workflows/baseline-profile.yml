@@ -58,7 +58,7 @@ jobs:
       # This allows us to build most of what we need without the emulator running
       # and using resources
       - name: Build app and benchmark
-        run: ./gradlew :benchmark:assembleBenchmark :app:assembleStandardBenchmark
+        run: ./gradlew assembleBenchmark
 
       - name: Clear unused Gradle Managed Devices
         run: ./gradlew cleanManagedDevices --unused-only
@@ -81,13 +81,13 @@ jobs:
         run: |
           # Pull down any changes which may have been committed while this workflow has been running
           git pull
-          # Copy the baseline profile to :app
-          cp benchmark/build/outputs/managed_device_android_test_additional_output/api31/BaselineProfileGenerator_generateBaselineProfile-baseline-prof.txt app/src/main/baseline-prof.txt
+          # Copy the baseline profile to :android-app:app
+          cp android-app/benchmark/build/outputs/managed_device_android_test_additional_output/api31/BaselineProfileGenerator_generateBaselineProfile-baseline-prof.txt android-app/app/src/main/baseline-prof.txt
           # If the baseline profile has changed, commit it
-          if [[ $(git diff --stat app/src/main/baseline-prof.txt) != '' ]]; then
+          if [[ $(git diff --stat android-app/app/src/main/baseline-prof.txt) != '' ]]; then
             git config user.name github-actions
             git config user.email github-actions@github.com
-            git add app/src/main/baseline-prof.txt
+            git add android-app/app/src/main/baseline-prof.txt
             git commit -m "Update app baseline profile" && git push
           fi
 
@@ -96,7 +96,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: baseline-profile-output
-          path: benchmark/build/outputs/managed_device_android_test_additional_output
+          path: android-app/benchmark/build/outputs/managed_device_android_test_additional_output
 
       - name: Upload reports
         if: always()
