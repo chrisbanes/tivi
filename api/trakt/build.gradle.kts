@@ -19,7 +19,6 @@ kotlin {
                 api(projects.data.traktauth)
 
                 implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.okhttp)
                 implementation(libs.ktor.client.auth)
 
                 api(libs.kotlin.coroutines.core)
