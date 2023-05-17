@@ -146,7 +146,7 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
 playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:16.2.0"
 
-robolectric = "org.robolectric:robolectric:4.10.2"
+robolectric = "org.robolectric:robolectric:4.10.3"
 
 slack-lint-compose = "com.slack.lint.compose:compose-lint-checks:1.2.0"
 
