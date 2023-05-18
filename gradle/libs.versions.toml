@@ -131,7 +131,7 @@ kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", ver
 # This isn't strictly used, but allows Renovate to see us using the ktlint artifact
 ktlint = { module = "com.pinterest:ktlint", version.ref = "ktlint" }
 
-leakCanary = "com.squareup.leakcanary:leakcanary-android:2.10"
+leakCanary = "com.squareup.leakcanary:leakcanary-android:2.11"
 
 mockK = "io.mockk:mockk:1.13.5"
 
