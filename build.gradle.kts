@@ -15,7 +15,6 @@
  */
 
 
-import com.android.build.gradle.BaseExtension
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
@@ -98,42 +97,5 @@ allprojects {
                 )
             }
         }
-    }
-
-    // Configure Android projects
-    pluginManager.withPlugin("com.android.application") {
-        configureAndroidProject()
-    }
-    pluginManager.withPlugin("com.android.library") {
-        configureAndroidProject()
-    }
-    pluginManager.withPlugin("com.android.test") {
-        configureAndroidProject()
-    }
-}
-
-fun Project.configureAndroidProject() {
-    extensions.configure<BaseExtension> {
-        compileSdkVersion(libs.versions.compileSdk.get().toInt())
-
-        defaultConfig {
-            minSdk = libs.versions.minSdk.get().toInt()
-            targetSdk = libs.versions.targetSdk.get().toInt()
-        }
-
-        // Can remove this once https://issuetracker.google.com/issues/260059413 is fixed.
-        // See https://kotlinlang.org/docs/gradle-configure-project.html#gradle-java-toolchains-support
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_11
-            targetCompatibility = JavaVersion.VERSION_11
-
-            // https://developer.android.com/studio/write/java8-support
-            isCoreLibraryDesugaringEnabled = true
-        }
-    }
-
-    dependencies {
-        // https://developer.android.com/studio/write/java8-support
-        "coreLibraryDesugaring"(libs.tools.desugarjdklibs)
     }
 }
