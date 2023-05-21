@@ -16,18 +16,17 @@
 
 package app.tivi.gradle
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.kotlin.dsl.configure
 
-class KotlinAndroidConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
-            with(pluginManager) {
-                apply("org.jetbrains.kotlin.android")
-                apply("org.gradle.android.cache-fix")
-            }
-
-            configureKotlin()
+fun Project.configureJava() {
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(11))
         }
     }
 }
+
+private fun Project.java(action: JavaPluginExtension.() -> Unit) = extensions.configure<JavaPluginExtension>(action)
