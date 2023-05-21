@@ -25,6 +25,8 @@ class AndroidTestConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.test")
             }
+
+            configureAndroid()
         }
     }
 }

@@ -19,9 +19,6 @@ ktor = "2.3.0"
 paging = "3.1.1"
 retrofit = "2.9.0"
 sqldelight = "2.0.0-alpha05"
-compileSdk = "33"
-minSdk = "23"
-targetSdk = "31"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
