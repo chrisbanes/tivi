@@ -15,6 +15,8 @@
  */
 
 
+import com.android.build.gradle.internal.lint.AndroidLintAnalysisTask
+import com.android.build.gradle.internal.lint.AndroidLintTask
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
@@ -60,16 +62,14 @@ allprojects {
     }
 
     // Workaround for https://issuetracker.google.com/issues/268961156
-    tasks.withType<com.android.build.gradle.internal.lint.AndroidLintTask>() {
-        val kspTestTask = tasks.findByName("kspTestKotlin")
-        if (kspTestTask != null) {
-            dependsOn(kspTestTask)
+    tasks.withType<AndroidLintTask> {
+        tasks.findByName("kspTestKotlin")?.let {
+            dependsOn(it)
         }
     }
-    tasks.withType<com.android.build.gradle.internal.lint.AndroidLintAnalysisTask>() {
-        val kspTestTask = tasks.findByName("kspTestKotlin")
-        if (kspTestTask != null) {
-            dependsOn(kspTestTask)
+    tasks.withType<AndroidLintAnalysisTask> {
+        tasks.findByName("kspTestKotlin")?.let {
+            dependsOn(it)
         }
     }
 
