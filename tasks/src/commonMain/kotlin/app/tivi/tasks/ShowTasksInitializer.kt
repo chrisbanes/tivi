@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,16 @@
  * limitations under the License.
  */
 
+package app.tivi.tasks
 
-plugins {
-    id("app.tivi.android.library")
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
-}
+import app.tivi.appinitializers.AppInitializer
+import me.tatarka.inject.annotations.Inject
 
-android {
-    namespace = "app.tivi.tasks"
-
-    defaultConfig {
-        manifestPlaceholders += mapOf(
-            "appAuthRedirectScheme" to "empty",
-        )
+@Inject
+class ShowTasksInitializer(
+    private val showTasks: Lazy<ShowTasks>,
+) : AppInitializer {
+    override fun init() {
+        showTasks.value.setupNightSyncs()
     }
-}
-
-dependencies {
-    implementation(projects.core.base)
-    implementation(projects.domain)
-    api(projects.tasks.api)
-
-    api(libs.androidx.work.runtime)
-
-    implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
 }

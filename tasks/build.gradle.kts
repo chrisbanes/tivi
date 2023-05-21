@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,23 +28,15 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(projects.core.base)
-                implementation(projects.core.logging)
+                implementation(projects.core.base)
+                implementation(libs.kotlininject.runtime)
             }
         }
 
         val androidMain by getting {
             dependencies {
-                api(libs.appauth)
-
-                implementation(libs.androidx.activity.activity)
-                implementation(libs.androidx.browser)
-                implementation(libs.androidx.core)
-
-                implementation(libs.playservices.blockstore)
-                implementation(libs.kotlinx.coroutines.playservices)
-
-                implementation(libs.kotlininject.runtime)
+                implementation(projects.domain)
+                api(libs.androidx.work.runtime)
             }
         }
     }
@@ -55,9 +47,11 @@ dependencies {
 }
 
 android {
-    namespace = "app.tivi.data.traktauth"
+    namespace = "app.tivi.tasks"
 
     defaultConfig {
-        manifestPlaceholders += mapOf("appAuthRedirectScheme" to "empty")
+        manifestPlaceholders += mapOf(
+            "appAuthRedirectScheme" to "empty",
+        )
     }
 }
