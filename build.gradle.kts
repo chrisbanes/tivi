@@ -49,16 +49,6 @@ allprojects {
         }
     }
 
-    // Configure Java to use our chosen language level. Kotlin will automatically
-    // pick this up
-    plugins.withType<JavaBasePlugin>().configureEach {
-        extensions.configure<JavaPluginExtension> {
-            toolchain {
-                languageVersion.set(JavaLanguageVersion.of(11))
-            }
-        }
-    }
-
     // Workaround for https://issuetracker.google.com/issues/268961156
     tasks.withType<com.android.build.gradle.internal.lint.AndroidLintTask>() {
         val kspTestTask = tasks.findByName("kspTestKotlin")
