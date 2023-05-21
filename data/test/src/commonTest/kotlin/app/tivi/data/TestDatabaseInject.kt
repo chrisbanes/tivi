@@ -38,7 +38,6 @@ import app.tivi.data.shows.TraktShowDataSource
 import app.tivi.data.shows.TraktShowDataSourceImpl
 import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
-import app.tivi.tasks.ShowTasks
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.utils.AuthorizedAuthStore
 import app.tivi.utils.SuccessFakeShowDataSource
@@ -106,10 +105,6 @@ abstract class TestDataSourceComponent :
             main = testDispatcher,
         )
     }
-
-    @ApplicationScope
-    @Provides
-    fun provideShowTasks(): ShowTasks = mockk(relaxUnitFun = true)
 
     @Provides
     fun provideAuthStore(): AuthStore = AuthorizedAuthStore
