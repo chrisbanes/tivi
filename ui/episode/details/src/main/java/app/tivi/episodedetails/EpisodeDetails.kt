@@ -35,7 +35,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
@@ -65,7 +64,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -73,11 +71,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
@@ -130,16 +125,16 @@ internal fun EpisodeDetails(
     navigateUp: () -> Unit,
     navigateToTrack: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState = viewModel.presenter()
 
     EpisodeDetails(
         viewState = viewState,
         navigateUp = navigateUp,
-        refresh = viewModel::refresh,
-        onRemoveAllWatches = viewModel::removeAllWatches,
-        onRemoveWatch = viewModel::removeWatchEntry,
+        refresh = { viewState.eventSink(EpisodeDetailsUiEvent.Refresh(true)) },
+        onRemoveAllWatches = { viewState.eventSink(EpisodeDetailsUiEvent.RemoveAllWatches) },
+        onRemoveWatch = { id -> viewState.eventSink(EpisodeDetailsUiEvent.RemoveWatchEntry(id)) },
         onAddWatch = navigateToTrack,
-        onMessageShown = viewModel::clearMessage,
+        onMessageShown = { id -> viewState.eventSink(EpisodeDetailsUiEvent.ClearMessage(id)) },
     )
 }
 
@@ -486,22 +481,6 @@ private fun EpisodeWatchSwipeBackground(
     }
 }
 
-private fun Modifier.drawGrowingCircle(
-    color: Color,
-    center: Offset,
-    radius: Float,
-) = drawWithContent {
-    drawContent()
-
-    clipRect {
-        drawCircle(
-            color = color,
-            radius = radius,
-            center = center,
-        )
-    }
-}
-
 @Composable
 private fun MarkWatchedButton(
     onClick: () -> Unit,
@@ -587,7 +566,6 @@ private fun EpisodeDetailsAppBar(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun PreviewEpisodeDetails() {
@@ -612,6 +590,7 @@ fun PreviewEpisodeDetails() {
                     watchedAt = Clock.System.now(),
                 ),
             ),
+            eventSink = {},
         ),
         navigateUp = {},
         refresh = {},
