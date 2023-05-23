@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_PARAMETER")
-
 package app.tivi.episode.track
 
 import androidx.compose.animation.AnimatedVisibility
@@ -43,8 +41,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,17 +86,16 @@ internal fun EpisodeTrack(
     viewModel: EpisodeTrackViewModel,
     navigateUp: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState = viewModel.presenter()
     EpisodeTrack(
         viewState = viewState,
         navigateUp = navigateUp,
-        refresh = viewModel::refresh,
-        onSubmit = viewModel::submitWatch,
-        onNowSelected = viewModel::selectNow,
-        onSetFirstAired = viewModel::selectEpisodeFirstAired,
-        onDateSelected = viewModel::selectDate,
-        onTimeSelected = viewModel::selectTime,
-        onMessageShown = viewModel::clearMessage,
+        onSubmit = { viewState.eventSink(EpisodeTrackUiEvent.Submit) },
+        onNowSelected = { viewState.eventSink(EpisodeTrackUiEvent.SelectNow) },
+        onSetFirstAired = { viewState.eventSink(EpisodeTrackUiEvent.SelectFirstAired) },
+        onDateSelected = { viewState.eventSink(EpisodeTrackUiEvent.SelectDate(it)) },
+        onTimeSelected = { viewState.eventSink(EpisodeTrackUiEvent.SelectTime(it)) },
+        onMessageShown = { viewState.eventSink(EpisodeTrackUiEvent.ClearMessage(it)) },
     )
 }
 
@@ -109,7 +104,6 @@ internal fun EpisodeTrack(
 internal fun EpisodeTrack(
     viewState: EpisodeTrackViewState,
     navigateUp: () -> Unit,
-    refresh: () -> Unit,
     onSubmit: () -> Unit,
     onNowSelected: (Boolean) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
