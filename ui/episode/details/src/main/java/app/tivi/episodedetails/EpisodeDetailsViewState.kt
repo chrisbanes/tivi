@@ -30,8 +30,12 @@ data class EpisodeDetailsViewState(
     val canAddEpisodeWatch: Boolean = false,
     val refreshing: Boolean = false,
     val message: UiMessage? = null,
-) {
-    companion object {
-        val Empty = EpisodeDetailsViewState()
-    }
+    val eventSink: (EpisodeDetailsUiEvent) -> Unit,
+)
+
+sealed interface EpisodeDetailsUiEvent {
+    data class Refresh(val fromUser: Boolean = false) : EpisodeDetailsUiEvent
+    data class RemoveWatchEntry(val id: Long) : EpisodeDetailsUiEvent
+    data class ClearMessage(val id: Long) : EpisodeDetailsUiEvent
+    object RemoveAllWatches : EpisodeDetailsUiEvent
 }
