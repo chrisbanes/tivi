@@ -16,23 +16,25 @@
 
 package app.tivi.episode.track
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiMessageManager
 import app.tivi.base.InvokeSuccess
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
-import app.tivi.extensions.combine
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
 import app.tivi.util.onEachStatus
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
@@ -44,129 +46,119 @@ import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-@Suppress("unused")
 @Inject
 class EpisodeTrackViewModel(
     @Assisted savedStateHandle: SavedStateHandle,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
-    observeEpisodeDetails: ObserveEpisodeDetails,
+    private val observeEpisodeDetails: ObserveEpisodeDetails,
     private val addEpisodeWatch: AddEpisodeWatch,
     private val logger: Logger,
 ) : ViewModel() {
     private val episodeId: Long = savedStateHandle["episodeId"]!!
 
-    private val loadingState = ObservableLoadingCounter()
-    private val submittingState = ObservableLoadingCounter()
-    private val uiMessageManager = UiMessageManager()
+    @Composable
+    fun presenter(): EpisodeTrackViewState {
+        val scope = rememberCoroutineScope()
 
-    private val selectedDate = MutableStateFlow<LocalDate?>(null)
-    private val selectedTime = MutableStateFlow<LocalTime?>(null)
-    private val selectedNow = MutableStateFlow(true)
+        val loadingState = remember { ObservableLoadingCounter() }
+        val submittingState = remember { ObservableLoadingCounter() }
+        val uiMessageManager = remember { UiMessageManager() }
 
-    private val dismiss = MutableStateFlow(false)
+        var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+        var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
+        var selectedNow by remember { mutableStateOf(false) }
 
-    val state: StateFlow<EpisodeTrackViewState> = combine(
-        observeEpisodeDetails.flow,
-        selectedDate,
-        selectedTime,
-        selectedNow,
-        dismiss,
-        loadingState.observable,
-        submittingState.observable,
-        uiMessageManager.message,
-    ) {
-            episodeDetails, selectedDate, selectedTime, selectedNow, dismiss,
-            refreshing, submitting, message,
-        ->
-        EpisodeTrackViewState(
-            episode = episodeDetails.episode,
-            season = episodeDetails.season,
-            showSetFirstAired = episodeDetails.episode.firstAired != null,
+        val episodeDetails by observeEpisodeDetails.flow.collectAsState(initial = null)
+
+        val refreshing by loadingState.observable.collectAsState(initial = false)
+        val submitting by submittingState.observable.collectAsState(initial = false)
+        val message by uiMessageManager.message.collectAsState(initial = null)
+
+        var dismissed by remember { mutableStateOf(false) }
+
+        val selectedDateTime by remember {
+            derivedStateOf {
+                val date = selectedDate
+                val time = selectedTime
+                if (date != null && time != null) LocalDateTime(date, time) else null
+            }
+        }
+
+        fun eventSink(event: EpisodeTrackUiEvent) {
+            when (event) {
+                is EpisodeTrackUiEvent.ClearMessage -> {
+                    scope.launch {
+                        uiMessageManager.clearMessage(event.id)
+                    }
+                }
+
+                is EpisodeTrackUiEvent.Refresh -> {
+                    scope.launch {
+                        updateEpisodeDetails(
+                            UpdateEpisodeDetails.Params(episodeId, event.fromUser),
+                        ).collectStatus(loadingState, logger, uiMessageManager)
+                    }
+                }
+
+                is EpisodeTrackUiEvent.SelectDate -> {
+                    selectedDate = event.date
+                }
+
+                EpisodeTrackUiEvent.SelectFirstAired -> {
+                    episodeDetails?.episode?.firstAired
+                        ?.toLocalDateTime(TimeZone.currentSystemDefault())
+                        ?.also { dateTime ->
+                            selectedDate = dateTime.date
+                            selectedTime = dateTime.time
+                        }
+                }
+
+                EpisodeTrackUiEvent.SelectNow -> {
+                    selectedNow = true
+                }
+
+                is EpisodeTrackUiEvent.SelectTime -> {
+                    selectedTime = event.time
+                }
+
+                EpisodeTrackUiEvent.Submit -> {
+                    val dt = selectedDateTime
+                    val instant = when {
+                        selectedNow -> Clock.System.now()
+                        dt != null -> dt.toInstant(TimeZone.currentSystemDefault())
+                        else -> null
+                    }
+
+                    if (instant != null) {
+                        scope.launch {
+                            addEpisodeWatch(AddEpisodeWatch.Params(episodeId, instant))
+                                .onEachStatus(submittingState, logger, uiMessageManager)
+                                .collect { status ->
+                                    if (status == InvokeSuccess) {
+                                        dismissed = true
+                                    }
+                                }
+                        }
+                    } else {
+                        // TODO: display error message
+                    }
+                }
+            }
+        }
+
+        return EpisodeTrackViewState(
+            episode = episodeDetails?.episode,
+            season = episodeDetails?.season,
+            showSetFirstAired = episodeDetails?.episode?.firstAired != null,
             selectedDate = selectedDate,
             selectedTime = selectedTime,
             selectedNow = selectedNow,
             refreshing = refreshing,
             message = message,
             submitInProgress = submitting,
-            shouldDismiss = dismiss,
+            shouldDismiss = dismissed,
             canSubmit = !submitting && (selectedNow || (selectedDate != null && selectedTime != null)),
+            eventSink = ::eventSink,
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = EpisodeTrackViewState.Empty,
-    )
-
-    init {
-        observeEpisodeDetails(ObserveEpisodeDetails.Params(episodeId))
-
-        refresh(false)
-    }
-
-    fun refresh(fromUserInteraction: Boolean = true) {
-        viewModelScope.launch {
-            updateEpisodeDetails(
-                UpdateEpisodeDetails.Params(episodeId, fromUserInteraction),
-            ).collectStatus(loadingState, logger, uiMessageManager)
-        }
-    }
-
-    private val selectedDateTime: LocalDateTime?
-        get() {
-            val date = selectedDate.value
-            val time = selectedTime.value
-            return if (date != null && time != null) LocalDateTime(date, time) else null
-        }
-
-    fun submitWatch() {
-        val dt = selectedDateTime
-        val instant = when {
-            selectedNow.value -> Clock.System.now()
-            dt != null -> dt.toInstant(TimeZone.currentSystemDefault())
-            else -> null
-        }
-
-        if (instant != null) {
-            viewModelScope.launch {
-                addEpisodeWatch(AddEpisodeWatch.Params(episodeId, instant))
-                    .onEachStatus(submittingState, logger, uiMessageManager)
-                    .collect { status ->
-                        if (status == InvokeSuccess) {
-                            dismiss.emit(true)
-                        }
-                    }
-            }
-        } else {
-            // TODO: display error message
-        }
-    }
-
-    fun selectNow(selected: Boolean) {
-        selectedNow.tryEmit(selected)
-    }
-
-    fun selectEpisodeFirstAired() {
-        val episodeFirstAired = state.value.episode?.firstAired
-        if (episodeFirstAired != null) {
-            val dt = episodeFirstAired.toLocalDateTime(TimeZone.currentSystemDefault())
-            selectedDate.tryEmit(dt.date)
-            selectedTime.tryEmit(dt.time)
-        } else {
-            // TODO: display error message
-        }
-    }
-
-    fun selectDate(date: LocalDate) {
-        selectedDate.tryEmit(date)
-    }
-
-    fun selectTime(time: LocalTime) {
-        selectedTime.tryEmit(time)
-    }
-
-    fun clearMessage(id: Long) {
-        viewModelScope.launch {
-            uiMessageManager.clearMessage(id)
-        }
     }
 }

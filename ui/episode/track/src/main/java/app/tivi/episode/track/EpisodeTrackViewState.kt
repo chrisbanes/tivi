@@ -40,8 +40,16 @@ data class EpisodeTrackViewState(
     val selectedNow: Boolean = true,
 
     val shouldDismiss: Boolean = false,
-) {
-    companion object {
-        val Empty = EpisodeTrackViewState()
-    }
+
+    val eventSink: (EpisodeTrackUiEvent) -> Unit,
+)
+
+sealed interface EpisodeTrackUiEvent {
+    data class Refresh(val fromUser: Boolean = false) : EpisodeTrackUiEvent
+    object Submit : EpisodeTrackUiEvent
+    object SelectNow : EpisodeTrackUiEvent
+    object SelectFirstAired : EpisodeTrackUiEvent
+    data class SelectDate(val date: LocalDate) : EpisodeTrackUiEvent
+    data class SelectTime(val time: LocalTime) : EpisodeTrackUiEvent
+    data class ClearMessage(val id: Long) : EpisodeTrackUiEvent
 }
