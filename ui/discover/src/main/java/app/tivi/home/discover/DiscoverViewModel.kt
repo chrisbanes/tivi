@@ -20,11 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.neverEqualPolicy
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import app.tivi.api.UiMessageManager
 import app.tivi.data.traktauth.TraktAuthState
@@ -81,9 +78,38 @@ class DiscoverViewModel(
 
         val message by uiMessageManager.message.collectAsState(null)
 
-        var refreshSignal by remember {
-            // use neverEqual so that every set triggers a refresh
-            mutableStateOf(DiscoverUiEvent.Refresh(), neverEqualPolicy())
+        fun eventSink(event: DiscoverUiEvent) {
+            when (event) {
+                is DiscoverUiEvent.ClearMessage -> {
+                    scope.launch {
+                        uiMessageManager.clearMessage(event.id)
+                    }
+                }
+
+                is DiscoverUiEvent.Refresh -> {
+                    scope.launch {
+                        updatePopularShows(
+                            UpdatePopularShows.Params(
+                                page = UpdatePopularShows.Page.REFRESH,
+                                forceRefresh = event.fromUser,
+                            ),
+                        ).collectStatus(popularLoadingState, logger, uiMessageManager)
+                    }
+                    scope.launch {
+                        updateTrendingShows(
+                            UpdateTrendingShows.Params(
+                                page = UpdateTrendingShows.Page.REFRESH,
+                                forceRefresh = event.fromUser,
+                            ),
+                        ).collectStatus(trendingLoadingState, logger, uiMessageManager)
+                    }
+                    scope.launch {
+                        updateRecommendedShows(
+                            UpdateRecommendedShows.Params(forceRefresh = event.fromUser),
+                        ).collectStatus(recommendedLoadingState, logger, uiMessageManager)
+                    }
+                }
+            }
         }
 
         LaunchedEffect(Unit) {
@@ -93,36 +119,14 @@ class DiscoverViewModel(
             observeNextShowEpisodeToWatch(Unit)
             observeTraktAuthState(Unit)
             observeUserDetails(ObserveUserDetails.Params("me"))
+
+            eventSink(DiscoverUiEvent.Refresh(false))
         }
 
         LaunchedEffect(observeTraktAuthState) {
             // Each time the auth state changes, tickle the refresh signal...
             observeTraktAuthState.flow.collect {
-                refreshSignal = DiscoverUiEvent.Refresh()
-            }
-        }
-
-        LaunchedEffect(refreshSignal) {
-            launch {
-                updatePopularShows(
-                    UpdatePopularShows.Params(
-                        page = UpdatePopularShows.Page.REFRESH,
-                        forceRefresh = refreshSignal.fromUser,
-                    ),
-                ).collectStatus(popularLoadingState, logger, uiMessageManager)
-            }
-            launch {
-                updateTrendingShows(
-                    UpdateTrendingShows.Params(
-                        page = UpdateTrendingShows.Page.REFRESH,
-                        forceRefresh = refreshSignal.fromUser,
-                    ),
-                ).collectStatus(trendingLoadingState, logger, uiMessageManager)
-            }
-            launch {
-                updateRecommendedShows(
-                    UpdateRecommendedShows.Params(forceRefresh = refreshSignal.fromUser),
-                ).collectStatus(recommendedLoadingState, logger, uiMessageManager)
+                eventSink(DiscoverUiEvent.Refresh(false))
             }
         }
 
@@ -137,17 +141,7 @@ class DiscoverViewModel(
             recommendedRefreshing = recommendedLoading,
             nextEpisodeWithShowToWatch = nextShow,
             message = message,
-        ) { event ->
-            when (event) {
-                is DiscoverUiEvent.ClearMessage -> {
-                    scope.launch {
-                        uiMessageManager.clearMessage(event.id)
-                    }
-                }
-                is DiscoverUiEvent.Refresh -> {
-                    refreshSignal = event
-                }
-            }
-        }
+            eventSink = ::eventSink,
+        )
     }
 }
