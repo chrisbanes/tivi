@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     id("app.tivi.android.application")
-    alias(libs.plugins.kotlin.android)
+    id("app.tivi.kotlin.android")
     alias(libs.plugins.ksp)
 }
 
