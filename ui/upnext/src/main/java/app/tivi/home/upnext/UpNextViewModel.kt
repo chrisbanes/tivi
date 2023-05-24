@@ -16,13 +16,18 @@
 
 package app.tivi.home.upnext
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.api.UiMessageManager
-import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.SortOption
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.executeSync
@@ -31,19 +36,11 @@ import app.tivi.domain.interactors.UpdateUpNextEpisodes
 import app.tivi.domain.observers.ObservePagedUpNextShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
-import app.tivi.extensions.combine
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -51,116 +48,106 @@ import me.tatarka.inject.annotations.Inject
 class UpNextViewModel(
     private val observePagedUpNextShows: ObservePagedUpNextShows,
     private val updateUpNextEpisodes: UpdateUpNextEpisodes,
-    observeTraktAuthState: ObserveTraktAuthState,
-    observeUserDetails: ObserveUserDetails,
+    private val observeTraktAuthState: ObserveTraktAuthState,
+    private val observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
     private val preferences: TiviPreferences,
     private val logger: Logger,
 ) : ViewModel() {
-    private val loadingState = ObservableLoadingCounter()
-    private val uiMessageManager = UiMessageManager()
 
-    val pagedList: Flow<PagingData<UpNextEntry>> =
-        observePagedUpNextShows.flow.cachedIn(viewModelScope)
+    @Composable
+    fun presenter(): UpNextViewState {
+        val scope = rememberCoroutineScope()
 
-    private val availableSorts = listOf(
-        SortOption.LAST_WATCHED,
-        SortOption.AIR_DATE,
-    )
+        val loadingState = remember { ObservableLoadingCounter() }
+        val uiMessageManager = remember { UiMessageManager() }
 
-    private val sort = MutableStateFlow(SortOption.LAST_WATCHED)
+        val items = observePagedUpNextShows.flow.collectAsLazyPagingItems()
 
-    private val followedOnly = preferences
-        .observeUpNextFollowedOnly()
-        .stateIn(
-            scope = viewModelScope,
-            started = WhileSubscribed(),
-            initialValue = preferences.upNextFollowedOnly,
-        )
+        var sort by remember { mutableStateOf(SortOption.LAST_WATCHED) }
 
-    val state: StateFlow<UpNextViewState> = combine(
-        loadingState.observable,
-        observeTraktAuthState.flow,
-        observeUserDetails.flow,
-        sort,
-        uiMessageManager.message,
-        followedOnly,
-    ) { loading, authState, user, sort, message, followedShowsOnly ->
-        UpNextViewState(
+        val loading by loadingState.observable.collectAsState(false)
+        val message by uiMessageManager.message.collectAsState(null)
+
+        val user by observeUserDetails.flow.collectAsState(null)
+        val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
+
+        // TODO: this is gross. Tidy up preference flows
+        val followedShowsOnly by remember(preferences) {
+            preferences.observeUpNextFollowedOnly()
+        }
+            .collectAsState(false)
+
+        fun eventSink(event: UpNextUiEvent) {
+            when (event) {
+                is UpNextUiEvent.ChangeSort -> sort = event.sort
+                is UpNextUiEvent.ClearMessage -> {
+                    scope.launch {
+                        uiMessageManager.clearMessage(event.id)
+                    }
+                }
+                is UpNextUiEvent.Refresh -> {
+                    scope.launch {
+                        if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
+                            updateUpNextEpisodes(
+                                UpdateUpNextEpisodes.Params(event.fromUser),
+                            ).collectStatus(loadingState, logger, uiMessageManager)
+                        }
+                    }
+                }
+
+                UpNextUiEvent.ToggleFollowedShowsOnly -> {
+                    preferences.upNextFollowedOnly = !preferences.upNextFollowedOnly
+                }
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            observeTraktAuthState(Unit)
+            observeUserDetails(ObserveUserDetails.Params("me"))
+        }
+
+        LaunchedEffect(observeTraktAuthState) {
+            observeTraktAuthState.flow
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect {
+                    eventSink(UpNextUiEvent.Refresh(false))
+                }
+        }
+
+        LaunchedEffect(sort, followedShowsOnly) {
+            // When the filter and sort options change, update the data source
+            observePagedUpNextShows(
+                ObservePagedUpNextShows.Parameters(
+                    sort = sort,
+                    followedOnly = followedShowsOnly,
+                    pagingConfig = PAGING_CONFIG,
+                ),
+            )
+        }
+
+        return UpNextViewState(
+            items = items,
             user = user,
             authState = authState,
             isLoading = loading,
-            availableSorts = availableSorts,
+            availableSorts = AVAILABLE_SORT_OPTIONS,
             sort = sort,
             message = message,
             followedShowsOnly = followedShowsOnly,
+            eventSink = ::eventSink,
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = WhileSubscribed(),
-        initialValue = UpNextViewState.Empty,
-    )
-
-    init {
-        observeTraktAuthState(Unit)
-        observeUserDetails(ObserveUserDetails.Params("me"))
-
-        // When the sort options change, update the data source
-        sort
-            .onEach { updateDataSource() }
-            .launchIn(viewModelScope)
-
-        // When the user logs in, refresh...
-        observeTraktAuthState.flow
-            .filter { it == TraktAuthState.LOGGED_IN }
-            .onEach { refresh(false) }
-            .launchIn(viewModelScope)
-
-        followedOnly
-            .onEach { updateDataSource() }
-            .launchIn(viewModelScope)
-    }
-
-    private fun updateDataSource() {
-        observePagedUpNextShows(
-            ObservePagedUpNextShows.Parameters(
-                sort = sort.value,
-                pagingConfig = PAGING_CONFIG,
-                followedOnly = preferences.upNextFollowedOnly,
-            ),
-        )
-    }
-
-    fun refresh(fromUser: Boolean = true) {
-        viewModelScope.launch {
-            if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
-                updateUpNextEpisodes(
-                    UpdateUpNextEpisodes.Params(forceRefresh = fromUser),
-                ).collectStatus(loadingState, logger, uiMessageManager)
-            }
-        }
-    }
-
-    fun setSort(sort: SortOption) {
-        viewModelScope.launch {
-            this@UpNextViewModel.sort.emit(sort)
-        }
-    }
-
-    fun clearMessage(id: Long) {
-        viewModelScope.launch {
-            uiMessageManager.clearMessage(id)
-        }
-    }
-
-    fun toggleFollowedShowsOnly() {
-        preferences.upNextFollowedOnly = !preferences.upNextFollowedOnly
     }
 
     companion object {
         private val PAGING_CONFIG = PagingConfig(
             pageSize = 16,
             initialLoadSize = 32,
+        )
+
+        private val AVAILABLE_SORT_OPTIONS = listOf(
+            SortOption.LAST_WATCHED,
+            SortOption.AIR_DATE,
         )
     }
 }
