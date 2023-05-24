@@ -46,7 +46,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -90,13 +89,12 @@ internal fun Search(
     viewModel: SearchViewModel,
     openShowDetails: (showId: Long) -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
-
+    val viewState = viewModel.presenter()
     Search(
         state = viewState,
         openShowDetails = openShowDetails,
-        onSearchQueryChanged = viewModel::search,
-        onMessageShown = viewModel::clearMessage,
+        onSearchQueryChanged = { viewState.eventSink(SearchUiEvent.UpdateQuery(it)) },
+        onMessageShown = { viewState.eventSink(SearchUiEvent.ClearMessage(it)) },
     )
 }
 
