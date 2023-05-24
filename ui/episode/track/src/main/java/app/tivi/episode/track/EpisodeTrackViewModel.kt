@@ -17,6 +17,7 @@
 package app.tivi.episode.track
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -117,6 +118,10 @@ class EpisodeTrackViewModel(
                     selectedNow = true
                 }
 
+                EpisodeTrackUiEvent.UnselectNow -> {
+                    selectedNow = false
+                }
+
                 is EpisodeTrackUiEvent.SelectTime -> {
                     selectedTime = event.time
                 }
@@ -144,6 +149,11 @@ class EpisodeTrackViewModel(
                     }
                 }
             }
+        }
+
+        LaunchedEffect(Unit) {
+            observeEpisodeDetails(ObserveEpisodeDetails.Params(episodeId))
+            eventSink(EpisodeTrackUiEvent.Refresh(false))
         }
 
         return EpisodeTrackViewState(
