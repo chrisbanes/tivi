@@ -91,7 +91,14 @@ internal fun EpisodeTrack(
         viewState = viewState,
         navigateUp = navigateUp,
         onSubmit = { viewState.eventSink(EpisodeTrackUiEvent.Submit) },
-        onNowSelected = { viewState.eventSink(EpisodeTrackUiEvent.SelectNow) },
+        onNowSelected = { selected ->
+            viewState.eventSink(
+                when {
+                    selected -> EpisodeTrackUiEvent.SelectNow
+                    else -> EpisodeTrackUiEvent.UnselectNow
+                },
+            )
+        },
         onSetFirstAired = { viewState.eventSink(EpisodeTrackUiEvent.SelectFirstAired) },
         onDateSelected = { viewState.eventSink(EpisodeTrackUiEvent.SelectDate(it)) },
         onTimeSelected = { viewState.eventSink(EpisodeTrackUiEvent.SelectTime(it)) },

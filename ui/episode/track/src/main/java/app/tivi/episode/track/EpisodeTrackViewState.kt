@@ -48,6 +48,7 @@ sealed interface EpisodeTrackUiEvent {
     data class Refresh(val fromUser: Boolean = false) : EpisodeTrackUiEvent
     object Submit : EpisodeTrackUiEvent
     object SelectNow : EpisodeTrackUiEvent
+    object UnselectNow : EpisodeTrackUiEvent
     object SelectFirstAired : EpisodeTrackUiEvent
     data class SelectDate(val date: LocalDate) : EpisodeTrackUiEvent
     data class SelectTime(val time: LocalTime) : EpisodeTrackUiEvent
