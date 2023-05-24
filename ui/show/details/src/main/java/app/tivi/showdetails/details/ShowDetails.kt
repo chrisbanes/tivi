@@ -83,7 +83,6 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -165,21 +164,21 @@ internal fun ShowDetails(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     openSeasons: (showId: Long, seasonId: Long) -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState = viewModel.presenter()
     ShowDetails(
         viewState = viewState,
         navigateUp = navigateUp,
         openShowDetails = openShowDetails,
         openEpisodeDetails = openEpisodeDetails,
-        refresh = viewModel::refresh,
-        onMessageShown = viewModel::clearMessage,
+        refresh = { viewState.eventSink(ShowDetailsUiEvent.Refresh(true)) },
+        onMessageShown = { viewState.eventSink(ShowDetailsUiEvent.ClearMessage(it)) },
         openSeason = { openSeasons(viewState.show.id, it) },
-        onSeasonFollowed = { viewModel.setSeasonFollowed(it, true) },
-        onSeasonUnfollowed = { viewModel.setSeasonFollowed(it, false) },
-        unfollowPreviousSeasons = viewModel::unfollowPreviousSeasons,
-        onMarkSeasonWatched = { viewModel.setSeasonWatched(it, onlyAired = true) },
-        onMarkSeasonUnwatched = viewModel::setSeasonUnwatched,
-        onToggleShowFollowed = viewModel::toggleFollowShow,
+        onSeasonFollowed = { viewState.eventSink(ShowDetailsUiEvent.FollowSeason(it)) },
+        onSeasonUnfollowed = { viewState.eventSink(ShowDetailsUiEvent.UnfollowSeason(it)) },
+        unfollowPreviousSeasons = { viewState.eventSink(ShowDetailsUiEvent.UnfollowPreviousSeasons(it)) },
+        onMarkSeasonWatched = { viewState.eventSink(ShowDetailsUiEvent.MarkSeasonWatched(it, onlyAired = true)) },
+        onMarkSeasonUnwatched = { viewState.eventSink(ShowDetailsUiEvent.MarkSeasonUnwatched(it)) },
+        onToggleShowFollowed = { viewState.eventSink(ShowDetailsUiEvent.ToggleShowFollowed) },
     )
 }
 
