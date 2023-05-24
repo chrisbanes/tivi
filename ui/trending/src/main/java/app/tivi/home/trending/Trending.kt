@@ -19,7 +19,6 @@ package app.tivi.home.trending
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
@@ -52,8 +51,9 @@ internal fun TrendingShows(
     openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit,
 ) {
+    val viewState = viewModel.presenter()
     EntryGrid(
-        lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
+        lazyPagingItems = viewState.items,
         title = stringResource(MR.strings.discover_trending_title),
         onOpenShowDetails = openShowDetails,
         onNavigateUp = navigateUp,
