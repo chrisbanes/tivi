@@ -41,7 +41,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,49 +48,41 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.ui.AsyncImage
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.models.TraktUser
 import app.tivi.data.traktauth.TraktAuthState
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias AccountUi = @Composable (
-    openSettings: () -> Unit,
-    modifier: Modifier,
-) -> Unit
-
 @Inject
-@Composable
-fun AccountUi(
-    viewModelFactory: () -> AccountUiViewModel,
-    @Assisted openSettings: () -> Unit,
-    @Assisted modifier: Modifier = Modifier,
-) {
-    AccountUi(
-        viewModel = viewModel(factory = viewModelFactory),
-        openSettings = openSettings,
-        modifier = modifier,
-    )
+class AccountScreenUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is AccountUiScreen -> accountUi()
+        else -> null
+    }
+}
+
+private fun accountUi() = ui<AccountUiState> { state, modifier ->
+    AccountUi(state, modifier)
 }
 
 @Composable
 internal fun AccountUi(
-    viewModel: AccountUiViewModel,
-    openSettings: () -> Unit,
+    state: AccountUiState,
     modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
-
     AccountUi(
-        viewState = viewState,
-        openSettings = openSettings,
-        login = { viewState.eventSink(AccountUiEvent.Login) },
-        logout = { viewState.eventSink(AccountUiEvent.Logout) },
+        viewState = state,
+        openSettings = { state.eventSink(AccountUiEvent.NavigateToSettings) },
+        login = { state.eventSink(AccountUiEvent.Login) },
+        logout = { state.eventSink(AccountUiEvent.Logout) },
         modifier = modifier,
     )
 }
@@ -99,7 +90,7 @@ internal fun AccountUi(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun AccountUi(
-    viewState: AccountUiViewState,
+    viewState: AccountUiState,
     openSettings: () -> Unit,
     login: () -> Unit,
     logout: () -> Unit,

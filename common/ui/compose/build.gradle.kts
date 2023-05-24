@@ -42,6 +42,8 @@ dependencies {
     api(projects.core.preferences)
     api(projects.common.imageloading)
 
+    api(libs.circuit)
+
     api(projects.common.ui.resources)
     api(projects.common.ui.resourcesCompose)
     api(projects.common.ui.view)

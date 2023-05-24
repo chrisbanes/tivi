@@ -28,21 +28,44 @@ import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.interactors.ClearUserDetails
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
+@Parcelize
+object AccountUiScreen : Screen
+
 @Inject
-class AccountUiViewModel(
+class AccountUiPresenterFactory(
+    private val presenterFactory: (AccountUiScreen, Navigator) -> AccountPresenter,
+) : Presenter.Factory {
+    override fun create(screen: Screen, navigator: Navigator, context: CircuitContext): Presenter<*>? {
+        return when (screen) {
+            is AccountUiScreen -> presenterFactory(screen, navigator)
+            else -> null
+        }
+    }
+}
+
+@Inject
+class AccountPresenter(
+    @Assisted private val screen: AccountUiScreen,
+    @Assisted private val navigator: Navigator,
     private val traktAuthRepository: TraktAuthRepository,
     private val loginToTraktInteractor: LoginToTraktInteractor,
     private val observeTraktAuthState: ObserveTraktAuthState,
     private val observeUserDetails: ObserveUserDetails,
     private val clearUserDetails: ClearUserDetails,
-) : ViewModel() {
+) : Presenter<AccountUiState> {
 
     @Composable
-    fun presenter(): AccountUiViewState {
+    override fun present(): AccountUiState {
         val user by observeUserDetails.flow.collectAsState(null)
         val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
         val scope = rememberCoroutineScope()
@@ -52,11 +75,14 @@ class AccountUiViewModel(
             observeUserDetails(ObserveUserDetails.Params("me"))
         }
 
-        return AccountUiViewState(
+        return AccountUiState(
             user = user,
             authState = authState,
         ) { event ->
             when (event) {
+                AccountUiEvent.NavigateToSettings -> {
+                    // FIXME
+                }
                 AccountUiEvent.Login -> loginToTraktInteractor.launch()
                 AccountUiEvent.Logout -> {
                     scope.launch {

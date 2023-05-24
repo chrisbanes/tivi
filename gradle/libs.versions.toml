@@ -27,6 +27,7 @@ android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = "com.google.devtools.ksp:1.8.21-1.0.11"
 moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
 gms-googleServices = "com.google.gms.google-services:4.3.15"
@@ -73,6 +74,8 @@ androidx-work-runtime = "androidx.work:work-runtime-ktx:2.8.1"
 appauth = "net.openid:appauth:0.8.1"
 
 chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
+
+circuit = "com.slack.circuit:circuit-foundation:0.8.0"
 
 coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }

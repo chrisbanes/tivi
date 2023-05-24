@@ -92,7 +92,6 @@ import dev.icerock.moko.resources.compose.stringResource
 )
 @Composable
 internal fun Home(
-    composeScreens: ComposeScreens,
     analytics: Analytics,
     onOpenSettings: () -> Unit,
 ) {
