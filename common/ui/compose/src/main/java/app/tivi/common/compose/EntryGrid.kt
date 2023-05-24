@@ -70,7 +70,7 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun <E : Entry> EntryGrid(
-    lazyPagingItems: LazyPagingItems<out EntryWithShow<E>>,
+    lazyPagingItems: LazyPagingItems<EntryWithShow<E>>,
     title: String,
     onNavigateUp: () -> Unit,
     onOpenShowDetails: (Long) -> Unit,

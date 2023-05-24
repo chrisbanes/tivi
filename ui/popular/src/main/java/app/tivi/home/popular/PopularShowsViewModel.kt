@@ -16,26 +16,30 @@
 
 package app.tivi.home.popular
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import app.tivi.data.compoundmodels.PopularEntryWithShow
+import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.domain.observers.ObservePagedPopularShows
-import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class PopularShowsViewModel(
-    pagingInteractor: ObservePagedPopularShows,
+    private val pagingInteractor: ObservePagedPopularShows,
 ) : ViewModel() {
 
-    val pagedList: Flow<PagingData<PopularEntryWithShow>> =
-        pagingInteractor.flow.cachedIn(viewModelScope)
+    @Composable
+    fun presenter(): PopularViewState {
+        val items = pagingInteractor.flow.collectAsLazyPagingItems()
 
-    init {
-        pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))
+        LaunchedEffect(Unit) {
+            pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))
+        }
+
+        return PopularViewState(
+            items = items,
+        )
     }
 
     companion object {
