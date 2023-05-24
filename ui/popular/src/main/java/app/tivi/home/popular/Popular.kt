@@ -17,7 +17,6 @@
 package app.tivi.home.popular
 
 import androidx.compose.runtime.Composable
-import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
@@ -50,8 +49,9 @@ internal fun PopularShows(
     openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit,
 ) {
+    val viewState = viewModel.presenter()
     EntryGrid(
-        lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
+        lazyPagingItems = viewState.items,
         title = stringResource(MR.strings.discover_popular_title),
         onOpenShowDetails = openShowDetails,
         onNavigateUp = navigateUp,
