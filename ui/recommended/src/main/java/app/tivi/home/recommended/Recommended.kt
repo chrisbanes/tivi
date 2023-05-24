@@ -52,7 +52,7 @@ internal fun RecommendedShows(
     val viewState = viewModel.presenter()
     EntryGrid(
         lazyPagingItems = viewState.items,
-        title = stringResource(MR.strings.discover_popular_title),
+        title = stringResource(MR.strings.discover_recommended_title),
         onOpenShowDetails = openShowDetails,
         onNavigateUp = navigateUp,
     )
