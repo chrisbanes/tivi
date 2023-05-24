@@ -61,7 +61,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,7 +73,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import app.cash.paging.LoadStateLoading
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
@@ -125,28 +123,24 @@ internal fun Library(
     openShowDetails: (showId: Long) -> Unit,
     openUser: () -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
-    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
-
+    val viewState = viewModel.presenter()
     Library(
         state = viewState,
-        lazyPagingItems = pagingItems,
         openShowDetails = openShowDetails,
-        onMessageShown = viewModel::clearMessage,
-        onToggleIncludeFollowedShows = viewModel::toggleFollowedShowsIncluded,
-        onToggleIncludeWatchedShows = viewModel::toggleWatchedShowsIncluded,
+        onMessageShown = { viewState.eventSink(LibraryUiEvent.ClearMessage(it)) },
+        onToggleIncludeFollowedShows = { viewState.eventSink(LibraryUiEvent.ToggleFollowedShowsIncluded) },
+        onToggleIncludeWatchedShows = { viewState.eventSink(LibraryUiEvent.ToggleWatchedShowsIncluded) },
         openUser = openUser,
-        refresh = viewModel::refresh,
-        onFilterChanged = viewModel::setFilter,
-        onSortSelected = viewModel::setSort,
+        refresh = { viewState.eventSink(LibraryUiEvent.Refresh(true)) },
+        onFilterChanged = { viewState.eventSink(LibraryUiEvent.ChangeFilter(it)) },
+        onSortSelected = { viewState.eventSink(LibraryUiEvent.ChangeSort(it)) },
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun Library(
     state: LibraryViewState,
-    lazyPagingItems: LazyPagingItems<LibraryShow>,
     openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
     onToggleIncludeFollowedShows: () -> Unit,
@@ -214,7 +208,7 @@ internal fun Library(
         Box(modifier = Modifier.pullRefresh(state = refreshState)) {
             LibraryGrid(
                 state = state,
-                lazyPagingItems = lazyPagingItems,
+                lazyPagingItems = state.items,
                 paddingValues = paddingValues,
                 onFilterChanged = onFilterChanged,
                 onToggleIncludeFollowedShows = onToggleIncludeFollowedShows,

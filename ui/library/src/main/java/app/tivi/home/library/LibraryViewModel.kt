@@ -16,35 +16,31 @@
 
 package app.tivi.home.library
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.api.UiMessageManager
-import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.executeSync
-import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.interactors.UpdateLibraryShows
 import app.tivi.domain.observers.ObservePagedLibraryShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
-import app.tivi.extensions.combine
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -52,143 +48,120 @@ import me.tatarka.inject.annotations.Inject
 class LibraryViewModel(
     private val updateLibraryShows: UpdateLibraryShows,
     private val observePagedLibraryShows: ObservePagedLibraryShows,
-    observeTraktAuthState: ObserveTraktAuthState,
-    private val changeShowFollowStatus: ChangeShowFollowStatus,
-    observeUserDetails: ObserveUserDetails,
+    private val observeTraktAuthState: ObserveTraktAuthState,
+    private val observeUserDetails: ObserveUserDetails,
     private val getTraktAuthState: GetTraktAuthState,
     private val preferences: TiviPreferences,
     private val logger: Logger,
 ) : ViewModel() {
-    private val followedLoadingState = ObservableLoadingCounter()
-    private val watchedLoadingState = ObservableLoadingCounter()
-    private val uiMessageManager = UiMessageManager()
 
-    val pagedList: Flow<PagingData<LibraryShow>> =
-        observePagedLibraryShows.flow.cachedIn(viewModelScope)
+    @Composable
+    fun presenter(): LibraryViewState {
+        val scope = rememberCoroutineScope()
 
-    private val availableSorts = listOf(
-        SortOption.LAST_WATCHED,
-        SortOption.ALPHABETICAL,
-    )
+        val followedLoadingState = remember { ObservableLoadingCounter() }
+        val watchedLoadingState = remember { ObservableLoadingCounter() }
+        val uiMessageManager = remember { UiMessageManager() }
 
-    private val filter = MutableStateFlow<String?>(null)
-    private val sort = MutableStateFlow(SortOption.LAST_WATCHED)
+        val items = observePagedLibraryShows.flow.collectAsLazyPagingItems()
 
-    val state: StateFlow<LibraryViewState> = combine(
-        followedLoadingState.observable,
-        watchedLoadingState.observable,
-        observeTraktAuthState.flow,
-        observeUserDetails.flow,
-        filter,
-        sort,
-        uiMessageManager.message,
-        preferences.observeLibraryWatchedActive(),
-        preferences.observeLibraryFollowedActive(),
-    ) { followedLoading, watchedLoading, authState, user, filter, sort, message, includeWatchedShows, includeFollowedShows ->
-        LibraryViewState(
+        var filter by remember { mutableStateOf<String?>(null) }
+        var sort by remember { mutableStateOf(SortOption.LAST_WATCHED) }
+
+        val followedLoading by followedLoadingState.observable.collectAsState(false)
+        val watchedLoading by watchedLoadingState.observable.collectAsState(false)
+        val message by uiMessageManager.message.collectAsState(null)
+
+        val user by observeUserDetails.flow.collectAsState(null)
+        val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
+
+        // TODO: this is gross. Tidy up preference flows
+        val includeWatchedShows by remember(preferences) {
+            preferences.observeLibraryWatchedActive()
+        }.collectAsState(false)
+        val includeFollowedShows by remember(preferences) {
+            preferences.observeLibraryFollowedActive()
+        }.collectAsState(false)
+
+        fun eventSink(event: LibraryUiEvent) {
+            when (event) {
+                is LibraryUiEvent.ChangeFilter -> filter = event.filter
+                is LibraryUiEvent.ChangeSort -> sort = event.sort
+                is LibraryUiEvent.ClearMessage -> {
+                    scope.launch {
+                        uiMessageManager.clearMessage(event.id)
+                    }
+                }
+                is LibraryUiEvent.Refresh -> {
+                    scope.launch {
+                        if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
+                            updateLibraryShows(
+                                UpdateLibraryShows.Params(event.fromUser),
+                            ).collectStatus(followedLoadingState, logger, uiMessageManager)
+                        }
+                    }
+                }
+
+                LibraryUiEvent.ToggleFollowedShowsIncluded -> {
+                    preferences.libraryFollowedActive = !preferences.libraryFollowedActive
+                }
+                LibraryUiEvent.ToggleWatchedShowsIncluded -> {
+                    preferences.libraryWatchedActive = !preferences.libraryWatchedActive
+                }
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            observeTraktAuthState(Unit)
+            observeUserDetails(ObserveUserDetails.Params("me"))
+        }
+
+        LaunchedEffect(observeTraktAuthState) {
+            observeTraktAuthState.flow
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect {
+                    eventSink(LibraryUiEvent.Refresh(false))
+                }
+        }
+
+        LaunchedEffect(filter, sort, includeFollowedShows, includeWatchedShows) {
+            // When the filter and sort options change, update the data source
+            observePagedLibraryShows(
+                ObservePagedLibraryShows.Parameters(
+                    sort = sort,
+                    filter = filter,
+                    includeFollowed = preferences.libraryFollowedActive,
+                    includeWatched = preferences.libraryWatchedActive,
+                    pagingConfig = PAGING_CONFIG,
+                ),
+            )
+        }
+
+        return LibraryViewState(
+            items = items,
             user = user,
             authState = authState,
             isLoading = followedLoading || watchedLoading,
             filter = filter,
             filterActive = !filter.isNullOrEmpty(),
-            availableSorts = availableSorts,
+            availableSorts = AVAILABLE_SORT_OPTIONS,
             sort = sort,
             message = message,
             watchedShowsIncluded = includeWatchedShows,
             followedShowsIncluded = includeFollowedShows,
+            eventSink = ::eventSink,
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = WhileSubscribed(),
-        initialValue = LibraryViewState.Empty,
-    )
-
-    init {
-        observeTraktAuthState(Unit)
-        observeUserDetails(ObserveUserDetails.Params("me"))
-
-        // When the filter and sort options change, update the data source
-        filter
-            .onEach { updateDataSource() }
-            .launchIn(viewModelScope)
-
-        sort
-            .onEach { updateDataSource() }
-            .launchIn(viewModelScope)
-
-        preferences.observeLibraryWatchedActive()
-            .onEach { updateDataSource() }
-            .launchIn(viewModelScope)
-
-        preferences.observeLibraryFollowedActive()
-            .onEach { updateDataSource() }
-            .launchIn(viewModelScope)
-
-        // When the user logs in, refresh...
-        observeTraktAuthState.flow
-            .filter { it == TraktAuthState.LOGGED_IN }
-            .onEach { refresh(false) }
-            .launchIn(viewModelScope)
-    }
-
-    private fun updateDataSource() {
-        observePagedLibraryShows(
-            ObservePagedLibraryShows.Parameters(
-                sort = sort.value,
-                filter = filter.value,
-                includeFollowed = preferences.libraryFollowedActive,
-                includeWatched = preferences.libraryWatchedActive,
-                pagingConfig = PAGING_CONFIG,
-            ),
-        )
-    }
-
-    fun refresh(fromUser: Boolean = true) {
-        viewModelScope.launch {
-            if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
-                refreshFollowed(fromUser)
-            }
-        }
-    }
-
-    fun setFilter(filter: String?) {
-        viewModelScope.launch {
-            this@LibraryViewModel.filter.emit(filter)
-        }
-    }
-
-    fun setSort(sort: SortOption) {
-        viewModelScope.launch {
-            this@LibraryViewModel.sort.emit(sort)
-        }
-    }
-
-    fun toggleFollowedShowsIncluded() {
-        preferences.libraryFollowedActive = !preferences.libraryFollowedActive
-    }
-
-    fun toggleWatchedShowsIncluded() {
-        preferences.libraryWatchedActive = !preferences.libraryWatchedActive
-    }
-
-    private fun refreshFollowed(fromInteraction: Boolean) {
-        viewModelScope.launch {
-            updateLibraryShows(
-                UpdateLibraryShows.Params(fromInteraction),
-            ).collectStatus(followedLoadingState, logger, uiMessageManager)
-        }
-    }
-
-    fun clearMessage(id: Long) {
-        viewModelScope.launch {
-            uiMessageManager.clearMessage(id)
-        }
     }
 
     companion object {
         private val PAGING_CONFIG = PagingConfig(
             pageSize = 16,
             initialLoadSize = 32,
+        )
+
+        private val AVAILABLE_SORT_OPTIONS = listOf(
+            SortOption.LAST_WATCHED,
+            SortOption.ALPHABETICAL,
         )
     }
 }
