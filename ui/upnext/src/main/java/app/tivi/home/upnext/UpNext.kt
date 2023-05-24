@@ -61,7 +61,6 @@ import androidx.compose.material3.rememberDismissState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,8 +71,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import app.cash.paging.LoadStateLoading
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
@@ -88,7 +85,6 @@ import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
-import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
@@ -133,19 +129,16 @@ internal fun UpNext(
     openUser: () -> Unit,
     openTrackEpisode: (episodeId: Long) -> Unit,
 ) {
-    val viewState by viewModel.state.collectAsState()
-    val pagingItems = viewModel.pagedList.collectAsLazyPagingItems()
-
+    val viewState = viewModel.presenter()
     UpNext(
         state = viewState,
-        lazyPagingItems = pagingItems,
         openShowDetails = openShowDetails,
         openTrackEpisode = openTrackEpisode,
-        onMessageShown = viewModel::clearMessage,
+        onMessageShown = { viewState.eventSink(UpNextUiEvent.ClearMessage(it)) },
         openUser = openUser,
-        refresh = viewModel::refresh,
-        onSortSelected = viewModel::setSort,
-        onToggleFollowedShowsOnly = viewModel::toggleFollowedShowsOnly,
+        refresh = { viewState.eventSink(UpNextUiEvent.Refresh()) },
+        onSortSelected = { viewState.eventSink(UpNextUiEvent.ChangeSort(it)) },
+        onToggleFollowedShowsOnly = { viewState.eventSink(UpNextUiEvent.ToggleFollowedShowsOnly) },
     )
 }
 
@@ -153,7 +146,6 @@ internal fun UpNext(
 @Composable
 internal fun UpNext(
     state: UpNextViewState,
-    lazyPagingItems: LazyPagingItems<UpNextEntry>,
     openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
     openTrackEpisode: (episodeId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
@@ -223,7 +215,7 @@ internal fun UpNext(
             val gutter = Layout.gutter
 
             LazyVerticalGrid(
-                state = rememberLazyGridState(lazyPagingItems.itemCount == 0),
+                state = rememberLazyGridState(state.items.itemCount == 0),
                 columns = GridCells.Fixed(columns / 4),
                 contentPadding = paddingValues + PaddingValues(
                     horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
@@ -247,8 +239,8 @@ internal fun UpNext(
                     )
                 }
 
-                if (lazyPagingItems.itemCount == 0 &&
-                    lazyPagingItems.loadState.refresh != LoadStateLoading
+                if (state.items.itemCount == 0 &&
+                    state.items.loadState.refresh != LoadStateLoading
                 ) {
                     fullSpanItem {
                         EmptyContent(
@@ -263,7 +255,7 @@ internal fun UpNext(
                 }
 
                 items(
-                    items = lazyPagingItems,
+                    items = state.items,
                     key = { it.show.id },
                 ) { entry ->
                     if (entry != null) {
