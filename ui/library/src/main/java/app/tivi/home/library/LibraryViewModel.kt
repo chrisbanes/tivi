@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -75,13 +76,12 @@ class LibraryViewModel(
         val user by observeUserDetails.flow.collectAsState(null)
         val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
 
-        // TODO: this is gross. Tidy up preference flows
-        val includeWatchedShows by remember(preferences) {
-            preferences.observeLibraryWatchedActive()
-        }.collectAsState(false)
-        val includeFollowedShows by remember(preferences) {
-            preferences.observeLibraryFollowedActive()
-        }.collectAsState(false)
+        val includeWatchedShows by produceState(false, preferences) {
+            preferences.observeLibraryWatchedActive().collect { value = it }
+        }
+        val includeFollowedShows by produceState(false, preferences) {
+            preferences.observeLibraryFollowedActive().collect { value = it }
+        }
 
         fun eventSink(event: LibraryUiEvent) {
             when (event) {

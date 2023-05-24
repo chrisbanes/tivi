@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -72,11 +73,9 @@ class UpNextViewModel(
         val user by observeUserDetails.flow.collectAsState(null)
         val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
 
-        // TODO: this is gross. Tidy up preference flows
-        val followedShowsOnly by remember(preferences) {
-            preferences.observeUpNextFollowedOnly()
+        val followedShowsOnly by produceState(false, preferences) {
+            preferences.observeUpNextFollowedOnly().collect { value = it }
         }
-            .collectAsState(false)
 
         fun eventSink(event: UpNextUiEvent) {
             when (event) {
