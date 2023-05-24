@@ -16,25 +16,30 @@
 
 package app.tivi.home.recommended
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import app.tivi.data.compoundmodels.RecommendedEntryWithShow
+import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.domain.observers.ObservePagedRecommendedShows
-import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class RecommendedShowsViewModel(
-    pagingInteractor: ObservePagedRecommendedShows,
+    private val pagingInteractor: ObservePagedRecommendedShows,
 ) : ViewModel() {
-    val pagedList: Flow<PagingData<RecommendedEntryWithShow>> =
-        pagingInteractor.flow.cachedIn(viewModelScope)
 
-    init {
-        pagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
+    @Composable
+    fun presenter(): RecommendedShowsViewState {
+        val items = pagingInteractor.flow.collectAsLazyPagingItems()
+
+        LaunchedEffect(Unit) {
+            pagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
+        }
+
+        return RecommendedShowsViewState(
+            items = items,
+        )
     }
 
     companion object {
