@@ -16,26 +16,30 @@
 
 package app.tivi.home.trending
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import app.tivi.data.compoundmodels.TrendingEntryWithShow
+import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.domain.observers.ObservePagedTrendingShows
-import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TrendingShowsViewModel(
-    pagingInteractor: ObservePagedTrendingShows,
+    private val pagingInteractor: ObservePagedTrendingShows,
 ) : ViewModel() {
 
-    val pagedList: Flow<PagingData<TrendingEntryWithShow>> =
-        pagingInteractor.flow.cachedIn(viewModelScope)
+    @Composable
+    fun presenter(): TrendingShowsViewState {
+        val items = pagingInteractor.flow.collectAsLazyPagingItems()
 
-    init {
-        pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
+        LaunchedEffect(Unit) {
+            pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
+        }
+
+        return TrendingShowsViewState(
+            items = items,
+        )
     }
 
     companion object {
