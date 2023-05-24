@@ -61,7 +61,6 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -121,14 +120,14 @@ internal fun ShowSeasons(
     openEpisodeDetails: (episodeId: Long) -> Unit,
     initialSeasonId: Long?,
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val viewState = viewModel.presenter()
 
     ShowSeasons(
         viewState = viewState,
         navigateUp = navigateUp,
         openEpisodeDetails = openEpisodeDetails,
-        refresh = viewModel::refresh,
-        onMessageShown = viewModel::clearMessage,
+        refresh = { viewState.eventSink(ShowSeasonsUiEvent.Refresh()) },
+        onMessageShown = { viewState.eventSink(ShowSeasonsUiEvent.ClearMessage(it)) },
         initialSeasonId = initialSeasonId,
     )
 }
