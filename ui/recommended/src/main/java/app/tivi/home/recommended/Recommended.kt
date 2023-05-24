@@ -16,10 +16,7 @@
 
 package app.tivi.home.recommended
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
@@ -52,11 +49,11 @@ internal fun RecommendedShows(
     openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit,
 ) {
+    val viewState = viewModel.presenter()
     EntryGrid(
-        lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
-        title = stringResource(MR.strings.discover_recommended_title),
+        lazyPagingItems = viewState.items,
+        title = stringResource(MR.strings.discover_popular_title),
         onOpenShowDetails = openShowDetails,
         onNavigateUp = navigateUp,
-        modifier = Modifier.fillMaxSize(),
     )
 }
