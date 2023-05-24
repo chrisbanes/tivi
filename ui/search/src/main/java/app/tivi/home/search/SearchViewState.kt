@@ -24,8 +24,10 @@ data class SearchViewState(
     val searchResults: List<TiviShow> = emptyList(),
     val refreshing: Boolean = false,
     val message: UiMessage? = null,
-) {
-    companion object {
-        val Empty = SearchViewState()
-    }
+    val eventSink: (SearchUiEvent) -> Unit,
+)
+
+sealed interface SearchUiEvent {
+    data class ClearMessage(val id: Long) : SearchUiEvent
+    data class UpdateQuery(val query: String) : SearchUiEvent
 }
