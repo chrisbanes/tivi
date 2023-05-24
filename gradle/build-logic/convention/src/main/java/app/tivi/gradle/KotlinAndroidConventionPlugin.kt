@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
+package app.tivi.gradle
 
-plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.android")
-}
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 
-android {
-    namespace = "app.tivi.common.ui"
-}
-
-dependencies {
-    api(projects.data.models)
-    api(projects.common.ui.resources)
-    api(projects.core.logging)
-
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
-    implementation(libs.kotlin.coroutines.core)
-
-    implementation(libs.androidx.activity.activity)
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.emoji)
+class KotlinAndroidConventionPlugin : Plugin<Project> {
+    override fun apply(target: Project) {
+        with(target) {
+            with(pluginManager) {
+                apply("org.jetbrains.kotlin.android")
+                apply("org.gradle.android.cache-fix")
+            }
+        }
+    }
 }

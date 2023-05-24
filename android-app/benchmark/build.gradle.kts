@@ -19,7 +19,7 @@ import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
     id("app.tivi.android.test")
-    alias(libs.plugins.kotlin.android)
+    id("app.tivi.kotlin.android")
 }
 
 android {

@@ -17,7 +17,7 @@
 
 plugins {
     id("app.tivi.android.library")
-    alias(libs.plugins.kotlin.android)
+    id("app.tivi.kotlin.android")
     alias(libs.plugins.ksp)
 }
 

@@ -37,6 +37,11 @@ gradlePlugin {
             implementationClass = "app.tivi.gradle.KotlinMultiplatformConventionPlugin"
         }
 
+        register("kotlinAndroid") {
+            id = "app.tivi.kotlin.android"
+            implementationClass = "app.tivi.gradle.KotlinAndroidConventionPlugin"
+        }
+
         register("androidApplication") {
             id = "app.tivi.android.application"
             implementationClass = "app.tivi.gradle.AndroidApplicationConventionPlugin"
