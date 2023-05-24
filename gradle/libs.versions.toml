@@ -32,7 +32,7 @@ moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.re
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.5"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
-spotless = "com.diffplug.spotless:6.18.0"
+spotless = "com.diffplug.spotless:6.19.0"
 
 [libraries]
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
