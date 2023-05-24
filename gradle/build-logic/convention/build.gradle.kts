@@ -33,7 +33,7 @@ dependencies {
 gradlePlugin {
     plugins {
         register("kotlinMultiplatform") {
-            id = "app.tivi.multiplatform"
+            id = "app.tivi.kotlin.multiplatform"
             implementationClass = "app.tivi.gradle.KotlinMultiplatformConventionPlugin"
         }
 
