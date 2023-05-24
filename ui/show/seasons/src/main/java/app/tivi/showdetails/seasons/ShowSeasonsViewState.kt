@@ -27,8 +27,10 @@ data class ShowSeasonsViewState(
     val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val refreshing: Boolean = false,
     val message: UiMessage? = null,
-) {
-    companion object {
-        val Empty = ShowSeasonsViewState()
-    }
+    val eventSink: (ShowSeasonsUiEvent) -> Unit,
+)
+
+sealed interface ShowSeasonsUiEvent {
+    data class ClearMessage(val id: Long) : ShowSeasonsUiEvent
+    data class Refresh(val fromUser: Boolean = true) : ShowSeasonsUiEvent
 }
