@@ -22,34 +22,48 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiMessageManager
 import app.tivi.data.models.TiviShow
 import app.tivi.domain.interactors.UpdateShowSeasons
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
+import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ShowSeasonsViewModel(
-    @Assisted savedStateHandle: SavedStateHandle,
+class ShowSeasonsUiPresenterFactory(
+    private val presenterFactory: (ShowSeasonsScreen, Navigator) -> ShowSeasonsPresenter,
+) : Presenter.Factory {
+    override fun create(
+        screen: Screen,
+        navigator: Navigator,
+        context: CircuitContext,
+    ): Presenter<*>? = when (screen) {
+        is ShowSeasonsScreen -> presenterFactory(screen, navigator)
+        else -> null
+    }
+}
+
+@Inject
+class ShowSeasonsPresenter(
+    @Assisted private val screen: ShowSeasonsScreen,
+    @Assisted private val navigator: Navigator,
     private val observeShowDetails: ObserveShowDetails,
     private val observeShowSeasons: ObserveShowSeasonsEpisodesWatches,
     private val updateShowSeasons: UpdateShowSeasons,
     private val logger: Logger,
-) : ViewModel() {
-    private val showId: Long = savedStateHandle["showId"]!!
-
+) : Presenter<ShowSeasonsUiState> {
     @Composable
-    fun presenter(): ShowSeasonsViewState {
+    override fun present(): ShowSeasonsUiState {
         val scope = rememberCoroutineScope()
 
         val loadingState = remember { ObservableLoadingCounter() }
@@ -63,7 +77,7 @@ class ShowSeasonsViewModel(
         fun eventSink(event: ShowSeasonsUiEvent) {
             when (event) {
                 is ShowSeasonsUiEvent.ClearMessage -> {
-                    viewModelScope.launch {
+                    scope.launch {
                         uiMessageManager.clearMessage(event.id)
                     }
                 }
@@ -71,25 +85,31 @@ class ShowSeasonsViewModel(
                 is ShowSeasonsUiEvent.Refresh -> {
                     scope.launch {
                         updateShowSeasons(
-                            UpdateShowSeasons.Params(showId, event.fromUser),
+                            UpdateShowSeasons.Params(screen.id, event.fromUser),
                         ).collectStatus(loadingState, logger, uiMessageManager)
                     }
                 }
+
+                ShowSeasonsUiEvent.NavigateBack -> navigator.pop()
+                is ShowSeasonsUiEvent.OpenEpisodeDetails -> TODO()
+                is ShowSeasonsUiEvent.OpenSeason -> TODO()
+                is ShowSeasonsUiEvent.OpenShowDetails -> TODO()
             }
         }
 
         LaunchedEffect(Unit) {
-            observeShowDetails(ObserveShowDetails.Params(showId))
-            observeShowSeasons(ObserveShowSeasonsEpisodesWatches.Params(showId))
+            observeShowDetails(ObserveShowDetails.Params(screen.id))
+            observeShowSeasons(ObserveShowSeasonsEpisodesWatches.Params(screen.id))
 
             eventSink(ShowSeasonsUiEvent.Refresh(false))
         }
 
-        return ShowSeasonsViewState(
+        return ShowSeasonsUiState(
             show = show,
             seasons = seasons,
             refreshing = refreshing,
             message = message,
+            initialSeasonId = screen.selectedSeasonId,
             eventSink = ::eventSink,
         )
     }

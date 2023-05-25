@@ -25,6 +25,7 @@ import app.tivi.home.search.SearchComponent
 import app.tivi.home.trending.TrendingShowsComponent
 import app.tivi.home.upnext.UpNextComponent
 import app.tivi.showdetails.details.ShowDetailsComponent
+import app.tivi.showdetails.seasons.ShowSeasonsComponent
 import com.slack.circuit.foundation.CircuitConfig
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
@@ -38,6 +39,7 @@ interface UiComponent :
     RecommendedShowsComponent,
     SearchComponent,
     ShowDetailsComponent,
+    ShowSeasonsComponent,
     TrendingShowsComponent,
     UpNextComponent {
     @Provides
