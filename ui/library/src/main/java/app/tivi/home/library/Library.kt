@@ -87,60 +87,56 @@ import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.screens.LibraryScreen
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Instant
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias Library = @Composable (
-    openShowDetails: (showId: Long) -> Unit,
-    openUser: () -> Unit,
-) -> Unit
-
 @Inject
-@Composable
-fun Library(
-    viewModelFactory: () -> LibraryViewModel,
-    @Assisted openShowDetails: (showId: Long) -> Unit,
-    @Assisted openUser: () -> Unit,
-) {
-    Library(
-        viewModel = viewModel(factory = viewModelFactory),
-        openShowDetails = openShowDetails,
-        openUser = openUser,
-    )
+class LibraryUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is LibraryScreen -> {
+            ui<LibraryUiState> { state, modifier ->
+                Library(state, modifier)
+            }
+        }
+
+        else -> null
+    }
 }
 
 @Composable
 internal fun Library(
-    viewModel: LibraryViewModel,
-    openShowDetails: (showId: Long) -> Unit,
-    openUser: () -> Unit,
+    state: LibraryUiState,
+    modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
     Library(
-        state = viewState,
-        openShowDetails = openShowDetails,
-        onMessageShown = { viewState.eventSink(LibraryUiEvent.ClearMessage(it)) },
-        onToggleIncludeFollowedShows = { viewState.eventSink(LibraryUiEvent.ToggleFollowedShowsIncluded) },
-        onToggleIncludeWatchedShows = { viewState.eventSink(LibraryUiEvent.ToggleWatchedShowsIncluded) },
-        openUser = openUser,
-        refresh = { viewState.eventSink(LibraryUiEvent.Refresh(true)) },
-        onFilterChanged = { viewState.eventSink(LibraryUiEvent.ChangeFilter(it)) },
-        onSortSelected = { viewState.eventSink(LibraryUiEvent.ChangeSort(it)) },
+        state = state,
+        openShowDetails = { state.eventSink(LibraryUiEvent.OpenShowDetails(it)) },
+        onMessageShown = { state.eventSink(LibraryUiEvent.ClearMessage(it)) },
+        onToggleIncludeFollowedShows = { state.eventSink(LibraryUiEvent.ToggleFollowedShowsIncluded) },
+        onToggleIncludeWatchedShows = { state.eventSink(LibraryUiEvent.ToggleWatchedShowsIncluded) },
+        openUser = { state.eventSink(LibraryUiEvent.OpenAccount) },
+        refresh = { state.eventSink(LibraryUiEvent.Refresh(true)) },
+        onFilterChanged = { state.eventSink(LibraryUiEvent.ChangeFilter(it)) },
+        onSortSelected = { state.eventSink(LibraryUiEvent.ChangeSort(it)) },
+        modifier = modifier,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun Library(
-    state: LibraryViewState,
+    state: LibraryUiState,
     openShowDetails: (showId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
     onToggleIncludeFollowedShows: () -> Unit,
@@ -149,6 +145,7 @@ internal fun Library(
     openUser: () -> Unit,
     onFilterChanged: (String) -> Unit,
     onSortSelected: (SortOption) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -199,7 +196,7 @@ internal fun Library(
                 )
             }
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     ) { paddingValues ->
         val refreshState = rememberPullRefreshState(
             refreshing = state.isLoading,
@@ -236,7 +233,7 @@ internal fun Library(
 @Composable
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 private fun LibraryGrid(
-    state: LibraryViewState,
+    state: LibraryUiState,
     lazyPagingItems: LazyPagingItems<LibraryShow>,
     paddingValues: PaddingValues,
     onFilterChanged: (String) -> Unit,

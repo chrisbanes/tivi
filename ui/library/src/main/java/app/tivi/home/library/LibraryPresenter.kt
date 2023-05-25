@@ -25,7 +25,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.api.UiMessageManager
@@ -37,16 +36,39 @@ import app.tivi.domain.interactors.UpdateLibraryShows
 import app.tivi.domain.observers.ObservePagedLibraryShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
+import app.tivi.screens.AccountScreen
+import app.tivi.screens.LibraryScreen
+import app.tivi.screens.ShowDetailsScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class LibraryViewModel(
+class LibraryUiPresenterFactory(
+    private val presenterFactory: (Navigator) -> LibraryPresenter,
+) : Presenter.Factory {
+    override fun create(
+        screen: Screen,
+        navigator: Navigator,
+        context: CircuitContext,
+    ): Presenter<*>? = when (screen) {
+        is LibraryScreen -> presenterFactory(navigator)
+        else -> null
+    }
+}
+
+@Inject
+class LibraryPresenter(
+    @Assisted private val navigator: Navigator,
     private val updateLibraryShows: UpdateLibraryShows,
     private val observePagedLibraryShows: ObservePagedLibraryShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
@@ -54,10 +76,10 @@ class LibraryViewModel(
     private val getTraktAuthState: GetTraktAuthState,
     private val preferences: TiviPreferences,
     private val logger: Logger,
-) : ViewModel() {
+) : Presenter<LibraryUiState> {
 
     @Composable
-    fun presenter(): LibraryViewState {
+    override fun present(): LibraryUiState {
         val scope = rememberCoroutineScope()
 
         val followedLoadingState = remember { ObservableLoadingCounter() }
@@ -101,12 +123,15 @@ class LibraryViewModel(
                         }
                     }
                 }
-
                 LibraryUiEvent.ToggleFollowedShowsIncluded -> {
                     preferences.libraryFollowedActive = !preferences.libraryFollowedActive
                 }
                 LibraryUiEvent.ToggleWatchedShowsIncluded -> {
                     preferences.libraryWatchedActive = !preferences.libraryWatchedActive
+                }
+                LibraryUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
+                is LibraryUiEvent.OpenShowDetails -> {
+                    navigator.goTo(ShowDetailsScreen(event.showId))
                 }
             }
         }
@@ -137,7 +162,7 @@ class LibraryViewModel(
             )
         }
 
-        return LibraryViewState(
+        return LibraryUiState(
             items = items,
             user = user,
             authState = authState,
