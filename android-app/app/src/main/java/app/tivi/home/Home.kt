@@ -60,37 +60,24 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import app.tivi.common.ui.resources.MR
-import app.tivi.core.analytics.Analytics
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
 import app.tivi.screens.SearchScreen
 import app.tivi.screens.UpNextScreen
-import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.CircuitConfig
-import com.slack.circuit.foundation.CircuitContent
+import com.slack.circuit.backstack.SaveableBackStack
+import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.overlay.ContentWithOverlays
+import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 
-@Suppress("UNUSED_PARAMETER", "UNUSED_ANONYMOUS_PARAMETER")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun Home(
-    analytics: Analytics,
-    circuitConfig: CircuitConfig,
-    onOpenSettings: () -> Unit,
-) { // Launch an effect to track changes to the current back stack entry, and push them
-    // as a screen views to analytics
-//    LaunchedEffect(navController, analytics) {
-//        navController.currentBackStackEntryFlow.collect { entry ->
-//            analytics.trackScreenView(
-//                label = entry.debugLabel,
-//                route = entry.destination.route,
-//                arguments = entry.arguments,
-//            )
-//        }
-//    }
-
+    backstack: SaveableBackStack,
+    navigator: Navigator,
+) {
     val configuration = LocalConfiguration.current
     val useBottomNavigation = configuration.smallestScreenWidthDp < 600
 
@@ -100,14 +87,7 @@ internal fun Home(
                 HomeNavigationBar(
                     selectedNavigation = DiscoverScreen, // FIXME
                     onNavigationSelected = { selected ->
-//                        navController.navigate(selected.route) {
-//                            launchSingleTop = true
-//                            restoreState = true
-//
-//                            popUpTo(navController.graph.findStartDestination().id) {
-//                                saveState = true
-//                            }
-//                        }
+                        navigator.resetRoot(selected)
                     },
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -136,14 +116,7 @@ internal fun Home(
                 HomeNavigationRail(
                     selectedNavigation = DiscoverScreen, // FIXME
                     onNavigationSelected = { selected ->
-//                        navController.navigate(selected.route) {
-//                            launchSingleTop = true
-//                            restoreState = true
-//
-//                            popUpTo(navController.graph.findStartDestination().id) {
-//                                saveState = true
-//                            }
-//                        }
+                        navigator.resetRoot(selected)
                     },
                     modifier = Modifier.fillMaxHeight(),
                 )
@@ -155,9 +128,10 @@ internal fun Home(
                 )
             }
 
-            CircuitCompositionLocals(circuitConfig) {
-                CircuitContent(
-                    screen = DiscoverScreen,
+            ContentWithOverlays {
+                NavigableCircuitContent(
+                    navigator = navigator,
+                    backstack = backstack,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),

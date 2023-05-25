@@ -189,6 +189,8 @@ dependencies {
     implementation(projects.ui.settings)
     implementation(projects.ui.upnext)
 
+    implementation(libs.circuit.overlay)
+
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     implementation(libs.androidx.activity.activity)

@@ -17,12 +17,12 @@
 package app.tivi.home
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.findViewTreeLifecycleOwner
@@ -46,11 +46,17 @@ import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.ApplicationComponent
-import app.tivi.settings.SettingsActivity
+import app.tivi.screens.DiscoverScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
+import com.slack.circuit.backstack.SaveableBackStack
+import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.CircuitConfig
+import com.slack.circuit.foundation.push
+import com.slack.circuit.foundation.rememberCircuitNavigator
+import com.slack.circuit.runtime.Navigator
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -93,23 +99,29 @@ class MainActivity : TiviActivity() {
 
     @Composable
     private fun TiviContent() {
-        CompositionLocalProvider(
-            LocalTiviDateFormatter provides component.tiviDateFormatter,
-            LocalTiviTextCreator provides component.textCreator,
-        ) {
-            TiviTheme(
-                useDarkColors = preferences.shouldUseDarkColors(),
-                useDynamicColors = preferences.shouldUseDynamicColors(),
-            ) {
-                Home(
-                    analytics = analytics,
-                    circuitConfig = component.circuitConfig,
-                    onOpenSettings = {
-                        startActivity(
-                            Intent(this@MainActivity, SettingsActivity::class.java),
-                        )
-                    },
+        CircuitCompositionLocals(component.circuitConfig) {
+            val backstack: SaveableBackStack = rememberSaveableBackStack { push(DiscoverScreen) }
+            val navigator: Navigator = rememberCircuitNavigator(backstack)
+
+            // Launch an effect to track changes to the current back stack entry, and push them
+            // as a screen views to analytics
+            LaunchedEffect(backstack.topRecord) {
+                analytics.trackScreenView(
+                    label = backstack.topRecord.toString(),
+                    route = "",
                 )
+            }
+
+            CompositionLocalProvider(
+                LocalTiviDateFormatter provides component.tiviDateFormatter,
+                LocalTiviTextCreator provides component.textCreator,
+            ) {
+                TiviTheme(
+                    useDarkColors = preferences.shouldUseDarkColors(),
+                    useDynamicColors = preferences.shouldUseDynamicColors(),
+                ) {
+                    Home(backstack = backstack, navigator = navigator)
+                }
             }
         }
     }

@@ -71,6 +71,7 @@ appauth = "net.openid:appauth:0.8.1"
 chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
+circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
 circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
 
 coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
