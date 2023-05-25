@@ -42,9 +42,6 @@ dependencies {
     api(projects.common.ui.screens)
     api(libs.circuit.foundation)
 
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
 

@@ -43,9 +43,6 @@ dependencies {
     api(projects.common.ui.screens)
     api(libs.circuit.foundation)
 
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-
     // For registerForActivityResult
     implementation(libs.androidx.activity.compose)
 
