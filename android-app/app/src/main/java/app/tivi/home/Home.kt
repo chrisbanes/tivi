@@ -16,7 +16,6 @@
 
 package app.tivi.home
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -47,15 +46,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
@@ -191,77 +189,57 @@ internal fun HomeNavigationRail(
 
 @Composable
 private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) {
-    val painter = when (item) {
-        is HomeNavigationItem.ResourceIcon -> painterResource(item.iconResId)
-        is HomeNavigationItem.ImageVectorIcon -> rememberVectorPainter(item.iconImageVector)
-    }
-    val selectedPainter = when (item) {
-        is HomeNavigationItem.ResourceIcon -> item.selectedIconResId?.let { painterResource(it) }
-        is HomeNavigationItem.ImageVectorIcon -> item.selectedImageVector?.let { rememberVectorPainter(it) }
-    }
-
-    if (selectedPainter != null) {
-        Crossfade(targetState = selected) {
+    if (item.selectedImageVector != null) {
+        Crossfade(targetState = selected) { s ->
             Icon(
-                painter = if (it) selectedPainter else painter,
+                imageVector = if (s) item.selectedImageVector else item.iconImageVector,
                 contentDescription = stringResource(item.contentDescriptionResource),
             )
         }
     } else {
         Icon(
-            painter = painter,
+            imageVector = item.iconImageVector,
             contentDescription = stringResource(item.contentDescriptionResource),
         )
     }
 }
 
-private sealed class HomeNavigationItem(
+@Immutable
+private data class HomeNavigationItem(
     val screen: Screen,
     val labelResource: StringResource,
     val contentDescriptionResource: StringResource,
-) {
-    class ResourceIcon(
-        screen: Screen,
-        labelResource: StringResource,
-        contentDescriptionResource: StringResource,
-        @DrawableRes val iconResId: Int,
-        @DrawableRes val selectedIconResId: Int? = null,
-    ) : HomeNavigationItem(screen, labelResource, contentDescriptionResource)
-
-    class ImageVectorIcon(
-        screen: Screen,
-        labelResource: StringResource,
-        contentDescriptionResource: StringResource,
-        val iconImageVector: ImageVector,
-        val selectedImageVector: ImageVector? = null,
-    ) : HomeNavigationItem(screen, labelResource, contentDescriptionResource)
-}
-
-private val HomeNavigationItems = listOf(
-    HomeNavigationItem.ImageVectorIcon(
-        screen = DiscoverScreen,
-        labelResource = MR.strings.discover_title,
-        contentDescriptionResource = MR.strings.cd_discover_title,
-        iconImageVector = Icons.Outlined.Weekend,
-        selectedImageVector = Icons.Default.Weekend,
-    ),
-    HomeNavigationItem.ImageVectorIcon(
-        screen = UpNextScreen,
-        labelResource = MR.strings.upnext_title,
-        contentDescriptionResource = MR.strings.cd_upnext_title,
-        iconImageVector = Icons.Default.Subscriptions,
-    ),
-    HomeNavigationItem.ImageVectorIcon(
-        screen = LibraryScreen,
-        labelResource = MR.strings.library_title,
-        contentDescriptionResource = MR.strings.cd_library_title,
-        iconImageVector = Icons.Outlined.VideoLibrary,
-        selectedImageVector = Icons.Default.VideoLibrary,
-    ),
-    HomeNavigationItem.ImageVectorIcon(
-        screen = SearchScreen,
-        labelResource = MR.strings.search_navigation_title,
-        contentDescriptionResource = MR.strings.cd_search_navigation_title,
-        iconImageVector = Icons.Default.Search,
-    ),
+    val iconImageVector: ImageVector,
+    val selectedImageVector: ImageVector? = null,
 )
+
+private val HomeNavigationItems by lazy {
+    listOf(
+        HomeNavigationItem(
+            screen = DiscoverScreen,
+            labelResource = MR.strings.discover_title,
+            contentDescriptionResource = MR.strings.cd_discover_title,
+            iconImageVector = Icons.Outlined.Weekend,
+            selectedImageVector = Icons.Default.Weekend,
+        ),
+        HomeNavigationItem(
+            screen = UpNextScreen,
+            labelResource = MR.strings.upnext_title,
+            contentDescriptionResource = MR.strings.cd_upnext_title,
+            iconImageVector = Icons.Default.Subscriptions,
+        ),
+        HomeNavigationItem(
+            screen = LibraryScreen,
+            labelResource = MR.strings.library_title,
+            contentDescriptionResource = MR.strings.cd_library_title,
+            iconImageVector = Icons.Outlined.VideoLibrary,
+            selectedImageVector = Icons.Default.VideoLibrary,
+        ),
+        HomeNavigationItem(
+            screen = SearchScreen,
+            labelResource = MR.strings.search_navigation_title,
+            contentDescriptionResource = MR.strings.cd_search_navigation_title,
+            iconImageVector = Icons.Default.Search,
+        ),
+    )
+}
