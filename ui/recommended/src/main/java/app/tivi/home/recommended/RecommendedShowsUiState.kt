@@ -18,7 +18,15 @@ package app.tivi.home.recommended
 
 import androidx.paging.compose.LazyPagingItems
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
+import com.slack.circuit.runtime.CircuitUiEvent
+import com.slack.circuit.runtime.CircuitUiState
 
-data class RecommendedShowsViewState(
+data class RecommendedShowsUiState(
     val items: LazyPagingItems<RecommendedEntryWithShow>,
-)
+    val eventSink: (RecommendedShowsUiEvent) -> Unit,
+) : CircuitUiState
+
+sealed interface RecommendedShowsUiEvent : CircuitUiEvent {
+    data class OpenShowDetails(val showId: Long) : RecommendedShowsUiEvent
+    object NavigateUp : RecommendedShowsUiEvent
+}

@@ -17,43 +17,40 @@
 package app.tivi.home.recommended
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import app.tivi.common.compose.EntryGrid
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
+import app.tivi.screens.RecommendedShowsScreen
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias RecommendedShows = @Composable (
-    openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit,
-) -> Unit
-
 @Inject
-@Composable
-fun RecommendedShows(
-    viewModelFactory: () -> RecommendedShowsViewModel,
-    @Assisted openShowDetails: (showId: Long) -> Unit,
-    @Assisted navigateUp: () -> Unit,
-) {
-    RecommendedShows(
-        viewModel = viewModel(factory = viewModelFactory),
-        openShowDetails = openShowDetails,
-        navigateUp = navigateUp,
-    )
+class RecommendedShowsUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is RecommendedShowsScreen -> {
+            ui<RecommendedShowsUiState> { state, modifier ->
+                RecommendedShows(state, modifier)
+            }
+        }
+
+        else -> null
+    }
 }
 
 @Composable
 internal fun RecommendedShows(
-    viewModel: RecommendedShowsViewModel,
-    openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit,
+    state: RecommendedShowsUiState,
+    modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
     EntryGrid(
-        lazyPagingItems = viewState.items,
+        lazyPagingItems = state.items,
         title = stringResource(MR.strings.discover_recommended_title),
-        onOpenShowDetails = openShowDetails,
-        onNavigateUp = navigateUp,
+        onOpenShowDetails = { state.eventSink(RecommendedShowsUiEvent.OpenShowDetails(it)) },
+        onNavigateUp = { state.eventSink(RecommendedShowsUiEvent.NavigateUp) },
+        modifier = modifier,
     )
 }
