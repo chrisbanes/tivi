@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package app.tivi.home
 
 import androidx.annotation.DrawableRes
@@ -40,7 +38,6 @@ import androidx.compose.material.icons.filled.Weekend
 import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -50,6 +47,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -66,6 +66,7 @@ import app.tivi.screens.SearchScreen
 import app.tivi.screens.UpNextScreen
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.screen
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -81,14 +82,16 @@ internal fun Home(
     val configuration = LocalConfiguration.current
     val useBottomNavigation = configuration.smallestScreenWidthDp < 600
 
+    val rootScreen by remember {
+        derivedStateOf { backstack.last().screen }
+    }
+
     Scaffold(
         bottomBar = {
             if (useBottomNavigation) {
                 HomeNavigationBar(
-                    selectedNavigation = DiscoverScreen, // FIXME
-                    onNavigationSelected = { selected ->
-                        navigator.resetRoot(selected)
-                    },
+                    selectedNavigation = rootScreen,
+                    onNavigationSelected = { navigator.resetRoot(it) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             } else {
@@ -114,10 +117,8 @@ internal fun Home(
         ) {
             if (!useBottomNavigation) {
                 HomeNavigationRail(
-                    selectedNavigation = DiscoverScreen, // FIXME
-                    onNavigationSelected = { selected ->
-                        navigator.resetRoot(selected)
-                    },
+                    selectedNavigation = rootScreen,
+                    onNavigationSelected = { navigator.resetRoot(it) },
                     modifier = Modifier.fillMaxHeight(),
                 )
 
