@@ -17,6 +17,7 @@
 package app.tivi.inject
 
 import app.tivi.account.AccountComponent
+import app.tivi.episode.track.EpisodeTrackComponent
 import app.tivi.episodedetails.EpisodeDetailsComponent
 import app.tivi.home.discover.DiscoverComponent
 import app.tivi.home.library.LibraryComponent
@@ -36,6 +37,7 @@ interface UiComponent :
     AccountComponent,
     DiscoverComponent,
     EpisodeDetailsComponent,
+    EpisodeTrackComponent,
     LibraryComponent,
     PopularShowsComponent,
     RecommendedShowsComponent,

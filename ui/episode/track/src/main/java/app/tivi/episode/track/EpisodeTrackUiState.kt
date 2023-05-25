@@ -20,11 +20,13 @@ import androidx.compose.runtime.Immutable
 import app.tivi.api.UiMessage
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
+import com.slack.circuit.runtime.CircuitUiEvent
+import com.slack.circuit.runtime.CircuitUiState
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 @Immutable
-data class EpisodeTrackViewState(
+data class EpisodeTrackUiState(
     val season: Season? = null,
     val episode: Episode? = null,
     val showEpisodeInfo: Boolean = true,
@@ -42,9 +44,9 @@ data class EpisodeTrackViewState(
     val shouldDismiss: Boolean = false,
 
     val eventSink: (EpisodeTrackUiEvent) -> Unit,
-)
+) : CircuitUiState
 
-sealed interface EpisodeTrackUiEvent {
+sealed interface EpisodeTrackUiEvent : CircuitUiEvent {
     data class Refresh(val fromUser: Boolean = false) : EpisodeTrackUiEvent
     object Submit : EpisodeTrackUiEvent
     object SelectNow : EpisodeTrackUiEvent
@@ -53,4 +55,5 @@ sealed interface EpisodeTrackUiEvent {
     data class SelectDate(val date: LocalDate) : EpisodeTrackUiEvent
     data class SelectTime(val time: LocalTime) : EpisodeTrackUiEvent
     data class ClearMessage(val id: Long) : EpisodeTrackUiEvent
+    object NavigateUp : EpisodeTrackUiEvent
 }

@@ -47,69 +47,66 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.DateTextField
 import app.tivi.common.compose.ui.LoadingButton
 import app.tivi.common.compose.ui.TimeTextField
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
+import app.tivi.screens.EpisodeTrackScreen
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias EpisodeTrack = @Composable (
-    navigateUp: () -> Unit,
-) -> Unit
-
 @Inject
-@Composable
-fun EpisodeTrack(
-    viewModelFactory: (SavedStateHandle) -> EpisodeTrackViewModel,
-    @Assisted navigateUp: () -> Unit,
-) {
-    EpisodeTrack(
-        viewModel = viewModel(factory = viewModelFactory),
-        navigateUp = navigateUp,
-    )
+class EpisodeTrackUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is EpisodeTrackScreen -> {
+            ui<EpisodeTrackUiState> { state, modifier ->
+                EpisodeTrack(state, modifier)
+            }
+        }
+
+        else -> null
+    }
 }
 
 @Composable
 internal fun EpisodeTrack(
-    viewModel: EpisodeTrackViewModel,
-    navigateUp: () -> Unit,
+    state: EpisodeTrackUiState,
+    modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
     EpisodeTrack(
-        viewState = viewState,
-        navigateUp = navigateUp,
-        onSubmit = { viewState.eventSink(EpisodeTrackUiEvent.Submit) },
+        viewState = state,
+        navigateUp = { state.eventSink(EpisodeTrackUiEvent.NavigateUp) },
+        onSubmit = { state.eventSink(EpisodeTrackUiEvent.Submit) },
         onNowSelected = { selected ->
-            viewState.eventSink(
-                when {
-                    selected -> EpisodeTrackUiEvent.SelectNow
-                    else -> EpisodeTrackUiEvent.UnselectNow
-                },
-            )
+            when {
+                selected -> state.eventSink(EpisodeTrackUiEvent.SelectNow)
+                else -> state.eventSink(EpisodeTrackUiEvent.UnselectNow)
+            }
         },
-        onSetFirstAired = { viewState.eventSink(EpisodeTrackUiEvent.SelectFirstAired) },
-        onDateSelected = { viewState.eventSink(EpisodeTrackUiEvent.SelectDate(it)) },
-        onTimeSelected = { viewState.eventSink(EpisodeTrackUiEvent.SelectTime(it)) },
-        onMessageShown = { viewState.eventSink(EpisodeTrackUiEvent.ClearMessage(it)) },
+        onSetFirstAired = { state.eventSink(EpisodeTrackUiEvent.SelectFirstAired) },
+        onDateSelected = { state.eventSink(EpisodeTrackUiEvent.SelectDate(it)) },
+        onTimeSelected = { state.eventSink(EpisodeTrackUiEvent.SelectTime(it)) },
+        onMessageShown = { state.eventSink(EpisodeTrackUiEvent.ClearMessage(it)) },
+        modifier = modifier,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EpisodeTrack(
-    viewState: EpisodeTrackViewState,
+    viewState: EpisodeTrackUiState,
     navigateUp: () -> Unit,
     onSubmit: () -> Unit,
     onNowSelected: (Boolean) -> Unit,
@@ -117,6 +114,7 @@ internal fun EpisodeTrack(
     onTimeSelected: (LocalTime) -> Unit,
     onSetFirstAired: () -> Unit,
     onMessageShown: (id: Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -148,7 +146,7 @@ internal fun EpisodeTrack(
     Surface(
         shadowElevation = 2.dp,
         tonalElevation = 4.dp,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .testTag("episode_track"),
     ) {

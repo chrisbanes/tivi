@@ -25,17 +25,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import app.tivi.api.UiMessageManager
 import app.tivi.base.InvokeSuccess
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
+import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
 import app.tivi.util.onEachStatus
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
@@ -48,17 +51,30 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class EpisodeTrackViewModel(
-    @Assisted savedStateHandle: SavedStateHandle,
+class EpisodeTrackUiPresenterFactory(
+    private val presenterFactory: (EpisodeTrackScreen, Navigator) -> EpisodeTrackPresenter,
+) : Presenter.Factory {
+    override fun create(
+        screen: Screen,
+        navigator: Navigator,
+        context: CircuitContext,
+    ): Presenter<*>? = when (screen) {
+        is EpisodeTrackScreen -> presenterFactory(screen, navigator)
+        else -> null
+    }
+}
+
+@Inject
+class EpisodeTrackPresenter(
+    @Assisted private val screen: EpisodeTrackScreen,
+    @Assisted private val navigator: Navigator,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     private val observeEpisodeDetails: ObserveEpisodeDetails,
     private val addEpisodeWatch: AddEpisodeWatch,
     private val logger: Logger,
-) : ViewModel() {
-    private val episodeId: Long = savedStateHandle["episodeId"]!!
-
+) : Presenter<EpisodeTrackUiState> {
     @Composable
-    fun presenter(): EpisodeTrackViewState {
+    override fun present(): EpisodeTrackUiState {
         val scope = rememberCoroutineScope()
 
         val loadingState = remember { ObservableLoadingCounter() }
@@ -96,7 +112,7 @@ class EpisodeTrackViewModel(
                 is EpisodeTrackUiEvent.Refresh -> {
                     scope.launch {
                         updateEpisodeDetails(
-                            UpdateEpisodeDetails.Params(episodeId, event.fromUser),
+                            UpdateEpisodeDetails.Params(screen.id, event.fromUser),
                         ).collectStatus(loadingState, logger, uiMessageManager)
                     }
                 }
@@ -136,7 +152,7 @@ class EpisodeTrackViewModel(
 
                     if (instant != null) {
                         scope.launch {
-                            addEpisodeWatch(AddEpisodeWatch.Params(episodeId, instant))
+                            addEpisodeWatch(AddEpisodeWatch.Params(screen.id, instant))
                                 .onEachStatus(submittingState, logger, uiMessageManager)
                                 .collect { status ->
                                     if (status == InvokeSuccess) {
@@ -148,15 +164,17 @@ class EpisodeTrackViewModel(
                         // TODO: display error message
                     }
                 }
+
+                EpisodeTrackUiEvent.NavigateUp -> navigator.pop()
             }
         }
 
         LaunchedEffect(Unit) {
-            observeEpisodeDetails(ObserveEpisodeDetails.Params(episodeId))
+            observeEpisodeDetails(ObserveEpisodeDetails.Params(screen.id))
             eventSink(EpisodeTrackUiEvent.Refresh(false))
         }
 
-        return EpisodeTrackViewState(
+        return EpisodeTrackUiState(
             episode = episodeDetails?.episode,
             season = episodeDetails?.season,
             showSetFirstAired = episodeDetails?.episode?.firstAired != null,
