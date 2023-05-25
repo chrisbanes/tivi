@@ -18,18 +18,41 @@ package app.tivi.screens
 
 import com.slack.circuit.runtime.Screen
 
-expect abstract class TiviScreen() : Screen
+@CommonParcelize
+object AccountScreen : Screen
 
-object AccountScreen : TiviScreen()
-object DiscoverScreen : TiviScreen()
-data class EpisodeDetailsScreen(val id: Long) : TiviScreen()
-data class EpisodeTrackScreen(val id: Long) : TiviScreen()
-object LibraryScreen : TiviScreen()
-object PopularShowsScreen : TiviScreen()
-object RecommendedShowsScreen : TiviScreen()
-object SearchScreen : TiviScreen()
-object SettingsScreen : TiviScreen()
-data class ShowDetailsScreen(val id: Long) : TiviScreen()
-data class ShowSeasonsScreen(val id: Long) : TiviScreen()
-object TrendingShowsScreen : TiviScreen()
-object UpNextScreen : TiviScreen()
+@CommonParcelize
+object DiscoverScreen : Screen
+
+@CommonParcelize
+data class EpisodeDetailsScreen(val id: Long) : Screen
+
+@CommonParcelize
+data class EpisodeTrackScreen(val id: Long) : Screen
+
+@CommonParcelize
+object LibraryScreen : Screen
+
+@CommonParcelize
+object PopularShowsScreen : Screen
+
+@CommonParcelize
+object RecommendedShowsScreen : Screen
+
+@CommonParcelize
+object SearchScreen : Screen
+
+@CommonParcelize
+object SettingsScreen : Screen
+
+@CommonParcelize
+data class ShowDetailsScreen(val id: Long) : Screen
+
+@CommonParcelize
+data class ShowSeasonsScreen(val id: Long) : Screen
+
+@CommonParcelize
+object TrendingShowsScreen : Screen
+
+@CommonParcelize
+object UpNextScreen : Screen

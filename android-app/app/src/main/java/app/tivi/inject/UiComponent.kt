@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package app.tivi.screens
+package app.tivi.inject
 
-import com.slack.circuit.runtime.Screen
+import app.tivi.account.AccountComponent
 
-actual abstract class TiviScreen : Screen
+interface UiComponent : AccountComponent

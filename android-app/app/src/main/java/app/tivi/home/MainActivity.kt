@@ -103,7 +103,6 @@ class MainActivity : TiviActivity() {
             ) {
                 Home(
                     analytics = analytics,
-                    composeScreens = component.screens,
                     onOpenSettings = {
                         startActivity(
                             Intent(this@MainActivity, SettingsActivity::class.java),
@@ -127,7 +126,6 @@ abstract class MainActivityComponent(
     abstract val preferences: TiviPreferences
     abstract val analytics: Analytics
     abstract val contentViewSetter: ContentViewSetter
-    abstract val screens: ComposeScreens
     abstract val login: LoginToTraktInteractor
     abstract val viewModel: () -> MainActivityViewModel
 }
