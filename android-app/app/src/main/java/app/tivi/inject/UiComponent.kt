@@ -17,6 +17,7 @@
 package app.tivi.inject
 
 import app.tivi.account.AccountComponent
+import app.tivi.episodedetails.EpisodeDetailsComponent
 import app.tivi.home.discover.DiscoverComponent
 import app.tivi.home.library.LibraryComponent
 import app.tivi.home.popular.PopularShowsComponent
@@ -34,6 +35,7 @@ import me.tatarka.inject.annotations.Provides
 interface UiComponent :
     AccountComponent,
     DiscoverComponent,
+    EpisodeDetailsComponent,
     LibraryComponent,
     PopularShowsComponent,
     RecommendedShowsComponent,
