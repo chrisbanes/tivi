@@ -49,8 +49,6 @@ dependencies {
     // For registerForActivityResult
     implementation(libs.androidx.activity.compose)
 
-    implementation(libs.androidx.navigation.compose)
-
     implementation(libs.compose.foundation.foundation)
     implementation(libs.compose.foundation.layout)
     implementation(libs.compose.material.material)

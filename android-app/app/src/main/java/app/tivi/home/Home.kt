@@ -20,7 +20,6 @@ package app.tivi.home
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -33,7 +32,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Subscriptions
@@ -44,7 +42,6 @@ import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
@@ -53,13 +50,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -69,45 +59,37 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import app.tivi.AppNavigation
-import app.tivi.RootScreen
 import app.tivi.common.ui.resources.MR
 import app.tivi.core.analytics.Analytics
-import app.tivi.debugLabel
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import com.google.accompanist.navigation.material.ModalBottomSheetLayout
-import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
+import app.tivi.screens.DiscoverScreen
+import app.tivi.screens.LibraryScreen
+import app.tivi.screens.SearchScreen
+import app.tivi.screens.UpNextScreen
+import com.slack.circuit.foundation.CircuitCompositionLocals
+import com.slack.circuit.foundation.CircuitConfig
+import com.slack.circuit.foundation.CircuitContent
+import com.slack.circuit.runtime.Screen
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 
-@OptIn(
-    ExperimentalAnimationApi::class,
-    ExperimentalMaterialNavigationApi::class,
-    ExperimentalComposeUiApi::class,
-)
+@Suppress("UNUSED_PARAMETER", "UNUSED_ANONYMOUS_PARAMETER")
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun Home(
     analytics: Analytics,
+    circuitConfig: CircuitConfig,
     onOpenSettings: () -> Unit,
-) {
-    val bottomSheetNavigator = rememberBottomSheetNavigator()
-    val navController = rememberAnimatedNavController(bottomSheetNavigator)
-
-    // Launch an effect to track changes to the current back stack entry, and push them
+) { // Launch an effect to track changes to the current back stack entry, and push them
     // as a screen views to analytics
-    LaunchedEffect(navController, analytics) {
-        navController.currentBackStackEntryFlow.collect { entry ->
-            analytics.trackScreenView(
-                label = entry.debugLabel,
-                route = entry.destination.route,
-                arguments = entry.arguments,
-            )
-        }
-    }
+//    LaunchedEffect(navController, analytics) {
+//        navController.currentBackStackEntryFlow.collect { entry ->
+//            analytics.trackScreenView(
+//                label = entry.debugLabel,
+//                route = entry.destination.route,
+//                arguments = entry.arguments,
+//            )
+//        }
+//    }
 
     val configuration = LocalConfiguration.current
     val useBottomNavigation = configuration.smallestScreenWidthDp < 600
@@ -115,18 +97,17 @@ internal fun Home(
     Scaffold(
         bottomBar = {
             if (useBottomNavigation) {
-                val currentSelectedItem by navController.currentScreenAsState()
                 HomeNavigationBar(
-                    selectedNavigation = currentSelectedItem,
+                    selectedNavigation = DiscoverScreen, // FIXME
                     onNavigationSelected = { selected ->
-                        navController.navigate(selected.route) {
-                            launchSingleTop = true
-                            restoreState = true
-
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                        }
+//                        navController.navigate(selected.route) {
+//                            launchSingleTop = true
+//                            restoreState = true
+//
+//                            popUpTo(navController.graph.findStartDestination().id) {
+//                                saveState = true
+//                            }
+//                        }
                     },
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -152,18 +133,17 @@ internal fun Home(
                 .padding(paddingValues),
         ) {
             if (!useBottomNavigation) {
-                val currentSelectedItem by navController.currentScreenAsState()
                 HomeNavigationRail(
-                    selectedNavigation = currentSelectedItem,
+                    selectedNavigation = DiscoverScreen, // FIXME
                     onNavigationSelected = { selected ->
-                        navController.navigate(selected.route) {
-                            launchSingleTop = true
-                            restoreState = true
-
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                        }
+//                        navController.navigate(selected.route) {
+//                            launchSingleTop = true
+//                            restoreState = true
+//
+//                            popUpTo(navController.graph.findStartDestination().id) {
+//                                saveState = true
+//                            }
+//                        }
                     },
                     modifier = Modifier.fillMaxHeight(),
                 )
@@ -175,20 +155,9 @@ internal fun Home(
                 )
             }
 
-            ModalBottomSheetLayout(
-                bottomSheetNavigator = bottomSheetNavigator,
-                sheetShape = MaterialTheme.shapes.large.copy(
-                    bottomStart = CornerSize(0.dp),
-                    bottomEnd = CornerSize(0.dp),
-                ),
-                sheetBackgroundColor = MaterialTheme.colorScheme.surface,
-                sheetContentColor = MaterialTheme.colorScheme.onSurface,
-                scrimColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.33f),
-            ) {
-                AppNavigation(
-                    navController = navController,
-                    composeScreens = composeScreens,
-                    onOpenSettings = onOpenSettings,
+            CircuitCompositionLocals(circuitConfig) {
+                CircuitContent(
+                    screen = DiscoverScreen,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
@@ -198,46 +167,10 @@ internal fun Home(
     }
 }
 
-/**
- * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the
- * returned [State] which is updated as the destination changes.
- */
-@Stable
-@Composable
-private fun NavController.currentScreenAsState(): State<RootScreen> {
-    val selectedItem = remember { mutableStateOf<RootScreen>(RootScreen.Discover) }
-
-    DisposableEffect(this) {
-        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            when {
-                destination.hierarchy.any { it.route == RootScreen.Discover.route } -> {
-                    selectedItem.value = RootScreen.Discover
-                }
-                destination.hierarchy.any { it.route == RootScreen.Library.route } -> {
-                    selectedItem.value = RootScreen.Library
-                }
-                destination.hierarchy.any { it.route == RootScreen.UpNext.route } -> {
-                    selectedItem.value = RootScreen.UpNext
-                }
-                destination.hierarchy.any { it.route == RootScreen.Search.route } -> {
-                    selectedItem.value = RootScreen.Search
-                }
-            }
-        }
-        addOnDestinationChangedListener(listener)
-
-        onDispose {
-            removeOnDestinationChangedListener(listener)
-        }
-    }
-
-    return selectedItem
-}
-
 @Composable
 internal fun HomeNavigationBar(
-    selectedNavigation: RootScreen,
-    onNavigationSelected: (RootScreen) -> Unit,
+    selectedNavigation: Screen,
+    onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavigationBar(modifier = modifier) {
@@ -259,8 +192,8 @@ internal fun HomeNavigationBar(
 
 @Composable
 internal fun HomeNavigationRail(
-    selectedNavigation: RootScreen,
-    onNavigationSelected: (RootScreen) -> Unit,
+    selectedNavigation: Screen,
+    onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavigationRail(modifier = modifier) {
@@ -308,12 +241,12 @@ private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) 
 }
 
 private sealed class HomeNavigationItem(
-    val screen: RootScreen,
+    val screen: Screen,
     val labelResource: StringResource,
     val contentDescriptionResource: StringResource,
 ) {
     class ResourceIcon(
-        screen: RootScreen,
+        screen: Screen,
         labelResource: StringResource,
         contentDescriptionResource: StringResource,
         @DrawableRes val iconResId: Int,
@@ -321,7 +254,7 @@ private sealed class HomeNavigationItem(
     ) : HomeNavigationItem(screen, labelResource, contentDescriptionResource)
 
     class ImageVectorIcon(
-        screen: RootScreen,
+        screen: Screen,
         labelResource: StringResource,
         contentDescriptionResource: StringResource,
         val iconImageVector: ImageVector,
@@ -331,27 +264,27 @@ private sealed class HomeNavigationItem(
 
 private val HomeNavigationItems = listOf(
     HomeNavigationItem.ImageVectorIcon(
-        screen = RootScreen.Discover,
+        screen = DiscoverScreen,
         labelResource = MR.strings.discover_title,
         contentDescriptionResource = MR.strings.cd_discover_title,
         iconImageVector = Icons.Outlined.Weekend,
         selectedImageVector = Icons.Default.Weekend,
     ),
     HomeNavigationItem.ImageVectorIcon(
-        screen = RootScreen.UpNext,
+        screen = UpNextScreen,
         labelResource = MR.strings.upnext_title,
         contentDescriptionResource = MR.strings.cd_upnext_title,
         iconImageVector = Icons.Default.Subscriptions,
     ),
     HomeNavigationItem.ImageVectorIcon(
-        screen = RootScreen.Library,
+        screen = LibraryScreen,
         labelResource = MR.strings.library_title,
         contentDescriptionResource = MR.strings.cd_library_title,
         iconImageVector = Icons.Outlined.VideoLibrary,
         selectedImageVector = Icons.Default.VideoLibrary,
     ),
     HomeNavigationItem.ImageVectorIcon(
-        screen = RootScreen.Search,
+        screen = SearchScreen,
         labelResource = MR.strings.search_navigation_title,
         contentDescriptionResource = MR.strings.cd_search_navigation_title,
         iconImageVector = Icons.Default.Search,

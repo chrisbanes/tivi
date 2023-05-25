@@ -161,12 +161,6 @@ androidComponents {
     }
 }
 
-tasks.withType<KotlinCompilationTask<*>> {
-    compilerOptions {
-        freeCompilerArgs.add("-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi")
-    }
-}
-
 dependencies {
     implementation(projects.core.base)
     implementation(projects.core.analytics)
@@ -202,8 +196,6 @@ dependencies {
     implementation(libs.androidx.activity.activity)
     implementation(libs.androidx.activity.compose)
 
-    implementation(libs.androidx.navigation.compose)
-
     implementation(libs.androidx.emoji)
 
     implementation(libs.compose.foundation.foundation)
@@ -215,9 +207,6 @@ dependencies {
     implementation(libs.compose.ui.tooling)
 
     lintChecks(libs.slack.lint.compose)
-
-    implementation(libs.accompanist.navigation.animation)
-    implementation(libs.accompanist.navigation.material)
 
     implementation(libs.timber)
 

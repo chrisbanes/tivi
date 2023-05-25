@@ -32,7 +32,6 @@ import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import app.tivi.ComposeScreens
 import app.tivi.ContentViewSetter
 import app.tivi.TiviActivity
 import app.tivi.common.compose.LocalTiviDateFormatter
@@ -51,6 +50,7 @@ import app.tivi.settings.SettingsActivity
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
+import com.slack.circuit.foundation.CircuitConfig
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -103,6 +103,7 @@ class MainActivity : TiviActivity() {
             ) {
                 Home(
                     analytics = analytics,
+                    circuitConfig = component.circuitConfig,
                     onOpenSettings = {
                         startActivity(
                             Intent(this@MainActivity, SettingsActivity::class.java),
@@ -127,6 +128,7 @@ abstract class MainActivityComponent(
     abstract val analytics: Analytics
     abstract val contentViewSetter: ContentViewSetter
     abstract val login: LoginToTraktInteractor
+    abstract val circuitConfig: CircuitConfig
     abstract val viewModel: () -> MainActivityViewModel
 }
 

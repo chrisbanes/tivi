@@ -53,8 +53,6 @@ dependencies {
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
 
-    api(libs.accompanist.navigation.material)
-
     implementation(libs.coil.compose)
 
     ksp(libs.kotlininject.compiler)

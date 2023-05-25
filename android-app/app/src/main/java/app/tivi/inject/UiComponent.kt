@@ -17,5 +17,19 @@
 package app.tivi.inject
 
 import app.tivi.account.AccountComponent
+import com.slack.circuit.foundation.CircuitConfig
+import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.ui.Ui
+import me.tatarka.inject.annotations.Provides
 
-interface UiComponent : AccountComponent
+interface UiComponent : AccountComponent {
+    @Provides
+    @ApplicationScope
+    fun provideCircuitConfig(
+        uiFactories: Set<Ui.Factory>,
+        presenterFactories: Set<Presenter.Factory>,
+    ): CircuitConfig = CircuitConfig.Builder()
+        .addUiFactories(uiFactories)
+        .addPresenterFactories(presenterFactories)
+        .build()
+}
