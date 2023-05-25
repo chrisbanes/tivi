@@ -22,7 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.ViewModel
 import app.tivi.api.UiMessageManager
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.interactors.UpdatePopularShows
@@ -34,14 +33,44 @@ import app.tivi.domain.observers.ObserveRecommendedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.domain.observers.ObserveUserDetails
+import app.tivi.screens.AccountScreen
+import app.tivi.screens.DiscoverScreen
+import app.tivi.screens.EpisodeDetailsScreen
+import app.tivi.screens.PopularShowsScreen
+import app.tivi.screens.RecommendedShowsScreen
+import app.tivi.screens.ShowDetailsScreen
+import app.tivi.screens.ShowSeasonsScreen
+import app.tivi.screens.TrendingShowsScreen
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class DiscoverViewModel(
+class DiscoverUiPresenterFactory(
+    private val presenterFactory: (Navigator) -> DiscoverPresenter,
+) : Presenter.Factory {
+    override fun create(
+        screen: Screen,
+        navigator: Navigator,
+        context: CircuitContext,
+    ): Presenter<*>? {
+        return when (screen) {
+            is DiscoverScreen -> presenterFactory(navigator)
+            else -> null
+        }
+    }
+}
+
+@Inject
+class DiscoverPresenter(
+    @Assisted private val navigator: Navigator,
     private val updatePopularShows: UpdatePopularShows,
     private val observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
@@ -52,10 +81,10 @@ class DiscoverViewModel(
     private val observeTraktAuthState: ObserveTraktAuthState,
     private val observeUserDetails: ObserveUserDetails,
     private val logger: Logger,
-) : ViewModel() {
+) : Presenter<DiscoverUiState> {
 
     @Composable
-    fun presenter(): DiscoverViewState {
+    override fun present(): DiscoverUiState {
         val scope = rememberCoroutineScope()
 
         val trendingLoadingState = remember { ObservableLoadingCounter() }
@@ -109,6 +138,21 @@ class DiscoverViewModel(
                         ).collectStatus(recommendedLoadingState, logger, uiMessageManager)
                     }
                 }
+
+                DiscoverUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
+                DiscoverUiEvent.OpenPopularShows -> navigator.goTo(PopularShowsScreen)
+                DiscoverUiEvent.OpenRecommendedShows -> navigator.goTo(RecommendedShowsScreen)
+                is DiscoverUiEvent.OpenShowDetails -> {
+                    navigator.goTo(ShowDetailsScreen(event.showId))
+                    if (event.seasonId != null) {
+                        navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
+                        if (event.episodeId != null) {
+                            navigator.goTo(EpisodeDetailsScreen(event.episodeId))
+                        }
+                    }
+                }
+
+                DiscoverUiEvent.OpenTrendingShows -> navigator.goTo(TrendingShowsScreen)
             }
         }
 
@@ -130,7 +174,7 @@ class DiscoverViewModel(
             }
         }
 
-        return DiscoverViewState(
+        return DiscoverUiState(
             user = user,
             authState = authState,
             trendingItems = trendingItems,

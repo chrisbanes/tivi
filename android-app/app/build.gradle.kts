@@ -15,8 +15,6 @@
  */
 
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 plugins {
     id("app.tivi.android.application")
     id("app.tivi.kotlin.android")

@@ -49,7 +49,7 @@ object SettingsScreen : Screen
 data class ShowDetailsScreen(val id: Long) : Screen
 
 @CommonParcelize
-data class ShowSeasonsScreen(val id: Long) : Screen
+data class ShowSeasonsScreen(val id: Long, val selectedSeasonId: Long? = null) : Screen
 
 @CommonParcelize
 object TrendingShowsScreen : Screen
