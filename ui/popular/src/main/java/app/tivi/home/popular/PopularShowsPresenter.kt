@@ -18,27 +18,58 @@ package app.tivi.home.popular
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.ViewModel
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.domain.observers.ObservePagedPopularShows
+import app.tivi.screens.PopularShowsScreen
+import app.tivi.screens.ShowDetailsScreen
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class PopularShowsViewModel(
+class PopularShowsUiPresenterFactory(
+    private val presenterFactory: (Navigator) -> PopularShowsPresenter,
+) : Presenter.Factory {
+    override fun create(
+        screen: Screen,
+        navigator: Navigator,
+        context: CircuitContext,
+    ): Presenter<*>? = when (screen) {
+        is PopularShowsScreen -> presenterFactory(navigator)
+        else -> null
+    }
+}
+
+@Inject
+class PopularShowsPresenter(
+    @Assisted private val navigator: Navigator,
     private val pagingInteractor: ObservePagedPopularShows,
-) : ViewModel() {
+) : Presenter<PopularShowsUiState> {
 
     @Composable
-    fun presenter(): PopularViewState {
+    override fun present(): PopularShowsUiState {
         val items = pagingInteractor.flow.collectAsLazyPagingItems()
 
         LaunchedEffect(Unit) {
             pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))
         }
 
-        return PopularViewState(
+        fun eventSink(event: PopularShowsUiEvent) {
+            when (event) {
+                PopularShowsUiEvent.NavigateUp -> navigator.pop()
+                is PopularShowsUiEvent.OpenShowDetails -> {
+                    navigator.goTo(ShowDetailsScreen(event.showId))
+                }
+            }
+        }
+
+        return PopularShowsUiState(
             items = items,
+            eventSink = ::eventSink,
         )
     }
 

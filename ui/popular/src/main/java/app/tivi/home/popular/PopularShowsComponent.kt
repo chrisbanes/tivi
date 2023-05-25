@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,20 @@
 
 package app.tivi.home.popular
 
-import androidx.paging.compose.LazyPagingItems
-import app.tivi.data.compoundmodels.PopularEntryWithShow
+import app.tivi.inject.ApplicationScope
+import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.ui.Ui
+import me.tatarka.inject.annotations.IntoSet
+import me.tatarka.inject.annotations.Provides
 
-data class PopularViewState(
-    val items: LazyPagingItems<PopularEntryWithShow>,
-)
+interface PopularShowsComponent {
+    @IntoSet
+    @Provides
+    @ApplicationScope
+    fun bindPopularShowsPresenterFactory(factory: PopularShowsUiPresenterFactory): Presenter.Factory = factory
+
+    @IntoSet
+    @Provides
+    @ApplicationScope
+    fun bindPopularShowsUiFactoryFactory(factory: PopularShowsUiFactory): Ui.Factory = factory
+}

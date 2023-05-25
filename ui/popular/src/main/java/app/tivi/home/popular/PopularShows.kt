@@ -17,43 +17,40 @@
 package app.tivi.home.popular
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import app.tivi.common.compose.EntryGrid
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
+import app.tivi.screens.PopularShowsScreen
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias PopularShows = @Composable (
-    openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit,
-) -> Unit
-
 @Inject
-@Composable
-fun PopularShows(
-    viewModelFactory: () -> PopularShowsViewModel,
-    @Assisted openShowDetails: (showId: Long) -> Unit,
-    @Assisted navigateUp: () -> Unit,
-) {
-    PopularShows(
-        viewModel = viewModel(factory = viewModelFactory),
-        openShowDetails = openShowDetails,
-        navigateUp = navigateUp,
-    )
+class PopularShowsUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is PopularShowsScreen -> {
+            ui<PopularShowsUiState> { state, modifier ->
+                PopularShows(state, modifier)
+            }
+        }
+
+        else -> null
+    }
 }
 
 @Composable
 internal fun PopularShows(
-    viewModel: PopularShowsViewModel,
-    openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit,
+    state: PopularShowsUiState,
+    modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
     EntryGrid(
-        lazyPagingItems = viewState.items,
+        lazyPagingItems = state.items,
         title = stringResource(MR.strings.discover_popular_title),
-        onOpenShowDetails = openShowDetails,
-        onNavigateUp = navigateUp,
+        onOpenShowDetails = { state.eventSink(PopularShowsUiEvent.OpenShowDetails(it)) },
+        onNavigateUp = { state.eventSink(PopularShowsUiEvent.NavigateUp) },
+        modifier = modifier,
     )
 }
