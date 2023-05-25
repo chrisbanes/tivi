@@ -21,33 +21,30 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.ViewModel
 import app.tivi.data.traktauth.LoginToTraktInteractor
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.interactors.ClearUserDetails
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
+import app.tivi.screens.AccountScreen
+import app.tivi.screens.SettingsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-@Parcelize
-object AccountUiScreen : Screen
-
 @Inject
 class AccountUiPresenterFactory(
-    private val presenterFactory: (AccountUiScreen, Navigator) -> AccountPresenter,
+    private val presenterFactory: (Navigator) -> AccountPresenter,
 ) : Presenter.Factory {
     override fun create(screen: Screen, navigator: Navigator, context: CircuitContext): Presenter<*>? {
         return when (screen) {
-            is AccountUiScreen -> presenterFactory(screen, navigator)
+            is AccountScreen -> presenterFactory(navigator)
             else -> null
         }
     }
@@ -55,7 +52,6 @@ class AccountUiPresenterFactory(
 
 @Inject
 class AccountPresenter(
-    @Assisted private val screen: AccountUiScreen,
     @Assisted private val navigator: Navigator,
     private val traktAuthRepository: TraktAuthRepository,
     private val loginToTraktInteractor: LoginToTraktInteractor,
@@ -80,9 +76,7 @@ class AccountPresenter(
             authState = authState,
         ) { event ->
             when (event) {
-                AccountUiEvent.NavigateToSettings -> {
-                    // FIXME
-                }
+                AccountUiEvent.NavigateToSettings -> navigator.goTo(SettingsScreen)
                 AccountUiEvent.Login -> loginToTraktInteractor.launch()
                 AccountUiEvent.Logout -> {
                     scope.launch {

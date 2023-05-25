@@ -18,7 +18,6 @@
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.android")
-    alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
 }
 
@@ -38,6 +37,9 @@ dependencies {
     implementation(projects.core.base)
     implementation(projects.domain)
     implementation(projects.common.ui.compose)
+
+    api(projects.common.ui.screens)
+    api(libs.circuit.foundation)
 
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

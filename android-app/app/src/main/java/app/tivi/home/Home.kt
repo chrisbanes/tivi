@@ -73,7 +73,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import app.tivi.AppNavigation
-import app.tivi.ComposeScreens
 import app.tivi.RootScreen
 import app.tivi.common.ui.resources.MR
 import app.tivi.core.analytics.Analytics

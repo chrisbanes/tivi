@@ -51,6 +51,7 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.models.TraktUser
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.screens.AccountScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -62,15 +63,15 @@ import kotlinx.datetime.toInstant
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class AccountScreenUiFactory : Ui.Factory {
+class AccountUiFactory : Ui.Factory {
     override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is AccountUiScreen -> accountUi()
+        is AccountScreen -> {
+            ui<AccountUiState> { state, modifier ->
+                AccountUi(state, modifier)
+            }
+        }
         else -> null
     }
-}
-
-private fun accountUi() = ui<AccountUiState> { state, modifier ->
-    AccountUi(state, modifier)
 }
 
 @Composable

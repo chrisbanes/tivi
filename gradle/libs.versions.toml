@@ -4,6 +4,7 @@ accompanist = "0.30.1"
 androidxlifecycle = "2.6.1"
 androidxactivity = "1.7.2"
 chucker = "3.5.2"
+circuit = "0.8.0"
 coil = "2.4.0"
 compose-bom = "2023.03.00"
 composecompiler = "1.4.7"
@@ -75,7 +76,8 @@ appauth = "net.openid:appauth:0.8.1"
 
 chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 
-circuit = "com.slack.circuit:circuit-foundation:0.8.0"
+circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
+circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
 
 coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
