@@ -27,6 +27,7 @@ import app.tivi.data.models.TiviShow
 import app.tivi.domain.interactors.UpdateShowSeasons
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
+import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
@@ -91,9 +92,9 @@ class ShowSeasonsPresenter(
                 }
 
                 ShowSeasonsUiEvent.NavigateBack -> navigator.pop()
-                is ShowSeasonsUiEvent.OpenEpisodeDetails -> TODO()
-                is ShowSeasonsUiEvent.OpenSeason -> TODO()
-                is ShowSeasonsUiEvent.OpenShowDetails -> TODO()
+                is ShowSeasonsUiEvent.OpenEpisodeDetails -> {
+                    navigator.goTo(EpisodeDetailsScreen(event.episodeId))
+                }
             }
         }
 

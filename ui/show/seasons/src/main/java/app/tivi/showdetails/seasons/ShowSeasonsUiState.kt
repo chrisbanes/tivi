@@ -36,9 +36,6 @@ data class ShowSeasonsUiState(
 sealed interface ShowSeasonsUiEvent : CircuitUiEvent {
     data class ClearMessage(val id: Long) : ShowSeasonsUiEvent
     data class Refresh(val fromUser: Boolean = true) : ShowSeasonsUiEvent
-
-    data class OpenSeason(val seasonId: Long) : ShowSeasonsUiEvent
-    data class OpenShowDetails(val showId: Long) : ShowSeasonsUiEvent
     data class OpenEpisodeDetails(val episodeId: Long) : ShowSeasonsUiEvent
     object NavigateBack : ShowSeasonsUiEvent
 }
