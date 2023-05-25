@@ -22,9 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import app.tivi.api.UiMessageManager
 import app.tivi.data.models.TiviShow
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
@@ -42,16 +39,38 @@ import app.tivi.domain.observers.ObserveShowFollowStatus
 import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.domain.observers.ObserveShowViewStats
+import app.tivi.screens.EpisodeDetailsScreen
+import app.tivi.screens.ShowDetailsScreen
+import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ShowDetailsViewModel(
-    @Assisted savedStateHandle: SavedStateHandle,
+class ShowDetailsUiPresenterFactory(
+    private val presenterFactory: (ShowDetailsScreen, Navigator) -> ShowDetailsPresenter,
+) : Presenter.Factory {
+    override fun create(
+        screen: Screen,
+        navigator: Navigator,
+        context: CircuitContext,
+    ): Presenter<*>? = when (screen) {
+        is ShowDetailsScreen -> presenterFactory(screen, navigator)
+        else -> null
+    }
+}
+
+@Inject
+class ShowDetailsPresenter(
+    @Assisted private val screen: ShowDetailsScreen,
+    @Assisted private val navigator: Navigator,
     private val updateShowDetails: UpdateShowDetails,
     private val observeShowDetails: ObserveShowDetails,
     private val updateRelatedShows: UpdateRelatedShows,
@@ -65,11 +84,11 @@ class ShowDetailsViewModel(
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
     private val logger: Logger,
-) : ViewModel() {
-    private val showId: Long = savedStateHandle["showId"]!!
+) : Presenter<ShowDetailsUiState> {
+    private val showId: Long get() = screen.id
 
     @Composable
-    fun presenter(): ShowDetailsViewState {
+    override fun present(): ShowDetailsUiState {
         val scope = rememberCoroutineScope()
 
         val loadingState = remember { ObservableLoadingCounter() }
@@ -138,7 +157,7 @@ class ShowDetailsViewModel(
                 }
 
                 ShowDetailsUiEvent.ToggleShowFollowed -> {
-                    viewModelScope.launch {
+                    scope.launch {
                         changeShowFollowStatus(
                             ChangeShowFollowStatus.Params(showId, TOGGLE),
                         ).collectStatus(loadingState, logger, uiMessageManager)
@@ -166,6 +185,16 @@ class ShowDetailsViewModel(
                         ).collectStatus(loadingState, logger, uiMessageManager)
                     }
                 }
+                ShowDetailsUiEvent.NavigateBack -> navigator.pop()
+                is ShowDetailsUiEvent.OpenEpisodeDetails -> {
+                    navigator.goTo(EpisodeDetailsScreen(event.episodeId))
+                }
+                is ShowDetailsUiEvent.OpenSeason -> {
+                    navigator.goTo(ShowSeasonsScreen(showId, event.seasonId))
+                }
+                is ShowDetailsUiEvent.OpenShowDetails -> {
+                    navigator.goTo(ShowDetailsScreen(event.showId))
+                }
             }
         }
 
@@ -180,7 +209,7 @@ class ShowDetailsViewModel(
             eventSink(ShowDetailsUiEvent.Refresh(false))
         }
 
-        return ShowDetailsViewState(
+        return ShowDetailsUiState(
             isFollowed = isFollowed,
             show = show,
             relatedShows = relatedShows,

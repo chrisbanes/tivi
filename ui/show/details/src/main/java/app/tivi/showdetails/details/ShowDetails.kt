@@ -99,7 +99,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
-import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LogCompositions
@@ -111,7 +110,6 @@ import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.compose.viewModel
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.EpisodeWithSeason
@@ -126,65 +124,54 @@ import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 import app.tivi.data.views.ShowsWatchStats
+import app.tivi.screens.ShowDetailsScreen
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Instant
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias ShowDetails = @Composable (
-    navigateUp: () -> Unit,
-    openShowDetails: (showId: Long) -> Unit,
-    openEpisodeDetails: (episodeId: Long) -> Unit,
-    openSeasons: (showId: Long, seasonId: Long) -> Unit,
-) -> Unit
-
 @Inject
+class ShowDetailsUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is ShowDetailsScreen -> {
+            ui<ShowDetailsUiState> { state, modifier ->
+                ShowDetails(state, modifier)
+            }
+        }
+
+        else -> null
+    }
+}
+
 @Composable
-fun ShowDetails(
-    viewModelFactory: (SavedStateHandle) -> ShowDetailsViewModel,
-    @Assisted navigateUp: () -> Unit,
-    @Assisted openShowDetails: (showId: Long) -> Unit,
-    @Assisted openEpisodeDetails: (episodeId: Long) -> Unit,
-    @Assisted openSeasons: (showId: Long, seasonId: Long) -> Unit,
+internal fun ShowDetails(
+    state: ShowDetailsUiState,
+    modifier: Modifier = Modifier,
 ) {
     ShowDetails(
-        viewModel = viewModel(factory = viewModelFactory),
-        navigateUp = navigateUp,
-        openShowDetails = openShowDetails,
-        openEpisodeDetails = openEpisodeDetails,
-        openSeasons = openSeasons,
+        viewState = state,
+        navigateUp = { state.eventSink(ShowDetailsUiEvent.NavigateBack) },
+        openShowDetails = { state.eventSink(ShowDetailsUiEvent.OpenShowDetails(it)) },
+        openEpisodeDetails = { state.eventSink(ShowDetailsUiEvent.OpenEpisodeDetails(it)) },
+        refresh = { state.eventSink(ShowDetailsUiEvent.Refresh(true)) },
+        onMessageShown = { state.eventSink(ShowDetailsUiEvent.ClearMessage(it)) },
+        openSeason = { state.eventSink(ShowDetailsUiEvent.OpenSeason(it)) },
+        onSeasonFollowed = { state.eventSink(ShowDetailsUiEvent.FollowSeason(it)) },
+        onSeasonUnfollowed = { state.eventSink(ShowDetailsUiEvent.UnfollowSeason(it)) },
+        unfollowPreviousSeasons = { state.eventSink(ShowDetailsUiEvent.UnfollowPreviousSeasons(it)) },
+        onMarkSeasonWatched = { state.eventSink(ShowDetailsUiEvent.MarkSeasonWatched(it, onlyAired = true)) },
+        onMarkSeasonUnwatched = { state.eventSink(ShowDetailsUiEvent.MarkSeasonUnwatched(it)) },
+        onToggleShowFollowed = { state.eventSink(ShowDetailsUiEvent.ToggleShowFollowed) },
+        modifier = modifier,
     )
 }
 
 @Composable
 internal fun ShowDetails(
-    viewModel: ShowDetailsViewModel,
-    navigateUp: () -> Unit,
-    openShowDetails: (showId: Long) -> Unit,
-    openEpisodeDetails: (episodeId: Long) -> Unit,
-    openSeasons: (showId: Long, seasonId: Long) -> Unit,
-) {
-    val viewState = viewModel.presenter()
-    ShowDetails(
-        viewState = viewState,
-        navigateUp = navigateUp,
-        openShowDetails = openShowDetails,
-        openEpisodeDetails = openEpisodeDetails,
-        refresh = { viewState.eventSink(ShowDetailsUiEvent.Refresh(true)) },
-        onMessageShown = { viewState.eventSink(ShowDetailsUiEvent.ClearMessage(it)) },
-        openSeason = { openSeasons(viewState.show.id, it) },
-        onSeasonFollowed = { viewState.eventSink(ShowDetailsUiEvent.FollowSeason(it)) },
-        onSeasonUnfollowed = { viewState.eventSink(ShowDetailsUiEvent.UnfollowSeason(it)) },
-        unfollowPreviousSeasons = { viewState.eventSink(ShowDetailsUiEvent.UnfollowPreviousSeasons(it)) },
-        onMarkSeasonWatched = { viewState.eventSink(ShowDetailsUiEvent.MarkSeasonWatched(it, onlyAired = true)) },
-        onMarkSeasonUnwatched = { viewState.eventSink(ShowDetailsUiEvent.MarkSeasonUnwatched(it)) },
-        onToggleShowFollowed = { viewState.eventSink(ShowDetailsUiEvent.ToggleShowFollowed) },
-    )
-}
-
-@Composable
-internal fun ShowDetails(
-    viewState: ShowDetailsViewState,
+    viewState: ShowDetailsUiState,
     navigateUp: () -> Unit,
     openShowDetails: (showId: Long) -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
@@ -197,6 +184,7 @@ internal fun ShowDetails(
     onMarkSeasonWatched: (seasonId: Long) -> Unit,
     onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
     onToggleShowFollowed: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
@@ -261,7 +249,7 @@ internal fun ShowDetails(
         // The nav bar is handled by the root Scaffold
         contentWindowInsets = ScaffoldDefaults.contentWindowInsets
             .exclude(WindowInsets.navigationBars),
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { contentPadding ->
         LogCompositions("ShowDetails")
 

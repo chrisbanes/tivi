@@ -24,9 +24,11 @@ import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.ActionDate
 import app.tivi.data.models.TiviShow
 import app.tivi.data.views.ShowsWatchStats
+import com.slack.circuit.runtime.CircuitUiEvent
+import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
-data class ShowDetailsViewState(
+data class ShowDetailsUiState(
     val isFollowed: Boolean = false,
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val relatedShows: List<RelatedShowEntryWithShow> = emptyList(),
@@ -36,9 +38,9 @@ data class ShowDetailsViewState(
     val refreshing: Boolean = false,
     val message: UiMessage? = null,
     val eventSink: (ShowDetailsUiEvent) -> Unit,
-)
+) : CircuitUiState
 
-sealed interface ShowDetailsUiEvent {
+sealed interface ShowDetailsUiEvent : CircuitUiEvent {
     data class ClearMessage(val id: Long) : ShowDetailsUiEvent
     data class Refresh(val fromUser: Boolean = true) : ShowDetailsUiEvent
     object ToggleShowFollowed : ShowDetailsUiEvent
@@ -54,4 +56,9 @@ sealed interface ShowDetailsUiEvent {
 
     data class FollowSeason(val seasonId: Long) : ShowDetailsUiEvent
     data class UnfollowPreviousSeasons(val seasonId: Long) : ShowDetailsUiEvent
+
+    data class OpenSeason(val seasonId: Long) : ShowDetailsUiEvent
+    data class OpenShowDetails(val showId: Long) : ShowDetailsUiEvent
+    data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsUiEvent
+    object NavigateBack : ShowDetailsUiEvent
 }

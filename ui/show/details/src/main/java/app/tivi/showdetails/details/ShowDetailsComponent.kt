@@ -14,29 +14,22 @@
  * limitations under the License.
  */
 
-package app.tivi.inject
+package app.tivi.showdetails.details
 
-import app.tivi.account.AccountComponent
-import app.tivi.home.discover.DiscoverComponent
-import app.tivi.showdetails.details.ShowDetailsComponent
-import com.slack.circuit.foundation.CircuitConfig
+import app.tivi.inject.ApplicationScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
+import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
-interface UiComponent :
-    AccountComponent,
-    DiscoverComponent,
-    ShowDetailsComponent {
+interface ShowDetailsComponent {
+    @IntoSet
     @Provides
     @ApplicationScope
-    fun provideCircuitConfig(
-        uiFactories: Set<Ui.Factory>,
-        presenterFactories: Set<Presenter.Factory>,
-    ): CircuitConfig {
-        return CircuitConfig.Builder()
-            .addUiFactories(uiFactories)
-            .addPresenterFactories(presenterFactories)
-            .build()
-    }
+    fun bindShowDetailsPresenterFactory(factory: ShowDetailsUiPresenterFactory): Presenter.Factory = factory
+
+    @IntoSet
+    @Provides
+    @ApplicationScope
+    fun bindShowDetailsUiFactoryFactory(factory: ShowDetailsUiFactory): Ui.Factory = factory
 }
