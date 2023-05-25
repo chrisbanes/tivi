@@ -18,27 +18,58 @@ package app.tivi.home.trending
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.ViewModel
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.domain.observers.ObservePagedTrendingShows
+import app.tivi.screens.ShowDetailsScreen
+import app.tivi.screens.TrendingShowsScreen
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TrendingShowsViewModel(
+class TrendingShowsUiPresenterFactory(
+    private val presenterFactory: (Navigator) -> TrendingShowsPresenter,
+) : Presenter.Factory {
+    override fun create(
+        screen: Screen,
+        navigator: Navigator,
+        context: CircuitContext,
+    ): Presenter<*>? = when (screen) {
+        is TrendingShowsScreen -> presenterFactory(navigator)
+        else -> null
+    }
+}
+
+@Inject
+class TrendingShowsPresenter(
+    @Assisted private val navigator: Navigator,
     private val pagingInteractor: ObservePagedTrendingShows,
-) : ViewModel() {
+) : Presenter<TrendingShowsUiState> {
 
     @Composable
-    fun presenter(): TrendingShowsViewState {
+    override fun present(): TrendingShowsUiState {
         val items = pagingInteractor.flow.collectAsLazyPagingItems()
 
         LaunchedEffect(Unit) {
             pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
         }
 
-        return TrendingShowsViewState(
+        fun eventSink(event: TrendingShowsUiEvent) {
+            when (event) {
+                TrendingShowsUiEvent.NavigateUp -> navigator.pop()
+                is TrendingShowsUiEvent.OpenShowDetails -> {
+                    navigator.goTo(ShowDetailsScreen(event.showId))
+                }
+            }
+        }
+
+        return TrendingShowsUiState(
             items = items,
+            eventSink = ::eventSink,
         )
     }
 

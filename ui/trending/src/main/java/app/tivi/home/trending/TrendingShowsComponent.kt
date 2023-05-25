@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,20 @@
 
 package app.tivi.home.trending
 
-import androidx.paging.compose.LazyPagingItems
-import app.tivi.data.compoundmodels.TrendingEntryWithShow
+import app.tivi.inject.ApplicationScope
+import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.ui.Ui
+import me.tatarka.inject.annotations.IntoSet
+import me.tatarka.inject.annotations.Provides
 
-data class TrendingShowsViewState(
-    val items: LazyPagingItems<TrendingEntryWithShow>,
-)
+interface TrendingShowsComponent {
+    @IntoSet
+    @Provides
+    @ApplicationScope
+    fun bindTrendingShowsPresenterFactory(factory: TrendingShowsUiPresenterFactory): Presenter.Factory = factory
+
+    @IntoSet
+    @Provides
+    @ApplicationScope
+    fun bindTrendingShowsUiFactoryFactory(factory: TrendingShowsUiFactory): Ui.Factory = factory
+}
