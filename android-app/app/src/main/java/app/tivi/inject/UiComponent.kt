@@ -23,6 +23,7 @@ import app.tivi.home.popular.PopularShowsComponent
 import app.tivi.home.recommended.RecommendedShowsComponent
 import app.tivi.home.search.SearchComponent
 import app.tivi.home.trending.TrendingShowsComponent
+import app.tivi.home.upnext.UpNextComponent
 import app.tivi.showdetails.details.ShowDetailsComponent
 import com.slack.circuit.foundation.CircuitConfig
 import com.slack.circuit.runtime.presenter.Presenter
@@ -37,7 +38,8 @@ interface UiComponent :
     RecommendedShowsComponent,
     SearchComponent,
     ShowDetailsComponent,
-    TrendingShowsComponent {
+    TrendingShowsComponent,
+    UpNextComponent {
     @Provides
     @ApplicationScope
     fun provideCircuitConfig(

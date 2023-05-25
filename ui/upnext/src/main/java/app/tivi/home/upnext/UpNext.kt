@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalMaterialApi::class)
-
 package app.tivi.home.upnext
 
 import androidx.compose.animation.AnimatedVisibility
@@ -83,7 +81,6 @@ import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviStandardAppBar
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
@@ -93,59 +90,54 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.screens.UpNextScreen
 import coil.compose.AsyncImagePainter
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias UpNext = @Composable (
-    openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
-    openUser: () -> Unit,
-    openTrackEpisode: (episodeId: Long) -> Unit,
-) -> Unit
-
 @Inject
-@Composable
-fun UpNext(
-    viewModelFactory: () -> UpNextViewModel,
-    @Assisted openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
-    @Assisted openUser: () -> Unit,
-    @Assisted openTrackEpisode: (episodeId: Long) -> Unit,
-) {
-    UpNext(
-        viewModel = viewModel(factory = viewModelFactory),
-        openShowDetails = openShowDetails,
-        openTrackEpisode = openTrackEpisode,
-        openUser = openUser,
-    )
+class UpNextUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is UpNextScreen -> {
+            ui<UpNextUiState> { state, modifier ->
+                UpNext(state, modifier)
+            }
+        }
+
+        else -> null
+    }
 }
 
 @Composable
 internal fun UpNext(
-    viewModel: UpNextViewModel,
-    openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
-    openUser: () -> Unit,
-    openTrackEpisode: (episodeId: Long) -> Unit,
+    state: UpNextUiState,
+    modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
     UpNext(
-        state = viewState,
-        openShowDetails = openShowDetails,
-        openTrackEpisode = openTrackEpisode,
-        onMessageShown = { viewState.eventSink(UpNextUiEvent.ClearMessage(it)) },
-        openUser = openUser,
-        refresh = { viewState.eventSink(UpNextUiEvent.Refresh()) },
-        onSortSelected = { viewState.eventSink(UpNextUiEvent.ChangeSort(it)) },
-        onToggleFollowedShowsOnly = { viewState.eventSink(UpNextUiEvent.ToggleFollowedShowsOnly) },
+        state = state,
+        openShowDetails = { showId, seasonId, episodeId ->
+            state.eventSink(UpNextUiEvent.OpenShowDetails(showId, seasonId, episodeId))
+        },
+        openTrackEpisode = { state.eventSink(UpNextUiEvent.ClearMessage(it)) },
+        onMessageShown = { state.eventSink(UpNextUiEvent.ClearMessage(it)) },
+        openUser = { state.eventSink(UpNextUiEvent.OpenAccount) },
+        refresh = { state.eventSink(UpNextUiEvent.Refresh()) },
+        onSortSelected = { state.eventSink(UpNextUiEvent.ChangeSort(it)) },
+        onToggleFollowedShowsOnly = { state.eventSink(UpNextUiEvent.ToggleFollowedShowsOnly) },
+        modifier = modifier,
     )
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun UpNext(
-    state: UpNextViewState,
+    state: UpNextUiState,
     openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
     openTrackEpisode: (episodeId: Long) -> Unit,
     onMessageShown: (id: Long) -> Unit,
@@ -153,6 +145,7 @@ internal fun UpNext(
     openUser: () -> Unit,
     onSortSelected: (SortOption) -> Unit,
     onToggleFollowedShowsOnly: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -203,7 +196,7 @@ internal fun UpNext(
                 )
             }
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     ) { paddingValues ->
         val refreshState = rememberPullRefreshState(
             refreshing = state.isLoading,

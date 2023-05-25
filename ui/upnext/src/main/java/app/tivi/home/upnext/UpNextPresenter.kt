@@ -25,7 +25,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.api.UiMessageManager
@@ -37,16 +36,41 @@ import app.tivi.domain.interactors.UpdateUpNextEpisodes
 import app.tivi.domain.observers.ObservePagedUpNextShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
+import app.tivi.screens.AccountScreen
+import app.tivi.screens.EpisodeDetailsScreen
+import app.tivi.screens.ShowDetailsScreen
+import app.tivi.screens.ShowSeasonsScreen
+import app.tivi.screens.UpNextScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectStatus
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class UpNextViewModel(
+class UpNextUiPresenterFactory(
+    private val presenterFactory: (Navigator) -> UpNextPresenter,
+) : Presenter.Factory {
+    override fun create(
+        screen: Screen,
+        navigator: Navigator,
+        context: CircuitContext,
+    ): Presenter<*>? = when (screen) {
+        is UpNextScreen -> presenterFactory(navigator)
+        else -> null
+    }
+}
+
+@Inject
+class UpNextPresenter(
+    @Assisted private val navigator: Navigator,
     private val observePagedUpNextShows: ObservePagedUpNextShows,
     private val updateUpNextEpisodes: UpdateUpNextEpisodes,
     private val observeTraktAuthState: ObserveTraktAuthState,
@@ -54,10 +78,10 @@ class UpNextViewModel(
     private val getTraktAuthState: GetTraktAuthState,
     private val preferences: TiviPreferences,
     private val logger: Logger,
-) : ViewModel() {
+) : Presenter<UpNextUiState> {
 
     @Composable
-    fun presenter(): UpNextViewState {
+    override fun present(): UpNextUiState {
         val scope = rememberCoroutineScope()
 
         val loadingState = remember { ObservableLoadingCounter() }
@@ -98,6 +122,13 @@ class UpNextViewModel(
                 UpNextUiEvent.ToggleFollowedShowsOnly -> {
                     preferences.upNextFollowedOnly = !preferences.upNextFollowedOnly
                 }
+
+                UpNextUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
+                is UpNextUiEvent.OpenShowDetails -> {
+                    navigator.goTo(ShowDetailsScreen(event.showId))
+                    navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
+                    navigator.goTo(EpisodeDetailsScreen(event.episodeId))
+                }
             }
         }
 
@@ -125,7 +156,7 @@ class UpNextViewModel(
             )
         }
 
-        return UpNextViewState(
+        return UpNextUiState(
             items = items,
             user = user,
             authState = authState,

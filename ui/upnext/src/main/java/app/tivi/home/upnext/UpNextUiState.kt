@@ -22,8 +22,10 @@ import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TraktUser
 import app.tivi.data.traktauth.TraktAuthState
+import com.slack.circuit.runtime.CircuitUiEvent
+import com.slack.circuit.runtime.CircuitUiState
 
-data class UpNextViewState(
+data class UpNextUiState(
     val items: LazyPagingItems<UpNextEntry>,
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
@@ -33,11 +35,13 @@ data class UpNextViewState(
     val message: UiMessage? = null,
     val followedShowsOnly: Boolean = false,
     val eventSink: (UpNextUiEvent) -> Unit,
-)
+) : CircuitUiState
 
-sealed interface UpNextUiEvent {
+sealed interface UpNextUiEvent : CircuitUiEvent {
     data class ClearMessage(val id: Long) : UpNextUiEvent
     data class Refresh(val fromUser: Boolean = false) : UpNextUiEvent
     data class ChangeSort(val sort: SortOption) : UpNextUiEvent
     object ToggleFollowedShowsOnly : UpNextUiEvent
+    object OpenAccount : UpNextUiEvent
+    data class OpenShowDetails(val showId: Long, val seasonId: Long, val episodeId: Long) : UpNextUiEvent
 }
