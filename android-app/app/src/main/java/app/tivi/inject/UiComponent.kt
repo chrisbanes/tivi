@@ -21,6 +21,7 @@ import app.tivi.home.discover.DiscoverComponent
 import app.tivi.home.library.LibraryComponent
 import app.tivi.home.popular.PopularShowsComponent
 import app.tivi.home.recommended.RecommendedShowsComponent
+import app.tivi.home.search.SearchComponent
 import app.tivi.home.trending.TrendingShowsComponent
 import app.tivi.showdetails.details.ShowDetailsComponent
 import com.slack.circuit.foundation.CircuitConfig
@@ -34,6 +35,7 @@ interface UiComponent :
     LibraryComponent,
     PopularShowsComponent,
     RecommendedShowsComponent,
+    SearchComponent,
     ShowDetailsComponent,
     TrendingShowsComponent {
     @Provides

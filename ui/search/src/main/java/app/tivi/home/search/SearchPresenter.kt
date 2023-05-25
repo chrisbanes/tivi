@@ -25,25 +25,46 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.lifecycle.ViewModel
 import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
 import app.tivi.domain.interactors.SearchShows
+import app.tivi.screens.SearchScreen
+import app.tivi.screens.ShowDetailsScreen
 import app.tivi.util.ObservableLoadingCounter
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class SearchViewModel(
+class SearchUiPresenterFactory(
+    private val presenterFactory: (Navigator) -> SearchPresenter,
+) : Presenter.Factory {
+    override fun create(
+        screen: Screen,
+        navigator: Navigator,
+        context: CircuitContext,
+    ): Presenter<*>? = when (screen) {
+        is SearchScreen -> presenterFactory(navigator)
+        else -> null
+    }
+}
+
+@Inject
+class SearchPresenter(
+    @Assisted private val navigator: Navigator,
     private val searchShows: SearchShows,
-) : ViewModel() {
+) : Presenter<SearchUiState> {
 
     @Composable
-    fun presenter(): SearchViewState {
+    override fun present(): SearchUiState {
         val scope = rememberCoroutineScope()
 
         var query by remember { mutableStateOf("") }
@@ -79,10 +100,13 @@ class SearchViewModel(
                     }
                 }
                 is SearchUiEvent.UpdateQuery -> query = event.query
+                is SearchUiEvent.OpenShowDetails -> {
+                    navigator.goTo(ShowDetailsScreen(event.showId))
+                }
             }
         }
 
-        return SearchViewState(
+        return SearchUiState(
             query = query,
             searchResults = results,
             refreshing = loading,

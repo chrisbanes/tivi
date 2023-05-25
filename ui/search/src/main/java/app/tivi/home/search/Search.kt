@@ -61,50 +61,51 @@ import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.models.TiviShow
+import app.tivi.screens.SearchScreen
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias Search = @Composable (
-    openShowDetails: (showId: Long) -> Unit,
-) -> Unit
-
 @Inject
-@Composable
-fun Search(
-    viewModelFactory: () -> SearchViewModel,
-    @Assisted openShowDetails: (showId: Long) -> Unit,
-) {
-    Search(
-        viewModel = viewModel(factory = viewModelFactory),
-        openShowDetails = openShowDetails,
-    )
+class SearchUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is SearchScreen -> {
+            ui<SearchUiState> { state, modifier ->
+                Search(state, modifier)
+            }
+        }
+
+        else -> null
+    }
 }
 
 @Composable
 internal fun Search(
-    viewModel: SearchViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    state: SearchUiState,
+    modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
     Search(
-        state = viewState,
-        openShowDetails = openShowDetails,
-        onSearchQueryChanged = { viewState.eventSink(SearchUiEvent.UpdateQuery(it)) },
-        onMessageShown = { viewState.eventSink(SearchUiEvent.ClearMessage(it)) },
+        state = state,
+        openShowDetails = { state.eventSink(SearchUiEvent.OpenShowDetails(it)) },
+        onSearchQueryChanged = { state.eventSink(SearchUiEvent.UpdateQuery(it)) },
+        onMessageShown = { state.eventSink(SearchUiEvent.ClearMessage(it)) },
+        modifier = modifier,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Search(
-    state: SearchViewState,
+    state: SearchUiState,
     openShowDetails: (showId: Long) -> Unit,
     onSearchQueryChanged: (query: String) -> Unit,
     onMessageShown: (id: Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -164,6 +165,7 @@ internal fun Search(
                 )
             }
         },
+        modifier = modifier,
     ) { padding ->
         if (state.searchResults.isEmpty() && !state.refreshing) {
             EmptyContent(

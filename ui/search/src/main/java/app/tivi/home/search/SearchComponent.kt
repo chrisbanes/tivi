@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,20 @@
 
 package app.tivi.home.search
 
-import app.tivi.api.UiMessage
-import app.tivi.data.models.TiviShow
+import app.tivi.inject.ApplicationScope
+import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.ui.Ui
+import me.tatarka.inject.annotations.IntoSet
+import me.tatarka.inject.annotations.Provides
 
-data class SearchViewState(
-    val query: String = "",
-    val searchResults: List<TiviShow> = emptyList(),
-    val refreshing: Boolean = false,
-    val message: UiMessage? = null,
-    val eventSink: (SearchUiEvent) -> Unit,
-)
+interface SearchComponent {
+    @IntoSet
+    @Provides
+    @ApplicationScope
+    fun bindSearchPresenterFactory(factory: SearchUiPresenterFactory): Presenter.Factory = factory
 
-sealed interface SearchUiEvent {
-    data class ClearMessage(val id: Long) : SearchUiEvent
-    data class UpdateQuery(val query: String) : SearchUiEvent
+    @IntoSet
+    @Provides
+    @ApplicationScope
+    fun bindSearchUiFactoryFactory(factory: SearchUiFactory): Ui.Factory = factory
 }
