@@ -40,6 +40,7 @@ dependencies {
     implementation(projects.common.ui.compose)
 
     api(projects.common.ui.screens)
+    api(projects.common.ui.circuitOverlay)
     api(libs.circuit.foundation)
 
     implementation(libs.compose.foundation.foundation)

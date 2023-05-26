@@ -17,6 +17,7 @@
 package app.tivi.episode.track
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,7 +34,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -143,14 +143,16 @@ internal fun EpisodeTrack(
         }
     }
 
-    Surface(
-        shadowElevation = 2.dp,
-        tonalElevation = 4.dp,
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .testTag("episode_track"),
     ) {
-        Column(Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 32.dp),
+        ) {
             viewState.episode?.let { episode ->
                 EpisodeHeader(
                     episode = episode,

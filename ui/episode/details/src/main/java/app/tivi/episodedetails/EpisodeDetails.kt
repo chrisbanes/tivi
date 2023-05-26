@@ -68,6 +68,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,12 +94,16 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.models.Season
+import app.tivi.overlays.showInBottomSheet
 import app.tivi.screens.EpisodeDetailsScreen
+import app.tivi.screens.EpisodeTrackScreen
+import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
 
@@ -120,13 +125,20 @@ internal fun EpisodeDetails(
     viewState: EpisodeDetailsUiState,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
+    val overlayHost = LocalOverlayHost.current
+
     EpisodeDetails(
         viewState = viewState,
         navigateUp = { viewState.eventSink(EpisodeDetailsUiEvent.NavigateUp) },
         refresh = { viewState.eventSink(EpisodeDetailsUiEvent.Refresh(true)) },
         onRemoveAllWatches = { viewState.eventSink(EpisodeDetailsUiEvent.RemoveAllWatches) },
         onRemoveWatch = { id -> viewState.eventSink(EpisodeDetailsUiEvent.RemoveWatchEntry(id)) },
-        onAddWatch = { viewState.eventSink(EpisodeDetailsUiEvent.OpenTrackEpisode) },
+        onAddWatch = {
+            scope.launch {
+                overlayHost.showInBottomSheet(EpisodeTrackScreen(viewState.episode!!.id))
+            }
+        },
         onMessageShown = { id -> viewState.eventSink(EpisodeDetailsUiEvent.ClearMessage(id)) },
         modifier = modifier,
     )
