@@ -30,6 +30,7 @@ import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
@@ -191,6 +192,8 @@ class FollowedShowsRepository(
         if (traktListId == null) {
             traktListId = try {
                 dataSource.getFollowedListId().ids?.trakt
+            } catch (ce: CancellationException) {
+                throw ce
             } catch (e: Exception) {
                 null
             }
