@@ -47,6 +47,7 @@ import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.ApplicationComponent
 import app.tivi.screens.DiscoverScreen
+import app.tivi.screens.TiviScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
@@ -56,6 +57,7 @@ import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.CircuitConfig
 import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
+import com.slack.circuit.foundation.screen
 import com.slack.circuit.runtime.Navigator
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
@@ -106,9 +108,10 @@ class MainActivity : TiviActivity() {
             // Launch an effect to track changes to the current back stack entry, and push them
             // as a screen views to analytics
             LaunchedEffect(backstack.topRecord) {
+                val topScreen = backstack.topRecord?.screen as? TiviScreen
                 analytics.trackScreenView(
-                    label = backstack.topRecord.toString(),
-                    route = "",
+                    name = topScreen?.name ?: "unknown screen",
+                    arguments = topScreen?.arguments,
                 )
             }
 

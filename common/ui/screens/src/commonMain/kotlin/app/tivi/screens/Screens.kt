@@ -19,40 +19,58 @@ package app.tivi.screens
 import com.slack.circuit.runtime.Screen
 
 @CommonParcelize
-object AccountScreen : Screen
+object AccountScreen : TiviScreen(name = "AccountUi()")
 
 @CommonParcelize
-object DiscoverScreen : Screen
+object DiscoverScreen : TiviScreen(name = "Discover()")
 
 @CommonParcelize
-data class EpisodeDetailsScreen(val id: Long) : Screen
+data class EpisodeDetailsScreen(val id: Long) : TiviScreen(name = "EpisodeDetails()") {
+    override val arguments get() = mapOf("id" to id)
+}
 
 @CommonParcelize
-data class EpisodeTrackScreen(val id: Long) : Screen
+data class EpisodeTrackScreen(val id: Long) : TiviScreen(name = "EpisodeTrack()") {
+    override val arguments get() = mapOf("id" to id)
+}
 
 @CommonParcelize
-object LibraryScreen : Screen
+object LibraryScreen : TiviScreen(name = "Library()")
 
 @CommonParcelize
-object PopularShowsScreen : Screen
+object PopularShowsScreen : TiviScreen(name = "PopularShows()")
 
 @CommonParcelize
-object RecommendedShowsScreen : Screen
+object RecommendedShowsScreen : TiviScreen(name = "RecommendedShows()")
 
 @CommonParcelize
-object SearchScreen : Screen
+object SearchScreen : TiviScreen(name = "Search()")
 
 @CommonParcelize
-object SettingsScreen : Screen
+object SettingsScreen : TiviScreen(name = "Settings()")
 
 @CommonParcelize
-data class ShowDetailsScreen(val id: Long) : Screen
+data class ShowDetailsScreen(val id: Long) : TiviScreen(name = "ShowDetails()") {
+    override val arguments get() = mapOf("id" to id)
+}
 
 @CommonParcelize
-data class ShowSeasonsScreen(val id: Long, val selectedSeasonId: Long? = null) : Screen
+data class ShowSeasonsScreen(
+    val id: Long,
+    val selectedSeasonId: Long? = null,
+) : TiviScreen(name = "ShowSeasons()") {
+    override val arguments get() = mapOf(
+        "id" to id,
+        "selectedSeasonId" to selectedSeasonId,
+    )
+}
 
 @CommonParcelize
-object TrendingShowsScreen : Screen
+object TrendingShowsScreen : TiviScreen(name = "TrendingShows()")
 
 @CommonParcelize
-object UpNextScreen : Screen
+object UpNextScreen : TiviScreen(name = "UpNext()")
+
+abstract class TiviScreen(val name: String) : Screen {
+    open val arguments: Map<String, *>? = null
+}
