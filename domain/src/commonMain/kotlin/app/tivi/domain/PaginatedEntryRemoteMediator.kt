@@ -16,6 +16,7 @@
 
 package app.tivi.domain
 
+import androidx.paging.ExperimentalPagingApi
 import app.cash.paging.LoadType
 import app.cash.paging.PagingState
 import app.cash.paging.RemoteMediator
@@ -28,6 +29,7 @@ import kotlinx.coroutines.CancellationException
  * next page to load.
  */
 
+@OptIn(ExperimentalPagingApi::class)
 internal class PaginatedEntryRemoteMediator<LI, ET>(
     private val fetch: suspend (page: Int) -> Unit,
 ) : RemoteMediator<Int, LI>() where ET : PaginatedEntry, LI : EntryWithShow<ET> {
@@ -47,8 +49,8 @@ internal class PaginatedEntryRemoteMediator<LI, ET>(
         return try {
             fetch(nextPage)
             MediatorResult.Success(endOfPaginationReached = false)
-        } catch (e: CancellationException) {
-            throw e
+        } catch (ce: CancellationException) {
+            throw ce
         } catch (t: Throwable) {
             MediatorResult.Error(t)
         }

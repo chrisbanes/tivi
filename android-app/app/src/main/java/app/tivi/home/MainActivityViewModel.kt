@@ -27,6 +27,7 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.util.Logger
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -63,6 +64,8 @@ class MainActivityViewModel(
                     // If we got a 401 back from Trakt, we should clear out the auth state
                     clearTraktAuthState.executeSync()
                 }
+            } catch (ce: CancellationException) {
+                throw ce
             } catch (t: Throwable) {
                 // no-op
             }

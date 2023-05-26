@@ -24,6 +24,7 @@ import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import app.tivi.util.parallelForEach
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -38,6 +39,8 @@ class UpdateRelatedShows(
         relatedShowsStore.fetch(params.showId, params.forceLoad).parallelForEach {
             try {
                 showsStore.fetch(it.otherShowId)
+            } catch (ce: CancellationException) {
+                throw ce
             } catch (t: Throwable) {
                 logger.e("Error while show info: ${it.otherShowId}")
             }

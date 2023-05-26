@@ -28,6 +28,7 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import app.tivi.util.parallelForEach
 import kotlin.time.Duration.Companion.hours
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -84,6 +85,8 @@ class UpdateLibraryShows(
                         updateShowEpisodeWatches(entry.showId)
                     }
                 }
+            } catch (ce: CancellationException) {
+                throw ce
             } catch (t: Throwable) {
                 logger.e(t, "Error while updating show seasons/episodes: ${entry.showId}")
             }
