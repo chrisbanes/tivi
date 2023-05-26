@@ -62,6 +62,7 @@ import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.FirstBaseline
@@ -80,12 +81,16 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.overlays.showInDialog
+import app.tivi.screens.AccountScreen
 import app.tivi.screens.DiscoverScreen
+import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -106,10 +111,17 @@ internal fun Discover(
     state: DiscoverUiState,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
+    val overlayHost = LocalOverlayHost.current
+
     Discover(
         state = state,
         refresh = { state.eventSink(DiscoverUiEvent.Refresh(true)) },
-        openUser = { state.eventSink(DiscoverUiEvent.OpenAccount) },
+        openUser = {
+            scope.launch {
+                overlayHost.showInDialog(AccountScreen)
+            }
+        },
         openShowDetails = { showId, seasonId, episodeId ->
             state.eventSink(DiscoverUiEvent.OpenShowDetails(showId, seasonId, episodeId))
         },

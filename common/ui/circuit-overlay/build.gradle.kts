@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,10 @@
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.android")
-    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "app.tivi.home.upnext"
+    namespace = "app.tivi.ui.overlays"
 
     buildFeatures {
         compose = true
@@ -34,31 +33,14 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.base)
-    implementation(projects.domain)
-    implementation(projects.common.ui.compose)
-    implementation(projects.common.ui.view)
+    implementation(projects.common.ui.screens)
 
-    api(projects.common.ui.screens)
-    api(projects.common.ui.circuitOverlay)
-    api(libs.circuit.foundation)
-
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
-
-    implementation(libs.swipe)
-
-    implementation(libs.androidx.core)
-
-    implementation(libs.compose.foundation.foundation)
-    implementation(libs.compose.foundation.layout)
-    implementation(libs.compose.material.material)
-    implementation(libs.compose.material.iconsext)
+    implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
+    implementation(libs.androidx.activity.compose)
 
-    implementation(libs.coil.compose)
-
-    ksp(libs.kotlininject.compiler)
+    api(libs.circuit.foundation)
+    api(libs.circuit.overlay)
 }

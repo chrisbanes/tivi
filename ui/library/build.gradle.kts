@@ -40,6 +40,7 @@ dependencies {
     implementation(projects.common.ui.view)
 
     api(projects.common.ui.screens)
+    api(projects.common.ui.circuitOverlay)
     api(libs.circuit.foundation)
 
     implementation(libs.androidx.paging.runtime)

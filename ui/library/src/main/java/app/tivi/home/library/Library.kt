@@ -64,6 +64,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -92,12 +93,16 @@ import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.overlays.showInDialog
+import app.tivi.screens.AccountScreen
 import app.tivi.screens.LibraryScreen
+import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 
@@ -119,13 +124,20 @@ internal fun Library(
     state: LibraryUiState,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
+    val overlayHost = LocalOverlayHost.current
+
     Library(
         state = state,
         openShowDetails = { state.eventSink(LibraryUiEvent.OpenShowDetails(it)) },
         onMessageShown = { state.eventSink(LibraryUiEvent.ClearMessage(it)) },
         onToggleIncludeFollowedShows = { state.eventSink(LibraryUiEvent.ToggleFollowedShowsIncluded) },
         onToggleIncludeWatchedShows = { state.eventSink(LibraryUiEvent.ToggleWatchedShowsIncluded) },
-        openUser = { state.eventSink(LibraryUiEvent.OpenAccount) },
+        openUser = {
+            scope.launch {
+                overlayHost.showInDialog(AccountScreen)
+            }
+        },
         refresh = { state.eventSink(LibraryUiEvent.Refresh(true)) },
         onFilterChanged = { state.eventSink(LibraryUiEvent.ChangeFilter(it)) },
         onSortSelected = { state.eventSink(LibraryUiEvent.ChangeSort(it)) },

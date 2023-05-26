@@ -70,6 +70,7 @@ include(
     ":core:performance",
     ":core:powercontroller",
     ":core:preferences",
+    ":common:ui:circuit-overlay",
     ":common:ui:view",
     ":common:ui:resources",
     ":common:ui:resources-compose",

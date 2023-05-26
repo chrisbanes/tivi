@@ -62,6 +62,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,13 +91,17 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.overlays.showInDialog
+import app.tivi.screens.AccountScreen
 import app.tivi.screens.UpNextScreen
 import coil.compose.AsyncImagePainter
+import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 import me.tatarka.inject.annotations.Inject
@@ -119,6 +124,9 @@ internal fun UpNext(
     state: UpNextUiState,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
+    val overlayHost = LocalOverlayHost.current
+
     UpNext(
         state = state,
         openShowDetails = { showId, seasonId, episodeId ->
@@ -126,7 +134,11 @@ internal fun UpNext(
         },
         openTrackEpisode = { state.eventSink(UpNextUiEvent.ClearMessage(it)) },
         onMessageShown = { state.eventSink(UpNextUiEvent.ClearMessage(it)) },
-        openUser = { state.eventSink(UpNextUiEvent.OpenAccount) },
+        openUser = {
+            scope.launch {
+                overlayHost.showInDialog(AccountScreen)
+            }
+        },
         refresh = { state.eventSink(UpNextUiEvent.Refresh()) },
         onSortSelected = { state.eventSink(UpNextUiEvent.ChangeSort(it)) },
         onToggleFollowedShowsOnly = { state.eventSink(UpNextUiEvent.ToggleFollowedShowsOnly) },
