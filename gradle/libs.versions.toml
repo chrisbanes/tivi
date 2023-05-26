@@ -97,7 +97,7 @@ compose-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding" }
 # This isn't strictly used, but allows Renovate to see us using the Compose Compiler artifact
 compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composecompiler" }
 
-google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.2.2"
+google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.3.0"
 google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.3.7"
 google-firebase-perf = "com.google.firebase:firebase-perf-ktx:20.3.2"
 
