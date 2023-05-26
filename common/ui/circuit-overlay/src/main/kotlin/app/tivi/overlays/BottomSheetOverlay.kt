@@ -88,6 +88,8 @@ suspend fun OverlayHost.showInBottomSheet(
     screen: Screen,
 ): Unit = show(
     BottomSheetOverlay(Unit, {}) { _, _ ->
+        // We want to use `onNavEvent` here to finish the overlay but we're blocked by
+        // https://github.com/slackhq/circuit/issues/653
         CircuitContent(screen = screen)
     },
 )
