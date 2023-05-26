@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2017 Christopher Banes
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,13 +41,23 @@ allprojects {
             targetExclude("$buildDir/**/*.kt")
             targetExclude("bin/**/*.kt")
             ktlint(libs.versions.ktlint.get())
-            licenseHeaderFile(rootProject.file("spotless/copyright.txt"))
+            licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"))
+                .named("google")
+                .onlyIfContentMatches("Copyright \\d+ Google")
+            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"))
+                .named("cb-existing")
+                .onlyIfContentMatches("Copyright \\d+ Christopher Banes")
         }
         kotlinGradle {
             target("**/*.kts")
             targetExclude("$buildDir/**/*.kts")
             ktlint(libs.versions.ktlint.get())
-            licenseHeaderFile(rootProject.file("spotless/copyright.txt"), "(^(?![\\/ ]\\*).*$)")
+            licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"), "(^(?![\\/ ]\\*).*$)")
+                .named("google")
+                .onlyIfContentMatches("Copyright \\d+ Google")
+            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"), "(^(?![\\/ ]\\*).*$)")
+                .named("cb-existing")
+                .onlyIfContentMatches("Copyright \\d+ Christopher Banes")
         }
     }
 
