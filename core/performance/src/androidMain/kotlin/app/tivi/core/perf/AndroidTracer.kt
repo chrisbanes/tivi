@@ -21,16 +21,24 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AndroidTracer : Tracer {
+    private var enabled = true
+
     override fun trace(name: String, block: () -> Unit) {
+        if (!enabled) {
+            // If we've disabled ourselves, call block and return
+            return block()
+        }
+
         try {
             firebaseTrace(name) {
                 block()
             }
         } catch (e: IllegalStateException) {
-            // Firebase likely isn't setup. Ignore the exception
-
-            // TODO: intelligently disable Firebase Perf Monitoring if Firebase isn't setup
-            // https://firebase.google.com/docs/perf-mon/disable-sdk?platform=android#disable-library
+            // Firebase likely isn't setup. Ignore the exception, but disable calls to Firebase
+            // Performance Monitoring from now on
+            enabled = false
+            // Still need to call block too
+            block()
         }
     }
 }
