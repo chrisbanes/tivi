@@ -22,8 +22,15 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class AndroidTracer : Tracer {
     override fun trace(name: String, block: () -> Unit) {
-        firebaseTrace("test_trace") {
-            block()
+        try {
+            firebaseTrace(name) {
+                block()
+            }
+        } catch (e: IllegalStateException) {
+            // Firebase likely isn't setup. Ignore the exception
+
+            // TODO: intelligently disable Firebase Perf Monitoring if Firebase isn't setup
+            // https://firebase.google.com/docs/perf-mon/disable-sdk?platform=android#disable-library
         }
     }
 }

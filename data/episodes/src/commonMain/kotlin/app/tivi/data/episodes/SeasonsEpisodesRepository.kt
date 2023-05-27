@@ -34,6 +34,7 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -156,11 +157,15 @@ class SeasonsEpisodesRepository(
 
         val trakt = try {
             traktDeferred.await()
+        } catch (ce: CancellationException) {
+            throw ce
         } catch (e: Exception) {
             null
         }
         val tmdb = try {
             tmdbDeferred.await()
+        } catch (ce: CancellationException) {
+            throw ce
         } catch (e: Exception) {
             null
         }
