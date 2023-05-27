@@ -22,7 +22,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class AndroidTracer : Tracer {
     override fun trace(name: String, block: () -> Unit) {
-        firebaseTrace("test_trace") {
+        firebaseTrace(name) {
             block()
         }
     }
