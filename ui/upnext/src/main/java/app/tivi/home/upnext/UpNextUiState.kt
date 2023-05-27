@@ -16,6 +16,7 @@
 
 package app.tivi.home.upnext
 
+import androidx.compose.runtime.Stable
 import androidx.paging.compose.LazyPagingItems
 import app.tivi.api.UiMessage
 import app.tivi.data.compoundmodels.UpNextEntry
@@ -25,6 +26,7 @@ import app.tivi.data.traktauth.TraktAuthState
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 
+@Stable // 'only' stable due to LazyPagingItems
 data class UpNextUiState(
     val items: LazyPagingItems<UpNextEntry>,
     val user: TraktUser? = null,

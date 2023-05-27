@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package app.tivi.home.library
 
+import androidx.compose.runtime.Stable
 import androidx.paging.compose.LazyPagingItems
 import app.tivi.api.UiMessage
 import app.tivi.data.compoundmodels.LibraryShow
@@ -25,6 +26,7 @@ import app.tivi.data.traktauth.TraktAuthState
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 
+@Stable // 'only' stable due to LazyPagingItems
 data class LibraryUiState(
     val items: LazyPagingItems<LibraryShow>,
     val user: TraktUser? = null,
