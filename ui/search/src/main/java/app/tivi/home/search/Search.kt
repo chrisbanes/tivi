@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,11 +89,15 @@ internal fun Search(
     state: SearchUiState,
     modifier: Modifier = Modifier,
 ) {
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
+
     Search(
         state = state,
-        openShowDetails = { state.eventSink(SearchUiEvent.OpenShowDetails(it)) },
-        onSearchQueryChanged = { state.eventSink(SearchUiEvent.UpdateQuery(it)) },
-        onMessageShown = { state.eventSink(SearchUiEvent.ClearMessage(it)) },
+        openShowDetails = { eventSink(SearchUiEvent.OpenShowDetails(it)) },
+        onSearchQueryChanged = { eventSink(SearchUiEvent.UpdateQuery(it)) },
+        onMessageShown = { eventSink(SearchUiEvent.ClearMessage(it)) },
         modifier = modifier,
     )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,21 +114,25 @@ internal fun Discover(
     val scope = rememberCoroutineScope()
     val overlayHost = LocalOverlayHost.current
 
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
+
     Discover(
         state = state,
-        refresh = { state.eventSink(DiscoverUiEvent.Refresh(true)) },
+        refresh = { eventSink(DiscoverUiEvent.Refresh(true)) },
         openUser = {
             scope.launch {
                 overlayHost.showInDialog(AccountScreen)
             }
         },
         openShowDetails = { showId, seasonId, episodeId ->
-            state.eventSink(DiscoverUiEvent.OpenShowDetails(showId, seasonId, episodeId))
+            eventSink(DiscoverUiEvent.OpenShowDetails(showId, seasonId, episodeId))
         },
-        openTrendingShows = { state.eventSink(DiscoverUiEvent.OpenTrendingShows) },
-        openRecommendedShows = { state.eventSink(DiscoverUiEvent.OpenRecommendedShows) },
-        openPopularShows = { state.eventSink(DiscoverUiEvent.OpenPopularShows) },
-        onMessageShown = { state.eventSink(DiscoverUiEvent.ClearMessage(it)) },
+        openTrendingShows = { eventSink(DiscoverUiEvent.OpenTrendingShows) },
+        openRecommendedShows = { eventSink(DiscoverUiEvent.OpenRecommendedShows) },
+        openPopularShows = { eventSink(DiscoverUiEvent.OpenPopularShows) },
+        onMessageShown = { eventSink(DiscoverUiEvent.ClearMessage(it)) },
         modifier = modifier,
     )
 }

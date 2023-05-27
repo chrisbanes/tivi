@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,11 +46,15 @@ internal fun PopularShows(
     state: PopularShowsUiState,
     modifier: Modifier = Modifier,
 ) {
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
+
     EntryGrid(
         lazyPagingItems = state.items,
         title = stringResource(MR.strings.discover_popular_title),
-        onOpenShowDetails = { state.eventSink(PopularShowsUiEvent.OpenShowDetails(it)) },
-        onNavigateUp = { state.eventSink(PopularShowsUiEvent.NavigateUp) },
+        onOpenShowDetails = { eventSink(PopularShowsUiEvent.OpenShowDetails(it)) },
+        onNavigateUp = { eventSink(PopularShowsUiEvent.NavigateUp) },
         modifier = modifier,
     )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,11 +79,14 @@ internal fun AccountUi(
     state: AccountUiState,
     modifier: Modifier = Modifier,
 ) {
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
     AccountUi(
         viewState = state,
-        openSettings = { state.eventSink(AccountUiEvent.NavigateToSettings) },
-        login = { state.eventSink(AccountUiEvent.Login) },
-        logout = { state.eventSink(AccountUiEvent.Logout) },
+        openSettings = { eventSink(AccountUiEvent.NavigateToSettings) },
+        login = { eventSink(AccountUiEvent.Login) },
+        logout = { eventSink(AccountUiEvent.Logout) },
         modifier = modifier,
     )
 }

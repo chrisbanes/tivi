@@ -85,20 +85,24 @@ internal fun EpisodeTrack(
     state: EpisodeTrackUiState,
     modifier: Modifier = Modifier,
 ) {
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
+
     EpisodeTrack(
         viewState = state,
-        navigateUp = { state.eventSink(EpisodeTrackUiEvent.NavigateUp) },
-        onSubmit = { state.eventSink(EpisodeTrackUiEvent.Submit) },
+        navigateUp = { eventSink(EpisodeTrackUiEvent.NavigateUp) },
+        onSubmit = { eventSink(EpisodeTrackUiEvent.Submit) },
         onNowSelected = { selected ->
             when {
-                selected -> state.eventSink(EpisodeTrackUiEvent.SelectNow)
-                else -> state.eventSink(EpisodeTrackUiEvent.UnselectNow)
+                selected -> eventSink(EpisodeTrackUiEvent.SelectNow)
+                else -> eventSink(EpisodeTrackUiEvent.UnselectNow)
             }
         },
-        onSetFirstAired = { state.eventSink(EpisodeTrackUiEvent.SelectFirstAired) },
-        onDateSelected = { state.eventSink(EpisodeTrackUiEvent.SelectDate(it)) },
-        onTimeSelected = { state.eventSink(EpisodeTrackUiEvent.SelectTime(it)) },
-        onMessageShown = { state.eventSink(EpisodeTrackUiEvent.ClearMessage(it)) },
+        onSetFirstAired = { eventSink(EpisodeTrackUiEvent.SelectFirstAired) },
+        onDateSelected = { eventSink(EpisodeTrackUiEvent.SelectDate(it)) },
+        onTimeSelected = { eventSink(EpisodeTrackUiEvent.SelectTime(it)) },
+        onMessageShown = { eventSink(EpisodeTrackUiEvent.ClearMessage(it)) },
         modifier = modifier,
     )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,12 +111,16 @@ internal fun ShowSeasons(
     state: ShowSeasonsUiState,
     modifier: Modifier = Modifier,
 ) {
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
+
     ShowSeasons(
         state = state,
-        navigateUp = { state.eventSink(ShowSeasonsUiEvent.NavigateBack) },
-        openEpisodeDetails = { state.eventSink(ShowSeasonsUiEvent.OpenEpisodeDetails(it)) },
-        refresh = { state.eventSink(ShowSeasonsUiEvent.Refresh()) },
-        onMessageShown = { state.eventSink(ShowSeasonsUiEvent.ClearMessage(it)) },
+        navigateUp = { eventSink(ShowSeasonsUiEvent.NavigateBack) },
+        openEpisodeDetails = { eventSink(ShowSeasonsUiEvent.OpenEpisodeDetails(it)) },
+        refresh = { eventSink(ShowSeasonsUiEvent.Refresh()) },
+        onMessageShown = { eventSink(ShowSeasonsUiEvent.ClearMessage(it)) },
         modifier = modifier,
     )
 }

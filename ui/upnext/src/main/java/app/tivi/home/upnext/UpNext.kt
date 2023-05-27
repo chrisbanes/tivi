@@ -127,21 +127,25 @@ internal fun UpNext(
     val scope = rememberCoroutineScope()
     val overlayHost = LocalOverlayHost.current
 
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
+
     UpNext(
         state = state,
         openShowDetails = { showId, seasonId, episodeId ->
-            state.eventSink(UpNextUiEvent.OpenShowDetails(showId, seasonId, episodeId))
+            eventSink(UpNextUiEvent.OpenShowDetails(showId, seasonId, episodeId))
         },
-        openTrackEpisode = { state.eventSink(UpNextUiEvent.ClearMessage(it)) },
-        onMessageShown = { state.eventSink(UpNextUiEvent.ClearMessage(it)) },
+        openTrackEpisode = { eventSink(UpNextUiEvent.ClearMessage(it)) },
+        onMessageShown = { eventSink(UpNextUiEvent.ClearMessage(it)) },
         openUser = {
             scope.launch {
                 overlayHost.showInDialog(AccountScreen)
             }
         },
-        refresh = { state.eventSink(UpNextUiEvent.Refresh()) },
-        onSortSelected = { state.eventSink(UpNextUiEvent.ChangeSort(it)) },
-        onToggleFollowedShowsOnly = { state.eventSink(UpNextUiEvent.ToggleFollowedShowsOnly) },
+        refresh = { eventSink(UpNextUiEvent.Refresh()) },
+        onSortSelected = { eventSink(UpNextUiEvent.ChangeSort(it)) },
+        onToggleFollowedShowsOnly = { eventSink(UpNextUiEvent.ToggleFollowedShowsOnly) },
         modifier = modifier,
     )
 }

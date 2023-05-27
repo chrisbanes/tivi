@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,20 +127,24 @@ internal fun Library(
     val scope = rememberCoroutineScope()
     val overlayHost = LocalOverlayHost.current
 
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
+
     Library(
         state = state,
-        openShowDetails = { state.eventSink(LibraryUiEvent.OpenShowDetails(it)) },
-        onMessageShown = { state.eventSink(LibraryUiEvent.ClearMessage(it)) },
-        onToggleIncludeFollowedShows = { state.eventSink(LibraryUiEvent.ToggleFollowedShowsIncluded) },
-        onToggleIncludeWatchedShows = { state.eventSink(LibraryUiEvent.ToggleWatchedShowsIncluded) },
+        openShowDetails = { eventSink(LibraryUiEvent.OpenShowDetails(it)) },
+        onMessageShown = { eventSink(LibraryUiEvent.ClearMessage(it)) },
+        onToggleIncludeFollowedShows = { eventSink(LibraryUiEvent.ToggleFollowedShowsIncluded) },
+        onToggleIncludeWatchedShows = { eventSink(LibraryUiEvent.ToggleWatchedShowsIncluded) },
         openUser = {
             scope.launch {
                 overlayHost.showInDialog(AccountScreen)
             }
         },
-        refresh = { state.eventSink(LibraryUiEvent.Refresh(true)) },
-        onFilterChanged = { state.eventSink(LibraryUiEvent.ChangeFilter(it)) },
-        onSortSelected = { state.eventSink(LibraryUiEvent.ChangeSort(it)) },
+        refresh = { eventSink(LibraryUiEvent.Refresh(true)) },
+        onFilterChanged = { eventSink(LibraryUiEvent.ChangeFilter(it)) },
+        onSortSelected = { eventSink(LibraryUiEvent.ChangeSort(it)) },
         modifier = modifier,
     )
 }

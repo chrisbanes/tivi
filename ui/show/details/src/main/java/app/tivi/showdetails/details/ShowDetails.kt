@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,20 +151,24 @@ internal fun ShowDetails(
     state: ShowDetailsUiState,
     modifier: Modifier = Modifier,
 ) {
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
+
     ShowDetails(
         viewState = state,
-        navigateUp = { state.eventSink(ShowDetailsUiEvent.NavigateBack) },
-        openShowDetails = { state.eventSink(ShowDetailsUiEvent.OpenShowDetails(it)) },
-        openEpisodeDetails = { state.eventSink(ShowDetailsUiEvent.OpenEpisodeDetails(it)) },
-        refresh = { state.eventSink(ShowDetailsUiEvent.Refresh(true)) },
-        onMessageShown = { state.eventSink(ShowDetailsUiEvent.ClearMessage(it)) },
-        openSeason = { state.eventSink(ShowDetailsUiEvent.OpenSeason(it)) },
-        onSeasonFollowed = { state.eventSink(ShowDetailsUiEvent.FollowSeason(it)) },
-        onSeasonUnfollowed = { state.eventSink(ShowDetailsUiEvent.UnfollowSeason(it)) },
-        unfollowPreviousSeasons = { state.eventSink(ShowDetailsUiEvent.UnfollowPreviousSeasons(it)) },
-        onMarkSeasonWatched = { state.eventSink(ShowDetailsUiEvent.MarkSeasonWatched(it, onlyAired = true)) },
-        onMarkSeasonUnwatched = { state.eventSink(ShowDetailsUiEvent.MarkSeasonUnwatched(it)) },
-        onToggleShowFollowed = { state.eventSink(ShowDetailsUiEvent.ToggleShowFollowed) },
+        navigateUp = { eventSink(ShowDetailsUiEvent.NavigateBack) },
+        openShowDetails = { eventSink(ShowDetailsUiEvent.OpenShowDetails(it)) },
+        openEpisodeDetails = { eventSink(ShowDetailsUiEvent.OpenEpisodeDetails(it)) },
+        refresh = { eventSink(ShowDetailsUiEvent.Refresh(true)) },
+        onMessageShown = { eventSink(ShowDetailsUiEvent.ClearMessage(it)) },
+        openSeason = { eventSink(ShowDetailsUiEvent.OpenSeason(it)) },
+        onSeasonFollowed = { eventSink(ShowDetailsUiEvent.FollowSeason(it)) },
+        onSeasonUnfollowed = { eventSink(ShowDetailsUiEvent.UnfollowSeason(it)) },
+        unfollowPreviousSeasons = { eventSink(ShowDetailsUiEvent.UnfollowPreviousSeasons(it)) },
+        onMarkSeasonWatched = { eventSink(ShowDetailsUiEvent.MarkSeasonWatched(it, onlyAired = true)) },
+        onMarkSeasonUnwatched = { eventSink(ShowDetailsUiEvent.MarkSeasonUnwatched(it)) },
+        onToggleShowFollowed = { eventSink(ShowDetailsUiEvent.ToggleShowFollowed) },
         modifier = modifier,
     )
 }
