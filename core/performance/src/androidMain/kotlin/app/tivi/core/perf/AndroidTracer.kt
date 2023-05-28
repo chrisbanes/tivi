@@ -33,7 +33,7 @@ class AndroidTracer : Tracer {
             firebaseTrace(name) {
                 block()
             }
-        } catch (e: IllegalStateException) {
+        } catch (t: Throwable) {
             // Firebase likely isn't setup. Ignore the exception, but disable calls to Firebase
             // Performance Monitoring from now on
             enabled = false
