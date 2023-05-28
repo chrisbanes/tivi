@@ -22,11 +22,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.screens.SearchScreen
 import app.tivi.screens.ShowDetailsScreen

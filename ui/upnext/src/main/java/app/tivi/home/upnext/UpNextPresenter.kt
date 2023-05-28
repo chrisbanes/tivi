@@ -23,11 +23,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.api.UiMessageManager
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.models.SortOption
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.executeSync

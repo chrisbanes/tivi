@@ -24,11 +24,11 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.unit.Dp
+import app.tivi.common.compose.rememberCoroutineScope
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.overlay.Overlay
 import com.slack.circuit.overlay.OverlayHost

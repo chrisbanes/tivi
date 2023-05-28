@@ -21,8 +21,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import app.tivi.api.UiMessageManager
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows

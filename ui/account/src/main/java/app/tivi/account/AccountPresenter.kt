@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.traktauth.LoginToTraktInteractor
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.data.traktauth.TraktAuthState
