@@ -28,6 +28,7 @@ dependencies {
     implementation(projects.data.traktauth) // This should really be used through an interactor
 
     api(projects.common.ui.screens)
+    api(projects.common.ui.circuitOverlay) // Only for LocalNavigator
     api(libs.circuit.foundation)
 
     // For registerForActivityResult

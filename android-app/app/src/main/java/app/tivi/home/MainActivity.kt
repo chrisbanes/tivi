@@ -4,12 +4,15 @@
 package app.tivi.home
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.findViewTreeLifecycleOwner
@@ -33,8 +36,11 @@ import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.ApplicationComponent
+import app.tivi.overlays.LocalNavigator
 import app.tivi.screens.DiscoverScreen
+import app.tivi.screens.SettingsScreen
 import app.tivi.screens.TiviScreen
+import app.tivi.settings.SettingsActivity
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
@@ -46,6 +52,7 @@ import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.foundation.screen
 import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.Screen
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -90,7 +97,11 @@ class MainActivity : TiviActivity() {
     private fun TiviContent() {
         CircuitCompositionLocals(component.circuitConfig) {
             val backstack: SaveableBackStack = rememberSaveableBackStack { push(DiscoverScreen) }
-            val navigator: Navigator = rememberCircuitNavigator(backstack)
+            val circuitNavigator = rememberCircuitNavigator(backstack)
+
+            val navigator: Navigator = remember(circuitNavigator) {
+                TiviNavigator(context = this, navigator = circuitNavigator)
+            }
 
             // Launch an effect to track changes to the current back stack entry, and push them
             // as a screen views to analytics
@@ -105,6 +116,7 @@ class MainActivity : TiviActivity() {
             CompositionLocalProvider(
                 LocalTiviDateFormatter provides component.tiviDateFormatter,
                 LocalTiviTextCreator provides component.textCreator,
+                LocalNavigator provides navigator,
             ) {
                 TiviTheme(
                     useDarkColors = preferences.shouldUseDarkColors(),
@@ -114,6 +126,29 @@ class MainActivity : TiviActivity() {
                 }
             }
         }
+    }
+}
+
+internal class TiviNavigator(
+    private val context: Context,
+    private val navigator: Navigator,
+) : Navigator {
+    override fun goTo(screen: Screen) {
+        when (screen) {
+            is SettingsScreen -> {
+                // We need to 'escape' out of Compose here and launch an activity
+                context.startActivity(Intent(context, SettingsActivity::class.java))
+            }
+            else -> navigator.goTo(screen)
+        }
+    }
+
+    override fun pop(): Screen? {
+        return navigator.pop()
+    }
+
+    override fun resetRoot(newRoot: Screen): List<Screen> {
+        return navigator.resetRoot(newRoot)
     }
 }
 

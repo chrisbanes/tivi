@@ -38,7 +38,9 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.models.TraktUser
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.overlays.LocalNavigator
 import app.tivi.screens.AccountScreen
+import app.tivi.screens.SettingsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -69,9 +71,19 @@ internal fun AccountUi(
     // Need to extract the eventSink out to a local val, so that the Compose Compiler
     // treats it as stable. See: https://issuetracker.google.com/issues/256100927
     val eventSink = state.eventSink
+
+    val navigator = LocalNavigator.current
+
     AccountUi(
         viewState = state,
-        openSettings = { eventSink(AccountUiEvent.NavigateToSettings) },
+        openSettings = {
+            // Really we should send up the NavigateToSettings event to the presenter, and let
+            // it handle the navigation. Due to how this UI is presented (in an overlay), the
+            // navigator given to the presenter is a no-op. To workaround that, we stuff the actual
+            // navigator used into a composition local, and then manually call it.
+            // eventSink(AccountUiEvent.NavigateToSettings)
+            navigator.goTo(SettingsScreen)
+        },
         login = { eventSink(AccountUiEvent.Login) },
         logout = { eventSink(AccountUiEvent.Logout) },
         modifier = modifier,
