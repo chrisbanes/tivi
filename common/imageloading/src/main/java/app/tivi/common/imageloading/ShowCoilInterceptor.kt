@@ -1,4 +1,4 @@
-// Copyright 2019, Google LLC, Christopher Banes and the Tivi project contributors
+// Copyright 2019, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package app.tivi.common.imageloading

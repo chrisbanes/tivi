@@ -1,4 +1,4 @@
-// Copyright 2021, Google LLC, Christopher Banes and the Tivi project contributors
+// Copyright 2021, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package dev.icerock.moko.resources.compose
