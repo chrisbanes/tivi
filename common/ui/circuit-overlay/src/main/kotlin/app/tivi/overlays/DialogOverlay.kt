@@ -3,9 +3,13 @@
 
 package app.tivi.overlays
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.common.compose.ui.androidMinWidthDialogSize
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.overlay.Overlay
 import com.slack.circuit.overlay.OverlayHost
@@ -23,12 +27,15 @@ class DialogOverlay<Model : Any, Result : Any>(
         val coroutineScope = rememberCoroutineScope()
         Dialog(
             onDismissRequest = { navigator.finish(onDismiss()) },
+            properties = DialogProperties(usePlatformDefaultWidth = false),
         ) {
-            // Delay setting the result until we've finished dismissing
-            content(model) { result ->
-                // This is the OverlayNavigator.finish() callback
-                coroutineScope.launch {
-                    navigator.finish(result)
+            Box(Modifier.androidMinWidthDialogSize(clampMaxWidth = true)) {
+                // Delay setting the result until we've finished dismissing
+                content(model) { result ->
+                    // This is the OverlayNavigator.finish() callback
+                    coroutineScope.launch {
+                        navigator.finish(result)
+                    }
                 }
             }
         }

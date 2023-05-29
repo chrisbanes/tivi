@@ -4,7 +4,6 @@
 package app.tivi.common.compose.ui
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -52,7 +51,7 @@ fun Modifier.androidMinWidthDialogSize(
     }
 
     if (clampMaxWidth) {
-        Modifier.width(((displayWidth * minWidthRatio) / density).dp)
+        Modifier.widthIn(max = ((displayWidth * minWidthRatio) / density).dp)
     } else {
         Modifier.widthIn(min = ((displayWidth * minWidthRatio) / density).dp)
     }
