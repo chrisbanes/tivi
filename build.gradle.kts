@@ -1,18 +1,5 @@
-/*
- * Copyright 2017 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2023, Christopher Banes and the Tivi project contributors
+// SPDX-License-Identifier: Apache-2.0
 
 
 import com.android.build.gradle.internal.lint.AndroidLintAnalysisTask
@@ -41,13 +28,29 @@ allprojects {
             targetExclude("$buildDir/**/*.kt")
             targetExclude("bin/**/*.kt")
             ktlint(libs.versions.ktlint.get())
-            licenseHeaderFile(rootProject.file("spotless/copyright.txt"))
+            licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"))
+                .named("google")
+                .onlyIfContentMatches("Copyright \\d+,* Google")
+            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"))
+                .named("cb-existing")
+                .onlyIfContentMatches("Copyright \\d+,* Christopher Banes")
+            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"))
+                .named("cb-none")
+                .onlyIfContentMatches("^(?!// Copyright).*\$")
         }
         kotlinGradle {
             target("**/*.kts")
             targetExclude("$buildDir/**/*.kts")
             ktlint(libs.versions.ktlint.get())
-            licenseHeaderFile(rootProject.file("spotless/copyright.txt"), "(^(?![\\/ ]\\*).*$)")
+            licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
+                .named("google")
+                .onlyIfContentMatches("Copyright \\d+,* Google")
+            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
+                .named("cb-existing")
+                .onlyIfContentMatches("Copyright \\d+,* Christopher Banes")
+            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
+                .named("cb-none")
+                .onlyIfContentMatches("^(?!// Copyright).*\$")
         }
     }
 

@@ -1,0 +1,7 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="allowReplaceRegexp" value="Copyright \d+, Christopher" />
+    <option name="notice" value="Copyright &amp;#36;today.year, Christopher Banes and the Tivi project contributors&#10;SPDX-License-Identifier: Apache-2.0" />
+    <option name="myName" value="Chris Banes Apache v2" />
+  </copyright>
+</component>
