@@ -1,8 +1,6 @@
 // Copyright 2023, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// Copyright 2017, Christopher Banes and the Tivi project contributors
-// SPDX-License-Identifier: Apache-2.0
 
 import com.android.build.gradle.internal.lint.AndroidLintAnalysisTask
 import com.android.build.gradle.internal.lint.AndroidLintTask
@@ -36,17 +34,23 @@ allprojects {
             licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"))
                 .named("cb-existing")
                 .onlyIfContentMatches("Copyright \\d+,* Christopher Banes")
+            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"))
+                .named("cb-none")
+                .onlyIfContentMatches("^(?!// Copyright).*\$")
         }
         kotlinGradle {
             target("**/*.kts")
             targetExclude("$buildDir/**/*.kts")
             ktlint(libs.versions.ktlint.get())
-            licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"), "(^(?![\\/ ]\\*).*$)")
+            licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
                 .named("google")
                 .onlyIfContentMatches("Copyright \\d+,* Google")
-            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"), "(^(?![\\/ ]\\*).*$)")
+            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
                 .named("cb-existing")
                 .onlyIfContentMatches("Copyright \\d+,* Christopher Banes")
+            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
+                .named("cb-none")
+                .onlyIfContentMatches("^(?!// Copyright).*\$")
         }
     }
 

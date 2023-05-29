@@ -1,13 +1,6 @@
 // Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
-// SPDX-License-Identifier: Apache-2.0
-
-// Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
-// SPDX-License-Identifier: Apache-2.0
-// Copyright 2017, Google LLC, Christopher Banes and the Tivi project contributors
-// SPDX-License-Identifier: Apache-2.0
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
