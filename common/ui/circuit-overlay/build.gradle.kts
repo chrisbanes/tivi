@@ -20,6 +20,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.common.ui.compose)
     implementation(projects.common.ui.screens)
 
     implementation(platform(libs.compose.bom))
