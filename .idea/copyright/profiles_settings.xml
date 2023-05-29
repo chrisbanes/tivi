@@ -1,3 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="Chris Banes Apache v2" />
+  <settings default="Chris Banes Apache v2">
+    <LanguageOptions name="__TEMPLATE__">
+      <option name="block" value="false" />
+    </LanguageOptions>
+  </settings>
 </component>
