@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
+import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.models.SortOption
@@ -28,8 +29,6 @@ import app.tivi.screens.LibraryScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
-import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectStatus
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -68,9 +67,6 @@ class LibraryPresenter(
     @Composable
     override fun present(): LibraryUiState {
         val scope = rememberCoroutineScope()
-
-        val followedLoadingState = remember { ObservableLoadingCounter() }
-        val watchedLoadingState = remember { ObservableLoadingCounter() }
         val uiMessageManager = remember { UiMessageManager() }
 
         val items = observePagedLibraryShows.flow.collectAsLazyPagingItems()
@@ -78,8 +74,7 @@ class LibraryPresenter(
         var filter by remember { mutableStateOf<String?>(null) }
         var sort by remember { mutableStateOf(SortOption.LAST_WATCHED) }
 
-        val followedLoading by followedLoadingState.observable.collectAsState(false)
-        val watchedLoading by watchedLoadingState.observable.collectAsState(false)
+        val loading by updateLibraryShows.inProgress.collectAsState(false)
         val message by uiMessageManager.message.collectAsState(null)
 
         val user by observeUserDetails.flow.collectAsState(null)
@@ -106,7 +101,12 @@ class LibraryPresenter(
                         if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
                             updateLibraryShows(
                                 UpdateLibraryShows.Params(event.fromUser),
-                            ).collectStatus(followedLoadingState, logger, uiMessageManager)
+                            ).also { result ->
+                                result.exceptionOrNull()?.let { e ->
+                                    logger.i(e)
+                                    uiMessageManager.emitMessage(UiMessage(e))
+                                }
+                            }
                         }
                     }
                 }
@@ -153,7 +153,7 @@ class LibraryPresenter(
             items = items,
             user = user,
             authState = authState,
-            isLoading = followedLoading || watchedLoading,
+            isLoading = loading,
             filter = filter,
             filterActive = !filter.isNullOrEmpty(),
             availableSorts = AVAILABLE_SORT_OPTIONS,

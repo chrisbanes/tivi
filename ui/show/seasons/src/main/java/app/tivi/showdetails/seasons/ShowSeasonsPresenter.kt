@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.models.TiviShow
@@ -17,8 +18,6 @@ import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
-import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectStatus
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -54,12 +53,11 @@ class ShowSeasonsPresenter(
     override fun present(): ShowSeasonsUiState {
         val scope = rememberCoroutineScope()
 
-        val loadingState = remember { ObservableLoadingCounter() }
         val uiMessageManager = remember { UiMessageManager() }
 
         val seasons by observeShowSeasons.flow.collectAsState(emptyList())
         val show by observeShowDetails.flow.collectAsState(TiviShow.EMPTY_SHOW)
-        val refreshing by loadingState.observable.collectAsState(false)
+        val refreshing by updateShowSeasons.inProgress.collectAsState(false)
         val message by uiMessageManager.message.collectAsState(null)
 
         fun eventSink(event: ShowSeasonsUiEvent) {
@@ -74,7 +72,12 @@ class ShowSeasonsPresenter(
                     scope.launch {
                         updateShowSeasons(
                             UpdateShowSeasons.Params(screen.id, event.fromUser),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 

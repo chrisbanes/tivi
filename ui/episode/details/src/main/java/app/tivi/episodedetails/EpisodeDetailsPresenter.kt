@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.domain.interactors.RemoveEpisodeWatch
@@ -18,8 +19,6 @@ import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.util.Logger
-import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectStatus
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -56,11 +55,9 @@ class EpisodeDetailsPresenter(
     @Composable
     override fun present(): EpisodeDetailsUiState {
         val scope = rememberCoroutineScope()
-
-        val loadingState = remember { ObservableLoadingCounter() }
         val uiMessageManager = remember { UiMessageManager() }
 
-        val refreshing by loadingState.observable.collectAsState(false)
+        val refreshing by updateEpisodeDetails.inProgress.collectAsState(false)
         val message by uiMessageManager.message.collectAsState(null)
 
         val episodeDetails by observeEpisodeDetails.flow.collectAsState(null)
@@ -72,7 +69,12 @@ class EpisodeDetailsPresenter(
                     scope.launch {
                         updateEpisodeDetails(
                             UpdateEpisodeDetails.Params(screen.id, event.fromUser),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 
@@ -86,7 +88,12 @@ class EpisodeDetailsPresenter(
                     scope.launch {
                         removeEpisodeWatches(
                             RemoveEpisodeWatches.Params(screen.id),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 
@@ -94,7 +101,12 @@ class EpisodeDetailsPresenter(
                     scope.launch {
                         removeEpisodeWatch(
                             RemoveEpisodeWatch.Params(event.id),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 

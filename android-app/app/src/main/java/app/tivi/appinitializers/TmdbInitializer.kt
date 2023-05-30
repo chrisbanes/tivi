@@ -3,8 +3,8 @@
 
 package app.tivi.appinitializers
 
-import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.UpdateTmdbConfig
+import app.tivi.domain.invoke
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -19,7 +19,7 @@ class TmdbInitializer(
     override fun init() {
         @OptIn(DelicateCoroutinesApi::class)
         GlobalScope.launch(dispatchers.main) {
-            updateTmdbConfig.executeSync()
+            updateTmdbConfig.invoke()
         }
     }
 }

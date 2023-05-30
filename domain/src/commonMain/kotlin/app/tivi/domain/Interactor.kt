@@ -5,47 +5,59 @@ package app.tivi.domain
 
 import app.cash.paging.PagingConfig
 import app.cash.paging.PagingData
-import app.tivi.base.InvokeError
-import app.tivi.base.InvokeStarted
-import app.tivi.base.InvokeStatus
-import app.tivi.base.InvokeSuccess
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.TimeoutCancellationException
+import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withTimeout
 
 abstract class Interactor<in P> {
-    operator fun invoke(
-        params: P,
-        timeoutMs: Long = defaultTimeoutMs,
-    ): Flow<InvokeStatus> = flow {
-        try {
-            withTimeout(timeoutMs) {
-                emit(InvokeStarted)
-                doWork(params)
-                emit(InvokeSuccess)
-            }
-        } catch (t: TimeoutCancellationException) {
-            emit(InvokeError(t))
-        }
-    }.catch { t -> emit(InvokeError(t)) }
+    private val count = AtomicInteger()
+    private val loadingState = MutableStateFlow(count.get())
 
-    suspend fun executeSync(params: P) = doWork(params)
+    val inProgress: Flow<Boolean>
+        get() = loadingState.map { it > 0 }.distinctUntilChanged()
+
+    private fun addLoader() {
+        loadingState.value = count.incrementAndGet()
+    }
+
+    private fun removeLoader() {
+        loadingState.value = count.decrementAndGet()
+    }
+
+    suspend operator fun invoke(
+        params: P,
+        timeoutMs: Long = DefaultTimeoutMs,
+    ): Result<Unit> {
+        return try {
+            addLoader()
+            runCatching {
+                withTimeout(timeoutMs) {
+                    doWork(params)
+                }
+            }
+        } finally {
+            removeLoader()
+        }
+    }
 
     protected abstract suspend fun doWork(params: P)
 
     companion object {
-        private val defaultTimeoutMs = TimeUnit.MINUTES.toMillis(5)
+        internal val DefaultTimeoutMs = TimeUnit.MINUTES.toMillis(5)
     }
 }
 
-suspend inline fun Interactor<Unit>.executeSync() = executeSync(Unit)
+suspend fun Interactor<Unit>.invoke(
+    timeoutMs: Long = Interactor.DefaultTimeoutMs,
+) = invoke(Unit, timeoutMs)
 
 abstract class ResultInteractor<in P, R> {
     operator fun invoke(params: P): Flow<R> = flow {

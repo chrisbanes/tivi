@@ -7,7 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.models.TiviShow
@@ -30,12 +32,11 @@ import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
-import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectStatus
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -78,12 +79,18 @@ class ShowDetailsPresenter(
     override fun present(): ShowDetailsUiState {
         val scope = rememberCoroutineScope()
 
-        val loadingState = remember { ObservableLoadingCounter() }
         val uiMessageManager = remember { UiMessageManager() }
 
         val isFollowed by observeShowFollowStatus.flow.collectAsState(false)
         val show by observeShowDetails.flow.collectAsState(TiviShow.EMPTY_SHOW)
-        val refreshing by loadingState.observable.collectAsState(false)
+        val refreshing by produceState(false) {
+            combine(
+                updateShowDetails.inProgress,
+                updateShowSeasons.inProgress,
+                updateRelatedShows.inProgress,
+                transform = { values -> values.any { it } },
+            ).collect { value = it }
+        }
         val relatedShows by observeRelatedShows.flow.collectAsState(emptyList())
         val nextEpisode by observeNextEpisodeToWatch.flow.collectAsState(null)
         val seasons by observeShowSeasons.flow.collectAsState(emptyList())
@@ -102,17 +109,32 @@ class ShowDetailsPresenter(
                     scope.launch {
                         updateShowDetails(
                             UpdateShowDetails.Params(showId, event.fromUser),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                     scope.launch {
                         updateRelatedShows(
                             UpdateRelatedShows.Params(showId, event.fromUser),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                     scope.launch {
                         updateShowSeasons(
                             UpdateShowSeasons.Params(showId, event.fromUser),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 
@@ -123,7 +145,12 @@ class ShowDetailsPresenter(
                                 seasonId = event.seasonId,
                                 action = ChangeSeasonFollowStatus.Action.FOLLOW,
                             ),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 
@@ -131,7 +158,12 @@ class ShowDetailsPresenter(
                     scope.launch {
                         changeSeasonWatchedStatus(
                             Params(event.seasonId, Action.UNWATCH),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 
@@ -139,7 +171,12 @@ class ShowDetailsPresenter(
                     scope.launch {
                         changeSeasonWatchedStatus(
                             Params(event.seasonId, Action.WATCHED, event.onlyAired, event.date),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 
@@ -147,7 +184,12 @@ class ShowDetailsPresenter(
                     scope.launch {
                         changeShowFollowStatus(
                             ChangeShowFollowStatus.Params(showId, TOGGLE),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 
@@ -158,7 +200,12 @@ class ShowDetailsPresenter(
                                 seasonId = event.seasonId,
                                 action = ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS,
                             ),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 
@@ -169,7 +216,12 @@ class ShowDetailsPresenter(
                                 seasonId = event.seasonId,
                                 action = ChangeSeasonFollowStatus.Action.IGNORE,
                             ),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
                 ShowDetailsUiEvent.NavigateBack -> navigator.pop()
