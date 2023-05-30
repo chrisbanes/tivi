@@ -7,13 +7,13 @@ import app.cash.paging.PagingConfig
 import app.cash.paging.PagingData
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withTimeout
 
@@ -65,14 +65,7 @@ abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T : Any> : S
     }
 }
 
-abstract class SuspendingWorkInteractor<P : Any, T> : SubjectInteractor<P, T>() {
-    override fun createObservable(params: P): Flow<T> = flow {
-        emit(doWork(params))
-    }
-
-    abstract suspend fun doWork(params: P): T
-}
-
+@OptIn(ExperimentalCoroutinesApi::class)
 abstract class SubjectInteractor<P : Any, T> {
     // Ideally this would be buffer = 0, since we use flatMapLatest below, BUT invoke is not
     // suspending. This means that we can't suspend while flatMapLatest cancels any
