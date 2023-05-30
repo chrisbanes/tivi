@@ -56,5 +56,5 @@ WHERE
   AND s.ignored = 0
   AND watched_at IS NULL
   AND datetime(first_aired) < datetime('now')
-  AND ((1000 * s.number) + eps.number) > coalesce(last_watched_abs_number, 0)
+  AND ((1000 * s.number) + eps.number) > (coalesce(last_watched_abs_number, 0))
 GROUP BY fs.id;
