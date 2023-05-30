@@ -6,7 +6,7 @@ package app.tivi.domain.interactors
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.models.TiviShow
 import app.tivi.data.search.SearchRepository
-import app.tivi.domain.SuspendingWorkInteractor
+import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -16,7 +16,7 @@ class SearchShows(
     private val searchRepository: SearchRepository,
     private val showDao: TiviShowDao,
     private val dispatchers: AppCoroutineDispatchers,
-) : SuspendingWorkInteractor<SearchShows.Params, List<TiviShow>>() {
+) : Interactor<SearchShows.Params, List<TiviShow>>() {
     override suspend fun doWork(params: Params): List<TiviShow> = withContext(dispatchers.io) {
         val remoteResults = searchRepository.search(params.query)
         when {

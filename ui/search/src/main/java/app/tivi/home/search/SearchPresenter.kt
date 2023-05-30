@@ -10,22 +10,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.data.models.TiviShow
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.screens.SearchScreen
 import app.tivi.screens.ShowDetailsScreen
-import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.Logger
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onEach
+import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -48,6 +46,7 @@ class SearchUiPresenterFactory(
 class SearchPresenter(
     @Assisted private val navigator: Navigator,
     private val searchShows: SearchShows,
+    private val logger: Logger,
 ) : Presenter<SearchUiState> {
 
     @Composable
@@ -55,28 +54,23 @@ class SearchPresenter(
         val scope = rememberCoroutineScope()
 
         var query by remember { mutableStateOf("") }
-        val loadingState = remember { ObservableLoadingCounter() }
         val uiMessageManager = remember { UiMessageManager() }
 
-        val loading by loadingState.observable.collectAsState(false)
+        val loading by searchShows.inProgress.collectAsState(false)
         val message by uiMessageManager.message.collectAsState(null)
-        val results by searchShows.flow.collectAsState(emptyList())
+        var results by remember { mutableStateOf(emptyList<TiviShow>()) }
 
-        LaunchedEffect(Unit) {
-            snapshotFlow { query }
-                .debounce(300)
-                .onEach { query ->
-                    launch {
-                        loadingState.addLoader()
-                        searchShows(SearchShows.Params(query))
-                    }.invokeOnCompletion {
-                        loadingState.removeLoader()
-                    }
-                }
-                .catch { throwable ->
-                    uiMessageManager.emitMessage(UiMessage(throwable))
-                }
-                .collect()
+        LaunchedEffect(query) {
+            // delay for 300 milliseconds. This has the same effect as debounce
+            delay(300.milliseconds)
+
+            val result = searchShows(SearchShows.Params(query))
+            results = result.getOrDefault(emptyList())
+
+            result.exceptionOrNull()?.let { e ->
+                logger.i(e)
+                uiMessageManager.emitMessage(UiMessage(e))
+            }
         }
 
         fun eventSink(event: SearchUiEvent) {
@@ -86,6 +80,7 @@ class SearchPresenter(
                         uiMessageManager.clearMessage(event.id)
                     }
                 }
+
                 is SearchUiEvent.UpdateQuery -> query = event.query
                 is SearchUiEvent.OpenShowDetails -> {
                     navigator.goTo(ShowDetailsScreen(event.showId))
