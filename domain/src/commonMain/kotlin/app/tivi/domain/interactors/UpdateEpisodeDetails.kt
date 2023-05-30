@@ -13,7 +13,7 @@ import me.tatarka.inject.annotations.Inject
 class UpdateEpisodeDetails(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<UpdateEpisodeDetails.Params>() {
+) : Interactor<UpdateEpisodeDetails.Params, Unit>() {
 
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {

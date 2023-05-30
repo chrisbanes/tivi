@@ -20,7 +20,7 @@ class UpdateTrendingShows(
     private val trendingShowsDao: TrendingDao,
     private val showStore: ShowStore,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<Params>() {
+) : Interactor<Params, Unit>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
             val page = when {

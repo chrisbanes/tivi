@@ -13,7 +13,7 @@ import me.tatarka.inject.annotations.Inject
 class ClearUserDetails(
     private val userDao: UserDao,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<ClearUserDetails.Params>() {
+) : Interactor<ClearUserDetails.Params, Unit>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
             when (params.username) {

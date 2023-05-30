@@ -18,9 +18,9 @@ import app.tivi.api.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.models.SortOption
 import app.tivi.data.traktauth.TraktAuthState
-import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.interactors.UpdateLibraryShows
+import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObservePagedLibraryShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
@@ -98,7 +98,7 @@ class LibraryPresenter(
                 }
                 is LibraryUiEvent.Refresh -> {
                     scope.launch {
-                        if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
+                        if (getTraktAuthState.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
                             updateLibraryShows(
                                 UpdateLibraryShows.Params(event.fromUser),
                             ).also { result ->

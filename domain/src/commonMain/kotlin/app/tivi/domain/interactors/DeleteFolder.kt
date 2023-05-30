@@ -12,7 +12,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class DeleteFolder(
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<DeleteFolder.Params>() {
+) : Interactor<DeleteFolder.Params, Unit>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
             if (params.directory.exists()) {

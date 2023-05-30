@@ -21,7 +21,7 @@ class UpdateRelatedShows(
     private val showsStore: ShowStore,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
-) : Interactor<Params>() {
+) : Interactor<Params, Unit>() {
     override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
         relatedShowsStore.fetch(params.showId, params.forceLoad).parallelForEach {
             try {

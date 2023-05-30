@@ -14,7 +14,7 @@ import me.tatarka.inject.annotations.Inject
 class UpdateShowImages(
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<UpdateShowImages.Params>() {
+) : Interactor<UpdateShowImages.Params, Unit>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
             showImagesStore.fetch(params.showId, params.forceLoad)

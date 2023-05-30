@@ -32,7 +32,7 @@ class UpdateLibraryShows(
     private val watchedShowDao: WatchedShowDao,
     private val logger: Logger,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<UpdateLibraryShows.Params>() {
+) : Interactor<UpdateLibraryShows.Params, Unit>() {
 
     override suspend fun doWork(params: Params): Unit = withContext(dispatchers.io) {
         val watchedShowsDeferred = async {
