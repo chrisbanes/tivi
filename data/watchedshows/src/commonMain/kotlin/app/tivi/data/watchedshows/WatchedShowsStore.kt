@@ -8,16 +8,16 @@ import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.WatchedShowEntry
+import app.tivi.data.util.storeBuilder
 import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
-import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
+import org.mobilenativefoundation.store.store5.Validator
 
 @ApplicationScope
 @Inject
@@ -28,24 +28,20 @@ class WatchedShowsStore(
     lastRequestStore: WatchedShowsLastRequestStore,
     logger: Logger,
     transactionRunner: DatabaseTransactionRunner,
-) : Store<Unit, List<WatchedShowEntry>> by StoreBuilder.from(
+) : Store<Unit, List<WatchedShowEntry>> by storeBuilder(
     fetcher = Fetcher.of {
-        dataSource()
-            .also { lastRequestStore.updateLastRequest() }
-    },
-    sourceOfTruth = SourceOfTruth.of(
-        reader = {
-            watchedShowsDao.entriesObservable().map { entries ->
-                when {
-                    // Store only treats null as 'no value', so convert to null
-                    entries.isEmpty() -> null
-                    // If the request is expired, our data is stale
-                    lastRequestStore.isRequestExpired(6.hours) -> null
-                    // Otherwise, our data is fresh and valid
-                    else -> entries
+        dataSource().let { response ->
+            transactionRunner {
+                lastRequestStore.updateLastRequest()
+
+                response.map { (show, entry) ->
+                    entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
                 }
             }
-        },
+        }
+    },
+    sourceOfTruth = SourceOfTruth.of(
+        reader = { watchedShowsDao.entriesObservable() },
         writer = { _: Unit, response ->
             val syncer = syncerForEntity(
                 entityDao = watchedShowsDao,
@@ -58,9 +54,7 @@ class WatchedShowsStore(
             transactionRunner {
                 syncer.sync(
                     currentValues = watchedShowsDao.entries(),
-                    networkValues = response.map { (show, entry) ->
-                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
-                    },
+                    networkValues = response,
                 )
             }
         },
@@ -70,4 +64,6 @@ class WatchedShowsStore(
         },
         deleteAll = watchedShowsDao::deleteAll,
     ),
+).validator(
+    Validator.by { lastRequestStore.isRequestValid(6.hours) },
 ).build()

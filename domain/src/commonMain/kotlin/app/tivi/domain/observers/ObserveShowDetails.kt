@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.StoreRequest
-import org.mobilenativefoundation.store.store5.StoreResponse
+import org.mobilenativefoundation.store.store5.StoreReadRequest
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 @Inject
 class ObserveShowDetails(
@@ -22,8 +22,8 @@ class ObserveShowDetails(
 ) : SubjectInteractor<ObserveShowDetails.Params, TiviShow>() {
 
     override fun createObservable(params: Params): Flow<TiviShow> {
-        return showStore.stream(StoreRequest.cached(params.showId, refresh = false))
-            .filter { it is StoreResponse.Data }
+        return showStore.stream(StoreReadRequest.cached(params.showId, refresh = false))
+            .filter { it is StoreReadResponse.Data }
             .map { it.requireData() }
             .flowOn(dispatchers.computation)
     }

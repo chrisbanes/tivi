@@ -22,6 +22,10 @@ open class GroupLastRequestStore(
         return isRequestBefore(Clock.System.now() - threshold)
     }
 
+    fun isRequestValid(threshold: Duration): Boolean {
+        return !isRequestExpired(threshold)
+    }
+
     fun isRequestBefore(instant: Instant): Boolean {
         return getRequestInstant()?.let { it < instant } ?: true
     }

@@ -5,10 +5,13 @@ package app.tivi.data.util
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
+import org.mobilenativefoundation.store.store5.Fetcher
+import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreResponse
-import org.mobilenativefoundation.store.store5.fresh
-import org.mobilenativefoundation.store.store5.get
+import org.mobilenativefoundation.store.store5.StoreBuilder
+import org.mobilenativefoundation.store.store5.StoreReadResponse
+import org.mobilenativefoundation.store.store5.impl.extensions.fresh
+import org.mobilenativefoundation.store.store5.impl.extensions.get
 
 suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     key: Key,
@@ -19,6 +22,12 @@ suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     else -> get(key)
 }
 
-fun <T> Flow<StoreResponse<T>>.filterForResult(): Flow<StoreResponse<T>> = filterNot {
-    it is StoreResponse.Loading || it is StoreResponse.NoNewData
+fun <T> Flow<StoreReadResponse<T>>.filterForResult(): Flow<StoreReadResponse<T>> = filterNot {
+    it is StoreReadResponse.Loading || it is StoreReadResponse.NoNewData
 }
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun <Key : Any, Model : Any> storeBuilder(
+    fetcher: Fetcher<Key, Model>,
+    sourceOfTruth: SourceOfTruth<Key, Model>,
+): StoreBuilder<Key, Model> = StoreBuilder.from(fetcher, sourceOfTruth)
