@@ -27,13 +27,12 @@ dependencies {
     implementation(projects.common.ui.compose)
     implementation(projects.data.traktauth) // This should really be used through an interactor
 
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    api(projects.common.ui.screens)
+    api(projects.common.ui.circuitOverlay) // Only for LocalNavigator
+    api(libs.circuit.foundation)
 
     // For registerForActivityResult
     implementation(libs.androidx.activity.compose)
-
-    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.compose.foundation.foundation)
     implementation(libs.compose.foundation.layout)

@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.android.lint) apply false
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.parcelize) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.gms.googleServices) apply false
     alias(libs.plugins.firebase.crashlytics) apply false

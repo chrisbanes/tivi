@@ -65,9 +65,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Backdrop
@@ -75,66 +75,73 @@ import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.TiviAlertDialog
 import app.tivi.common.compose.ui.none
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.models.Season
+import app.tivi.overlays.showInBottomSheet
+import app.tivi.screens.EpisodeDetailsScreen
+import app.tivi.screens.EpisodeTrackScreen
+import com.slack.circuit.overlay.LocalOverlayHost
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias EpisodeDetails = @Composable (
-    navigateUp: () -> Unit,
-    navigateToTrack: () -> Unit,
-) -> Unit
-
 @Inject
-@Composable
-fun EpisodeDetails(
-    viewModelFactory: (SavedStateHandle) -> EpisodeDetailsViewModel,
-    @Assisted navigateUp: () -> Unit,
-    @Assisted navigateToTrack: () -> Unit,
-) {
-    EpisodeDetails(
-        viewModel = viewModel(factory = viewModelFactory),
-        navigateUp = navigateUp,
-        navigateToTrack = navigateToTrack,
-    )
+class EpisodeDetailsUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is EpisodeDetailsScreen -> {
+            ui<EpisodeDetailsUiState> { state, modifier ->
+                EpisodeDetails(state, modifier)
+            }
+        }
+
+        else -> null
+    }
 }
 
 @Composable
 internal fun EpisodeDetails(
-    viewModel: EpisodeDetailsViewModel,
-    navigateUp: () -> Unit,
-    navigateToTrack: () -> Unit,
+    viewState: EpisodeDetailsUiState,
+    modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
+    val scope = rememberCoroutineScope()
+    val overlayHost = LocalOverlayHost.current
 
     EpisodeDetails(
         viewState = viewState,
-        navigateUp = navigateUp,
+        navigateUp = { viewState.eventSink(EpisodeDetailsUiEvent.NavigateUp) },
         refresh = { viewState.eventSink(EpisodeDetailsUiEvent.Refresh(true)) },
         onRemoveAllWatches = { viewState.eventSink(EpisodeDetailsUiEvent.RemoveAllWatches) },
         onRemoveWatch = { id -> viewState.eventSink(EpisodeDetailsUiEvent.RemoveWatchEntry(id)) },
-        onAddWatch = navigateToTrack,
+        onAddWatch = {
+            scope.launch {
+                overlayHost.showInBottomSheet(EpisodeTrackScreen(viewState.episode!!.id))
+            }
+        },
         onMessageShown = { id -> viewState.eventSink(EpisodeDetailsUiEvent.ClearMessage(id)) },
+        modifier = modifier,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EpisodeDetails(
-    viewState: EpisodeDetailsViewState,
+    viewState: EpisodeDetailsUiState,
     navigateUp: () -> Unit,
     refresh: () -> Unit,
     onRemoveAllWatches: () -> Unit,
     onRemoveWatch: (id: Long) -> Unit,
     onAddWatch: () -> Unit,
     onMessageShown: (id: Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -158,7 +165,7 @@ internal fun EpisodeDetails(
     }
 
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .testTag("episode_details"),
     ) {
@@ -557,7 +564,7 @@ private fun EpisodeDetailsAppBar(
 @Composable
 fun PreviewEpisodeDetails() {
     EpisodeDetails(
-        viewState = EpisodeDetailsViewState(
+        viewState = EpisodeDetailsUiState(
             episode = Episode(
                 seasonId = 100,
                 title = "A show too far",

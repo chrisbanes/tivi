@@ -3,47 +3,45 @@
 
 package app.tivi.home.trending
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.EntryGrid
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
+import app.tivi.screens.TrendingShowsScreen
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias TrendingShows = @Composable (
-    openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit,
-) -> Unit
-
 @Inject
-@Composable
-fun TrendingShows(
-    viewModelFactory: () -> TrendingShowsViewModel,
-    @Assisted openShowDetails: (showId: Long) -> Unit,
-    @Assisted navigateUp: () -> Unit,
-) {
-    TrendingShows(
-        viewModel = viewModel(factory = viewModelFactory),
-        openShowDetails = openShowDetails,
-        navigateUp = navigateUp,
-    )
+class TrendingShowsUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is TrendingShowsScreen -> {
+            ui<TrendingShowsUiState> { state, modifier ->
+                TrendingShows(state, modifier)
+            }
+        }
+
+        else -> null
+    }
 }
 
 @Composable
 internal fun TrendingShows(
-    viewModel: TrendingShowsViewModel,
-    openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit,
+    state: TrendingShowsUiState,
+    modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
+
     EntryGrid(
-        lazyPagingItems = viewState.items,
+        lazyPagingItems = state.items,
         title = stringResource(MR.strings.discover_trending_title),
-        onOpenShowDetails = openShowDetails,
-        onNavigateUp = navigateUp,
-        modifier = Modifier.fillMaxSize(),
+        onOpenShowDetails = { eventSink(TrendingShowsUiEvent.OpenShowDetails(it)) },
+        onNavigateUp = { eventSink(TrendingShowsUiEvent.NavigateUp) },
+        modifier = modifier,
     )
 }

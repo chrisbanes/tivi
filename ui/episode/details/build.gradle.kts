@@ -26,8 +26,9 @@ dependencies {
     implementation(projects.common.ui.view)
     implementation(projects.common.ui.compose)
 
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    api(projects.common.ui.screens)
+    api(projects.common.ui.circuitOverlay)
+    api(libs.circuit.foundation)
 
     implementation(libs.compose.foundation.foundation)
     implementation(libs.compose.foundation.layout)
@@ -36,8 +37,6 @@ dependencies {
     implementation(libs.compose.material.iconsext)
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
-
-    api(libs.accompanist.navigation.material)
 
     implementation(libs.coil.compose)
 

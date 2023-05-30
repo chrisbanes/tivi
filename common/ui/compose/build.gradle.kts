@@ -29,12 +29,14 @@ dependencies {
     api(projects.core.preferences)
     api(projects.common.imageloading)
 
+    api(projects.common.ui.screens)
+    api(libs.circuit.foundation)
+
     api(projects.common.ui.resources)
     api(projects.common.ui.resourcesCompose)
     api(projects.common.ui.view)
 
     implementation(libs.androidx.core)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     api(platform(libs.compose.bom))
     implementation(libs.compose.ui.ui)

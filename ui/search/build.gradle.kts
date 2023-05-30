@@ -27,8 +27,8 @@ dependencies {
     implementation(projects.common.ui.compose)
     implementation(projects.common.imageloading)
 
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    api(projects.common.ui.screens)
+    api(libs.circuit.foundation)
 
     implementation(libs.compose.foundation.foundation)
     implementation(libs.compose.foundation.layout)

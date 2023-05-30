@@ -26,8 +26,10 @@ dependencies {
     implementation(projects.common.ui.view)
     implementation(projects.common.ui.compose)
 
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    api(projects.common.ui.screens)
+    api(projects.common.ui.circuitOverlay)
+    api(libs.circuit.foundation)
+
     implementation(libs.androidx.activity.compose)
 
     implementation(libs.compose.foundation.foundation)

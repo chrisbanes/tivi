@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,7 +48,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,78 +58,76 @@ import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviStandardAppBar
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.overlays.showInDialog
+import app.tivi.screens.AccountScreen
+import app.tivi.screens.DiscoverScreen
+import com.slack.circuit.overlay.LocalOverlayHost
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
-import me.tatarka.inject.annotations.Assisted
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
-/**
- * The type which is used for injecting the function
- */
-typealias Discover = @Composable (
-    openTrendingShows: () -> Unit,
-    openPopularShows: () -> Unit,
-    openRecommendedShows: () -> Unit,
-    openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openUser: () -> Unit,
-) -> Unit
-
 @Inject
-@Composable
-fun Discover(
-    viewModelFactory: () -> DiscoverViewModel,
-    @Assisted openTrendingShows: () -> Unit,
-    @Assisted openPopularShows: () -> Unit,
-    @Assisted openRecommendedShows: () -> Unit,
-    @Assisted openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    @Assisted openUser: () -> Unit,
-) {
-    Discover(
-        viewModel = viewModel(factory = viewModelFactory),
-        openTrendingShows = openTrendingShows,
-        openPopularShows = openPopularShows,
-        openRecommendedShows = openRecommendedShows,
-        openShowDetails = openShowDetails,
-        openUser = openUser,
-    )
+class DiscoverUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is DiscoverScreen -> {
+            ui<DiscoverUiState> { state, modifier ->
+                Discover(state, modifier)
+            }
+        }
+
+        else -> null
+    }
 }
 
 @Composable
 internal fun Discover(
-    viewModel: DiscoverViewModel,
-    openTrendingShows: () -> Unit,
-    openPopularShows: () -> Unit,
-    openRecommendedShows: () -> Unit,
-    openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openUser: () -> Unit,
+    state: DiscoverUiState,
+    modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
+    val scope = rememberCoroutineScope()
+    val overlayHost = LocalOverlayHost.current
+
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
 
     Discover(
-        state = viewState,
-        refresh = { viewState.eventSink(DiscoverUiEvent.Refresh(true)) },
-        openUser = openUser,
-        openShowDetails = openShowDetails,
-        openTrendingShows = openTrendingShows,
-        openRecommendedShows = openRecommendedShows,
-        openPopularShows = openPopularShows,
-        onMessageShown = { viewState.eventSink(DiscoverUiEvent.ClearMessage(it)) },
+        state = state,
+        refresh = { eventSink(DiscoverUiEvent.Refresh(true)) },
+        openUser = {
+            scope.launch {
+                overlayHost.showInDialog(AccountScreen)
+            }
+        },
+        openShowDetails = { showId, seasonId, episodeId ->
+            eventSink(DiscoverUiEvent.OpenShowDetails(showId, seasonId, episodeId))
+        },
+        openTrendingShows = { eventSink(DiscoverUiEvent.OpenTrendingShows) },
+        openRecommendedShows = { eventSink(DiscoverUiEvent.OpenRecommendedShows) },
+        openPopularShows = { eventSink(DiscoverUiEvent.OpenPopularShows) },
+        onMessageShown = { eventSink(DiscoverUiEvent.ClearMessage(it)) },
+        modifier = modifier,
     )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun Discover(
-    state: DiscoverViewState,
+    state: DiscoverUiState,
     refresh: () -> Unit,
     openUser: () -> Unit,
     openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
@@ -139,6 +135,7 @@ internal fun Discover(
     openRecommendedShows: () -> Unit,
     openPopularShows: () -> Unit,
     onMessageShown: (id: Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -196,7 +193,7 @@ internal fun Discover(
                 )
             }
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
     ) { paddingValues ->
         val refreshState = rememberPullRefreshState(refreshing = false, onRefresh = refresh)
         Box(modifier = Modifier.pullRefresh(state = refreshState)) {

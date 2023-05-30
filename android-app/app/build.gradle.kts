@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 plugins {
     id("app.tivi.android.application")
     id("app.tivi.kotlin.android")
@@ -148,12 +146,6 @@ androidComponents {
     }
 }
 
-tasks.withType<KotlinCompilationTask<*>> {
-    compilerOptions {
-        freeCompilerArgs.add("-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi")
-    }
-}
-
 dependencies {
     implementation(projects.core.base)
     implementation(projects.core.analytics)
@@ -184,12 +176,12 @@ dependencies {
     implementation(projects.ui.settings)
     implementation(projects.ui.upnext)
 
+    implementation(libs.circuit.overlay)
+
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     implementation(libs.androidx.activity.activity)
     implementation(libs.androidx.activity.compose)
-
-    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.androidx.emoji)
 
@@ -202,9 +194,6 @@ dependencies {
     implementation(libs.compose.ui.tooling)
 
     lintChecks(libs.slack.lint.compose)
-
-    implementation(libs.accompanist.navigation.animation)
-    implementation(libs.accompanist.navigation.material)
 
     implementation(libs.timber)
 

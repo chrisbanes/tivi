@@ -51,7 +51,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,73 +60,67 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import androidx.lifecycle.SavedStateHandle
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.TopAppBarWithBottomContent
-import app.tivi.common.compose.viewModel
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.EpisodeWithWatches
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
+import app.tivi.screens.ShowSeasonsScreen
+import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.runtime.ui.ui
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias ShowSeasons = @Composable (
-    navigateUp: () -> Unit,
-    openEpisodeDetails: (episodeId: Long) -> Unit,
-    initialSeasonId: Long?,
-) -> Unit
-
 @Inject
-@Composable
-fun ShowSeasons(
-    viewModelFactory: (SavedStateHandle) -> ShowSeasonsViewModel,
-    @Assisted navigateUp: () -> Unit,
-    @Assisted openEpisodeDetails: (episodeId: Long) -> Unit,
-    @Assisted initialSeasonId: Long? = null,
-) {
-    ShowSeasons(
-        viewModel = viewModel(factory = viewModelFactory),
-        navigateUp = navigateUp,
-        openEpisodeDetails = openEpisodeDetails,
-        initialSeasonId = initialSeasonId,
-    )
+class ShowSeasonsUiFactory : Ui.Factory {
+    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+        is ShowSeasonsScreen -> {
+            ui<ShowSeasonsUiState> { state, modifier ->
+                ShowSeasons(state, modifier)
+            }
+        }
+
+        else -> null
+    }
 }
 
 @Composable
 internal fun ShowSeasons(
-    viewModel: ShowSeasonsViewModel,
-    navigateUp: () -> Unit,
-    openEpisodeDetails: (episodeId: Long) -> Unit,
-    initialSeasonId: Long?,
+    state: ShowSeasonsUiState,
+    modifier: Modifier = Modifier,
 ) {
-    val viewState = viewModel.presenter()
+    // Need to extract the eventSink out to a local val, so that the Compose Compiler
+    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+    val eventSink = state.eventSink
 
     ShowSeasons(
-        viewState = viewState,
-        navigateUp = navigateUp,
-        openEpisodeDetails = openEpisodeDetails,
-        refresh = { viewState.eventSink(ShowSeasonsUiEvent.Refresh()) },
-        onMessageShown = { viewState.eventSink(ShowSeasonsUiEvent.ClearMessage(it)) },
-        initialSeasonId = initialSeasonId,
+        state = state,
+        navigateUp = { eventSink(ShowSeasonsUiEvent.NavigateBack) },
+        openEpisodeDetails = { eventSink(ShowSeasonsUiEvent.OpenEpisodeDetails(it)) },
+        refresh = { eventSink(ShowSeasonsUiEvent.Refresh()) },
+        onMessageShown = { eventSink(ShowSeasonsUiEvent.ClearMessage(it)) },
+        modifier = modifier,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun ShowSeasons(
-    viewState: ShowSeasonsViewState,
+    state: ShowSeasonsUiState,
     navigateUp: () -> Unit,
     openEpisodeDetails: (episodeId: Long) -> Unit,
     refresh: () -> Unit,
     onMessageShown: (id: Long) -> Unit,
-    initialSeasonId: Long?,
+    modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -142,7 +135,7 @@ internal fun ShowSeasons(
         },
     )
 
-    viewState.message?.let { message ->
+    state.message?.let { message ->
         LaunchedEffect(message) {
             snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
@@ -157,8 +150,8 @@ internal fun ShowSeasons(
         if (pagerState.isScrollInProgress) pagerBeenScrolled = true
     }
 
-    if (initialSeasonId != null && !pagerBeenScrolled && pagerState.canScrollForward) {
-        val initialIndex = viewState.seasons.indexOfFirst { it.season.id == initialSeasonId }
+    if (state.initialSeasonId != null && !pagerBeenScrolled && pagerState.canScrollForward) {
+        val initialIndex = state.seasons.indexOfFirst { it.season.id == state.initialSeasonId }
         LaunchedEffect(initialIndex) {
             pagerState.scrollToPage(initialIndex)
         }
@@ -168,7 +161,7 @@ internal fun ShowSeasons(
         contentWindowInsets = WindowInsets.statusBars,
         topBar = {
             TopAppBarWithBottomContent(
-                title = { Text(text = viewState.show.title ?: "") },
+                title = { Text(text = state.show.title ?: "") },
                 navigationIcon = {
                     IconButton(onClick = navigateUp) {
                         Icon(
@@ -179,14 +172,14 @@ internal fun ShowSeasons(
                 },
                 actions = {
                     RefreshButton(
-                        refreshing = viewState.refreshing,
+                        refreshing = state.refreshing,
                         onClick = refresh,
                     )
                 },
                 bottomContent = {
                     SeasonPagerTabs(
                         pagerState = pagerState,
-                        seasons = viewState.seasons.map { it.season },
+                        seasons = state.seasons.map { it.season },
                         modifier = Modifier.fillMaxWidth(),
                         containerColor = Color.Transparent,
                         contentColor = LocalContentColor.current,
@@ -206,12 +199,12 @@ internal fun ShowSeasons(
                 )
             }
         },
-        modifier = Modifier
+        modifier = modifier
             .testTag("show_seasons")
             .fillMaxSize(),
     ) { contentPadding ->
         SeasonsPager(
-            seasons = viewState.seasons,
+            seasons = state.seasons,
             pagerState = pagerState,
             openEpisodeDetails = openEpisodeDetails,
             modifier = Modifier

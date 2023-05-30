@@ -5,8 +5,7 @@ package app.tivi.core.analytics
 
 interface Analytics {
     fun trackScreenView(
-        label: String,
-        route: String?,
-        arguments: Any? = null,
+        name: String,
+        arguments: Map<String, *>? = null,
     )
 }
