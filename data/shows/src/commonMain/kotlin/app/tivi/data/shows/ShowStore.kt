@@ -8,14 +8,14 @@ import app.tivi.data.daos.getShowWithIdOrThrow
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.TiviShow
 import app.tivi.data.util.mergeShows
+import app.tivi.data.util.storeBuilder
 import app.tivi.inject.ApplicationScope
 import kotlin.time.Duration.Companion.days
-import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
+import org.mobilenativefoundation.store.store5.Validator
 
 @ApplicationScope
 @Inject
@@ -25,7 +25,7 @@ class ShowStore(
     traktDataSource: TraktShowDataSource,
     tmdbDataSource: TmdbShowDataSource,
     transactionRunner: DatabaseTransactionRunner,
-) : Store<Long, TiviShow> by StoreBuilder.from(
+) : Store<Long, TiviShow> by storeBuilder(
     fetcher = Fetcher.of { id: Long ->
         val savedShow = showDao.getShowWithIdOrThrow(id)
 
@@ -45,16 +45,7 @@ class ShowStore(
         throw traktResult.exceptionOrNull()!!
     },
     sourceOfTruth = SourceOfTruth.of(
-        reader = { showId ->
-            showDao.getShowWithIdFlow(showId).map {
-                when {
-                    // If the request is expired, our data is stale
-                    lastRequestStore.isRequestExpired(showId, 14.days) -> null
-                    // Otherwise, our data is fresh and valid
-                    else -> it
-                }
-            }
-        },
+        reader = { showId -> showDao.getShowWithIdFlow(showId) },
         writer = { id, response ->
             transactionRunner {
                 showDao.upsert(
@@ -65,4 +56,6 @@ class ShowStore(
         delete = showDao::delete,
         deleteAll = showDao::deleteAll,
     ),
+).validator(
+    Validator.by { lastRequestStore.isRequestValid(it.id, 14.days) },
 ).build()

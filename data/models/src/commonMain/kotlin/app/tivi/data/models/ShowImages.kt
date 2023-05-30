@@ -5,8 +5,10 @@ package app.tivi.data.models
 
 import app.tivi.extensions.unsafeLazy
 
-data class ShowImages(val images: List<ShowTmdbImage>) {
-
+data class ShowImages(
+    val showId: Long,
+    val images: List<ShowTmdbImage>,
+) {
     val backdrop by unsafeLazy { findHighestRatedForType(ImageType.BACKDROP) }
 
     val poster by unsafeLazy { findHighestRatedForType(ImageType.POSTER) }

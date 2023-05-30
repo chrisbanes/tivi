@@ -15,7 +15,7 @@ import coil.request.ImageRequest
 import coil.request.ImageResult
 import coil.size.pxOrElse
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.get
+import org.mobilenativefoundation.store.store5.impl.extensions.get
 
 @Inject
 class ShowCoilInterceptor(
@@ -36,7 +36,7 @@ class ShowCoilInterceptor(
         model: ShowImageModel,
     ): ImageRequest {
         val entity = runCatching {
-            findHighestRatedForType(showImagesStore.get(model.id), model.imageType)
+            findHighestRatedForType(showImagesStore.get(model.id).images, model.imageType)
         }.getOrNull()
 
         return if (entity != null) {

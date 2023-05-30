@@ -22,6 +22,10 @@ abstract class EntityLastRequestStore(
         return isRequestBefore(entityId, Clock.System.now() - threshold)
     }
 
+    fun isRequestValid(entityId: Long, threshold: Duration): Boolean {
+        return !isRequestExpired(entityId, threshold)
+    }
+
     fun hasBeenRequested(entityId: Long): Boolean = dao.requestCount(request, entityId) > 0
 
     fun isRequestBefore(entityId: Long, instant: Instant): Boolean {
