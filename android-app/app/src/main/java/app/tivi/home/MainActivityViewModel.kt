@@ -45,7 +45,7 @@ class MainActivityViewModel(
     private fun refreshMe() {
         viewModelScope.launch {
             try {
-                updateUserDetails.executeSync(UpdateUserDetails.Params("me", false))
+                updateUserDetails(UpdateUserDetails.Params("me", false))
             } catch (e: ResponseException) {
                 if (e.response.status == HttpStatusCode.Unauthorized) {
                     // If we got a 401 back from Trakt, we should clear out the auth state

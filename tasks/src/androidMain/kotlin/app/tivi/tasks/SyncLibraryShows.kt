@@ -25,7 +25,10 @@ class SyncLibraryShows(
 
     override suspend fun doWork(): Result {
         logger.d("$tags worker running")
-        updateLibraryShows.executeSync(UpdateLibraryShows.Params(true))
-        return Result.success()
+        val result = updateLibraryShows(UpdateLibraryShows.Params(true))
+        return when {
+            result.isSuccess -> Result.success()
+            else -> Result.failure()
+        }
     }
 }

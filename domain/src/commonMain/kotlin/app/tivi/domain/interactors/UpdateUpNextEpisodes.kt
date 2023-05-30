@@ -20,9 +20,7 @@ class UpdateUpNextEpisodes(
 ) : Interactor<UpdateUpNextEpisodes.Params>() {
 
     override suspend fun doWork(params: Params) {
-        updateLibraryShows.executeSync(
-            UpdateLibraryShows.Params(params.forceRefresh),
-        )
+        updateLibraryShows(UpdateLibraryShows.Params(params.forceRefresh))
 
         // Now update the next episodes, to fetch images, etc
         withContext(dispatchers.io) {

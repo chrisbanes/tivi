@@ -11,17 +11,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
-import app.tivi.base.InvokeSuccess
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.util.Logger
-import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectStatus
-import app.tivi.util.onEachStatus
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -63,9 +60,6 @@ class EpisodeTrackPresenter(
     @Composable
     override fun present(): EpisodeTrackUiState {
         val scope = rememberCoroutineScope()
-
-        val loadingState = remember { ObservableLoadingCounter() }
-        val submittingState = remember { ObservableLoadingCounter() }
         val uiMessageManager = remember { UiMessageManager() }
 
         var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
@@ -74,8 +68,8 @@ class EpisodeTrackPresenter(
 
         val episodeDetails by observeEpisodeDetails.flow.collectAsState(initial = null)
 
-        val refreshing by loadingState.observable.collectAsState(initial = false)
-        val submitting by submittingState.observable.collectAsState(initial = false)
+        val refreshing by updateEpisodeDetails.inProgress.collectAsState(initial = false)
+        val submitting by addEpisodeWatch.inProgress.collectAsState(initial = false)
         val message by uiMessageManager.message.collectAsState(initial = null)
 
         var dismissed by remember { mutableStateOf(false) }
@@ -100,7 +94,12 @@ class EpisodeTrackPresenter(
                     scope.launch {
                         updateEpisodeDetails(
                             UpdateEpisodeDetails.Params(screen.id, event.fromUser),
-                        ).collectStatus(loadingState, logger, uiMessageManager)
+                        ).also { result ->
+                            result.exceptionOrNull()?.let { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
+                            }
+                        }
                     }
                 }
 
@@ -139,13 +138,17 @@ class EpisodeTrackPresenter(
 
                     if (instant != null) {
                         scope.launch {
-                            addEpisodeWatch(AddEpisodeWatch.Params(screen.id, instant))
-                                .onEachStatus(submittingState, logger, uiMessageManager)
-                                .collect { status ->
-                                    if (status == InvokeSuccess) {
-                                        dismissed = true
-                                    }
+                            addEpisodeWatch(
+                                AddEpisodeWatch.Params(screen.id, instant),
+                            ).also { result ->
+                                if (result.isSuccess) {
+                                    dismissed = true
                                 }
+                                result.exceptionOrNull()?.let { e ->
+                                    logger.i(e)
+                                    uiMessageManager.emitMessage(UiMessage(e))
+                                }
+                            }
                         }
                     } else {
                         // TODO: display error message

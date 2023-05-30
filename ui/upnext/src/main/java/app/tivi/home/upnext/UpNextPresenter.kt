@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
+import app.tivi.api.UiMessage
 import app.tivi.api.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.models.SortOption
@@ -30,8 +31,6 @@ import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.screens.UpNextScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
-import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectStatus
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -71,14 +70,13 @@ class UpNextPresenter(
     override fun present(): UpNextUiState {
         val scope = rememberCoroutineScope()
 
-        val loadingState = remember { ObservableLoadingCounter() }
         val uiMessageManager = remember { UiMessageManager() }
 
         val items = observePagedUpNextShows.flow.collectAsLazyPagingItems()
 
         var sort by remember { mutableStateOf(SortOption.LAST_WATCHED) }
 
-        val loading by loadingState.observable.collectAsState(false)
+        val loading by updateUpNextEpisodes.inProgress.collectAsState(false)
         val message by uiMessageManager.message.collectAsState(null)
 
         val user by observeUserDetails.flow.collectAsState(null)
@@ -101,7 +99,12 @@ class UpNextPresenter(
                         if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
                             updateUpNextEpisodes(
                                 UpdateUpNextEpisodes.Params(event.fromUser),
-                            ).collectStatus(loadingState, logger, uiMessageManager)
+                            ).also { result ->
+                                result.exceptionOrNull()?.let { e ->
+                                    logger.i(e)
+                                    uiMessageManager.emitMessage(UiMessage(e))
+                                }
+                            }
                         }
                     }
                 }

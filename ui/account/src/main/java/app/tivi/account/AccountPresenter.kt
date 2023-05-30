@@ -20,7 +20,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -68,7 +67,7 @@ class AccountPresenter(
                 AccountUiEvent.Logout -> {
                     scope.launch {
                         traktAuthRepository.clearAuth()
-                        clearUserDetails(ClearUserDetails.Params("me")).collect()
+                        clearUserDetails(ClearUserDetails.Params("me"))
                     }
                 }
             }

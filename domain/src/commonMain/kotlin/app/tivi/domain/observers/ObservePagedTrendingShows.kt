@@ -29,7 +29,7 @@ class ObservePagedTrendingShows(
             config = params.pagingConfig,
             remoteMediator = PaginatedEntryRemoteMediator { page ->
                 try {
-                    updateTrendingShows.executeSync(
+                    updateTrendingShows(
                         UpdateTrendingShows.Params(page = page, forceRefresh = true),
                     )
                 } catch (ce: CancellationException) {
