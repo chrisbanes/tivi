@@ -21,8 +21,6 @@ kotlin {
                 implementation(projects.core.base)
                 api(projects.data.db)
 
-                api(libs.androidx.paging.runtime)
-
                 api(libs.kotlinx.datetime)
 
                 implementation(libs.kotlininject.runtime)

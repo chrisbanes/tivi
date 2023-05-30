@@ -39,7 +39,7 @@ kotlin {
 
                 implementation(projects.api.tmdb)
 
-                api(libs.cashapp.paging.common)
+                api(libs.paging.common)
 
                 implementation(libs.kotlininject.runtime)
             }

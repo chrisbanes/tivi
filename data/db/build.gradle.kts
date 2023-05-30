@@ -14,7 +14,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 api(projects.data.models)
-                api(libs.cashapp.paging.common)
+                api(libs.paging.common)
             }
         }
     }
