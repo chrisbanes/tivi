@@ -17,7 +17,7 @@ class UpdateUpNextEpisodes(
     private val seasonEpisodeRepository: SeasonsEpisodesRepository,
     private val updateLibraryShows: UpdateLibraryShows,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<UpdateUpNextEpisodes.Params>() {
+) : Interactor<UpdateUpNextEpisodes.Params, Unit>() {
 
     override suspend fun doWork(params: Params) {
         updateLibraryShows(UpdateLibraryShows.Params(params.forceRefresh))

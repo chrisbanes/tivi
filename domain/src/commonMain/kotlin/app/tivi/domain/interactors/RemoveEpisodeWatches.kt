@@ -13,7 +13,7 @@ import me.tatarka.inject.annotations.Inject
 class RemoveEpisodeWatches(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<RemoveEpisodeWatches.Params>() {
+) : Interactor<RemoveEpisodeWatches.Params, Unit>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
             seasonsEpisodesRepository.removeAllEpisodeWatches(params.episodeId)

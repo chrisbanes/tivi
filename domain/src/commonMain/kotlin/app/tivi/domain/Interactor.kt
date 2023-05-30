@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withTimeout
 
-abstract class Interactor<in P> {
+abstract class Interactor<in P, R> {
     private val count = AtomicInteger()
     private val loadingState = MutableStateFlow(count.get())
 
@@ -35,7 +35,7 @@ abstract class Interactor<in P> {
     suspend operator fun invoke(
         params: P,
         timeoutMs: Long = DefaultTimeoutMs,
-    ): Result<Unit> {
+    ): Result<R> {
         return try {
             addLoader()
             runCatching {
@@ -48,28 +48,16 @@ abstract class Interactor<in P> {
         }
     }
 
-    protected abstract suspend fun doWork(params: P)
+    protected abstract suspend fun doWork(params: P): R
 
     companion object {
         internal val DefaultTimeoutMs = TimeUnit.MINUTES.toMillis(5)
     }
 }
 
-suspend fun Interactor<Unit>.invoke(
+suspend fun <R> Interactor<Unit, R>.invoke(
     timeoutMs: Long = Interactor.DefaultTimeoutMs,
 ) = invoke(Unit, timeoutMs)
-
-abstract class ResultInteractor<in P, R> {
-    operator fun invoke(params: P): Flow<R> = flow {
-        emit(doWork(params))
-    }
-
-    suspend fun executeSync(params: P): R = doWork(params)
-
-    protected abstract suspend fun doWork(params: P): R
-}
-
-suspend inline fun <R> ResultInteractor<Unit, R>.executeSync(): R = executeSync(Unit)
 
 abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T : Any> : SubjectInteractor<P, PagingData<T>>() {
     interface Parameters<T : Any> {

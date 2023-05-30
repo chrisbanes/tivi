@@ -18,7 +18,7 @@ class UpdateShowDetails(
     private val showStore: ShowStore,
     private val lastRequestStore: ShowLastRequestStore,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<Params>() {
+) : Interactor<Params, Unit>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
             showStore.fetch(

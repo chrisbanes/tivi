@@ -17,7 +17,7 @@ class ChangeShowFollowStatus(
     private val followedShowsRepository: FollowedShowsRepository,
     private val showStore: ShowStore,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<ChangeShowFollowStatus.Params>() {
+) : Interactor<ChangeShowFollowStatus.Params, Unit>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
             params.showIds.forEach { showId ->

@@ -24,7 +24,7 @@ class UpdateRecommendedShows(
     private val dispatchers: AppCoroutineDispatchers,
     private val traktAuthRepository: TraktAuthRepository,
     private val logger: Logger,
-) : Interactor<Params>() {
+) : Interactor<Params, Unit>() {
     override suspend fun doWork(params: Params) {
         // If we're not logged in, we can't load the recommended shows
         if (traktAuthRepository.state.value != TraktAuthState.LOGGED_IN) return
