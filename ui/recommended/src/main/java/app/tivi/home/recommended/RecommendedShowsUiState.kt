@@ -4,7 +4,7 @@
 package app.tivi.home.recommended
 
 import androidx.compose.runtime.Stable
-import androidx.paging.compose.LazyPagingItems
+import app.cash.paging.compose.LazyPagingItems
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState

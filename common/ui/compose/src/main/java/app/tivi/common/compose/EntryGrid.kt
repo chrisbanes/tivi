@@ -43,7 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
+import app.cash.paging.compose.LazyPagingItems
 import app.tivi.common.compose.ui.PlaceholderPosterCard
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton

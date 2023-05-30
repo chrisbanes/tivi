@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
+import app.cash.paging.compose.LazyPagingItems
 
 inline fun LazyListScope.itemSpacer(height: Dp) {
     item {

@@ -16,7 +16,7 @@ moko-resources = "0.22.3"
 okhttp = "4.11.0"
 kermit = "2.0.0-RC4"
 ktor = "2.3.0"
-paging = "3.1.1"
+paging-multiplatform = "3.2.0-alpha05-0.2.2"
 retrofit = "2.9.0"
 sqldelight = "2.0.0-alpha05"
 
@@ -47,9 +47,8 @@ androidx-emoji = "androidx.emoji:emoji:1.1.0"
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxlifecycle" }
 
-cashapp-paging-common = "app.cash.paging:paging-common:3.1.1-0.2.0"
-androidx-paging-runtime = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
-androidx-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha20"
+paging-common = { module = "app.cash.paging:paging-common", version.ref = "paging-multiplatform" }
+paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "paging-multiplatform" }
 
 androidx-palette = "androidx.palette:palette:1.0.0"
 

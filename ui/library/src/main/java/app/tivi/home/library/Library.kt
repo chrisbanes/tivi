@@ -59,8 +59,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 import app.cash.paging.LoadStateLoading
+import app.cash.paging.compose.LazyPagingItems
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator

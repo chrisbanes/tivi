@@ -4,7 +4,7 @@
 package app.tivi.home.library
 
 import androidx.compose.runtime.Stable
-import androidx.paging.compose.LazyPagingItems
+import app.cash.paging.compose.LazyPagingItems
 import app.tivi.api.UiMessage
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
