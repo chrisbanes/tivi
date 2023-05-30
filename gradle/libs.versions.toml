@@ -153,8 +153,8 @@ sqldelight-primitive = { module = "app.cash.sqldelight:primitive-adapters", vers
 
 timber = "com.jakewharton.timber:timber:5.0.1"
 
-tmdb-api = "app.moviebase:tmdb-api:1.0.0"
-trakt-api = "app.moviebase:trakt-api:0.4.0"
+tmdb-api = "app.moviebase:tmdb-api:1.1.0-SNAPSHOT"
+trakt-api = "app.moviebase:trakt-api:0.5.0-SNAPSHOT"
 
 truth = "com.google.truth:truth:1.1.4"
 

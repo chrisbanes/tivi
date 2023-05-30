@@ -25,8 +25,8 @@ dependencyResolutionManagement {
         // maven("https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/")
 
         // Used for snapshots if needed
-        // maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-        // maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
