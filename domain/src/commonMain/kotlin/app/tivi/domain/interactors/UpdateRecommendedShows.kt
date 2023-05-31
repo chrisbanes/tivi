@@ -36,7 +36,7 @@ class UpdateRecommendedShows(
                 } catch (ce: CancellationException) {
                     throw ce
                 } catch (t: Throwable) {
-                    logger.e(t, "Error while show info: ${it.showId}")
+                    logger.e(t) { "Error while show info: ${it.showId}" }
                 }
             }
         }

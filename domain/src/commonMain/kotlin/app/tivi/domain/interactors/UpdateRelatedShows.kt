@@ -29,7 +29,7 @@ class UpdateRelatedShows(
             } catch (ce: CancellationException) {
                 throw ce
             } catch (t: Throwable) {
-                logger.e("Error while show info: ${it.otherShowId}")
+                logger.e { "Error while show info: ${it.otherShowId}" }
             }
         }
     }

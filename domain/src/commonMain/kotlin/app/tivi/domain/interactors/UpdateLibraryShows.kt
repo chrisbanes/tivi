@@ -75,7 +75,7 @@ class UpdateLibraryShows(
             } catch (ce: CancellationException) {
                 throw ce
             } catch (t: Throwable) {
-                logger.e(t, "Error while updating show seasons/episodes: ${entry.showId}")
+                logger.e(t) { "Error while updating show seasons/episodes: ${entry.showId}" }
             }
         }
     }

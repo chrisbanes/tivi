@@ -32,10 +32,11 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
         val updated = ArrayList<LocalType>()
 
         for (networkEntity in networkValues) {
-            logger.v("Syncing item from network: %s", networkEntity)
+            logger.v { "Syncing item from network: $networkEntity" }
 
             val remoteId = networkEntityToKey(networkEntity)
-            logger.v("Mapped to remote ID: %s", remoteId)
+            logger.v { "Mapped to remote ID: $remoteId" }
+
             if (remoteId == null) {
                 break
             }
@@ -43,16 +44,17 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
             val dbEntityForId = currentDbEntities.find {
                 localEntityToKey(it) == remoteId
             }
-            logger.v("Matched database entity for remote ID %s : %s", remoteId, dbEntityForId)
+            logger.v { "Matched database entity for remote ID $remoteId : $dbEntityForId" }
 
             if (dbEntityForId != null) {
                 val entity = networkEntityToLocalEntity(networkEntity, dbEntityForId)
-                logger.v("Mapped network entity to local entity: %s", entity)
+                logger.v { "Mapped network entity to local entity: $entity" }
+
                 if (dbEntityForId != entity) {
                     // This is currently in the DB, so lets merge it with the saved version
                     // and update it
                     upsertEntity(entity)
-                    logger.v("Updated entry with remote id: %s", remoteId)
+                    logger.v { "Updated entry with remote id: $remoteId" }
                 }
                 // Remove it from the list so that it is not deleted
                 currentDbEntities.remove(dbEntityForId)
@@ -67,7 +69,7 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
             // Anything left in the set needs to be deleted from the database
             currentDbEntities.forEach {
                 deleteEntity(it)
-                logger.v("Deleted entry: %s", it)
+                logger.v { "Deleted entry: $it" }
                 removed += it
             }
         }

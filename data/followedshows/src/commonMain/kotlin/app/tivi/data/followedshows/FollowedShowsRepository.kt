@@ -64,7 +64,7 @@ class FollowedShowsRepository(
     fun addFollowedShow(showId: Long) {
         val entry = followedShowsDao.entryWithShowId(showId)
 
-        logger.d("addFollowedShow. Current entry: %s", entry)
+        logger.d { "addFollowedShow. Current entry: $entry" }
 
         if (entry == null || entry.pendingAction == PendingAction.DELETE) {
             // If we don't have an entry, or it is marked for deletion, lets update it to be uploaded
@@ -76,7 +76,7 @@ class FollowedShowsRepository(
             )
             val newEntryId = followedShowsDao.upsert(newEntry)
 
-            logger.v("addFollowedShow. Entry saved with ID: %s - %s", newEntryId, newEntry)
+            logger.v { "addFollowedShow. Entry saved with ID: $newEntryId - $newEntry" }
         }
     }
 
@@ -109,7 +109,7 @@ class FollowedShowsRepository(
         listId: Int,
     ): ItemSyncerResult<FollowedShowEntry> {
         val response = dataSource.getListShows(listId)
-        logger.d("pullDownTraktFollowedList. Response: %s", response)
+        logger.d { "pullDownTraktFollowedList. Response: $response" }
         return transactionRunner {
             response.map { (entry, show) ->
                 // Grab the show id if it exists, or save the show and use it's generated ID
@@ -125,7 +125,7 @@ class FollowedShowsRepository(
 
     private suspend fun processPendingAdditions(listId: Int?) {
         val pending = followedShowsDao.entriesWithSendPendingActions()
-        logger.d("processPendingAdditions. listId: %s, Entries: %s", listId, pending)
+        logger.d { "processPendingAdditions. listId: $listId, Entries: $pending" }
 
         if (pending.isEmpty()) {
             return
@@ -133,10 +133,10 @@ class FollowedShowsRepository(
 
         if (listId != null && traktAuthRepository.state.value == TraktAuthState.LOGGED_IN) {
             val shows = pending.mapNotNull { showDao.getShowWithId(it.showId) }
-            logger.v("processPendingAdditions. Entries mapped: %s", shows)
+            logger.v { "processPendingAdditions. Entries mapped: $shows" }
 
             val response = dataSource.addShowIdsToList(listId, shows)
-            logger.v("processPendingAdditions. Trakt response: %s", response)
+            logger.v { "processPendingAdditions. Trakt response: $response" }
 
             // Now update the database
             followedShowsDao.updateEntriesToPendingAction(
@@ -154,7 +154,7 @@ class FollowedShowsRepository(
 
     private suspend fun processPendingDelete(listId: Int?) {
         val pending = followedShowsDao.entriesWithDeletePendingActions()
-        logger.d("processPendingDelete. listId: %s, Entries: %s", listId, pending)
+        logger.d { "processPendingDelete. listId: $listId, Entries: $pending" }
 
         if (pending.isEmpty()) {
             return
@@ -162,10 +162,10 @@ class FollowedShowsRepository(
 
         if (listId != null && traktAuthRepository.state.value == TraktAuthState.LOGGED_IN) {
             val shows = pending.mapNotNull { showDao.getShowWithId(it.showId) }
-            logger.v("processPendingDelete. Entries mapped: %s", shows)
+            logger.v { "processPendingDelete. Entries mapped: $shows" }
 
             val response = dataSource.removeShowIdsFromList(listId, shows)
-            logger.v("processPendingDelete. Trakt response: %s", response)
+            logger.v { "processPendingDelete. Trakt response: $response" }
 
             // Now update the database
             followedShowsDao.deleteWithIds(pending.map { it.id })
