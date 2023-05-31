@@ -15,10 +15,14 @@ actual interface SqlDelightDatabasePlatformComponent {
     @ApplicationScope
     fun provideDriverFactory(
         application: Application,
+        configuration: DatabaseConfiguration,
     ): SqlDriver = AndroidSqliteDriver(
         schema = Database.Schema,
         context = application,
-        name = "shows.db",
+        name = when {
+            configuration.inMemory -> null
+            else -> "shows.db"
+        },
         callback = object : AndroidSqliteDriver.Callback(Database.Schema) {
             override fun onConfigure(db: SupportSQLiteDatabase) {
                 db.enableWriteAheadLogging()
