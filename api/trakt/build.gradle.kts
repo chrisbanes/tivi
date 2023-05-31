@@ -33,9 +33,18 @@ kotlin {
                 implementation(libs.ktor.client.okhttp)
             }
         }
+
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.ktor.client.darwin)
+            }
+        }
     }
 }
 
 dependencies {
     add("kspJvm", libs.kotlininject.compiler)
+    add("kspIosArm64", libs.kotlininject.compiler)
+    add("kspIosSimulatorArm64", libs.kotlininject.compiler)
+    add("kspIosX64", libs.kotlininject.compiler)
 }
