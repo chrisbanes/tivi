@@ -33,7 +33,7 @@ class ObservePagedRecommendedShows(
                 } catch (ce: CancellationException) {
                     throw ce
                 } catch (t: Throwable) {
-                    logger.e(t, "Error while fetching from RemoteMediator")
+                    logger.e(t) { "Error while fetching from RemoteMediator" }
                     throw t
                 }
             },

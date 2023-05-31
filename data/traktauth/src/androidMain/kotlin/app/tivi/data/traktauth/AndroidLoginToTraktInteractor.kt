@@ -53,7 +53,7 @@ class AndroidLoginToTraktInteractor(
                 }
             }
 
-            error != null -> logger.d(error, "AuthException")
+            error != null -> logger.d(error) { "AuthException" }
         }
     }
 }
