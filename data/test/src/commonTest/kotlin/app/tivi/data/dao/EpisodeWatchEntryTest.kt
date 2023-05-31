@@ -37,7 +37,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
 
     @BeforeTest
     fun setup() {
-        val component = EpisodeWatchEntryTestComponent::class.create()
+        val component = EpisodeWatchEntryTestComponent::class.create(applicationComponent)
         showsDao = component.showsDao
         seasonsDao = component.seasonsDao
         episodesDao = component.episodesDao
@@ -98,8 +98,7 @@ class EpisodeWatchEntryTest : DatabaseTest() {
 
 @Component
 abstract class EpisodeWatchEntryTestComponent(
-    @Component val testApplicationComponent: TestApplicationComponent =
-        TestApplicationComponent::class.create(),
+    @Component val applicationComponent: TestApplicationComponent,
 ) {
     abstract val showsDao: TiviShowDao
     abstract val episodesDao: EpisodesDao

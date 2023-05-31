@@ -29,7 +29,7 @@ class SeasonsTest : DatabaseTest() {
 
     @BeforeTest
     fun setup() {
-        val component = SeasonsTestComponent::class.create()
+        val component = SeasonsTestComponent::class.create(applicationComponent)
         showsDao = component.showsDao
         seasonsDao = component.seasonsDao
 
@@ -85,8 +85,7 @@ class SeasonsTest : DatabaseTest() {
 
 @Component
 abstract class SeasonsTestComponent(
-    @Component val testApplicationComponent: TestApplicationComponent =
-        TestApplicationComponent::class.create(),
+    @Component val applicationComponent: TestApplicationComponent,
 ) {
     abstract val showsDao: TiviShowDao
     abstract val seasonsDao: SeasonsDao

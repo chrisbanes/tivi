@@ -41,7 +41,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @BeforeTest
     fun setup() {
-        val component = FollowedShowsRepositoryTestComponent::class.create()
+        val component = FollowedShowsRepositoryTestComponent::class.create(applicationComponent)
         showsDao = component.showsDao
         followShowsDao = component.followShowsDao
         followedShowsRepository = component.followedShowsRepository
@@ -133,8 +133,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
 @Component
 abstract class FollowedShowsRepositoryTestComponent(
-    @Component val testApplicationComponent: TestApplicationComponent =
-        TestApplicationComponent::class.create(),
+    @Component val applicationComponent: TestApplicationComponent,
 ) {
     abstract val showsDao: TiviShowDao
     abstract val followShowsDao: FollowedShowsDao

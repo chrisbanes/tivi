@@ -11,7 +11,9 @@ import me.tatarka.inject.annotations.Provides
 actual interface SqlDelightDatabasePlatformComponent {
     @Provides
     @ApplicationScope
-    fun provideDriverFactory(): SqlDriver {
+    fun provideDriverFactory(
+        configuration: DatabaseConfiguration,
+    ): SqlDriver {
         return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also { db ->
             Database.Schema.create(db)
             db.execute(null, "PRAGMA foreign_keys=ON", 0)

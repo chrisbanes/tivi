@@ -103,4 +103,8 @@ interface SqlDelightDatabaseComponent : SqlDelightDatabasePlatformComponent {
     @ApplicationScope
     @Provides
     fun provideDatabaseTransactionRunner(runner: SqlDelightTransactionRunner): DatabaseTransactionRunner = runner
+
+    @ApplicationScope
+    @Provides
+    fun provideDatabaseConfiguration(): DatabaseConfiguration = DatabaseConfiguration(inMemory = false)
 }

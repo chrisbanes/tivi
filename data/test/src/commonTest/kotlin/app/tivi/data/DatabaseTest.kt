@@ -3,21 +3,25 @@
 
 package app.tivi.data
 
+import app.cash.sqldelight.db.SqlDriver
 import app.moviebase.tmdb.Tmdb3
 import app.moviebase.trakt.Trakt
 import app.tivi.data.traktauth.RefreshTraktTokensInteractor
 import app.tivi.data.traktauth.TraktAuthState
-import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ApplicationScope
 import app.tivi.tmdb.TmdbCommonComponent
 import app.tivi.trakt.TraktCommonComponent
 import app.tivi.util.LoggerComponent
+import kotlin.test.AfterTest
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
 abstract class DatabaseTest {
-    val component: TestApplicationComponent by unsafeLazy {
-        TestApplicationComponent::class.create()
+    val applicationComponent = TestApplicationComponent::class.create()
+
+    @AfterTest
+    fun closeDatabase() {
+        applicationComponent.sqlDriver.close()
     }
 }
 
@@ -43,4 +47,13 @@ abstract class TestApplicationComponent :
 
     @Provides
     fun provideTmdb(): Tmdb3 = Tmdb3("fakefakefake")
+
+    @Provides
+    override fun provideDatabaseConfiguration(): DatabaseConfiguration {
+        return super.provideDatabaseConfiguration().copy(
+            inMemory = true,
+        )
+    }
+
+    abstract val sqlDriver: SqlDriver
 }
