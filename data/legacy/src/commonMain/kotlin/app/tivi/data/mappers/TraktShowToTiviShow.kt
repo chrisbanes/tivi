@@ -5,7 +5,6 @@ package app.tivi.data.mappers
 
 import app.moviebase.trakt.model.TraktShow
 import app.tivi.data.models.TiviShow
-import java.util.Locale
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -32,12 +31,7 @@ class TraktShowToTiviShow(
         firstAired = from.firstAired,
         _genres = from.genres.joinToString(","),
         status = from.status?.let { statusMapper.map(it) },
-        airsDay = from.airs?.day?.let { airsDayString ->
-            DayOfWeek.values().firstOrNull { day ->
-                val dayString = day.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
-                airsDayString.equals(dayString, true)
-            }
-        },
+        airsDay = from.airs?.day?.parseToDayOfWeek(),
         airsTime = from.airs?.time?.let {
             try {
                 LocalTime.parse(it)
@@ -53,4 +47,15 @@ class TraktShowToTiviShow(
             }
         },
     )
+}
+
+fun String.parseToDayOfWeek(): DayOfWeek? = when (this.lowercase()) {
+    "monday" -> DayOfWeek.MONDAY
+    "tuesday" -> DayOfWeek.TUESDAY
+    "wednesday" -> DayOfWeek.WEDNESDAY
+    "thursday" -> DayOfWeek.THURSDAY
+    "friday" -> DayOfWeek.FRIDAY
+    "saturday" -> DayOfWeek.SATURDAY
+    "sunday" -> DayOfWeek.SUNDAY
+    else -> null
 }
