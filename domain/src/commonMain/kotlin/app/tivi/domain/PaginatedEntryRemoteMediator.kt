@@ -3,10 +3,12 @@
 
 package app.tivi.domain
 
-import androidx.paging.ExperimentalPagingApi
 import app.cash.paging.LoadType
 import app.cash.paging.PagingState
 import app.cash.paging.RemoteMediator
+import app.cash.paging.RemoteMediatorMediatorResult
+import app.cash.paging.RemoteMediatorMediatorResultError
+import app.cash.paging.RemoteMediatorMediatorResultSuccess
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.PaginatedEntry
 import kotlinx.coroutines.CancellationException
@@ -15,31 +17,33 @@ import kotlinx.coroutines.CancellationException
  * A [RemoteMediator] which works on [PaginatedEntry] entities. [fetch] will be called with the
  * next page to load.
  */
-
-@OptIn(ExperimentalPagingApi::class)
+@Suppress("CAST_NEVER_SUCCEEDS", "USELESS_CAST", "KotlinRedundantDiagnosticSuppress")
 internal class PaginatedEntryRemoteMediator<LI, ET>(
     private val fetch: suspend (page: Int) -> Unit,
 ) : RemoteMediator<Int, LI>() where ET : PaginatedEntry, LI : EntryWithShow<ET> {
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, LI>,
-    ): MediatorResult {
+    ): RemoteMediatorMediatorResult {
         val nextPage = when (loadType) {
             LoadType.REFRESH -> 0
-            LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+            LoadType.PREPEND -> return RemoteMediatorMediatorResultSuccess(endOfPaginationReached = true)
+                as RemoteMediatorMediatorResult
             LoadType.APPEND -> {
                 val lastItem = state.lastItemOrNull()
-                    ?: return MediatorResult.Success(endOfPaginationReached = true)
+                    ?: return RemoteMediatorMediatorResultSuccess(endOfPaginationReached = true)
+                        as RemoteMediatorMediatorResult
                 lastItem.entry.page + 1
             }
         }
         return try {
             fetch(nextPage)
-            MediatorResult.Success(endOfPaginationReached = false)
+            RemoteMediatorMediatorResultSuccess(endOfPaginationReached = false)
+                as RemoteMediatorMediatorResult
         } catch (ce: CancellationException) {
             throw ce
         } catch (t: Throwable) {
-            MediatorResult.Error(t)
+            RemoteMediatorMediatorResultError(t) as RemoteMediatorMediatorResult
         }
     }
 }
