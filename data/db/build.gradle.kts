@@ -19,8 +19,3 @@ kotlin {
         }
     }
 }
-
-// https://github.com/cashapp/multiplatform-paging/issues/6
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>> {
-    compilerOptions.freeCompilerArgs.add("-opt-in=androidx.paging.ExperimentalPagingApi")
-}

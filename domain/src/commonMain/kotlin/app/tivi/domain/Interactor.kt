@@ -5,8 +5,8 @@ package app.tivi.domain
 
 import app.cash.paging.PagingConfig
 import app.cash.paging.PagingData
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -18,28 +18,28 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withTimeout
 
 abstract class Interactor<in P, R> {
-    private val count = AtomicInteger()
-    private val loadingState = MutableStateFlow(count.get())
+    private var count: Int = 0
+    private val loadingState = MutableStateFlow(count)
 
     val inProgress: Flow<Boolean>
         get() = loadingState.map { it > 0 }.distinctUntilChanged()
 
     private fun addLoader() {
-        loadingState.value = count.incrementAndGet()
+        loadingState.value = count++
     }
 
     private fun removeLoader() {
-        loadingState.value = count.decrementAndGet()
+        loadingState.value = count--
     }
 
     suspend operator fun invoke(
         params: P,
-        timeoutMs: Long = DefaultTimeoutMs,
+        timeout: Duration = DefaultTimeout,
     ): Result<R> {
         return try {
             addLoader()
             runCatching {
-                withTimeout(timeoutMs) {
+                withTimeout(timeout) {
                     doWork(params)
                 }
             }
@@ -51,13 +51,13 @@ abstract class Interactor<in P, R> {
     protected abstract suspend fun doWork(params: P): R
 
     companion object {
-        internal val DefaultTimeoutMs = TimeUnit.MINUTES.toMillis(5)
+        internal val DefaultTimeout = 5.minutes
     }
 }
 
 suspend fun <R> Interactor<Unit, R>.invoke(
-    timeoutMs: Long = Interactor.DefaultTimeoutMs,
-) = invoke(Unit, timeoutMs)
+    timeout: Duration = Interactor.DefaultTimeout,
+) = invoke(Unit, timeout)
 
 abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T : Any> : SubjectInteractor<P, PagingData<T>>() {
     interface Parameters<T : Any> {
