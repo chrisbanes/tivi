@@ -17,6 +17,7 @@ import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.utils.AuthorizedAuthState
+import app.tivi.utils.FakeSeasonsEpisodesDataSource
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1_id
@@ -30,14 +31,15 @@ import app.tivi.utils.s2_id
 import app.tivi.utils.s2e1
 import app.tivi.utils.show
 import app.tivi.utils.showId
-import com.google.common.truth.Truth.assertThat
-import io.mockk.coEvery
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.isEmpty
+import assertk.assertions.isEqualTo
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Component
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
 
 class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     private lateinit var showsDao: TiviShowDao
@@ -46,10 +48,10 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     private lateinit var episodesDao: EpisodesDao
     private lateinit var watchStore: EpisodeWatchStore
     private lateinit var repository: SeasonsEpisodesRepository
-    private lateinit var seasonsDataSource: SeasonsEpisodesDataSource
+    private lateinit var seasonsDataSource: FakeSeasonsEpisodesDataSource
     private lateinit var traktAuthRepository: TraktAuthRepository
 
-    @Before
+    @BeforeTest
     fun setup() {
         val component = SeasonsEpisodesRepositoryTestComponent::class.create()
         showsDao = component.showsDao
@@ -58,7 +60,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao = component.episodesDao
         watchStore = component.watchStore
         repository = component.repository
-        seasonsDataSource = component.seasonsDataSource
+        seasonsDataSource = component.seasonsDataSource as FakeSeasonsEpisodesDataSource
         traktAuthRepository = component.traktAuthRepository
 
         // We'll assume that there's a show in the db
@@ -71,8 +73,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s1_episodes)
 
         // Return a response with 2 items
-        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
-            listOf(s1e1 to s1e1w, s1e1 to s1e1w2)
+        seasonsDataSource.getShowEpisodeWatchesResult =
+            Result.success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         traktAuthRepository.onNewAuthState(AuthorizedAuthState)
         // Sync
         repository.syncEpisodeWatchesForShow(showId)
@@ -89,8 +91,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Insert both the watches
         episodeWatchDao.insert(s1e1w, s1e1w2)
         // Return a response with the same items
-        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
-            listOf(s1e1 to s1e1w, s1e1 to s1e1w2)
+        seasonsDataSource.getShowEpisodeWatchesResult =
+            Result.success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         // Now re-sync with the same response
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
@@ -106,13 +108,14 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Insert both the watches
         episodeWatchDao.insert(s1e1w, s1e1w2)
         // Return a response with just the second item
-        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
-            listOf(s1e1 to s1e1w2)
+        seasonsDataSource.getShowEpisodeWatchesResult = Result.success(listOf(s1e1 to s1e1w2))
+
         traktAuthRepository.onNewAuthState(AuthorizedAuthState)
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that only the second is in the db
-        assertThat(watchStore.getEpisodeWatchesForShow(showId)).containsExactly(s1e1w2)
+        assertThat(watchStore.getEpisodeWatchesForShow(showId))
+            .containsExactly(s1e1w2)
     }
 
     @Test
@@ -123,7 +126,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Insert both the watches
         episodeWatchDao.insert(s1e1w, s1e1w2)
         // Return a empty response
-        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns emptyList()
+        seasonsDataSource.getShowEpisodeWatchesResult = Result.success(emptyList())
         traktAuthRepository.onNewAuthState(AuthorizedAuthState)
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
@@ -134,7 +137,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     @Test
     fun testSyncSeasonsEpisodes() = runTest {
         // Return a response with 2 items
-        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns listOf(s1 to s1_episodes)
+
+        seasonsDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -148,7 +152,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s1_episodes)
 
         // Return a response with the same items
-        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns listOf(s1 to s1_episodes)
+        seasonsDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -162,7 +166,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s1_episodes)
 
         // Return an empty response
-        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns emptyList()
+        seasonsDataSource.getSeasonsEpisodesResult = Result.success(emptyList())
         repository.updateSeasonsEpisodes(showId)
 
         // Assert the database is empty
@@ -177,7 +181,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s2_episodes)
 
         // Return a response with just the first season
-        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns listOf(s1 to s1_episodes)
+        seasonsDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -192,7 +196,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s2_episodes)
 
         // Return a response with both seasons, but just a single episodes in each
-        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns listOf(s1 to listOf(s1e1), s2 to listOf(s2e1))
+        seasonsDataSource.getSeasonsEpisodesResult =
+            Result.success(listOf(s1 to listOf(s1e1), s2 to listOf(s2e1)))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -207,14 +212,14 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s1_episodes)
 
         repository.observeNextEpisodeToWatch(showId).test {
-            assertEquals(s1e1, awaitItem()?.episode)
+            assertThat(awaitItem()?.episode).isEqualTo(s1e1)
 
             // Now mark s1e1 as watched
-            coEvery { seasonsDataSource.addEpisodeWatches(any()) } returns Unit
-            coEvery { seasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns listOf(s1e1w)
+            seasonsDataSource.addEpisodeWatchesResult = Result.success(Unit)
+            seasonsDataSource.getEpisodeWatchesResult = Result.success(listOf(s1e1w))
             repository.addEpisodeWatch(s1e1.id, Clock.System.now())
 
-            assertEquals(s1e2, awaitItem()?.episode)
+            assertThat(awaitItem()?.episode).isEqualTo(s1e2)
         }
     }
 }

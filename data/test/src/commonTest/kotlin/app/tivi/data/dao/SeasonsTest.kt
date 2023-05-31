@@ -14,18 +14,20 @@ import app.tivi.utils.s1_id
 import app.tivi.utils.s2
 import app.tivi.utils.show
 import app.tivi.utils.showId
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertFails
 import me.tatarka.inject.annotations.Component
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.nullValue
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Before
-import org.junit.Test
 
 class SeasonsTest : DatabaseTest() {
     private lateinit var showsDao: TiviShowDao
     private lateinit var seasonsDao: SeasonsDao
 
-    @Before
+    @BeforeTest
     fun setup() {
         val component = SeasonsTestComponent::class.create()
         showsDao = component.showsDao
@@ -39,17 +41,18 @@ class SeasonsTest : DatabaseTest() {
     fun insertSeason() {
         seasonsDao.insert(s1)
 
-        assertThat(seasonsDao.seasonWithId(s1_id), `is`(s1))
+        assertThat(seasonsDao.seasonWithId(s1_id)).isEqualTo(s1)
     }
 
-    @Test(expected = Throwable::class) // Can't be any more granular
+    @Test
     fun insert_withSameTraktId() {
         seasonsDao.insert(s1)
 
-        // Make a copy with a 0 id
-        val copy = s1.copy(id = 0)
-
-        seasonsDao.insert(copy)
+        assertFails {
+            // Make a copy with a 0 id
+            val copy = s1.copy(id = 0)
+            seasonsDao.insert(copy)
+        }
     }
 
     @Test
@@ -59,10 +62,7 @@ class SeasonsTest : DatabaseTest() {
         seasonsDao.insert(s2)
 
         // Specials should always be last
-        assertThat(
-            seasonsDao.seasonsForShowId(showId),
-            `is`(listOf(s1, s2, s0)),
-        )
+        assertThat(seasonsDao.seasonsForShowId(showId)).containsExactly(s1, s2, s0)
     }
 
     @Test
@@ -70,7 +70,7 @@ class SeasonsTest : DatabaseTest() {
         seasonsDao.insert(s1)
         seasonsDao.deleteEntity(s1)
 
-        assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
+        assertThat(seasonsDao.seasonWithId(s1_id)).isNull()
     }
 
     @Test
@@ -79,7 +79,7 @@ class SeasonsTest : DatabaseTest() {
         // Now delete show
         showsDao.deleteEntity(show)
 
-        assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
+        assertThat(seasonsDao.seasonWithId(s1_id)).isNull()
     }
 }
 
