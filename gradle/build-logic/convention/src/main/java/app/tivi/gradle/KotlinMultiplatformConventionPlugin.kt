@@ -8,6 +8,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 class KotlinMultiplatformConventionPlugin : Plugin<Project> {
@@ -29,6 +30,15 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                     baseName = path.replace(':', '-')
                 }
             }
+
+            // Need to add linker flag for SQLite
+            // See: https://github.com/touchlab/SQLiter/issues/77
+            targets
+                .filterIsInstance<KotlinNativeTarget>()
+                .flatMap { it.binaries }
+                .forEach { compilationUnit ->
+                    compilationUnit.linkerOpts("-lsqlite3")
+                }
 
             configureKotlin()
         }
