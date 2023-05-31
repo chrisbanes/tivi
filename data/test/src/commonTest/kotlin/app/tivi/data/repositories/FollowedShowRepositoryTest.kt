@@ -15,6 +15,7 @@ import app.tivi.data.followedshows.FollowedShowsDataSource
 import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.utils.AuthorizedAuthState
+import app.tivi.utils.FakeFollowedShowsDataSource
 import app.tivi.utils.followedShow1Local
 import app.tivi.utils.followedShow1Network
 import app.tivi.utils.followedShow1PendingDelete
@@ -23,27 +24,28 @@ import app.tivi.utils.followedShow2Local
 import app.tivi.utils.followedShow2Network
 import app.tivi.utils.show
 import app.tivi.utils.show2
-import com.google.common.truth.Truth.assertThat
-import io.mockk.coEvery
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.isEmpty
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
 import me.tatarka.inject.annotations.Component
-import org.junit.Before
-import org.junit.Test
 
 class FollowedShowRepositoryTest : DatabaseTest() {
     private lateinit var showsDao: TiviShowDao
     private lateinit var followShowsDao: FollowedShowsDao
     private lateinit var followedShowsRepository: FollowedShowsRepository
-    private lateinit var followedShowsDataSource: FollowedShowsDataSource
+    private lateinit var followedShowsDataSource: FakeFollowedShowsDataSource
     private lateinit var traktAuthRepository: TraktAuthRepository
 
-    @Before
+    @BeforeTest
     fun setup() {
         val component = FollowedShowsRepositoryTestComponent::class.create()
         showsDao = component.showsDao
         followShowsDao = component.followShowsDao
         followedShowsRepository = component.followedShowsRepository
-        followedShowsDataSource = component.followedShowsDataSource
+        followedShowsDataSource = component.followedShowsDataSource as FakeFollowedShowsDataSource
         traktAuthRepository = component.traktAuthRepository
 
         // We'll assume that there's a show in the db
@@ -53,10 +55,10 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
     @Test
     fun testSync() = runTest {
-        coEvery { followedShowsDataSource.getFollowedListId() }
-            .returns(TraktList(ids = TraktListIds(trakt = 0)))
-        coEvery { followedShowsDataSource.getListShows(0) }
-            .returns(listOf(followedShow1Network to show))
+        followedShowsDataSource.getFollowedListIdResult =
+            Result.success(TraktList(ids = TraktListIds(trakt = 0)))
+        followedShowsDataSource.getListShowsResult =
+            Result.success(listOf(followedShow1Network to show))
 
         traktAuthRepository.onNewAuthState(AuthorizedAuthState)
 
@@ -70,10 +72,9 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     fun testSync_emptyResponse() = runTest {
         followShowsDao.insert(followedShow1Local)
 
-        coEvery { followedShowsDataSource.getFollowedListId() } returns
-            TraktList(ids = TraktListIds(trakt = 0))
-
-        coEvery { followedShowsDataSource.getListShows(0) } returns emptyList()
+        followedShowsDataSource.getFollowedListIdResult =
+            Result.success(TraktList(ids = TraktListIds(trakt = 0)))
+        followedShowsDataSource.getListShowsResult = Result.success(emptyList())
 
         traktAuthRepository.onNewAuthState(AuthorizedAuthState)
 
@@ -86,9 +87,10 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     fun testSync_responseDifferentShow() = runTest {
         followShowsDao.insert(followedShow1Local)
 
-        coEvery { followedShowsDataSource.getFollowedListId() } returns
-            TraktList(ids = TraktListIds(trakt = 0))
-        coEvery { followedShowsDataSource.getListShows(0) } returns listOf(followedShow2Network to show2)
+        followedShowsDataSource.getFollowedListIdResult =
+            Result.success(TraktList(ids = TraktListIds(trakt = 0)))
+        followedShowsDataSource.getListShowsResult =
+            Result.success(listOf(followedShow2Network to show2))
 
         traktAuthRepository.onNewAuthState(AuthorizedAuthState)
 
@@ -103,7 +105,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followShowsDao.insert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
-        coEvery { followedShowsDataSource.getFollowedListId() } throws IllegalArgumentException()
+        followedShowsDataSource.getFollowedListIdResult =
+            Result.failure(IllegalArgumentException())
 
         traktAuthRepository.onNewAuthState(AuthorizedAuthState)
 
@@ -117,7 +120,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followShowsDao.insert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
-        coEvery { followedShowsDataSource.getFollowedListId() } throws IllegalArgumentException()
+        followedShowsDataSource.getFollowedListIdResult = Result.failure(IllegalArgumentException())
 
         traktAuthRepository.onNewAuthState(AuthorizedAuthState)
 

@@ -31,10 +31,8 @@ kotlin {
             dependencies {
                 implementation(projects.data.legacy)
 
-                implementation(libs.junit)
-                implementation(libs.mockK)
-
-                implementation(libs.truth)
+                implementation(kotlin("test"))
+                implementation(libs.assertk)
                 implementation(libs.kotlin.coroutines.test)
 
                 implementation(libs.turbine)
@@ -44,6 +42,8 @@ kotlin {
 }
 
 dependencies {
-    add("kspJvm", libs.kotlininject.compiler)
     add("kspJvmTest", libs.kotlininject.compiler)
+    add("kspIosArm64Test", libs.kotlininject.compiler)
+    add("kspIosSimulatorArm64Test", libs.kotlininject.compiler)
+    add("kspIosX64Test", libs.kotlininject.compiler)
 }

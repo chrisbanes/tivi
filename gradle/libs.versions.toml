@@ -123,8 +123,6 @@ ktlint = { module = "com.pinterest:ktlint", version.ref = "ktlint" }
 
 leakCanary = "com.squareup.leakcanary:leakcanary-android:2.11"
 
-mockK = "io.mockk:mockk:1.13.5"
-
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
 
 okhttp-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
@@ -157,7 +155,7 @@ timber = "com.jakewharton.timber:timber:5.0.1"
 tmdb-api = "app.moviebase:tmdb-api:1.1.0-SNAPSHOT"
 trakt-api = "app.moviebase:trakt-api:0.5.0-SNAPSHOT"
 
-truth = "com.google.truth:truth:1.1.4"
+assertk = "com.willowtreeapps.assertk:assertk:0.26.1"
 
 turbine = "app.cash.turbine:turbine:0.13.0"
 

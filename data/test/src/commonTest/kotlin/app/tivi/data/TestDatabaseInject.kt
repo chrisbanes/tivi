@@ -27,9 +27,11 @@ import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.utils.AuthorizedAuthStore
+import app.tivi.utils.FakeEpisodeDataSource
+import app.tivi.utils.FakeFollowedShowsDataSource
+import app.tivi.utils.FakeSeasonsEpisodesDataSource
 import app.tivi.utils.SuccessFakeShowDataSource
 import app.tivi.utils.SuccessFakeShowImagesDataSource
-import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import me.tatarka.inject.annotations.Provides
@@ -44,25 +46,25 @@ abstract class TestDataSourceComponent :
     @Provides
     override fun provideTraktFollowedShowsDataSource(
         bind: TraktFollowedShowsDataSource,
-    ): FollowedShowsDataSource = mockk()
+    ): FollowedShowsDataSource = FakeFollowedShowsDataSource()
 
     @ApplicationScope
     @Provides
     override fun provideTraktEpisodeDataSource(
         bind: TraktEpisodeDataSourceImpl,
-    ): TraktEpisodeDataSource = mockk()
+    ): TraktEpisodeDataSource = FakeEpisodeDataSource()
 
     @ApplicationScope
     @Provides
     override fun provideTmdbEpisodeDataSource(
         bind: TmdbEpisodeDataSourceImpl,
-    ): TmdbEpisodeDataSource = mockk()
+    ): TmdbEpisodeDataSource = FakeEpisodeDataSource()
 
     @ApplicationScope
     @Provides
     override fun provideTraktSeasonsEpisodesDataSource(
         bind: TraktSeasonsEpisodesDataSource,
-    ): SeasonsEpisodesDataSource = mockk()
+    ): SeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource()
 
     @ApplicationScope
     @Provides
@@ -97,8 +99,4 @@ abstract class TestDataSourceComponent :
     fun provideAuthStore(): AuthStore = AuthorizedAuthStore
 }
 
-interface TestDatabaseComponent : SqlDelightDatabaseComponent {
-
-    @Provides
-    fun provideDriverFactory(): DriverFactory = DriverFactory()
-}
+interface TestDatabaseComponent : SqlDelightDatabaseComponent
