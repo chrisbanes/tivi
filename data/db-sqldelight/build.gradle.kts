@@ -42,6 +42,12 @@ kotlin {
                 implementation(libs.sqldelight.sqlite)
             }
         }
+
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.sqldelight.native)
+            }
+        }
     }
 }
 
@@ -63,6 +69,9 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
 
 dependencies {
     add("kspJvm", libs.kotlininject.compiler)
+    add("kspIosArm64", libs.kotlininject.compiler)
+    add("kspIosSimulatorArm64", libs.kotlininject.compiler)
+    add("kspIosX64", libs.kotlininject.compiler)
 }
 
 android {

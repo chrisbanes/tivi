@@ -3,7 +3,6 @@
 
 package app.tivi.data
 
-import app.cash.sqldelight.db.SqlDriver
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.FollowedShowsDao
@@ -36,12 +35,9 @@ import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface SqlDelightDatabaseComponent {
-    @Provides
-    fun provideSqlDelightDriver(
-        factory: DriverFactory,
-    ): SqlDriver = factory.createDriver()
+expect interface SqlDelightDatabasePlatformComponent
 
+interface SqlDelightDatabaseComponent : SqlDelightDatabasePlatformComponent {
     @ApplicationScope
     @Provides
     fun provideSqlDelightDatabase(
