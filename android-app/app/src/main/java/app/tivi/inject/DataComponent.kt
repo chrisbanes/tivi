@@ -3,7 +3,7 @@
 
 package app.tivi.inject
 
-import app.tivi.data.AndroidSqlDelightDatabaseComponent
+import app.tivi.data.SqlDelightDatabaseComponent
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsBinds
 import app.tivi.data.popularshows.PopularShowsBinds
@@ -30,4 +30,4 @@ interface DataComponent :
     TraktUsersBinds,
     TrendingShowsBinds,
     WatchedShowsBinds,
-    AndroidSqlDelightDatabaseComponent
+    SqlDelightDatabaseComponent
