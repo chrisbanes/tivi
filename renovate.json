@@ -19,6 +19,11 @@
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
+    },
+    {
+      "description": "Disable updates to SNAPSHOTS",
+      "matchDatasources": ["maven"],
+      "allowedVersions": "/\\-SNAPSHOT$/"
     }
   ]
 }
