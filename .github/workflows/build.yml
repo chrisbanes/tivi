@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 60
+    timeout-minutes: 75
     env:
       TERM: dumb
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
