@@ -18,18 +18,34 @@ class KermitLogger : Logger {
     }
 
     override fun v(throwable: Throwable?, message: () -> String) {
-        Kermit.v(throwable = throwable, message = message)
+        if (throwable != null) {
+            Kermit.v(throwable = throwable, message = message)
+        } else {
+            Kermit.v(message = message)
+        }
     }
 
     override fun d(throwable: Throwable?, message: () -> String) {
-        Kermit.d(throwable = throwable, message = message)
+        if (throwable != null) {
+            Kermit.d(throwable = throwable, message = message)
+        } else {
+            Kermit.d(message = message)
+        }
     }
 
     override fun i(throwable: Throwable?, message: () -> String) {
-        Kermit.i(throwable = throwable, message = message)
+        if (throwable != null) {
+            Kermit.i(throwable = throwable, message = message)
+        } else {
+            Kermit.i(message = message)
+        }
     }
 
     override fun e(throwable: Throwable?, message: () -> String) {
-        Kermit.e(throwable = throwable, message = message)
+        if (throwable != null) {
+            Kermit.e(throwable = throwable, message = message)
+        } else {
+            Kermit.e(message = message)
+        }
     }
 }
