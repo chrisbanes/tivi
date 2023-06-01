@@ -11,6 +11,7 @@ class AndroidTestConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.test")
+                apply("org.gradle.android.cache-fix")
             }
 
             configureAndroid()
