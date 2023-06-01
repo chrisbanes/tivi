@@ -5,17 +5,21 @@
 
 package app.tivi.settings
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceCategory
 import android.preference.PreferenceFragment
 import android.preference.SwitchPreference
+import androidx.annotation.AttrRes
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.pm.PackageInfoCompat
+import androidx.core.content.res.use
 import androidx.core.net.toUri
 import app.tivi.common.ui.resources.MR
-import app.tivi.extensions.resolveThemeColor
 import app.tivi.util.SaveData
 import app.tivi.util.SaveDataReason
 import dev.icerock.moko.resources.format
@@ -69,5 +73,12 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
             val category = findPreference("pref_category_ui") as PreferenceCategory?
             category?.removePreference(findPreference("pref_dynamic_colors"))
         }
+    }
+}
+
+@SuppressLint("Recycle")
+private fun Context.resolveThemeColor(@AttrRes resId: Int, defaultColor: Int = Color.MAGENTA): Int {
+    return obtainStyledAttributes(intArrayOf(resId)).use {
+        it.getColor(0, defaultColor)
     }
 }
