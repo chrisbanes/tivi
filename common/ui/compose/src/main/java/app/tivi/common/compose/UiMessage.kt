@@ -1,7 +1,7 @@
 // Copyright 2019, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package app.tivi.api
+package app.tivi.common.compose
 
 import java.util.UUID
 import kotlinx.coroutines.flow.Flow

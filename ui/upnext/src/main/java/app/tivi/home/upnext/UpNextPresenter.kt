@@ -13,8 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.paging.PagingConfig
 import app.cash.paging.compose.collectAsLazyPagingItems
-import app.tivi.api.UiMessage
-import app.tivi.api.UiMessageManager
+import app.tivi.common.compose.UiMessage
+import app.tivi.common.compose.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.models.SortOption
 import app.tivi.data.traktauth.TraktAuthState

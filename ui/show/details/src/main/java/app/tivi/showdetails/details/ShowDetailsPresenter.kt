@@ -9,8 +9,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import app.tivi.api.UiMessage
-import app.tivi.api.UiMessageManager
+import app.tivi.common.compose.UiMessage
+import app.tivi.common.compose.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.models.TiviShow
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus

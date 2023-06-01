@@ -4,7 +4,7 @@
 package app.tivi.home.search
 
 import androidx.compose.runtime.Immutable
-import app.tivi.api.UiMessage
+import app.tivi.common.compose.UiMessage
 import app.tivi.data.models.TiviShow
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState

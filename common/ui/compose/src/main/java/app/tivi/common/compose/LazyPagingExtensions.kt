@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
-import app.tivi.api.UiMessage
 
 fun CombinedLoadStates.appendErrorOrNull(): UiMessage? {
     return (append.takeIf { it is LoadState.Error } as? LoadState.Error)

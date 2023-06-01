@@ -4,7 +4,7 @@
 package app.tivi.home.discover
 
 import androidx.compose.runtime.Immutable
-import app.tivi.api.UiMessage
+import app.tivi.common.compose.UiMessage
 import app.tivi.data.compoundmodels.EpisodeWithSeasonWithShow
 import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
