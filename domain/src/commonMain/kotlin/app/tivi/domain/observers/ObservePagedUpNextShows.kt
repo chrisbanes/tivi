@@ -18,6 +18,7 @@ class ObservePagedUpNextShows(
     private val watchedShowsDao: WatchedShowDao,
 ) : PagingInteractor<ObservePagedUpNextShows.Parameters, UpNextEntry>() {
 
+    @OptIn(app.cash.paging.ExperimentalPagingApi::class)
     override fun createObservable(
         params: Parameters,
     ): Flow<PagingData<UpNextEntry>> = Pager(config = params.pagingConfig) {

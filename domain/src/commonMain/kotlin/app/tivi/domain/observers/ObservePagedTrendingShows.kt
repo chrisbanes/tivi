@@ -22,6 +22,7 @@ class ObservePagedTrendingShows(
     private val updateTrendingShows: UpdateTrendingShows,
     private val logger: Logger,
 ) : PagingInteractor<ObservePagedTrendingShows.Params, TrendingEntryWithShow>() {
+    @OptIn(app.cash.paging.ExperimentalPagingApi::class)
     override fun createObservable(
         params: Params,
     ): Flow<PagingData<TrendingEntryWithShow>> {

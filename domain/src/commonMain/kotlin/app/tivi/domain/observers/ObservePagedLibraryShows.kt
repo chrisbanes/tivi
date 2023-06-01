@@ -17,7 +17,7 @@ import me.tatarka.inject.annotations.Inject
 class ObservePagedLibraryShows(
     private val libraryShowsDao: LibraryShowsDao,
 ) : PagingInteractor<ObservePagedLibraryShows.Parameters, LibraryShow>() {
-
+    @OptIn(app.cash.paging.ExperimentalPagingApi::class)
     override fun createObservable(
         params: Parameters,
     ): Flow<PagingData<LibraryShow>> = Pager(config = params.pagingConfig) {
