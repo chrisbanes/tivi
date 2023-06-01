@@ -11,7 +11,6 @@ class KotlinAndroidConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("org.jetbrains.kotlin.android")
-                apply("org.gradle.android.cache-fix")
             }
 
             configureKotlin()
