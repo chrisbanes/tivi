@@ -26,7 +26,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                 iosSimulatorArm64(),
             ).forEach { target ->
                 target.binaries.framework {
-                    baseName = path.replace(':', '-')
+                    baseName = path.substring(1).replace(':', '-')
                 }
             }
 

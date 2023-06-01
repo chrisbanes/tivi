@@ -9,14 +9,21 @@ plugins {
 }
 
 kotlin {
+    jvm()
     android()
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(libs.kotlin.coroutines.core)
-
+                api(projects.data.models)
                 api(libs.moko.resources)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.assertk)
             }
         }
     }
@@ -28,6 +35,13 @@ multiplatformResources {
 
 android {
     namespace = "app.tivi.common.ui.resources"
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
+    compilerOptions {
+        // Disable warnings as errors
+        allWarningsAsErrors.set(false)
+    }
 }
 
 tasks.withType(com.android.build.gradle.tasks.MergeResources::class).configureEach {

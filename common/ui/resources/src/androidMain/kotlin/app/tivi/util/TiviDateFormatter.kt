@@ -15,16 +15,14 @@ import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalTime
-import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
 @Inject
-class TiviDateFormatter(
+actual class TiviDateFormatter(
     private val locale: Locale,
 ) {
     private val shortDate: DateTimeFormatter by lazy {
@@ -52,58 +50,46 @@ class TiviDateFormatter(
         return JavaLocalDateTime.ofInstant(toJavaInstant(), ZoneId.systemDefault())
     }
 
-    fun formatShortDate(instant: Instant): String {
+    actual fun formatShortDate(instant: Instant): String {
         return shortDate.format(instant.toTemporal())
     }
 
-    fun formatShortDate(date: LocalDate): String {
+    actual fun formatShortDate(date: LocalDate): String {
         return shortDate.format(date.toJavaLocalDate())
     }
 
-    fun formatMediumDate(instant: Instant): String {
+    actual fun formatMediumDate(instant: Instant): String {
         return mediumDate.format(instant.toTemporal())
     }
 
-    fun formatMediumDateTime(instant: Instant): String {
+    actual fun formatMediumDateTime(instant: Instant): String {
         return mediumDateTime.format(instant.toTemporal())
     }
 
-    fun formatShortTime(localTime: LocalTime): String {
+    actual fun formatShortTime(localTime: LocalTime): String {
         return shortTime.format(localTime.toJavaLocalTime())
     }
 
-    fun formatShortRelativeTime(dateTime: Instant): String {
-        val nowInstant = kotlinx.datetime.Clock.System.now()
-        val now = nowInstant.toLocalDateTime(TimeZone.currentSystemDefault())
-
-        val localDateTime = dateTime.toLocalDateTime(TimeZone.currentSystemDefault())
-
-        return if (dateTime < nowInstant) {
-            if (localDateTime.year == now.year || dateTime > (nowInstant - 7.days)) {
-                // Within the past week
-                DateUtils.getRelativeTimeSpanString(
-                    dateTime.toEpochMilliseconds(),
-                    nowInstant.toEpochMilliseconds(),
-                    DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.FORMAT_SHOW_DATE,
-                ).toString()
-            } else {
-                // More than 7 days ago
-                formatShortDate(dateTime)
-            }
-        } else {
-            if (localDateTime.year == now.year || dateTime > (nowInstant - 14.days)) {
-                // In the near future (next 2 weeks)
-                DateUtils.getRelativeTimeSpanString(
-                    dateTime.toEpochMilliseconds(),
-                    nowInstant.toEpochMilliseconds(),
-                    DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.FORMAT_SHOW_DATE,
-                ).toString()
-            } else {
-                // In the far future
-                formatShortDate(dateTime)
-            }
+    actual fun formatShortRelativeTime(date: Instant, reference: Instant): String = when {
+        // Within the past week
+        date < reference && (reference - date) < 7.days -> {
+            DateUtils.getRelativeTimeSpanString(
+                date.toEpochMilliseconds(),
+                reference.toEpochMilliseconds(),
+                DateUtils.MINUTE_IN_MILLIS,
+                DateUtils.FORMAT_SHOW_DATE,
+            ).toString()
         }
+        // In the near future (next 2 weeks)
+        date > reference && (date - reference) < 14.days -> {
+            DateUtils.getRelativeTimeSpanString(
+                date.toEpochMilliseconds(),
+                reference.toEpochMilliseconds(),
+                DateUtils.MINUTE_IN_MILLIS,
+                DateUtils.FORMAT_SHOW_DATE,
+            ).toString()
+        }
+        // In the far past/future
+        else -> formatShortDate(date)
     }
 }
