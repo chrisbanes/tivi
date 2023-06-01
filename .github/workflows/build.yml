@@ -9,11 +9,10 @@ on:
   pull_request:
 
 jobs:
-  build:
+  android:
     runs-on: macos-latest
-    timeout-minutes: 75
+    timeout-minutes: 45
     env:
-      TERM: dumb
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
       ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
       ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
@@ -47,12 +46,9 @@ jobs:
         env:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
-      - name: Run Spotless
-        run: ./gradlew spotlessCheck
-
       - name: Build Android App (skipping benchmark variant)
         run: |
-          ./gradlew \
+          ./gradlew spotlessCheck \
               :android-app:app:bundle \
               :android-app:app:build \
               jvmTest \
@@ -60,8 +56,109 @@ jobs:
               -x :android-app:app:assembleStandardBenchmark \
               -x :android-app:app:bundleStandardBenchmark
 
+      - name: Clean secrets
+        if: always()
+        run: ./release/clean-secrets.sh
+
+      - name: Upload build outputs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-build-outputs
+          path: android-app/app/build/outputs
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-reports
+          path: |
+            **/build/reports/*
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-test-results
+          path: |
+            **/build/test-results/*
+
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    env:
+      ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET }}
+      ORG_GRADLE_PROJECT_TIVI_RELEASE_KEYSTORE_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEYSTORE_PWD }}
+      ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD }}
+      ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Decrypt secrets
+        run: ./release/decrypt-secrets.sh
+        env:
+          ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
+
       - name: Build iOS libraries
-        run: ./gradlew linkIosX64 iosX64Test
+        run: ./gradlew spotlessCheck linkIosX64 iosX64Test
+
+      - name: Clean secrets
+        if: always()
+        run: ./release/clean-secrets.sh
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-reports
+          path: |
+            **/build/reports/*
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-test-results
+          path: |
+            **/build/test-results/*
+
+  publish:
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    needs: [android, ios]
+    runs-on: macos-latest
+    timeout-minutes: 20
+    env:
+      TERM: dumb
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Decrypt secrets
+        run: ./release/decrypt-secrets.sh
+        env:
+          ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: android-build-outputs
+          path: android-app/app/build/outputs
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
@@ -91,29 +188,6 @@ jobs:
           releaseFiles: android-app/app/build/outputs/bundle/standardRelease/app-standard-release.aab
           mappingFile: android-app/app/build/outputs/mapping/standardRelease/mapping.txt
 
-      - name: Build changelog for beta release
-        id: build_changelog
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: mikepenz/release-changelog-builder-action@v3
-        with:
-          configurationJson: |
-            {
-              "template": "Changes:\n#{{UNCATEGORIZED}}",
-              "pr_template": "#{{TITLE}} ##{{NUMBER}}",
-              "trim_values": true,
-            }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create changelog folder for beta release
-        if: steps.build_changelog.outcome == 'success'
-        run: mkdir playwhatsnew
-
-      - name: Write changelog for beta release
-        if: steps.build_changelog.outcome == 'success'
-        continue-on-error: true # Need to fix echo multiline string
-        run: echo '${{ steps.build_changelog.outputs.changelog }}' > playwhatsnew/whatsnew-en-US
-
       - name: Publish tagged release to beta track
         if: startsWith(github.ref, 'refs/tags/v')
         uses: r0adkll/upload-google-play@v1.1.1
@@ -121,33 +195,5 @@ jobs:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
           track: beta
-          whatsNewDirectory: playwhatsnew
           releaseFiles: android-app/app/build/outputs/bundle/standardRelease/app-standard-release.aab
           mappingFile: android-app/app/build/outputs/mapping/standardRelease/mapping.txt
-
-      - name: Clean secrets
-        if: always()
-        run: ./release/clean-secrets.sh
-
-      - name: Upload build outputs
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-outputs
-          path: android-app/app/build/outputs
-
-      - name: Upload reports
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: reports
-          path: |
-            **/build/reports/*
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: junit-results
-          path: |
-            **/build/test-results/*
