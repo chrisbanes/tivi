@@ -22,6 +22,7 @@ class ObservePagedRecommendedShows(
     private val updateRecommendedShows: UpdateRecommendedShows,
     private val logger: Logger,
 ) : PagingInteractor<ObservePagedRecommendedShows.Params, RecommendedEntryWithShow>() {
+    @OptIn(app.cash.paging.ExperimentalPagingApi::class)
     override fun createObservable(
         params: Params,
     ): Flow<PagingData<RecommendedEntryWithShow>> {

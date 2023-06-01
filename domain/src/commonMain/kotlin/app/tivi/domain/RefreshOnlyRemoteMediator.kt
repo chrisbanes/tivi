@@ -18,6 +18,7 @@ import kotlinx.coroutines.CancellationException
  * [fetch] for [LoadType.REFRESH] events.
  */
 @Suppress("CAST_NEVER_SUCCEEDS", "USELESS_CAST", "KotlinRedundantDiagnosticSuppress")
+@OptIn(app.cash.paging.ExperimentalPagingApi::class)
 internal class RefreshOnlyRemoteMediator<LI, ET>(
     private val fetch: suspend () -> Unit,
 ) : RemoteMediator<Int, LI>() where ET : PaginatedEntry, LI : EntryWithShow<ET> {
