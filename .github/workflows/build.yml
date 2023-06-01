@@ -47,8 +47,21 @@ jobs:
         env:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
-      - name: Build (skipping benchmark type)
-        run: ./gradlew build bundle -x :android-app:app:assembleStandardBenchmark -x :android-app:app:bundleStandardBenchmark
+      - name: Run Spotless
+        run: ./gradlew spotlessCheck
+
+      - name: Build Android App (skipping benchmark variant)
+        run: |
+          ./gradlew \
+              :android-app:app:bundle \
+              :android-app:app:build \
+              jvmTest \
+              lint \
+              -x :android-app:app:assembleStandardBenchmark \
+              -x :android-app:app:bundleStandardBenchmark
+
+      - name: Build iOS libraries
+        run: ./gradlew linkIosX64 iosX64Test
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
