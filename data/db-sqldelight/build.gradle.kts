@@ -12,10 +12,10 @@ plugins {
 }
 
 kotlin {
-    jvm()
-    android()
-
     sourceSets {
+        jvm()
+        android()
+
         val commonMain by getting {
             dependencies {
                 implementation(projects.core.base)
