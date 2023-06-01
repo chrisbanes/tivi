@@ -18,7 +18,7 @@ kermit = "1.2.2" # Pinned back as Store uses Kermit 1.x
 ktor = "2.3.0"
 paging-multiplatform = "3.2.0-alpha05-0.2.2"
 retrofit = "2.9.0"
-sqldelight = "2.0.0-rc01"
+sqldelight = "2.0.0-SNAPSHOT"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
