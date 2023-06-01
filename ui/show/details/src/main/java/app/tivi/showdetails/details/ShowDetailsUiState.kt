@@ -4,7 +4,7 @@
 package app.tivi.showdetails.details
 
 import androidx.compose.runtime.Immutable
-import app.tivi.api.UiMessage
+import app.tivi.common.compose.UiMessage
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches

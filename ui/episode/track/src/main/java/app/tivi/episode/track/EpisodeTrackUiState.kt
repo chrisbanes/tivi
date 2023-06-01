@@ -4,7 +4,7 @@
 package app.tivi.episode.track
 
 import androidx.compose.runtime.Immutable
-import app.tivi.api.UiMessage
+import app.tivi.common.compose.UiMessage
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import com.slack.circuit.runtime.CircuitUiEvent

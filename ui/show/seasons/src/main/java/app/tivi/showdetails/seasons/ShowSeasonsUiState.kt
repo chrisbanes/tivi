@@ -4,7 +4,7 @@
 package app.tivi.showdetails.seasons
 
 import androidx.compose.runtime.Immutable
-import app.tivi.api.UiMessage
+import app.tivi.common.compose.UiMessage
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.TiviShow
 import com.slack.circuit.runtime.CircuitUiEvent
