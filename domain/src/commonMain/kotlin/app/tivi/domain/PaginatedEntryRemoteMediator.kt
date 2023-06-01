@@ -18,6 +18,7 @@ import kotlinx.coroutines.CancellationException
  * next page to load.
  */
 @Suppress("CAST_NEVER_SUCCEEDS", "USELESS_CAST", "KotlinRedundantDiagnosticSuppress")
+@OptIn(app.cash.paging.ExperimentalPagingApi::class)
 internal class PaginatedEntryRemoteMediator<LI, ET>(
     private val fetch: suspend (page: Int) -> Unit,
 ) : RemoteMediator<Int, LI>() where ET : PaginatedEntry, LI : EntryWithShow<ET> {
@@ -35,6 +36,7 @@ internal class PaginatedEntryRemoteMediator<LI, ET>(
                         as RemoteMediatorMediatorResult
                 lastItem.entry.page + 1
             }
+            else -> error("Unknown LoadType: $loadType")
         }
         return try {
             fetch(nextPage)
