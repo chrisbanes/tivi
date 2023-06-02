@@ -56,7 +56,6 @@ include(
     ":core:powercontroller",
     ":core:preferences",
     ":common:ui:circuit-overlay",
-    ":common:ui:view",
     ":common:ui:resources",
     ":common:ui:resources-compose",
     ":common:ui:compose",

@@ -3,21 +3,22 @@
 
 package dev.icerock.moko.resources.compose
 
-import android.content.Context
-import android.graphics.Typeface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import dev.icerock.moko.resources.FontResource
 
+@Suppress("RedundantNullableReturnType")
 @Composable
-fun fontFamilyResource(fontResource: FontResource): FontFamily {
-    val context: Context = LocalContext.current
-    return remember(context, fontResource) {
-        val typeface: Typeface = fontResource.getTypeface(context)
-            ?: throw IllegalStateException("can't read typeface for $fontResource")
-
-        FontFamily(typeface)
-    }
+fun FontResource.asFont(
+    weight: FontWeight = FontWeight.Normal,
+    style: FontStyle = FontStyle.Normal,
+): Font? = remember(fontResourceId) {
+    Font(
+        resId = fontResourceId,
+        weight = weight,
+        style = style,
+    )
 }

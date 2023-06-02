@@ -4,71 +4,40 @@
 package app.tivi.common.compose.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.googlefonts.Font
-import androidx.compose.ui.text.googlefonts.GoogleFont
+import app.tivi.common.ui.resources.MR
+import dev.icerock.moko.resources.compose.asFont
 
-@ExperimentalTextApi
-private fun createSingleGoogleFontFamily(
-    name: String,
-    provider: GoogleFont.Provider = GmsFontProvider,
-    variants: List<Pair<FontWeight, FontStyle>>,
-): FontFamily = FontFamily(
-    variants.map { (weight, style) ->
-        Font(
-            googleFont = GoogleFont(name),
-            fontProvider = provider,
-            weight = weight,
-            style = style,
+internal val InterFontFamily: FontFamily
+    @Composable get() = FontFamily(
+        MR.fonts.Inter.light.asFont(FontWeight.Light)!!,
+        MR.fonts.Inter.regular.asFont(FontWeight.Normal)!!,
+        MR.fonts.Inter.medium.asFont(FontWeight.Medium)!!,
+        MR.fonts.Inter.bold.asFont(FontWeight.Bold)!!,
+    )
+
+val TiviTypography: Typography
+    @Composable get() {
+        // Eugh, this is gross but there is no defaultFontFamily property in M3
+        val default = Typography()
+        val fontFamily = InterFontFamily
+        return Typography(
+            displayLarge = default.displayLarge.copy(fontFamily = fontFamily),
+            displayMedium = default.displayMedium.copy(fontFamily = fontFamily),
+            displaySmall = default.displaySmall.copy(fontFamily = fontFamily),
+            headlineLarge = default.headlineLarge.copy(fontFamily = fontFamily),
+            headlineMedium = default.headlineMedium.copy(fontFamily = fontFamily),
+            headlineSmall = default.headlineSmall.copy(fontFamily = fontFamily),
+            titleLarge = default.titleLarge.copy(fontFamily = fontFamily),
+            titleMedium = default.titleMedium.copy(fontFamily = fontFamily),
+            titleSmall = default.titleSmall.copy(fontFamily = fontFamily),
+            bodyLarge = default.bodyLarge.copy(fontFamily = fontFamily),
+            bodyMedium = default.bodyMedium.copy(fontFamily = fontFamily),
+            bodySmall = default.bodySmall.copy(fontFamily = fontFamily),
+            labelLarge = default.labelLarge.copy(fontFamily = fontFamily),
+            labelMedium = default.labelMedium.copy(fontFamily = fontFamily),
+            labelSmall = default.labelSmall.copy(fontFamily = fontFamily),
         )
-    },
-)
-
-@ExperimentalTextApi
-internal val InterFontFamily: FontFamily by lazy {
-    createSingleGoogleFontFamily(
-        name = "Inter",
-        variants = listOf(
-            FontWeight.Light to FontStyle.Normal,
-            FontWeight.Normal to FontStyle.Normal,
-            FontWeight.Normal to FontStyle.Italic,
-            FontWeight.Medium to FontStyle.Normal,
-            FontWeight.Bold to FontStyle.Normal,
-        ),
-    )
-}
-
-@ExperimentalTextApi
-internal val GmsFontProvider: GoogleFont.Provider by lazy {
-    GoogleFont.Provider(
-        providerAuthority = "com.google.android.gms.fonts",
-        providerPackage = "com.google.android.gms",
-        certificates = app.tivi.common.ui.R.array.com_google_android_gms_fonts_certs,
-    )
-}
-
-@OptIn(ExperimentalTextApi::class)
-val TiviTypography by lazy {
-    // Eugh, this is gross but there is no defaultFontFamily property in M3
-    val default = Typography()
-    Typography(
-        displayLarge = default.displayLarge.copy(fontFamily = InterFontFamily),
-        displayMedium = default.displayMedium.copy(fontFamily = InterFontFamily),
-        displaySmall = default.displaySmall.copy(fontFamily = InterFontFamily),
-        headlineLarge = default.headlineLarge.copy(fontFamily = InterFontFamily),
-        headlineMedium = default.headlineMedium.copy(fontFamily = InterFontFamily),
-        headlineSmall = default.headlineSmall.copy(fontFamily = InterFontFamily),
-        titleLarge = default.titleLarge.copy(fontFamily = InterFontFamily),
-        titleMedium = default.titleMedium.copy(fontFamily = InterFontFamily),
-        titleSmall = default.titleSmall.copy(fontFamily = InterFontFamily),
-        bodyLarge = default.bodyLarge.copy(fontFamily = InterFontFamily),
-        bodyMedium = default.bodyMedium.copy(fontFamily = InterFontFamily),
-        bodySmall = default.bodySmall.copy(fontFamily = InterFontFamily),
-        labelLarge = default.labelLarge.copy(fontFamily = InterFontFamily),
-        labelMedium = default.labelMedium.copy(fontFamily = InterFontFamily),
-        labelSmall = default.labelSmall.copy(fontFamily = InterFontFamily),
-    )
-}
+    }
