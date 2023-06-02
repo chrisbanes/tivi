@@ -21,7 +21,6 @@ dependencies {
     implementation(projects.data.episodes)
     implementation(projects.data.showimages)
 
-    implementation(projects.common.ui.view)
     implementation(projects.api.tmdb)
 
     implementation(libs.androidx.core)

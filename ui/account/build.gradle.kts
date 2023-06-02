@@ -23,7 +23,6 @@ android {
 dependencies {
     implementation(projects.core.base)
     implementation(projects.domain)
-    implementation(projects.common.ui.view)
     implementation(projects.common.ui.compose)
     implementation(projects.data.traktauth) // This should really be used through an interactor
 

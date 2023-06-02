@@ -153,7 +153,6 @@ dependencies {
     implementation(projects.core.performance)
     implementation(projects.core.powercontroller)
     implementation(projects.core.preferences)
-    implementation(projects.common.ui.view)
     implementation(projects.common.imageloading)
     implementation(projects.common.ui.compose)
     implementation(projects.data.dbSqldelight)

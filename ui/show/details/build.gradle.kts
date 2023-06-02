@@ -23,7 +23,6 @@ android {
 dependencies {
     implementation(projects.core.base)
     implementation(projects.domain)
-    implementation(projects.common.ui.view)
     implementation(projects.common.ui.compose)
 
     api(projects.common.ui.screens)

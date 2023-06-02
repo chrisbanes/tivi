@@ -34,13 +34,11 @@ dependencies {
 
     api(projects.common.ui.resources)
     api(projects.common.ui.resourcesCompose)
-    api(projects.common.ui.view)
 
     implementation(libs.androidx.core)
 
     api(platform(libs.compose.bom))
     implementation(libs.compose.ui.ui)
-    implementation(libs.compose.ui.uitextfonts)
     implementation(libs.compose.foundation.foundation)
     implementation(libs.compose.foundation.layout)
     implementation(libs.compose.material.material)

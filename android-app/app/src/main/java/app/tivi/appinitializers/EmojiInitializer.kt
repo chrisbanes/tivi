@@ -18,7 +18,7 @@ class EmojiInitializer(
             "com.google.android.gms.fonts",
             "com.google.android.gms",
             "Noto Color Emoji Compat",
-            app.tivi.common.ui.R.array.com_google_android_gms_fonts_certs,
+            app.tivi.R.array.com_google_android_gms_fonts_certs,
         )
 
         val config = FontRequestEmojiCompatConfig(application, fontRequest)
