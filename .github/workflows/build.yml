@@ -11,7 +11,7 @@ on:
 jobs:
   android:
     runs-on: macos-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
       ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
@@ -85,7 +85,7 @@ jobs:
 
   ios:
     runs-on: macos-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
       ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
