@@ -18,6 +18,7 @@ kermit = "1.2.2" # Pinned back as Store uses Kermit 1.x
 ktor = "2.3.0"
 paging-multiplatform = "3.2.0-alpha05-0.2.2"
 retrofit = "2.9.0"
+spotless = "6.19.0"
 sqldelight = "2.0.0-rc01"
 
 [plugins]
@@ -33,7 +34,7 @@ moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.re
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.5"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
-spotless = "com.diffplug.spotless:6.19.0"
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [libraries]
 androidx-activity-activity = { module = "androidx.activity:activity", version.ref = "androidxactivity" }
@@ -162,3 +163,4 @@ turbine = "app.cash.turbine:turbine:0.13.0"
 # Build logic dependencies
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }

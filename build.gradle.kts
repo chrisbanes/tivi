@@ -4,10 +4,11 @@
 
 import com.android.build.gradle.internal.lint.AndroidLintAnalysisTask
 import com.android.build.gradle.internal.lint.AndroidLintTask
-import com.diffplug.gradle.spotless.SpotlessExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
+    id("app.tivi.root")
+
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.cacheFixPlugin) apply false
@@ -22,38 +23,6 @@ plugins {
 }
 
 allprojects {
-    apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
-    configure<SpotlessExtension> {
-        kotlin {
-            target("**/*.kt")
-            targetExclude("$buildDir/**/*.kt")
-            targetExclude("bin/**/*.kt")
-            ktlint(libs.versions.ktlint.get())
-            licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"))
-                .named("google")
-                .onlyIfContentMatches("Copyright \\d+,* Google")
-            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"))
-                .named("cb-existing")
-                .onlyIfContentMatches("Copyright \\d+,* Christopher Banes")
-            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"))
-                .named("cb-none")
-                .onlyIfContentMatches("^(?!// Copyright).*\$")
-        }
-        kotlinGradle {
-            target("**/*.kts")
-            targetExclude("$buildDir/**/*.kts")
-            ktlint(libs.versions.ktlint.get())
-            licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
-                .named("google")
-                .onlyIfContentMatches("Copyright \\d+,* Google")
-            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
-                .named("cb-existing")
-                .onlyIfContentMatches("Copyright \\d+,* Christopher Banes")
-            licenseHeaderFile(rootProject.file("spotless/cb-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
-                .named("cb-none")
-                .onlyIfContentMatches("^(?!// Copyright).*\$")
-        }
-    }
 
     // Workaround for https://issuetracker.google.com/issues/268961156
     tasks.withType<AndroidLintTask> {
