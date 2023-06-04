@@ -39,6 +39,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                     compilationUnit.linkerOpts("-lsqlite3")
                 }
 
+            configureSpotless()
             configureKotlin()
         }
     }

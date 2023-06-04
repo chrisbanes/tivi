@@ -15,6 +15,7 @@ java {
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.spotless.gradlePlugin)
 }
 
 gradlePlugin {
@@ -22,6 +23,11 @@ gradlePlugin {
         register("kotlinMultiplatform") {
             id = "app.tivi.kotlin.multiplatform"
             implementationClass = "app.tivi.gradle.KotlinMultiplatformConventionPlugin"
+        }
+
+        register("root") {
+            id = "app.tivi.root"
+            implementationClass = "app.tivi.gradle.RootConventionPlugin"
         }
 
         register("kotlinAndroid") {

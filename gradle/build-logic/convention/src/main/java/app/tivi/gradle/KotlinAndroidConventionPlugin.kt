@@ -13,6 +13,7 @@ class KotlinAndroidConventionPlugin : Plugin<Project> {
                 apply("org.jetbrains.kotlin.android")
             }
 
+            configureSpotless()
             configureKotlin()
         }
     }
