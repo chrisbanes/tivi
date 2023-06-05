@@ -163,7 +163,6 @@
     <string name="season_title_fallback">Season %1$d</string>
     <string name="episode_title_fallback">Episode %1$d</string>
 
-    <string name="followed_watch_stats_to_watch">%d episodes to watch</string>
     <string name="followed_watch_stats_complete">Watched all</string>
 
     <string name="menu_refresh">Refresh</string>

@@ -49,8 +49,8 @@ interface CommonTiviTextCreator {
         watchedEpisodeCount: Int,
     ): CharSequence = when {
         watchedEpisodeCount < episodeCount -> {
-            MR.strings.followed_watch_stats_to_watch
-                .format(episodeCount - watchedEpisodeCount)
+            MR.plurals.followed_watch_stats_to_watch
+                .format(episodeCount - watchedEpisodeCount, episodeCount - watchedEpisodeCount)
                 .asString()
         }
         watchedEpisodeCount > 0 -> {
@@ -78,6 +78,7 @@ interface CommonTiviTextCreator {
         }
         else -> ""
     }
+
     fun seasonSummaryText(
         watched: Int,
         toWatch: Int,
