@@ -220,20 +220,6 @@ dependencies {
     testImplementation(libs.androidx.test.rules)
 }
 
-androidComponents {
-    onVariants { variant ->
-        tasks.register("open${variant.name.capitalize()}") {
-            dependsOn(tasks.named("install${variant.name.capitalize()}"))
-
-            doLast {
-                exec {
-                    commandLine = "adb shell monkey -p ${variant.applicationId.get()} -c android.intent.category.LAUNCHER 1".split(" ")
-                }
-            }
-        }
-    }
-}
-
 if (file("google-services.json").exists()) {
     apply(plugin = libs.plugins.gms.googleServices.get().pluginId)
     apply(plugin = libs.plugins.firebase.crashlytics.get().pluginId)
