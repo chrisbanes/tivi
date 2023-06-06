@@ -221,7 +221,7 @@ dependencies {
 }
 
 android.applicationVariants.forEach { variant ->
-    tasks.create("open${variant.name.capitalize()}") {
+    tasks.register("open${variant.name.capitalize()}") {
         dependsOn(tasks.named("install${variant.name.capitalize()}"))
 
         doLast {
