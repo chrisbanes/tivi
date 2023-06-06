@@ -220,13 +220,15 @@ dependencies {
     testImplementation(libs.androidx.test.rules)
 }
 
-android.applicationVariants.forEach { variant ->
-    tasks.register("open${variant.name.capitalize()}") {
-        dependsOn(tasks.named("install${variant.name.capitalize()}"))
+androidComponents {
+    onVariants { variant ->
+        tasks.register("open${variant.name.capitalize()}") {
+            dependsOn(tasks.named("install${variant.name.capitalize()}"))
 
-        doLast {
-            exec {
-                commandLine = "adb shell monkey -p ${variant.applicationId} -c android.intent.category.LAUNCHER 1".split(" ")
+            doLast {
+                exec {
+                    commandLine = "adb shell monkey -p ${variant.applicationId.get()} -c android.intent.category.LAUNCHER 1".split(" ")
+                }
             }
         }
     }
