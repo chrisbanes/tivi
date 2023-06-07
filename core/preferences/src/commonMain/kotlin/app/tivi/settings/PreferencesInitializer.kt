@@ -1,9 +1,9 @@
 // Copyright 2019, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package app.tivi.appinitializers
+package app.tivi.settings
 
-import app.tivi.settings.TiviPreferences
+import app.tivi.appinitializers.AppInitializer
 import me.tatarka.inject.annotations.Inject
 
 @Inject

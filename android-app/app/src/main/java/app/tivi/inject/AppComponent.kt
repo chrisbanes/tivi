@@ -9,7 +9,6 @@ import app.tivi.app.ApplicationInfo
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.LoggerInitializer
-import app.tivi.appinitializers.PreferencesInitializer
 import app.tivi.appinitializers.TmdbInitializer
 import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.tmdb.TmdbOAuthInfo
@@ -54,10 +53,6 @@ interface AppComponent {
     @Provides
     @IntoSet
     fun provideLoggerInitializer(bind: LoggerInitializer): AppInitializer = bind
-
-    @Provides
-    @IntoSet
-    fun providePreferencesInitializer(bind: PreferencesInitializer): AppInitializer = bind
 
     @Provides
     @IntoSet
