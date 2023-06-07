@@ -147,19 +147,7 @@ androidComponents {
 }
 
 dependencies {
-    implementation(projects.core.base)
-    implementation(projects.core.analytics)
-    implementation(projects.core.logging)
-    implementation(projects.core.performance)
-    implementation(projects.core.powercontroller)
-    implementation(projects.core.preferences)
-    implementation(projects.common.imageloading)
-    implementation(projects.common.ui.compose)
-    implementation(projects.data.dbSqldelight)
-    implementation(projects.api.trakt)
-    implementation(projects.api.tmdb)
-    implementation(projects.domain)
-    implementation(projects.tasks)
+    implementation(projects.shared)
 
     implementation(projects.ui.account)
     implementation(projects.ui.discover)

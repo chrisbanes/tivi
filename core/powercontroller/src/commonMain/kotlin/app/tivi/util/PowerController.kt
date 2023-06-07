@@ -16,7 +16,7 @@ sealed class SaveData {
     data class Enabled(val reason: SaveDataReason) : SaveData()
 }
 
-object EmptyPowerController: PowerController {
+object EmptyPowerController : PowerController {
     override fun observeShouldSaveData(ignorePreference: Boolean): Flow<SaveData> = emptyFlow()
 
     override fun shouldSaveData(): SaveData = SaveData.Disabled

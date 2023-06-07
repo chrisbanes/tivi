@@ -82,6 +82,7 @@ include(
     ":api:tmdb",
     ":tasks",
     ":domain",
+    ":shared",
     ":ui:discover",
     ":ui:episode:details",
     ":ui:episode:track",
