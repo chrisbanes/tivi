@@ -6,7 +6,7 @@ package app.tivi.core.analytics
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface AnalyticsComponent {
+actual interface AnalyticsComponent {
     @ApplicationScope
     @Provides
     fun provideTiviFirebaseAnalytics(bind: TiviFirebaseAnalytics): Analytics = bind
