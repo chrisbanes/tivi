@@ -4,6 +4,7 @@
 package app.tivi.util
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 interface PowerController {
     fun observeShouldSaveData(ignorePreference: Boolean): Flow<SaveData>
@@ -13,6 +14,12 @@ interface PowerController {
 sealed class SaveData {
     object Disabled : SaveData()
     data class Enabled(val reason: SaveDataReason) : SaveData()
+}
+
+object EmptyPowerController: PowerController {
+    override fun observeShouldSaveData(ignorePreference: Boolean): Flow<SaveData> = emptyFlow()
+
+    override fun shouldSaveData(): SaveData = SaveData.Disabled
 }
 
 enum class SaveDataReason {
