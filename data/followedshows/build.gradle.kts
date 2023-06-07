@@ -4,7 +4,6 @@
 
 plugins {
     id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -26,8 +25,4 @@ kotlin {
             }
         }
     }
-}
-
-dependencies {
-    add("kspJvm", libs.kotlininject.compiler)
 }

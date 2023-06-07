@@ -7,13 +7,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.ksp)
     alias(libs.plugins.sqldelight)
 }
 
 kotlin {
     sourceSets {
-
         val commonMain by getting {
             dependencies {
                 implementation(projects.core.base)
@@ -63,13 +61,6 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
         // warnings for unused parameters
         allWarningsAsErrors.set(false)
     }
-}
-
-dependencies {
-    add("kspJvm", libs.kotlininject.compiler)
-    add("kspIosArm64", libs.kotlininject.compiler)
-    add("kspIosSimulatorArm64", libs.kotlininject.compiler)
-    add("kspIosX64", libs.kotlininject.compiler)
 }
 
 android {

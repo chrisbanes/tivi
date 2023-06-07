@@ -5,7 +5,6 @@
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.ksp)
 }
 
 kotlin {

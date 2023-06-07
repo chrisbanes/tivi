@@ -18,8 +18,10 @@ import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.home.ContentViewSetterComponent
 import app.tivi.tasks.TiviWorkerFactory
 import app.tivi.tmdb.TmdbOAuthInfo
+import app.tivi.util.AppCoroutineDispatchers
 import java.io.File
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
@@ -41,6 +43,17 @@ abstract class AndroidApplicationComponent(
 
     abstract val initializers: AppInitializers
     abstract val workerFactory: TiviWorkerFactory
+
+    /**
+     * Need to wait to upgrade to Coroutines 1.7.x so we can reference IO from common
+     */
+    @ApplicationScope
+    @Provides
+    fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
+        io = Dispatchers.IO,
+        computation = Dispatchers.Default,
+        main = Dispatchers.Main,
+    )
 
     @ApplicationScope
     @Provides

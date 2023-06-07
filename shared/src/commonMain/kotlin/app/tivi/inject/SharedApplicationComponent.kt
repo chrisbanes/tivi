@@ -22,27 +22,14 @@ import app.tivi.settings.PreferencesComponent
 import app.tivi.tasks.TasksComponent
 import app.tivi.tmdb.TmdbComponent
 import app.tivi.trakt.TraktComponent
-import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.LoggerComponent
 import app.tivi.util.PowerControllerComponent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import me.tatarka.inject.annotations.Provides
 
 interface SharedApplicationComponent :
     ApiComponent,
     TasksComponent,
     CoreComponent,
-    DataComponent {
-
-    @ApplicationScope
-    @Provides
-    fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
-        io = Dispatchers.IO,
-        computation = Dispatchers.Default,
-        main = Dispatchers.Main,
-    )
-}
+    DataComponent
 
 interface ApiComponent : TmdbComponent, TraktComponent
 

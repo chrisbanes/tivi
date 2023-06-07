@@ -5,7 +5,6 @@
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.android")
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -26,7 +25,6 @@ dependencies {
     implementation(libs.androidx.core)
 
     implementation(libs.kotlininject.runtime)
-    ksp(libs.kotlininject.compiler)
 
     api(libs.coil.coil)
 }
