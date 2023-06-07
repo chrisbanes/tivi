@@ -35,7 +35,7 @@ import app.tivi.data.traktauth.TraktAuthActivityComponent
 import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
-import app.tivi.inject.ApplicationComponent
+import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.overlays.LocalNavigator
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.SettingsScreen
@@ -155,8 +155,8 @@ internal class TiviNavigator(
 @ActivityScope
 @Component
 abstract class MainActivityComponent(
-    @get:Provides val activity: Activity,
-    @Component val applicationComponent: ApplicationComponent = ApplicationComponent.from(activity),
+    @get:Provides override val activity: Activity,
+    @Component val applicationComponent: AndroidApplicationComponent = AndroidApplicationComponent.from(activity),
 ) : ActivityComponent,
     TraktAuthActivityComponent {
     abstract val tiviDateFormatter: TiviDateFormatter
