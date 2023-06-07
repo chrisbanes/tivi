@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
+import app.tivi.gradle.addKspTestDependencyForAllTargets
+
 plugins {
     id("app.tivi.kotlin.multiplatform")
     alias(libs.plugins.ksp)
@@ -39,9 +41,4 @@ kotlin {
     }
 }
 
-dependencies {
-    add("kspJvmTest", libs.kotlininject.compiler)
-    add("kspIosArm64Test", libs.kotlininject.compiler)
-    add("kspIosSimulatorArm64Test", libs.kotlininject.compiler)
-    add("kspIosX64Test", libs.kotlininject.compiler)
-}
+addKspTestDependencyForAllTargets(libs.kotlininject.compiler)

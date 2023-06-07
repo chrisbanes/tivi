@@ -4,7 +4,6 @@
 
 plugins {
     id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.ksp)
 }
 
 kotlin {

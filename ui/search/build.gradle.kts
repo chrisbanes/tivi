@@ -5,7 +5,6 @@
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.android")
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -35,8 +34,6 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
-
-    ksp(libs.kotlininject.compiler)
 
     lintChecks(libs.slack.lint.compose)
 }
