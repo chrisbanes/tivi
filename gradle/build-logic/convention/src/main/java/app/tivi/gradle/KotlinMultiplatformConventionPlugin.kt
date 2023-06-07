@@ -20,6 +20,11 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
         extensions.configure<KotlinMultiplatformExtension> {
             targetHierarchy.default()
 
+            jvm()
+            if (pluginManager.hasPlugin("com.android.library")) {
+                android()
+            }
+
             listOf(
                 iosX64(),
                 iosArm64(),

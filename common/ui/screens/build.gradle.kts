@@ -3,15 +3,12 @@
 
 
 plugins {
-    id("app.tivi.kotlin.multiplatform")
     id("app.tivi.android.library")
+    id("app.tivi.kotlin.multiplatform")
     alias(libs.plugins.kotlin.parcelize)
 }
 
 kotlin {
-    jvm()
-    android()
-
     sourceSets {
         val commonMain by getting {
             dependencies {
