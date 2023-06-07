@@ -9,5 +9,5 @@ import me.tatarka.inject.annotations.Provides
 actual interface PerformanceComponent {
     @ApplicationScope
     @Provides
-    fun provideTracer(bind: AndroidTracer): Tracer = bind
+    fun provideTracer(): Tracer = Tracer { _, block -> block() }
 }

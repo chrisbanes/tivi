@@ -3,7 +3,7 @@
 
 package app.tivi.core.perf
 
-interface Tracer {
+fun interface Tracer {
     fun trace(
         name: String,
         block: () -> Unit,
