@@ -23,7 +23,7 @@
     {
       "description": "Disable updates to SNAPSHOTS",
       "matchDatasources": ["maven"],
-      "allowedVersions": "/\\-SNAPSHOT$/"
+      "allowedVersions": "!/SNAPSHOT$/"
     }
   ]
 }
