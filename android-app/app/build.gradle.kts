@@ -4,9 +4,9 @@
 
 plugins {
     id("app.tivi.android.application")
-    id("app.tivi.android.compose")
     id("app.tivi.kotlin.android")
     alias(libs.plugins.ksp)
+    alias(libs.plugins.composeMultiplatform)
 }
 
 val appVersionCode = propOrDef("TIVI_VERSIONCODE", "1000").toInt()
@@ -150,18 +150,7 @@ dependencies {
     implementation(projects.shared)
 
     implementation(projects.ui.account)
-    implementation(projects.ui.discover)
-    implementation(projects.ui.episode.details)
-    implementation(projects.ui.episode.track)
-    implementation(projects.ui.library)
-    implementation(projects.ui.popular)
-    implementation(projects.ui.trending)
-    implementation(projects.ui.recommended)
-    implementation(projects.ui.search)
-    implementation(projects.ui.show.details)
-    implementation(projects.ui.show.seasons)
     implementation(projects.ui.settings)
-    implementation(projects.ui.upnext)
 
     implementation(libs.circuit.overlay)
 
@@ -172,16 +161,13 @@ dependencies {
 
     implementation(libs.androidx.emoji)
 
-    implementation(libs.compose.foundation.foundation)
-    implementation(libs.compose.foundation.layout)
-    implementation(libs.compose.material.material)
-    implementation(libs.compose.material.iconsext)
-    implementation(libs.compose.material3.material3)
+    implementation(compose.foundation)
+    implementation(compose.material)
+    implementation(compose.materialIconsExtended)
+    implementation(compose.material3)
     implementation(libs.compose.material3.windowsizeclass)
-    implementation(libs.compose.animation.animation)
-    implementation(libs.compose.ui.tooling)
-
-    implementation(libs.timber)
+    implementation(compose.animation)
+    implementation(compose.uiTooling)
 
     implementation(libs.kotlin.coroutines.android)
 
