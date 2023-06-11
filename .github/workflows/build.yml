@@ -117,7 +117,8 @@ jobs:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
       - name: Build iOS libraries
-        run: ./gradlew spotlessCheck linkIosX64 iosX64Test
+        # This should run linkIosX64 but we're blocked by Ktor upgrading
+        run: ./gradlew spotlessCheck linkDebugFrameworkIosX64 iosX64Test
 
       - name: Clean secrets
         if: always()
