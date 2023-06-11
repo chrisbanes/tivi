@@ -57,7 +57,6 @@ include(
     ":core:preferences",
     ":common:ui:circuit-overlay",
     ":common:ui:resources",
-    ":common:ui:resources-compose",
     ":common:ui:compose",
     ":common:ui:screens",
     ":common:imageloading",

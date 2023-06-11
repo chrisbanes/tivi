@@ -19,10 +19,10 @@ plugins {
     alias(libs.plugins.gms.googleServices) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.spotless) apply false
+    alias(libs.plugins.composeMultiplatform) apply false
 }
 
 allprojects {
-
     // Workaround for https://issuetracker.google.com/issues/268961156
     tasks.withType<AndroidLintTask> {
         tasks.findByName("kspTestKotlin")?.let {

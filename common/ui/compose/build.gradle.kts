@@ -4,47 +4,49 @@
 
 plugins {
     id("app.tivi.android.library")
-    id("app.tivi.android.compose")
-    id("app.tivi.kotlin.android")
+    id("app.tivi.kotlin.multiplatform")
+    alias(libs.plugins.composeMultiplatform)
+}
+
+kotlin {
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                api(projects.data.models)
+                api(projects.core.preferences)
+                api(projects.common.imageloading)
+
+                api(projects.common.ui.screens)
+                api(libs.circuit.foundation)
+
+                api(projects.common.ui.resources)
+                api(libs.moko.resourcesCompose)
+
+                implementation(compose.foundation)
+                implementation(compose.material)
+                implementation(compose.materialIconsExtended)
+                api(compose.material3)
+                api(libs.compose.material3.windowsizeclass)
+                implementation(compose.animation)
+
+                api(libs.insetsx)
+
+                implementation(libs.paging.compose)
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.androidx.activity.compose)
+            }
+        }
+    }
 }
 
 android {
     namespace = "app.tivi.common.compose"
 
-    buildFeatures {
-        buildConfig = true
-    }
-
     lint {
         baseline = file("lint-baseline.xml")
     }
-}
-
-dependencies {
-    api(projects.data.models)
-    api(projects.core.preferences)
-    api(projects.common.imageloading)
-
-    api(projects.common.ui.screens)
-    api(libs.circuit.foundation)
-
-    api(projects.common.ui.resources)
-    api(projects.common.ui.resourcesCompose)
-
-    implementation(libs.androidx.core)
-
-    api(platform(libs.compose.bom))
-    implementation(libs.compose.ui.ui)
-    implementation(libs.compose.foundation.foundation)
-    implementation(libs.compose.foundation.layout)
-    implementation(libs.compose.material.material)
-    implementation(libs.compose.material.iconsext)
-    api(libs.compose.material3.material3)
-    api(libs.compose.material3.windowsizeclass)
-    implementation(libs.compose.animation.animation)
-    implementation(libs.compose.ui.tooling)
-
-    implementation(libs.paging.compose)
-
-    implementation(libs.coil.compose)
 }

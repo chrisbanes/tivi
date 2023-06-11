@@ -4,27 +4,31 @@
 
 plugins {
     id("app.tivi.android.library")
-    id("app.tivi.android.compose")
-    id("app.tivi.kotlin.android")
+    id("app.tivi.kotlin.multiplatform")
+    alias(libs.plugins.composeMultiplatform)
 }
 
 android {
     namespace = "app.tivi.home.recommended"
 }
 
-dependencies {
-    implementation(projects.core.base)
-    implementation(projects.domain)
-    implementation(projects.common.ui.compose)
+kotlin {
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.core.base)
+                implementation(projects.domain)
+                implementation(projects.common.ui.compose)
 
-    api(projects.common.ui.screens)
-    api(libs.circuit.foundation)
+                api(projects.common.ui.screens)
+                api(libs.circuit.foundation)
 
-    implementation(libs.paging.compose)
+                implementation(libs.paging.compose)
 
-    implementation(libs.compose.foundation.foundation)
-    implementation(libs.compose.foundation.layout)
-    implementation(libs.compose.material.material)
-    implementation(libs.compose.animation.animation)
-    implementation(libs.compose.ui.tooling)
+                implementation(compose.foundation)
+                implementation(compose.material)
+                implementation(compose.animation)
+            }
+        }
+    }
 }
