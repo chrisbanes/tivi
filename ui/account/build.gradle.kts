@@ -4,8 +4,8 @@
 
 plugins {
     id("app.tivi.android.library")
-    id("app.tivi.android.compose")
     id("app.tivi.kotlin.android")
+    alias(libs.plugins.composeMultiplatform)
 }
 
 android {
@@ -25,12 +25,9 @@ dependencies {
     // For registerForActivityResult
     implementation(libs.androidx.activity.compose)
 
-    implementation(libs.compose.foundation.foundation)
-    implementation(libs.compose.foundation.layout)
-    implementation(libs.compose.material.material)
-    implementation(libs.compose.material3.material3)
-    implementation(libs.compose.animation.animation)
-    implementation(libs.compose.ui.tooling)
-
-    implementation(libs.coil.compose)
+    implementation(compose.foundation)
+    implementation(compose.material)
+    implementation(compose.material3)
+    implementation(compose.animation)
+    implementation(compose.uiTooling)
 }
