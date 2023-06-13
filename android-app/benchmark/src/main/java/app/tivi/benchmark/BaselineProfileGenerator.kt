@@ -4,7 +4,6 @@
 package app.tivi.benchmark
 
 import android.os.SystemClock
-import androidx.benchmark.macro.ExperimentalStableBaselineProfilesApi
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
@@ -20,9 +19,8 @@ class BaselineProfileGenerator {
     @get:Rule
     val rule = BaselineProfileRule()
 
-    @OptIn(ExperimentalStableBaselineProfilesApi::class)
     @Test
-    fun generateBaselineProfile() = rule.collectStableBaselineProfile(
+    fun generateBaselineProfile() = rule.collectBaselineProfile(
         packageName = "app.tivi",
         stableIterations = 2,
         maxIterations = 8,
@@ -33,25 +31,25 @@ class BaselineProfileGenerator {
         // -------------
         // Discover
         // -------------
-        device.testDiscover() || return@collectStableBaselineProfile
+        device.testDiscover() || return@collectBaselineProfile
         device.navigateFromDiscoverToShowDetails()
 
         // -------------
         // Show Details
         // -------------
-        device.testShowDetails() || return@collectStableBaselineProfile
+        device.testShowDetails() || return@collectBaselineProfile
         device.navigateFromShowDetailsToSeasons()
 
         // -------------
         // Seasons
         // -------------
-        device.testSeasons() || return@collectStableBaselineProfile
+        device.testSeasons() || return@collectBaselineProfile
         device.navigateFromSeasonsToEpisodeDetails()
 
         // -------------
         // Episode details
         // -------------
-        device.testEpisodeDetails() || return@collectStableBaselineProfile
+        device.testEpisodeDetails() || return@collectBaselineProfile
     }
 
     private fun UiDevice.testDiscover(): Boolean {
