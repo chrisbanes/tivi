@@ -76,7 +76,7 @@ jobs:
               mv "${1}" "${1//[^A-Za-z0-9._-]/_}"
           }
           export -f sanitizefilename
-          find android-app/app/build/outputs -type f -exec bash -c 'sanitizefilename "$0"' {} \;
+          find android-app/app/build/outputs -type f -execdir bash -c 'sanitizefilename "$0"' {} \;
 
       - name: Upload build outputs
         if: always()
