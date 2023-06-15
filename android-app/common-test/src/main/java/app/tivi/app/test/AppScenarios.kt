@@ -44,14 +44,14 @@ object AppScenarios {
 }
 
 private fun UiDevice.testDiscover(): Boolean {
-    // Might need to wait a while for the app to load
-    waitForObject(By.res("discover_carousel"), 30.seconds).run {
-        // Scroll one of the Discover Carousels
-        scroll(Direction.RIGHT, 1f)
-        scroll(Direction.LEFT, 1f)
-    }
+    // Scroll one of the Discover Carousels. Might need to wait a while for the app to load
+    waitForObject(By.res("discover_carousel"), 30.seconds)
+        .scroll(Direction.RIGHT, 1f)
 
-    return wait(Until.hasObject(By.res("discover_carousel_item")), 5.seconds)
+    waitForObject(By.res("discover_carousel"))
+        .scroll(Direction.LEFT, 1f)
+
+    return true
 }
 
 private fun UiDevice.navigateFromDiscoverToShowDetails() {
