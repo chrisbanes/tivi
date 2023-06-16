@@ -32,7 +32,7 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 ksp = "com.google.devtools.ksp:1.8.21-1.0.11"
 moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
 gms-googleServices = "com.google.gms.google-services:4.3.15"
-firebase-crashlytics = "com.google.firebase.crashlytics:2.9.5"
+firebase-crashlytics = "com.google.firebase.crashlytics:2.9.6"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
