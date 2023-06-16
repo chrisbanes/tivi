@@ -159,9 +159,9 @@ jobs:
             **/build/test-results/*
 
   publish:
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    if: github.ref == 'refs/heads/main'
     needs: [android, ios]
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       TERM: dumb
@@ -179,16 +179,7 @@ jobs:
           name: android-build-outputs
           path: android-app/app/build/outputs
 
-      - name: Create release for tags
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          generate_release_notes: true
-          files: |
-            android-app/app/build/outputs/apk/standard/release/app-standard-release.apk
-
       - name: Publish QA build to internal track
-        if: github.ref == 'refs/heads/main'
         uses: r0adkll/upload-google-play@v1.1.1
         with:
           serviceAccountJson: release/play-account.json
@@ -198,21 +189,10 @@ jobs:
           mappingFile: android-app/app/build/outputs/mapping/qaRelease/mapping.txt
 
       - name: Publish build to alpha track
-        if: github.ref == 'refs/heads/main'
         uses: r0adkll/upload-google-play@v1.1.1
         with:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
           track: alpha
-          releaseFiles: android-app/app/build/outputs/bundle/standardRelease/app-standard-release.aab
-          mappingFile: android-app/app/build/outputs/mapping/standardRelease/mapping.txt
-
-      - name: Publish tagged release to beta track
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: r0adkll/upload-google-play@v1.1.1
-        with:
-          serviceAccountJson: release/play-account.json
-          packageName: app.tivi
-          track: beta
           releaseFiles: android-app/app/build/outputs/bundle/standardRelease/app-standard-release.aab
           mappingFile: android-app/app/build/outputs/mapping/standardRelease/mapping.txt
