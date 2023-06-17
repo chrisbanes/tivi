@@ -124,13 +124,15 @@ class DiscoverPresenter(
                             }
                         }
                     }
-                    scope.launch {
-                        updateRecommendedShows(
-                            UpdateRecommendedShows.Params(forceRefresh = event.fromUser),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
+                    if (authState == TraktAuthState.LOGGED_IN) {
+                        scope.launch {
+                            updateRecommendedShows(
+                                UpdateRecommendedShows.Params(forceRefresh = event.fromUser),
+                            ).also { result ->
+                                result.exceptionOrNull()?.let { e ->
+                                    logger.i(e)
+                                    uiMessageManager.emitMessage(UiMessage(e))
+                                }
                             }
                         }
                     }
@@ -153,13 +155,16 @@ class DiscoverPresenter(
             }
         }
 
-        LaunchedEffect(Unit) {
+        LaunchedEffect(authState) {
             observeTrendingShows(ObserveTrendingShows.Params(10))
             observePopularShows(ObservePopularShows.Params(10))
-            observeRecommendedShows(ObserveRecommendedShows.Params(10))
             observeNextShowEpisodeToWatch(Unit)
             observeTraktAuthState(Unit)
             observeUserDetails(ObserveUserDetails.Params("me"))
+
+            if (authState == TraktAuthState.LOGGED_IN) {
+                observeRecommendedShows(ObserveRecommendedShows.Params(10))
+            }
 
             eventSink(DiscoverUiEvent.Refresh(false))
         }
