@@ -40,6 +40,4 @@ dependencies {
     implementation(libs.compose.ui.tooling)
 
     implementation(libs.coil.compose)
-
-    lintChecks(libs.slack.lint.compose)
 }

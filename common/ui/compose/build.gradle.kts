@@ -51,6 +51,4 @@ dependencies {
     implementation(libs.paging.compose)
 
     implementation(libs.coil.compose)
-
-    lintChecks(libs.slack.lint.compose)
 }

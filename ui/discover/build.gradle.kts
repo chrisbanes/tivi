@@ -37,6 +37,4 @@ dependencies {
     implementation(libs.compose.material3.windowsizeclass)
     implementation(libs.compose.animation.animation)
     implementation(libs.compose.ui.tooling)
-
-    lintChecks(libs.slack.lint.compose)
 }
