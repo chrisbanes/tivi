@@ -46,9 +46,11 @@ object AppScenarios {
 private fun UiDevice.testDiscover(): Boolean {
     // Scroll one of the Discover Carousels. Might need to wait a while for the app to load
     waitForObject(By.res("discover_carousel"), 30.seconds)
+        .apply { setGestureMargin(visibleBounds.width() / 6) }
         .scroll(Direction.RIGHT, 1f)
 
     waitForObject(By.res("discover_carousel"))
+        .apply { setGestureMargin(visibleBounds.width() / 6) }
         .scroll(Direction.LEFT, 1f)
 
     return true
@@ -74,7 +76,7 @@ private fun UiDevice.testShowDetails(): Boolean {
 
         // Scroll to the end to show the seasons
         waitForObject(By.res("show_details_lazycolumn"))
-            .scroll(Direction.DOWN, 1f)
+            .scroll(Direction.DOWN, 0.8f)
     }
 
     return false
