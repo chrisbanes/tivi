@@ -14,7 +14,7 @@ class BaselineProfileGenerator {
     val rule = BaselineProfileRule()
 
     @Test
-    fun generateBaselineProfile() = rule.collectBaselineProfile(
+    fun generateBaselineProfile() = rule.collect(
         packageName = "app.tivi",
         stableIterations = 2,
         maxIterations = 8,
