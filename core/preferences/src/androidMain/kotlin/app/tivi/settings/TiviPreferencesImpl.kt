@@ -6,6 +6,7 @@ package app.tivi.settings
 import android.app.Application
 import android.content.SharedPreferences
 import android.os.Build
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.core.content.edit
 import app.tivi.core.preferences.R
 import app.tivi.settings.TiviPreferences.Theme
@@ -24,12 +25,13 @@ class TiviPreferencesImpl(
 ) : TiviPreferences {
     private val defaultThemeValue = context.getString(R.string.pref_theme_default_value)
 
+    @ChecksSdkIntAtLeast(api = 31)
     private val defaultUseDynamicColors = Build.VERSION.SDK_INT >= 31
 
     private val preferenceKeyChangedFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        preferenceKeyChangedFlow.tryEmit(key)
+        preferenceKeyChangedFlow.tryEmit(key!!)
     }
 
     companion object {
