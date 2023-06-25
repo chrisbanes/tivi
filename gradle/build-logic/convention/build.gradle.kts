@@ -49,5 +49,10 @@ gradlePlugin {
             id = "app.tivi.android.test"
             implementationClass = "app.tivi.gradle.AndroidTestConventionPlugin"
         }
+
+        register("androidCompose") {
+            id = "app.tivi.android.compose"
+            implementationClass = "app.tivi.gradle.AndroidComposeConventionPlugin"
+        }
     }
 }

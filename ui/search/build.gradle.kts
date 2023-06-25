@@ -4,19 +4,12 @@
 
 plugins {
     id("app.tivi.android.library")
+    id("app.tivi.android.compose")
     id("app.tivi.kotlin.android")
 }
 
 android {
     namespace = "app.tivi.home.search"
-
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composecompiler.get()
-    }
 }
 
 dependencies {

@@ -4,6 +4,7 @@
 
 plugins {
     id("app.tivi.android.application")
+    id("app.tivi.android.compose")
     id("app.tivi.kotlin.android")
     alias(libs.plugins.ksp)
 }
@@ -54,11 +55,6 @@ android {
 
     buildFeatures {
         buildConfig = true
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composecompiler.get()
     }
 
     testOptions {

@@ -4,6 +4,7 @@
 
 plugins {
     id("app.tivi.android.library")
+    id("app.tivi.android.compose")
     id("app.tivi.kotlin.android")
 }
 
@@ -12,11 +13,6 @@ android {
 
     buildFeatures {
         buildConfig = true
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composecompiler.get()
     }
 }
 
