@@ -6,14 +6,10 @@ package app.tivi.gradle
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getByType
 
 fun Project.configureAndroid() {
-    val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-
     android {
         compileSdkVersion(Versions.compileSdk)
 
