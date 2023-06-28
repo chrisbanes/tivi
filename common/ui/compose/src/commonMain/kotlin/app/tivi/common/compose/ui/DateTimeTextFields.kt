@@ -160,13 +160,13 @@ fun TimeTextField(
     }
 }
 
-//object TimeTextFieldDefaults {
+// object TimeTextFieldDefaults {
 //    val is24Hour: Boolean
 //        @Composable get() {
 //            val context = LocalContext.current
 //            return remember { DateFormat.is24HourFormat(context) }
 //        }
-//}
+// }
 
 @ExperimentalMaterial3Api
 @Composable
