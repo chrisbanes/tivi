@@ -2,12 +2,22 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.multiplatform")
 }
 
 kotlin {
+    targets.withType<KotlinNativeTarget> {
+        binaries.withType<Framework> {
+            isStatic = true
+            baseName = "Tivi"
+        }
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
