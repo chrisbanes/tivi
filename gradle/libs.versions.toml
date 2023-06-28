@@ -137,8 +137,6 @@ playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:
 
 robolectric = "org.robolectric:robolectric:4.10.3"
 
-swipe = "me.saket.swipe:swipe:1.2.0"
-
 store = "org.mobilenativefoundation.store:store5:5.0.0-beta01"
 
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
