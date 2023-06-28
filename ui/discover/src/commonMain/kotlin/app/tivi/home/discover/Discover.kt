@@ -5,7 +5,6 @@
 
 package app.tivi.home.discover
 
-import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
@@ -155,15 +154,11 @@ internal fun Discover(
         }
     }
 
-    if (Build.VERSION.SDK_INT >= 25) {
-        // ReportDrawnWhen routinely causes crashes on API < 25:
-        // https://issuetracker.google.com/issues/260506820
-        ReportDrawnWhen {
-            !state.popularRefreshing &&
-                !state.trendingRefreshing &&
-                state.popularItems.isNotEmpty() &&
-                state.trendingItems.isNotEmpty()
-        }
+    ReportDrawnWhen {
+        !state.popularRefreshing &&
+            !state.trendingRefreshing &&
+            state.popularItems.isNotEmpty() &&
+            state.trendingItems.isNotEmpty()
     }
 
     Scaffold(
