@@ -3,11 +3,10 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.message
+import com.vanpra.composematerialdialogs.title
 
 @Composable
 fun TiviAlertDialog(
@@ -18,19 +17,12 @@ fun TiviAlertDialog(
     dismissText: String,
     onDismissRequest: () -> Unit,
 ) {
-    AlertDialog(
-        title = { Text(text = title) },
-        text = { Text(text = message) },
-        confirmButton = {
-            OutlinedButton(onClick = { onConfirm() }) {
-                Text(text = confirmText)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { onDismissRequest() }) {
-                Text(text = dismissText)
-            }
-        },
-        onDismissRequest = onDismissRequest,
-    )
+    MaterialDialog(
+        onCloseRequest = { onDismissRequest() },
+    ) {
+        title(title)
+        message(message)
+        dialogButtons.positiveButton(text = confirmText, onClick = onConfirm)
+        dialogButtons.negativeButton(text = dismissText, onClick = onDismissRequest)
+    }
 }
