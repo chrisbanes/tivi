@@ -26,7 +26,7 @@ kotlin {
 
                 implementation(libs.paging.compose)
 
-                implementation(libs.swipe)
+                implementation(projects.thirdparty.swipe)
 
                 implementation(compose.foundation)
                 implementation(compose.material)

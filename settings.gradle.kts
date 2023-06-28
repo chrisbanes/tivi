@@ -98,4 +98,5 @@ include(
     ":android-app:app",
     ":android-app:benchmark",
     ":android-app:common-test",
+    ":thirdparty:swipe",
 )

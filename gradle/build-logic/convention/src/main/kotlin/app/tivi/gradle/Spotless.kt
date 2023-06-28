@@ -8,6 +8,11 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
 fun Project.configureSpotless() {
+    if (path.startsWith(":thirdparty")) {
+        println("Skipping Spotless")
+        return
+    }
+
     val ktlintVersion = libs.findVersion("ktlint").get().requiredVersion
 
     with(pluginManager) {
@@ -16,7 +21,7 @@ fun Project.configureSpotless() {
 
     spotless {
         kotlin {
-            target("**/*.kt")
+            target("src/**/*.kt")
             targetExclude("$buildDir/**/*.kt")
             targetExclude("bin/**/*.kt")
             ktlint(ktlintVersion)
@@ -32,7 +37,7 @@ fun Project.configureSpotless() {
         }
 
         kotlinGradle {
-            target("**/*.kts")
+            target("src/**/*.kts")
             targetExclude("$buildDir/**/*.kts")
             ktlint(ktlintVersion)
             licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
