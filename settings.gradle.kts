@@ -95,6 +95,7 @@ include(
     ":ui:library",
     ":ui:account",
     ":ui:upnext",
+    ":ui:root",
     ":android-app:app",
     ":android-app:benchmark",
     ":android-app:common-test",
