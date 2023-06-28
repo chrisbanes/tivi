@@ -31,6 +31,8 @@ kotlin {
 
                 api(libs.insetsx)
 
+                implementation(libs.uuid)
+
                 implementation(libs.paging.compose)
             }
         }
