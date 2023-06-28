@@ -33,15 +33,14 @@ interface UiComponent :
     ShowSeasonsComponent,
     TrendingShowsComponent,
     UpNextComponent {
+
     @Provides
     @ApplicationScope
     fun provideCircuitConfig(
         uiFactories: Set<Ui.Factory>,
         presenterFactories: Set<Presenter.Factory>,
-    ): CircuitConfig {
-        return CircuitConfig.Builder()
-            .addUiFactories(uiFactories)
-            .addPresenterFactories(presenterFactories)
-            .build()
-    }
+    ): CircuitConfig = CircuitConfig.Builder()
+        .addUiFactories(uiFactories)
+        .addPresenterFactories(presenterFactories)
+        .build()
 }

@@ -3,8 +3,12 @@
 
 package app.tivi.inject
 
+<<<<<<< HEAD
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.TmdbInitializer
+=======
+import app.tivi.common.imageloading.ImageLoadingComponent
+>>>>>>> a8436cacd (Move :ui:account to KMP)
 import app.tivi.core.analytics.AnalyticsComponent
 import app.tivi.core.perf.PerformanceComponent
 import app.tivi.data.SqlDelightDatabaseComponent
@@ -29,14 +33,19 @@ import app.tivi.util.LoggerComponent
 import app.tivi.util.PowerControllerComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+<<<<<<< HEAD
 import me.tatarka.inject.annotations.IntoSet
+=======
+>>>>>>> a8436cacd (Move :ui:account to KMP)
 import me.tatarka.inject.annotations.Provides
 
 interface SharedApplicationComponent :
     ApiComponent,
     TasksComponent,
     CoreComponent,
-    DataComponent
+    DataComponent,
+    ImageLoadingComponent,
+    UiComponent
 
 interface ApiComponent : TmdbComponent, TraktComponent
 
@@ -58,9 +67,12 @@ interface CoreComponent :
         main = Dispatchers.Main,
     )
 
+<<<<<<< HEAD
     @Provides
     @IntoSet
     fun provideTmdbInitializer(bind: TmdbInitializer): AppInitializer = bind
+=======
+>>>>>>> a8436cacd (Move :ui:account to KMP)
 }
 
 interface DataComponent :

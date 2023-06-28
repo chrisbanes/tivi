@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.multiplatform")
+    alias(libs.plugins.composeMultiplatform)
 }
 
 kotlin {
@@ -36,7 +37,7 @@ kotlin {
                 api(projects.common.imageloading)
                 api(projects.common.ui.compose)
 
-                // api(projects.ui.account)
+                api(projects.ui.account)
                 api(projects.ui.discover)
                 api(projects.ui.episode.details)
                 api(projects.ui.episode.track)
