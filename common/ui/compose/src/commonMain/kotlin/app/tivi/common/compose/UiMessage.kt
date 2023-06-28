@@ -3,7 +3,7 @@
 
 package app.tivi.common.compose
 
-import java.util.UUID
+import com.benasher44.uuid.uuid4
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -13,12 +13,12 @@ import kotlinx.coroutines.sync.withLock
 
 data class UiMessage(
     val message: String,
-    val id: Long = UUID.randomUUID().mostSignificantBits,
+    val id: Long = uuid4().mostSignificantBits,
 )
 
 fun UiMessage(
     t: Throwable,
-    id: Long = UUID.randomUUID().mostSignificantBits,
+    id: Long = uuid4().mostSignificantBits,
 ): UiMessage = UiMessage(
     message = t.message ?: "Error occurred: $t",
     id = id,
