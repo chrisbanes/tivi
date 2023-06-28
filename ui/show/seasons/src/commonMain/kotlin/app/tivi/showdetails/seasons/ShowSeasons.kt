@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -74,6 +73,7 @@ import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.screens.ShowSeasonsScreen
+import com.moriatsushi.insetsx.statusBars
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
