@@ -14,7 +14,7 @@ kotlin {
     targets.withType<KotlinNativeTarget> {
         binaries.withType<Framework> {
             isStatic = true
-            baseName = "Tivi"
+            baseName = "TiviKt"
         }
     }
 
