@@ -48,6 +48,7 @@ kotlin {
                 api(projects.ui.search)
                 api(projects.ui.show.details)
                 api(projects.ui.show.seasons)
+                api(projects.ui.root)
                 // api(projects.ui.settings)
                 api(projects.ui.upnext)
             }

@@ -8,13 +8,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
@@ -27,35 +26,20 @@ import app.tivi.ContentViewSetter
 import app.tivi.TiviActivity
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.LocalWindowSizeClass
-import app.tivi.common.compose.shouldUseDarkColors
-import app.tivi.common.compose.shouldUseDynamicColors
-import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.core.analytics.Analytics
 import app.tivi.data.traktauth.LoginToTraktInteractor
 import app.tivi.data.traktauth.TraktAuthActivityComponent
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.AndroidApplicationComponent
-import app.tivi.overlays.LocalNavigator
-import app.tivi.screens.DiscoverScreen
-import app.tivi.screens.SettingsScreen
-import app.tivi.screens.TiviScreen
 import app.tivi.settings.SettingsActivity
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
-import com.slack.circuit.backstack.SaveableBackStack
-import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.CircuitConfig
-import com.slack.circuit.foundation.push
-import com.slack.circuit.foundation.rememberCircuitNavigator
-import com.slack.circuit.foundation.screen
-import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.Screen
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -69,6 +53,7 @@ class MainActivity : TiviActivity() {
         }
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component = MainActivityComponent::class.create(this)
@@ -89,8 +74,18 @@ class MainActivity : TiviActivity() {
                         TiviContent(
                             analytics = component.analytics,
                             preferences = component.preferences,
+                            onRootPop = {
+                                if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+                                    onBackPressedDispatcher.onBackPressed()
+                                }
+                            },
                             onOpenSettings = {
                                 context.startActivity(Intent(context, SettingsActivity::class.java))
+                            },
+                            modifier = Modifier.semantics {
+                                // Enables testTag -> UiAutomator resource id
+                                // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
+                                testTagsAsResourceId = true
                             },
                         )
                     }
@@ -105,63 +100,6 @@ class MainActivity : TiviActivity() {
         component.login.register()
 
         component.contentViewSetter.setContentView(this, composeView)
-    }
-}
-
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Composable
-private fun TiviContent(
-    onOpenSettings: () -> Unit,
-    analytics: Analytics,
-    preferences: TiviPreferences,
-) {
-    val backstack: SaveableBackStack = rememberSaveableBackStack { push(DiscoverScreen) }
-    val circuitNavigator = rememberCircuitNavigator(backstack)
-
-    val navigator: Navigator = remember(circuitNavigator) {
-        TiviNavigator(circuitNavigator, onOpenSettings)
-    }
-
-    // Launch an effect to track changes to the current back stack entry, and push them
-    // as a screen views to analytics
-    LaunchedEffect(backstack.topRecord) {
-        val topScreen = backstack.topRecord?.screen as? TiviScreen
-        analytics.trackScreenView(
-            name = topScreen?.name ?: "unknown screen",
-            arguments = topScreen?.arguments,
-        )
-    }
-
-    CompositionLocalProvider(
-        LocalNavigator provides navigator,
-        LocalWindowSizeClass provides calculateWindowSizeClass(),
-    ) {
-        TiviTheme(
-            useDarkColors = preferences.shouldUseDarkColors(),
-            useDynamicColors = preferences.shouldUseDynamicColors(),
-        ) {
-            Home(backstack = backstack, navigator = navigator)
-        }
-    }
-}
-
-private class TiviNavigator(
-    private val navigator: Navigator,
-    private val onOpenSettings: () -> Unit,
-) : Navigator {
-    override fun goTo(screen: Screen) {
-        when (screen) {
-            is SettingsScreen -> onOpenSettings()
-            else -> navigator.goTo(screen)
-        }
-    }
-
-    override fun pop(): Screen? {
-        return navigator.pop()
-    }
-
-    override fun resetRoot(newRoot: Screen): List<Screen> {
-        return navigator.resetRoot(newRoot)
     }
 }
 
