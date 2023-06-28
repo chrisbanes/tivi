@@ -3,6 +3,8 @@
 
 package app.tivi.inject
 
+import app.tivi.appinitializers.AppInitializer
+import app.tivi.appinitializers.TmdbInitializer
 import app.tivi.core.analytics.AnalyticsComponent
 import app.tivi.core.perf.PerformanceComponent
 import app.tivi.data.SqlDelightDatabaseComponent
@@ -22,8 +24,13 @@ import app.tivi.settings.PreferencesComponent
 import app.tivi.tasks.TasksComponent
 import app.tivi.tmdb.TmdbComponent
 import app.tivi.trakt.TraktComponent
+import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.LoggerComponent
 import app.tivi.util.PowerControllerComponent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import me.tatarka.inject.annotations.IntoSet
+import me.tatarka.inject.annotations.Provides
 
 interface SharedApplicationComponent :
     ApiComponent,
@@ -38,7 +45,23 @@ interface CoreComponent :
     LoggerComponent,
     PerformanceComponent,
     PowerControllerComponent,
-    PreferencesComponent
+    PreferencesComponent {
+
+    /**
+     * Need to wait to upgrade to Coroutines 1.7.x so we can reference IO from common
+     */
+    @ApplicationScope
+    @Provides
+    fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
+        io = Dispatchers.IO,
+        computation = Dispatchers.Default,
+        main = Dispatchers.Main,
+    )
+
+    @Provides
+    @IntoSet
+    fun provideTmdbInitializer(bind: TmdbInitializer): AppInitializer = bind
+}
 
 interface DataComponent :
     EpisodeBinds,

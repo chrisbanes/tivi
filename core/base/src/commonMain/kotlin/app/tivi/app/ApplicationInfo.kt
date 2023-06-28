@@ -5,4 +5,10 @@ package app.tivi.app
 
 data class ApplicationInfo(
     val packageName: String,
+    val debugBuild: Boolean,
+    val flavor: Flavor,
 )
+
+enum class Flavor {
+    Qa, Standard
+}
