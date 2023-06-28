@@ -15,7 +15,11 @@ import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.CircuitConfig
+import kotlin.experimental.ExperimentalObjCName
+import platform.UIKit.UIViewController
 
+@OptIn(ExperimentalObjCName::class)
+@ObjCName("HomeViewController")
 fun HomeViewController(
     onRootPop: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -25,7 +29,7 @@ fun HomeViewController(
     circuitConfig: CircuitConfig,
     analytics: Analytics,
     preferences: TiviPreferences,
-) = ComposeUIViewController {
+): UIViewController = ComposeUIViewController {
     CompositionLocalProvider(
         LocalImageLoader provides imageLoader,
         LocalTiviDateFormatter provides tiviDateFormatter,

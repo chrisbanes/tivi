@@ -40,9 +40,7 @@ object EmptyTiviPreferences : TiviPreferences {
 
     override var theme: TiviPreferences.Theme = TiviPreferences.Theme.SYSTEM
 
-    override fun observeTheme(): Flow<TiviPreferences.Theme> {
-        TODO("Not yet implemented")
-    }
+    override fun observeTheme(): Flow<TiviPreferences.Theme> = emptyFlow()
 
     override var useDynamicColors: Boolean = false
 

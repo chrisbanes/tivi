@@ -7,6 +7,7 @@ import app.tivi.core.analytics.Analytics
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
+import com.seiko.imageloader.ImageLoader
 import com.slack.circuit.foundation.CircuitConfig
 import me.tatarka.inject.annotations.Component
 
@@ -20,6 +21,7 @@ abstract class HomeUiControllerComponent(
     abstract val preferences: TiviPreferences
     abstract val analytics: Analytics
     abstract val circuitConfig: CircuitConfig
+    abstract val imageLoader: ImageLoader
 
     companion object
 }

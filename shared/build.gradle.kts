@@ -1,7 +1,6 @@
 // Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import app.tivi.gradle.addKspDependencyForAllTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -11,13 +10,16 @@ plugins {
     id("app.tivi.kotlin.multiplatform")
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.moko.resources)
 }
 
 kotlin {
     targets.withType<KotlinNativeTarget> {
         binaries.withType<Framework> {
             isStatic = true
-            baseName = "Tivi"
+            baseName = "TiviKt"
+
+            export(projects.ui.root)
         }
     }
 
@@ -67,3 +69,27 @@ ksp {
 }
 
 addKspDependencyForAllTargets(libs.kotlininject.compiler)
+
+multiplatformResources {
+    disableStaticFrameworkWarning = true
+    multiplatformResourcesPackage = "app.tivi"
+    multiplatformResourcesSourceSet = "iosMain"
+}
+
+// Various fixes for moko-resources tasks
+// iOS
+afterEvaluate {
+    tasks.findByPath("kspKotlinIosArm64")?.apply {
+        dependsOn(tasks.getByPath("generateMRiosArm64Main"))
+    }
+    tasks.findByPath("kspKotlinIosSimulatorArm64")?.apply {
+        dependsOn(tasks.getByPath("generateMRiosSimulatorArm64Main"))
+    }
+}
+// Android
+tasks.withType(com.android.build.gradle.tasks.MergeResources::class).configureEach {
+    dependsOn(tasks.getByPath("generateMRandroidMain"))
+}
+tasks.withType(com.android.build.gradle.tasks.MapSourceSetPathsTask::class).configureEach {
+    dependsOn(tasks.getByPath("generateMRandroidMain"))
+}
