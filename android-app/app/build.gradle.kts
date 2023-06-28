@@ -148,36 +148,21 @@ androidComponents {
 
 dependencies {
     implementation(projects.shared)
-
-    implementation(projects.ui.account)
     implementation(projects.ui.settings)
-
-    implementation(libs.circuit.overlay)
-
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     implementation(libs.androidx.activity.activity)
     implementation(libs.androidx.activity.compose)
-
     implementation(libs.androidx.emoji)
-
-    implementation(compose.foundation)
-    implementation(compose.material)
-    implementation(compose.materialIconsExtended)
-    implementation(compose.material3)
-    implementation(libs.compose.material3.windowsizeclass)
-    implementation(compose.animation)
-    implementation(compose.uiTooling)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.profileinstaller)
 
     implementation(libs.kotlin.coroutines.android)
 
-    implementation(libs.androidx.profileinstaller)
+    implementation(libs.google.firebase.crashlytics)
 
     implementation(libs.okhttp.loggingInterceptor)
 
     ksp(libs.kotlininject.compiler)
-
-    implementation(libs.google.firebase.crashlytics)
 
     qaImplementation(libs.chucker.library)
 

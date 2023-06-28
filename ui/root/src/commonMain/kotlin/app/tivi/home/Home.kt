@@ -42,11 +42,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.ui.resources.MR
@@ -66,11 +63,12 @@ import com.slack.circuit.runtime.Screen
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Home(
     backstack: SaveableBackStack,
     navigator: Navigator,
+    modifier: Modifier = Modifier,
 ) {
     val windowSizeClass = LocalWindowSizeClass.current
     val navigationType = remember(windowSizeClass) {
@@ -99,11 +97,7 @@ internal fun Home(
         },
         contentWindowInsets = ScaffoldDefaults.contentWindowInsets
             .exclude(WindowInsets.statusBars), // We let content handle the status bar
-        modifier = Modifier.semantics {
-            // Enables testTag -> UiAutomator resource id
-            // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
-            testTagsAsResourceId = true
-        },
+        modifier = modifier,
     ) { paddingValues ->
         Row(
             modifier = Modifier
