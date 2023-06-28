@@ -3,7 +3,6 @@
 
 package app.tivi.common.compose.ui
 
-import android.text.format.DateFormat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.ui.resources.MR
@@ -109,7 +107,7 @@ fun TimeTextField(
     selectedTime: LocalTime?,
     onTimeSelected: (LocalTime) -> Unit,
     modifier: Modifier = Modifier,
-    is24Hour: Boolean = TimeTextFieldDefaults.is24Hour,
+    is24Hour: Boolean = true, // FIXME
 ) {
     var showPicker by remember { mutableStateOf(false) }
 
@@ -162,13 +160,13 @@ fun TimeTextField(
     }
 }
 
-object TimeTextFieldDefaults {
-    val is24Hour: Boolean
-        @Composable get() {
-            val context = LocalContext.current
-            return remember { DateFormat.is24HourFormat(context) }
-        }
-}
+//object TimeTextFieldDefaults {
+//    val is24Hour: Boolean
+//        @Composable get() {
+//            val context = LocalContext.current
+//            return remember { DateFormat.is24HourFormat(context) }
+//        }
+//}
 
 @ExperimentalMaterial3Api
 @Composable

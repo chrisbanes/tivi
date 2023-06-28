@@ -3,7 +3,6 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.annotation.FloatRange
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -47,7 +46,7 @@ fun ScrimmedIconButton(
 private fun ScrimSurface(
     modifier: Modifier = Modifier,
     showScrim: Boolean = true,
-    @FloatRange(from = 0.0, to = 1.0) alpha: Float = 0.3f,
+    alpha: Float = 0.3f,
     icon: @Composable () -> Unit,
 ) {
     Surface(
