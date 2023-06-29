@@ -81,10 +81,6 @@ android {
             signingConfig = signingConfigs["debug"]
             versionNameSuffix = "-dev"
             applicationIdSuffix = ".debug"
-
-            buildConfigField("String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_DEBUG_TRAKT_CLIENT_ID", "TIVI_TRAKT_CLIENT_ID", "") + "\"")
-            buildConfigField("String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_DEBUG_TRAKT_CLIENT_SECRET", "TIVI_TRAKT_CLIENT_SECRET", "") + "\"")
-            buildConfigField("String", "TMDB_API_KEY", "\"" + propOrDef("TIVI_DEBUG_TMDB_API_KEY", "TIVI_TMDB_API_KEY", "") + "\"")
         }
 
         release {
@@ -92,10 +88,6 @@ android {
             isShrinkResources = true
             isMinifyEnabled = true
             proguardFiles("proguard-rules.pro")
-
-            buildConfigField("String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_TRAKT_CLIENT_ID", "") + "\"")
-            buildConfigField("String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_TRAKT_CLIENT_SECRET", "") + "\"")
-            buildConfigField("String", "TMDB_API_KEY", "\"" + propOrDef("TIVI_TMDB_API_KEY", "") + "\"")
         }
 
         create("benchmark") {
