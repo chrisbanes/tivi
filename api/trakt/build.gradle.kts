@@ -4,6 +4,16 @@
 
 plugins {
     id("app.tivi.kotlin.multiplatform")
+    alias(libs.plugins.buildConfig)
+}
+
+buildConfig {
+    packageName("app.tivi.trakt")
+
+    buildConfigField("String", "TRAKT_DEBUG_CLIENT_SECRET", "\"${propOrDef("TIVI_DEBUG_TRAKT_CLIENT_SECRET", "")}\"")
+    buildConfigField("String", "TRAKT_DEBUG_CLIENT_ID", "\"${propOrDef("TIVI_DEBUG_TRAKT_CLIENT_ID", "")}\"")
+    buildConfigField("String", "TRAKT_CLIENT_SECRET", "\"${propOrDef("TIVI_TRAKT_CLIENT_SECRET", "")}\"")
+    buildConfigField("String", "TRAKT_CLIENT_ID", "\"${propOrDef("TIVI_TRAKT_CLIENT_ID", "")}\"")
 }
 
 kotlin {
@@ -37,4 +47,9 @@ kotlin {
             }
         }
     }
+}
+
+fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
+    @Suppress("UNCHECKED_CAST")
+    return project.properties[propertyName] as T? ?: defaultValue
 }

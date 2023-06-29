@@ -13,10 +13,8 @@ import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.common.imageloading.ImageLoadingComponent
-import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.home.ContentViewSetterComponent
 import app.tivi.tasks.TiviWorkerFactory
-import app.tivi.tmdb.TmdbOAuthInfo
 import java.io.File
 import java.util.concurrent.TimeUnit
 import me.tatarka.inject.annotations.Component
@@ -50,20 +48,6 @@ abstract class AndroidApplicationComponent(
             "qa" -> Flavor.Qa
             else -> Flavor.Standard
         },
-    )
-
-    @ApplicationScope
-    @Provides
-    fun provideTmdbApiKey(): TmdbOAuthInfo = TmdbOAuthInfo(BuildConfig.TMDB_API_KEY)
-
-    @ApplicationScope
-    @Provides
-    fun provideTraktOAuthInfo(
-        appInfo: ApplicationInfo,
-    ): TraktOAuthInfo = TraktOAuthInfo(
-        clientId = BuildConfig.TRAKT_CLIENT_ID,
-        clientSecret = BuildConfig.TRAKT_CLIENT_SECRET,
-        redirectUri = "${appInfo.packageName}://auth/oauth2callback",
     )
 
     @Provides

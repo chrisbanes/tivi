@@ -11,6 +11,9 @@ import app.moviebase.trakt.api.TraktSeasonsApi
 import app.moviebase.trakt.api.TraktShowsApi
 import app.moviebase.trakt.api.TraktSyncApi
 import app.moviebase.trakt.api.TraktUsersApi
+import app.tivi.app.ApplicationInfo
+import app.tivi.data.traktauth.TraktOAuthInfo
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface TraktComponent : TraktCommonComponent, TraktPlatformComponent
@@ -18,6 +21,30 @@ interface TraktComponent : TraktCommonComponent, TraktPlatformComponent
 expect interface TraktPlatformComponent
 
 interface TraktCommonComponent {
+
+    @ApplicationScope
+    @Provides
+    fun provideTraktOAuthInfo(
+        appInfo: ApplicationInfo,
+    ): TraktOAuthInfo = TraktOAuthInfo(
+        clientId = when {
+            appInfo.debugBuild -> {
+                BuildConfig.TRAKT_DEBUG_CLIENT_ID.ifEmpty { BuildConfig.TRAKT_CLIENT_ID }
+            }
+
+            else -> BuildConfig.TRAKT_CLIENT_ID
+        },
+        clientSecret = when {
+            appInfo.debugBuild -> {
+                BuildConfig.TRAKT_DEBUG_CLIENT_SECRET
+                    .ifEmpty { BuildConfig.TRAKT_CLIENT_SECRET }
+            }
+
+            else -> BuildConfig.TRAKT_CLIENT_SECRET
+        },
+        redirectUri = "${appInfo.packageName}://auth/oauth2callback",
+    )
+
     @Provides
     fun provideTraktUsersService(trakt: Trakt): TraktUsersApi = trakt.users
 
