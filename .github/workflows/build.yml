@@ -136,7 +136,7 @@ jobs:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
       - name: Build iOS libraries
-        run: ./gradlew spotlessCheck linkIosX64 iosX64Test
+        run: ./gradlew spotlessCheck :shared:linkIosX64 iosX64Test
 
       - name: Clean secrets
         if: always()
