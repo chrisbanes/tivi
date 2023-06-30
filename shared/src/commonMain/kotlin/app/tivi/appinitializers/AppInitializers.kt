@@ -10,11 +10,11 @@ import me.tatarka.inject.annotations.Inject
 class AppInitializers(
     private val initializers: Set<AppInitializer>,
     private val tracer: Tracer,
-) {
-    fun init() {
+) : AppInitializer {
+    override fun initialize() {
         tracer.trace("AppInitializers") {
             for (initializer in initializers) {
-                initializer.init()
+                initializer.initialize()
             }
         }
     }

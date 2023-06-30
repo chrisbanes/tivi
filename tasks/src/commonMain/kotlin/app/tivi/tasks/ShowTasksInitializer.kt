@@ -10,7 +10,7 @@ import me.tatarka.inject.annotations.Inject
 class ShowTasksInitializer(
     private val showTasks: Lazy<ShowTasks>,
 ) : AppInitializer {
-    override fun init() {
+    override fun initialize() {
         showTasks.value.setupNightSyncs()
     }
 }

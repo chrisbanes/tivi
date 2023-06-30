@@ -3,7 +3,7 @@
 
 package app.tivi.home.upnext
 
-import app.tivi.inject.ApplicationScope
+import app.tivi.inject.ActivityScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.IntoSet
@@ -12,11 +12,11 @@ import me.tatarka.inject.annotations.Provides
 interface UpNextComponent {
     @IntoSet
     @Provides
-    @ApplicationScope
+    @ActivityScope
     fun bindUpNextPresenterFactory(factory: UpNextUiPresenterFactory): Presenter.Factory = factory
 
     @IntoSet
     @Provides
-    @ApplicationScope
+    @ActivityScope
     fun bindUpNextUiFactoryFactory(factory: UpNextUiFactory): Ui.Factory = factory
 }

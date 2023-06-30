@@ -4,5 +4,5 @@
 package app.tivi.appinitializers
 
 fun interface AppInitializer {
-    fun init()
+    fun initialize()
 }

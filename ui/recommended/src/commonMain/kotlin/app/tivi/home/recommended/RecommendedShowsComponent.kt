@@ -3,7 +3,7 @@
 
 package app.tivi.home.recommended
 
-import app.tivi.inject.ApplicationScope
+import app.tivi.inject.ActivityScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.IntoSet
@@ -12,11 +12,11 @@ import me.tatarka.inject.annotations.Provides
 interface RecommendedShowsComponent {
     @IntoSet
     @Provides
-    @ApplicationScope
+    @ActivityScope
     fun bindRecommendedShowsPresenterFactory(factory: RecommendedShowsUiPresenterFactory): Presenter.Factory = factory
 
     @IntoSet
     @Provides
-    @ApplicationScope
+    @ActivityScope
     fun bindRecommendedShowsUiFactoryFactory(factory: RecommendedShowsUiFactory): Ui.Factory = factory
 }

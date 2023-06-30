@@ -22,7 +22,7 @@ class TiviApplication : Application(), Configuration.Provider {
 
         workerFactory = component.workerFactory
 
-        component.initializers.init()
+        component.initializers.initialize()
     }
 
     override fun getWorkManagerConfiguration(): Configuration {

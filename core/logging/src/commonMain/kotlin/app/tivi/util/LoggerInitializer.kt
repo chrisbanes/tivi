@@ -13,7 +13,7 @@ class LoggerInitializer(
     private val logger: Logger,
     private val applicationInfo: ApplicationInfo,
 ) : AppInitializer {
-    override fun init() {
+    override fun initialize() {
         logger.setup(
             debugMode = when {
                 applicationInfo.debugBuild -> true

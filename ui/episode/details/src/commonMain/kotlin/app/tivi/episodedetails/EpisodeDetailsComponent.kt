@@ -3,7 +3,7 @@
 
 package app.tivi.episodedetails
 
-import app.tivi.inject.ApplicationScope
+import app.tivi.inject.ActivityScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.IntoSet
@@ -12,11 +12,11 @@ import me.tatarka.inject.annotations.Provides
 interface EpisodeDetailsComponent {
     @IntoSet
     @Provides
-    @ApplicationScope
+    @ActivityScope
     fun bindEpisodeDetailsPresenterFactory(factory: EpisodeDetailsUiPresenterFactory): Presenter.Factory = factory
 
     @IntoSet
     @Provides
-    @ApplicationScope
+    @ActivityScope
     fun bindEpisodeDetailsUiFactoryFactory(factory: EpisodeDetailsUiFactory): Ui.Factory = factory
 }

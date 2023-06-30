@@ -10,7 +10,7 @@ import me.tatarka.inject.annotations.Inject
 class PreferencesInitializer(
     private val prefs: TiviPreferences,
 ) : AppInitializer {
-    override fun init() {
+    override fun initialize() {
         prefs.setup()
     }
 }
