@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
+import app.tivi.gradle.addKspDependencyForAllTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
@@ -9,6 +10,7 @@ plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.multiplatform")
     alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -59,3 +61,9 @@ kotlin {
 android {
     namespace = "app.tivi.shared"
 }
+
+ksp {
+    arg("me.tatarka.inject.generateCompanionExtensions", "true")
+}
+
+addKspDependencyForAllTargets(libs.kotlininject.compiler)

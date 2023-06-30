@@ -3,6 +3,7 @@
 
 package app.tivi.util
 
+import app.tivi.inject.ActivityScope
 import kotlin.time.Duration.Companion.days
 import kotlinx.cinterop.convert
 import kotlinx.datetime.Instant
@@ -10,6 +11,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.toNSDate
 import kotlinx.datetime.toNSDateComponents
+import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSCalendar
 import platform.Foundation.NSCalendar.Companion.currentCalendar
 import platform.Foundation.NSDate
@@ -23,6 +25,8 @@ import platform.Foundation.NSRelativeDateTimeFormatter
 import platform.Foundation.NSRelativeDateTimeFormatterStyleNamed
 import platform.Foundation.autoupdatingCurrentLocale
 
+@ActivityScope
+@Inject
 actual class TiviDateFormatter(
     locale: NSLocale = NSLocale.autoupdatingCurrentLocale,
 ) {

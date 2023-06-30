@@ -53,7 +53,7 @@ actual interface TraktAuthComponent {
 
     @ApplicationScope
     @Provides
-    fun provideAuthStore(manager: TiviAuthStore): AuthStore = manager
+    fun provideAuthStore(store: TiviAuthStore): AuthStore = store
 }
 
 interface TraktAuthActivityComponent {
