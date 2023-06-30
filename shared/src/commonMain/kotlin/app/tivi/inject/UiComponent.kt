@@ -35,7 +35,7 @@ interface UiComponent :
     UpNextComponent {
 
     @Provides
-    @ApplicationScope
+    @ActivityScope
     fun provideCircuitConfig(
         uiFactories: Set<Ui.Factory>,
         presenterFactories: Set<Presenter.Factory>,

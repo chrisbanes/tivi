@@ -13,7 +13,7 @@ import me.tatarka.inject.annotations.Inject
 class EmojiInitializer(
     private val application: Application,
 ) : AppInitializer {
-    override fun init() {
+    override fun initialize() {
         val fontRequest = FontRequest(
             "com.google.android.gms.fonts",
             "com.google.android.gms",

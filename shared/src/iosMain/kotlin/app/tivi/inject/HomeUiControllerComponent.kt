@@ -11,7 +11,7 @@ import platform.UIKit.UIViewController
 @Component
 abstract class HomeUiControllerComponent(
     @Component val applicationComponent: IosApplicationComponent,
-) {
+) : UiComponent {
     abstract val viewController: TiviUiViewController
 
     /**

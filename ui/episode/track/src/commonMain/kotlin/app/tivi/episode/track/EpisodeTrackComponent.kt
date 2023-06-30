@@ -3,7 +3,7 @@
 
 package app.tivi.episode.track
 
-import app.tivi.inject.ApplicationScope
+import app.tivi.inject.ActivityScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.IntoSet
@@ -12,11 +12,11 @@ import me.tatarka.inject.annotations.Provides
 interface EpisodeTrackComponent {
     @IntoSet
     @Provides
-    @ApplicationScope
+    @ActivityScope
     fun bindEpisodeTrackPresenterFactory(factory: EpisodeTrackUiPresenterFactory): Presenter.Factory = factory
 
     @IntoSet
     @Provides
-    @ApplicationScope
+    @ActivityScope
     fun bindEpisodeTrackUiFactoryFactory(factory: EpisodeTrackUiFactory): Ui.Factory = factory
 }

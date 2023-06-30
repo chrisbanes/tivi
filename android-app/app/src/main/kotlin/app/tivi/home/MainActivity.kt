@@ -28,6 +28,7 @@ import app.tivi.data.traktauth.TraktAuthActivityComponent
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.AndroidApplicationComponent
+import app.tivi.inject.UiComponent
 import app.tivi.settings.SettingsActivity
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
@@ -87,8 +88,7 @@ class MainActivity : TiviActivity() {
 abstract class MainActivityComponent(
     @get:Provides override val activity: Activity,
     @Component val applicationComponent: AndroidApplicationComponent = AndroidApplicationComponent.from(activity),
-) : ActivityComponent,
-    TraktAuthActivityComponent {
+) : ActivityComponent, TraktAuthActivityComponent, UiComponent {
     abstract val tiviContent: TiviContent
 
     abstract val contentViewSetter: ContentViewSetter

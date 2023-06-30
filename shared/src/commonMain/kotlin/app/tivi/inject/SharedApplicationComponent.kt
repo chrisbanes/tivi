@@ -38,8 +38,7 @@ interface SharedApplicationComponent :
     TasksComponent,
     CoreComponent,
     DataComponent,
-    ImageLoadingComponent,
-    UiComponent
+    ImageLoadingComponent
 
 interface ApiComponent : TmdbComponent, TraktComponent
 

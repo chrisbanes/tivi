@@ -16,7 +16,7 @@ class TmdbInitializer(
     private val updateTmdbConfig: UpdateTmdbConfig,
     private val dispatchers: AppCoroutineDispatchers,
 ) : AppInitializer {
-    override fun init() {
+    override fun initialize() {
         @OptIn(DelicateCoroutinesApi::class)
         GlobalScope.launch(dispatchers.main) {
             updateTmdbConfig.invoke()
