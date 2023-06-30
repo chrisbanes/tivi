@@ -1,0 +1,10 @@
+Lcom/slack/circuit/overlay/ContentWithOverlaysKt$ContentWithOverlays$1;
+HSPLcom/slack/circuit/overlay/ContentWithOverlaysKt$ContentWithOverlays$1;-><init>(Lcom/slack/circuit/overlay/OverlayHostImpl;Landroidx/compose/ui/Modifier;ILkotlin/jvm/functions/Function2;)V
+HPLcom/slack/circuit/overlay/ContentWithOverlaysKt$ContentWithOverlays$1;->invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+Lcom/slack/circuit/overlay/Overlay;
+Lcom/slack/circuit/overlay/OverlayHostDataImpl;
+Lcom/slack/circuit/overlay/OverlayHostImpl;
+HSPLcom/slack/circuit/overlay/OverlayHostImpl;-><init>()V
+Lcom/slack/circuit/overlay/OverlayKt;
+HSPLcom/slack/circuit/overlay/OverlayKt;-><clinit>()V
+Lcom/slack/circuit/overlay/OverlayNavigator;

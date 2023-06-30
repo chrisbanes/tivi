@@ -1,0 +1,12 @@
+androidx.annotation:annotation
+androidx.compose.runtime:runtime
+org.jetbrains.compose.runtime:runtime
+org.jetbrains.kotlin:kotlin-bom
+org.jetbrains.kotlin:kotlin-stdlib-jdk7
+org.jetbrains.kotlin:kotlin-stdlib-jdk8
+org.jetbrains.kotlin:kotlin-stdlib
+org.jetbrains.kotlinx:kotlinx-coroutines-android
+org.jetbrains.kotlinx:kotlinx-coroutines-bom
+org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm
+org.jetbrains.kotlinx:kotlinx-coroutines-core
+org.jetbrains:annotations

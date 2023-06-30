@@ -100,4 +100,11 @@ include(
     ":android-app:benchmark",
     ":android-app:common-test",
     ":thirdparty:swipe",
+    ":thirdparty:circuit:backstack",
+    ":thirdparty:circuit:circuit-foundation",
+    ":thirdparty:circuit:circuit-overlay",
+    ":thirdparty:circuit:circuit-retained",
+    ":thirdparty:circuit:circuit-runtime",
+    ":thirdparty:circuit:circuit-runtime-presenter",
+    ":thirdparty:circuit:circuit-runtime-ui",
 )

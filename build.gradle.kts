@@ -60,4 +60,12 @@ allprojects {
             }
         }
     }
+
+    configurations.all {
+        resolutionStrategy.dependencySubstitution {
+            substitute(module("com.slack.circuit:circuit-foundation")).using(project(":thirdparty:circuit:circuit-foundation"))
+            substitute(module("com.slack.circuit:circuit-overlay")).using(project(":thirdparty:circuit:circuit-overlay"))
+            substitute(module("com.slack.circuit:circuit-runtime")).using(project(":thirdparty:circuit:circuit-runtime"))
+        }
+    }
 }

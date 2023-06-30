@@ -1,0 +1,12 @@
+org.jetbrains.compose.runtime:runtime-desktop
+org.jetbrains.compose.runtime:runtime
+org.jetbrains.kotlin:kotlin-bom
+org.jetbrains.kotlin:kotlin-stdlib-jdk7
+org.jetbrains.kotlin:kotlin-stdlib-jdk8
+org.jetbrains.kotlin:kotlin-stdlib
+org.jetbrains.kotlinx:atomicfu-jvm
+org.jetbrains.kotlinx:atomicfu
+org.jetbrains.kotlinx:kotlinx-coroutines-bom
+org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm
+org.jetbrains.kotlinx:kotlinx-coroutines-core
+org.jetbrains:annotations
