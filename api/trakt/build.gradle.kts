@@ -36,7 +36,7 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                implementation(libs.okhttp.okhttp)
+                api(libs.okhttp.okhttp)
                 implementation(libs.ktor.client.okhttp)
             }
         }
