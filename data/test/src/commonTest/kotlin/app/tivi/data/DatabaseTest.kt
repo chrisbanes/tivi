@@ -6,6 +6,7 @@ package app.tivi.data
 import app.cash.sqldelight.db.SqlDriver
 import app.moviebase.tmdb.Tmdb3
 import app.moviebase.trakt.Trakt
+import app.tivi.data.traktauth.AuthState
 import app.tivi.data.traktauth.RefreshTraktTokensInteractor
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.inject.ApplicationScope
@@ -39,7 +40,9 @@ abstract class TestApplicationComponent :
 
     @Provides
     fun provideRefreshTraktTokensInteractor(): RefreshTraktTokensInteractor {
-        return RefreshTraktTokensInteractor { null }
+        return object : RefreshTraktTokensInteractor {
+            override suspend fun invoke(): AuthState? = null
+        }
     }
 
     @Provides
