@@ -10,6 +10,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import app.tivi.common.compose.LocalTiviDateFormatter
+import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.shouldUseDynamicColors
@@ -20,22 +22,41 @@ import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.SettingsScreen
 import app.tivi.screens.TiviScreen
 import app.tivi.settings.TiviPreferences
+import app.tivi.util.TiviDateFormatter
+import app.tivi.util.TiviTextCreator
+import com.seiko.imageloader.ImageLoader
+import com.seiko.imageloader.LocalImageLoader
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.CircuitCompositionLocals
+import com.slack.circuit.foundation.CircuitConfig
 import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.foundation.screen
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
+typealias TiviContent = @Composable (
+    onRootPop: () -> Unit,
+    onOpenSettings: () -> Unit,
+    modifier: Modifier,
+) -> Unit
+
+@Inject
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun TiviContent(
-    onRootPop: () -> Unit,
-    onOpenSettings: () -> Unit,
+    @Assisted onRootPop: () -> Unit,
+    @Assisted onOpenSettings: () -> Unit,
+    circuitConfig: CircuitConfig,
     analytics: Analytics,
+    tiviDateFormatter: TiviDateFormatter,
+    tiviTextCreator: TiviTextCreator,
     preferences: TiviPreferences,
-    modifier: Modifier = Modifier,
+    imageLoader: ImageLoader,
+    @Assisted modifier: Modifier = Modifier,
 ) {
     val backstack: SaveableBackStack = rememberSaveableBackStack { push(DiscoverScreen) }
     val circuitNavigator = rememberCircuitNavigator(backstack, onRootPop)
@@ -56,17 +77,22 @@ fun TiviContent(
 
     CompositionLocalProvider(
         LocalNavigator provides navigator,
+        LocalImageLoader provides imageLoader,
+        LocalTiviDateFormatter provides tiviDateFormatter,
+        LocalTiviTextCreator provides tiviTextCreator,
         LocalWindowSizeClass provides calculateWindowSizeClass(),
     ) {
-        TiviTheme(
-            useDarkColors = preferences.shouldUseDarkColors(),
-            useDynamicColors = preferences.shouldUseDynamicColors(),
-        ) {
-            Home(
-                backstack = backstack,
-                navigator = navigator,
-                modifier = modifier,
-            )
+        CircuitCompositionLocals(circuitConfig) {
+            TiviTheme(
+                useDarkColors = preferences.shouldUseDarkColors(),
+                useDynamicColors = preferences.shouldUseDynamicColors(),
+            ) {
+                Home(
+                    backstack = backstack,
+                    navigator = navigator,
+                    modifier = modifier,
+                )
+            }
         }
     }
 }

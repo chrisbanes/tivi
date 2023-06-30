@@ -14,7 +14,8 @@ struct TiviApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(applicationComponent: applicationComponent)
+            let uiComponent = HomeUiControllerComponent.companion.create(applicationComponent: applicationComponent)
+            ContentView(component: uiComponent)
         }
     }
 }
