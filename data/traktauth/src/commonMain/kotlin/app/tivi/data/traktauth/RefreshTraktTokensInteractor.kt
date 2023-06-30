@@ -3,6 +3,6 @@
 
 package app.tivi.data.traktauth
 
-fun interface RefreshTraktTokensInteractor {
+interface RefreshTraktTokensInteractor {
     suspend operator fun invoke(): AuthState?
 }

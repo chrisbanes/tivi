@@ -3,4 +3,20 @@
 
 package app.tivi.data.traktauth
 
-actual interface TraktAuthComponent
+import app.tivi.data.traktauth.store.AuthStore
+import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.Provides
+
+actual interface TraktAuthComponent {
+    @ApplicationScope
+    @Provides
+    fun provideAuthStore(store: IosAuthStore): AuthStore = store
+
+    @ApplicationScope
+    @Provides
+    fun provideRefreshTraktTokensInteractor(impl: IosRefreshTraktTokensInteractor): RefreshTraktTokensInteractor = impl
+
+    @Provides
+    @ApplicationScope
+    fun provideLoginToTraktInteractor(impl: IosLoginToTraktInteractor): LoginToTraktInteractor = impl
+}

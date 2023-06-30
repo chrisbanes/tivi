@@ -7,5 +7,5 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface PowerControllerComponent {
     @Provides
-    fun providePowerController() = EmptyPowerController
+    fun providePowerController(): PowerController = EmptyPowerController
 }

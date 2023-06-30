@@ -5,6 +5,7 @@ package app.tivi.util
 
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.models.TiviShow
+import app.tivi.inject.ActivityScope
 import dev.icerock.moko.resources.desc.StringDesc
 import dev.icerock.moko.resources.format
 import kotlinx.cinterop.convert
@@ -14,6 +15,7 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.toNSTimeZone
+import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSCalendar
 import platform.Foundation.NSCalendarUnitHour
 import platform.Foundation.NSCalendarUnitMinute
@@ -22,6 +24,8 @@ import platform.Foundation.NSCalendarUnitWeekday
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateComponentsFormatter
 
+@ActivityScope
+@Inject
 actual class TiviTextCreator(
     override val dateFormatter: TiviDateFormatter,
 ) : CommonTiviTextCreator {
