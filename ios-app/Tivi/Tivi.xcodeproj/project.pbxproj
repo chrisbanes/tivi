@@ -14,6 +14,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		38282FFD2A4F318E00E7929E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		833349342A4CCCEE00F464FE /* Tivi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tivi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		833349372A4CCCEE00F464FE /* TiviApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiviApp.swift; sourceTree = "<group>"; };
 		833349392A4CCCEE00F464FE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -51,6 +52,7 @@
 		833349362A4CCCEE00F464FE /* Tivi */ = {
 			isa = PBXGroup;
 			children = (
+				38282FFD2A4F318E00E7929E /* Info.plist */,
 				833349372A4CCCEE00F464FE /* TiviApp.swift */,
 				833349392A4CCCEE00F464FE /* ContentView.swift */,
 				8333493B2A4CCCEF00F464FE /* Assets.xcassets */,
@@ -309,6 +311,7 @@
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tivi/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -345,6 +348,7 @@
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tivi/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
