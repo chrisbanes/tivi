@@ -85,6 +85,9 @@ afterEvaluate {
     tasks.findByPath("kspKotlinIosSimulatorArm64")?.apply {
         dependsOn(tasks.getByPath("generateMRiosSimulatorArm64Main"))
     }
+    tasks.findByPath("kspKotlinIosX64")?.apply {
+        dependsOn(tasks.getByPath("generateMRiosX64Main"))
+    }
 }
 // Android
 tasks.withType(com.android.build.gradle.tasks.MergeResources::class).configureEach {
