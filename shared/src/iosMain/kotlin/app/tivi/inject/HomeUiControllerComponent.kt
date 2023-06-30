@@ -3,25 +3,24 @@
 
 package app.tivi.inject
 
-import app.tivi.core.analytics.Analytics
-import app.tivi.settings.TiviPreferences
-import app.tivi.util.TiviDateFormatter
-import app.tivi.util.TiviTextCreator
-import com.seiko.imageloader.ImageLoader
-import com.slack.circuit.foundation.CircuitConfig
+import app.tivi.home.TiviUiViewController
 import me.tatarka.inject.annotations.Component
+import platform.UIKit.UIViewController
 
 @ActivityScope
 @Component
 abstract class HomeUiControllerComponent(
     @Component val applicationComponent: IosApplicationComponent,
 ) {
-    abstract val tiviDateFormatter: TiviDateFormatter
-    abstract val textCreator: TiviTextCreator
-    abstract val preferences: TiviPreferences
-    abstract val analytics: Analytics
-    abstract val circuitConfig: CircuitConfig
-    abstract val imageLoader: ImageLoader
+    abstract val viewController: TiviUiViewController
+
+    /**
+     * Function which makes [viewController] easier to call from Swift
+     */
+    fun uiViewController(
+        onRootPop: () -> Unit,
+        onOpenSettings: () -> Unit,
+    ): UIViewController = viewController(onRootPop, onOpenSettings)
 
     companion object
 }

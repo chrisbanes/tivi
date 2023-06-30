@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -24,22 +23,12 @@ import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import app.tivi.ContentViewSetter
 import app.tivi.TiviActivity
-import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.core.analytics.Analytics
 import app.tivi.data.traktauth.LoginToTraktInteractor
 import app.tivi.data.traktauth.TraktAuthActivityComponent
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.settings.SettingsActivity
-import app.tivi.settings.TiviPreferences
-import app.tivi.util.TiviDateFormatter
-import app.tivi.util.TiviTextCreator
-import com.seiko.imageloader.ImageLoader
-import com.seiko.imageloader.LocalImageLoader
-import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.CircuitConfig
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -65,31 +54,21 @@ class MainActivity : TiviActivity() {
 
         val composeView = ComposeView(this).apply {
             setContent {
-                CompositionLocalProvider(
-                    LocalImageLoader provides component.imageLoader,
-                    LocalTiviDateFormatter provides component.tiviDateFormatter,
-                    LocalTiviTextCreator provides component.textCreator,
-                ) {
-                    CircuitCompositionLocals(component.circuitConfig) {
-                        TiviContent(
-                            analytics = component.analytics,
-                            preferences = component.preferences,
-                            onRootPop = {
-                                if (onBackPressedDispatcher.hasEnabledCallbacks()) {
-                                    onBackPressedDispatcher.onBackPressed()
-                                }
-                            },
-                            onOpenSettings = {
-                                context.startActivity(Intent(context, SettingsActivity::class.java))
-                            },
-                            modifier = Modifier.semantics {
-                                // Enables testTag -> UiAutomator resource id
-                                // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
-                                testTagsAsResourceId = true
-                            },
-                        )
-                    }
-                }
+                component.tiviContent(
+                    onRootPop = {
+                        if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+                            onBackPressedDispatcher.onBackPressed()
+                        }
+                    },
+                    onOpenSettings = {
+                        context.startActivity(Intent(context, SettingsActivity::class.java))
+                    },
+                    modifier = Modifier.semantics {
+                        // Enables testTag -> UiAutomator resource id
+                        // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
+                        testTagsAsResourceId = true
+                    },
+                )
             }
         }
 
@@ -110,14 +89,10 @@ abstract class MainActivityComponent(
     @Component val applicationComponent: AndroidApplicationComponent = AndroidApplicationComponent.from(activity),
 ) : ActivityComponent,
     TraktAuthActivityComponent {
-    abstract val tiviDateFormatter: TiviDateFormatter
-    abstract val textCreator: TiviTextCreator
-    abstract val preferences: TiviPreferences
-    abstract val analytics: Analytics
+    abstract val tiviContent: TiviContent
+
     abstract val contentViewSetter: ContentViewSetter
     abstract val login: LoginToTraktInteractor
-    abstract val circuitConfig: CircuitConfig
-    abstract val imageLoader: ImageLoader
     abstract val viewModel: () -> MainActivityViewModel
 }
 

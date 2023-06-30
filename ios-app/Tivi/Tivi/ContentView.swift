@@ -10,11 +10,11 @@ import TiviKt
 
 struct ContentView: View {
     let component: HomeUiControllerComponent
-    
-    init(applicationComponent: IosApplicationComponent) {
-        self.component = HomeUiControllerComponent.companion.create(applicationComponent: applicationComponent)
+
+    init(component: HomeUiControllerComponent) {
+        self.component = component
     }
-    
+
     var body: some View {
         ComposeView(component: self.component)
             .ignoresSafeArea(.all, edges: .bottom) // Compose has own keyboard handler
@@ -23,26 +23,17 @@ struct ContentView: View {
 
 struct ComposeView: UIViewControllerRepresentable {
     let component: HomeUiControllerComponent
-    
+
     init(component: HomeUiControllerComponent) {
         self.component = component
     }
-    
+
     func makeUIViewController(context: Context) -> UIViewController {
-        HomeKt.HomeViewController(
-            onRootPop: {
-                // todo
-            },
-            onOpenSettings: {
-                // todo
-            },
-            imageLoader: component.imageLoader,
-            tiviDateFormatter: component.tiviDateFormatter,
-            tiviTextCreator: component.textCreator,
-            circuitConfig: component.circuitConfig,
-            analytics: component.analytics,
-            preferences: component.preferences
-        )
+        component.uiViewController {
+            // onRootPop
+        } onOpenSettings: {
+            // no-op
+        }
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
