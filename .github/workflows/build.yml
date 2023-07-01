@@ -51,7 +51,6 @@ jobs:
           ./gradlew spotlessCheck \
             :android-app:app:bundle \
             :android-app:app:build \
-            jvmTest \
             lint \
             -x :android-app:app:assembleStandardBenchmark \
             -x :android-app:app:bundleStandardBenchmark
@@ -102,7 +101,7 @@ jobs:
           path: |
             **/build/test-results/*
 
-  ios:
+  desktop:
     runs-on: macos-latest
     timeout-minutes: 60
     env:
@@ -110,9 +109,6 @@ jobs:
       ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
       ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
       ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET }}
-      ORG_GRADLE_PROJECT_TIVI_RELEASE_KEYSTORE_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEYSTORE_PWD }}
-      ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD }}
-      ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT }}
 
     steps:
       - uses: actions/checkout@v3
@@ -130,17 +126,59 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
-      - name: Decrypt secrets
-        run: ./release/decrypt-secrets.sh
-        env:
-          ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
+      - name: Build Desktop App
+        run: ./gradlew spotlessCheck jvmTest :desktop-app:package
+
+      - name: Upload build outputs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: desktop-build-binaries
+          path: desktop-app/build/compose/binaries
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: desktop-reports
+          path: |
+            **/build/reports/*
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: desktop-test-results
+          path: |
+            **/build/test-results/*
+
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    env:
+      ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
 
       - name: Build iOS libraries
         run: ./gradlew spotlessCheck :shared:linkIosX64 iosX64Test
-
-      - name: Clean secrets
-        if: always()
-        run: ./release/clean-secrets.sh
 
       - name: Upload reports
         if: always()
@@ -160,7 +198,7 @@ jobs:
 
   publish:
     if: github.ref == 'refs/heads/main'
-    needs: [android, ios]
+    needs: [android, ios, desktop]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
