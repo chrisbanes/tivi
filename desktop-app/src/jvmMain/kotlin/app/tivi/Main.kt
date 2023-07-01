@@ -3,6 +3,7 @@
 
 package app.tivi
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Window
@@ -14,6 +15,10 @@ import app.tivi.inject.create
 fun main() = application {
     val applicationComponent = remember {
         DesktopApplicationComponent.create()
+    }
+
+    LaunchedEffect(applicationComponent) {
+        applicationComponent.initializers.initialize()
     }
 
     Window(
