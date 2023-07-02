@@ -180,6 +180,15 @@ jobs:
       - name: Build iOS libraries
         run: ./gradlew spotlessCheck :shared:linkIosX64 iosX64Test
 
+      - run: fastlane beta
+        working-directory: ios-app/Tivi
+        env:
+          FASTLANE_USER: ${{ secrets.APPSTORE_CONNECT_USERNAME }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APPSTORE_CONNECT_PASSWORD }}
+          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
+          TIVI_BUILD_NUMBER: ${{ github.run_number }}
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v3
@@ -195,6 +204,14 @@ jobs:
           name: ios-test-results
           path: |
             **/build/test-results/*
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-logs
+          path: |
+            **/fastlane-buildlog
 
   publish-android:
     if: github.ref == 'refs/heads/main'

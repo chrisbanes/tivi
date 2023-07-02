@@ -1,8 +1,8 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "Push a new beta build to TestFlight"
-  lane :beta do
+
+  lane :build do
     setup_ci if ENV['CI']
     match(type: 'appstore')
     increment_build_number(
@@ -11,9 +11,13 @@ platform :ios do
     )
     build_app(
       scheme: "Tivi",
-      clean: true,
       buildlog_path: "build/fastlane-buildlog"
     )
+  end
+
+  lane :beta do
+    build
     upload_to_testflight(skip_waiting_for_build_processing: true)
   end
+
 end
