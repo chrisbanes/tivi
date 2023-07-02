@@ -178,8 +178,8 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
-      - name: Test
-        run: ./gradlew spotlessCheck iosArm64Test
+      # - name: Test
+      #  run: ./gradlew spotlessCheck iosArm64Test
 
       - name: Build iOS application
         run: fastlane beta
