@@ -36,9 +36,9 @@ jobs:
       - run: fastlane beta
         working-directory: ios-app/Tivi
         env:
-          APP_STORE_CONNECT_TEAM_ID: ${{ secrets.APPSTORE_CONNECT_TEAM_ID }}
-          DEVELOPER_PORTAL_TEAM_ID: ${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}
-          FASTLANE_APPLE_ID: ${{ secrets.APPSTORE_CONNECT_USERNAME }}
+          # APP_STORE_CONNECT_TEAM_ID: ${{ secrets.APPSTORE_CONNECT_TEAM_ID }}
+          # DEVELOPER_PORTAL_TEAM_ID: ${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}
+          FASTLANE_USER: ${{ secrets.APPSTORE_CONNECT_USERNAME }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APPSTORE_CONNECT_PASSWORD }}
           MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
