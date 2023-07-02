@@ -11,6 +11,9 @@
 		8333493A2A4CCCEE00F464FE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833349392A4CCCEE00F464FE /* ContentView.swift */; };
 		8333493C2A4CCCEF00F464FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8333493B2A4CCCEF00F464FE /* Assets.xcassets */; };
 		8333493F2A4CCCEF00F464FE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8333493E2A4CCCEF00F464FE /* Preview Assets.xcassets */; };
+		83AB5FFE2A51F27B007FC216 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 83AB5FFD2A51F27B007FC216 /* FirebaseCrashlytics */; };
+		83AB60012A51F3FD007FC216 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 83AB60002A51F3FD007FC216 /* FirebaseAnalyticsSwift */; };
+		83AB60062A520078007FC216 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83AB60052A520078007FC216 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +23,7 @@
 		833349392A4CCCEE00F464FE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8333493B2A4CCCEF00F464FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8333493E2A4CCCEF00F464FE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		83AB60052A520078007FC216 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +31,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83AB60012A51F3FD007FC216 /* FirebaseAnalyticsSwift in Frameworks */,
+				83AB5FFE2A51F27B007FC216 /* FirebaseCrashlytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +44,7 @@
 			children = (
 				833349362A4CCCEE00F464FE /* Tivi */,
 				833349352A4CCCEE00F464FE /* Products */,
+				83AB5FFF2A51F3FD007FC216 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -57,6 +64,7 @@
 				833349392A4CCCEE00F464FE /* ContentView.swift */,
 				8333493B2A4CCCEF00F464FE /* Assets.xcassets */,
 				8333493D2A4CCCEF00F464FE /* Preview Content */,
+				83AB60052A520078007FC216 /* GoogleService-Info.plist */,
 			);
 			path = Tivi;
 			sourceTree = "<group>";
@@ -69,6 +77,13 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		83AB5FFF2A51F3FD007FC216 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -76,17 +91,22 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 833349422A4CCCEF00F464FE /* Build configuration list for PBXNativeTarget "Tivi" */;
 			buildPhases = (
-				833349452A4CCD9F00F464FE /* ShellScript */,
+				833349452A4CCD9F00F464FE /* Build :shared KMP library */,
 				833349302A4CCCEE00F464FE /* Sources */,
 				833349312A4CCCEE00F464FE /* Frameworks */,
 				833349322A4CCCEE00F464FE /* Resources */,
-				38282FFA2A4F242200E7929E /* ShellScript */,
+				38282FFA2A4F242200E7929E /* Copy Moko Resources */,
+				83AB60022A51F473007FC216 /* Upload Crashlytics symbols */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = Tivi;
+			packageProductDependencies = (
+				83AB5FFD2A51F27B007FC216 /* FirebaseCrashlytics */,
+				83AB60002A51F3FD007FC216 /* FirebaseAnalyticsSwift */,
+			);
 			productName = Tivi;
 			productReference = 833349342A4CCCEE00F464FE /* Tivi.app */;
 			productType = "com.apple.product-type.application";
@@ -115,6 +135,9 @@
 				Base,
 			);
 			mainGroup = 8333492B2A4CCCEE00F464FE;
+			packageReferences = (
+				83AB5FFC2A51F27B007FC216 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 833349352A4CCCEE00F464FE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -131,13 +154,14 @@
 			files = (
 				8333493F2A4CCCEF00F464FE /* Preview Assets.xcassets in Resources */,
 				8333493C2A4CCCEF00F464FE /* Assets.xcassets in Resources */,
+				83AB60062A520078007FC216 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		38282FFA2A4F242200E7929E /* ShellScript */ = {
+		38282FFA2A4F242200E7929E /* Copy Moko Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -146,6 +170,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Copy Moko Resources";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -154,7 +179,7 @@
 			shellPath = /bin/sh;
 			shellScript = "cd \"$SRCROOT/../..\"\n./gradlew :shared:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"$CONFIGURATION\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \n";
 		};
-		833349452A4CCD9F00F464FE /* ShellScript */ = {
+		833349452A4CCD9F00F464FE /* Build :shared KMP library */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -163,6 +188,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Build :shared KMP library";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -170,6 +196,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd \"$SRCROOT/../..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+		83AB60022A51F473007FC216 /* Upload Crashlytics symbols */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Upload Crashlytics symbols";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\" || true\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -308,6 +354,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1000;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"Tivi/Preview Content\"";
 				DEVELOPMENT_TEAM = GLF74Y6P9T;
 				ENABLE_PREVIEWS = YES;
@@ -405,6 +452,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		83AB5FFC2A51F27B007FC216 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		83AB5FFD2A51F27B007FC216 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 83AB5FFC2A51F27B007FC216 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		83AB60002A51F3FD007FC216 /* FirebaseAnalyticsSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 83AB5FFC2A51F27B007FC216 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8333492C2A4CCCEE00F464FE /* Project object */;
 }
