@@ -196,7 +196,7 @@ jobs:
           path: |
             **/build/test-results/*
 
-  publish:
+  publish-android:
     if: github.ref == 'refs/heads/main'
     needs: [android, ios, desktop]
     runs-on: ubuntu-latest
