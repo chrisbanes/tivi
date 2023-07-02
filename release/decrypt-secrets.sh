@@ -26,8 +26,10 @@ if [[ ! -z "$ENCRYPT_KEY" ]]; then
   decrypt ${ENCRYPT_KEY} release/app-release.gpg release/app-release.jks
   # Decrypt Play Store key
   decrypt ${ENCRYPT_KEY} release/play-account.gpg release/play-account.json
-  # Decrypt Google Services key
+  # Decrypt Google Services key (Android)
   decrypt ${ENCRYPT_KEY} release/google-services.gpg android-app/app/google-services.json
+  # Decrypt Google Services key (iOS)
+  decrypt ${ENCRYPT_KEY} release/GoogleService-Info.plist.gpg ios-app/Tivi/Tivi/GoogleService-Info.plist
 else
   echo "ENCRYPT_KEY is empty"
 fi
