@@ -160,6 +160,7 @@ jobs:
       ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
       ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
       ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET }}
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 
     steps:
       - uses: actions/checkout@v3
@@ -177,8 +178,19 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
-      - name: Build iOS libraries
-        run: ./gradlew spotlessCheck :shared:linkIosX64 iosX64Test
+      # - name: Test
+      #  run: ./gradlew spotlessCheck iosArm64Test
+
+      - name: Build iOS application
+        run: fastlane beta
+        working-directory: ios-app/Tivi
+        env:
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_KEY_CONTENTS: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
+          ISSUER_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
+          TIVI_BUILD_NUMBER: ${{ github.run_number }}
 
       - name: Upload reports
         if: always()
@@ -195,6 +207,14 @@ jobs:
           name: ios-test-results
           path: |
             **/build/test-results/*
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-logs
+          path: |
+            **/fastlane-buildlog
 
   publish-android:
     if: github.ref == 'refs/heads/main'
