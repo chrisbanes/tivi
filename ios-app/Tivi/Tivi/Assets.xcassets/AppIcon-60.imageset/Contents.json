@@ -1,0 +1,18 @@
+{
+  "images" : [
+    {
+      "filename" : "AppIcon-60@2x~car.png",
+      "idiom" : "car",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "AppIcon-60@3x~car.png",
+      "idiom" : "car",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
