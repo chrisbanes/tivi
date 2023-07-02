@@ -4,11 +4,21 @@ platform :ios do
 
   lane :build do
     setup_ci if ENV['CI']
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV['API_KEY_ID'],
+      issuer_id: ENV['ISSUER_KEY_ID'],
+      key_content: ENV['API_KEY_CONTENTS'],
+      is_key_content_base64: true
+    )
+
     match(type: 'appstore')
+
     increment_build_number(
       xcodeproj: "Tivi.xcodeproj",
       build_number: ENV['TIVI_BUILD_NUMBER']
     )
+
     build_app(
       scheme: "Tivi",
       buildlog_path: "build/fastlane-buildlog"

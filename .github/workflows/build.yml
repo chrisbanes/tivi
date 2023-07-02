@@ -160,6 +160,7 @@ jobs:
       ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
       ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
       ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET }}
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 
     steps:
       - uses: actions/checkout@v3
@@ -177,14 +178,16 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
-      - name: Build iOS libraries
+      - name: Build Shared KMP library
         run: ./gradlew spotlessCheck :shared:linkIosX64 iosX64Test
 
-      - run: fastlane beta
+      - name: Build iOS application
+        run: fastlane beta
         working-directory: ios-app/Tivi
         env:
-          FASTLANE_USER: ${{ secrets.APPSTORE_CONNECT_USERNAME }}
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APPSTORE_CONNECT_PASSWORD }}
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_KEY_CONTENTS: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
+          ISSUER_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
           TIVI_BUILD_NUMBER: ${{ github.run_number }}
