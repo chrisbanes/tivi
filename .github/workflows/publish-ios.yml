@@ -30,6 +30,9 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
+      - name: Build shared library
+        run: ./gradlew :shared:linkReleaseFrameworkIosArm64
+
       - run: fastlane beta
         working-directory: ios-app/Tivi
         env:
@@ -39,3 +42,11 @@ jobs:
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: '${{ secrets.APPSTORE_CONNECT_PASSWORD }}'
           MATCH_PASSWORD: '${{ secrets.FASTLANE_MATCH_PASSWORD }}'
           MATCH_GIT_BASIC_AUTHORIZATION: '${{ secrets.FASTLANE_MATCH_GH_PAT }}'
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-logs
+          path: |
+            **/fastlane-buildlog
