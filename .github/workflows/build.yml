@@ -178,8 +178,8 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
-      - name: Build Shared KMP library
-        run: ./gradlew spotlessCheck :shared:linkIosX64 iosX64Test
+      - name: Test
+        run: ./gradlew spotlessCheck iosArm64Test
 
       - name: Build iOS application
         run: fastlane beta
