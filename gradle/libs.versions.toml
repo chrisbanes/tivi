@@ -87,7 +87,7 @@ debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer",
 debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber", version.ref = "debugdrawer" }
 debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-okhttp-logger", version.ref = "debugdrawer" }
 
-imageloader = "io.github.qdsfdhvh:image-loader:1.5.1"
+imageloader = "io.github.qdsfdhvh:image-loader:1.5.3"
 
 junit = "junit:junit:4.13.2"
 
