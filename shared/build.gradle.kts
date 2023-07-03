@@ -20,6 +20,7 @@ kotlin {
             baseName = "TiviKt"
 
             export(projects.ui.root)
+            export(projects.core.analytics)
         }
     }
 

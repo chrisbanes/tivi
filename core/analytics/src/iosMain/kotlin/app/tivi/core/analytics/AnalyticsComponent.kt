@@ -7,9 +7,9 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 actual interface AnalyticsComponent {
+    var analyticsProvider: () -> Analytics
+
     @Provides
     @ApplicationScope
-    fun provideAnalytics(): Analytics = object : Analytics {
-        override fun trackScreenView(name: String, arguments: Map<String, *>?) = Unit
-    }
+    fun provideAnalytics(): Analytics = analyticsProvider()
 }

@@ -3,6 +3,11 @@
 
 package app.tivi.core.analytics
 
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
+
+@OptIn(ExperimentalObjCName::class)
+@ObjCName(swiftName = "TiviAnalytics")
 interface Analytics {
     fun trackScreenView(
         name: String,
