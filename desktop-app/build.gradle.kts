@@ -1,3 +1,7 @@
+// Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
+// SPDX-License-Identifier: Apache-2.0
+
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 // Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
