@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.Density
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import app.tivi.appinitializers.AppInitializers
+import app.tivi.core.analytics.Analytics
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
@@ -15,6 +16,10 @@ import platform.Foundation.NSBundle
 @ApplicationScope
 abstract class IosApplicationComponent : SharedApplicationComponent {
     abstract val initializers: AppInitializers
+
+    override var analyticsProvider: () -> Analytics = {
+        error("Analytics not provided")
+    }
 
     @ApplicationScope
     @Provides

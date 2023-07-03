@@ -7,6 +7,7 @@
 
 import SwiftUI
 import TiviKt
+import FirebaseAnalytics
 import FirebaseCore
 
 class AppDelegate: NSObject, UIApplicationDelegate {
@@ -14,7 +15,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
-        if FirebaseOptions.defaultOptions()?.apiKey != nil {
+        if !(FirebaseOptions.defaultOptions()?.apiKey?.isEmpty ?? true) {
             FirebaseApp.configure()
         }
         return true
@@ -28,6 +29,7 @@ struct TiviApp: App {
     let applicationComponent = IosApplicationComponent.companion.create()
 
     init() {
+        applicationComponent.analyticsProvider = { FirebaseAnalytics() }
         applicationComponent.initializers.initialize()
     }
 
@@ -38,5 +40,16 @@ struct TiviApp: App {
             )
             ContentView(component: uiComponent)
         }
+    }
+}
+
+class FirebaseAnalytics: TiviAnalytics {
+    func trackScreenView(name: String, arguments: [String : Any]?) {
+        var params = [AnalyticsParameterScreenName: name]
+        arguments?.forEach { (key, value) in
+            params[key] = "screen_arg_\(value)"
+        }
+        
+        Analytics.logEvent(AnalyticsEventSelectContent, parameters: params)
     }
 }
