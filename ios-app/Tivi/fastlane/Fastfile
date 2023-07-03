@@ -26,9 +26,7 @@ platform :ios do
       is_key_content_base64: true
     )
 
-    upload_to_testflight(
-      uses_non_exempt_encryption: true
-    )
+    upload_to_testflight
   end
 
   lane :production do
