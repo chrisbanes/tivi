@@ -1,6 +1,7 @@
 // Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
+
 import app.tivi.gradle.addKspDependencyForAllTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
