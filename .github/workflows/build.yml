@@ -9,7 +9,31 @@ on:
   pull_request:
 
 jobs:
+  code-style:
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Check code style with Spotless
+        run: ./gradlew spotlessCheck
+
   android:
+    needs: [code-style]
     runs-on: macos-latest
     timeout-minutes: 60
     env:
@@ -48,7 +72,7 @@ jobs:
 
       - name: Build Android App (skipping benchmark variant)
         run: |
-          ./gradlew spotlessCheck \
+          ./gradlew \
             :android-app:app:bundle \
             :android-app:app:build \
             lint \
@@ -102,6 +126,7 @@ jobs:
             **/build/test-results/*
 
   desktop:
+    needs: [code-style]
     runs-on: macos-latest
     timeout-minutes: 60
     env:
@@ -127,7 +152,7 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - name: Build Desktop App
-        run: ./gradlew spotlessCheck jvmTest :desktop-app:package
+        run: ./gradlew jvmTest :desktop-app:package
 
       - name: Upload build outputs
         if: always()
@@ -153,6 +178,7 @@ jobs:
             **/build/test-results/*
 
   ios-app:
+    needs: [code-style]
     runs-on: macos-latest
     timeout-minutes: 60
     env:
@@ -207,6 +233,7 @@ jobs:
             **/fastlane-buildlog
 
   ios-test:
+    needs: [code-style]
     runs-on: macos-latest
     timeout-minutes: 60
     env:
@@ -228,7 +255,7 @@ jobs:
           java-version: 17
 
       - name: Test
-        run: ./gradlew spotlessCheck iosX64Test
+        run: ./gradlew iosX64Test
 
       - name: Upload reports
         if: always()
