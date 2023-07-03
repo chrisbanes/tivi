@@ -4,15 +4,18 @@
 package app.tivi.trakt
 
 import app.moviebase.trakt.Trakt
+import app.tivi.app.ApplicationInfo
 import app.tivi.data.traktauth.RefreshTraktTokensInteractor
 import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.Logger
 import io.ktor.client.engine.darwin.Darwin
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.http.HttpStatusCode
 import me.tatarka.inject.annotations.Provides
 
@@ -22,10 +25,24 @@ actual interface TraktPlatformComponent {
     fun provideTrakt(
         authStore: AuthStore,
         oauthInfo: TraktOAuthInfo,
+        applicationInfo: ApplicationInfo,
+        tiviLogger: Logger,
         refreshTokens: Lazy<RefreshTraktTokensInteractor>,
     ): Trakt = Trakt {
         traktApiKey = oauthInfo.clientId
         maxRetriesOnException = 3
+
+        logging {
+            logger = object : io.ktor.client.plugins.logging.Logger {
+                override fun log(message: String) {
+                    tiviLogger.d { message }
+                }
+            }
+            level = when {
+                applicationInfo.debugBuild -> LogLevel.HEADERS
+                else -> LogLevel.NONE
+            }
+        }
 
         httpClient(Darwin) {
             engine {
