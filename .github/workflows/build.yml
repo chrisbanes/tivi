@@ -29,6 +29,9 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
+      - name: Check convention plugins code style with Spotless
+        run: ./gradlew -p gradle/build-logic spotlessCheck
+
       - name: Check code style with Spotless
         run: ./gradlew spotlessCheck
 
