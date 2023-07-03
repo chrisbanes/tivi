@@ -4,9 +4,12 @@
 package app.tivi.tmdb
 
 import app.moviebase.tmdb.Tmdb3
+import app.tivi.app.ApplicationInfo
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.Logger
 import io.ktor.client.engine.darwin.Darwin
 import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.http.HttpStatusCode
 import me.tatarka.inject.annotations.Provides
 
@@ -15,9 +18,23 @@ actual interface TmdbPlatformComponent {
     @Provides
     fun provideTmdb(
         tmdbOAuthInfo: TmdbOAuthInfo,
+        applicationInfo: ApplicationInfo,
+        tiviLogger: Logger,
     ): Tmdb3 = Tmdb3 {
         tmdbApiKey = tmdbOAuthInfo.apiKey
         maxRetriesOnException = 3
+
+        logging {
+            logger = object : io.ktor.client.plugins.logging.Logger {
+                override fun log(message: String) {
+                    tiviLogger.d { message }
+                }
+            }
+            level = when {
+                applicationInfo.debugBuild -> LogLevel.HEADERS
+                else -> LogLevel.NONE
+            }
+        }
 
         httpClient(Darwin) {
             engine {

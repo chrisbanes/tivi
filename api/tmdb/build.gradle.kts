@@ -19,6 +19,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(projects.core.base)
+                implementation(projects.core.logging)
 
                 api(libs.tmdb.api)
                 implementation(libs.ktor.client.core)
