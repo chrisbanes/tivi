@@ -18,7 +18,6 @@ import app.tivi.common.compose.shouldUseDynamicColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.core.analytics.Analytics
 import app.tivi.overlays.LocalNavigator
-import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.SettingsScreen
 import app.tivi.screens.TiviScreen
 import app.tivi.settings.TiviPreferences
@@ -27,11 +26,8 @@ import app.tivi.util.TiviTextCreator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.slack.circuit.backstack.SaveableBackStack
-import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.CircuitConfig
-import com.slack.circuit.foundation.push
-import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.foundation.screen
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -39,7 +35,8 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias TiviContent = @Composable (
-    onRootPop: () -> Unit,
+    backstack: SaveableBackStack,
+    navigator: Navigator,
     onOpenSettings: () -> Unit,
     modifier: Modifier,
 ) -> Unit
@@ -48,7 +45,8 @@ typealias TiviContent = @Composable (
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun TiviContent(
-    @Assisted onRootPop: () -> Unit,
+    @Assisted backstack: SaveableBackStack,
+    @Assisted navigator: Navigator,
     @Assisted onOpenSettings: () -> Unit,
     circuitConfig: CircuitConfig,
     analytics: Analytics,
@@ -58,11 +56,8 @@ fun TiviContent(
     imageLoader: ImageLoader,
     @Assisted modifier: Modifier = Modifier,
 ) {
-    val backstack: SaveableBackStack = rememberSaveableBackStack { push(DiscoverScreen) }
-    val circuitNavigator = rememberCircuitNavigator(backstack, onRootPop)
-
-    val navigator: Navigator = remember(circuitNavigator) {
-        TiviNavigator(circuitNavigator, onOpenSettings)
+    val tiviNavigator: Navigator = remember(navigator) {
+        TiviNavigator(navigator, onOpenSettings)
     }
 
     // Launch an effect to track changes to the current back stack entry, and push them
@@ -76,7 +71,7 @@ fun TiviContent(
     }
 
     CompositionLocalProvider(
-        LocalNavigator provides navigator,
+        LocalNavigator provides tiviNavigator,
         LocalImageLoader provides imageLoader,
         LocalTiviDateFormatter provides tiviDateFormatter,
         LocalTiviTextCreator provides tiviTextCreator,
@@ -89,7 +84,7 @@ fun TiviContent(
             ) {
                 Home(
                     backstack = backstack,
-                    navigator = navigator,
+                    navigator = tiviNavigator,
                     modifier = modifier,
                 )
             }
