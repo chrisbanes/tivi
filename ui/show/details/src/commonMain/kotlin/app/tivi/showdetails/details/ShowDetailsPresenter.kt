@@ -32,6 +32,7 @@ import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
+import app.tivi.util.onException
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -109,31 +110,25 @@ class ShowDetailsPresenter(
                     scope.launch {
                         updateShowDetails(
                             UpdateShowDetails.Params(showId, event.fromUser),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                     scope.launch {
                         updateRelatedShows(
                             UpdateRelatedShows.Params(showId, event.fromUser),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                     scope.launch {
                         updateShowSeasons(
                             UpdateShowSeasons.Params(showId, event.fromUser),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }
@@ -145,11 +140,9 @@ class ShowDetailsPresenter(
                                 seasonId = event.seasonId,
                                 action = ChangeSeasonFollowStatus.Action.FOLLOW,
                             ),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }
@@ -158,11 +151,9 @@ class ShowDetailsPresenter(
                     scope.launch {
                         changeSeasonWatchedStatus(
                             Params(event.seasonId, Action.UNWATCH),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }
@@ -171,11 +162,9 @@ class ShowDetailsPresenter(
                     scope.launch {
                         changeSeasonWatchedStatus(
                             Params(event.seasonId, Action.WATCHED, event.onlyAired, event.date),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }
@@ -184,11 +173,9 @@ class ShowDetailsPresenter(
                     scope.launch {
                         changeShowFollowStatus(
                             ChangeShowFollowStatus.Params(showId, TOGGLE),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }
@@ -200,11 +187,9 @@ class ShowDetailsPresenter(
                                 seasonId = event.seasonId,
                                 action = ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS,
                             ),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }
@@ -216,11 +201,9 @@ class ShowDetailsPresenter(
                                 seasonId = event.seasonId,
                                 action = ChangeSeasonFollowStatus.Action.IGNORE,
                             ),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }

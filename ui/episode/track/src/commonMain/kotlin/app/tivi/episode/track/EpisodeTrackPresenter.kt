@@ -19,6 +19,7 @@ import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.util.Logger
+import app.tivi.util.onException
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -94,11 +95,9 @@ class EpisodeTrackPresenter(
                     scope.launch {
                         updateEpisodeDetails(
                             UpdateEpisodeDetails.Params(screen.id, event.fromUser),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }
@@ -144,7 +143,7 @@ class EpisodeTrackPresenter(
                                 if (result.isSuccess) {
                                     dismissed = true
                                 }
-                                result.exceptionOrNull()?.let { e ->
+                                result.onException { e ->
                                     logger.i(e)
                                     uiMessageManager.emitMessage(UiMessage(e))
                                 }

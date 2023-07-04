@@ -30,6 +30,7 @@ import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.screens.TrendingShowsScreen
 import app.tivi.util.Logger
+import app.tivi.util.onException
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -104,11 +105,9 @@ class DiscoverPresenter(
                                 page = UpdatePopularShows.Page.REFRESH,
                                 forceRefresh = event.fromUser,
                             ),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                     scope.launch {
@@ -117,11 +116,9 @@ class DiscoverPresenter(
                                 page = UpdateTrendingShows.Page.REFRESH,
                                 forceRefresh = event.fromUser,
                             ),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                     if (authState == TraktAuthState.LOGGED_IN) {
@@ -129,7 +126,7 @@ class DiscoverPresenter(
                             updateRecommendedShows(
                                 UpdateRecommendedShows.Params(forceRefresh = event.fromUser),
                             ).also { result ->
-                                result.exceptionOrNull()?.let { e ->
+                                result.onException { e ->
                                     logger.i(e)
                                     uiMessageManager.emitMessage(UiMessage(e))
                                 }

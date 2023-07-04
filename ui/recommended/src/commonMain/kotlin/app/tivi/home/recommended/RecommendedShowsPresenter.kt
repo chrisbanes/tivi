@@ -5,7 +5,7 @@ package app.tivi.home.recommended
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.paging.PagingConfig
+import app.cash.paging.PagingConfig
 import app.cash.paging.compose.collectAsLazyPagingItems
 import app.tivi.domain.observers.ObservePagedRecommendedShows
 import app.tivi.screens.RecommendedShowsScreen

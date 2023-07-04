@@ -7,21 +7,21 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.paging.CombinedLoadStates
-import androidx.paging.LoadState
+import app.cash.paging.CombinedLoadStates
+import app.cash.paging.LoadStateError
 
 fun CombinedLoadStates.appendErrorOrNull(): UiMessage? {
-    return (append.takeIf { it is LoadState.Error } as? LoadState.Error)
+    return (append.takeIf { it is LoadStateError } as? LoadStateError)
         ?.let { UiMessage(it.error) }
 }
 
 fun CombinedLoadStates.prependErrorOrNull(): UiMessage? {
-    return (prepend.takeIf { it is LoadState.Error } as? LoadState.Error)
+    return (prepend.takeIf { it is LoadStateError } as? LoadStateError)
         ?.let { UiMessage(it.error) }
 }
 
 fun CombinedLoadStates.refreshErrorOrNull(): UiMessage? {
-    return (refresh.takeIf { it is LoadState.Error } as? LoadState.Error)
+    return (refresh.takeIf { it is LoadStateError } as? LoadStateError)
         ?.let { UiMessage(it.error) }
 }
 

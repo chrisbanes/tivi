@@ -11,7 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.paging.PagingConfig
+import app.cash.paging.PagingConfig
 import app.cash.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
@@ -31,6 +31,7 @@ import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.screens.UpNextScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
+import app.tivi.util.onException
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -94,16 +95,15 @@ class UpNextPresenter(
                         uiMessageManager.clearMessage(event.id)
                     }
                 }
+
                 is UpNextUiEvent.Refresh -> {
                     scope.launch {
                         if (getTraktAuthState.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
                             updateUpNextEpisodes(
                                 UpdateUpNextEpisodes.Params(event.fromUser),
-                            ).also { result ->
-                                result.exceptionOrNull()?.let { e ->
-                                    logger.i(e)
-                                    uiMessageManager.emitMessage(UiMessage(e))
-                                }
+                            ).onException { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
                             }
                         }
                     }

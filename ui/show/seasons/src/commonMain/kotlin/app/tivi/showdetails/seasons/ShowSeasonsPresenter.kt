@@ -18,6 +18,7 @@ import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
+import app.tivi.util.onException
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -72,11 +73,9 @@ class ShowSeasonsPresenter(
                     scope.launch {
                         updateShowSeasons(
                             UpdateShowSeasons.Params(screen.id, event.fromUser),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }

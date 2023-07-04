@@ -19,6 +19,7 @@ import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.util.Logger
+import app.tivi.util.onException
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -69,11 +70,9 @@ class EpisodeDetailsPresenter(
                     scope.launch {
                         updateEpisodeDetails(
                             UpdateEpisodeDetails.Params(screen.id, event.fromUser),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }
@@ -88,11 +87,9 @@ class EpisodeDetailsPresenter(
                     scope.launch {
                         removeEpisodeWatches(
                             RemoveEpisodeWatches.Params(screen.id),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }
@@ -101,11 +98,9 @@ class EpisodeDetailsPresenter(
                     scope.launch {
                         removeEpisodeWatch(
                             RemoveEpisodeWatch.Params(event.id),
-                        ).also { result ->
-                            result.exceptionOrNull()?.let { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
+                        ).onException { e ->
+                            logger.i(e)
+                            uiMessageManager.emitMessage(UiMessage(e))
                         }
                     }
                 }
