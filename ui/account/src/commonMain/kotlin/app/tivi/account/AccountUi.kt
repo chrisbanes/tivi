@@ -24,7 +24,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -58,6 +57,7 @@ class AccountUiFactory : Ui.Factory {
                 AccountUi(state, modifier)
             }
         }
+
         else -> null
     }
 }
@@ -98,65 +98,59 @@ internal fun AccountUi(
     logout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = MaterialTheme.shapes.medium,
-        modifier = modifier,
-    ) {
-        Column {
+    Column(modifier = modifier) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (viewState.user != null) {
+            UserRow(
+                user = viewState.user,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
             Spacer(modifier = Modifier.height(16.dp))
-
-            if (viewState.user != null) {
-                UserRow(
-                    user = viewState.user,
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .wrapContentSize(Alignment.CenterEnd)
-                    .align(Alignment.End),
-            ) {
-                if (viewState.authState == TraktAuthState.LOGGED_OUT) {
-                    OutlinedButton(onClick = login) {
-                        Text(text = stringResource(MR.strings.login))
-                    }
-                } else {
-                    TextButton(onClick = login) {
-                        Text(text = stringResource(MR.strings.refresh_credentials))
-                    }
-                }
-
-                OutlinedButton(onClick = logout) {
-                    Text(text = stringResource(MR.strings.logout))
-                }
-            }
-
-            Spacer(
-                modifier = Modifier
-                    .height(16.dp)
-                    .fillMaxWidth(),
-            )
-
-            Divider()
-
-            AppAction(
-                label = stringResource(MR.strings.settings_title),
-                icon = Icons.Default.Settings,
-                contentDescription = stringResource(MR.strings.settings_title),
-                onClick = openSettings,
-            )
-
-            Spacer(
-                modifier = Modifier
-                    .height(8.dp)
-                    .fillMaxWidth(),
-            )
         }
+
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .wrapContentSize(Alignment.CenterEnd)
+                .align(Alignment.End),
+        ) {
+            if (viewState.authState == TraktAuthState.LOGGED_OUT) {
+                OutlinedButton(onClick = login) {
+                    Text(text = stringResource(MR.strings.login))
+                }
+            } else {
+                TextButton(onClick = login) {
+                    Text(text = stringResource(MR.strings.refresh_credentials))
+                }
+            }
+
+            OutlinedButton(onClick = logout) {
+                Text(text = stringResource(MR.strings.logout))
+            }
+        }
+
+        Spacer(
+            modifier = Modifier
+                .height(16.dp)
+                .fillMaxWidth(),
+        )
+
+        Divider()
+
+        AppAction(
+            label = stringResource(MR.strings.settings_title),
+            icon = Icons.Default.Settings,
+            contentDescription = stringResource(MR.strings.settings_title),
+            onClick = openSettings,
+        )
+
+        Spacer(
+            modifier = Modifier
+                .height(8.dp)
+                .fillMaxWidth(),
+        )
     }
 }
 
