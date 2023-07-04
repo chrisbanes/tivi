@@ -32,6 +32,7 @@ kotlin {
                 api(libs.insetsx)
 
                 implementation(libs.materialdialogs.core)
+                implementation(libs.materialdialogs.datetime)
 
                 implementation(libs.uuid)
 
