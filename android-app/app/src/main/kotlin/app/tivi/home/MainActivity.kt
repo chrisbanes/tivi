@@ -29,7 +29,11 @@ import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.UiComponent
+import app.tivi.screens.DiscoverScreen
 import app.tivi.settings.SettingsActivity
+import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.push
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -55,12 +59,12 @@ class MainActivity : TiviActivity() {
 
         val composeView = ComposeView(this).apply {
             setContent {
+                val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+                val navigator = rememberCircuitNavigator(backstack)
+
                 component.tiviContent(
-                    onRootPop = {
-                        if (onBackPressedDispatcher.hasEnabledCallbacks()) {
-                            onBackPressedDispatcher.onBackPressed()
-                        }
-                    },
+                    backstack = backstack,
+                    navigator = navigator,
                     onOpenSettings = {
                         context.startActivity(Intent(context, SettingsActivity::class.java))
                     },

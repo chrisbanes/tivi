@@ -11,6 +11,10 @@ import androidx.compose.ui.window.application
 import app.tivi.inject.DesktopApplicationComponent
 import app.tivi.inject.WindowComponent
 import app.tivi.inject.create
+import app.tivi.screens.DiscoverScreen
+import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.push
+import com.slack.circuit.foundation.rememberCircuitNavigator
 
 fun main() = application {
     val applicationComponent = remember {
@@ -29,13 +33,13 @@ fun main() = application {
             WindowComponent.create(applicationComponent)
         }
 
+        val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+        val navigator = rememberCircuitNavigator(backstack) { /* no-op */ }
+
         component.tiviContent(
-            onRootPop = {
-                // TODO
-            },
-            onOpenSettings = {
-                // TODO
-            },
+            backstack = backstack,
+            navigator = navigator,
+            onOpenSettings = { /* no-op for now */ },
             modifier = Modifier,
         )
     }
