@@ -17,12 +17,10 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.toNSTimeZone
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSCalendar
-import platform.Foundation.NSCalendarUnitHour
-import platform.Foundation.NSCalendarUnitMinute
-import platform.Foundation.NSCalendarUnitSecond
-import platform.Foundation.NSCalendarUnitWeekday
+import platform.Foundation.NSCalendarMatchStrictly
 import platform.Foundation.NSDate
-import platform.Foundation.NSDateComponentsFormatter
+import platform.Foundation.NSDateComponents
+import platform.Foundation.NSDateFormatter
 
 @ActivityScope
 @Inject
@@ -30,8 +28,10 @@ actual class TiviTextCreator(
     override val dateFormatter: TiviDateFormatter,
 ) : CommonTiviTextCreator {
 
-    private val shortTime by lazy {
-        NSDateComponentsFormatter().apply {
+    private val dayOfWeekFormatter by lazy {
+        NSDateFormatter().apply {
+            setDateFormat("EEEE")
+            locale = dateFormatter.locale
             calendar = NSCalendar.currentCalendar
         }
     }
@@ -44,18 +44,27 @@ actual class TiviTextCreator(
         val calendar = NSCalendar.currentCalendar
         calendar.timeZone = airTz.toNSTimeZone()
 
-        val date = NSDate()
-        calendar.dateBySettingUnit(NSCalendarUnitSecond, airTime.second.convert(), date, 0)
-        calendar.dateBySettingUnit(NSCalendarUnitMinute, airTime.minute.convert(), date, 0)
-        calendar.dateBySettingUnit(NSCalendarUnitHour, airTime.hour.convert(), date, 0)
-        calendar.dateBySettingUnit(NSCalendarUnitWeekday, airDay.toNSWeekdayUnit().convert(), date, 0)
+        val date = NSDateComponents()
+            .apply {
+                hour = airTime.hour.convert()
+                minute = airTime.minute.convert()
+                second = airTime.second.convert()
+                weekday = airDay.toNSWeekdayUnit().convert()
+            }
+            .let { component ->
+                calendar.nextDateAfterDate(
+                    date = NSDate(),
+                    matchingComponents = component,
+                    options = NSCalendarMatchStrictly,
+                )
+            } ?: return null
 
         val localTime = date.toKotlinInstant()
             .toLocalDateTime(TimeZone.currentSystemDefault())
             .time
 
         return MR.strings.airs_text.format(
-            shortTime.stringFromDateComponents(calendar.components(NSCalendarUnitWeekday, date))!!,
+            dayOfWeekFormatter.stringFromDate(date),
             dateFormatter.formatShortTime(localTime),
         ).asString()
     }

@@ -14,6 +14,8 @@ import kotlinx.datetime.toNSDateComponents
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSCalendar
 import platform.Foundation.NSCalendar.Companion.currentCalendar
+import platform.Foundation.NSCalendarUnitHour
+import platform.Foundation.NSCalendarUnitMinute
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateComponents
 import platform.Foundation.NSDateComponentsFormatter
@@ -28,7 +30,7 @@ import platform.Foundation.autoupdatingCurrentLocale
 @ActivityScope
 @Inject
 actual class TiviDateFormatter(
-    locale: NSLocale = NSLocale.autoupdatingCurrentLocale,
+    internal val locale: NSLocale = NSLocale.autoupdatingCurrentLocale,
 ) {
     private val shortDate by lazy {
         NSDateFormatter().apply {
@@ -38,6 +40,7 @@ actual class TiviDateFormatter(
     }
     private val shortTime by lazy {
         NSDateComponentsFormatter().apply {
+            setAllowedUnits(NSCalendarUnitHour or NSCalendarUnitMinute)
             calendar = NSCalendar.currentCalendar.apply {
                 this.locale = locale
             }
