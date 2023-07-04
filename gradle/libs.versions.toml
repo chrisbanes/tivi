@@ -14,6 +14,7 @@ okhttp = "4.11.0"
 kermit = "1.2.2" # Pinned back as Store uses Kermit 1.x
 ktor = "2.3.2"
 paging-multiplatform = "3.2.0-alpha05-0.2.2"
+materialdialogs = "0.9.3"
 retrofit = "2.9.0"
 spotless = "6.19.0"
 sqldelight = "2.0.0-rc02"
@@ -73,7 +74,8 @@ circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = 
 
 compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.2.0"
 
-materialdialogs-core = "ca.gosyer:compose-material-dialogs-core:0.9.3"
+materialdialogs-core = { module = "ca.gosyer:compose-material-dialogs-core", version.ref = "materialdialogs" }
+materialdialogs-datetime =  { module = "ca.gosyer:compose-material-dialogs-datetime", version.ref = "materialdialogs" }
 
 tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.0.3"
 

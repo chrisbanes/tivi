@@ -5,13 +5,11 @@ package app.tivi.common.compose.ui
 
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.unit.dp
-import com.vanpra.composematerialdialogs.MaterialDialog
+import app.tivi.common.compose.Material3Dialog
 import com.vanpra.composematerialdialogs.message
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import com.vanpra.composematerialdialogs.title
@@ -37,11 +35,8 @@ fun TiviAlertDialog(
         lastOnDismissRequest()
     }
 
-    MaterialDialog(
+    Material3Dialog(
         dialogState = dialogState,
-        backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp),
-        shape = MaterialTheme.shapes.medium,
-        elevation = 0.dp,
         onCloseRequest = { onDismiss() },
         buttons = {
             negativeButton(

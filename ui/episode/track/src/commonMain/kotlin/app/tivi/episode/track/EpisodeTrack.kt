@@ -261,6 +261,7 @@ private fun EpisodeTrack(
                     DateTextField(
                         selectedDate = selectedDate,
                         onDateSelected = onDateSelected,
+                        dialogTitle = stringResource(MR.strings.episode_watch_date_title),
                         modifier = Modifier.fillMaxWidth(3 / 5f),
                     )
 
@@ -269,6 +270,7 @@ private fun EpisodeTrack(
                     TimeTextField(
                         selectedTime = selectedTime,
                         onTimeSelected = onTimeSelected,
+                        dialogTitle = stringResource(MR.strings.episode_watch_time_title),
                         modifier = Modifier.weight(1f),
                     )
                 }
