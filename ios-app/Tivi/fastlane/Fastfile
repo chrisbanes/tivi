@@ -5,16 +5,21 @@ platform :ios do
   lane :build do
     setup_ci if ENV['CI']
 
-    match(type: 'appstore')
+    match(type: 'appstore') if ENV['MATCH_PASSWORD']
 
     increment_build_number(
       xcodeproj: "Tivi.xcodeproj",
       build_number: ENV['TIVI_BUILD_NUMBER']
-    )
+    ) if ENV['TIVI_BUILD_NUMBER']
+
+    # If match hasn't been setup, skip all code signing and packaging
+    skip_packaging = ENV['MATCH_PASSWORD'].nil?
 
     build_app(
       scheme: "Tivi",
-      buildlog_path: "build/fastlane-buildlog"
+      buildlog_path: "build/fastlane-buildlog",
+      skip_package_ipa: skip_packaging,
+      skip_codesigning: skip_packaging
     )
   end
 

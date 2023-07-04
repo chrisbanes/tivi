@@ -222,6 +222,7 @@ jobs:
 
       - name: Upload build outputs
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v3
         with:
           name: ios-build-outputs
