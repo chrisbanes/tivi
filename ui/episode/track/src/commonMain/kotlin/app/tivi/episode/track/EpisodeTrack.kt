@@ -139,8 +139,7 @@ internal fun EpisodeTrack(
     ) {
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 32.dp),
+                .padding(16.dp),
         ) {
             viewState.episode?.let { episode ->
                 EpisodeHeader(

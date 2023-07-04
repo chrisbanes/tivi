@@ -4,13 +4,13 @@
 package app.tivi.overlays
 
 import androidx.compose.runtime.Composable
+import app.tivi.common.compose.TiviDialog
 import app.tivi.common.compose.rememberCoroutineScope
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.overlay.Overlay
 import com.slack.circuit.overlay.OverlayHost
 import com.slack.circuit.overlay.OverlayNavigator
 import com.slack.circuit.runtime.Screen
-import com.vanpra.composematerialdialogs.MaterialDialog
 import kotlinx.coroutines.launch
 
 class DialogOverlay<Model : Any, Result : Any>(
@@ -21,8 +21,8 @@ class DialogOverlay<Model : Any, Result : Any>(
     @Composable
     override fun Content(navigator: OverlayNavigator<Result>) {
         val coroutineScope = rememberCoroutineScope()
-        MaterialDialog(
-            onCloseRequest = { navigator.finish(onDismiss()) },
+        TiviDialog(
+            onDismissRequest = { navigator.finish(onDismiss()) },
         ) {
             // Delay setting the result until we've finished dismissing
             content(model) { result ->
