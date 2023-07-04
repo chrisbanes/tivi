@@ -147,9 +147,7 @@ private fun ResultImage(
 
             is ImageResult.Image -> result.image.toPainter(filterQuality)
             is ImageResult.Painter -> result.painter
-            is ImageResult.Error -> TODO()
-            is ImageResult.Source -> TODO()
-            null -> EmptyPainter
+            else -> EmptyPainter
         },
         alignment = alignment,
         contentDescription = contentDescription,
