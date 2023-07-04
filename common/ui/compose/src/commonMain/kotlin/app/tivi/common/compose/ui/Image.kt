@@ -1,13 +1,12 @@
 // Copyright 2022, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package app.tivi.common.compose.ui
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -52,6 +51,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun AsyncImage(
     model: Any?,
@@ -108,6 +108,7 @@ fun AsyncImage(
         targetState = result,
         animationSpec = tween(durationMillis = 220),
         label = "AsyncImage-Crossfade",
+        modifier = modifier,
     ) { r ->
         ResultImage(
             result = r,
@@ -116,7 +117,9 @@ fun AsyncImage(
             contentScale = contentScale,
             alpha = alpha,
             colorFilter = colorFilter,
-            modifier = modifier.then(sizeResolver),
+            modifier = Modifier
+                .fillMaxSize()
+                .then(sizeResolver),
             filterQuality = filterQuality,
         )
     }
