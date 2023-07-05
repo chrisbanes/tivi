@@ -6,17 +6,14 @@ package app.tivi.util
 import app.tivi.data.models.TiviShow
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import java.util.Locale
 import kotlin.test.Test
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
-import platform.Foundation.NSLocale
 
 class TiviTextCreatorTest {
-    private val tiviDateFormatter = TiviDateFormatter(
-        overrideLocale = NSLocale("en-GB"),
-        overrideTimeZone = TimeZone.UTC,
-    )
+    private val tiviDateFormatter = TiviDateFormatter(Locale.UK)
     private val textCreator = TiviTextCreator(tiviDateFormatter)
 
     private val tiviShow = TiviShow(
@@ -28,6 +25,6 @@ class TiviTextCreatorTest {
 
     @Test
     fun airsDate() {
-        assertThat(textCreator.airsText(tiviShow)).isEqualTo("Sunday at 20:00")
+        assertThat(textCreator.airsText(tiviShow)).isEqualTo("Sun at 21:00")
     }
 }

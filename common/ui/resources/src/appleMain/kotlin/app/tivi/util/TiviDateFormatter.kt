@@ -6,14 +6,18 @@ package app.tivi.util
 import app.tivi.inject.ActivityScope
 import kotlin.time.Duration.Companion.days
 import kotlinx.cinterop.convert
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toNSDate
 import kotlinx.datetime.toNSDateComponents
+import kotlinx.datetime.toNSTimeZone
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSCalendar
 import platform.Foundation.NSCalendar.Companion.currentCalendar
+import platform.Foundation.NSCalendarMatchNextTime
 import platform.Foundation.NSCalendarUnitHour
 import platform.Foundation.NSCalendarUnitMinute
 import platform.Foundation.NSDate
@@ -25,43 +29,58 @@ import platform.Foundation.NSDateFormatterShortStyle
 import platform.Foundation.NSLocale
 import platform.Foundation.NSRelativeDateTimeFormatter
 import platform.Foundation.NSRelativeDateTimeFormatterStyleNamed
-import platform.Foundation.autoupdatingCurrentLocale
 
 @ActivityScope
 @Inject
 actual class TiviDateFormatter(
-    internal val locale: NSLocale = NSLocale.autoupdatingCurrentLocale,
+    private val overrideLocale: NSLocale? = null,
+    internal val overrideTimeZone: TimeZone? = null,
 ) {
+    internal val calendar: NSCalendar by lazy {
+        NSCalendar.currentCalendar.apply {
+            if (overrideLocale != null) {
+                locale = overrideLocale
+            }
+            if (overrideTimeZone != null) {
+                timeZone = overrideTimeZone.toNSTimeZone()
+            }
+        }
+    }
+
     private val shortDate by lazy {
-        NSDateFormatter().apply {
-            this.locale = locale
+        createDateFormatter().apply {
             dateStyle = NSDateFormatterShortStyle
         }
     }
     private val shortTime by lazy {
         NSDateComponentsFormatter().apply {
             setAllowedUnits(NSCalendarUnitHour or NSCalendarUnitMinute)
-            calendar = NSCalendar.currentCalendar.apply {
-                this.locale = locale
-            }
+            calendar = this@TiviDateFormatter.calendar
         }
     }
     private val mediumDate by lazy {
-        NSDateFormatter().apply {
-            this.locale = locale
+        createDateFormatter().apply {
             dateStyle = NSDateFormatterMediumStyle
         }
     }
     private val mediumDateTime by lazy {
-        NSDateFormatter().apply {
-            this.locale = locale
+        createDateFormatter().apply {
             dateStyle = NSDateFormatterMediumStyle
             timeStyle = NSDateFormatterMediumStyle
         }
     }
     private val interval by lazy {
         NSRelativeDateTimeFormatter().apply {
+            calendar = this@TiviDateFormatter.calendar
+            if (overrideLocale != null) {
+                locale = overrideLocale
+            }
             dateTimeStyle = NSRelativeDateTimeFormatterStyleNamed
+        }
+    }
+    private val dayOfWeekFormatter by lazy {
+        createDateFormatter().apply {
+            setDateFormat("EEEE")
         }
     }
 
@@ -99,18 +118,42 @@ actual class TiviDateFormatter(
         else -> formatShortDate(date)
     }
 
+    actual fun formatDayOfWeek(dayOfWeek: DayOfWeek): String {
+        val date = NSDateComponents()
+            .apply { weekday = dayOfWeek.toNSWeekdayUnit().convert() }
+            .let { component ->
+                calendar.nextDateAfterDate(
+                    date = NSDate(),
+                    matchingComponents = component,
+                    options = NSCalendarMatchNextTime,
+                )
+            }
+
+        return date?.let(dayOfWeekFormatter::stringFromDate).orEmpty()
+    }
+
     private fun LocalDate.toNSDate(calendar: NSCalendar = currentCalendar): NSDate {
         val components = toNSDateComponents()
         components.calendar = calendar
         return components.date ?: error("Error while formatting LocalDate: $this")
     }
 
-    private fun LocalTime.toNSDateComponents(): NSDateComponents {
-        val components = NSDateComponents()
-        components.hour = hour.convert()
-        components.minute = minute.convert()
-        components.second = second.convert()
-        components.nanosecond = nanosecond.convert()
-        return components
+    private fun createDateFormatter(): NSDateFormatter = NSDateFormatter().apply {
+        calendar = this@TiviDateFormatter.calendar
+        if (overrideLocale != null) {
+            locale = overrideLocale
+        }
+        if (overrideTimeZone != null) {
+            timeZone = overrideTimeZone.toNSTimeZone()
+        }
     }
+}
+
+private fun LocalTime.toNSDateComponents(): NSDateComponents {
+    val components = NSDateComponents()
+    components.hour = hour.convert()
+    components.minute = minute.convert()
+    components.second = second.convert()
+    components.nanosecond = nanosecond.convert()
+    return components
 }
