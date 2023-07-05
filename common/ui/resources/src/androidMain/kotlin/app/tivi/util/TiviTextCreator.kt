@@ -30,7 +30,7 @@ actual class TiviTextCreator(
         val localDateTime = java.time.ZonedDateTime.now(airTz.toJavaZoneId())
             .with(airDay)
             .with(airTime.toJavaLocalTime())
-            .withZoneSameInstant(java.time.ZoneId.systemDefault())
+            .withZoneSameInstant(dateFormatter.timeZone.toJavaZoneId())
 
         return MR.strings.airs_text.format(
             localDateTime.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault()),

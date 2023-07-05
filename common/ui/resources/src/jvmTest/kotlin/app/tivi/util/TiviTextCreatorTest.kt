@@ -13,7 +13,10 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 
 class TiviTextCreatorTest {
-    private val tiviDateFormatter = TiviDateFormatter(Locale.UK)
+    private val tiviDateFormatter = TiviDateFormatter(
+        locale = Locale.UK,
+        timeZone = TimeZone.UTC,
+    )
     private val textCreator = TiviTextCreator(tiviDateFormatter)
 
     private val tiviShow = TiviShow(
@@ -25,6 +28,6 @@ class TiviTextCreatorTest {
 
     @Test
     fun airsDate() {
-        assertThat(textCreator.airsText(tiviShow)).isEqualTo("Sun at 21:00")
+        assertThat(textCreator.airsText(tiviShow)).isEqualTo("Sun at 20:00")
     }
 }

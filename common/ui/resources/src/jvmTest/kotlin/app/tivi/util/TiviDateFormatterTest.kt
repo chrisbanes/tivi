@@ -14,7 +14,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
 class TiviDateFormatterTest {
-    private val tiviDateFormatter = TiviDateFormatter(Locale.UK, TimeZone.UTC)
+    private val tiviDateFormatter = TiviDateFormatter(
+        locale = Locale.UK,
+        timeZone = TimeZone.UTC,
+    )
 
     @Test
     fun formatShortDate() {

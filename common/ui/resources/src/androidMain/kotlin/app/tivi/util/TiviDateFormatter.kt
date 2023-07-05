@@ -30,7 +30,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 actual class TiviDateFormatter(
     private val locale: Locale = Locale.getDefault(),
-    private val timeZone: TimeZone = TimeZone.currentSystemDefault(),
+    internal val timeZone: TimeZone = TimeZone.currentSystemDefault(),
 ) {
     private val shortDateFormatter: DateTimeFormatter by lazy {
         DateTimeFormatter
