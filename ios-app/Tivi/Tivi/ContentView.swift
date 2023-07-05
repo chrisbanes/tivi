@@ -28,9 +28,9 @@ struct ComposeView: UIViewControllerRepresentable {
         self.component = component
     }
 
-    func makeUIViewController(context: Context) -> UIViewController {
+    func makeUIViewController(context _: Context) -> UIViewController {
         return component.uiViewControllerFactory()
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    func updateUIViewController(_: UIViewController, context _: Context) {}
 }

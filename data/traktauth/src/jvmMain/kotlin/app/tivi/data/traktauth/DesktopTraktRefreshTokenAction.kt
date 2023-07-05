@@ -6,7 +6,7 @@ package app.tivi.data.traktauth
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class DesktopRefreshTraktTokensInteractor : RefreshTraktTokensInteractor {
+class DesktopTraktRefreshTokenAction : TraktRefreshTokenAction {
     override suspend fun invoke(state: AuthState): AuthState? {
         // TODO
         return null

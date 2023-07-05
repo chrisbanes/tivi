@@ -21,6 +21,8 @@ import me.tatarka.inject.annotations.Inject
 class TraktAuthRepository(
     private val dispatchers: AppCoroutineDispatchers,
     private val authStore: AuthStore,
+    private val loginAction: Lazy<TraktLoginAction>,
+    private val refreshTokenAction: Lazy<TraktRefreshTokenAction>,
 ) {
     private val authState = MutableStateFlow(AuthState.Empty)
 
@@ -49,22 +51,40 @@ class TraktAuthRepository(
         }
     }
 
-    fun clearAuth() {
-        authState.value = AuthState.Empty
-        GlobalScope.launch(dispatchers.io) { authStore.clear() }
+    suspend fun login(): AuthState? {
+        val newState = loginAction.value()
+        onNewAuthState(newState ?: AuthState.Empty)
+        return newState
     }
 
-    fun onNewAuthState(newState: AuthState) {
+    suspend fun refreshTokens(): AuthState? {
+        return authStore.get()
+            ?.let { currentState -> refreshTokenAction.value.invoke(currentState) }
+            .also { onNewAuthState(it ?: AuthState.Empty) }
+    }
+
+    suspend fun logout() {
+        clearAuth()
+    }
+
+    private suspend fun clearAuth() {
+        authState.value = AuthState.Empty
+        withContext(dispatchers.io) {
+            authStore.clear()
+        }
+    }
+
+    private suspend fun onNewAuthState(newState: AuthState) {
         // Update our local state
         authState.value = newState
         updateAuthState(newState)
 
-        GlobalScope.launch(dispatchers.io) {
-            // Persist auth state
+        // Persist auth state
+        withContext(dispatchers.io) {
             if (newState.isAuthorized) {
                 authStore.save(newState)
             } else {
-                authStore.clear()
+                clearAuth()
             }
         }
     }

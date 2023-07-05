@@ -12,9 +12,9 @@ actual interface TraktAuthComponent {
     @Provides
     fun provideAuthStore(store: IosAuthStore): AuthStore = store
 
-    val refreshTraktTokensInteractorProvider: (TraktOAuthInfo) -> RefreshTraktTokensInteractor
+    val traktRefreshTokenActionProvider: (TraktOAuthInfo) -> TraktRefreshTokenAction
 
     @Provides
     @ApplicationScope
-    fun provideRefreshTraktTokensInteractor(info: TraktOAuthInfo): RefreshTraktTokensInteractor = refreshTraktTokensInteractorProvider(info)
+    fun provideRefreshTraktTokensInteractor(info: TraktOAuthInfo): TraktRefreshTokenAction = traktRefreshTokenActionProvider(info)
 }

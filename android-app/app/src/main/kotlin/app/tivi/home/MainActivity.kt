@@ -23,8 +23,6 @@ import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import app.tivi.ContentViewSetter
 import app.tivi.TiviActivity
-import app.tivi.data.traktauth.LoginToTraktInteractor
-import app.tivi.data.traktauth.TraktAuthActivityComponent
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.AndroidApplicationComponent
@@ -80,9 +78,6 @@ class MainActivity : TiviActivity() {
         // Copied from setContent {} ext-fun
         setOwners()
 
-        // Register for Login activity results
-        component.login.register()
-
         component.contentViewSetter.setContentView(this, composeView)
     }
 }
@@ -92,11 +87,9 @@ class MainActivity : TiviActivity() {
 abstract class MainActivityComponent(
     @get:Provides override val activity: Activity,
     @Component val applicationComponent: AndroidApplicationComponent = AndroidApplicationComponent.from(activity),
-) : ActivityComponent, TraktAuthActivityComponent, UiComponent {
+) : ActivityComponent, UiComponent {
     abstract val tiviContent: TiviContent
-
     abstract val contentViewSetter: ContentViewSetter
-    abstract val login: LoginToTraktInteractor
     abstract val viewModel: () -> MainActivityViewModel
 }
 

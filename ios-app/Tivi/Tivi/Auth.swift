@@ -14,24 +14,24 @@ private let configuration = OIDServiceConfiguration(
     tokenEndpoint: URL(string: "https://trakt.tv/oauth/token")!
 )
 
-class IosRefreshTraktTokensInteractor: RefreshTraktTokensInteractor {    
+class IosTraktRefreshTokenAction: TraktRefreshTokenAction {
     private let traktOAuthInfo: TraktOAuthInfo
-    
+
     init(traktOAuthInfo: TraktOAuthInfo) {
         self.traktOAuthInfo = traktOAuthInfo
     }
-    
-    func invoke(state: AuthState) async throws -> AuthState? {
-        // TODO
+
+    func invoke(state _: AuthState) async throws -> AuthState? {
+        // TODO:
         return nil
     }
 }
 
-class IosLoginToTraktInteractor: LoginToTraktInteractor {
+class IosTraktLoginAction: TraktLoginAction {
     private let appDelegate: AppDelegate
     private let uiViewController: () -> UIViewController
     private let traktOAuthInfo: TraktOAuthInfo
-    
+
     init(
         appDelegate: AppDelegate,
         uiViewController: @escaping () -> UIViewController,
@@ -41,7 +41,7 @@ class IosLoginToTraktInteractor: LoginToTraktInteractor {
         self.uiViewController = uiViewController
         self.traktOAuthInfo = traktOAuthInfo
     }
-    
+
     func invoke() async throws -> AuthState? {
         let request = OIDAuthorizationRequest(
             configuration: configuration,
@@ -54,10 +54,10 @@ class IosLoginToTraktInteractor: LoginToTraktInteractor {
         )
         return await login(request: request)
     }
-    
+
     @MainActor private func login(request: OIDAuthorizationRequest) async -> AuthState? {
         return await withCheckedContinuation { continuation in
-            self.appDelegate.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request, presenting: self.uiViewController()) { authState, error in
+            self.appDelegate.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request, presenting: self.uiViewController()) { authState, _ in
                 if let authState = authState {
                     let tiviAuthState = SimpleAuthState(
                         accessToken: authState.lastTokenResponse?.accessToken ?? "",
@@ -69,9 +69,5 @@ class IosLoginToTraktInteractor: LoginToTraktInteractor {
                 }
             }
         }
-    }
-    
-    func register() {
-        // not required on iOS
     }
 }

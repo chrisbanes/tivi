@@ -6,11 +6,7 @@ package app.tivi.data.traktauth
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class DesktopLoginToTraktInteractor : LoginToTraktInteractor {
-    override fun register() {
-        // TODO
-    }
-
+class DesktopTraktLoginAction : TraktLoginAction {
     override suspend operator fun invoke(): AuthState? {
         return null
     }

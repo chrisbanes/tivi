@@ -55,7 +55,7 @@ abstract class Interactor<in P, R> {
     }
 }
 
-suspend fun <R> Interactor<Unit, R>.invoke(
+suspend operator fun <R> Interactor<Unit, R>.invoke(
     timeout: Duration = Interactor.DefaultTimeout,
 ) = invoke(Unit, timeout)
 

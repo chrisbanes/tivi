@@ -8,11 +8,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import app.tivi.common.compose.rememberCoroutineScope
-import app.tivi.data.traktauth.AuthState
-import app.tivi.data.traktauth.LoginToTraktInteractor
-import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.data.traktauth.TraktAuthState
-import app.tivi.domain.interactors.ClearUserDetails
+import app.tivi.domain.interactors.LoginTrakt
+import app.tivi.domain.interactors.LogoutTrakt
+import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.screens.AccountScreen
@@ -40,11 +39,11 @@ class AccountUiPresenterFactory(
 @Inject
 class AccountPresenter(
     @Assisted private val navigator: Navigator,
-    private val traktAuthRepository: TraktAuthRepository,
-    private val loginToTraktInteractor: LoginToTraktInteractor,
+    private val loginTrakt: LoginTrakt,
+    private val logoutTrakt: LogoutTrakt,
     private val observeTraktAuthState: ObserveTraktAuthState,
     private val observeUserDetails: ObserveUserDetails,
-    private val clearUserDetails: ClearUserDetails,
+
 ) : Presenter<AccountUiState> {
 
     @Composable
@@ -64,17 +63,8 @@ class AccountPresenter(
         ) { event ->
             when (event) {
                 AccountUiEvent.NavigateToSettings -> navigator.goTo(SettingsScreen)
-                AccountUiEvent.Login -> {
-                    scope.launch {
-                        traktAuthRepository.onNewAuthState(loginToTraktInteractor() ?: AuthState.Empty)
-                    }
-                }
-                AccountUiEvent.Logout -> {
-                    scope.launch {
-                        traktAuthRepository.clearAuth()
-                        clearUserDetails(ClearUserDetails.Params("me"))
-                    }
-                }
+                AccountUiEvent.Login -> scope.launch { loginTrakt() }
+                AccountUiEvent.Logout -> scope.launch { logoutTrakt() }
             }
         }
     }
