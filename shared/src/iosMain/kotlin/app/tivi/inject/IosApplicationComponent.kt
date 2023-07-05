@@ -8,8 +8,8 @@ import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.core.analytics.Analytics
-import app.tivi.data.traktauth.LoginToTraktInteractor
 import app.tivi.data.traktauth.RefreshTraktTokensInteractor
+import app.tivi.data.traktauth.TraktOAuthInfo
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
@@ -18,8 +18,7 @@ import platform.Foundation.NSBundle
 @ApplicationScope
 abstract class IosApplicationComponent(
     override val analyticsProvider: () -> Analytics,
-    override val refreshTraktTokensInteractorProvider: () -> RefreshTraktTokensInteractor,
-    override val loginToTraktInteractorProvider: () -> LoginToTraktInteractor,
+    override val refreshTraktTokensInteractorProvider: (TraktOAuthInfo) -> RefreshTraktTokensInteractor,
 ) : SharedApplicationComponent {
     abstract val initializers: AppInitializers
 

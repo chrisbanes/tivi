@@ -5,12 +5,16 @@
 //  Created by Chris Banes on 28/06/2023.
 //
 
+import AppAuth
 import SwiftUI
 import TiviKt
 import FirebaseAnalytics
 import FirebaseCore
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    // property of the app's AppDelegate
+    var currentAuthorizationFlow: OIDExternalUserAgentSession?
+    
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
@@ -20,23 +24,38 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
         return true
     }
+    
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+    ) -> Bool {
+        if let authorizationFlow = self.currentAuthorizationFlow,
+           authorizationFlow.resumeExternalUserAgentFlow(with: url) {
+            self.currentAuthorizationFlow = nil
+            return true
+        }
+        
+        return false
+    }
 }
 
 @main
 struct TiviApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
+    
     let applicationComponent: IosApplicationComponent
-
+    
     init() {
         applicationComponent = createApplicationComponent()
         applicationComponent.initializers.initialize()
     }
-
+    
     var body: some Scene {
         WindowGroup {
-            let uiComponent = HomeUiControllerComponent.companion.create(
-                applicationComponent: applicationComponent
+            let uiComponent = createHomeUiControllerComponent(
+                applicationComponent: applicationComponent,
+                appDelegate: delegate
             )
             ContentView(component: uiComponent)
         }
@@ -46,23 +65,26 @@ struct TiviApp: App {
 private func createApplicationComponent() -> IosApplicationComponent {
     return IosApplicationComponent.companion.create(
         analyticsProvider: { FirebaseAnalytics() },
-        refreshTraktTokensInteractorProvider: { IosRefreshTraktTokensInteractor() },
-        loginToTraktInteractorProvider: { IosLoginToTraktInteractor() }
+        refreshTraktTokensInteractorProvider: { traktOAuthInfo in
+            IosRefreshTraktTokensInteractor(traktOAuthInfo: traktOAuthInfo)
+        }
     )
 }
 
-class IosRefreshTraktTokensInteractor: RefreshTraktTokensInteractor {
-    func invoke() async throws -> AuthState? {
-        return nil
-    }
-}
-
-class IosLoginToTraktInteractor: LoginToTraktInteractor {
-    func launch() {
-    }
-    
-    func register() {
-    }
+private func createHomeUiControllerComponent(
+    applicationComponent: IosApplicationComponent,
+    appDelegate: AppDelegate
+) -> HomeUiControllerComponent {
+    return HomeUiControllerComponent.companion.create(
+        applicationComponent: applicationComponent,
+        loginToTraktInteractorProvider: { traktOAuthInfo, uiViewController in
+            IosLoginToTraktInteractor(
+                appDelegate: appDelegate,
+                uiViewController: uiViewController,
+                traktOAuthInfo: traktOAuthInfo
+            )
+        }
+    )
 }
 
 class FirebaseAnalytics: TiviAnalytics {

@@ -9,7 +9,7 @@ import SwiftUI
 import TiviKt
 
 struct ContentView: View {
-    let component: HomeUiControllerComponent
+    private let component: HomeUiControllerComponent
 
     init(component: HomeUiControllerComponent) {
         self.component = component
@@ -22,18 +22,14 @@ struct ContentView: View {
 }
 
 struct ComposeView: UIViewControllerRepresentable {
-    let component: HomeUiControllerComponent
+    private let component: HomeUiControllerComponent
 
     init(component: HomeUiControllerComponent) {
         self.component = component
     }
 
     func makeUIViewController(context: Context) -> UIViewController {
-        component.uiViewController {
-            // onRootPop
-        } onOpenSettings: {
-            // no-op
-        }
+        return component.uiViewControllerFactory()
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

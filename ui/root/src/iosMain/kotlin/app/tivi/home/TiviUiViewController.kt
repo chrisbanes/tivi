@@ -9,28 +9,22 @@ import app.tivi.screens.DiscoverScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import platform.UIKit.UIViewController
 
-typealias TiviUiViewController = (
-    onRootPop: () -> Unit,
-    onOpenSettings: () -> Unit,
-) -> UIViewController
+typealias TiviUiViewController = () -> UIViewController
 
 @Inject
 fun TiviUiViewController(
-    @Assisted onRootPop: () -> Unit,
-    @Assisted onOpenSettings: () -> Unit,
     tiviContent: TiviContent,
 ): UIViewController = ComposeUIViewController {
     val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
-    val navigator = rememberCircuitNavigator(backstack, onRootPop)
+    val navigator = rememberCircuitNavigator(backstack, onRootPop = { /* no-op */ })
 
     tiviContent(
         backstack = backstack,
         navigator = navigator,
-        onOpenSettings = onOpenSettings,
+        onOpenSettings = { /* no-op */ },
         modifier = Modifier,
     )
 }
