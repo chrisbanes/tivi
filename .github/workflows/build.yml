@@ -10,8 +10,8 @@ on:
 
 jobs:
   code-style:
-    runs-on: macos-latest
-    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v3
@@ -24,10 +24,6 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 17
-
-      - uses: gradle/gradle-build-action@v2
-        with:
-          gradle-home-cache-cleanup: true
 
       - name: Check code style with Spotless
         run: ./gradlew spotlessCheck
