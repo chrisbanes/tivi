@@ -3,8 +3,8 @@
 
 package app.tivi.util
 
-import java.time.LocalDateTime as JavaLocalDateTime
 import app.tivi.inject.ActivityScope
+import java.time.LocalDateTime as JavaLocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.temporal.Temporal
