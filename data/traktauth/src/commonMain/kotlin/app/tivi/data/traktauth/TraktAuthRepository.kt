@@ -61,7 +61,11 @@ class TraktAuthRepository(
 
         GlobalScope.launch(dispatchers.io) {
             // Persist auth state
-            authStore.save(newState)
+            if (newState.isAuthorized) {
+                authStore.save(newState)
+            } else {
+                authStore.clear()
+            }
         }
     }
 }

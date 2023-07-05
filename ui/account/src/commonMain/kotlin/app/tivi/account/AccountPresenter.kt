@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.data.traktauth.AuthState
 import app.tivi.data.traktauth.LoginToTraktInteractor
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.data.traktauth.TraktAuthState
@@ -65,13 +66,7 @@ class AccountPresenter(
                 AccountUiEvent.NavigateToSettings -> navigator.goTo(SettingsScreen)
                 AccountUiEvent.Login -> {
                     scope.launch {
-                        val newAuthState = loginToTraktInteractor()
-                        if (newAuthState != null) {
-                            traktAuthRepository.onNewAuthState(newAuthState)
-                        } else {
-                            traktAuthRepository.clearAuth()
-                            clearUserDetails(ClearUserDetails.Params("me"))
-                        }
+                        traktAuthRepository.onNewAuthState(loginToTraktInteractor() ?: AuthState.Empty)
                     }
                 }
                 AccountUiEvent.Logout -> {

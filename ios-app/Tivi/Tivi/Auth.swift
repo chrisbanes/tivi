@@ -14,14 +14,14 @@ private let configuration = OIDServiceConfiguration(
     tokenEndpoint: URL(string: "https://trakt.tv/oauth/token")!
 )
 
-class IosRefreshTraktTokensInteractor: RefreshTraktTokensInteractor {
+class IosRefreshTraktTokensInteractor: RefreshTraktTokensInteractor {    
     private let traktOAuthInfo: TraktOAuthInfo
     
     init(traktOAuthInfo: TraktOAuthInfo) {
         self.traktOAuthInfo = traktOAuthInfo
     }
     
-    func invoke() async throws -> AuthState? {
+    func invoke(state: AuthState) async throws -> AuthState? {
         // TODO
         return nil
     }
