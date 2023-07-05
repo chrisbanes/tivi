@@ -7,7 +7,7 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 actual interface AnalyticsComponent {
-    var analyticsProvider: () -> Analytics
+    val analyticsProvider: () -> Analytics
 
     @Provides
     @ApplicationScope

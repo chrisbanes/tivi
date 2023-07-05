@@ -26,10 +26,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct TiviApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
-    let applicationComponent = IosApplicationComponent.companion.create()
+    let applicationComponent: IosApplicationComponent
 
     init() {
-        applicationComponent.analyticsProvider = { FirebaseAnalytics() }
+        applicationComponent = createApplicationComponent()
         applicationComponent.initializers.initialize()
     }
 
@@ -40,6 +40,28 @@ struct TiviApp: App {
             )
             ContentView(component: uiComponent)
         }
+    }
+}
+
+private func createApplicationComponent() -> IosApplicationComponent {
+    return IosApplicationComponent.companion.create(
+        analyticsProvider: { FirebaseAnalytics() },
+        refreshTraktTokensInteractorProvider: { IosRefreshTraktTokensInteractor() },
+        loginToTraktInteractorProvider: { IosLoginToTraktInteractor() }
+    )
+}
+
+class IosRefreshTraktTokensInteractor: RefreshTraktTokensInteractor {
+    func invoke() async throws -> AuthState? {
+        return nil
+    }
+}
+
+class IosLoginToTraktInteractor: LoginToTraktInteractor {
+    func launch() {
+    }
+    
+    func register() {
     }
 }
 

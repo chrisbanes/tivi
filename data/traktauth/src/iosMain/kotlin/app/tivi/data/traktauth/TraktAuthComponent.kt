@@ -12,11 +12,15 @@ actual interface TraktAuthComponent {
     @Provides
     fun provideAuthStore(store: IosAuthStore): AuthStore = store
 
-    @ApplicationScope
-    @Provides
-    fun provideRefreshTraktTokensInteractor(impl: IosRefreshTraktTokensInteractor): RefreshTraktTokensInteractor = impl
+    val refreshTraktTokensInteractorProvider: () -> RefreshTraktTokensInteractor
 
     @Provides
     @ApplicationScope
-    fun provideLoginToTraktInteractor(impl: IosLoginToTraktInteractor): LoginToTraktInteractor = impl
+    fun provideRefreshTraktTokensInteractor(): RefreshTraktTokensInteractor = refreshTraktTokensInteractorProvider()
+
+    val loginToTraktInteractorProvider: () -> LoginToTraktInteractor
+
+    @Provides
+    @ApplicationScope
+    fun provideLoginToTraktInteractor(): LoginToTraktInteractor = loginToTraktInteractorProvider()
 }

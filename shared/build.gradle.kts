@@ -22,6 +22,7 @@ kotlin {
 
             export(projects.ui.root)
             export(projects.core.analytics)
+            export(projects.data.traktauth)
         }
     }
 
