@@ -8,18 +8,16 @@ import assertk.assertions.isEqualTo
 import java.util.Locale
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.days
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
 class TiviDateFormatterTest {
-    private val tiviDateFormatter = TiviDateFormatter(Locale.UK)
+    private val tiviDateFormatter = TiviDateFormatter(Locale.UK, TimeZone.UTC)
 
     @Test
     fun formatShortDate() {
-        assertThat(tiviDateFormatter.formatShortDate(localDate)).isEqualTo("01/06/2023")
         assertThat(tiviDateFormatter.formatShortDate(instant)).isEqualTo("01/06/2023")
     }
 
@@ -55,9 +53,8 @@ class TiviDateFormatterTest {
     }
 
     companion object {
-        val localDate = LocalDate.parse("2023-06-01")
         val localTime = LocalTime.parse("01:23:45")
         val localDateTime = LocalDateTime.parse("2023-06-01T01:23:45")
-        val instant = localDateTime.toInstant(TimeZone.currentSystemDefault())
+        val instant = localDateTime.toInstant(TimeZone.UTC)
     }
 }
