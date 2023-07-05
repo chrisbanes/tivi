@@ -19,6 +19,7 @@ import me.tatarka.inject.annotations.Inject
 actual class TiviTextCreator(
     override val dateFormatter: TiviDateFormatter,
 ) : CommonTiviTextCreator {
+
     override fun airsText(show: TiviShow): CharSequence? {
         val airTime = show.airsTime ?: return null
         val airTz = show.airsTimeZone ?: return null
@@ -27,7 +28,7 @@ actual class TiviTextCreator(
         val localDateTime = java.time.ZonedDateTime.now(airTz.toJavaZoneId())
             .with(airDay)
             .with(airTime.toJavaLocalTime())
-            .withZoneSameInstant(java.time.ZoneId.systemDefault())
+            .withZoneSameInstant(dateFormatter.timeZone.toJavaZoneId())
 
         return MR.strings.airs_text.format(
             localDateTime.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault()),
