@@ -18,3 +18,13 @@ interface AuthState {
         }
     }
 }
+
+internal data class SimpleAuthState(
+    override val accessToken: String,
+    override val refreshToken: String,
+) : AuthState {
+    override val isAuthorized: Boolean
+        get() = accessToken.isNotEmpty() && refreshToken.isNotEmpty()
+
+    override fun serializeToJson(): String = error("serializeToJson not implemented")
+}

@@ -3,21 +3,43 @@
 
 package app.tivi.data.traktauth
 
+import app.tivi.app.ApplicationInfo
 import app.tivi.data.traktauth.store.AuthStore
+import app.tivi.util.AppCoroutineDispatchers
+import com.russhwolf.settings.ExperimentalSettingsImplementation
+import com.russhwolf.settings.KeychainSettings
+import com.russhwolf.settings.set
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
+@OptIn(ExperimentalSettingsImplementation::class)
 @Inject
-class IosAuthStore : AuthStore {
-    override suspend fun get(): AuthState? {
-        // TODO no-op for now
-        return null
+class IosAuthStore(
+    private val applicationInfo: ApplicationInfo,
+    private val dispatchers: AppCoroutineDispatchers,
+) : AuthStore {
+    private val keyChainSettings by lazy { KeychainSettings(applicationInfo.packageName) }
+
+    override suspend fun get(): AuthState? = withContext(dispatchers.computation) {
+        val accessToken = keyChainSettings.getStringOrNull(KEY_ACCESS_TOKEN)
+        val refreshToken = keyChainSettings.getStringOrNull(KEY_REFRESH_TOKEN)
+        if (accessToken != null && refreshToken != null) {
+            SimpleAuthState(accessToken, refreshToken)
+        } else {
+            null
+        }
     }
 
-    override suspend fun save(state: AuthState) {
-        // TODO no-op for now
+    override suspend fun save(state: AuthState) = withContext(dispatchers.computation) {
+        keyChainSettings[KEY_ACCESS_TOKEN] = state.accessToken
+        keyChainSettings[KEY_REFRESH_TOKEN] = state.refreshToken
     }
 
-    override suspend fun clear() {
-        // TODO no-op for now
+    override suspend fun clear() = withContext(dispatchers.computation) {
+        keyChainSettings.remove(KEY_ACCESS_TOKEN)
+        keyChainSettings.remove(KEY_REFRESH_TOKEN)
     }
 }
+
+private const val KEY_ACCESS_TOKEN = "access_token"
+private const val KEY_REFRESH_TOKEN = "refresh_token"

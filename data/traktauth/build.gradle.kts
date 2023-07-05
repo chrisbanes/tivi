@@ -30,6 +30,12 @@ kotlin {
                 implementation(libs.kotlininject.runtime)
             }
         }
+
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.multiplatformsettings.core)
+            }
+        }
     }
 }
 
