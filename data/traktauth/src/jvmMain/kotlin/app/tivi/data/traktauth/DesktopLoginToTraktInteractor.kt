@@ -11,7 +11,7 @@ class DesktopLoginToTraktInteractor : LoginToTraktInteractor {
         // TODO
     }
 
-    override fun launch() {
-        // TODO
+    override suspend operator fun invoke(): AuthState? {
+        return null
     }
 }

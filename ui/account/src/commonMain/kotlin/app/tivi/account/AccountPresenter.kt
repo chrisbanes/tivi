@@ -63,7 +63,17 @@ class AccountPresenter(
         ) { event ->
             when (event) {
                 AccountUiEvent.NavigateToSettings -> navigator.goTo(SettingsScreen)
-                AccountUiEvent.Login -> loginToTraktInteractor.launch()
+                AccountUiEvent.Login -> {
+                    scope.launch {
+                        val newAuthState = loginToTraktInteractor()
+                        if (newAuthState != null) {
+                            traktAuthRepository.onNewAuthState(newAuthState)
+                        } else {
+                            traktAuthRepository.clearAuth()
+                            clearUserDetails(ClearUserDetails.Params("me"))
+                        }
+                    }
+                }
                 AccountUiEvent.Logout -> {
                     scope.launch {
                         traktAuthRepository.clearAuth()

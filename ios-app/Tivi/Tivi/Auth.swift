@@ -42,7 +42,7 @@ class IosLoginToTraktInteractor: LoginToTraktInteractor {
         self.traktOAuthInfo = traktOAuthInfo
     }
     
-    func launch() {
+    func invoke() async throws -> AuthState? {
         let request = OIDAuthorizationRequest(
             configuration: configuration,
             clientId: traktOAuthInfo.clientId,
@@ -52,17 +52,21 @@ class IosLoginToTraktInteractor: LoginToTraktInteractor {
             responseType: OIDResponseTypeCode,
             additionalParameters: nil
         )
-        
-        // performs authentication request
-        print("Initiating authorization request with scope: \(request.scope ?? "nil")")
-        
-        appDelegate.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request, presenting: uiViewController()) { authState, error in
-            if let authState = authState {
-                // TODO do something with authState
-                print("Got authorization tokens. Access token: " +
-                      "\(authState.lastTokenResponse?.accessToken ?? "nil")")
-            } else {
-                print("Authorization error: \(error?.localizedDescription ?? "Unknown error")")
+        return await login(request: request)
+    }
+    
+    @MainActor private func login(request: OIDAuthorizationRequest) async -> AuthState? {
+        return await withCheckedContinuation { continuation in
+            self.appDelegate.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request, presenting: self.uiViewController()) { authState, error in
+                if let authState = authState {
+                    let tiviAuthState = SimpleAuthState(
+                        accessToken: authState.lastTokenResponse?.accessToken ?? "",
+                        refreshToken: authState.lastTokenResponse?.refreshToken ?? ""
+                    )
+                    continuation.resume(returning: tiviAuthState)
+                } else {
+                    continuation.resume(returning: nil)
+                }
             }
         }
     }

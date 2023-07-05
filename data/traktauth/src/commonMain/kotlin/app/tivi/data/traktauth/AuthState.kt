@@ -19,7 +19,7 @@ interface AuthState {
     }
 }
 
-internal data class SimpleAuthState(
+data class SimpleAuthState(
     override val accessToken: String,
     override val refreshToken: String,
 ) : AuthState {
