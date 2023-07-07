@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		38137D702A55BA8A00A687CC /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 38137D6F2A55BA8A00A687CC /* AppAuth */; };
 		38137D722A55D6E200A687CC /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38137D712A55D6E200A687CC /* Auth.swift */; };
+		38137D772A584D1900A687CC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 38137D762A584D1900A687CC /* Settings.bundle */; };
 		833349382A4CCCEE00F464FE /* TiviApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833349372A4CCCEE00F464FE /* TiviApp.swift */; };
 		8333493A2A4CCCEE00F464FE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833349392A4CCCEE00F464FE /* ContentView.swift */; };
 		8333493C2A4CCCEF00F464FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8333493B2A4CCCEF00F464FE /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 
 /* Begin PBXFileReference section */
 		38137D712A55D6E200A687CC /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
+		38137D762A584D1900A687CC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		38282FFD2A4F318E00E7929E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		833349342A4CCCEE00F464FE /* Tivi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tivi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		833349372A4CCCEE00F464FE /* TiviApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiviApp.swift; sourceTree = "<group>"; };
@@ -47,6 +49,7 @@
 			isa = PBXGroup;
 			children = (
 				833349362A4CCCEE00F464FE /* Tivi */,
+				38137D762A584D1900A687CC /* Settings.bundle */,
 				833349352A4CCCEE00F464FE /* Products */,
 				83AB5FFF2A51F3FD007FC216 /* Frameworks */,
 			);
@@ -102,6 +105,7 @@
 				833349322A4CCCEE00F464FE /* Resources */,
 				38282FFA2A4F242200E7929E /* Copy Moko Resources */,
 				83AB60022A51F473007FC216 /* Upload Crashlytics symbols */,
+				38137D782A584D5300A687CC /* Update Settings version */,
 			);
 			buildRules = (
 			);
@@ -159,6 +163,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				38137D772A584D1900A687CC /* Settings.bundle in Resources */,
 				8333493F2A4CCCEF00F464FE /* Preview Assets.xcassets in Resources */,
 				8333493C2A4CCCEF00F464FE /* Assets.xcassets in Resources */,
 				83AB60062A520078007FC216 /* GoogleService-Info.plist in Resources */,
@@ -168,6 +173,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		38137D782A584D5300A687CC /* Update Settings version */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Update Settings version";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "version=\"$MARKETING_VERSION ($CURRENT_PROJECT_VERSION)\"\n/usr/libexec/PlistBuddy \"$SRCROOT/Settings.bundle/Root.plist\" -c \"set PreferenceSpecifiers:0:DefaultValue $version\"\n";
+		};
 		38282FFA2A4F242200E7929E /* Copy Moko Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
