@@ -3,9 +3,6 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -17,12 +14,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import app.tivi.common.ui.resources.MR
 import dev.icerock.moko.resources.compose.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchTextField(
     value: TextFieldValue,
@@ -31,9 +30,10 @@ fun SearchTextField(
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions(),
-    showClearButton: Boolean = value.text.isNotEmpty(),
     onCleared: (() -> Unit) = { onValueChange(TextFieldValue()) },
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     TextField(
         value = value,
         onValueChange = onValueChange,
@@ -44,17 +44,18 @@ fun SearchTextField(
             )
         },
         trailingIcon = {
-            AnimatedVisibility(
-                visible = showClearButton,
-                enter = fadeIn(),
-                exit = fadeOut(),
+            IconButton(
+                onClick = {
+                    onCleared()
+                    // This is mostly for iOS, otherwise there is no way to dismiss the iOS
+                    // keyboard once opened.
+                    keyboardController?.hide()
+                },
             ) {
-                IconButton(onClick = onCleared) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = stringResource(MR.strings.cd_clear_text),
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Clear,
+                    contentDescription = stringResource(MR.strings.cd_clear_text),
+                )
             }
         },
         placeholder = { Text(text = hint) },

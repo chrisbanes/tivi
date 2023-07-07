@@ -285,7 +285,6 @@ private fun LibraryGrid(
                         },
                         hint = stringResource(MR.strings.filter_shows, lazyPagingItems.itemCount),
                         modifier = Modifier.fillMaxWidth(),
-                        showClearButton = true,
                         onCleared = {
                             filter = TextFieldValue()
                             onFilterChanged("")
