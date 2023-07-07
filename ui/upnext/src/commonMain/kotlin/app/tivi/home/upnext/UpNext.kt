@@ -80,6 +80,7 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
+import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.screens.UpNextScreen
 import com.seiko.imageloader.ImageRequestState
 import com.slack.circuit.overlay.LocalOverlayHost
@@ -123,7 +124,11 @@ internal fun UpNext(
         openShowDetails = { showId, seasonId, episodeId ->
             eventSink(UpNextUiEvent.OpenShowDetails(showId, seasonId, episodeId))
         },
-        openTrackEpisode = { eventSink(UpNextUiEvent.ClearMessage(it)) },
+        openTrackEpisode = {
+            scope.launch {
+                overlayHost.showInDialog(EpisodeTrackScreen(it))
+            }
+        },
         onMessageShown = { eventSink(UpNextUiEvent.ClearMessage(it)) },
         openUser = {
             scope.launch {
