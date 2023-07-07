@@ -4,7 +4,6 @@
 package app.tivi.inject
 
 import android.app.Application
-import au.com.gridstone.debugdrawer.okhttplogs.HttpLogger
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
@@ -30,12 +29,4 @@ interface VariantAwareComponent {
             "Authorization",
         )
         .build()
-
-    @ApplicationScope
-    @Provides
-    fun provideHttpLogger(application: Application): HttpLogger = HttpLogger(application)
-
-    @Provides
-    @IntoSet
-    fun provideHttpLoggerInterceptor(httpLogger: HttpLogger): Interceptor = httpLogger.interceptor
 }

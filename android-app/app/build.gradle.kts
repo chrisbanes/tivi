@@ -57,12 +57,6 @@ android {
         buildConfig = true
     }
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
-
     packaging {
         resources.excludes += setOf(
             // Exclude AndroidX version files
@@ -153,7 +147,6 @@ dependencies {
     implementation(libs.androidx.activity.activity)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.emoji)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.profileinstaller)
 
     implementation(libs.kotlin.coroutines.android)
@@ -165,11 +158,6 @@ dependencies {
     ksp(libs.kotlininject.compiler)
 
     qaImplementation(libs.chucker.library)
-
-    qaImplementation(libs.debugdrawer.debugdrawer)
-    qaImplementation(libs.debugdrawer.timber)
-    qaImplementation(libs.debugdrawer.okhttplogger)
-
     qaImplementation(libs.leakCanary)
 
     androidTestImplementation(projects.androidApp.commonTest)
@@ -195,13 +183,6 @@ fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
     @Suppress("UNCHECKED_CAST")
     val propertyValue = project.properties[propertyName] as T?
     return propertyValue ?: defaultValue
-}
-
-fun <T : Any> propOrDef(propertyName: String, fallbackProperty: String, defaultValue: T): T {
-    @Suppress("UNCHECKED_CAST")
-    return project.properties[propertyName] as T?
-        ?: project.properties[fallbackProperty] as T?
-        ?: defaultValue
 }
 
 fun DependencyHandler.qaImplementation(dependencyNotation: Any) =
