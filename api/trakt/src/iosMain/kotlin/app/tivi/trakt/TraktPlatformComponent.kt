@@ -7,7 +7,6 @@ import app.moviebase.trakt.Trakt
 import app.tivi.app.ApplicationInfo
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.data.traktauth.TraktOAuthInfo
-import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.Logger
 import io.ktor.client.engine.darwin.Darwin
@@ -23,7 +22,6 @@ actual interface TraktPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideTrakt(
-        authStore: AuthStore,
         oauthInfo: TraktOAuthInfo,
         applicationInfo: ApplicationInfo,
         tiviLogger: Logger,
@@ -64,9 +62,8 @@ actual interface TraktPlatformComponent {
             install(Auth) {
                 bearer {
                     loadTokens {
-                        authStore.get()?.let {
-                            BearerTokens(it.accessToken, it.refreshToken)
-                        }
+                        traktAuthRepository.value.getAuthState()
+                            ?.let { BearerTokens(it.accessToken, it.refreshToken) }
                     }
 
                     refreshTokens {

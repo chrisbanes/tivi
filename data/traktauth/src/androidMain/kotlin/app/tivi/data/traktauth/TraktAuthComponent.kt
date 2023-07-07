@@ -50,11 +50,11 @@ actual interface TraktAuthComponent {
 
     @ApplicationScope
     @Provides
-    fun provideRefreshTraktTokensInteractor(impl: AndroidTraktRefreshTokenAction): TraktRefreshTokenAction = impl
+    fun provideTraktRefreshTokenAction(impl: AndroidTraktRefreshTokenAction): TraktRefreshTokenAction = impl
 
     @ApplicationScope
     @Provides
-    fun provideLoginToTraktInteractor(impl: AndroidTraktLoginAction): TraktLoginAction = impl
+    fun provideTraktLoginAction(impl: AndroidTraktLoginAction): TraktLoginAction = impl
 
     @IntoSet
     @Provides

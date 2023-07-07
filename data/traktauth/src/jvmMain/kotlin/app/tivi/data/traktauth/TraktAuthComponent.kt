@@ -14,9 +14,9 @@ actual interface TraktAuthComponent {
 
     @ApplicationScope
     @Provides
-    fun provideRefreshTraktTokensInteractor(impl: DesktopTraktRefreshTokenAction): TraktRefreshTokenAction = impl
+    fun provideTraktRefreshTokenAction(impl: DesktopTraktRefreshTokenAction): TraktRefreshTokenAction = impl
 
     @Provides
     @ApplicationScope
-    fun provideLoginToTraktInteractor(impl: DesktopTraktLoginAction): TraktLoginAction = impl
+    fun provideTraktLoginAction(impl: DesktopTraktLoginAction): TraktLoginAction = impl
 }

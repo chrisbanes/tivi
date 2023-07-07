@@ -6,6 +6,8 @@ package app.tivi.data.traktauth
 import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.Logger
+import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -23,68 +27,81 @@ class TraktAuthRepository(
     private val authStore: AuthStore,
     private val loginAction: Lazy<TraktLoginAction>,
     private val refreshTokenAction: Lazy<TraktRefreshTokenAction>,
+    private val logger: Logger,
 ) {
-    private val authState = MutableStateFlow(AuthState.Empty)
-
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
     val state: StateFlow<TraktAuthState> get() = _state.asStateFlow()
 
-    init {
-        // Observer which updates local state
-        GlobalScope.launch(dispatchers.main) {
-            authState.collect { authState ->
-                updateAuthState(authState)
-            }
-        }
+    private var lastAuthState: AuthState? = null
+    private var lastAuthStateExpiry: Instant = Instant.DISTANT_PAST
 
-        // Read the auth state from prefs
+    init {
+        // Read the auth state from the AuthStore
         GlobalScope.launch(dispatchers.main) {
-            val state = withContext(dispatchers.io) { authStore.get() }
-            authState.value = state ?: AuthState.Empty
+            val state = getAuthState() ?: AuthState.Empty
+            updateAuthState(authState = state, skipPersist = true)
         }
     }
 
-    private fun updateAuthState(authState: AuthState) {
+    suspend fun getAuthState(): AuthState? {
+        val state = lastAuthState
+        if (state != null && lastAuthStateExpiry >= Clock.System.now()) {
+            logger.d { "[TraktAuthRepository] getAuthState. Using cached tokens: $state" }
+            return state
+        }
+
+        logger.d { "[TraktAuthRepository] getAuthState. Retrieving tokens from AuthStore" }
+        return withContext(dispatchers.io) { authStore.get() }
+            ?.also { cacheAuthState(it) }
+    }
+
+    suspend fun login(): AuthState? {
+        logger.d { "[TraktAuthRepository] login()" }
+        return loginAction.value().also {
+            updateAuthState(authState = it ?: AuthState.Empty)
+        }
+    }
+
+    suspend fun refreshTokens(): AuthState? {
+        logger.d { "[TraktAuthRepository] refreshTokens" }
+        return authStore.get()
+            ?.let { currentState -> refreshTokenAction.value.invoke(currentState) }
+            .also { updateAuthState(authState = it ?: AuthState.Empty) }
+    }
+
+    suspend fun logout() {
+        updateAuthState(authState = AuthState.Empty)
+    }
+
+    private fun cacheAuthState(authState: AuthState) {
+        if (authState.isAuthorized) {
+            lastAuthState = authState
+            lastAuthStateExpiry = Clock.System.now() + 1.hours
+        } else {
+            lastAuthState = null
+            lastAuthStateExpiry = Instant.DISTANT_PAST
+        }
+    }
+
+    private suspend fun updateAuthState(authState: AuthState, skipPersist: Boolean = false) {
+        logger.d { "[TraktAuthRepository] updateAuthState: $authState. Persist: ${!skipPersist}" }
         _state.value = when {
             authState.isAuthorized -> TraktAuthState.LOGGED_IN
             else -> TraktAuthState.LOGGED_OUT
         }
-    }
+        cacheAuthState(authState)
+        logger.d { "[TraktAuthRepository] Updated AuthState: ${_state.value}" }
 
-    suspend fun login(): AuthState? {
-        val newState = loginAction.value()
-        onNewAuthState(newState ?: AuthState.Empty)
-        return newState
-    }
-
-    suspend fun refreshTokens(): AuthState? {
-        return authStore.get()
-            ?.let { currentState -> refreshTokenAction.value.invoke(currentState) }
-            .also { onNewAuthState(it ?: AuthState.Empty) }
-    }
-
-    suspend fun logout() {
-        clearAuth()
-    }
-
-    private suspend fun clearAuth() {
-        authState.value = AuthState.Empty
-        withContext(dispatchers.io) {
-            authStore.clear()
-        }
-    }
-
-    private suspend fun onNewAuthState(newState: AuthState) {
-        // Update our local state
-        authState.value = newState
-        updateAuthState(newState)
-
-        // Persist auth state
-        withContext(dispatchers.io) {
-            if (newState.isAuthorized) {
-                authStore.save(newState)
-            } else {
-                clearAuth()
+        if (!skipPersist) {
+            // Persist auth state
+            withContext(dispatchers.io) {
+                if (authState.isAuthorized) {
+                    logger.d { "[TraktAuthRepository] Saving state to AuthStore: $authState" }
+                    authStore.save(authState)
+                } else {
+                    logger.d { "[TraktAuthRepository] Clearing AuthStore" }
+                    authStore.clear()
+                }
             }
         }
     }

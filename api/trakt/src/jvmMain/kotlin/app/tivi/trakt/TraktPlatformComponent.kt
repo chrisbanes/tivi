@@ -48,9 +48,8 @@ actual interface TraktPlatformComponent {
             install(Auth) {
                 bearer {
                     loadTokens {
-                        authStore.get()?.let {
-                            BearerTokens(it.accessToken, it.refreshToken)
-                        }
+                        traktAuthRepository.value.getAuthState()
+                            ?.let { BearerTokens(it.accessToken, it.refreshToken) }
                     }
 
                     refreshTokens {

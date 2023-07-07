@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 implementation(projects.core.logging)
+                implementation(libs.kotlinx.datetime)
             }
         }
 
