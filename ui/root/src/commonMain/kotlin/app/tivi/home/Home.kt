@@ -56,7 +56,6 @@ import com.moriatsushi.insetsx.safeContentPadding
 import com.moriatsushi.insetsx.statusBars
 import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.backstack.SaveableBackStack
-import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.screen
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
@@ -130,7 +129,7 @@ internal fun Home(
             }
 
             ContentWithOverlays {
-                NavigableCircuitContent(
+                TiviNavigableCircuitContent(
                     navigator = navigator,
                     backstack = backstack,
                     modifier = Modifier
