@@ -6,13 +6,15 @@ package app.tivi.data
 import app.cash.sqldelight.db.SqlDriver
 import app.moviebase.tmdb.Tmdb3
 import app.moviebase.trakt.Trakt
-import app.tivi.data.traktauth.AuthState
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.data.traktauth.TraktLoginAction
 import app.tivi.data.traktauth.TraktRefreshTokenAction
 import app.tivi.inject.ApplicationScope
 import app.tivi.tmdb.TmdbCommonComponent
 import app.tivi.trakt.TraktCommonComponent
 import app.tivi.util.LoggerComponent
+import app.tivi.utils.SuccessRefreshTokenAction
+import app.tivi.utils.SuccessTraktLoginAction
 import kotlin.test.AfterTest
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
@@ -39,11 +41,10 @@ abstract class TestApplicationComponent :
     fun provideTraktAuthState(): TraktAuthState = TraktAuthState.LOGGED_IN
 
     @Provides
-    fun provideRefreshTraktTokensInteractor(): TraktRefreshTokenAction {
-        return object : TraktRefreshTokenAction {
-            override suspend fun invoke(): AuthState? = null
-        }
-    }
+    fun provideRefreshTraktTokensInteractor(): TraktRefreshTokenAction = SuccessRefreshTokenAction
+
+    @Provides
+    fun provideTraktLoginAction(): TraktLoginAction = SuccessTraktLoginAction
 
     @Provides
     fun provideTrakt(): Trakt = Trakt("fakefakefake")

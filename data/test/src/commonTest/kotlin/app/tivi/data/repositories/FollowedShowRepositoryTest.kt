@@ -14,7 +14,6 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.followedshows.FollowedShowsDataSource
 import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.traktauth.TraktAuthRepository
-import app.tivi.utils.AuthorizedAuthState
 import app.tivi.utils.FakeFollowedShowsDataSource
 import app.tivi.utils.followedShow1Local
 import app.tivi.utils.followedShow1Network
@@ -60,7 +59,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followedShowsDataSource.getListShowsResult =
             Result.success(listOf(followedShow1Network to show))
 
-        traktAuthRepository.onNewAuthState(AuthorizedAuthState)
+        traktAuthRepository.login()
 
         followedShowsRepository.syncFollowedShows()
 
@@ -76,7 +75,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
             Result.success(TraktList(ids = TraktListIds(trakt = 0)))
         followedShowsDataSource.getListShowsResult = Result.success(emptyList())
 
-        traktAuthRepository.onNewAuthState(AuthorizedAuthState)
+        traktAuthRepository.login()
 
         followedShowsRepository.syncFollowedShows()
 
@@ -92,7 +91,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followedShowsDataSource.getListShowsResult =
             Result.success(listOf(followedShow2Network to show2))
 
-        traktAuthRepository.onNewAuthState(AuthorizedAuthState)
+        traktAuthRepository.login()
 
         followedShowsRepository.syncFollowedShows()
 
@@ -108,7 +107,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         followedShowsDataSource.getFollowedListIdResult =
             Result.failure(IllegalArgumentException())
 
-        traktAuthRepository.onNewAuthState(AuthorizedAuthState)
+        traktAuthRepository.login()
 
         followedShowsRepository.syncFollowedShows()
 
@@ -122,7 +121,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
         // Return an error for the list ID so that we disable syncing
         followedShowsDataSource.getFollowedListIdResult = Result.failure(IllegalArgumentException())
 
-        traktAuthRepository.onNewAuthState(AuthorizedAuthState)
+        traktAuthRepository.login()
 
         followedShowsRepository.syncFollowedShows()
 
