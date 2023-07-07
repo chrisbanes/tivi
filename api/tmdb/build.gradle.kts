@@ -10,8 +10,16 @@ plugins {
 buildConfig {
     packageName("app.tivi.tmdb")
 
-    buildConfigField("String", "TMDB_DEBUG_API_KEY", "\"${propOrDef("TIVI_DEBUG_TMDB_API_KEY", "")}\"")
-    buildConfigField("String", "TMDB_API_KEY", "\"${propOrDef("TIVI_TMDB_API_KEY", "")}\"")
+    buildConfigField(
+        type = "String",
+        name = "TMDB_DEBUG_API_KEY",
+        value = "\"${properties["TIVI_DEBUG_TMDB_API_KEY]"]?.toString() ?: ""}\"",
+    )
+    buildConfigField(
+        type = "String",
+        name = "TMDB_API_KEY",
+        value = "\"${properties["TIVI_TMDB_API_KEY]"]?.toString() ?: ""}\"",
+    )
 }
 
 kotlin {
@@ -43,9 +51,4 @@ kotlin {
             }
         }
     }
-}
-
-fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
-    @Suppress("UNCHECKED_CAST")
-    return project.properties[propertyName] as T? ?: defaultValue
 }

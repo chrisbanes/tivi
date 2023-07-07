@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
 }
 
-val appVersionCode = propOrDef("TIVI_VERSIONCODE", "1000").toInt()
+val appVersionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 1000
 println("APK version code: $appVersionCode")
 
 val useReleaseKeystore = rootProject.file("release/app-release.jks").exists()
@@ -36,9 +36,9 @@ android {
         create("release") {
             if (useReleaseKeystore) {
                 storeFile = rootProject.file("release/app-release.jks")
-                storePassword = propOrDef("TIVI_RELEASE_KEYSTORE_PWD", "")
+                storePassword = properties["TIVI_RELEASE_KEYSTORE_PWD"]?.toString() ?: ""
                 keyAlias = "tivi"
-                keyPassword = propOrDef("TIVI_RELEASE_KEY_PWD", "")
+                keyPassword = properties["TIVI_RELEASE_KEY_PWD"]?.toString() ?: ""
             }
         }
     }
