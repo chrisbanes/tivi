@@ -13,7 +13,6 @@ import app.tivi.app.Flavor
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.appinitializers.EmojiInitializer
-import app.tivi.home.ContentViewSetterComponent
 import app.tivi.tasks.TiviWorkerFactory
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -31,8 +30,7 @@ import okhttp3.OkHttpClient
 abstract class AndroidApplicationComponent(
     @get:Provides val application: Application,
 ) : SharedApplicationComponent,
-    VariantAwareComponent,
-    ContentViewSetterComponent {
+    VariantAwareComponent {
 
     abstract val initializers: AppInitializers
     abstract val workerFactory: TiviWorkerFactory

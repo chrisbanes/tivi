@@ -47,7 +47,6 @@ androidx-core = "androidx.core:core-ktx:1.10.1"
 androidx-emoji = "androidx.emoji:emoji:1.1.0"
 
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
-androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxlifecycle" }
 
 paging-common = { module = "app.cash.paging:paging-common", version.ref = "paging-multiplatform" }
 paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "paging-multiplatform" }
@@ -85,10 +84,6 @@ google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.3
 google-firebase-perf = "com.google.firebase:firebase-perf-ktx:20.3.3"
 
 insetsx = "com.moriatsushi.insetsx:insetsx:0.1.0-alpha10"
-
-debugdrawer-debugdrawer = { module = "au.com.gridstone.debugdrawer:debugdrawer", version.ref = "debugdrawer" }
-debugdrawer-timber = { module = "au.com.gridstone.debugdrawer:debugdrawer-timber", version.ref = "debugdrawer" }
-debugdrawer-okhttplogger = { module = "au.com.gridstone.debugdrawer:debugdrawer-okhttp-logger", version.ref = "debugdrawer" }
 
 imageloader = "io.github.qdsfdhvh:image-loader:1.5.3"
 
