@@ -9,12 +9,16 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import app.tivi.inject.ApplicationScope
+import com.russhwolf.settings.ObservableSettings
+import com.russhwolf.settings.SharedPreferencesSettings
 import me.tatarka.inject.annotations.Provides
 
 actual interface PreferencesPlatformComponent {
     @ApplicationScope
     @Provides
-    fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind
+    fun provideSettings(delegate: AppSharedPreferences): ObservableSettings {
+        return SharedPreferencesSettings(delegate)
+    }
 
     @ApplicationScope
     @Provides
