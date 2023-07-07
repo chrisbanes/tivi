@@ -3,10 +3,8 @@
 
 package app.tivi.home
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import app.tivi.data.traktauth.TraktAuthState
-import app.tivi.domain.interactors.ClearTraktAuthState
+import app.tivi.domain.interactors.LogoutTrakt
 import app.tivi.domain.interactors.UpdateUserDetails
 import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
@@ -15,26 +13,31 @@ import app.tivi.util.Logger
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class MainActivityViewModel(
+class RootViewModel(
+    @Assisted private val coroutineScope: CoroutineScope,
     observeTraktAuthState: ObserveTraktAuthState,
     private val updateUserDetails: UpdateUserDetails,
     observeUserDetails: ObserveUserDetails,
-    private val clearTraktAuthState: ClearTraktAuthState,
+    private val logoutTrakt: LogoutTrakt,
     private val logger: Logger,
-) : ViewModel() {
+) {
+
     init {
-        viewModelScope.launch {
+        coroutineScope.launch {
             observeUserDetails.flow.collect { user ->
                 logger.setUserId(user?.username ?: "")
             }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 
-        viewModelScope.launch {
+        coroutineScope.launch {
             observeTraktAuthState.flow.collect { state ->
                 if (state == TraktAuthState.LOGGED_IN) refreshMe()
             }
@@ -43,13 +46,13 @@ class MainActivityViewModel(
     }
 
     private fun refreshMe() {
-        viewModelScope.launch {
+        coroutineScope.launch {
             try {
                 updateUserDetails(UpdateUserDetails.Params("me", false))
             } catch (e: ResponseException) {
                 if (e.response.status == HttpStatusCode.Unauthorized) {
                     // If we got a 401 back from Trakt, we should clear out the auth state
-                    clearTraktAuthState.invoke()
+                    logoutTrakt()
                 }
             } catch (ce: CancellationException) {
                 throw ce
@@ -57,5 +60,9 @@ class MainActivityViewModel(
                 // no-op
             }
         }
+    }
+
+    fun clear() {
+        coroutineScope.cancel()
     }
 }

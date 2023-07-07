@@ -6,11 +6,12 @@ package app.tivi.data.traktauth
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import app.tivi.appinitializers.AppInitializer
 import app.tivi.data.traktauth.store.AuthSharedPreferences
 import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.data.traktauth.store.TiviAuthStore
-import app.tivi.inject.ActivityScope
 import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
@@ -49,15 +50,17 @@ actual interface TraktAuthComponent {
 
     @ApplicationScope
     @Provides
-    fun provideRefreshTraktTokensInteractor(impl: AndroidRefreshTraktTokensInteractor): RefreshTraktTokensInteractor = impl
+    fun provideRefreshTraktTokensInteractor(impl: AndroidTraktRefreshTokenAction): TraktRefreshTokenAction = impl
+
+    @ApplicationScope
+    @Provides
+    fun provideLoginToTraktInteractor(impl: AndroidTraktLoginAction): TraktLoginAction = impl
+
+    @IntoSet
+    @Provides
+    fun provideTraktAuthInitializer(bind: TraktAuthInitializer): AppInitializer = bind
 
     @ApplicationScope
     @Provides
     fun provideAuthStore(store: TiviAuthStore): AuthStore = store
-}
-
-interface TraktAuthActivityComponent {
-    @ActivityScope
-    @Provides
-    fun provideLoginToTraktInteractor(impl: AndroidLoginToTraktInteractor): LoginToTraktInteractor = impl
 }

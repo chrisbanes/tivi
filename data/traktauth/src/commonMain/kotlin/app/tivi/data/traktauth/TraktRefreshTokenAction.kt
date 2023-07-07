@@ -3,7 +3,6 @@
 
 package app.tivi.data.traktauth
 
-interface LoginToTraktInteractor {
-    fun register()
-    fun launch()
+interface TraktRefreshTokenAction {
+    suspend operator fun invoke(state: AuthState): AuthState?
 }

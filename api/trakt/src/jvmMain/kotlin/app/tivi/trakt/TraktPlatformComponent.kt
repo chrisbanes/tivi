@@ -4,7 +4,7 @@
 package app.tivi.trakt
 
 import app.moviebase.trakt.Trakt
-import app.tivi.data.traktauth.RefreshTraktTokensInteractor
+import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
@@ -24,7 +24,7 @@ actual interface TraktPlatformComponent {
         client: OkHttpClient,
         authStore: AuthStore,
         oauthInfo: TraktOAuthInfo,
-        refreshTokens: Lazy<RefreshTraktTokensInteractor>,
+        traktAuthRepository: Lazy<TraktAuthRepository>,
     ): Trakt = Trakt {
         traktApiKey = oauthInfo.clientId
         maxRetriesOnException = 3
@@ -54,9 +54,8 @@ actual interface TraktPlatformComponent {
                     }
 
                     refreshTokens {
-                        refreshTokens.value.invoke()?.let {
-                            BearerTokens(it.accessToken, it.refreshToken)
-                        }
+                        traktAuthRepository.value.refreshTokens()
+                            ?.let { BearerTokens(it.accessToken, it.refreshToken) }
                     }
 
                     sendWithoutRequest { request ->

@@ -5,6 +5,7 @@ package app.tivi.inject
 
 import app.tivi.home.TiviUiViewController
 import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 import platform.UIKit.UIViewController
 
 @ActivityScope
@@ -12,15 +13,11 @@ import platform.UIKit.UIViewController
 abstract class HomeUiControllerComponent(
     @Component val applicationComponent: IosApplicationComponent,
 ) : UiComponent {
-    abstract val viewController: TiviUiViewController
+    abstract val uiViewControllerFactory: () -> UIViewController
 
-    /**
-     * Function which makes [viewController] easier to call from Swift
-     */
-    fun uiViewController(
-        onRootPop: () -> Unit,
-        onOpenSettings: () -> Unit,
-    ): UIViewController = viewController(onRootPop, onOpenSettings)
+    @Provides
+    @ActivityScope
+    fun uiViewController(bind: TiviUiViewController): UIViewController = bind()
 
     companion object
 }

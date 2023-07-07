@@ -8,26 +8,36 @@ import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.core.analytics.Analytics
+import app.tivi.data.traktauth.TraktLoginAction
+import app.tivi.data.traktauth.TraktOAuthInfo
+import app.tivi.data.traktauth.TraktRefreshTokenAction
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
 
 @Component
 @ApplicationScope
-abstract class IosApplicationComponent : SharedApplicationComponent {
-    abstract val initializers: AppInitializers
+abstract class IosApplicationComponent(
+    override val analyticsProvider: () -> Analytics,
+    override val traktRefreshTokenActionProvider: (TraktOAuthInfo) -> TraktRefreshTokenAction,
+    private val traktLoginActionProvider: (TraktOAuthInfo) -> TraktLoginAction,
+) : SharedApplicationComponent {
 
-    override var analyticsProvider: () -> Analytics = {
-        error("Analytics not provided")
-    }
+    abstract val initializers: AppInitializers
 
     @ApplicationScope
     @Provides
     fun provideApplicationId(): ApplicationInfo = ApplicationInfo(
-        packageName = NSBundle.mainBundle.bundleIdentifier ?: "empty.bundle.id",
+        packageName = NSBundle.mainBundle.bundleIdentifier ?: "app.tivi.client",
         debugBuild = Platform.isDebugBinary,
         flavor = Flavor.Standard,
     )
+
+    @Provides
+    @ApplicationScope
+    fun provideLoginToTraktInteractor(info: TraktOAuthInfo): TraktLoginAction {
+        return traktLoginActionProvider(info)
+    }
 
     @Provides
     fun provideDensity(): Density = Density(density = 1f) // FIXME

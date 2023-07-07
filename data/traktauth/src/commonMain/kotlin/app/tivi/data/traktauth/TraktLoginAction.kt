@@ -3,6 +3,6 @@
 
 package app.tivi.data.traktauth
 
-interface RefreshTraktTokensInteractor {
+interface TraktLoginAction {
     suspend operator fun invoke(): AuthState?
 }

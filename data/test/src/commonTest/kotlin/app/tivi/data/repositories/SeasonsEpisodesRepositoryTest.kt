@@ -16,7 +16,6 @@ import app.tivi.data.episodes.EpisodeWatchStore
 import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.traktauth.TraktAuthRepository
-import app.tivi.utils.AuthorizedAuthState
 import app.tivi.utils.FakeSeasonsEpisodesDataSource
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
@@ -75,7 +74,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Return a response with 2 items
         seasonsDataSource.getShowEpisodeWatchesResult =
             Result.success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
-        traktAuthRepository.onNewAuthState(AuthorizedAuthState)
+        traktAuthRepository.login()
         // Sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
@@ -110,7 +109,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Return a response with just the second item
         seasonsDataSource.getShowEpisodeWatchesResult = Result.success(listOf(s1e1 to s1e1w2))
 
-        traktAuthRepository.onNewAuthState(AuthorizedAuthState)
+        traktAuthRepository.login()
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that only the second is in the db
@@ -127,7 +126,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodeWatchDao.insert(s1e1w, s1e1w2)
         // Return a empty response
         seasonsDataSource.getShowEpisodeWatchesResult = Result.success(emptyList())
-        traktAuthRepository.onNewAuthState(AuthorizedAuthState)
+        traktAuthRepository.login()
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that the database is empty
