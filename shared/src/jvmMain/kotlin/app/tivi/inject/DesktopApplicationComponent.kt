@@ -8,6 +8,7 @@ import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import app.tivi.appinitializers.AppInitializers
 import java.util.concurrent.TimeUnit
+import java.util.prefs.Preferences
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import okhttp3.ConnectionPool
@@ -26,6 +27,10 @@ abstract class DesktopApplicationComponent : SharedApplicationComponent {
         debugBuild = true,
         flavor = Flavor.Standard,
     )
+
+    @ApplicationScope
+    @Provides
+    fun providePreferences(): Preferences = Preferences.userRoot().node("app.tivi")
 
     @Provides
     fun provideDensity(): Density = Density(density = 1f) // FIXME

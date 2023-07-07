@@ -10,8 +10,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.PowerController
 import app.tivi.util.PowerControllerComponent
+import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -44,4 +46,12 @@ abstract class SettingsActivityComponent(
     @get:Provides val application: Application,
 ) : PowerControllerComponent, PreferencesComponent {
     abstract val powerController: PowerController
+
+    @ApplicationScope
+    @Provides
+    fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
+        io = Dispatchers.IO,
+        computation = Dispatchers.Default,
+        main = Dispatchers.Main,
+    )
 }

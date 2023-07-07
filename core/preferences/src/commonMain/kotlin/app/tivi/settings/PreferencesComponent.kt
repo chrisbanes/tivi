@@ -3,14 +3,13 @@
 
 package app.tivi.settings
 
-import app.tivi.appinitializers.AppInitializer
-import me.tatarka.inject.annotations.IntoSet
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 expect interface PreferencesPlatformComponent
 
 interface PreferencesComponent : PreferencesPlatformComponent {
+    @ApplicationScope
     @Provides
-    @IntoSet
-    fun providePreferencesInitializer(bind: PreferencesInitializer): AppInitializer = bind
+    fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind
 }

@@ -14,6 +14,7 @@ import app.tivi.data.traktauth.TraktRefreshTokenAction
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
+import platform.Foundation.NSUserDefaults
 
 @Component
 @ApplicationScope
@@ -32,6 +33,9 @@ abstract class IosApplicationComponent(
         debugBuild = Platform.isDebugBinary,
         flavor = Flavor.Standard,
     )
+
+    @Provides
+    fun provideNsUserDefaults(): NSUserDefaults = NSUserDefaults.standardUserDefaults
 
     @Provides
     @ApplicationScope
