@@ -35,24 +35,6 @@ class SqlDelightLastRequestDao(
         entity = entity,
         insert = ::insert,
         update = ::update,
-        onConflict = { e, throwable ->
-            val id = db.last_requestsQueries.getLastRequestForId(
-                entity.request,
-                entity.entityId,
-            ).executeAsOneOrNull()?.id
-
-            if (id != null) {
-                db.last_requestsQueries.update(
-                    id = id,
-                    entity_id = e.entityId,
-                    request = e.request,
-                    timestamp = e.timestamp,
-                )
-                id
-            } else {
-                throw throwable
-            }
-        },
     )
 
     override fun lastRequest(

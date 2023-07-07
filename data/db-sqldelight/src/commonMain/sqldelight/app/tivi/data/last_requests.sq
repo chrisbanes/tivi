@@ -30,7 +30,7 @@ UPDATE last_requests SET
 WHERE id = :id;
 
 insert:
-INSERT INTO last_requests (
+INSERT OR REPLACE INTO last_requests (
     `id`,
     `entity_id`,
     `request`,
