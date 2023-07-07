@@ -10,7 +10,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -88,6 +87,8 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.rememberTiviFlingBehavior
+import app.tivi.common.compose.rememberTiviSnapFlingBehavior
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
@@ -287,6 +288,7 @@ private fun ShowDetailsScrollingContent(
         state = listState,
         contentPadding = contentPadding,
         modifier = modifier,
+        flingBehavior = rememberTiviFlingBehavior(),
     ) {
         item {
             Backdrop(
@@ -635,7 +637,7 @@ private fun RelatedShows(
     LazyRow(
         state = lazyListState,
         modifier = modifier,
-        flingBehavior = rememberSnapFlingBehavior(
+        flingBehavior = rememberTiviSnapFlingBehavior(
             snapLayoutInfoProvider = remember(lazyListState) {
                 SnapLayoutInfoProvider(
                     lazyListState = lazyListState,
