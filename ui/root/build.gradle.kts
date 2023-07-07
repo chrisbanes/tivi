@@ -20,6 +20,9 @@ kotlin {
                 implementation(projects.core.analytics)
                 implementation(projects.common.ui.compose)
 
+                implementation(projects.domain)
+                implementation(projects.data.traktauth)
+
                 implementation(projects.common.ui.screens)
                 implementation(libs.circuit.foundation)
                 implementation(libs.circuit.overlay)

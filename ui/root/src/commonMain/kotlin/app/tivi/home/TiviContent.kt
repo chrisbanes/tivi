@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.shouldUseDynamicColors
 import app.tivi.common.compose.theme.TiviTheme
@@ -31,6 +32,7 @@ import com.slack.circuit.foundation.CircuitConfig
 import com.slack.circuit.foundation.screen
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
+import kotlinx.coroutines.CoroutineScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -48,6 +50,7 @@ fun TiviContent(
     @Assisted backstack: SaveableBackStack,
     @Assisted navigator: Navigator,
     @Assisted onOpenSettings: () -> Unit,
+    rootViewModel: (CoroutineScope) -> RootViewModel,
     circuitConfig: CircuitConfig,
     analytics: Analytics,
     tiviDateFormatter: TiviDateFormatter,
@@ -56,6 +59,9 @@ fun TiviContent(
     imageLoader: ImageLoader,
     @Assisted modifier: Modifier = Modifier,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    remember { rootViewModel(coroutineScope) }
+
     val tiviNavigator: Navigator = remember(navigator) {
         TiviNavigator(navigator, onOpenSettings)
     }

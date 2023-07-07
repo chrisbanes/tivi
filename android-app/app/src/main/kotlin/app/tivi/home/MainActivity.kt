@@ -7,7 +7,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -18,7 +17,6 @@ import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import app.tivi.ContentViewSetter
@@ -36,24 +34,11 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
 class MainActivity : TiviActivity() {
-
-    private lateinit var component: MainActivityComponent
-
-    private val viewModel: MainActivityViewModel by viewModels {
-        viewModelFactory {
-            addInitializer(MainActivityViewModel::class) { component.viewModel() }
-        }
-    }
-
-    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component = MainActivityComponent::class.create(this)
+        val component = MainActivityComponent::class.create(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        // Get the viewModel, so it is started and 'running'
-        viewModel
 
         val composeView = ComposeView(this).apply {
             setContent {
@@ -69,6 +54,7 @@ class MainActivity : TiviActivity() {
                     modifier = Modifier.semantics {
                         // Enables testTag -> UiAutomator resource id
                         // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
+                        @OptIn(ExperimentalComposeUiApi::class)
                         testTagsAsResourceId = true
                     },
                 )
@@ -90,7 +76,6 @@ abstract class MainActivityComponent(
 ) : ActivityComponent, UiComponent {
     abstract val tiviContent: TiviContent
     abstract val contentViewSetter: ContentViewSetter
-    abstract val viewModel: () -> MainActivityViewModel
 }
 
 private fun ComponentActivity.setOwners() {
