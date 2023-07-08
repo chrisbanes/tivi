@@ -34,9 +34,9 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import com.seiko.imageloader.ImageLoader
-import com.seiko.imageloader.ImageRequestState
 import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.asImageBitmap
+import com.seiko.imageloader.model.ImageAction
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageRequestBuilder
 import com.seiko.imageloader.model.ImageResult
@@ -47,9 +47,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
@@ -57,7 +56,7 @@ fun AsyncImage(
     model: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    onState: ((ImageRequestState) -> Unit)? = null,
+    onEvent: ((ImageAction) -> Unit)? = null,
     requestBuilder: (ImageRequestBuilder.() -> ImageRequestBuilder)? = null,
     imageLoader: ImageLoader = LocalImageLoader.current,
     alignment: Alignment = Alignment.Center,
@@ -67,22 +66,13 @@ fun AsyncImage(
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ) {
     val sizeResolver = ConstraintsSizeResolver()
-    var requestState: ImageRequestState by remember { mutableStateOf(ImageRequestState.Loading()) }
+    val lastRequestBuilder by rememberUpdatedState(requestBuilder)
 
-    val request by produceState<ImageRequest?>(null, model, contentScale) {
+    val request by produceState(ImageRequest(Unit), model, contentScale) {
         value = ImageRequest {
             data(model)
             size(sizeResolver)
-            requestBuilder?.invoke(this)
-
-            options {
-                if (scale == Scale.AUTO) {
-                    scale = contentScale.toScale()
-                }
-            }
-            eventListener { event ->
-                requestState = ImageRequestState.Loading(event)
-            }
+            lastRequestBuilder?.invoke(this)
         }
     }
 
@@ -90,18 +80,13 @@ fun AsyncImage(
     LaunchedEffect(imageLoader) {
         snapshotFlow { request }
             .filterNotNull()
-            .mapLatest {
-                withContext(imageLoader.config.imageScope.coroutineContext) {
-                    imageLoader.execute(it)
+            .flatMapLatest { imageLoader.async(it) }
+            .collect { action ->
+                onEvent?.invoke(action)
+                if (action is ImageResult) {
+                    result = action
                 }
             }
-            .collect { result = it }
-    }
-
-    val lastOnState by rememberUpdatedState(onState)
-    LaunchedEffect(Unit) {
-        snapshotFlow { requestState }
-            .collect { lastOnState?.invoke(it) }
     }
 
     Crossfade(
@@ -145,7 +130,7 @@ private fun ResultImage(
                 )
             }
 
-            is ImageResult.Image -> result.image.toPainter(filterQuality)
+            is ImageResult.Image -> result.image.toPainter()
             is ImageResult.Painter -> result.painter
             else -> EmptyPainter
         },

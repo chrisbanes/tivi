@@ -22,7 +22,7 @@ internal object DesktopImageLoaderFactory : ImageLoaderFactory {
         block: ImageLoaderConfigBuilder.() -> Unit,
     ): ImageLoader = ImageLoader {
         components {
-            setupDefaultComponents(imageScope)
+            setupDefaultComponents()
         }
         interceptor {
             memoryCacheConfig {
