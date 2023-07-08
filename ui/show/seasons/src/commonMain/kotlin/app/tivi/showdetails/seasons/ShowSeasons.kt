@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.DismissValue
@@ -65,6 +66,8 @@ import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.common.compose.rememberTiviDecayAnimationSpec
+import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.TopAppBarWithBottomContent
 import app.tivi.common.ui.resources.MR
@@ -270,6 +273,10 @@ private fun SeasonsPager(
     HorizontalPager(
         pageCount = seasons.size,
         state = pagerState,
+        flingBehavior = PagerDefaults.flingBehavior(
+            state = pagerState,
+            highVelocityAnimationSpec = rememberTiviDecayAnimationSpec(),
+        ),
         modifier = modifier,
     ) { page ->
         EpisodesList(
@@ -286,7 +293,10 @@ private fun EpisodesList(
     onEpisodeClick: (episodeId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(
+        modifier = modifier,
+        flingBehavior = rememberTiviFlingBehavior(),
+    ) {
         items(episodes, key = { it.episode.id }) { item ->
             EpisodeWithWatchesRow(
                 episode = item.episode,
