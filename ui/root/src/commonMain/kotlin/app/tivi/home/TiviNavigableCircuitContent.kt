@@ -8,10 +8,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.slack.circuit.backstack.BackStack
 import com.slack.circuit.backstack.ProvidedValues
@@ -36,20 +34,18 @@ expect fun TiviNavigableCircuitContent(
 )
 
 @Stable
-internal class ContentProvider(
+internal class RecordContentProvider(
     val backStackRecord: SaveableBackStack.Record,
     val content: @Composable () -> Unit,
-) {
-    var wasSwiped: Boolean by mutableStateOf(false)
-}
+)
 
 @Composable
-internal fun buildCircuitContentProvider(
+internal fun buildCircuitContentProviders(
     navigator: Navigator,
     backstack: SaveableBackStack,
     circuitConfig: CircuitConfig,
     unavailableRoute: @Composable (screen: Screen, modifier: Modifier) -> Unit,
-): List<ContentProvider> = buildList {
+): List<RecordContentProvider> = buildList {
     for (record in backstack) {
         val provider = key(record.key) {
             val currentContent: (@Composable (SaveableBackStack.Record) -> Unit) = {
@@ -68,6 +64,6 @@ internal fun buildCircuitContentProvider(
             remember { movableContentOf { currentRouteContent(currentRecord) } }
         }
 
-        add(ContentProvider(record, provider))
+        add(RecordContentProvider(record, provider))
     }
 }

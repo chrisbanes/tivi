@@ -101,6 +101,8 @@ actual fun TiviNavigableCircuitContent(
         }
 
         onBackInvokedDispatcher?.registerOnBackInvokedCallback(
+            // Circuit adds its own BackHandler() at the root, so we need to add a callback
+            // with a higher priority.
             OnBackInvokedDispatcher.PRIORITY_DEFAULT + 10,
             callback,
         )
@@ -111,7 +113,7 @@ actual fun TiviNavigableCircuitContent(
     }
 
     Box(modifier = modifier) {
-        val activeContentProviders = buildCircuitContentProvider(
+        val activeContentProviders = buildCircuitContentProviders(
             navigator = navigator,
             backstack = backstack,
             circuitConfig = circuitConfig,
