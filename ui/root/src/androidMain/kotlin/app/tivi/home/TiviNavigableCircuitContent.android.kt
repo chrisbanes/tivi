@@ -113,9 +113,8 @@ actual fun TiviNavigableCircuitContent(
     }
 
     Box(modifier = modifier) {
-        val activeContentProviders = buildCircuitContentProviders(
+        val activeContentProviders = backstack.buildCircuitContentProviders(
             navigator = navigator,
-            backstack = backstack,
             circuitConfig = circuitConfig,
             unavailableRoute = unavailableRoute,
         )
@@ -138,7 +137,9 @@ actual fun TiviNavigableCircuitContent(
                     val providedLocals = remember(values) {
                         values?.toTypedArray() ?: emptyArray()
                     }
-                    CompositionLocalProvider(*providedLocals) { cp.content() }
+                    CompositionLocalProvider(*providedLocals) {
+                        cp.content(cp.backStackRecord)
+                    }
                 }
             }
         }
@@ -168,7 +169,9 @@ actual fun TiviNavigableCircuitContent(
             val providedLocals = remember(values) {
                 values?.toTypedArray() ?: emptyArray()
             }
-            CompositionLocalProvider(*providedLocals) { topContentProvider.content() }
+            CompositionLocalProvider(*providedLocals) {
+                topContentProvider.content(topContentProvider.backStackRecord)
+            }
         }
     }
 }

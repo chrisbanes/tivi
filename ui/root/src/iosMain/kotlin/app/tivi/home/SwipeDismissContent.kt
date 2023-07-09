@@ -20,9 +20,7 @@ import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
@@ -69,26 +67,27 @@ internal fun <T> SwipeDismissContent(
             dismissState.snapTo(DismissValue.Default)
         }
 
-        val showPrevious by remember(dismissState) {
-            derivedStateOf { dismissState.offset.value != 0f }
-        }
+        // val showPrevious by remember(dismissState) {
+        //     derivedStateOf { dismissState.offset.value != 0f }
+        // }
 
-        if (showPrevious) {
-            previous?.let { p ->
-                PreviousContent(
-                    dismissState = dismissState,
-                    swipeProperties = swipeProperties,
-                    modifier = Modifier.zIndex(0f),
-                    content = { content(p) },
-                )
-            }
+        previous?.let { p ->
+            // movableContentOf needs to be attached to the composition otherwise it is cleaned up.
+            // Ideally we wouldn't call PreviousContent when `showPrevious` is false, but then we
+            // lose all of the presenter state (as the movable content is cleaned-up).
+            PreviousContent(
+                dismissState = dismissState,
+                swipeProperties = swipeProperties,
+                modifier = Modifier.zIndex(0f),
+                content = { content(p) },
+            )
         }
 
         SwipeableContent(
             state = dismissState,
             swipeEnabled = previous != null,
             dismissThreshold = swipeProperties.swipeThreshold,
-            modifier = Modifier.zIndex(if (showPrevious) 1f else 0f),
+            modifier = Modifier.zIndex(1f),
             content = { content(current) },
         )
     }

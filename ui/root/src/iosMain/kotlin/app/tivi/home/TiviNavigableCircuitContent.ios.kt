@@ -55,9 +55,8 @@ fun TiviNavigableCircuitContent(
 ) {
     if (backstack.isEmpty) return
 
-    val activeContentProviders = buildCircuitContentProviders(
+    val activeContentProviders = backstack.buildCircuitContentProviders(
         navigator = navigator,
-        backstack = backstack,
         circuitConfig = circuitConfig,
         unavailableRoute = unavailableRoute,
     )
@@ -73,6 +72,8 @@ fun TiviNavigableCircuitContent(
         val providedLocals = remember(values) {
             values?.toTypedArray() ?: emptyArray()
         }
-        CompositionLocalProvider(*providedLocals) { contentProvider.content() }
+        CompositionLocalProvider(*providedLocals) {
+            contentProvider.content(contentProvider.backStackRecord)
+        }
     }
 }

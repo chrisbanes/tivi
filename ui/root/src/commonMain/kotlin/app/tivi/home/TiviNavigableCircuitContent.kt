@@ -4,9 +4,8 @@
 package app.tivi.home
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -16,6 +15,7 @@ import com.slack.circuit.backstack.ProvidedValues
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.backstack.providedValuesForBackStack
 import com.slack.circuit.foundation.CircuitConfig
+import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.LocalCircuitConfig
 import com.slack.circuit.foundation.screen
 import com.slack.circuit.runtime.Navigator
@@ -33,37 +33,50 @@ expect fun TiviNavigableCircuitContent(
         circuitConfig.onUnavailableContent,
 )
 
-@Stable
-internal class RecordContentProvider(
+@Immutable
+internal data class RecordContentProvider(
     val backStackRecord: SaveableBackStack.Record,
-    val content: @Composable () -> Unit,
+    val content: @Composable (SaveableBackStack.Record) -> Unit,
 )
 
 @Composable
-internal fun buildCircuitContentProviders(
+internal fun SaveableBackStack.buildCircuitContentProviders(
     navigator: Navigator,
-    backstack: SaveableBackStack,
     circuitConfig: CircuitConfig,
     unavailableRoute: @Composable (screen: Screen, modifier: Modifier) -> Unit,
-): List<RecordContentProvider> = buildList {
-    for (record in backstack) {
-        val provider = key(record.key) {
-            val currentContent: (@Composable (SaveableBackStack.Record) -> Unit) = {
-                @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-                com.slack.circuit.foundation.CircuitContent(
-                    screen = record.screen,
-                    modifier = Modifier,
-                    navigator = navigator,
-                    circuitConfig = circuitConfig,
-                    unavailableContent = unavailableRoute,
+): List<RecordContentProvider> {
+    val previousContentProviders = remember { mutableMapOf<String, RecordContentProvider>() }
+
+    val lastNavigator by rememberUpdatedState(navigator)
+    val lastCircuitConfig by rememberUpdatedState(circuitConfig)
+    val lastUnavailableRoute by rememberUpdatedState(unavailableRoute)
+
+    return iterator()
+        .asSequence()
+        .map { record ->
+            // Query the previous content providers map, so that we use the same
+            // RecordContentProvider instances across calls.
+            previousContentProviders.getOrElse(record.key) {
+                RecordContentProvider(
+                    backStackRecord = record,
+                    content = movableContentOf { record ->
+                        CircuitContent(
+                            screen = record.screen,
+                            modifier = Modifier,
+                            navigator = lastNavigator,
+                            circuitConfig = lastCircuitConfig,
+                            unavailableContent = lastUnavailableRoute,
+                        )
+                    },
                 )
             }
-
-            val currentRouteContent by rememberUpdatedState(currentContent)
-            val currentRecord by rememberUpdatedState(record)
-            remember { movableContentOf { currentRouteContent(currentRecord) } }
         }
-
-        add(RecordContentProvider(record, provider))
-    }
+        .toList()
+        .also { list ->
+            // Update the previousContentProviders map so we can reference it on the next call
+            previousContentProviders.clear()
+            for (provider in list) {
+                previousContentProviders[provider.backStackRecord.key] = provider
+            }
+        }
 }
