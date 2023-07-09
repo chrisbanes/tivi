@@ -27,10 +27,8 @@ internal object IosImageLoaderFactory : ImageLoaderFactory {
     override fun create(
         block: ImageLoaderConfigBuilder.() -> Unit,
     ): ImageLoader = ImageLoader {
-        // commonConfig()
-
         components {
-            setupDefaultComponents(imageScope)
+            setupDefaultComponents()
         }
         interceptor {
             memoryCacheConfig {
