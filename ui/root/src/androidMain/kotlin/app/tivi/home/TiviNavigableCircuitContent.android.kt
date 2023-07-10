@@ -9,12 +9,22 @@ import android.window.BackEvent
 import android.window.OnBackAnimationCallback
 import android.window.OnBackInvokedDispatcher
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +50,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import kotlin.math.absoluteValue
 
+@OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("NewApi")
 @Composable
 actual fun TiviNavigableCircuitContent(
@@ -62,38 +73,36 @@ actual fun TiviNavigableCircuitContent(
         return
     }
 
-    var progress by remember { mutableStateOf(0f) }
-    var backStackAnimationEnabled by remember { mutableStateOf(false) }
-
-    LaunchedEffect(backstack) {
-        snapshotFlow { backstack.isAtRoot }
-            .collect { atRoot ->
-                backStackAnimationEnabled = !atRoot
-                if (atRoot) {
-                    progress = 0f
-                }
-            }
-    }
-
-    BackHandler(
-        animatedEnabled = backStackAnimationEnabled,
-        onBackProgress = { progress = it },
-        onBackInvoked = {
-            navigator.pop()
-            progress = 0f
-        },
-    )
-
     val activeContentProviders = backstack.buildCircuitContentProviders(
         navigator = navigator,
         circuitConfig = circuitConfig,
         unavailableRoute = unavailableRoute,
     )
 
-    Box(modifier = modifier) {
-        val current = activeContentProviders.first()
-        val previous = activeContentProviders.getOrNull(1)
+    val current = activeContentProviders.first()
+    val previous = activeContentProviders.getOrNull(1)
 
+    var backStackAnimationEnabled by remember { mutableStateOf(false) }
+
+    LaunchedEffect(backstack) {
+        snapshotFlow { backstack.isAtRoot }
+            .collect { atRoot ->
+                backStackAnimationEnabled = !atRoot
+            }
+    }
+
+    var lastPopViaSwipe by remember { mutableStateOf(false) }
+
+    BackHandler(
+        animatedEnabled = backStackAnimationEnabled,
+        onBackProgress = { current.swipeProgress = it },
+        onBackInvoked = {
+            lastPopViaSwipe = current.swipeProgress != 0f
+            navigator.pop()
+        },
+    )
+
+    Box(modifier = modifier) {
         previous?.let { cp ->
             // movableContentOf needs to be attached to the composition otherwise it is cleaned up.
             // Ideally we wouldn't call PreviousContent when `showPrevious` is false, but then we
@@ -109,21 +118,70 @@ actual fun TiviNavigableCircuitContent(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .zIndex(1f)
-                .predictiveBackMotionTreatment(MaterialTheme.shapes.extraLarge) { progress },
-        ) {
-            val values = providedValues[current.backStackRecord]?.provideValues()
-            val providedLocals = remember(values) {
-                values?.toTypedArray() ?: emptyArray()
-            }
-            CompositionLocalProvider(*providedLocals) {
-                current.content(current.backStackRecord)
+        val backStackDepth = activeContentProviders.size
+        var prevStackDepth by remember { mutableStateOf(backStackDepth) }
+        val diff = backStackDepth - prevStackDepth
+
+        SideEffect {
+            prevStackDepth = backStackDepth
+        }
+
+        AnimatedContent(
+            targetState = current,
+            transitionSpec = {
+                // Mirror the forward and backward transitions of activities in Android 33
+                when {
+                    // adding to back stack
+                    diff > 0 -> {
+                        (slideInHorizontally(tween(), SlightlyRight) + fadeIn()) with
+                            (slideOutHorizontally(tween(), SlightlyLeft) + fadeOut())
+                    }
+
+                    // come back from back stack
+                    diff < 0 -> {
+                        if (lastPopViaSwipe) {
+                            // This is basically a no-op enter transition. We can't use
+                            // EnterTransition.None as that then stops the exit transition working.
+                            // 🤷
+                            fadeIn(tween(), initialAlpha = 0.98f) with fadeOut()
+                        } else {
+                            (slideInHorizontally(tween(), SlightlyLeft) + fadeIn()) with
+                                slideOutHorizontally(tween(), SlightlyRight) + fadeOut()
+                        }
+                    }
+
+                    // Root reset. Crossfade
+                    else -> fadeIn() with fadeOut()
+                }.using(
+                    // Disable clipping since the faded slide-in/out should
+                    // be displayed out of bounds.
+                    SizeTransform(clip = false),
+                )
+            },
+            label = "",
+            modifier = Modifier.zIndex(1f),
+        ) { contentProvider ->
+            Box(
+                modifier = Modifier
+                    .predictiveBackMotionTreatment(MaterialTheme.shapes.extraLarge) {
+                        contentProvider.swipeProgress
+                    },
+            ) {
+                val values = providedValues[contentProvider.backStackRecord]?.provideValues()
+                val providedLocals = remember(values) {
+                    values?.toTypedArray() ?: emptyArray()
+                }
+                CompositionLocalProvider(*providedLocals) {
+                    contentProvider.content(contentProvider.backStackRecord)
+                }
             }
         }
     }
 }
+
+private const val FIVE_PERCENT = 0.05f
+private val SlightlyRight = { width: Int -> (width * FIVE_PERCENT).toInt() }
+private val SlightlyLeft = { width: Int -> 0 - (width * FIVE_PERCENT).toInt() }
 
 private fun Modifier.predictiveBackMotionTreatment(
     shape: Shape,
@@ -158,18 +216,20 @@ private fun BackHandler(
 ) {
     val onBackInvokedDispatcher = LocalView.current.findOnBackInvokedDispatcher()
     val lastAnimatedEnabled by rememberUpdatedState(animatedEnabled)
+    val lastOnBackProgress by rememberUpdatedState(onBackProgress)
+    val lastOnBackInvoked by rememberUpdatedState(onBackInvoked)
 
     DisposableEffect(onBackInvokedDispatcher) {
         val callback = object : OnBackAnimationCallback {
             override fun onBackStarted(backEvent: BackEvent) {
                 if (lastAnimatedEnabled) {
-                    onBackProgress(0f)
+                    lastOnBackProgress(0f)
                 }
             }
 
             override fun onBackProgressed(backEvent: BackEvent) {
                 if (lastAnimatedEnabled) {
-                    onBackProgress(
+                    lastOnBackProgress(
                         when (backEvent.swipeEdge) {
                             BackEvent.EDGE_LEFT -> backEvent.progress
                             else -> -backEvent.progress
@@ -178,7 +238,7 @@ private fun BackHandler(
                 }
             }
 
-            override fun onBackInvoked() = onBackInvoked()
+            override fun onBackInvoked() = lastOnBackInvoked()
         }
 
         onBackInvokedDispatcher?.registerOnBackInvokedCallback(

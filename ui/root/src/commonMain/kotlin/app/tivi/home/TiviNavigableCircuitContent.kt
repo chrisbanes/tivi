@@ -7,8 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.slack.circuit.backstack.BackStack
 import com.slack.circuit.backstack.ProvidedValues
@@ -37,7 +39,9 @@ expect fun TiviNavigableCircuitContent(
 internal data class RecordContentProvider(
     val backStackRecord: SaveableBackStack.Record,
     val content: @Composable (SaveableBackStack.Record) -> Unit,
-)
+) {
+    var swipeProgress: Float by mutableStateOf(0f)
+}
 
 @Composable
 internal fun SaveableBackStack.buildCircuitContentProviders(
