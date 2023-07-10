@@ -11,6 +11,6 @@ class ShowTasksInitializer(
     private val showTasks: Lazy<ShowTasks>,
 ) : AppInitializer {
     override fun initialize() {
-        showTasks.value.setupNightSyncs()
+        showTasks.value.register()
     }
 }

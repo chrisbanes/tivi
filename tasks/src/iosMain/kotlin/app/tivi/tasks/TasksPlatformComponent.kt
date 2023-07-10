@@ -9,13 +9,5 @@ import me.tatarka.inject.annotations.Provides
 actual interface TasksPlatformComponent {
     @ApplicationScope
     @Provides
-    fun provideShowTasks(): ShowTasks = EmptyShowTasks
-}
-
-object EmptyShowTasks : ShowTasks {
-    override fun syncLibraryShows(deferUntilIdle: Boolean) {
-    }
-
-    override fun setupNightSyncs() {
-    }
+    fun provideShowTasks(bind: IosShowTasks): ShowTasks = bind
 }

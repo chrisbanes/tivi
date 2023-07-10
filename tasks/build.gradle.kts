@@ -12,13 +12,14 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(projects.core.base)
+                implementation(projects.core.logging)
+                implementation(projects.domain)
                 implementation(libs.kotlininject.runtime)
             }
         }
 
         val androidMain by getting {
             dependencies {
-                implementation(projects.domain)
                 api(libs.androidx.work.runtime)
             }
         }

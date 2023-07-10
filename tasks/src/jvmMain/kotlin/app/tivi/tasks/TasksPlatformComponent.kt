@@ -13,9 +13,5 @@ actual interface TasksPlatformComponent {
 }
 
 object EmptyShowTasks : ShowTasks {
-    override fun syncLibraryShows(deferUntilIdle: Boolean) {
-    }
-
-    override fun setupNightSyncs() {
-    }
+    override fun register() = Unit
 }
