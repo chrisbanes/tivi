@@ -15,17 +15,16 @@ import me.tatarka.inject.annotations.Inject
 class SyncLibraryShows(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val updateLibraryShows: UpdateLibraryShows,
+    private val updateLibraryShows: Lazy<UpdateLibraryShows>,
     private val logger: Logger,
 ) : CoroutineWorker(context, params) {
     companion object {
-        internal const val TAG = "sync-all-followed-shows"
         internal const val NIGHTLY_SYNC_TAG = "night-sync-all-followed-shows"
     }
 
     override suspend fun doWork(): Result {
         logger.d { "$tags worker running" }
-        val result = updateLibraryShows(UpdateLibraryShows.Params(true))
+        val result = updateLibraryShows.value(UpdateLibraryShows.Params(true))
         return when {
             result.isSuccess -> Result.success()
             else -> Result.failure()

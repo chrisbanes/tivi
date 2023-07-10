@@ -4,6 +4,5 @@
 package app.tivi.tasks
 
 interface ShowTasks {
-    fun syncLibraryShows(deferUntilIdle: Boolean = false)
-    fun setupNightSyncs()
+    fun register()
 }
