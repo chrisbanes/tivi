@@ -4,14 +4,19 @@
 package app.tivi.common.compose
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -36,11 +41,29 @@ fun TiviDialog(
     content: @Composable () -> Unit,
 ) {
     Dialog(onDismissRequest, properties) {
-        Surface(
-            shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp),
-        ) {
-            content()
+        BoxWithConstraints {
+            val windowSizeClass = LocalWindowSizeClass.current
+            val width = constraints.maxWidth
+
+            Surface(
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp),
+                modifier = Modifier
+                    .widthIn(
+                        min = 280.dp,
+                        max = when (windowSizeClass.widthSizeClass) {
+                            WindowWidthSizeClass.Compact -> {
+                                with(LocalDensity.current) {
+                                    (width * 0.9f).toDp()
+                                }
+                            }
+                            WindowWidthSizeClass.Medium -> 440.dp
+                            else -> 560.dp
+                        },
+                    ),
+            ) {
+                content()
+            }
         }
     }
 }

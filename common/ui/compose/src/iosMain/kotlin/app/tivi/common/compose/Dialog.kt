@@ -3,12 +3,22 @@
 
 package app.tivi.common.compose
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.DrawerDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.KeyEventType
@@ -49,20 +59,42 @@ actual fun Dialog(
         },
     ) {
         Box(
-            modifier = Modifier.fillMaxSize()
-                .background(DrawerDefaults.scrimColor),
             contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize(),
         ) {
-            if (properties.dismissOnClickOutside) {
+            var visible by remember { mutableStateOf(false) }
+            LaunchedEffect(Unit) {
+                visible = true
+            }
+
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .pointerInput(onDismissRequest) {
-                            detectTapGestures(onTap = { onDismissRequest() })
+                        .background(DrawerDefaults.scrimColor)
+                        .let { m ->
+                            if (properties.dismissOnClickOutside) {
+                                m.pointerInput(onDismissRequest) {
+                                    detectTapGestures(onTap = { onDismissRequest() })
+                                }
+                            } else {
+                                m
+                            }
                         },
                 )
             }
-            content()
+
+            AnimatedVisibility(
+                visible = visible,
+                enter = slideInVertically(initialOffsetY = { it / 6 }) + fadeIn(),
+                exit = slideOutVertically(targetOffsetY = { it / 6 }) + fadeOut(),
+            ) {
+                content()
+            }
         }
     }
 }
