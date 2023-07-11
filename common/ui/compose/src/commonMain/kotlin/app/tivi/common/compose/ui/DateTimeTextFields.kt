@@ -7,6 +7,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -15,22 +16,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.compose.TiviDialog
 import app.tivi.common.ui.resources.MR
 import com.vanpra.composematerialdialogs.datetime.date.DatePicker
 import com.vanpra.composematerialdialogs.datetime.time.TimePicker
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -56,12 +54,7 @@ fun DateTextField(
 
         var showDialog by remember { mutableStateOf(false) }
         var date by remember { mutableStateOf(selectedDate) }
-
-        LaunchedEffect(Unit) {
-            snapshotFlow { date }
-                .filterNotNull()
-                .collect { onDateSelected(it) }
-        }
+        val lastOnDateSelected by rememberUpdatedState(onDateSelected)
 
         ClickableReadOnlyOutlinedTextField(
             value = formattedDate.orEmpty(),
@@ -71,30 +64,33 @@ fun DateTextField(
         )
 
         if (showDialog) {
-            TiviDialog(
+            AlertDialog(
                 onDismissRequest = { showDialog = false },
-            ) {
-                DatePicker(
-                    title = dialogTitle,
-                    initialDate = selectedDate ?: remember {
-                        Clock.System.now()
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
-                            .date
-                    },
-                    allowedDateValidator = { date ->
-                        // Only allow dates in the past
-                        date.toInstant() < Clock.System.now()
-                    },
-                    onDateChange = { date = it },
-                )
-            }
+                confirmButton = {
+                    Button(onClick = { date?.let(lastOnDateSelected) }) {
+                        Text(text = stringResource(MR.strings.button_confirm))
+                    }
+                },
+                text = {
+                    DatePicker(
+                        title = dialogTitle,
+                        initialDate = selectedDate ?: remember {
+                            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+                        },
+                        allowedDateValidator = { date ->
+                            // Only allow dates in the past
+                            date.toInstant() < Clock.System.now()
+                        },
+                        onDateChange = { date = it },
+                    )
+                }
+            )
         }
     }
 }
 
 private fun LocalDate.toInstant(): Instant {
-    return LocalDateTime(this, midday)
-        .toInstant(TimeZone.currentSystemDefault())
+    return LocalDateTime(this, midday).toInstant(TimeZone.currentSystemDefault())
 }
 
 private val midday: LocalTime by lazy { LocalTime(12, 0, 0, 0) }
@@ -116,12 +112,7 @@ fun TimeTextField(
 
         var showDialog by remember { mutableStateOf(false) }
         var time by remember { mutableStateOf(selectedTime) }
-
-        LaunchedEffect(Unit) {
-            snapshotFlow { time }
-                .filterNotNull()
-                .collect { onTimeSelected(it) }
-        }
+        val lastOnTimeSelected by rememberUpdatedState(onTimeSelected)
 
         ClickableReadOnlyOutlinedTextField(
             value = formattedTime.orEmpty(),
@@ -131,20 +122,24 @@ fun TimeTextField(
         )
 
         if (showDialog) {
-            TiviDialog(
+            AlertDialog(
                 onDismissRequest = { showDialog = false },
-            ) {
-                TimePicker(
-                    title = dialogTitle,
-                    initialTime = selectedTime ?: remember {
-                        Clock.System.now()
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
-                            .time
-                    },
-                    is24HourClock = is24Hour,
-                    onTimeChange = { time = it },
-                )
-            }
+                confirmButton = {
+                    Button(onClick = { time?.let(lastOnTimeSelected) }) {
+                        Text(text = stringResource(MR.strings.button_confirm))
+                    }
+                },
+                text = {
+                    TimePicker(
+                        title = dialogTitle,
+                        initialTime = selectedTime ?: remember {
+                            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+                        },
+                        is24HourClock = is24Hour,
+                        onTimeChange = { time = it },
+                    )
+                },
+            )
         }
     }
 }
