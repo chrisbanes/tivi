@@ -67,11 +67,11 @@ import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.common.compose.ui.AlertDialog
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.ScrimmedIconButton
-import app.tivi.common.compose.ui.TiviAlertDialog
 import app.tivi.common.compose.ui.none
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.imagemodels.asImageModel
@@ -240,7 +240,7 @@ internal fun EpisodeDetails(
                                 onRemoveAllWatches()
                                 openDialog = false
                             },
-                            onDismiss = { openDialog = false },
+                            onDismissRequest = { openDialog = false },
                         )
                     }
                 }
@@ -495,18 +495,30 @@ private fun AddWatchButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RemoveAllWatchesDialog(
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
-    TiviAlertDialog(
-        title = stringResource(MR.strings.episode_remove_watches_dialog_title),
-        message = stringResource(MR.strings.episode_remove_watches_dialog_message),
-        confirmText = stringResource(MR.strings.episode_remove_watches_dialog_confirm),
-        onConfirm = { onConfirm() },
-        dismissText = stringResource(MR.strings.dialog_dismiss),
-        onDismissRequest = { onDismiss() },
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(stringResource(MR.strings.episode_remove_watches_dialog_title))
+        },
+        text = {
+            Text(stringResource(MR.strings.episode_remove_watches_dialog_message))
+        },
+        dismissButton = {
+            Button(onClick = onDismissRequest) {
+                Text(stringResource(MR.strings.dialog_dismiss))
+            }
+        },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text(stringResource(MR.strings.episode_remove_watches_dialog_confirm))
+            }
+        },
     )
 }
 
