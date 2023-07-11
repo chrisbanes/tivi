@@ -7,7 +7,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -16,22 +15,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.compose.Material3Dialog
+import app.tivi.common.compose.TiviDialog
 import app.tivi.common.ui.resources.MR
-import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
-import com.vanpra.composematerialdialogs.datetime.date.datepicker
-import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
-import com.vanpra.composematerialdialogs.datetime.time.timepicker
-import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import com.vanpra.composematerialdialogs.datetime.date.DatePicker
+import com.vanpra.composematerialdialogs.datetime.time.TimePicker
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -55,51 +54,40 @@ fun DateTextField(
             selectedDate?.let { dateFormatter.formatShortDate(it) }
         }
 
-        val dialogState = rememberMaterialDialogState()
+        var showDialog by remember { mutableStateOf(false) }
+        var date by remember { mutableStateOf(selectedDate) }
+
+        LaunchedEffect(Unit) {
+            snapshotFlow { date }
+                .filterNotNull()
+                .collect { onDateSelected(it) }
+        }
 
         ClickableReadOnlyOutlinedTextField(
             value = formattedDate.orEmpty(),
             label = { Text(text = stringResource(MR.strings.date_label)) },
-            onClick = { dialogState.show() },
+            onClick = { showDialog = true },
             modifier = Modifier.fillMaxWidth(),
         )
 
-        var date by remember { mutableStateOf(selectedDate) }
-
-        Material3Dialog(
-            dialogState = dialogState,
-            buttons = {
-                positiveButton(
-                    text = stringResource(MR.strings.button_confirm),
-                    textStyle = MaterialTheme.typography.labelLarge,
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    onClick = { date?.let(onDateSelected) },
+        if (showDialog) {
+            TiviDialog(
+                onDismissRequest = { showDialog = false },
+            ) {
+                DatePicker(
+                    title = dialogTitle,
+                    initialDate = selectedDate ?: remember {
+                        Clock.System.now()
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                            .date
+                    },
+                    allowedDateValidator = { date ->
+                        // Only allow dates in the past
+                        date.toInstant() < Clock.System.now()
+                    },
+                    onDateChange = { date = it },
                 )
-            },
-        ) {
-            datepicker(
-                title = dialogTitle,
-                initialDate = selectedDate ?: remember {
-                    Clock.System.now()
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-                        .date
-                },
-                colors = DatePickerDefaults.colors(
-                    headerBackgroundColor = MaterialTheme.colorScheme.primary,
-                    headerTextColor = MaterialTheme.colorScheme.onPrimary,
-                    calendarHeaderTextColor = MaterialTheme.colorScheme.onBackground,
-                    dateActiveBackgroundColor = MaterialTheme.colorScheme.primary,
-                    dateActiveTextColor = MaterialTheme.colorScheme.onPrimary,
-                    dateInactiveTextColor = MaterialTheme.colorScheme.onBackground,
-                ),
-                allowedDateValidator = { date ->
-                    // Only allow dates in the past
-                    date.toInstant() < Clock.System.now()
-                },
-                onDateChange = { date = it },
-            )
+            }
         }
     }
 }
@@ -126,49 +114,37 @@ fun TimeTextField(
             selectedTime?.let { dateFormatter.formatShortTime(it) }
         }
 
-        val dialogState = rememberMaterialDialogState()
+        var showDialog by remember { mutableStateOf(false) }
+        var time by remember { mutableStateOf(selectedTime) }
+
+        LaunchedEffect(Unit) {
+            snapshotFlow { time }
+                .filterNotNull()
+                .collect { onTimeSelected(it) }
+        }
 
         ClickableReadOnlyOutlinedTextField(
             value = formattedTime.orEmpty(),
             label = { Text(text = stringResource(MR.strings.time_label)) },
-            onClick = { dialogState.show() },
+            onClick = { showDialog = true },
             modifier = Modifier.fillMaxWidth(),
         )
 
-        var time by remember { mutableStateOf(selectedTime) }
-
-        Material3Dialog(
-            dialogState = dialogState,
-            buttons = {
-                positiveButton(
-                    text = stringResource(MR.strings.button_confirm),
-                    textStyle = MaterialTheme.typography.labelLarge,
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    onClick = { time?.let(onTimeSelected) },
+        if (showDialog) {
+            TiviDialog(
+                onDismissRequest = { showDialog = false },
+            ) {
+                TimePicker(
+                    title = dialogTitle,
+                    initialTime = selectedTime ?: remember {
+                        Clock.System.now()
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                            .time
+                    },
+                    is24HourClock = is24Hour,
+                    onTimeChange = { time = it },
                 )
-            },
-        ) {
-            timepicker(
-                title = dialogTitle,
-                initialTime = selectedTime ?: remember {
-                    Clock.System.now()
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-                        .time
-                },
-                colors = TimePickerDefaults.colors(
-                    activeBackgroundColor = MaterialTheme.colorScheme.primary.copy(0.6f),
-                    inactiveBackgroundColor = MaterialTheme.colorScheme.onBackground.copy(0.15f),
-                    inactiveTextColor = MaterialTheme.colorScheme.onBackground,
-                    selectorColor = MaterialTheme.colorScheme.primary,
-                    selectorTextColor = MaterialTheme.colorScheme.onPrimary,
-                    headerTextColor = MaterialTheme.colorScheme.onBackground,
-                    borderColor = MaterialTheme.colorScheme.onBackground,
-                ),
-                is24HourClock = is24Hour,
-                onTimeChange = { time = it },
-            )
+            }
         }
     }
 }

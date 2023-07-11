@@ -100,4 +100,5 @@ include(
     ":android-app:common-test",
     ":desktop-app",
     ":thirdparty:swipe",
+    ":thirdparty:compose-material-dialogs:datetime",
 )
