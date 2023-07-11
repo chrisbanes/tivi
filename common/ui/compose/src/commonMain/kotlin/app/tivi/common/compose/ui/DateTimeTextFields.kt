@@ -67,7 +67,12 @@ fun DateTextField(
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
-                    Button(onClick = { date?.let(lastOnDateSelected) }) {
+                    Button(
+                        onClick = {
+                            date?.let(lastOnDateSelected)
+                            showDialog = false
+                        },
+                    ) {
                         Text(text = stringResource(MR.strings.button_confirm))
                     }
                 },
@@ -83,7 +88,7 @@ fun DateTextField(
                         },
                         onDateChange = { date = it },
                     )
-                }
+                },
             )
         }
     }
@@ -125,7 +130,12 @@ fun TimeTextField(
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
-                    Button(onClick = { time?.let(lastOnTimeSelected) }) {
+                    Button(
+                        onClick = {
+                            time?.let(lastOnTimeSelected)
+                            showDialog = false
+                        },
+                    ) {
                         Text(text = stringResource(MR.strings.button_confirm))
                     }
                 },

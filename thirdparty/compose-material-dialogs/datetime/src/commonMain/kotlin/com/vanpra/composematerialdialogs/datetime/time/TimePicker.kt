@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -113,54 +112,13 @@ fun TimePicker(
 }
 
 @Composable
-internal fun TimePickerExpandedImpl(
-    modifier: Modifier = Modifier,
-    title: String,
-    state: TimePickerState,
-) {
-    Column(modifier.padding(start = 24.dp, end = 24.dp)) {
-        Box(Modifier.align(Alignment.Start)) {
-            TimePickerTitle(Modifier.height(36.dp), title, state)
-        }
-
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Column(
-                Modifier
-                    .padding(top = 72.dp, bottom = 50.dp)
-                    .width(216.dp),
-            ) {
-                TimeLayout(state = state)
-                Spacer(modifier = Modifier.height(12.dp))
-                HorizontalPeriodPicker(state = state)
-            }
-
-            /* This isn't an exact match to the material spec as there is a contradiction it.
-            Dialogs should be limited to the size of 560 dp but given sizes for extended
-            time picker go over this limit */
-            Spacer(modifier = Modifier.width(40.dp))
-            Crossfade(state.currentScreen) {
-                when (it) {
-                    ClockScreen.Hour -> if (state.is24Hour) {
-                        ExtendedClockHourLayout(state = state)
-                    } else {
-                        ClockHourLayout(state = state)
-                    }
-
-                    ClockScreen.Minute -> ClockMinuteLayout(state = state)
-                }
-            }
-        }
-    }
-}
-
-@Composable
 internal fun TimePickerImpl(
     modifier: Modifier = Modifier,
     title: String,
     state: TimePickerState,
 ) {
     Column(
-        modifier.padding(start = 24.dp, end = 24.dp),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (title != "") {

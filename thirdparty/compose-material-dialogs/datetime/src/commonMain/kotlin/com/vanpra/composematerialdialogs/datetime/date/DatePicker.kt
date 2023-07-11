@@ -383,7 +383,7 @@ private fun DateSelectionBox(
                 .clip(CircleShape)
                 .background(colors.dateBackgroundColor(selected).value)
                 .wrapContentSize(Alignment.Center),
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.labelLarge,
             color = colors.dateTextColor(selected, enabled).value,
         )
     }
@@ -431,7 +431,10 @@ private fun CalendarHeader(title: String, state: DatePickerState, locale: Locale
 
     Box(
         Modifier
-            .background(state.colors.headerBackgroundColor)
+            .background(
+                color = state.colors.headerBackgroundColor,
+                shape = MaterialTheme.shapes.medium,
+            )
             .fillMaxWidth(),
     ) {
         Column(Modifier.padding(start = 24.dp, end = 24.dp)) {
