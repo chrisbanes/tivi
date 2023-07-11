@@ -34,6 +34,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -207,7 +208,7 @@ private fun YearPickerItem(
                 .clickable(
                     onClick = onClick,
                     interactionSource = MutableInteractionSource(),
-                    indication = null,
+                    indication = rememberRipple(bounded = false),
                 ),
             contentAlignment = Alignment.Center,
         ) {
@@ -270,20 +271,21 @@ private fun CalendarViewHeader(
                 .align(Alignment.CenterEnd),
         ) {
             Icon(
-                Icons.Default.KeyboardArrowLeft,
+                imageVector = Icons.Default.KeyboardArrowLeft,
                 contentDescription = "Previous Month",
                 modifier = Modifier
                     .testTag("dialog_date_prev_month")
                     .size(24.dp)
                     .clickable(
-                        onClick = {
-                            coroutineScope.launch {
-                                if (pagerState.currentPage - 1 >= 0) {
-                                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                                }
+                        interactionSource = MutableInteractionSource(),
+                        indication = rememberRipple(bounded = false),
+                    ) {
+                        coroutineScope.launch {
+                            if (pagerState.currentPage - 1 >= 0) {
+                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
                             }
-                        },
-                    ),
+                        }
+                    },
                 tint = state.colors.calendarHeaderTextColor,
             )
 
@@ -302,6 +304,8 @@ private fun CalendarViewHeader(
                                     pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }
                         },
+                        interactionSource = MutableInteractionSource(),
+                        indication = rememberRipple(bounded = false),
                     ),
                 tint = state.colors.calendarHeaderTextColor,
             )
@@ -339,7 +343,12 @@ private fun CalendarView(
                 }
                 val date = viewDate.withDayOfMonth(it)
                 val enabled = allowedDateValidator(date)
-                DateSelectionBox(it, selected, state.colors, enabled) {
+                DateSelectionBox(
+                    date = it,
+                    selected = selected,
+                    colors = state.colors,
+                    enabled = enabled,
+                ) {
                     state.selected = date
                 }
             }
@@ -359,7 +368,12 @@ private fun DateSelectionBox(
         Modifier
             .testTag("dialog_date_selection_$date")
             .size(40.dp)
-            .clickable(enabled = enabled, onClick = onClick),
+            .clickable(
+                enabled = enabled,
+                onClick = onClick,
+                interactionSource = MutableInteractionSource(),
+                indication = rememberRipple(bounded = false),
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Text(
