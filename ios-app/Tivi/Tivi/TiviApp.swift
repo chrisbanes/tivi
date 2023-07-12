@@ -36,8 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         options _: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
         if let authorizationFlow = currentAuthorizationFlow,
-           authorizationFlow.resumeExternalUserAgentFlow(with: url)
-        {
+           authorizationFlow.resumeExternalUserAgentFlow(with: url) {
             currentAuthorizationFlow = nil
             return true
         }

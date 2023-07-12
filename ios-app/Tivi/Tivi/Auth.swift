@@ -22,7 +22,6 @@ class IosTraktRefreshTokenAction: TraktRefreshTokenAction {
     }
 
     func invoke(state _: AuthState) async throws -> AuthState? {
-        // TODO:
         return nil
     }
 }
@@ -57,7 +56,10 @@ class IosTraktLoginAction: TraktLoginAction {
 
     @MainActor private func login(request: OIDAuthorizationRequest) async -> AuthState? {
         return await withCheckedContinuation { continuation in
-            self.appDelegate.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request, presenting: self.uiViewController()) { authState, _ in
+            self.appDelegate.currentAuthorizationFlow = OIDAuthState.authState(
+                byPresenting: request,
+                presenting: self.uiViewController()
+            ) { authState, _ in
                 if let authState = authState {
                     let tiviAuthState = SimpleAuthState(
                         accessToken: authState.lastTokenResponse?.accessToken ?? "",
