@@ -21,6 +21,8 @@ captures
 .idea/artifacts
 gradle.xml
 *.iml
+ios-app/Tivi/.idea/*
+.fleet
 
 # General
 .DS_Store
