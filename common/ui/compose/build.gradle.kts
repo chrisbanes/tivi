@@ -30,17 +30,27 @@ kotlin {
                 implementation(compose.animation)
 
                 api(libs.insetsx)
-
-                implementation(libs.materialdialogs.core)
-                implementation(projects.thirdparty.composeMaterialDialogs.datetime)
-
                 implementation(libs.uuid)
 
                 implementation(libs.paging.compose)
             }
         }
 
+        val jvmCommon by creating {
+            dependsOn(commonMain)
+
+            dependencies {
+                implementation(projects.thirdparty.composeMaterialDialogs.datetime)
+            }
+        }
+
+        val jvmMain by getting {
+            dependsOn(jvmCommon)
+        }
+
         val androidMain by getting {
+            dependsOn(jvmCommon)
+
             dependencies {
                 implementation(libs.androidx.activity.compose)
             }

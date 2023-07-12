@@ -7,7 +7,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -26,16 +25,11 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.ui.resources.MR
-import com.vanpra.composematerialdialogs.datetime.date.DatePicker
-import com.vanpra.composematerialdialogs.datetime.time.TimePicker
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,41 +58,25 @@ fun DateTextField(
         )
 
         if (showDialog) {
-            AlertDialog(
+            DatePickerDialog(
                 onDismissRequest = { showDialog = false },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            date?.let(lastOnDateSelected)
-                            showDialog = false
-                        },
-                    ) {
-                        Text(text = stringResource(MR.strings.button_confirm))
-                    }
+                selectedDate = selectedDate ?: remember {
+                    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
                 },
-                text = {
-                    DatePicker(
-                        title = dialogTitle,
-                        initialDate = selectedDate ?: remember {
-                            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-                        },
-                        allowedDateValidator = { date ->
-                            // Only allow dates in the past
-                            date.toInstant() < Clock.System.now()
-                        },
-                        onDateChange = { date = it },
-                    )
+                onDateChanged = {
+                    date = it
+                    lastOnDateSelected(it)
                 },
+                maximumDate = remember {
+                    Clock.System.now()
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .date
+                },
+                title = dialogTitle,
             )
         }
     }
 }
-
-private fun LocalDate.toInstant(): Instant {
-    return LocalDateTime(this, midday).toInstant(TimeZone.currentSystemDefault())
-}
-
-private val midday: LocalTime by lazy { LocalTime(12, 0, 0, 0) }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,7 +85,7 @@ fun TimeTextField(
     onTimeSelected: (LocalTime) -> Unit,
     dialogTitle: String,
     modifier: Modifier = Modifier,
-    is24Hour: Boolean = false,
+    @Suppress("UNUSED_PARAMETER") is24Hour: Boolean = false,
 ) {
     Box(modifier) {
         val dateFormatter = LocalTiviDateFormatter.current
@@ -127,28 +105,16 @@ fun TimeTextField(
         )
 
         if (showDialog) {
-            AlertDialog(
+            TimePickerDialog(
                 onDismissRequest = { showDialog = false },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            time?.let(lastOnTimeSelected)
-                            showDialog = false
-                        },
-                    ) {
-                        Text(text = stringResource(MR.strings.button_confirm))
-                    }
+                selectedTime = selectedTime ?: remember {
+                    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
                 },
-                text = {
-                    TimePicker(
-                        title = dialogTitle,
-                        initialTime = selectedTime ?: remember {
-                            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
-                        },
-                        is24HourClock = is24Hour,
-                        onTimeChange = { time = it },
-                    )
+                onTimeChanged = {
+                    time = it
+                    lastOnTimeSelected(it)
                 },
+                title = dialogTitle,
             )
         }
     }
