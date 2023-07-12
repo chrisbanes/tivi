@@ -21,9 +21,36 @@ class IosTraktRefreshTokenAction: TraktRefreshTokenAction {
         self.traktOAuthInfo = traktOAuthInfo
     }
 
-    func invoke(state _: AuthState) async throws -> AuthState? {
-        // TODO:
-        return nil
+    func invoke(state: AuthState) async throws -> AuthState? {
+        let request = OIDTokenRequest(
+            configuration: configuration,
+            grantType: OIDGrantTypeRefreshToken,
+            authorizationCode: nil,
+            redirectURL: nil,
+            clientID: traktOAuthInfo.clientId,
+            clientSecret: traktOAuthInfo.clientSecret,
+            scope: nil,
+            refreshToken: state.refreshToken,
+            codeVerifier: nil,
+            additionalParameters: nil)
+
+        return await refresh(request: request)
+    }
+
+    @MainActor private func refresh(request: OIDTokenRequest) async -> AuthState? {
+        return await withCheckedContinuation { continuation in
+            OIDAuthorizationService.perform(request) { response, _ in
+                if let response = response {
+                    let authState = SimpleAuthState(
+                        accessToken: response.accessToken ?? "",
+                        refreshToken: response.refreshToken ?? ""
+                    )
+                    continuation.resume(returning: authState)
+                } else {
+                    continuation.resume(returning: nil)
+                }
+            }
+        }
     }
 }
 
@@ -57,7 +84,10 @@ class IosTraktLoginAction: TraktLoginAction {
 
     @MainActor private func login(request: OIDAuthorizationRequest) async -> AuthState? {
         return await withCheckedContinuation { continuation in
-            self.appDelegate.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request, presenting: self.uiViewController()) { authState, _ in
+            self.appDelegate.currentAuthorizationFlow = OIDAuthState.authState(
+                byPresenting: request,
+                presenting: self.uiViewController()
+            ) { authState, _ in
                 if let authState = authState {
                     let tiviAuthState = SimpleAuthState(
                         accessToken: authState.lastTokenResponse?.accessToken ?? "",
