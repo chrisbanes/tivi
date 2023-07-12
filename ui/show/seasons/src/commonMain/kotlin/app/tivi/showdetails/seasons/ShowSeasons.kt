@@ -76,7 +76,7 @@ import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.screens.ShowSeasonsScreen
-import com.moriatsushi.insetsx.statusBars
+import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -161,7 +161,6 @@ internal fun ShowSeasons(
     }
 
     Scaffold(
-        contentWindowInsets = WindowInsets.statusBars,
         topBar = {
             TopAppBarWithBottomContent(
                 title = { Text(text = state.show.title ?: "") },
@@ -204,6 +203,7 @@ internal fun ShowSeasons(
                 )
             }
         },
+        contentWindowInsets = WindowInsets.systemBars,
         modifier = modifier
             .testTag("show_seasons")
             .fillMaxSize(),

@@ -8,9 +8,12 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -51,6 +54,7 @@ import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
+import com.moriatsushi.insetsx.systemBars
 import dev.icerock.moko.resources.compose.stringResource
 import kotlin.math.roundToInt
 
@@ -114,6 +118,7 @@ fun <E : Entry> EntryGrid(
                 )
             }
         },
+        contentWindowInsets = WindowInsets.systemBars,
         modifier = modifier,
     ) { paddingValues ->
         val refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading
@@ -202,6 +207,8 @@ private fun EntryGridAppBar(
                 )
             }
         },
+        windowInsets = WindowInsets.systemBars
+            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
         modifier = modifier,
         scrollBehavior = scrollBehavior,
         title = { Text(text = title) },

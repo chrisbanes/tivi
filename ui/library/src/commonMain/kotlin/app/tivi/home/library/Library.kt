@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -74,7 +75,7 @@ import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortChip
-import app.tivi.common.compose.ui.TiviStandardAppBar
+import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.LibraryShow
@@ -84,6 +85,7 @@ import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.LibraryScreen
+import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
@@ -174,7 +176,7 @@ internal fun Library(
 
     Scaffold(
         topBar = {
-            TiviStandardAppBar(
+            TiviRootScreenAppBar(
                 title = stringResource(MR.strings.library_title),
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
@@ -198,6 +200,7 @@ internal fun Library(
                 )
             }
         },
+        contentWindowInsets = WindowInsets.systemBars,
         modifier = modifier.fillMaxSize(),
     ) { paddingValues ->
         val refreshState = rememberPullRefreshState(

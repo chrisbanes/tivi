@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -68,7 +69,7 @@ import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.SortChip
-import app.tivi.common.compose.ui.TiviStandardAppBar
+import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.imagemodels.EpisodeImageModel
@@ -83,6 +84,7 @@ import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.screens.UpNextScreen
+import com.moriatsushi.insetsx.systemBars
 import com.seiko.imageloader.model.ImageResult
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
@@ -179,7 +181,7 @@ internal fun UpNext(
 
     Scaffold(
         topBar = {
-            TiviStandardAppBar(
+            TiviRootScreenAppBar(
                 title = stringResource(MR.strings.upnext_title),
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
@@ -203,6 +205,7 @@ internal fun UpNext(
                 )
             }
         },
+        contentWindowInsets = WindowInsets.systemBars,
         modifier = modifier.fillMaxSize(),
     ) { paddingValues ->
         val refreshState = rememberPullRefreshState(
