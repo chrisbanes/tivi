@@ -32,7 +32,6 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -54,6 +53,7 @@ import app.tivi.screens.UpNextScreen
 import com.moriatsushi.insetsx.navigationBars
 import com.moriatsushi.insetsx.safeContentPadding
 import com.moriatsushi.insetsx.statusBars
+import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.screen
@@ -95,8 +95,8 @@ internal fun Home(
                 )
             }
         },
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets
-            .exclude(WindowInsets.statusBars), // We let content handle the status bar
+        // We let content handle the status bar
+        contentWindowInsets = WindowInsets.systemBars.exclude(WindowInsets.statusBars),
         modifier = modifier,
     ) { paddingValues ->
         Row(
@@ -143,7 +143,10 @@ internal fun HomeNavigationBar(
     onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    NavigationBar(modifier = modifier) {
+    NavigationBar(
+        modifier = modifier,
+        windowInsets = WindowInsets.navigationBars,
+    ) {
         for (item in HomeNavigationItems) {
             NavigationBarItem(
                 icon = {

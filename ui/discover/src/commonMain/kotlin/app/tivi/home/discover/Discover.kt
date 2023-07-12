@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -60,7 +61,7 @@ import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.rememberTiviSnapFlingBehavior
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
-import app.tivi.common.compose.ui.TiviStandardAppBar
+import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.ui.resources.MR
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Episode
@@ -70,6 +71,7 @@ import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.DiscoverScreen
+import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
@@ -164,7 +166,7 @@ internal fun Discover(
 
     Scaffold(
         topBar = {
-            TiviStandardAppBar(
+            TiviRootScreenAppBar(
                 title = stringResource(MR.strings.discover_title),
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
@@ -186,6 +188,7 @@ internal fun Discover(
                 )
             }
         },
+        contentWindowInsets = WindowInsets.systemBars,
         modifier = modifier,
     ) { paddingValues ->
         val refreshState = rememberPullRefreshState(refreshing = false, onRefresh = refresh)

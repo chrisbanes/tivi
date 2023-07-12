@@ -19,12 +19,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -55,7 +57,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -108,6 +109,7 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.views.ShowsWatchStats
 import app.tivi.screens.ShowDetailsScreen
 import com.moriatsushi.insetsx.navigationBars
+import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -233,8 +235,7 @@ internal fun ShowDetails(
             }
         },
         // The nav bar is handled by the root Scaffold
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets
-            .exclude(WindowInsets.navigationBars),
+        contentWindowInsets = WindowInsets.systemBars.exclude(WindowInsets.navigationBars),
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { contentPadding ->
         Surface(modifier = Modifier.bodyWidth()) {
@@ -958,6 +959,8 @@ private fun ShowDetailsAppBar(
             )
         },
         scrollBehavior = scrollBehavior,
+        windowInsets = WindowInsets.systemBars
+            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
         modifier = modifier,
     )
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,6 +54,7 @@ import app.tivi.common.ui.resources.MR
 import app.tivi.data.models.TiviShow
 import app.tivi.screens.SearchScreen
 import com.moriatsushi.insetsx.statusBarsPadding
+import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -156,6 +158,7 @@ internal fun Search(
                 )
             }
         },
+        contentWindowInsets = WindowInsets.systemBars,
         modifier = modifier,
     ) { padding ->
         if (state.searchResults.isEmpty() && !state.refreshing) {
