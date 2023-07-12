@@ -2,6 +2,14 @@ default_platform(:ios)
 
 platform :ios do
 
+  lane :lint do
+    swiftlint(
+      mode: :lint,
+      strict: true,
+      raise_if_swiftlint_error: true
+    )
+  end
+
   lane :build do
     setup_ci if ENV['CI']
 

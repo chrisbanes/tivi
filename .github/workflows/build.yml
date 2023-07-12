@@ -32,6 +32,10 @@ jobs:
       - name: Check code style with Spotless
         run: ./gradlew spotlessCheck
 
+      - name: Check code style with SwiftLint
+        run: fastlane ios lint
+        working-directory: ios-app/Tivi
+
   android:
     needs: [code-style]
     runs-on: macos-latest
