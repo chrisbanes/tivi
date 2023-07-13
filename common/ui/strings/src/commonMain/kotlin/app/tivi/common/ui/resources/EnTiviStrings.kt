@@ -139,9 +139,13 @@ val EnTiviStrings = TiviStrings(
 
     traktRatingTitle = "Trakt Rating",
 
-    traktRatingText = "%.0f%%",
+    traktRatingText = { rating ->
+        "%.0f%%".fmt(rating)
+    },
 
-    cdTraktRating = "Trakt Rating: %.0f%%",
+    cdTraktRating = { rating ->
+        "Trakt Rating: %.0f%%".fmt(rating)
+    },
 
     traktRatingVotes = "%.1fk votes",
 

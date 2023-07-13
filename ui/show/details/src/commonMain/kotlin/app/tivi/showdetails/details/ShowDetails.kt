@@ -95,7 +95,7 @@ import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
@@ -114,7 +114,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 
@@ -158,7 +157,7 @@ internal fun ShowDetails(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun ShowDetails(
     viewState: ShowDetailsUiState,
@@ -315,7 +314,7 @@ private fun ShowDetailsScrollingContent(
         gutterSpacer()
 
         item {
-            Header(stringResource(MR.strings.details_about))
+            Header(LocalStrings.current.detailsAbout)
         }
 
         if (show.summary != null) {
@@ -339,7 +338,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(MR.strings.details_next_episode_to_watch))
+                Header(LocalStrings.current.detailsNextEpisodeToWatch)
             }
             item {
                 NextEpisodeToWatch(
@@ -354,7 +353,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(MR.strings.details_related))
+                Header(LocalStrings.current.detailsRelated)
             }
             item {
                 RelatedShows(
@@ -369,7 +368,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(MR.strings.details_view_stats))
+                Header(LocalStrings.current.detailsViewStats)
             }
             item {
                 WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
@@ -380,7 +379,7 @@ private fun ShowDetailsScrollingContent(
             gutterSpacer()
 
             item {
-                Header(stringResource(MR.strings.show_details_seasons))
+                Header(LocalStrings.current.showDetailsSeasons)
             }
 
             items(items = seasons) { season ->
@@ -418,7 +417,7 @@ private fun PosterInfoRow(
     Row(modifier.padding(horizontal = Layout.bodyMargin)) {
         AsyncImage(
             model = show.asImageModel(ImageType.POSTER),
-            contentDescription = stringResource(MR.strings.cd_show_poster, show.title ?: ""),
+            contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: ""),
             modifier = Modifier
                 .weight(1f)
                 .aspectRatio(2 / 3f)
@@ -442,7 +441,7 @@ private fun NetworkInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(MR.strings.network_title),
+            text = LocalStrings.current.networkTitle,
             style = MaterialTheme.typography.titleSmall,
         )
 
@@ -462,14 +461,14 @@ private fun RuntimeInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(MR.strings.runtime_title),
+            text = LocalStrings.current.runtimeTitle,
             style = MaterialTheme.typography.titleSmall,
         )
 
         Spacer(Modifier.height(4.dp))
 
         Text(
-            text = stringResource(MR.strings.minutes_format, runtime),
+            text = LocalStrings.current.minutesFormat(runtime),
             style = MaterialTheme.typography.bodyMedium,
         )
     }
@@ -482,7 +481,7 @@ private fun ShowStatusPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(MR.strings.status_title),
+            text = LocalStrings.current.statusTitle,
             style = MaterialTheme.typography.titleSmall,
         )
 
@@ -503,7 +502,7 @@ private fun AirsInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(MR.strings.airs_title),
+            text = LocalStrings.current.airsTitle,
             style = MaterialTheme.typography.titleSmall,
         )
 
@@ -524,7 +523,7 @@ private fun CertificateInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(MR.strings.certificate_title),
+            text = LocalStrings.current.certificateTitle,
             style = MaterialTheme.typography.titleSmall,
         )
 
@@ -552,7 +551,7 @@ private fun TraktRatingInfoPanel(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(MR.strings.trakt_rating_title),
+            text = LocalStrings.current.traktRatingTitle,
             style = MaterialTheme.typography.titleSmall,
         )
 
@@ -571,18 +570,12 @@ private fun TraktRatingInfoPanel(
 
             Column {
                 Text(
-                    text = stringResource(
-                        MR.strings.trakt_rating_text,
-                        rating * 10f,
-                    ),
+                    text = LocalStrings.current.traktRatingText(rating * 10f),
                     style = MaterialTheme.typography.bodyMedium,
                 )
 
                 Text(
-                    text = stringResource(
-                        MR.strings.trakt_rating_votes,
-                        votes / 1000f,
-                    ),
+                    text = LocalStrings.current.traktRatingText(votes / 1000f),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -689,7 +682,7 @@ private fun NextEpisodeToWatch(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            episode.title ?: stringResource(MR.strings.episode_title_fallback, episode.number!!),
+            text = episode.title ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
             style = MaterialTheme.typography.bodyLarge,
         )
     }
@@ -802,8 +795,7 @@ private fun SeasonRow(
             val textCreator = LocalTiviTextCreator.current
 
             Text(
-                text = season.title
-                    ?: stringResource(MR.strings.season_title_fallback, season.number!!),
+                text = season.title ?: LocalStrings.current.seasonTitleFallback(season.number!!),
                 style = MaterialTheme.typography.bodyLarge,
             )
 
@@ -835,7 +827,7 @@ private fun SeasonRow(
             IconButton(onClick = { showMenu = true }) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
-                    contentDescription = stringResource(MR.strings.cd_open_overflow),
+                    contentDescription = LocalStrings.current.cdOpenOverflow,
                 )
             }
 
@@ -876,7 +868,7 @@ private fun SeasonDropdownMenu(
     ) {
         if (season.ignored) {
             DropdownMenuItem(
-                text = { Text(text = stringResource(MR.strings.popup_season_follow)) },
+                text = { Text(text = LocalStrings.current.popupSeasonFollow) },
                 onClick = {
                     onSeasonFollowed(season.id)
                     onDismissRequest()
@@ -884,7 +876,7 @@ private fun SeasonDropdownMenu(
             )
         } else {
             DropdownMenuItem(
-                text = { Text(text = stringResource(MR.strings.popup_season_ignore)) },
+                text = { Text(text = LocalStrings.current.popupSeasonIgnore) },
                 onClick = {
                     onSeasonUnfollowed(season.id)
                     onDismissRequest()
@@ -895,7 +887,7 @@ private fun SeasonDropdownMenu(
         // Season number starts from 1, rather than 0
         if ((season.number ?: -100) >= 2) {
             DropdownMenuItem(
-                text = { Text(text = stringResource(MR.strings.popup_season_ignore_previous)) },
+                text = { Text(text = LocalStrings.current.popupSeasonIgnorePrevious) },
                 onClick = {
                     unfollowPreviousSeasons(season.id)
                     onDismissRequest()
@@ -905,7 +897,7 @@ private fun SeasonDropdownMenu(
 
         if (episodesWatched > 0) {
             DropdownMenuItem(
-                text = { Text(text = stringResource(MR.strings.popup_season_mark_all_unwatched)) },
+                text = { Text(text = LocalStrings.current.popupSeasonMarkWatchedAll) },
                 onClick = {
                     onMarkSeasonUnwatched(season.id)
                     onDismissRequest()
@@ -918,9 +910,9 @@ private fun SeasonDropdownMenu(
                 text = {
                     Text(
                         text = if (episodesToAir == 0) {
-                            stringResource(MR.strings.popup_season_mark_watched_all)
+                            LocalStrings.current.popupSeasonMarkWatchedAll
                         } else {
-                            stringResource(MR.strings.popup_season_mark_watched_aired)
+                            LocalStrings.current.popupSeasonMarkWatchedAired
                         },
                     )
                 },
@@ -948,7 +940,7 @@ private fun ShowDetailsAppBar(
             IconButton(onClick = onNavigateUp) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(MR.strings.cd_navigate_up),
+                    contentDescription = LocalStrings.current.cdNavigateUp,
                 )
             }
         },
@@ -981,16 +973,16 @@ private fun ToggleShowFollowFloatingActionButton(
                     else -> Icons.Default.FavoriteBorder
                 },
                 contentDescription = when {
-                    isFollowed -> stringResource(MR.strings.cd_follow_show_remove)
-                    else -> stringResource(MR.strings.cd_follow_show_add)
+                    isFollowed -> LocalStrings.current.cdFollowShowRemove
+                    else -> LocalStrings.current.cdFollowShowAdd
                 },
             )
         },
         text = {
             Text(
                 when {
-                    isFollowed -> stringResource(MR.strings.follow_show_remove)
-                    else -> stringResource(MR.strings.follow_show_add)
+                    isFollowed -> LocalStrings.current.followShowRemove
+                    else -> LocalStrings.current.followShowAdd
                 },
             )
         },

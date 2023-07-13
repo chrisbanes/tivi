@@ -6,13 +6,12 @@ package app.tivi.home.popular
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.EntryGrid
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.screens.PopularShowsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import dev.icerock.moko.resources.compose.stringResource
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -39,7 +38,7 @@ internal fun PopularShows(
 
     EntryGrid(
         lazyPagingItems = state.items,
-        title = stringResource(MR.strings.discover_popular_title),
+        title = LocalStrings.current.discoverPopularTitle,
         onOpenShowDetails = { eventSink(PopularShowsUiEvent.OpenShowDetails(it)) },
         onNavigateUp = { eventSink(PopularShowsUiEvent.NavigateUp) },
         modifier = modifier,

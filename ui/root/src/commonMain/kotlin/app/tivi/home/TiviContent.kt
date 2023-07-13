@@ -17,6 +17,7 @@ import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.shouldUseDynamicColors
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.common.ui.resources.ProvideStrings
 import app.tivi.core.analytics.Analytics
 import app.tivi.overlays.LocalNavigator
 import app.tivi.screens.SettingsScreen
@@ -76,23 +77,25 @@ fun TiviContent(
         )
     }
 
-    CompositionLocalProvider(
-        LocalNavigator provides tiviNavigator,
-        LocalImageLoader provides imageLoader,
-        LocalTiviDateFormatter provides tiviDateFormatter,
-        LocalTiviTextCreator provides tiviTextCreator,
-        LocalWindowSizeClass provides calculateWindowSizeClass(),
-    ) {
-        CircuitCompositionLocals(circuitConfig) {
-            TiviTheme(
-                useDarkColors = preferences.shouldUseDarkColors(),
-                useDynamicColors = preferences.shouldUseDynamicColors(),
-            ) {
-                Home(
-                    backstack = backstack,
-                    navigator = tiviNavigator,
-                    modifier = modifier,
-                )
+    ProvideStrings {
+        CompositionLocalProvider(
+            LocalNavigator provides tiviNavigator,
+            LocalImageLoader provides imageLoader,
+            LocalTiviDateFormatter provides tiviDateFormatter,
+            LocalTiviTextCreator provides tiviTextCreator,
+            LocalWindowSizeClass provides calculateWindowSizeClass(),
+        ) {
+            CircuitCompositionLocals(circuitConfig) {
+                TiviTheme(
+                    useDarkColors = preferences.shouldUseDarkColors(),
+                    useDynamicColors = preferences.shouldUseDynamicColors(),
+                ) {
+                    Home(
+                        backstack = backstack,
+                        navigator = tiviNavigator,
+                        modifier = modifier,
+                    )
+                }
             }
         }
     }

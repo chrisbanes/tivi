@@ -13,8 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import app.tivi.common.ui.resources.MR
-import dev.icerock.moko.resources.compose.stringResource
+import app.tivi.common.ui.resources.LocalStrings
 
 @Composable
 fun RefreshButton(
@@ -37,7 +36,7 @@ fun RefreshButton(
             } else {
                 Icon(
                     imageVector = Icons.Default.Refresh,
-                    contentDescription = stringResource(MR.strings.cd_refresh),
+                    contentDescription = LocalStrings.current.cdRefresh,
                 )
             }
         }
@@ -55,7 +54,7 @@ fun RefreshButton(
     ) {
         Icon(
             imageVector = Icons.Default.Refresh,
-            contentDescription = stringResource(MR.strings.cd_refresh),
+            contentDescription = LocalStrings.current.cdRefresh,
         )
     }
 }

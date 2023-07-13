@@ -77,7 +77,7 @@ import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
@@ -91,7 +91,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
@@ -177,7 +176,7 @@ internal fun Library(
     Scaffold(
         topBar = {
             TiviRootScreenAppBar(
-                title = stringResource(MR.strings.library_title),
+                title = LocalStrings.current.libraryTitle,
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 scrollBehavior = scrollBehavior,
@@ -288,7 +287,7 @@ private fun LibraryGrid(
                             filter = value
                             onFilterChanged(value.text)
                         },
-                        hint = stringResource(MR.strings.filter_shows, lazyPagingItems.itemCount),
+                        hint = LocalStrings.current.filterShows(lazyPagingItems.itemCount),
                         modifier = Modifier.fillMaxWidth(),
                         onCleared = {
                             filter = TextFieldValue()
@@ -312,7 +311,7 @@ private fun LibraryGrid(
                     },
                     onClick = onToggleIncludeFollowedShows,
                     label = {
-                        Text(text = stringResource(MR.strings.following_shows_title))
+                        Text(text = LocalStrings.current.followingShowsTitle)
                     },
                 )
 
@@ -328,7 +327,7 @@ private fun LibraryGrid(
                     },
                     onClick = onToggleIncludeWatchedShows,
                     label = {
-                        Text(text = stringResource(MR.strings.watched_shows_title))
+                        Text(text = LocalStrings.current.watchedShowsTitle)
                     },
                 )
 
@@ -345,8 +344,8 @@ private fun LibraryGrid(
                 lazyPagingItems.loadState.refresh != LoadStateLoading
             ) {
                 EmptyContent(
-                    title = { Text(text = stringResource(MR.strings.library_empty_title)) },
-                    prompt = { Text(text = stringResource(MR.strings.library_empty_prompt)) },
+                    title = { Text(text = LocalStrings.current.libraryEmptyTitle) },
+                    prompt = { Text(text = LocalStrings.current.libraryEmptyPrompt) },
                     graphic = { Text(text = "\uD83D\uDCFC") },
                     modifier = Modifier
                         .fillMaxSize()
@@ -458,8 +457,7 @@ private fun LibraryItem(
                 )
             } else if (lastWatchedDate != null) {
                 Text(
-                    text = stringResource(
-                        MR.strings.library_last_watched,
+                    text = LocalStrings.current.libraryLastWatched(
                         LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatchedDate),
                     ),
                     style = MaterialTheme.typography.bodySmall,

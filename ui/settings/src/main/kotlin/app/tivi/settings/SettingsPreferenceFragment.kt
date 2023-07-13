@@ -19,12 +19,16 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.content.res.use
 import androidx.core.net.toUri
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.Locales
+import app.tivi.common.ui.resources.Strings
 import app.tivi.util.SaveData
 import app.tivi.util.SaveDataReason
-import dev.icerock.moko.resources.format
+import cafe.adriel.lyricist.Lyricist
 
 internal class SettingsPreferenceFragment : PreferenceFragment() {
+
+    val lyricist = Lyricist(Locales.EN, Strings)
+
     internal var saveData: SaveData? = null
         set(value) {
             val pref = findPreference("pref_data_saver") as? SwitchPreference
@@ -37,10 +41,10 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
 
             if (pref.isEnabled) {
                 pref.summary = null
-                pref.summaryOn = MR.strings.settings_data_saver_summary_on.getString(context)
+                pref.summaryOn = lyricist.strings.settingsDataSaverSummaryOn
             } else {
                 pref.summaryOn = null
-                pref.summary = MR.strings.settings_data_saver_summary_system.getString(context)
+                pref.summary = lyricist.strings.settingsDataSaverSummarySystem
             }
 
             field = value
@@ -55,18 +59,17 @@ internal class SettingsPreferenceFragment : PreferenceFragment() {
             CustomTabsIntent.Builder()
                 .setToolbarColor(context.resolveThemeColor(android.R.attr.colorPrimary))
                 .build()
-                .launchUrl(context, MR.strings.privacy_policy_url.getString(context).toUri())
+                .launchUrl(context, lyricist.strings.privacyPolicyUrl.toUri())
             true
         }
 
         findPreference("version")?.apply {
             val pkgManager: PackageManager = context.packageManager
             val pkgInfo = pkgManager.getPackageInfo(context.packageName, 0)
-            summary = MR.strings.settings_app_version_summary
-                .format(
-                    pkgInfo.versionName,
-                    PackageInfoCompat.getLongVersionCode(pkgInfo),
-                ).toString(context)
+            summary = lyricist.strings.settingsAppVersionSummary(
+                pkgInfo.versionName,
+                PackageInfoCompat.getLongVersionCode(pkgInfo).toInt(),
+            )
         }
 
         if (Build.VERSION.SDK_INT < 31) {

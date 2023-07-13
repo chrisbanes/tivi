@@ -73,7 +73,7 @@ import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.none
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -88,7 +88,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
@@ -305,11 +304,7 @@ private fun EpisodeDetailsBackdrop(
                 val seasonNumber = season.number
                 if (seasonNumber != null && epNumber != null) {
                     Text(
-                        text = stringResource(
-                            MR.strings.season_episode_number,
-                            seasonNumber,
-                            epNumber,
-                        ),
+                        text = LocalStrings.current.seasonEpisodeNumber(seasonNumber, epNumber),
                     )
                 }
             },
@@ -322,11 +317,13 @@ private fun EpisodeDetailsBackdrop(
 @Composable
 private fun InfoPanes(episode: Episode) {
     Row {
+        val strings = LocalStrings.current
+
         episode.traktRating?.let { rating ->
             InfoPane(
                 imageVector = Icons.Default.Star,
-                label = stringResource(MR.strings.trakt_rating_text, rating * 10f),
-                contentDescription = stringResource(MR.strings.cd_trakt_rating, rating * 10f),
+                label = strings.traktRatingText(rating * 10f),
+                contentDescription = strings.cdTraktRating(rating * 10f),
                 modifier = Modifier.weight(1f),
             )
         }
@@ -337,10 +334,7 @@ private fun InfoPanes(episode: Episode) {
             InfoPane(
                 imageVector = Icons.Default.CalendarToday,
                 label = formattedDate,
-                contentDescription = stringResource(
-                    MR.strings.cd_episode_first_aired,
-                    formattedDate,
-                ),
+                contentDescription = strings.cdEpisodeFirstAired(formattedDate),
                 modifier = Modifier.weight(1f),
             )
         }
@@ -374,11 +368,13 @@ private fun InfoPane(
 @Composable
 private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     Row {
+        val strings = LocalStrings.current
+
         Text(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .align(Alignment.CenterVertically),
-            text = stringResource(MR.strings.episode_watches),
+            text = strings.episodeWatches,
             style = MaterialTheme.typography.titleMedium,
         )
 
@@ -389,7 +385,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.Default.DeleteSweep,
-                contentDescription = stringResource(MR.strings.cd_delete),
+                contentDescription = strings.cdDelete,
             )
         }
     }
@@ -416,7 +412,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             AnimatedVisibility(episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                 Icon(
                     imageVector = Icons.Default.Publish,
-                    contentDescription = stringResource(MR.strings.cd_episode_syncing),
+                    contentDescription = LocalStrings.current.cdEpisodeSyncing,
                     modifier = Modifier.padding(start = 8.dp),
                 )
             }
@@ -424,7 +420,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             AnimatedVisibility(episodeWatchEntry.pendingAction == PendingAction.DELETE) {
                 Icon(
                     imageVector = Icons.Default.VisibilityOff,
-                    contentDescription = stringResource(MR.strings.cd_episode_deleted),
+                    contentDescription = LocalStrings.current.cdEpisodeDeleted,
                     modifier = Modifier.padding(start = 8.dp),
                 )
             }
@@ -459,7 +455,7 @@ private fun EpisodeWatchSwipeBackground(
 
             Icon(
                 imageVector = Icons.Outlined.Delete,
-                contentDescription = stringResource(MR.strings.cd_delete),
+                contentDescription = LocalStrings.current.cdDelete,
                 modifier = Modifier
                     .padding(12.dp)
                     .padding(end = 8.dp)
@@ -478,7 +474,7 @@ private fun MarkWatchedButton(
         onClick = onClick,
         modifier = modifier,
     ) {
-        Text(text = stringResource(MR.strings.episode_mark_watched))
+        Text(text = LocalStrings.current.episodeMarkWatched)
     }
 }
 
@@ -491,7 +487,7 @@ private fun AddWatchButton(
         onClick = onClick,
         modifier = modifier,
     ) {
-        Text(text = stringResource(MR.strings.episode_add_watch))
+        Text(text = LocalStrings.current.episodeAddWatch)
     }
 }
 
@@ -501,22 +497,23 @@ private fun RemoveAllWatchesDialog(
     onConfirm: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val strings = LocalStrings.current
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = {
-            Text(stringResource(MR.strings.episode_remove_watches_dialog_title))
+            Text(text = strings.episodeRemoveWatchesDialogTitle)
         },
         text = {
-            Text(stringResource(MR.strings.episode_remove_watches_dialog_message))
+            Text(text = strings.episodeRemoveWatchesDialogMessage)
         },
         dismissButton = {
             Button(onClick = onDismissRequest) {
-                Text(stringResource(MR.strings.dialog_dismiss))
+                Text(text = strings.dialogDismiss)
             }
         },
         confirmButton = {
             Button(onClick = onConfirm) {
-                Text(stringResource(MR.strings.episode_remove_watches_dialog_confirm))
+                Text(text = strings.episodeRemoveWatchesDialogConfirm)
             }
         },
     )
@@ -540,7 +537,7 @@ private fun EpisodeDetailsAppBar(
             ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(MR.strings.cd_navigate_up),
+                    contentDescription = LocalStrings.current.cdNavigateUp,
                 )
             }
         },
@@ -556,7 +553,7 @@ private fun EpisodeDetailsAppBar(
                 ScrimmedIconButton(showScrim = true, onClick = refresh) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(MR.strings.cd_refresh),
+                        contentDescription = LocalStrings.current.cdRefresh,
                     )
                 }
             }

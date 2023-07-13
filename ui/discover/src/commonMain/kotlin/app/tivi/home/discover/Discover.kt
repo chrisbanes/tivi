@@ -62,7 +62,7 @@ import app.tivi.common.compose.rememberTiviSnapFlingBehavior
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
@@ -77,7 +77,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -167,7 +166,7 @@ internal fun Discover(
     Scaffold(
         topBar = {
             TiviRootScreenAppBar(
-                title = stringResource(MR.strings.discover_title),
+                title = LocalStrings.current.discoverTitle,
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.refreshing,
@@ -229,7 +228,7 @@ internal fun Discover(
                 item {
                     CarouselWithHeader(
                         items = state.trendingItems,
-                        title = stringResource(MR.strings.discover_trending_title),
+                        title = LocalStrings.current.discoverTrendingTitle,
                         refreshing = state.trendingRefreshing,
                         onItemClick = {
                             openShowDetails(it.id, null, null)
@@ -241,7 +240,7 @@ internal fun Discover(
                 item {
                     CarouselWithHeader(
                         items = state.recommendedItems,
-                        title = stringResource(MR.strings.discover_recommended_title),
+                        title = LocalStrings.current.discoverRecommendedTitle,
                         refreshing = state.recommendedRefreshing,
                         onItemClick = {
                             openShowDetails(it.id, null, null)
@@ -253,7 +252,7 @@ internal fun Discover(
                 item {
                     CarouselWithHeader(
                         items = state.popularItems,
-                        title = stringResource(MR.strings.discover_popular_title),
+                        title = LocalStrings.current.discoverPopularTitle,
                         refreshing = state.popularRefreshing,
                         onItemClick = { openShowDetails(it.id, null, null) },
                         onMoreClick = openPopularShows,
@@ -292,7 +291,7 @@ private fun NextEpisodeToWatch(
     ) {
         Column(Modifier.padding(Layout.gutter * 2)) {
             Header(
-                title = stringResource(MR.strings.discover_keep_watching_title),
+                title = LocalStrings.current.discoverKeepWatchingTitle,
                 modifier = Modifier.padding(bottom = 16.dp),
             )
 
@@ -316,7 +315,7 @@ private fun NextEpisodeToWatch(
 
                     Text(
                         text = episode.title
-                            ?: stringResource(MR.strings.episode_title_fallback, episode.number!!),
+                            ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
@@ -355,7 +354,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                     ),
                     modifier = Modifier.alignBy(FirstBaseline),
                 ) {
-                    Text(text = stringResource(MR.strings.header_more))
+                    Text(text = LocalStrings.current.headerMore)
                 }
             }
         }

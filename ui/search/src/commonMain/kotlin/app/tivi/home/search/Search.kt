@@ -50,7 +50,7 @@ import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.models.TiviShow
 import app.tivi.screens.SearchScreen
 import com.moriatsushi.insetsx.statusBarsPadding
@@ -59,7 +59,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import dev.icerock.moko.resources.compose.stringResource
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -140,7 +139,7 @@ internal fun Search(
                             searchQuery = value
                             onSearchQueryChanged(value.text)
                         },
-                        hint = stringResource(MR.strings.search_hint),
+                        hint = LocalStrings.current.searchHint,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -165,14 +164,14 @@ internal fun Search(
             EmptyContent(
                 title = {
                     if (state.query.isEmpty()) {
-                        Text(text = stringResource(MR.strings.search_empty_title))
+                        Text(text = LocalStrings.current.searchEmptyTitle)
                     } else {
-                        Text(text = stringResource(MR.strings.search_noresults_title))
+                        Text(text = LocalStrings.current.searchNoresultsPrompt)
                     }
                 },
                 prompt = {
                     if (state.query.isNotEmpty()) {
-                        Text(text = stringResource(MR.strings.search_noresults_prompt))
+                        Text(text = LocalStrings.current.searchNoresultsPrompt)
                     }
                 },
                 graphic = { Text(text = "\uD83D\uDD75️\u200D♂️") },

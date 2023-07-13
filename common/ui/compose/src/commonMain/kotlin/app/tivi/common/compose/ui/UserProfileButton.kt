@@ -14,9 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.models.TraktUser
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun UserProfileButton(
@@ -33,10 +32,8 @@ fun UserProfileButton(
             loggedIn && user?.avatarUrl != null -> {
                 AsyncImage(
                     model = user.avatarUrl!!,
-                    contentDescription = stringResource(
-                        MR.strings.cd_profile_pic,
-                        user.name ?: user.username,
-                    ),
+                    contentDescription = LocalStrings.current
+                        .cdProfilePic(user.name ?: user.username),
                     modifier = Modifier
                         .size(32.dp)
                         .clip(MaterialTheme.shapes.small),
@@ -48,7 +45,7 @@ fun UserProfileButton(
                         loggedIn -> Icons.Default.Person
                         else -> Icons.Outlined.Person
                     },
-                    contentDescription = stringResource(MR.strings.cd_user_profile),
+                    contentDescription = LocalStrings.current.cdUserProfile,
                 )
             }
         }

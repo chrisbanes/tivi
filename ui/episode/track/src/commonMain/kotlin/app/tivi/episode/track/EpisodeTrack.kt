@@ -40,7 +40,7 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.DateTextField
 import app.tivi.common.compose.ui.LoadingButton
 import app.tivi.common.compose.ui.TimeTextField
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
@@ -49,7 +49,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import me.tatarka.inject.annotations.Inject
@@ -236,15 +235,17 @@ private fun EpisodeTrack(
     selectedTime: LocalTime? = null,
 ) {
     Column(Modifier.padding(top = 16.dp)) {
+        val strings = LocalStrings.current
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = stringResource(MR.strings.episode_track_prompt),
+                text = strings.episodeTrackPrompt,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
             )
 
             Text(
-                text = stringResource(MR.strings.episode_track_now),
+                text = strings.episodeTrackNow,
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(horizontal = Layout.gutter),
             )
@@ -261,7 +262,7 @@ private fun EpisodeTrack(
                     DateTextField(
                         selectedDate = selectedDate,
                         onDateSelected = onDateSelected,
-                        dialogTitle = stringResource(MR.strings.episode_watch_date_title),
+                        dialogTitle = strings.episodeWatchDateTitle,
                         modifier = Modifier.fillMaxWidth(3 / 5f),
                     )
 
@@ -270,14 +271,14 @@ private fun EpisodeTrack(
                     TimeTextField(
                         selectedTime = selectedTime,
                         onTimeSelected = onTimeSelected,
-                        dialogTitle = stringResource(MR.strings.episode_watch_time_title),
+                        dialogTitle = strings.episodeWatchTimeTitle,
                         modifier = Modifier.weight(1f),
                     )
                 }
 
                 if (showSetFirstAired) {
                     TextButton(onClick = onSetFirstAired) {
-                        Text(text = stringResource(MR.strings.episode_track_set_first_aired))
+                        Text(text = strings.episodeTrackSetFirstAired)
                     }
                 }
             }
@@ -291,7 +292,7 @@ private fun EpisodeTrack(
             onClick = submitWatch,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(text = stringResource(MR.strings.episode_mark_watched))
+            Text(text = strings.episodeMarkWatched)
         }
     }
 }

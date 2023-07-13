@@ -6,13 +6,12 @@ package app.tivi.home.recommended
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.EntryGrid
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.screens.RecommendedShowsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import dev.icerock.moko.resources.compose.stringResource
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -39,7 +38,7 @@ internal fun RecommendedShows(
 
     EntryGrid(
         lazyPagingItems = state.items,
-        title = stringResource(MR.strings.discover_recommended_title),
+        title = LocalStrings.current.discoverRecommendedTitle,
         onOpenShowDetails = { eventSink(RecommendedShowsUiEvent.OpenShowDetails(it)) },
         onNavigateUp = { eventSink(RecommendedShowsUiEvent.NavigateUp) },
         modifier = modifier,
