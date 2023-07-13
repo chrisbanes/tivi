@@ -87,15 +87,17 @@ multiplatformResources {
 
 // Various fixes for moko-resources tasks
 // iOS
-afterEvaluate {
-    tasks.findByPath("kspKotlinIosArm64")?.apply {
-        dependsOn(tasks.getByPath("generateMRiosArm64Main"))
-    }
-    tasks.findByPath("kspKotlinIosSimulatorArm64")?.apply {
-        dependsOn(tasks.getByPath("generateMRiosSimulatorArm64Main"))
-    }
-    tasks.findByPath("kspKotlinIosX64")?.apply {
-        dependsOn(tasks.getByPath("generateMRiosX64Main"))
+if (org.gradle.internal.os.OperatingSystem.current().isMacOsX) {
+    afterEvaluate {
+        tasks.findByPath("kspKotlinIosArm64")?.apply {
+            dependsOn(tasks.getByPath("generateMRiosArm64Main"))
+        }
+        tasks.findByPath("kspKotlinIosSimulatorArm64")?.apply {
+            dependsOn(tasks.getByPath("generateMRiosSimulatorArm64Main"))
+        }
+        tasks.findByPath("kspKotlinIosX64")?.apply {
+            dependsOn(tasks.getByPath("generateMRiosX64Main"))
+        }
     }
 }
 // Android
