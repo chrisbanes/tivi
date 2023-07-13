@@ -18,11 +18,8 @@ dependencyResolutionManagement {
         mavenCentral()
         mavenLocal()
 
-        // Needed when using the 'dev' Compose Compiler
-        // maven("https://androidx.dev/storage/compose-compiler/repository/")
-
-        // Jetpack Compose SNAPSHOTs if needed
-        // maven("https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/")
+        // Prerelease versions of Compose Multiplatform
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 
         // Used for snapshots if needed
         // maven("https://oss.sonatype.org/content/repositories/snapshots/")

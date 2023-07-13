@@ -6,7 +6,7 @@ plugins {
     id("app.tivi.android.application")
     id("app.tivi.kotlin.android")
     alias(libs.plugins.ksp)
-    alias(libs.plugins.composeMultiplatform)
+    id("app.tivi.compose")
 }
 
 val appVersionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 1000

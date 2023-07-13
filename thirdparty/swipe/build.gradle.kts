@@ -5,7 +5,7 @@
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.composeMultiplatform)
+    id("app.tivi.compose")
 }
 
 kotlin {
