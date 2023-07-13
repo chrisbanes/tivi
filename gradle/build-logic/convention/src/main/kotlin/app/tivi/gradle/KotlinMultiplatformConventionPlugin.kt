@@ -8,7 +8,9 @@ import org.gradle.api.Project
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -57,7 +59,28 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
 fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("", dependencyNotation)
 fun Project.addKspTestDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("Test", dependencyNotation)
 
-private fun Project.addKspDependencyForAllTargets(configurationNameSuffix: String, dependencyNotation: Any) {
+fun Project.addKspDependencyForCommon(dependencyNotation: Any) {
+    dependencies {
+        add("kspCommonMainMetadata", dependencyNotation)
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
+        if (name != "kspCommonMainKotlinMetadata") {
+            dependsOn("kspCommonMainKotlinMetadata")
+        }
+    }
+
+    extensions.configure<KotlinMultiplatformExtension> {
+        sourceSets["commonMain"].apply {
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+        }
+    }
+}
+
+private fun Project.addKspDependencyForAllTargets(
+    configurationNameSuffix: String,
+    dependencyNotation: Any,
+) {
     val kmpExtension = extensions.getByType<KotlinMultiplatformExtension>()
     dependencies {
         kmpExtension.targets

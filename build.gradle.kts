@@ -40,12 +40,6 @@ allprojects {
             // Treat all Kotlin warnings as errors
             allWarningsAsErrors.set(true)
 
-            // Enable experimental coroutines APIs, including Flow
-            freeCompilerArgs.addAll(
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview",
-            )
-
             if (project.hasProperty("tivi.enableComposeCompilerReports")) {
                 freeCompilerArgs.addAll(
                     "-P",
