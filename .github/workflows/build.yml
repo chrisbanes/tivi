@@ -100,15 +100,6 @@ jobs:
         if: always()
         run: ./release/clean-secrets.sh
 
-      - name: Sanitize output file names (https://issuetracker.google.com/issues/263305468)
-        if: always()
-        run: |
-          sanitizefilename() {
-              mv "${1}" "${1//[^A-Za-z0-9._-]/_}"
-          }
-          export -f sanitizefilename
-          find android-app/app/build/outputs -type f -execdir bash -c 'sanitizefilename "$0"' {} \;
-
       - name: Upload build outputs
         if: always()
         uses: actions/upload-artifact@v3
