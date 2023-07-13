@@ -14,6 +14,7 @@ kotlin {
             dependencies {
                 api(projects.data.models)
                 api(libs.moko.resources)
+                api(projects.common.ui.strings)
             }
         }
 

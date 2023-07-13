@@ -3,11 +3,9 @@
 
 package app.tivi.util
 
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.data.models.TiviShow
 import app.tivi.inject.ActivityScope
-import dev.icerock.moko.resources.desc.StringDesc
-import dev.icerock.moko.resources.format
 import kotlinx.cinterop.convert
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.TimeZone
@@ -23,6 +21,7 @@ import platform.Foundation.NSDateComponents
 @Inject
 actual class TiviTextCreator(
     override val dateFormatter: TiviDateFormatter,
+    override val strings: TiviStrings,
 ) : CommonTiviTextCreator {
     override fun airsText(show: TiviShow): CharSequence? {
         val airTime = show.airsTime ?: return null
@@ -48,13 +47,11 @@ actual class TiviTextCreator(
             ?.toLocalDateTime(dateFormatter.overrideTimeZone ?: TimeZone.currentSystemDefault())
             ?: return null
 
-        return MR.strings.airs_text.format(
+        return strings.airsText(
             dateFormatter.formatDayOfWeek(localDateTime.dayOfWeek),
             dateFormatter.formatShortTime(localDateTime.time),
-        ).asString()
+        )
     }
-
-    override fun StringDesc.asString(): String = localized()
 }
 
 internal fun DayOfWeek.toNSWeekdayUnit(): Int {

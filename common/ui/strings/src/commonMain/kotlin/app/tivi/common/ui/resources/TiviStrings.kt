@@ -162,4 +162,4 @@ object Locales {
     const val EN = "en"
 }
 
-internal expect fun String.fmt(vararg args: Any?): String
+expect fun String.fmt(vararg args: Any?): String

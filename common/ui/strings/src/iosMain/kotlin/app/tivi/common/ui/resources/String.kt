@@ -9,7 +9,7 @@ import platform.Foundation.stringWithFormat
 /**
  * https://stackoverflow.com/a/71442518
  */
-internal actual fun String.fmt(vararg args: Any?): String = when (args.size) {
+actual fun String.fmt(vararg args: Any?): String = when (args.size) {
     0 -> NSString.stringWithFormat(this)
     1 -> NSString.stringWithFormat(this, args[0])
     2 -> NSString.stringWithFormat(this, args[0], args[1])
