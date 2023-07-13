@@ -4,11 +4,26 @@
 
 plugins {
     `kotlin-dsl`
+    alias(libs.plugins.spotless)
 }
 
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
+spotless {
+    kotlin {
+        target("src/**/*.kt")
+        ktlint(libs.versions.ktlint.get())
+        licenseHeaderFile(rootProject.file("../../spotless/cb-copyright.txt"))
+    }
+
+    kotlinGradle {
+        target("*.kts")
+        ktlint(libs.versions.ktlint.get())
+        licenseHeaderFile(rootProject.file("../../spotless/cb-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
     }
 }
 

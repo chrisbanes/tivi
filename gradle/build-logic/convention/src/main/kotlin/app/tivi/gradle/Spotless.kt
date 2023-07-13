@@ -21,8 +21,7 @@ fun Project.configureSpotless() {
 
     spotless {
         kotlin {
-            target("**/*.kt")
-            targetExclude("thirdparty/**/*.kt")
+            target("src/**/*.kt")
             ktlint(ktlintVersion)
             licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"))
                 .named("google")
@@ -36,8 +35,7 @@ fun Project.configureSpotless() {
         }
 
         kotlinGradle {
-            target("**/*.kts")
-            targetExclude("thirdparty/**/*.kts")
+            target("*.kts")
             ktlint(ktlintVersion)
             licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
                 .named("google")
