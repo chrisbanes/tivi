@@ -9,22 +9,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.composeMultiplatform)
+    id("app.tivi.compose")
     alias(libs.plugins.ksp)
 }
 
 kotlin {
-    targets.withType<KotlinNativeTarget> {
-        binaries.withType<Framework> {
-            isStatic = true
-            baseName = "TiviKt"
-
-            export(projects.ui.root)
-            export(projects.core.analytics)
-            export(projects.data.traktauth)
-        }
-    }
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -63,6 +52,17 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 api(libs.okhttp.okhttp)
+            }
+        }
+
+        targets.withType<KotlinNativeTarget>().configureEach {
+            binaries.withType<Framework> {
+                isStatic = true
+                baseName = "TiviKt"
+
+                export(projects.ui.root)
+                export(projects.core.analytics)
+                export(projects.data.traktauth)
             }
         }
     }
