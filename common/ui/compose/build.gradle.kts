@@ -20,7 +20,6 @@ kotlin {
                 api(libs.circuit.foundation)
 
                 api(projects.common.ui.resources)
-                api(libs.moko.resourcesCompose)
 
                 implementation(compose.foundation)
                 implementation(compose.material)

@@ -5,18 +5,7 @@ package app.tivi.common.compose.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import app.tivi.common.ui.resources.MR
-import dev.icerock.moko.resources.compose.asFont
-
-internal val InterFontFamily: FontFamily
-    @Composable get() = FontFamily(
-        MR.fonts.Inter.light.asFont(FontWeight.Light)!!,
-        MR.fonts.Inter.regular.asFont(FontWeight.Normal)!!,
-        MR.fonts.Inter.medium.asFont(FontWeight.Medium)!!,
-        MR.fonts.Inter.bold.asFont(FontWeight.Bold)!!,
-    )
+import app.tivi.common.ui.resources.InterFontFamily
 
 val TiviTypography: Typography
     @Composable get() {

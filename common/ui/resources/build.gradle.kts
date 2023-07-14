@@ -5,7 +5,7 @@
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.moko.resources) // needs to be enabled after AGP
+    alias(libs.plugins.composeMultiplatform)
 }
 
 kotlin {
@@ -13,8 +13,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(projects.data.models)
-                api(libs.moko.resources)
                 api(projects.common.ui.strings)
+                api(compose.ui)
             }
         }
 
@@ -24,28 +24,20 @@ kotlin {
                 implementation(libs.assertk)
             }
         }
-    }
-}
 
-multiplatformResources {
-    multiplatformResourcesPackage = "app.tivi.common.ui.resources"
+        val iosMain by getting {
+            dependencies {
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+                implementation(compose.components.resources)
+            }
+        }
+    }
 }
 
 android {
     namespace = "app.tivi.common.ui.resources"
-}
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
-    compilerOptions {
-        // Disable warnings as errors
-        allWarningsAsErrors.set(false)
+    sourceSets["main"].apply {
+        res.srcDirs("src/androidMain/res", "src/commonMain/resources")
     }
-}
-
-tasks.withType(com.android.build.gradle.tasks.MergeResources::class).configureEach {
-    dependsOn(tasks.getByPath("generateMRandroidMain"))
-}
-
-tasks.withType(com.android.build.gradle.tasks.MapSourceSetPathsTask::class).configureEach {
-    dependsOn(tasks.getByPath("generateMRandroidMain"))
 }
