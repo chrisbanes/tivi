@@ -3,9 +3,12 @@
 
 package app.tivi.util
 
+import app.tivi.common.ui.resources.Locales
+import app.tivi.common.ui.resources.Strings
 import app.tivi.data.models.TiviShow
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import cafe.adriel.lyricist.Lyricist
 import kotlin.test.Test
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -17,7 +20,8 @@ class TiviTextCreatorTest {
         overrideLocale = NSLocale("en-GB"),
         overrideTimeZone = TimeZone.UTC,
     )
-    private val textCreator = TiviTextCreator(tiviDateFormatter)
+    private val strings = Lyricist(Locales.EN, Strings).strings
+    private val textCreator = TiviTextCreator(tiviDateFormatter, strings)
 
     private val tiviShow = TiviShow(
         title = "My Show",
