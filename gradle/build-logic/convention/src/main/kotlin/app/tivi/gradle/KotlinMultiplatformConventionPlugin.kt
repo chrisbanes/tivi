@@ -9,6 +9,7 @@ import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -48,6 +49,14 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                     // Add linker flag for SQLite. See:
                     // https://github.com/touchlab/SQLiter/issues/77
                     linkerOpts("-lsqlite3")
+                }
+
+                // Try out preview custom allocator in K/N 1.9
+                // https://kotlinlang.org/docs/whatsnew19.html#preview-of-custom-memory-allocator
+                compilations.configureEach {
+                    compilerOptions.configure {
+                        freeCompilerArgs.add("-Xallocator=custom")
+                    }
                 }
             }
 
