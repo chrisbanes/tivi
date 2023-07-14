@@ -8,17 +8,17 @@ GEM
     artifactory (3.0.15)
     atomos (0.1.3)
     aws-eventstream (1.2.0)
-    aws-partitions (1.782.0)
-    aws-sdk-core (3.176.1)
+    aws-partitions (1.786.0)
+    aws-sdk-core (3.178.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.651.0)
       aws-sigv4 (~> 1.5)
       jmespath (~> 1, >= 1.6.1)
-    aws-sdk-kms (1.68.0)
-      aws-sdk-core (~> 3, >= 3.176.0)
+    aws-sdk-kms (1.71.0)
+      aws-sdk-core (~> 3, >= 3.177.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.127.0)
-      aws-sdk-core (~> 3, >= 3.176.0)
+    aws-sdk-s3 (1.130.0)
+      aws-sdk-core (~> 3, >= 3.177.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.6)
     aws-sigv4 (1.6.0)
@@ -30,7 +30,7 @@ GEM
     commander (4.6.0)
       highline (~> 2.0.0)
     declarative (0.0.20)
-    digest-crc (0.6.4)
+    digest-crc (0.6.5)
       rake (>= 12.0.0, < 14.0.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -66,7 +66,7 @@ GEM
     faraday_middleware (1.2.0)
       faraday (~> 1.0)
     fastimage (2.2.7)
-    fastlane (2.213.0)
+    fastlane (2.214.0)
       CFPropertyList (>= 2.3, < 4.0.0)
       addressable (>= 2.8, < 3.0.0)
       artifactory (~> 3.0)
@@ -161,7 +161,7 @@ GEM
     optparse (0.1.1)
     os (1.1.4)
     plist (3.7.0)
-    public_suffix (5.0.1)
+    public_suffix (5.0.3)
     rake (13.0.6)
     representable (3.2.0)
       declarative (< 0.1.0)
@@ -210,6 +210,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-22
+  x86_64-linux
 
 DEPENDENCIES
   fastlane
