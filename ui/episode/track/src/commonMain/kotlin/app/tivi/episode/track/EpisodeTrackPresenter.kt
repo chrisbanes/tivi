@@ -73,8 +73,6 @@ class EpisodeTrackPresenter(
         val submitting by addEpisodeWatch.inProgress.collectAsState(initial = false)
         val message by uiMessageManager.message.collectAsState(initial = null)
 
-        var dismissed by remember { mutableStateOf(false) }
-
         val selectedDateTime by remember {
             derivedStateOf {
                 val date = selectedDate
@@ -141,7 +139,7 @@ class EpisodeTrackPresenter(
                                 AddEpisodeWatch.Params(screen.id, instant),
                             ).also { result ->
                                 if (result.isSuccess) {
-                                    dismissed = true
+                                    navigator.pop()
                                 }
                                 result.onException { e ->
                                     logger.i(e)
@@ -153,8 +151,6 @@ class EpisodeTrackPresenter(
                         // TODO: display error message
                     }
                 }
-
-                EpisodeTrackUiEvent.NavigateUp -> navigator.pop()
             }
         }
 
@@ -173,7 +169,6 @@ class EpisodeTrackPresenter(
             refreshing = refreshing,
             message = message,
             submitInProgress = submitting,
-            shouldDismiss = dismissed,
             canSubmit = !submitting && (selectedNow || (selectedDate != null && selectedTime != null)),
             eventSink = ::eventSink,
         )
