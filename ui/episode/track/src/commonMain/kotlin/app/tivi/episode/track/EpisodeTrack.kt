@@ -77,7 +77,6 @@ internal fun EpisodeTrack(
 
     EpisodeTrack(
         viewState = state,
-        navigateUp = { eventSink(EpisodeTrackUiEvent.NavigateUp) },
         onSubmit = { eventSink(EpisodeTrackUiEvent.Submit) },
         onNowSelected = { selected ->
             when {
@@ -97,7 +96,6 @@ internal fun EpisodeTrack(
 @Composable
 internal fun EpisodeTrack(
     viewState: EpisodeTrackUiState,
-    navigateUp: () -> Unit,
     onSubmit: () -> Unit,
     onNowSelected: (Boolean) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
@@ -122,12 +120,6 @@ internal fun EpisodeTrack(
             snackbarHostState.showSnackbar(message.message)
             // Notify the view model that the message has been dismissed
             onMessageShown(message.id)
-        }
-    }
-
-    LaunchedEffect(viewState.shouldDismiss) {
-        if (viewState.shouldDismiss) {
-            navigateUp()
         }
     }
 

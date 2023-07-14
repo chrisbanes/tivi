@@ -10,6 +10,7 @@ import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.ui.AlertDialog
 import app.tivi.common.compose.ui.AlertDialogDefaults
 import com.slack.circuit.foundation.CircuitContent
+import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.overlay.Overlay
 import com.slack.circuit.overlay.OverlayHost
 import com.slack.circuit.overlay.OverlayNavigator
@@ -48,7 +49,15 @@ class DialogOverlay<Model : Any, Result : Any>(
 suspend fun OverlayHost.showInDialog(
     screen: Screen,
 ): Unit = show(
-    DialogOverlay(Unit, {}) { _, _ ->
-        CircuitContent(screen = screen)
+    DialogOverlay(model = Unit, onDismiss = {}) { _, navigator ->
+        CircuitContent(
+            screen = screen,
+            onNavEvent = { event ->
+                when (event) {
+                    NavEvent.Pop -> navigator.finish(Unit)
+                    else -> Unit
+                }
+            },
+        )
     },
 )

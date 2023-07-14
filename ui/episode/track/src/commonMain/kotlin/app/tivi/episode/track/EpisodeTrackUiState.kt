@@ -28,8 +28,6 @@ data class EpisodeTrackUiState(
     val selectedTime: LocalTime? = null,
     val selectedNow: Boolean = true,
 
-    val shouldDismiss: Boolean = false,
-
     val eventSink: (EpisodeTrackUiEvent) -> Unit,
 ) : CircuitUiState
 
@@ -42,5 +40,4 @@ sealed interface EpisodeTrackUiEvent : CircuitUiEvent {
     data class SelectDate(val date: LocalDate) : EpisodeTrackUiEvent
     data class SelectTime(val time: LocalTime) : EpisodeTrackUiEvent
     data class ClearMessage(val id: Long) : EpisodeTrackUiEvent
-    object NavigateUp : EpisodeTrackUiEvent
 }

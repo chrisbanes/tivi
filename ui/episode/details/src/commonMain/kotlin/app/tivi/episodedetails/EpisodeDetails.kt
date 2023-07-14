@@ -129,7 +129,7 @@ internal fun EpisodeDetails(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun EpisodeDetails(
     viewState: EpisodeDetailsUiState,
