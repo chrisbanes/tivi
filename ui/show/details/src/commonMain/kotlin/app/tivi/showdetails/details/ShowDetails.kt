@@ -575,7 +575,7 @@ private fun TraktRatingInfoPanel(
                 )
 
                 Text(
-                    text = LocalStrings.current.traktRatingText(votes / 1000f),
+                    text = LocalStrings.current.traktRatingVotes(votes / 1000f),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }

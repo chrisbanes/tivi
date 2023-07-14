@@ -149,7 +149,7 @@ data class TiviStrings(
     val timeLabel: String,
     val traktRatingText: (Float) -> String,
     val traktRatingTitle: String,
-    val traktRatingVotes: String,
+    val traktRatingVotes: (Float) -> String,
     val upnextEmptyPrompt: String,
     val upnextEmptyTitle: String,
     val upnextFilterFollowedShowsOnlyTitle: String,
