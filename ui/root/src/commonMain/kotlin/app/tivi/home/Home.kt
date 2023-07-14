@@ -45,7 +45,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalWindowSizeClass
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
+import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
 import app.tivi.screens.SearchScreen
@@ -60,8 +61,6 @@ import com.slack.circuit.foundation.screen
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
-import dev.icerock.moko.resources.StringResource
-import dev.icerock.moko.resources.compose.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,11 +78,15 @@ internal fun Home(
         derivedStateOf { backstack.last().screen }
     }
 
+    val strings = LocalStrings.current
+    val navigationItems = remember(strings) { buildNavigationItems(strings) }
+
     Scaffold(
         bottomBar = {
             if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
                 HomeNavigationBar(
                     selectedNavigation = rootScreen,
+                    navigationItems = navigationItems,
                     onNavigationSelected = { navigator.resetRoot(it) },
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -107,6 +110,7 @@ internal fun Home(
             if (navigationType == NavigationType.RAIL) {
                 HomeNavigationRail(
                     selectedNavigation = rootScreen,
+                    navigationItems = navigationItems,
                     onNavigationSelected = { navigator.resetRoot(it) },
                     modifier = Modifier.fillMaxHeight(),
                 )
@@ -119,6 +123,7 @@ internal fun Home(
             } else if (navigationType == NavigationType.PERMANENT_DRAWER) {
                 HomeNavigationDrawer(
                     selectedNavigation = rootScreen,
+                    navigationItems = navigationItems,
                     onNavigationSelected = { navigator.resetRoot(it) },
                     modifier = Modifier.fillMaxHeight(),
                 )
@@ -138,8 +143,9 @@ internal fun Home(
 }
 
 @Composable
-internal fun HomeNavigationBar(
+private fun HomeNavigationBar(
     selectedNavigation: Screen,
+    navigationItems: List<HomeNavigationItem>,
     onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -147,7 +153,7 @@ internal fun HomeNavigationBar(
         modifier = modifier,
         windowInsets = WindowInsets.navigationBars,
     ) {
-        for (item in HomeNavigationItems) {
+        for (item in navigationItems) {
             NavigationBarItem(
                 icon = {
                     HomeNavigationItemIcon(
@@ -155,7 +161,7 @@ internal fun HomeNavigationBar(
                         selected = selectedNavigation == item.screen,
                     )
                 },
-                label = { Text(text = stringResource(item.labelResource)) },
+                label = { Text(text = item.label) },
                 selected = selectedNavigation == item.screen,
                 onClick = { onNavigationSelected(item.screen) },
             )
@@ -164,13 +170,14 @@ internal fun HomeNavigationBar(
 }
 
 @Composable
-internal fun HomeNavigationRail(
+private fun HomeNavigationRail(
     selectedNavigation: Screen,
+    navigationItems: List<HomeNavigationItem>,
     onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavigationRail(modifier = modifier) {
-        for (item in HomeNavigationItems) {
+        for (item in navigationItems) {
             NavigationRailItem(
                 icon = {
                     HomeNavigationItemIcon(
@@ -179,7 +186,7 @@ internal fun HomeNavigationRail(
                     )
                 },
                 alwaysShowLabel = false,
-                label = { Text(text = stringResource(item.labelResource)) },
+                label = { Text(text = item.label) },
                 selected = selectedNavigation == item.screen,
                 onClick = { onNavigationSelected(item.screen) },
             )
@@ -188,8 +195,9 @@ internal fun HomeNavigationRail(
 }
 
 @Composable
-internal fun HomeNavigationDrawer(
+private fun HomeNavigationDrawer(
     selectedNavigation: Screen,
+    navigationItems: List<HomeNavigationItem>,
     onNavigationSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -199,16 +207,16 @@ internal fun HomeNavigationDrawer(
             .padding(16.dp)
             .widthIn(max = 280.dp),
     ) {
-        for (item in HomeNavigationItems) {
+        for (item in navigationItems) {
             @OptIn(ExperimentalMaterial3Api::class)
             NavigationDrawerItem(
                 icon = {
                     Icon(
                         imageVector = item.iconImageVector,
-                        contentDescription = stringResource(item.contentDescriptionResource),
+                        contentDescription = item.contentDescription,
                     )
                 },
-                label = { Text(text = stringResource(item.labelResource)) },
+                label = { Text(text = item.label) },
                 selected = selectedNavigation == item.screen,
                 onClick = { onNavigationSelected(item.screen) },
             )
@@ -222,13 +230,13 @@ private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) 
         Crossfade(targetState = selected) { s ->
             Icon(
                 imageVector = if (s) item.selectedImageVector else item.iconImageVector,
-                contentDescription = stringResource(item.contentDescriptionResource),
+                contentDescription = item.contentDescription,
             )
         }
     } else {
         Icon(
             imageVector = item.iconImageVector,
-            contentDescription = stringResource(item.contentDescriptionResource),
+            contentDescription = item.contentDescription,
         )
     }
 }
@@ -236,8 +244,8 @@ private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) 
 @Immutable
 private data class HomeNavigationItem(
     val screen: Screen,
-    val labelResource: StringResource,
-    val contentDescriptionResource: StringResource,
+    val label: String,
+    val contentDescription: String,
     val iconImageVector: ImageVector,
     val selectedImageVector: ImageVector? = null,
 )
@@ -258,32 +266,32 @@ internal enum class NavigationType {
     }
 }
 
-private val HomeNavigationItems by lazy {
-    listOf(
+private fun buildNavigationItems(strings: TiviStrings): List<HomeNavigationItem> {
+    return listOf(
         HomeNavigationItem(
             screen = DiscoverScreen,
-            labelResource = MR.strings.discover_title,
-            contentDescriptionResource = MR.strings.cd_discover_title,
+            label = strings.discoverTitle,
+            contentDescription = strings.cdDiscoverTitle,
             iconImageVector = Icons.Outlined.Weekend,
             selectedImageVector = Icons.Default.Weekend,
         ),
         HomeNavigationItem(
             screen = UpNextScreen,
-            labelResource = MR.strings.upnext_title,
-            contentDescriptionResource = MR.strings.cd_upnext_title,
+            label = strings.upnextTitle,
+            contentDescription = strings.cdUpnextTitle,
             iconImageVector = Icons.Default.Subscriptions,
         ),
         HomeNavigationItem(
             screen = LibraryScreen,
-            labelResource = MR.strings.library_title,
-            contentDescriptionResource = MR.strings.cd_library_title,
+            label = strings.libraryTitle,
+            contentDescription = strings.cdLibraryTitle,
             iconImageVector = Icons.Outlined.VideoLibrary,
             selectedImageVector = Icons.Default.VideoLibrary,
         ),
         HomeNavigationItem(
             screen = SearchScreen,
-            labelResource = MR.strings.search_navigation_title,
-            contentDescriptionResource = MR.strings.cd_search_navigation_title,
+            label = strings.searchNavigationTitle,
+            contentDescription = strings.cdSearchNavigationTitle,
             iconImageVector = Icons.Default.Search,
         ),
     )

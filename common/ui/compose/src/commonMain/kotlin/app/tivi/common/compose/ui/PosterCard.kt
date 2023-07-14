@@ -15,11 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.TiviShow
-import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun PosterCard(
@@ -55,10 +54,7 @@ private fun PosterCardContent(show: TiviShow) {
         )
         AsyncImage(
             model = show.asImageModel(ImageType.POSTER),
-            contentDescription = stringResource(
-                MR.strings.cd_show_poster_image,
-                show.title ?: "show",
-            ),
+            contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: "show"),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
         )

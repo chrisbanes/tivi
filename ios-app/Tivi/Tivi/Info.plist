@@ -15,5 +15,12 @@
 		<string>fetch</string>
 		<string>processing</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>inter-light.ttf</string>
+		<string>inter-regular.ttf</string>
+		<string>inter-medium.ttf</string>
+		<string>inter-bold.ttf</string>
+	</array>
 </dict>
 </plist>

@@ -71,7 +71,7 @@ import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
@@ -91,7 +91,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
@@ -182,7 +181,7 @@ internal fun UpNext(
     Scaffold(
         topBar = {
             TiviRootScreenAppBar(
-                title = stringResource(MR.strings.upnext_title),
+                title = LocalStrings.current.upnextTitle,
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 scrollBehavior = scrollBehavior,
@@ -248,8 +247,8 @@ internal fun UpNext(
                 ) {
                     fullSpanItem {
                         EmptyContent(
-                            title = { Text(text = stringResource(MR.strings.upnext_empty_title)) },
-                            prompt = { Text(text = stringResource(MR.strings.upnext_empty_prompt)) },
+                            title = { Text(text = LocalStrings.current.upnextEmptyTitle) },
+                            prompt = { Text(text = LocalStrings.current.upnextEmptyPrompt) },
                             graphic = { Text(text = "\uD83D\uDC7B") },
                             modifier = Modifier
                                 .fillMaxSize()
@@ -323,9 +322,7 @@ private fun UpNextFilterRow(
             },
             onClick = onToggleFollowedShowsOnly,
             label = {
-                Text(
-                    text = stringResource(MR.strings.upnext_filter_followed_shows_only_title),
-                )
+                Text(text = LocalStrings.current.upnextFilterFollowedShowsOnlyTitle)
             },
         )
 

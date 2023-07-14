@@ -1,8 +1,11 @@
 // Copyright 2018, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package app.tivi.extensions
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf

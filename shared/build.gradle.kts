@@ -11,7 +11,6 @@ plugins {
     id("app.tivi.kotlin.multiplatform")
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.moko.resources)
 }
 
 kotlin {
@@ -78,32 +77,3 @@ ksp {
 }
 
 addKspDependencyForAllTargets(libs.kotlininject.compiler)
-
-multiplatformResources {
-    disableStaticFrameworkWarning = true
-    multiplatformResourcesPackage = "app.tivi"
-    multiplatformResourcesSourceSet = "iosMain"
-}
-
-// Various fixes for moko-resources tasks
-// iOS
-if (org.gradle.internal.os.OperatingSystem.current().isMacOsX) {
-    afterEvaluate {
-        tasks.findByPath("kspKotlinIosArm64")?.apply {
-            dependsOn(tasks.getByPath("generateMRiosArm64Main"))
-        }
-        tasks.findByPath("kspKotlinIosSimulatorArm64")?.apply {
-            dependsOn(tasks.getByPath("generateMRiosSimulatorArm64Main"))
-        }
-        tasks.findByPath("kspKotlinIosX64")?.apply {
-            dependsOn(tasks.getByPath("generateMRiosX64Main"))
-        }
-    }
-}
-// Android
-tasks.withType(com.android.build.gradle.tasks.MergeResources::class).configureEach {
-    dependsOn(tasks.getByPath("generateMRandroidMain"))
-}
-tasks.withType(com.android.build.gradle.tasks.MapSourceSetPathsTask::class).configureEach {
-    dependsOn(tasks.getByPath("generateMRandroidMain"))
-}

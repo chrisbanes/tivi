@@ -18,8 +18,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
-import app.tivi.common.ui.resources.MR
-import dev.icerock.moko.resources.compose.stringResource
+import app.tivi.common.ui.resources.LocalStrings
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -54,7 +53,7 @@ fun SearchTextField(
             ) {
                 Icon(
                     imageVector = Icons.Default.Clear,
-                    contentDescription = stringResource(MR.strings.cd_clear_text),
+                    contentDescription = LocalStrings.current.cdClearText,
                 )
             }
         },

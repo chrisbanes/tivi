@@ -24,8 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.ui.resources.MR
-import dev.icerock.moko.resources.compose.stringResource
+import app.tivi.common.ui.resources.LocalStrings
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -52,7 +51,7 @@ fun DateTextField(
 
         ClickableReadOnlyOutlinedTextField(
             value = formattedDate.orEmpty(),
-            label = { Text(text = stringResource(MR.strings.date_label)) },
+            label = { Text(text = LocalStrings.current.dateLabel) },
             onClick = { showDialog = true },
             modifier = Modifier.fillMaxWidth(),
         )
@@ -99,7 +98,7 @@ fun TimeTextField(
 
         ClickableReadOnlyOutlinedTextField(
             value = formattedTime.orEmpty(),
-            label = { Text(text = stringResource(MR.strings.time_label)) },
+            label = { Text(text = LocalStrings.current.timeLabel) },
             onClick = { showDialog = true },
             modifier = Modifier.fillMaxWidth(),
         )

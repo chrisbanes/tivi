@@ -3,16 +3,14 @@
 
 package app.tivi.util
 
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Genre
 import app.tivi.data.models.Season
 import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.TiviShow
 import app.tivi.ui.GenreStringer
-import dev.icerock.moko.resources.desc.StringDesc
-import dev.icerock.moko.resources.desc.desc
-import dev.icerock.moko.resources.format
+import app.tivi.ui.getGenreLabel
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -21,6 +19,7 @@ expect class TiviTextCreator : CommonTiviTextCreator
 
 interface CommonTiviTextCreator {
     val dateFormatter: TiviDateFormatter
+    val strings: TiviStrings
 
     fun showTitle(
         show: TiviShow,
@@ -39,8 +38,8 @@ interface CommonTiviTextCreator {
 
     fun showHeaderCount(count: Int, filtered: Boolean = false): CharSequence {
         return when {
-            filtered -> MR.plurals.header_show_count_filtered.format(count, count).asString()
-            else -> MR.plurals.header_show_count.format(count, count).asString()
+            filtered -> strings.headerShowCountFiltered(count)
+            else -> strings.headerShowCount(count)
         }
     }
 
@@ -49,33 +48,24 @@ interface CommonTiviTextCreator {
         watchedEpisodeCount: Int,
     ): CharSequence = when {
         watchedEpisodeCount < episodeCount -> {
-            MR.plurals.followed_watch_stats_to_watch
-                .format(episodeCount - watchedEpisodeCount, episodeCount - watchedEpisodeCount)
-                .asString()
+            strings.followedWatchStatsToWatch(episodeCount - watchedEpisodeCount)
         }
-        watchedEpisodeCount > 0 -> {
-            MR.strings.followed_watch_stats_complete.desc().asString()
-        }
+        watchedEpisodeCount > 0 -> strings.followedWatchStatsComplete
         else -> ""
     }
 
-    fun seasonEpisodeTitleText(season: Season?, episode: Episode?): String {
-        return if (season != null && episode != null) {
-            MR.strings.season_episode_number
-                .format(season.number!!, episode.number!!)
-                .asString()
-        } else {
-            ""
+    fun seasonEpisodeTitleText(season: Season?, episode: Episode?): String = when {
+        season != null && episode != null -> {
+            strings.seasonEpisodeNumber(season.number!!, episode.number!!)
         }
+        else -> ""
     }
 
     fun seasonTitle(
         season: Season,
     ): String = when {
         season.title != null -> season.title!!
-        season.number != null -> {
-            MR.strings.season_title_fallback.format(season.number!!).asString()
-        }
+        season.number != null -> strings.seasonTitleFallback(season.number!!)
         else -> ""
     }
 
@@ -87,22 +77,20 @@ interface CommonTiviTextCreator {
     ): CharSequence {
         val text = StringBuilder()
         if (watched > 0) {
-            text.append(MR.strings.season_summary_watched.format(watched).asString())
+            text.append(strings.seasonSummaryWatched(watched))
         }
         if (toWatch > 0) {
             if (text.isNotEmpty()) text.append(" \u2022 ")
-            text.append(MR.strings.season_summary_to_watch.format(toWatch).asString())
+            text.append(strings.seasonSummaryToWatch(toWatch))
         }
         if (toAir > 0) {
             if (text.isNotEmpty()) text.append(" \u2022 ")
-            text.append(MR.strings.season_summary_to_air.format(toAir).asString())
+            text.append(strings.seasonSummaryToAir(toAir))
 
             if (nextToAirDate != null) {
                 text.append(". ")
                 text.append(
-                    MR.strings.next_prefix
-                        .format(dateFormatter.formatShortRelativeTime(date = nextToAirDate))
-                        .asString(),
+                    strings.nextPrefix(dateFormatter.formatShortRelativeTime(nextToAirDate)),
                 )
             }
         }
@@ -111,7 +99,7 @@ interface CommonTiviTextCreator {
 
     fun episodeNumberText(episode: Episode): CharSequence {
         val text = StringBuilder()
-        text.append(MR.strings.episode_number.format(episode.number!!).asString())
+        text.append(strings.episodeNumber(episode.number!!))
 
         episode.firstAired?.also {
             text.append(" \u2022 ")
@@ -126,7 +114,7 @@ interface CommonTiviTextCreator {
             return buildString {
                 for (i in genres.indices) {
                     val genre = genres[i]
-                    append(GenreStringer.getLabel(genre).desc().asString())
+                    append(strings.getGenreLabel(genre))
                     append("\u00A0") // nbsp
                     append(GenreStringer.getEmoji(genre))
                     if (i < genres.size - 1) append(" \u2022 ")
@@ -138,7 +126,7 @@ interface CommonTiviTextCreator {
 
     fun genreContentDescription(genres: List<Genre>?): CharSequence? {
         return genres?.joinToString(", ") {
-            GenreStringer.getLabel(it).desc().asString()
+            strings.getGenreLabel(it)
         }
     }
 
@@ -146,11 +134,9 @@ interface CommonTiviTextCreator {
 
     // TODO: change the string here, check if planned is still in Trakt
     fun showStatusText(status: ShowStatus): CharSequence = when (status) {
-        ShowStatus.CANCELED, ShowStatus.ENDED -> MR.strings.status_ended.desc().asString()
-        ShowStatus.RETURNING -> MR.strings.status_active.desc().asString()
-        ShowStatus.IN_PRODUCTION -> MR.strings.status_in_production.desc().asString()
-        ShowStatus.PLANNED -> MR.strings.status_planned.desc().asString()
+        ShowStatus.CANCELED, ShowStatus.ENDED -> strings.statusEnded
+        ShowStatus.RETURNING -> strings.statusActive
+        ShowStatus.IN_PRODUCTION -> strings.statusInProduction
+        ShowStatus.PLANNED -> strings.statusPlanned
     }
-
-    fun StringDesc.asString(): String
 }

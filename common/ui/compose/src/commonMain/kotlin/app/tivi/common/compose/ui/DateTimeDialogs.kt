@@ -5,8 +5,7 @@ package app.tivi.common.compose.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import app.tivi.common.ui.resources.MR
-import dev.icerock.moko.resources.compose.stringResource
+import app.tivi.common.ui.resources.LocalStrings
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -20,7 +19,7 @@ expect fun DatePickerDialog(
     selectedDate: LocalDate = remember {
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
     },
-    confirmLabel: String = stringResource(MR.strings.button_confirm),
+    confirmLabel: String = LocalStrings.current.buttonConfirm,
     minimumDate: LocalDate? = null,
     maximumDate: LocalDate? = null,
     title: String = "",
@@ -33,7 +32,7 @@ expect fun TimePickerDialog(
     selectedTime: LocalTime = remember {
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
     },
-    confirmLabel: String = stringResource(MR.strings.button_confirm),
+    confirmLabel: String = LocalStrings.current.buttonConfirm,
     title: String = "",
     is24Hour: Boolean = false,
 )

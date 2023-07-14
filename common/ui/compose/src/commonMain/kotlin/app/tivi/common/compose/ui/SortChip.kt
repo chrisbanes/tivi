@@ -21,8 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.models.SortOption
-import dev.icerock.moko.resources.compose.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +40,7 @@ fun SortChip(
             onClick = { expanded = true },
             label = {
                 Text(
-                    text = stringResource(currentSortOption.labelResId),
+                    text = currentSortOption.label(LocalStrings.current),
                     modifier = Modifier.animateContentSize(),
                 )
             },

@@ -70,7 +70,7 @@ import app.tivi.common.compose.rememberTiviDecayAnimationSpec
 import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.TopAppBarWithBottomContent
-import app.tivi.common.ui.resources.MR
+import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.compoundmodels.EpisodeWithWatches
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.Episode
@@ -81,7 +81,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -168,7 +167,7 @@ internal fun ShowSeasons(
                     IconButton(onClick = navigateUp) {
                         Icon(
                             Icons.Default.ArrowBack,
-                            contentDescription = stringResource(MR.strings.cd_navigate_up),
+                            contentDescription = LocalStrings.current.cdNavigateUp,
                         )
                     }
                 },
@@ -338,7 +337,7 @@ private fun EpisodeWithWatchesRow(
 
             Text(
                 text = episode.title
-                    ?: stringResource(MR.strings.episode_title_fallback, episode.number!!),
+                    ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -347,7 +346,7 @@ private fun EpisodeWithWatchesRow(
         if (hasPending) {
             Icon(
                 imageVector = Icons.Default.CloudUpload,
-                contentDescription = stringResource(MR.strings.cd_episode_syncing),
+                contentDescription = LocalStrings.current.cdEpisodeSyncing,
                 modifier = Modifier.align(Alignment.CenterVertically),
             )
             needSpacer = true
@@ -361,8 +360,8 @@ private fun EpisodeWithWatchesRow(
                     else -> Icons.Default.Visibility
                 },
                 contentDescription = when {
-                    onlyPendingDeletes -> stringResource(MR.strings.cd_episode_deleted)
-                    else -> stringResource(MR.strings.cd_episode_watched)
+                    onlyPendingDeletes -> LocalStrings.current.cdEpisodeDeleted
+                    else -> LocalStrings.current.cdEpisodeWatched
                 },
                 modifier = Modifier.align(Alignment.CenterVertically),
             )
