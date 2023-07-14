@@ -7,6 +7,7 @@ import app.cash.paging.PagingConfig
 import app.cash.paging.PagingData
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -18,34 +19,33 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withTimeout
 
 abstract class Interactor<in P, R> {
-    private var count: Int = 0
-    private val loadingState = MutableStateFlow(count)
+    private val count = atomic(0)
+    private val loadingState = MutableStateFlow(count.value)
 
-    val inProgress: Flow<Boolean>
-        get() = loadingState.map { it > 0 }.distinctUntilChanged()
+    val inProgress: Flow<Boolean> = loadingState
+        .map { it > 0 }
+        .distinctUntilChanged()
 
     private fun addLoader() {
-        loadingState.value = count++
+        loadingState.value = count.incrementAndGet()
     }
 
     private fun removeLoader() {
-        loadingState.value = count--
+        loadingState.value = count.decrementAndGet()
     }
 
     suspend operator fun invoke(
         params: P,
         timeout: Duration = DefaultTimeout,
-    ): Result<R> {
-        return try {
-            addLoader()
-            runCatching {
-                withTimeout(timeout) {
-                    doWork(params)
-                }
+    ): Result<R> = try {
+        addLoader()
+        runCatching {
+            withTimeout(timeout) {
+                doWork(params)
             }
-        } finally {
-            removeLoader()
         }
+    } finally {
+        removeLoader()
     }
 
     protected abstract suspend fun doWork(params: P): R
