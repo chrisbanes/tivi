@@ -35,16 +35,23 @@ abstract class AndroidApplicationComponent(
     abstract val initializers: AppInitializers
     abstract val workerFactory: TiviWorkerFactory
 
+    @Suppress("DEPRECATION")
     @ApplicationScope
     @Provides
-    fun provideApplicationId(application: Application): ApplicationInfo = ApplicationInfo(
-        packageName = application.packageName,
-        debugBuild = BuildConfig.DEBUG,
-        flavor = when (BuildConfig.FLAVOR) {
-            "qa" -> Flavor.Qa
-            else -> Flavor.Standard
-        },
-    )
+    fun provideApplicationInfo(application: Application): ApplicationInfo {
+        val packageInfo = application.packageManager.getPackageInfo(application.packageName, 0)
+
+        return ApplicationInfo(
+            packageName = application.packageName,
+            debugBuild = BuildConfig.DEBUG,
+            flavor = when (BuildConfig.FLAVOR) {
+                "qa" -> Flavor.Qa
+                else -> Flavor.Standard
+            },
+            versionName = packageInfo.versionName,
+            versionCode = packageInfo.versionCode,
+        )
+    }
 
     @Provides
     @IntoSet

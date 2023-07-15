@@ -4,9 +4,10 @@
 package app.tivi.home
 
 import android.app.Activity
-import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
@@ -18,7 +19,6 @@ import app.tivi.inject.ActivityScope
 import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.UiComponent
 import app.tivi.screens.DiscoverScreen
-import app.tivi.settings.SettingsActivity
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
@@ -39,9 +39,9 @@ class MainActivity : TiviActivity() {
             component.tiviContent(
                 backstack = backstack,
                 navigator = navigator,
-                onOpenSettings = {
-                    val context = this@MainActivity
-                    context.startActivity(Intent(context, SettingsActivity::class.java))
+                onOpenUrl = { url ->
+                    val intent = CustomTabsIntent.Builder().build()
+                    intent.launchUrl(this@MainActivity, Uri.parse(url))
                 },
                 modifier = Modifier.semantics {
                     // Enables testTag -> UiAutomator resource id

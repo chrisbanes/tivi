@@ -4,24 +4,30 @@
 
 plugins {
     id("app.tivi.android.library")
-    id("app.tivi.kotlin.android")
-    alias(libs.plugins.ksp)
+    id("app.tivi.kotlin.multiplatform")
+    alias(libs.plugins.composeMultiplatform)
 }
 
 android {
     namespace = "app.tivi.settings"
 }
 
-dependencies {
-    implementation(projects.core.base)
-    implementation(projects.common.ui.resources)
-    implementation(projects.core.powercontroller)
-    implementation(projects.core.preferences)
+kotlin {
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.core.base)
+                implementation(projects.core.preferences)
+                implementation(projects.domain)
+                implementation(projects.common.ui.compose)
 
-    implementation(libs.androidx.activity.activity)
-    implementation(libs.androidx.browser)
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+                api(projects.common.ui.screens)
+                api(libs.circuit.foundation)
 
-    ksp(libs.kotlininject.compiler)
+                implementation(compose.materialIconsExtended)
+                implementation(compose.material3)
+                implementation(compose.animation)
+            }
+        }
+    }
 }
