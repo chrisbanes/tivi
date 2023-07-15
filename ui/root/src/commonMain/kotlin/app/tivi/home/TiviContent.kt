@@ -20,8 +20,8 @@ import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.common.ui.resources.ProvideStrings
 import app.tivi.core.analytics.Analytics
 import app.tivi.overlays.LocalNavigator
-import app.tivi.screens.SettingsScreen
 import app.tivi.screens.TiviScreen
+import app.tivi.screens.UrlScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
@@ -40,7 +40,7 @@ import me.tatarka.inject.annotations.Inject
 typealias TiviContent = @Composable (
     backstack: SaveableBackStack,
     navigator: Navigator,
-    onOpenSettings: () -> Unit,
+    onOpenUrl: (String) -> Unit,
     modifier: Modifier,
 ) -> Unit
 
@@ -50,7 +50,7 @@ typealias TiviContent = @Composable (
 fun TiviContent(
     @Assisted backstack: SaveableBackStack,
     @Assisted navigator: Navigator,
-    @Assisted onOpenSettings: () -> Unit,
+    @Assisted onOpenUrl: (String) -> Unit,
     rootViewModel: (CoroutineScope) -> RootViewModel,
     circuitConfig: CircuitConfig,
     analytics: Analytics,
@@ -64,7 +64,7 @@ fun TiviContent(
     remember { rootViewModel(coroutineScope) }
 
     val tiviNavigator: Navigator = remember(navigator) {
-        TiviNavigator(navigator, onOpenSettings)
+        TiviNavigator(navigator, onOpenUrl)
     }
 
     // Launch an effect to track changes to the current back stack entry, and push them
@@ -103,20 +103,16 @@ fun TiviContent(
 
 private class TiviNavigator(
     private val navigator: Navigator,
-    private val onOpenSettings: () -> Unit,
+    private val onOpenUrl: (String) -> Unit,
 ) : Navigator {
     override fun goTo(screen: Screen) {
         when (screen) {
-            is SettingsScreen -> onOpenSettings()
+            is UrlScreen -> onOpenUrl(screen.url)
             else -> navigator.goTo(screen)
         }
     }
 
-    override fun pop(): Screen? {
-        return navigator.pop()
-    }
+    override fun pop(): Screen? = navigator.pop()
 
-    override fun resetRoot(newRoot: Screen): List<Screen> {
-        return navigator.resetRoot(newRoot)
-    }
+    override fun resetRoot(newRoot: Screen): List<Screen> = navigator.resetRoot(newRoot)
 }

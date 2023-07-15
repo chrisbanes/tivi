@@ -39,7 +39,7 @@ fun main() = application {
         component.tiviContent(
             backstack = backstack,
             navigator = navigator,
-            onOpenSettings = { /* no-op for now */ },
+            onOpenUrl = { /* no-op for now */ },
             modifier = Modifier,
         )
     }

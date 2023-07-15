@@ -32,6 +32,15 @@ abstract class IosApplicationComponent(
         packageName = NSBundle.mainBundle.bundleIdentifier ?: "app.tivi.client",
         debugBuild = Platform.isDebugBinary,
         flavor = Flavor.Standard,
+        versionName = NSBundle.mainBundle.infoDictionary
+            ?.get("CFBundleShortVersionString") as? String
+            ?: "",
+        versionCode = (
+            NSBundle.mainBundle.infoDictionary
+                ?.get("CFBundleVersion") as? String
+            )
+            ?.toIntOrNull()
+            ?: 0,
     )
 
     @Provides
