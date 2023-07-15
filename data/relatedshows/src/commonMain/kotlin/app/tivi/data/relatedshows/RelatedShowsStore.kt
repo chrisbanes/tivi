@@ -9,9 +9,12 @@ import app.tivi.data.daos.getIdOrSavePlaceholder
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.RelatedShowEntry
 import app.tivi.data.util.storeBuilder
+import app.tivi.data.util.usingDispatchers
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -27,6 +30,7 @@ class RelatedShowsStore(
     showDao: TiviShowDao,
     lastRequestStore: RelatedShowsLastRequestStore,
     transactionRunner: DatabaseTransactionRunner,
+    dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, RelatedShows> by storeBuilder(
     fetcher = Fetcher.of { showId: Long ->
         runCatching { tmdbDataSource(showId) }
@@ -38,14 +42,16 @@ class RelatedShowsStore(
             }
             .getOrThrow()
             .let { result ->
-                transactionRunner {
-                    lastRequestStore.updateLastRequest(showId)
+                withContext(dispatchers.databaseWrite) {
+                    transactionRunner {
+                        lastRequestStore.updateLastRequest(showId)
 
-                    result.map { (show, entry) ->
-                        entry.copy(
-                            showId = showId,
-                            otherShowId = showDao.getIdOrSavePlaceholder(show),
-                        )
+                        result.map { (show, entry) ->
+                            entry.copy(
+                                showId = showId,
+                                otherShowId = showDao.getIdOrSavePlaceholder(show),
+                            )
+                        }
                     }
                 }
             }
@@ -63,7 +69,10 @@ class RelatedShowsStore(
             }
         },
         delete = relatedShowsDao::deleteWithShowId,
-        deleteAll = relatedShowsDao::deleteAll,
+        deleteAll = { transactionRunner(relatedShowsDao::deleteAll) },
+    ).usingDispatchers(
+        readDispatcher = dispatchers.databaseRead,
+        writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
     Validator.by { lastRequestStore.isRequestValid(it.showId, 28.days) },

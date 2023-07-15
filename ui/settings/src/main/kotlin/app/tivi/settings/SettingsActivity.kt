@@ -51,6 +51,8 @@ abstract class SettingsActivityComponent(
     @Provides
     fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
         io = Dispatchers.IO,
+        databaseWrite = Dispatchers.IO,
+        databaseRead = Dispatchers.IO,
         computation = Dispatchers.Default,
         main = Dispatchers.Main,
     )

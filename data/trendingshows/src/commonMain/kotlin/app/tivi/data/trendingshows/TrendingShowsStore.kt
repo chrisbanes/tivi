@@ -10,8 +10,11 @@ import app.tivi.data.daos.updatePage
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.TrendingShowEntry
 import app.tivi.data.util.storeBuilder
+import app.tivi.data.util.usingDispatchers
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.hours
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -26,15 +29,18 @@ class TrendingShowsStore(
     showDao: TiviShowDao,
     lastRequestStore: TrendingShowsLastRequestStore,
     transactionRunner: DatabaseTransactionRunner,
+    dispatchers: AppCoroutineDispatchers,
 ) : Store<Int, List<TrendingShowEntry>> by storeBuilder(
     fetcher = Fetcher.of { page: Int ->
         dataSource(page, 20).let { response ->
-            transactionRunner {
-                if (page == 0) {
-                    lastRequestStore.updateLastRequest()
-                }
-                response.map { (show, entry) ->
-                    entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
+            withContext(dispatchers.databaseWrite) {
+                transactionRunner {
+                    if (page == 0) {
+                        lastRequestStore.updateLastRequest()
+                    }
+                    response.map { (show, entry) ->
+                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
+                    }
                 }
             }
         }
@@ -53,7 +59,10 @@ class TrendingShowsStore(
             }
         },
         delete = trendingShowsDao::deletePage,
-        deleteAll = trendingShowsDao::deleteAll,
+        deleteAll = { transactionRunner(trendingShowsDao::deleteAll) },
+    ).usingDispatchers(
+        readDispatcher = dispatchers.databaseRead,
+        writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
     Validator.by { lastRequestStore.isRequestValid(3.hours) },

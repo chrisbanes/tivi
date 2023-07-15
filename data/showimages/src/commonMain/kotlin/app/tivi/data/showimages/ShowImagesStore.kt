@@ -9,7 +9,9 @@ import app.tivi.data.daos.saveImages
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.ShowImages
 import app.tivi.data.util.storeBuilder
+import app.tivi.data.util.usingDispatchers
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
@@ -26,6 +28,7 @@ class ShowImagesStore(
     lastRequestStore: ShowImagesLastRequestStore,
     dataSource: ShowImagesDataSource,
     transactionRunner: DatabaseTransactionRunner,
+    dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, ShowImages> by storeBuilder(
     fetcher = Fetcher.of { showId: Long ->
         val show = showDao.getShowWithId(showId)
@@ -48,7 +51,10 @@ class ShowImagesStore(
             }
         },
         delete = showTmdbImagesDao::deleteForShowId,
-        deleteAll = showTmdbImagesDao::deleteAll,
+        deleteAll = { transactionRunner(showTmdbImagesDao::deleteAll) },
+    ).usingDispatchers(
+        readDispatcher = dispatchers.databaseRead,
+        writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
     Validator.by { lastRequestStore.isRequestValid(it.showId, 180.days) },

@@ -10,7 +10,9 @@ import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.WatchedShowEntry
 import app.tivi.data.util.storeBuilder
 import app.tivi.data.util.syncerForEntity
+import app.tivi.data.util.usingDispatchers
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
 import me.tatarka.inject.annotations.Inject
@@ -28,6 +30,7 @@ class WatchedShowsStore(
     lastRequestStore: WatchedShowsLastRequestStore,
     logger: Logger,
     transactionRunner: DatabaseTransactionRunner,
+    dispatchers: AppCoroutineDispatchers,
 ) : Store<Unit, List<WatchedShowEntry>> by storeBuilder(
     fetcher = Fetcher.of {
         dataSource().let { response ->
@@ -60,9 +63,12 @@ class WatchedShowsStore(
         },
         delete = {
             // Delete of an entity here means the entire list
-            watchedShowsDao.deleteAll()
+            transactionRunner(watchedShowsDao::deleteAll)
         },
-        deleteAll = watchedShowsDao::deleteAll,
+        deleteAll = { transactionRunner(watchedShowsDao::deleteAll) },
+    ).usingDispatchers(
+        readDispatcher = dispatchers.databaseRead,
+        writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
     Validator.by { lastRequestStore.isRequestValid(6.hours) },

@@ -29,6 +29,7 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.LoggerComponent
 import app.tivi.util.PowerControllerComponent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
@@ -52,10 +53,13 @@ interface CoreComponent :
     /**
      * Need to wait to upgrade to Coroutines 1.7.x so we can reference IO from common
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     @ApplicationScope
     @Provides
     fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
         io = Dispatchers.IO,
+        databaseWrite = Dispatchers.IO.limitedParallelism(1),
+        databaseRead = Dispatchers.IO.limitedParallelism(4),
         computation = Dispatchers.Default,
         main = Dispatchers.Main,
     )
