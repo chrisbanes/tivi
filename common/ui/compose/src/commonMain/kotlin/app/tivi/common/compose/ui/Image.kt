@@ -3,8 +3,13 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -37,10 +42,10 @@ import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.asImageBitmap
 import com.seiko.imageloader.model.ImageAction
+import com.seiko.imageloader.model.ImageEvent
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageRequestBuilder
 import com.seiko.imageloader.model.ImageResult
-import com.seiko.imageloader.option.Scale
 import com.seiko.imageloader.option.SizeResolver
 import com.seiko.imageloader.toPainter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -50,13 +55,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun AsyncImage(
     model: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    onEvent: ((ImageAction) -> Unit)? = null,
+    onAction: ((ImageAction) -> Unit)? = null,
     requestBuilder: (ImageRequestBuilder.() -> ImageRequestBuilder)? = null,
     imageLoader: ImageLoader = LocalImageLoader.current,
     alignment: Alignment = Alignment.Center,
@@ -76,25 +81,36 @@ fun AsyncImage(
         }
     }
 
+    var previousAction by remember { mutableStateOf<ImageAction?>(null) }
     var result by remember { mutableStateOf<ImageResult?>(null) }
+
     LaunchedEffect(imageLoader) {
         snapshotFlow { request }
             .filterNotNull()
             .flatMapLatest { imageLoader.async(it) }
             .collect { action ->
-                onEvent?.invoke(action)
+                onAction?.invoke(action)
                 if (action is ImageResult) {
                     result = action
                 }
+                previousAction = action
             }
     }
 
-    Crossfade(
-        targetState = result,
-        animationSpec = tween(durationMillis = 220),
-        label = "AsyncImage-Crossfade",
+    AnimatedContent(
+        targetState = result to previousAction,
+        transitionSpec = {
+            val (_, targetLastAction) = targetState
+            when (targetLastAction) {
+                is ImageEvent.StartWithMemory -> {
+                    // If it's loaded from the memory cache, don't fade it in
+                    EnterTransition.None with ExitTransition.None
+                }
+                else -> fadeIn() with fadeOut()
+            }
+        },
         modifier = modifier,
-    ) { r ->
+    ) { (r, _) ->
         ResultImage(
             result = r,
             alignment = alignment,
@@ -183,9 +199,4 @@ private fun Constraints.toSizeOrNull() = when {
         width = if (hasBoundedWidth) maxWidth.toFloat() else 0f,
         height = if (hasBoundedHeight) maxHeight.toFloat() else 0f,
     )
-}
-
-private fun ContentScale.toScale() = when (this) {
-    ContentScale.Fit, ContentScale.Inside -> Scale.FIT
-    else -> Scale.FILL
 }
