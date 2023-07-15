@@ -388,7 +388,7 @@ private fun UpNextItem(
 
             AsyncImage(
                 model = model,
-                onEvent = { state ->
+                onAction = { state ->
                     if (state is ImageResult.Error && model is EpisodeImageModel) {
                         // If the episode backdrop request failed, fallback to the show backdrop
                         model = show.asImageModel(ImageType.BACKDROP)
