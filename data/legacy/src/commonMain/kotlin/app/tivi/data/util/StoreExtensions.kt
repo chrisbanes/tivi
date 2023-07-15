@@ -3,8 +3,11 @@
 
 package app.tivi.data.util
 
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
@@ -31,3 +34,25 @@ inline fun <Key : Any, Model : Any> storeBuilder(
     fetcher: Fetcher<Key, Model>,
     sourceOfTruth: SourceOfTruth<Key, Model>,
 ): StoreBuilder<Key, Model> = StoreBuilder.from(fetcher, sourceOfTruth)
+
+fun <Key : Any, Local : Any> SourceOfTruth<Key, Local>.usingDispatchers(
+    readDispatcher: CoroutineDispatcher,
+    writeDispatcher: CoroutineDispatcher,
+): SourceOfTruth<Key, Local> {
+    val wrapped = this
+    return object : SourceOfTruth<Key, Local> {
+        override fun reader(key: Key): Flow<Local?> = wrapped.reader(key).flowOn(readDispatcher)
+
+        override suspend fun write(key: Key, value: Local) = withContext(writeDispatcher) {
+            wrapped.write(key, value)
+        }
+
+        override suspend fun delete(key: Key) = withContext(writeDispatcher) {
+            wrapped.delete(key)
+        }
+
+        override suspend fun deleteAll() = withContext(writeDispatcher) {
+            wrapped.deleteAll()
+        }
+    }
+}

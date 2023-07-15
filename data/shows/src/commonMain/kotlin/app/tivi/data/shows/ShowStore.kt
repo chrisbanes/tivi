@@ -9,8 +9,11 @@ import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.TiviShow
 import app.tivi.data.util.mergeShows
 import app.tivi.data.util.storeBuilder
+import app.tivi.data.util.usingDispatchers
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.days
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -25,9 +28,12 @@ class ShowStore(
     traktDataSource: TraktShowDataSource,
     tmdbDataSource: TmdbShowDataSource,
     transactionRunner: DatabaseTransactionRunner,
+    dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, TiviShow> by storeBuilder(
     fetcher = Fetcher.of { id: Long ->
-        val savedShow = showDao.getShowWithIdOrThrow(id)
+        val savedShow = withContext(dispatchers.databaseWrite) {
+            showDao.getShowWithIdOrThrow(id)
+        }
 
         val traktResult = runCatching { traktDataSource.getShow(savedShow) }
         if (traktResult.isSuccess) {
@@ -54,7 +60,10 @@ class ShowStore(
             }
         },
         delete = showDao::delete,
-        deleteAll = showDao::deleteAll,
+        deleteAll = { transactionRunner(showDao::deleteAll) },
+    ).usingDispatchers(
+        readDispatcher = dispatchers.databaseRead,
+        writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
     Validator.by { lastRequestStore.isRequestValid(it.id, 14.days) },

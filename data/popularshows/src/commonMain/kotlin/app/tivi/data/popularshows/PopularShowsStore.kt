@@ -10,7 +10,9 @@ import app.tivi.data.daos.updatePage
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.PopularShowEntry
 import app.tivi.data.util.storeBuilder
+import app.tivi.data.util.usingDispatchers
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.hours
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
@@ -26,6 +28,7 @@ class PopularShowsStore(
     showDao: TiviShowDao,
     lastRequestStore: PopularShowsLastRequestStore,
     transactionRunner: DatabaseTransactionRunner,
+    dispatchers: AppCoroutineDispatchers,
 ) : Store<Int, List<PopularShowEntry>> by storeBuilder(
     fetcher = Fetcher.of { page: Int ->
         dataSource(page, 20).let { response ->
@@ -53,7 +56,10 @@ class PopularShowsStore(
             }
         },
         delete = popularShowsDao::deletePage,
-        deleteAll = popularShowsDao::deleteAll,
+        deleteAll = { transactionRunner(popularShowsDao::deleteAll) },
+    ).usingDispatchers(
+        readDispatcher = dispatchers.databaseRead,
+        writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
     Validator.by { lastRequestStore.isRequestValid(3.hours) },

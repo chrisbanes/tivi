@@ -15,7 +15,13 @@ actual interface SqlDelightDatabasePlatformComponent {
     fun provideDriverFactory(configuration: DatabaseConfiguration): SqlDriver {
         return when {
             configuration.inMemory -> inMemoryDriver(Database.Schema)
-            else -> NativeSqliteDriver(schema = Database.Schema, name = "tivi.db")
+            else -> {
+                NativeSqliteDriver(
+                    schema = Database.Schema,
+                    name = "tivi.db",
+                    maxReaderConnections = 4,
+                )
+            }
         }.also { driver ->
             driver.execute(null, "PRAGMA foreign_keys=ON", 0)
         }

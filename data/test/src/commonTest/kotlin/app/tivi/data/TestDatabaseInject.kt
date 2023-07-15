@@ -90,6 +90,8 @@ abstract class TestDataSourceComponent :
         val testDispatcher = UnconfinedTestDispatcher()
         return AppCoroutineDispatchers(
             io = testDispatcher,
+            databaseRead = testDispatcher,
+            databaseWrite = testDispatcher,
             computation = testDispatcher,
             main = testDispatcher,
         )
