@@ -26,6 +26,8 @@ abstract class DesktopApplicationComponent : SharedApplicationComponent {
         packageName = "app.tivi",
         debugBuild = true,
         flavor = Flavor.Standard,
+        versionName = "1.0.0",
+        versionCode = 1,
     )
 
     @ApplicationScope
