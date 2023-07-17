@@ -26,9 +26,7 @@ import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
@@ -63,9 +61,9 @@ class EpisodeTrackPresenter(
         val scope = rememberCoroutineScope()
         val uiMessageManager = remember { UiMessageManager() }
 
-        var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-        var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
-        var selectedNow by remember { mutableStateOf(false) }
+        val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
+        var selectedDate by remember { mutableStateOf(now.date) }
+        var selectedTime by remember { mutableStateOf(now.time) }
 
         val episodeDetails by observeEpisodeDetails.flow.collectAsState(initial = null)
 
@@ -75,9 +73,7 @@ class EpisodeTrackPresenter(
 
         val selectedDateTime by remember {
             derivedStateOf {
-                val date = selectedDate
-                val time = selectedTime
-                if (date != null && time != null) LocalDateTime(date, time) else null
+                LocalDateTime(selectedDate, selectedTime)
             }
         }
 
@@ -114,11 +110,11 @@ class EpisodeTrackPresenter(
                 }
 
                 EpisodeTrackUiEvent.SelectNow -> {
-                    selectedNow = true
-                }
-
-                EpisodeTrackUiEvent.UnselectNow -> {
-                    selectedNow = false
+                    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                        .also { dateTime ->
+                            selectedDate = dateTime.date
+                            selectedTime = dateTime.time
+                        }
                 }
 
                 is EpisodeTrackUiEvent.SelectTime -> {
@@ -126,29 +122,21 @@ class EpisodeTrackPresenter(
                 }
 
                 EpisodeTrackUiEvent.Submit -> {
-                    val dt = selectedDateTime
-                    val instant = when {
-                        selectedNow -> Clock.System.now()
-                        dt != null -> dt.toInstant(TimeZone.currentSystemDefault())
-                        else -> null
-                    }
-
-                    if (instant != null) {
-                        scope.launch {
-                            addEpisodeWatch(
-                                AddEpisodeWatch.Params(screen.id, instant),
-                            ).also { result ->
-                                if (result.isSuccess) {
-                                    navigator.pop()
-                                }
-                                result.onException { e ->
-                                    logger.i(e)
-                                    uiMessageManager.emitMessage(UiMessage(e))
-                                }
+                    scope.launch {
+                        addEpisodeWatch(
+                            AddEpisodeWatch.Params(
+                                episodeId = screen.id,
+                                timestamp = selectedDateTime.toInstant(TimeZone.currentSystemDefault()),
+                            ),
+                        ).also { result ->
+                            if (result.isSuccess) {
+                                navigator.pop()
+                            }
+                            result.onException { e ->
+                                logger.i(e)
+                                uiMessageManager.emitMessage(UiMessage(e))
                             }
                         }
-                    } else {
-                        // TODO: display error message
                     }
                 }
             }
@@ -165,11 +153,10 @@ class EpisodeTrackPresenter(
             showSetFirstAired = episodeDetails?.episode?.firstAired != null,
             selectedDate = selectedDate,
             selectedTime = selectedTime,
-            selectedNow = selectedNow,
             refreshing = refreshing,
             message = message,
             submitInProgress = submitting,
-            canSubmit = !submitting && (selectedNow || (selectedDate != null && selectedTime != null)),
+            canSubmit = !submitting,
             eventSink = ::eventSink,
         )
     }

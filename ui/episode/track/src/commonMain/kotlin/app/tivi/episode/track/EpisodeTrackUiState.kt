@@ -24,9 +24,8 @@ data class EpisodeTrackUiState(
     val submitInProgress: Boolean = false,
 
     val showSetFirstAired: Boolean = false,
-    val selectedDate: LocalDate? = null,
-    val selectedTime: LocalTime? = null,
-    val selectedNow: Boolean = true,
+    val selectedDate: LocalDate,
+    val selectedTime: LocalTime,
 
     val eventSink: (EpisodeTrackUiEvent) -> Unit,
 ) : CircuitUiState
@@ -35,7 +34,6 @@ sealed interface EpisodeTrackUiEvent : CircuitUiEvent {
     data class Refresh(val fromUser: Boolean = false) : EpisodeTrackUiEvent
     object Submit : EpisodeTrackUiEvent
     object SelectNow : EpisodeTrackUiEvent
-    object UnselectNow : EpisodeTrackUiEvent
     object SelectFirstAired : EpisodeTrackUiEvent
     data class SelectDate(val date: LocalDate) : EpisodeTrackUiEvent
     data class SelectTime(val time: LocalTime) : EpisodeTrackUiEvent
