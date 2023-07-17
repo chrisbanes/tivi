@@ -3,7 +3,7 @@
 
 package app.tivi.episode.track
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -78,13 +77,8 @@ internal fun EpisodeTrack(
     EpisodeTrack(
         viewState = state,
         onSubmit = { eventSink(EpisodeTrackUiEvent.Submit) },
-        onNowSelected = { selected ->
-            when {
-                selected -> eventSink(EpisodeTrackUiEvent.SelectNow)
-                else -> eventSink(EpisodeTrackUiEvent.UnselectNow)
-            }
-        },
-        onSetFirstAired = { eventSink(EpisodeTrackUiEvent.SelectFirstAired) },
+        onNowSelected = { eventSink(EpisodeTrackUiEvent.SelectNow) },
+        onFirstAiredSelected = { eventSink(EpisodeTrackUiEvent.SelectFirstAired) },
         onDateSelected = { eventSink(EpisodeTrackUiEvent.SelectDate(it)) },
         onTimeSelected = { eventSink(EpisodeTrackUiEvent.SelectTime(it)) },
         onMessageShown = { eventSink(EpisodeTrackUiEvent.ClearMessage(it)) },
@@ -97,10 +91,10 @@ internal fun EpisodeTrack(
 internal fun EpisodeTrack(
     viewState: EpisodeTrackUiState,
     onSubmit: () -> Unit,
-    onNowSelected: (Boolean) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onTimeSelected: (LocalTime) -> Unit,
-    onSetFirstAired: () -> Unit,
+    onNowSelected: () -> Unit,
+    onFirstAiredSelected: () -> Unit,
     onMessageShown: (id: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -141,14 +135,13 @@ internal fun EpisodeTrack(
             Divider()
 
             EpisodeTrack(
-                selectedNow = viewState.selectedNow,
                 selectedDate = viewState.selectedDate,
                 selectedTime = viewState.selectedTime,
-                onNowSelected = onNowSelected,
                 onDateSelected = onDateSelected,
                 onTimeSelected = onTimeSelected,
                 showSetFirstAired = viewState.showSetFirstAired,
-                onSetFirstAired = onSetFirstAired,
+                onFirstAiredSelected = onFirstAiredSelected,
+                onNowSelected = onNowSelected,
                 submitInProgress = viewState.submitInProgress,
                 canSubmitWatch = viewState.canSubmit,
                 submitWatch = onSubmit,
@@ -214,12 +207,11 @@ private fun EpisodeHeader(
 
 @Composable
 private fun EpisodeTrack(
-    selectedNow: Boolean,
-    onNowSelected: (Boolean) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onTimeSelected: (LocalTime) -> Unit,
     showSetFirstAired: Boolean,
-    onSetFirstAired: () -> Unit,
+    onNowSelected: () -> Unit,
+    onFirstAiredSelected: () -> Unit,
     submitInProgress: Boolean,
     canSubmitWatch: Boolean,
     submitWatch: () -> Unit,
@@ -235,44 +227,35 @@ private fun EpisodeTrack(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
             )
+        }
 
-            Text(
-                text = strings.episodeTrackNow,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(horizontal = Layout.gutter),
+        Row(Modifier.padding(top = Layout.gutter)) {
+            DateTextField(
+                selectedDate = selectedDate,
+                onDateSelected = onDateSelected,
+                dialogTitle = strings.episodeWatchDateTitle,
+                modifier = Modifier.fillMaxWidth(3 / 5f),
             )
 
-            Switch(
-                checked = selectedNow,
-                onCheckedChange = onNowSelected,
+            Spacer(Modifier.width(Layout.gutter))
+
+            TimeTextField(
+                selectedTime = selectedTime,
+                onTimeSelected = onTimeSelected,
+                dialogTitle = strings.episodeWatchTimeTitle,
+                modifier = Modifier.weight(1f),
             )
         }
 
-        AnimatedVisibility(visible = !selectedNow) {
-            Column(Modifier.padding(top = Layout.gutter)) {
-                Row {
-                    DateTextField(
-                        selectedDate = selectedDate,
-                        onDateSelected = onDateSelected,
-                        dialogTitle = strings.episodeWatchDateTitle,
-                        modifier = Modifier.fillMaxWidth(3 / 5f),
-                    )
-
-                    Spacer(Modifier.width(Layout.gutter))
-
-                    TimeTextField(
-                        selectedTime = selectedTime,
-                        onTimeSelected = onTimeSelected,
-                        dialogTitle = strings.episodeWatchTimeTitle,
-                        modifier = Modifier.weight(1f),
-                    )
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            if (showSetFirstAired) {
+                TextButton(onClick = onFirstAiredSelected) {
+                    Text(text = strings.episodeTrackSetFirstAired)
                 }
+            }
 
-                if (showSetFirstAired) {
-                    TextButton(onClick = onSetFirstAired) {
-                        Text(text = strings.episodeTrackSetFirstAired)
-                    }
-                }
+            TextButton(onClick = onNowSelected) {
+                Text(text = strings.episodeTrackSetNow)
             }
         }
 

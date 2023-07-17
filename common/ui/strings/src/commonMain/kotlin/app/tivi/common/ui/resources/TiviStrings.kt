@@ -57,7 +57,7 @@ data class TiviStrings(
     val episodeRemoveWatchesDialogMessage: String,
     val episodeRemoveWatchesDialogTitle: String,
     val episodeTitleFallback: (Int) -> String,
-    val episodeTrackNow: String,
+    val episodeTrackSetNow: String,
     val episodeTrackPrompt: String,
     val episodeTrackSetFirstAired: String,
     val episodeWatchDateTitle: String,
