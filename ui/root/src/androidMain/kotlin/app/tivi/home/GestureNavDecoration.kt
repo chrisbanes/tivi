@@ -5,11 +5,11 @@ package app.tivi.home
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import android.window.BackEvent
 import android.window.OnBackAnimationCallback
 import android.window.OnBackInvokedDispatcher
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -23,10 +23,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -35,91 +37,97 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import app.tivi.animations.lerp
-import com.slack.circuit.backstack.BackStack
-import com.slack.circuit.backstack.ProvidedValues
-import com.slack.circuit.backstack.SaveableBackStack
-import com.slack.circuit.backstack.isAtRoot
-import com.slack.circuit.backstack.isEmpty
-import com.slack.circuit.foundation.CircuitConfig
-import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.NavigatorDefaults
 import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.Screen
 import kotlin.math.absoluteValue
 
-@OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("NewApi")
-@Composable
-actual fun TiviNavigableCircuitContent(
-    navigator: Navigator,
-    backstack: SaveableBackStack,
-    modifier: Modifier,
-    circuitConfig: CircuitConfig,
-    providedValues: Map<out BackStack.Record, ProvidedValues>,
-    unavailableRoute: @Composable (screen: Screen, modifier: Modifier) -> Unit,
-) {
-    if (Build.VERSION.SDK_INT < 34 || backstack.isEmpty) {
-        // On API 33 or below, just use the default implementation
-        NavigableCircuitContent(
-            navigator = navigator,
-            backstack = backstack,
-            modifier = modifier,
-            circuitConfig = circuitConfig,
-            providedValues = providedValues,
-        )
-        return
-    }
+@OptIn(ExperimentalAnimationApi::class)
+internal actual class GestureNavDecoration actual constructor(
+    private val navigator: Navigator,
+) : NavDecorationWithPrevious {
 
-    GestureDrivenNavigableCircuitContent(
-        navigator = navigator,
-        backstack = backstack,
-        modifier = modifier,
-        circuitConfig = circuitConfig,
-        providedValues = providedValues,
-        unavailableRoute = unavailableRoute,
-        transitionSpec = { diff ->
-            // Mirror the forward and backward transitions of activities in Android 33
-            when {
-                // adding to back stack
-                diff > 0 -> {
-                    (slideInHorizontally(tween(), SlightlyRight) + fadeIn()) with
-                        (slideOutHorizontally(tween(), SlightlyLeft) + fadeOut())
-                }
-
-                // come back from back stack
-                diff < 0 -> {
-                    if (initialState.poppedViaGesture) {
-                        EnterTransition.None with scaleOut(targetScale = 0.8f) + fadeOut()
-                    } else {
-                        slideInHorizontally(tween(), SlightlyLeft) + fadeIn() with
-                            slideOutHorizontally(tween(), SlightlyRight) + fadeOut()
-                    }.apply {
-                        targetContentZIndex = -1f
-                    }
-                }
-
-                // Root reset. Crossfade
-                else -> fadeIn() with fadeOut()
-            }
-        },
+    @Composable
+    override fun <T> DecoratedContent(
+        arg: T,
+        previous: T?,
+        backStackDepth: Int,
+        modifier: Modifier,
+        content: @Composable (T) -> Unit,
     ) {
-        var swipeProgress by remember { mutableStateOf(0f) }
+        if (Build.VERSION.SDK_INT < 34) {
+            return NavigatorDefaults.DefaultDecoration.DecoratedContent(
+                arg = arg,
+                backStackDepth = backStackDepth,
+                modifier = modifier,
+                content = content,
+            )
+        }
 
-        BackHandler(
-            animatedEnabled = !backstack.isAtRoot,
-            onBackProgress = { swipeProgress = it },
-            onBackInvoked = {
-                poppedViaGesture = true
-                navigator.pop()
-            },
-        )
+        // Remember the previous stack depth so we know if the navigation is going "back".
+        var prevStackDepth by rememberSaveable { mutableStateOf(backStackDepth) }
+        SideEffect {
+            prevStackDepth = backStackDepth
+        }
 
-        Box(
-            modifier = Modifier.predictiveBackMotion(
-                shape = MaterialTheme.shapes.extraLarge,
-                progress = { swipeProgress },
-            ),
-        ) {
-            content(backStackRecord)
+        val poppedViaGesture = remember { mutableMapOf<T, Boolean>() }
+
+        Box(modifier = modifier) {
+            if (previous != null) {
+                content(previous)
+            }
+
+            AnimatedContent(
+                targetState = arg,
+                transitionSpec = {
+                    // Mirror the forward and backward transitions of activities in Android 33
+                    when {
+                        // adding to back stack
+                        backStackDepth > prevStackDepth -> {
+                            (slideInHorizontally(tween(), SlightlyRight) + fadeIn()) with
+                                (slideOutHorizontally(tween(), SlightlyLeft) + fadeOut())
+                        }
+
+                        // come back from back stack
+                        backStackDepth < prevStackDepth -> {
+                            if (poppedViaGesture.getOrDefault(initialState, false)) {
+                                EnterTransition.None with scaleOut(targetScale = 0.8f) + fadeOut()
+                            } else {
+                                slideInHorizontally(tween(), SlightlyLeft) + fadeIn() with
+                                    slideOutHorizontally(tween(), SlightlyRight) + fadeOut()
+                            }.apply {
+                                targetContentZIndex = -1f
+                            }
+                        }
+
+                        // Root reset. Crossfade
+                        else -> fadeIn() with fadeOut()
+                    }
+                },
+                modifier = modifier,
+                label = "",
+            ) { record ->
+                var swipeProgress by remember { mutableStateOf(0f) }
+
+                if (backStackDepth > 1) {
+                    BackHandler(
+                        onBackProgress = { swipeProgress = it },
+                        onBackInvoked = {
+                            poppedViaGesture[record] = true
+                            navigator.pop()
+                        },
+                    )
+                }
+
+                Box(
+                    modifier = Modifier.predictiveBackMotion(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        progress = { swipeProgress },
+                    ),
+                ) {
+                    content(record)
+                }
+            }
         }
     }
 }
@@ -176,8 +184,6 @@ private fun BackHandler(
             }
 
             override fun onBackProgressed(backEvent: BackEvent) {
-                Log.d("OnBackAnimationCallback", "onProgress: ${backEvent.progress}")
-
                 if (lastAnimatedEnabled) {
                     lastOnBackProgress(
                         when (backEvent.swipeEdge) {

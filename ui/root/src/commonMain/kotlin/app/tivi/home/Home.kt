@@ -129,9 +129,10 @@ internal fun Home(
             }
 
             ContentWithOverlays {
-                TiviNavigableCircuitContent(
+                NavigableCircuitContentWithPrevious(
                     navigator = navigator,
                     backstack = backstack,
+                    decoration = GestureNavDecoration(navigator),
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
