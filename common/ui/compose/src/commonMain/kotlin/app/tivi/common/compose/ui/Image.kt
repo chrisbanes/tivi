@@ -42,7 +42,6 @@ import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.asImageBitmap
 import com.seiko.imageloader.model.ImageAction
-import com.seiko.imageloader.model.ImageEvent
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageRequestBuilder
 import com.seiko.imageloader.model.ImageResult
@@ -81,8 +80,8 @@ fun AsyncImage(
         }
     }
 
-    var previousAction by remember { mutableStateOf<ImageAction?>(null) }
-    var result by remember { mutableStateOf<ImageResult?>(null) }
+    var resultCount by remember(model) { mutableStateOf(0) }
+    var result by remember(model) { mutableStateOf<ImageResult?>(null) }
 
     LaunchedEffect(imageLoader) {
         snapshotFlow { request }
@@ -90,23 +89,24 @@ fun AsyncImage(
             .flatMapLatest { imageLoader.async(it) }
             .collect { action ->
                 onAction?.invoke(action)
+
                 if (action is ImageResult) {
                     result = action
+                    resultCount++
                 }
-                previousAction = action
             }
     }
 
     AnimatedContent(
-        targetState = result to previousAction,
+        targetState = result to (resultCount <= 1),
         transitionSpec = {
-            val (_, targetLastAction) = targetState
-            when (targetLastAction) {
-                is ImageEvent.StartWithMemory -> {
+            val (_, firstLoad) = targetState
+            when {
+                firstLoad -> fadeIn() with fadeOut()
+                else -> {
                     // If it's loaded from the memory cache, don't fade it in
                     EnterTransition.None with ExitTransition.None
                 }
-                else -> fadeIn() with fadeOut()
             }
         },
         modifier = modifier,
