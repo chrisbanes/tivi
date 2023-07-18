@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.with
@@ -80,8 +81,8 @@ fun AsyncImage(
         }
     }
 
-    var resultCount by remember(model) { mutableStateOf(0) }
-    var result by remember(model) { mutableStateOf<ImageResult?>(null) }
+    var crossfade by remember(request) { mutableStateOf(true) }
+    var result by remember { mutableStateOf<ImageResult?>(null) }
 
     LaunchedEffect(imageLoader) {
         snapshotFlow { request }
@@ -91,18 +92,19 @@ fun AsyncImage(
                 onAction?.invoke(action)
 
                 if (action is ImageResult) {
+                    // Crossfade if the current result is null
+                    crossfade = result == null
                     result = action
-                    resultCount++
                 }
             }
     }
 
     AnimatedContent(
-        targetState = result to (resultCount <= 1),
+        targetState = result to crossfade,
         transitionSpec = {
-            val (_, firstLoad) = targetState
+            val (_, xfade) = targetState
             when {
-                firstLoad -> fadeIn() with fadeOut()
+                xfade -> fadeIn(tween(200)) with fadeOut(tween(200))
                 else -> {
                     // If it's loaded from the memory cache, don't fade it in
                     EnterTransition.None with ExitTransition.None
