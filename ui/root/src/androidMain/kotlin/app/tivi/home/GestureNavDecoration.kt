@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import app.tivi.animations.lerp
@@ -69,7 +70,9 @@ internal actual class GestureNavDecoration actual constructor(
 
         Box(modifier = modifier) {
             if (previous != null) {
-                content(previous)
+                PreviousContent {
+                    content(previous)
+                }
             }
 
             // Remember the previous stack depth so we know if the navigation is going "back".
@@ -150,8 +153,24 @@ private const val FIVE_PERCENT = 0.05f
 private val SlightlyRight = { width: Int -> (width * FIVE_PERCENT).toInt() }
 private val SlightlyLeft = { width: Int -> 0 - (width * FIVE_PERCENT).toInt() }
 
+@Composable
+internal fun PreviousContent(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .pointerInput(Unit) {
+                // Content in the back stack should not be interactive until they're on top
+            },
+    ) {
+        content()
+    }
+}
+
 /**
- *
+ * Implements most of the treatment specified at
+ * https://developer.android.com/design/ui/mobile/guides/patterns/predictive-back#designing-gesture
  */
 private fun Modifier.predictiveBackMotion(
     shape: Shape,
