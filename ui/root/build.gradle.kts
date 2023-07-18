@@ -34,5 +34,11 @@ kotlin {
                 implementation(compose.animation)
             }
         }
+
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.androidx.activity.compose)
+            }
+        }
     }
 }
