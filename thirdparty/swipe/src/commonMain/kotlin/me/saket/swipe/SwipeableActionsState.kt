@@ -38,13 +38,14 @@ class SwipeableActionsState internal constructor() {
   internal lateinit var canSwipeTowardsLeft: () -> Boolean
 
   internal val draggableState = DraggableState { delta ->
-    val targetOffset = offsetState.value + delta
-    val isAllowed = isResettingOnRelease
-      || targetOffset > 0f && canSwipeTowardsRight()
-      || targetOffset < 0f && canSwipeTowardsLeft()
-
-    // Add some resistance if needed.
-    offsetState.value += if (isAllowed) delta else delta / 10
+      var newDelta = offsetState.value + delta
+      if (!canSwipeTowardsRight()) {
+          newDelta = newDelta.coerceAtMost(0f)
+      }
+      if (!canSwipeTowardsLeft()) {
+          newDelta = newDelta.coerceAtLeast(0f)
+      }
+      offsetState.value = newDelta
   }
 
   internal suspend fun resetOffset() {
