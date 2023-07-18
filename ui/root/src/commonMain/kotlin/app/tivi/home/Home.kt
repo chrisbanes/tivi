@@ -132,7 +132,7 @@ internal fun Home(
                 NavigableCircuitContentWithPrevious(
                     navigator = navigator,
                     backstack = backstack,
-                    decoration = GestureNavDecoration(navigator),
+                    decoration = remember(navigator) { GestureNavDecoration(navigator) },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
