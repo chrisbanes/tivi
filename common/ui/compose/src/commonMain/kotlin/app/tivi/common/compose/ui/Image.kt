@@ -3,19 +3,12 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -27,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -57,7 +51,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 
-@OptIn(ExperimentalCoroutinesApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun AsyncImage(
     model: Any?,
@@ -117,36 +111,38 @@ fun AsyncImage(
             }
     }
 
-    AnimatedContent(
-        targetState = result,
-        transitionSpec = {
-            val xfade = targetState?.source != ImageResultSource.MEMORY
-            when {
-                xfade -> fadeIn(tween(200)) togetherWith fadeOut(tween(200))
-                else -> {
-                    // If it's loaded from the memory cache, don't fade it in
-                    EnterTransition.None togetherWith ExitTransition.None
-                }
+    val transition = updateImageLoadingTransition(result)
+
+    val colorMatrix by remember(transition) {
+        derivedStateOf {
+            ColorMatrix().apply {
+                setAlpha(transition.alpha)
+                setBrightness(transition.brightness)
+                setSaturation(transition.saturation)
             }
-        },
-        modifier = modifier,
-    ) {
-        ResultImage(
-            result = it?.result,
-            alignment = alignment,
-            contentDescription = contentDescription,
-            contentScale = contentScale,
-            alpha = alpha,
-            colorFilter = colorFilter,
-            modifier = Modifier
-                .fillMaxSize()
-                .then(sizeResolver),
-            filterQuality = filterQuality,
-        )
+        }
     }
+
+    ResultImage(
+        result = result?.result,
+        alignment = alignment,
+        contentDescription = contentDescription,
+        contentScale = contentScale,
+        alpha = alpha,
+        colorFilter = when {
+            colorMatrix != IdentityMatrix -> ColorFilter.colorMatrix(colorMatrix)
+            else -> colorFilter
+        },
+        modifier = modifier
+            .fillMaxSize()
+            .then(sizeResolver),
+        filterQuality = filterQuality,
+    )
 }
 
-private data class ImageResultWithSource(
+private val IdentityMatrix = ColorMatrix()
+
+data class ImageResultWithSource(
     val result: ImageResult,
     val source: ImageResultSource,
 )
