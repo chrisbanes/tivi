@@ -13,6 +13,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
@@ -64,21 +67,29 @@ internal actual class GestureNavDecoration actual constructor(
             )
         }
 
-        // Remember the previous stack depth so we know if the navigation is going "back".
-        var prevStackDepth by rememberSaveable { mutableStateOf(backStackDepth) }
-        SideEffect {
-            prevStackDepth = backStackDepth
-        }
-
-        val poppedViaGesture = remember { mutableMapOf<T, Boolean>() }
-
         Box(modifier = modifier) {
             if (previous != null) {
                 content(previous)
             }
 
-            AnimatedContent(
-                targetState = arg,
+            // Remember the previous stack depth so we know if the navigation is going "back".
+            var prevStackDepth by rememberSaveable { mutableStateOf(backStackDepth) }
+            SideEffect {
+                prevStackDepth = backStackDepth
+            }
+
+            val transition = updateTransition(targetState = arg, label = "GestureNavDecoration")
+
+            val poppedViaGesture = remember { mutableSetOf<T>() }
+            LaunchedEffect(transition) {
+                // When the current state has changed (i.e. the transition has completed),
+                // clear out any transient state
+                snapshotFlow { transition.currentState }
+                    .collect { poppedViaGesture.clear() }
+            }
+
+            transition.AnimatedContent(
+                modifier = modifier,
                 transitionSpec = {
                     // Mirror the forward and backward transitions of activities in Android 33
                     when {
@@ -90,7 +101,7 @@ internal actual class GestureNavDecoration actual constructor(
 
                         // come back from back stack
                         backStackDepth < prevStackDepth -> {
-                            if (poppedViaGesture.getOrDefault(initialState, false)) {
+                            if (initialState in poppedViaGesture) {
                                 EnterTransition.None with scaleOut(targetScale = 0.8f) + fadeOut()
                             } else {
                                 slideInHorizontally(tween(), SlightlyLeft) + fadeIn() with
@@ -104,8 +115,6 @@ internal actual class GestureNavDecoration actual constructor(
                         else -> fadeIn() with fadeOut()
                     }
                 },
-                modifier = modifier,
-                label = "",
             ) { record ->
                 var swipeProgress by remember { mutableStateOf(0f) }
 
@@ -113,7 +122,12 @@ internal actual class GestureNavDecoration actual constructor(
                     BackHandler(
                         onBackProgress = { swipeProgress = it },
                         onBackInvoked = {
-                            poppedViaGesture[record] = true
+                            if (swipeProgress != 0f) {
+                                // If back has been invoked, and the swipe progress isn't zero,
+                                // mark this record as 'popped via gesture' so we can
+                                // use a different transition
+                                poppedViaGesture += record
+                            }
                             navigator.pop()
                         },
                     )
