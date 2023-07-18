@@ -72,27 +72,27 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
         modifier: Modifier,
         content: @Composable (T) -> Unit,
     ) {
-        // Remember the previous stack depth so we know if the navigation is going "back".
-        var prevStackDepth by rememberSaveable { mutableStateOf(backStackDepth) }
-        SideEffect {
-            prevStackDepth = backStackDepth
-        }
-
-        val dismissState = rememberDismissState()
-
-        LaunchedEffect(dismissState) {
-            snapshotFlow { dismissState.isDismissed(DismissDirection.StartToEnd) }
-                .filter { it }
-                .collect { navigator.pop() }
-        }
-
-        LaunchedEffect(arg) {
-            // Each time the top record changes, reset the dismiss state.
-            // We don't use reset() as that animates, and we need a snap.
-            dismissState.snapTo(DismissValue.Default)
-        }
-
         Box(modifier = modifier) {
+            // Remember the previous stack depth so we know if the navigation is going "back".
+            var prevStackDepth by rememberSaveable { mutableStateOf(backStackDepth) }
+            SideEffect {
+                prevStackDepth = backStackDepth
+            }
+
+            val dismissState = rememberDismissState()
+
+            LaunchedEffect(dismissState) {
+                snapshotFlow { dismissState.isDismissed(DismissDirection.StartToEnd) }
+                    .filter { it }
+                    .collect { navigator.pop() }
+            }
+
+            LaunchedEffect(arg) {
+                // Each time the top record changes, reset the dismiss state.
+                // We don't use reset() as that animates, and we need a snap.
+                dismissState.snapTo(DismissValue.Default)
+            }
+
             if (previous != null) {
                 PreviousContent(
                     dismissState = dismissState,
@@ -116,15 +116,19 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
 
                         // come back from back stack
                         backStackDepth < prevStackDepth -> {
-                            if (dismissState.offset.value != 0f) {
-                                EnterTransition.None with ExitTransition.None
-                            } else {
-                                slideInHorizontally { width ->
-                                    0 - (swipeProperties.enterScreenOffsetFraction * width).roundToInt()
-                                }.with(slideOutHorizontally(targetOffsetX = End))
-                                    .apply {
-                                        targetContentZIndex = -1f
+                            when {
+                                dismissState.offset.value != 0f -> {
+                                    EnterTransition.None with ExitTransition.None
+                                }
+                                else -> {
+                                    slideInHorizontally { width ->
+                                        0 - (swipeProperties.enterScreenOffsetFraction * width).roundToInt()
                                     }
+                                        .with(slideOutHorizontally(targetOffsetX = End))
+                                        .apply {
+                                            targetContentZIndex = -1f
+                                        }
+                                }
                             }
                         }
 
@@ -133,7 +137,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                     }
                 },
                 modifier = modifier,
-                label = "",
+                label = "GestureNavDecoration",
             ) { record ->
                 SwipeableContent(
                     state = dismissState,
@@ -159,9 +163,8 @@ internal fun PreviousContent(
     Box(
         modifier = modifier
             .graphicsLayer {
-                val offset = swipeProperties.enterScreenOffsetFraction *
+                translationX = swipeProperties.enterScreenOffsetFraction *
                     (dismissState.offset.value.absoluteValue - size.width)
-                IntOffset(x = offset.roundToInt(), y = 0)
             }
             .pointerInput(Unit) {
                 // Content in the back stack should not be interactive until they're on top
