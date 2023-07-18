@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateLoading
 import app.cash.paging.compose.LazyPagingItems
 import app.tivi.common.compose.Layout
+import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
@@ -77,7 +78,6 @@ import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow

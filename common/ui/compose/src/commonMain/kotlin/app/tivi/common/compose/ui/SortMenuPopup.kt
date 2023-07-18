@@ -9,7 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import app.tivi.common.ui.resources.LocalStrings
+import app.tivi.common.compose.LocalStrings
 import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.data.models.SortOption
 

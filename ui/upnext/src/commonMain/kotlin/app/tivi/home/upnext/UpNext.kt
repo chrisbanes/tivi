@@ -59,6 +59,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateLoading
 import app.tivi.common.compose.Layout
+import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
@@ -71,7 +72,6 @@ import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode

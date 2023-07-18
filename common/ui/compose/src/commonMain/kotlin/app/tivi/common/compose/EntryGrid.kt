@@ -51,7 +51,6 @@ import app.tivi.common.compose.ui.PlaceholderPosterCard
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
 import com.moriatsushi.insetsx.systemBars

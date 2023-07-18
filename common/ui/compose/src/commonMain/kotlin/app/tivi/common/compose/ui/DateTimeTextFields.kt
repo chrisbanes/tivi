@@ -23,8 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.ui.resources.LocalStrings
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime

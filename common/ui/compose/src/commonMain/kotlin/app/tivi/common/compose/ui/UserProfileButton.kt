@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import app.tivi.common.ui.resources.LocalStrings
+import app.tivi.common.compose.LocalStrings
 import app.tivi.data.models.TraktUser
 
 @Composable

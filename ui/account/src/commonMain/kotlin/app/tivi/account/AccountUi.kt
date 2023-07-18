@@ -32,8 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.ui.AsyncImage
-import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.models.TraktUser
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.overlays.LocalNavigator

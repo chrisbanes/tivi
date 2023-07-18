@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import app.tivi.common.compose.Layout
-import app.tivi.common.ui.resources.LocalStrings
+import app.tivi.common.compose.LocalStrings
 
 @Composable
 fun Backdrop(

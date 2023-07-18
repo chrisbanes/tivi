@@ -44,8 +44,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalWindowSizeClass
-import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
