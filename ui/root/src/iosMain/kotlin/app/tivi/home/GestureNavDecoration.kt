@@ -30,14 +30,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -94,9 +95,15 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
             }
 
             if (previous != null) {
+                // Previous content is only visible if the swipe-dismiss offset != 0
+                val showPrevious by remember { derivedStateOf { dismissState.offset.value != 0f } }
+
                 PreviousContent(
-                    dismissState = dismissState,
-                    swipeProperties = swipeProperties,
+                    isVisible = { showPrevious },
+                    modifier = Modifier.graphicsLayer {
+                        translationX = (dismissState.offset.value.absoluteValue - size.width) *
+                            swipeProperties.enterScreenOffsetFraction
+                    },
                     content = { content(previous) },
                 )
             }
@@ -151,28 +158,6 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
 }
 
 private val End: (Int) -> Int = { it }
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-internal fun PreviousContent(
-    dismissState: DismissState,
-    swipeProperties: SwipeProperties,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .graphicsLayer {
-                translationX = swipeProperties.enterScreenOffsetFraction *
-                    (dismissState.offset.value.absoluteValue - size.width)
-            }
-            .pointerInput(Unit) {
-                // Content in the back stack should not be interactive until they're on top
-            },
-    ) {
-        content()
-    }
-}
 
 /**
  * This is basically [androidx.compose.material.SwipeToDismiss] but simplified for our

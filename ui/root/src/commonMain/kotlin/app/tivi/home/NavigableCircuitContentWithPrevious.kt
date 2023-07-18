@@ -3,6 +3,7 @@
 
 package app.tivi.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -12,6 +13,9 @@ import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.layout
+import app.tivi.extensions.fluentIf
 import com.slack.circuit.backstack.BackStack
 import com.slack.circuit.backstack.ProvidedValues
 import com.slack.circuit.backstack.SaveableBackStack
@@ -115,4 +119,28 @@ private fun SaveableBackStack.buildCircuitContentProviders(
                 previousContentProviders[provider.backStackRecord.key] = provider
             }
         }
+}
+
+@Composable
+internal fun PreviousContent(
+    isVisible: () -> Boolean = { true },
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            // If we're not visible, don't measure, layout (or draw)
+            .fluentIf(!isVisible()) { emptyLayout() }
+            // Content in the back stack should not be interactive until they're on top
+            .pointerInput(Unit) {},
+    ) {
+        content()
+    }
+}
+
+/**
+ * This no-ops measure + layout (and thus draw) for child content.
+ */
+private fun Modifier.emptyLayout(): Modifier = layout { _, constraints ->
+    layout(constraints.minWidth, constraints.minHeight) {}
 }

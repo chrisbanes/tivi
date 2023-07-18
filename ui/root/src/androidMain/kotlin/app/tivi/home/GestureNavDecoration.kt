@@ -32,12 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import app.tivi.animations.lerp
@@ -69,8 +67,11 @@ internal actual class GestureNavDecoration actual constructor(
         }
 
         Box(modifier = modifier) {
+            var showPrevious by remember { mutableStateOf(false) }
+            var recordPoppedFromGesture by remember { mutableStateOf<T?>(null) }
+
             if (previous != null) {
-                PreviousContent {
+                PreviousContent(isVisible = { showPrevious }) {
                     content(previous)
                 }
             }
@@ -83,12 +84,11 @@ internal actual class GestureNavDecoration actual constructor(
 
             val transition = updateTransition(targetState = arg, label = "GestureNavDecoration")
 
-            val poppedViaGesture = remember { mutableSetOf<T>() }
-            LaunchedEffect(transition) {
-                // When the current state has changed (i.e. the transition has completed),
+            LaunchedEffect(transition.currentState) {
+                // When the current state has changed (i.e. any transition has completed),
                 // clear out any transient state
-                snapshotFlow { transition.currentState }
-                    .collect { poppedViaGesture.clear() }
+                showPrevious = false
+                recordPoppedFromGesture = null
             }
 
             transition.AnimatedContent(
@@ -104,7 +104,7 @@ internal actual class GestureNavDecoration actual constructor(
 
                         // come back from back stack
                         backStackDepth < prevStackDepth -> {
-                            if (initialState in poppedViaGesture) {
+                            if (recordPoppedFromGesture == initialState) {
                                 EnterTransition.None with scaleOut(targetScale = 0.8f) + fadeOut()
                             } else {
                                 slideInHorizontally(tween(), SlightlyLeft) + fadeIn() with
@@ -123,13 +123,16 @@ internal actual class GestureNavDecoration actual constructor(
 
                 if (backStackDepth > 1) {
                     BackHandler(
-                        onBackProgress = { swipeProgress = it },
+                        onBackProgress = { progress ->
+                            showPrevious = progress != 0f
+                            swipeProgress = progress
+                        },
                         onBackInvoked = {
                             if (swipeProgress != 0f) {
                                 // If back has been invoked, and the swipe progress isn't zero,
                                 // mark this record as 'popped via gesture' so we can
                                 // use a different transition
-                                poppedViaGesture += record
+                                recordPoppedFromGesture = record
                             }
                             navigator.pop()
                         },
@@ -152,21 +155,6 @@ internal actual class GestureNavDecoration actual constructor(
 private const val FIVE_PERCENT = 0.05f
 private val SlightlyRight = { width: Int -> (width * FIVE_PERCENT).toInt() }
 private val SlightlyLeft = { width: Int -> 0 - (width * FIVE_PERCENT).toInt() }
-
-@Composable
-internal fun PreviousContent(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .pointerInput(Unit) {
-                // Content in the back stack should not be interactive until they're on top
-            },
-    ) {
-        content()
-    }
-}
 
 /**
  * Implements most of the treatment specified at
