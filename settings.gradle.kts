@@ -43,10 +43,12 @@ gradleEnterprise {
 
 buildCache {
     val remoteBuildCacheUrl = extra["REMOTE_BUILD_CACHE_URL"] ?: return@buildCache
-    println("Enabling remote build cache. URL: $remoteBuildCacheUrl")
 
     remote(HttpBuildCache::class) {
         url = uri(remoteBuildCacheUrl)
+        isPush = System.getenv().containsKey("CI")
+
+        println("Enabling remote build cache. URL: $url. Push enabled: $isPush")
 
         credentials {
             username = extra["REMOTE_BUILD_CACHE_USERNAME"]?.toString()
