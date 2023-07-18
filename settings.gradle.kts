@@ -41,6 +41,20 @@ gradleEnterprise {
     }
 }
 
+buildCache {
+    val remoteBuildCacheUrl = extra["REMOTE_BUILD_CACHE_URL"] ?: return@buildCache
+    println("Enabling remote build cache. URL: $remoteBuildCacheUrl")
+
+    remote(HttpBuildCache::class) {
+        url = uri(remoteBuildCacheUrl)
+
+        credentials {
+            username = extra["REMOTE_BUILD_CACHE_USERNAME"]?.toString()
+            password = extra["REMOTE_BUILD_CACHE_PASSWORD"]?.toString()
+        }
+    }
+}
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 // https://docs.gradle.org/7.6/userguide/configuration_cache.html#config_cache:stable
 // enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
