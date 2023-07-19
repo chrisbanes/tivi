@@ -42,10 +42,6 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
 
             targets.withType<KotlinNativeTarget>().configureEach {
                 binaries.all {
-                    // Enable debug symbols:
-                    // https://kotlinlang.org/docs/native-ios-symbolication.html
-                    freeCompilerArgs += "-Xadd-light-debug=enable"
-
                     // Add linker flag for SQLite. See:
                     // https://github.com/touchlab/SQLiter/issues/77
                     linkerOpts("-lsqlite3")
@@ -57,7 +53,18 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                         // https://kotlinlang.org/docs/whatsnew19.html#preview-of-custom-memory-allocator
                         freeCompilerArgs.add("-Xallocator=custom")
 
-                        freeCompilerArgs.add("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
+                        // https://kotlinlang.org/docs/whatsnew19.html#compiler-option-for-c-interop-implicit-integer-conversions
+                        freeCompilerArgs.add("-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion")
+
+                        // Enable debug symbols:
+                        // https://kotlinlang.org/docs/native-ios-symbolication.html
+                        freeCompilerArgs.add("-Xadd-light-debug=enable")
+
+                        // Various opt-ins
+                        freeCompilerArgs.addAll(
+                            "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                            "-opt-in=kotlinx.cinterop.BetaInteropApi",
+                        )
                     }
                 }
             }
