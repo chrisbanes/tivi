@@ -17,7 +17,6 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
 
 fun Project.configureCompose() {
     with(extensions.getByType<ComposeExtension>()) {
-        kotlinCompilerPlugin.set("1.4.8-beta")
-        kotlinCompilerPluginArgs.add("suppressKotlinVersionCompatibilityCheck=1.9.0")
+        kotlinCompilerPlugin.set("1.5.0")
     }
 }
