@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 class KotlinMultiplatformConventionPlugin : Plugin<Project> {
@@ -28,7 +27,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
 
             jvm()
             if (pluginManager.hasPlugin("com.android.library")) {
-                android()
+                androidTarget()
             }
 
             listOf(
@@ -52,23 +51,19 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                     linkerOpts("-lsqlite3")
                 }
 
-                // Try out preview custom allocator in K/N 1.9
-                // https://kotlinlang.org/docs/whatsnew19.html#preview-of-custom-memory-allocator
                 compilations.configureEach {
                     compilerOptions.configure {
+                        // Try out preview custom allocator in K/N 1.9
+                        // https://kotlinlang.org/docs/whatsnew19.html#preview-of-custom-memory-allocator
                         freeCompilerArgs.add("-Xallocator=custom")
+
+                        freeCompilerArgs.add("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
                     }
                 }
             }
 
             configureSpotless()
             configureKotlin()
-        }
-
-        tasks.withType<KotlinCompilationTask<*>>().configureEach {
-            compilerOptions {
-                freeCompilerArgs.add("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
-            }
         }
     }
 }
