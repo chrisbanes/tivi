@@ -39,8 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.itemSpacer
-import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.screens.SettingsScreen
 import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext

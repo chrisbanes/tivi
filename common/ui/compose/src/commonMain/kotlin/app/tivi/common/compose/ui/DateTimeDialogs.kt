@@ -5,7 +5,7 @@ package app.tivi.common.compose.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import app.tivi.common.ui.resources.LocalStrings
+import app.tivi.common.compose.LocalStrings
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime

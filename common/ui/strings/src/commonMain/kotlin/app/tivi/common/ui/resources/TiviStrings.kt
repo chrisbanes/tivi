@@ -3,6 +3,14 @@
 
 package app.tivi.common.ui.resources
 
+val Strings: Map<String, TiviStrings> = mapOf(
+    "en" to EnTiviStrings,
+)
+
+object Locales {
+    const val EN = "en"
+}
+
 data class TiviStrings(
     val accountNameUnknown: String,
     val accountTitle: String,
@@ -156,9 +164,5 @@ data class TiviStrings(
     val viewPrivacyPolicy: String,
     val watchedShowsTitle: String,
 )
-
-object Locales {
-    const val EN = "en"
-}
 
 expect fun String.fmt(vararg args: Any?): String

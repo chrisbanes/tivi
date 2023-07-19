@@ -44,13 +44,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.Layout
+import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.LocalStrings
 import app.tivi.data.models.TiviShow
 import app.tivi.screens.SearchScreen
 import com.moriatsushi.insetsx.statusBarsPadding
