@@ -41,14 +41,17 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                 }
             }
 
-            // Need to add linker flag for SQLite
-            // See: https://github.com/touchlab/SQLiter/issues/77
-            targets
-                .filterIsInstance<KotlinNativeTarget>()
-                .flatMap { it.binaries }
-                .forEach { compilationUnit ->
-                    compilationUnit.linkerOpts("-lsqlite3")
+            targets.withType<KotlinNativeTarget>().configureEach {
+                binaries.all {
+                    // Enable debug symbols:
+                    // https://kotlinlang.org/docs/native-ios-symbolication.html
+                    freeCompilerArgs += "-Xadd-light-debug=enable"
+
+                    // Add linker flag for SQLite. See:
+                    // https://github.com/touchlab/SQLiter/issues/77
+                    linkerOpts("-lsqlite3")
                 }
+            }
 
             configureSpotless()
             configureKotlin()
