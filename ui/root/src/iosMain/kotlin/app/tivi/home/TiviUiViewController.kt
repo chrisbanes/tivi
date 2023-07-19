@@ -38,17 +38,15 @@ fun TiviUiViewController(
         with(LocalDensity.current) { 8.dp.toPx() },
     )
 
-    CompositionLocalProvider(LocalViewConfiguration provides vc) {
-        tiviContent(
-            backstack = backstack,
-            navigator = navigator,
-            onOpenUrl = { url ->
-                val safari = SFSafariViewController(NSURL(string = url))
-                uiViewController.presentViewController(safari, animated = true, completion = null)
-            },
-            modifier = Modifier,
-        )
-    }
+    CompositionLocalProvider(LocalViewConfiguration provides vc) {tiviContent(
+        backstack,
+        navigator,
+            { url ->
+            val safari = SFSafariViewController(NSURL(string = url))
+            uiViewController.presentViewController(safari, animated = true, completion = null)
+        },
+        Modifier,
+    )}
 }
 
 private fun ViewConfiguration.withTouchSlop(
