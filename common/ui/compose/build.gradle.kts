@@ -20,6 +20,7 @@ kotlin {
                 api(libs.circuit.foundation)
 
                 api(projects.common.ui.resources)
+                api(libs.lyricist.library)
 
                 implementation(compose.foundation)
                 implementation(compose.material)

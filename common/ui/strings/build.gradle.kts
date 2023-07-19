@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(libs.lyricist.library)
+                api(libs.lyricist.core)
             }
         }
     }
