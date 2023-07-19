@@ -29,6 +29,10 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
+      - uses: gradle/gradle-build-action@v2
+        with:
+          cache-disabled: true
+
       - name: Check convention plugins code style with Spotless
         run: ./gradlew -p gradle/build-logic spotlessCheck
 
@@ -68,6 +72,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 17
+
+      - uses: gradle/gradle-build-action@v2
+        with:
+          cache-disabled: true
 
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
@@ -144,6 +152,10 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
+      - uses: gradle/gradle-build-action@v2
+        with:
+          cache-disabled: true
+
       - name: Build Desktop App
         run: ./gradlew jvmTest :desktop-app:package
 
@@ -194,6 +206,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 17
+
+      - uses: gradle/gradle-build-action@v2
+        with:
+          cache-disabled: true
 
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
@@ -253,7 +269,11 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Test
+      - uses: gradle/gradle-build-action@v2
+        with:
+          cache-disabled: true
+
+      - name: iosX64Test
         # Disabling resources tests due to issue with Compose Multiplatform
         # https://github.com/JetBrains/compose-multiplatform/issues/3135
         run: ./gradlew iosX64Test -x :common:ui:resources:iosX64Test
