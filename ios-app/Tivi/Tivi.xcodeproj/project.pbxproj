@@ -10,10 +10,10 @@
 		38137D702A55BA8A00A687CC /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 38137D6F2A55BA8A00A687CC /* AppAuth */; };
 		38137D722A55D6E200A687CC /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38137D712A55D6E200A687CC /* Auth.swift */; };
 		38137D772A584D1900A687CC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 38137D762A584D1900A687CC /* Settings.bundle */; };
-		38FE597B2A617496006EBF5E /* inter_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38FE59772A617496006EBF5E /* inter_bold.ttf */; };
-		38FE597C2A617496006EBF5E /* inter_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38FE59782A617496006EBF5E /* inter_medium.ttf */; };
-		38FE597D2A617496006EBF5E /* inter_regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38FE59792A617496006EBF5E /* inter_regular.ttf */; };
-		38FE597E2A617496006EBF5E /* inter_light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38FE597A2A617496006EBF5E /* inter_light.ttf */; };
+		388C5D782A6989B600A858D6 /* inter_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388C5D762A69896300A858D6 /* inter_bold.ttf */; };
+		388C5D792A6989B600A858D6 /* inter_regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388C5D772A69896400A858D6 /* inter_regular.ttf */; };
+		388C5D7A2A6989B600A858D6 /* inter_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388C5D752A69896300A858D6 /* inter_medium.ttf */; };
+		388C5D7B2A6989B600A858D6 /* inter_light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388C5D742A69896300A858D6 /* inter_light.ttf */; };
 		833349382A4CCCEE00F464FE /* TiviApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833349372A4CCCEE00F464FE /* TiviApp.swift */; };
 		8333493A2A4CCCEE00F464FE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833349392A4CCCEE00F464FE /* ContentView.swift */; };
 		8333493C2A4CCCEF00F464FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8333493B2A4CCCEF00F464FE /* Assets.xcassets */; };
@@ -27,10 +27,10 @@
 		38137D712A55D6E200A687CC /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
 		38137D762A584D1900A687CC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		38282FFD2A4F318E00E7929E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		38FE59772A617496006EBF5E /* inter_bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_bold.ttf; path = ../../common/ui/resources/src/commonMain/resources/font/inter_bold.ttf; sourceTree = SOURCE_ROOT; };
-		38FE59782A617496006EBF5E /* inter_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_medium.ttf; path = ../../common/ui/resources/src/commonMain/resources/font/inter_medium.ttf; sourceTree = SOURCE_ROOT; };
-		38FE59792A617496006EBF5E /* inter_regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_regular.ttf; path = ../../common/ui/resources/src/commonMain/resources/font/inter_regular.ttf; sourceTree = SOURCE_ROOT; };
-		38FE597A2A617496006EBF5E /* inter_light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_light.ttf; path = ../../common/ui/resources/src/commonMain/resources/font/inter_light.ttf; sourceTree = SOURCE_ROOT; };
+		388C5D742A69896300A858D6 /* inter_light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_light.ttf; path = ../../common/ui/resources/fonts/src/commonMain/resources/font/inter_light.ttf; sourceTree = SOURCE_ROOT; };
+		388C5D752A69896300A858D6 /* inter_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_medium.ttf; path = ../../common/ui/resources/fonts/src/commonMain/resources/font/inter_medium.ttf; sourceTree = SOURCE_ROOT; };
+		388C5D762A69896300A858D6 /* inter_bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_bold.ttf; path = ../../common/ui/resources/fonts/src/commonMain/resources/font/inter_bold.ttf; sourceTree = SOURCE_ROOT; };
+		388C5D772A69896400A858D6 /* inter_regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_regular.ttf; path = ../../common/ui/resources/fonts/src/commonMain/resources/font/inter_regular.ttf; sourceTree = SOURCE_ROOT; };
 		833349342A4CCCEE00F464FE /* Tivi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tivi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		833349372A4CCCEE00F464FE /* TiviApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiviApp.swift; sourceTree = "<group>"; };
 		833349392A4CCCEE00F464FE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -56,10 +56,10 @@
 		3882F6342A6162EE00E03704 /* font */ = {
 			isa = PBXGroup;
 			children = (
-				38FE59772A617496006EBF5E /* inter_bold.ttf */,
-				38FE597A2A617496006EBF5E /* inter_light.ttf */,
-				38FE59782A617496006EBF5E /* inter_medium.ttf */,
-				38FE59792A617496006EBF5E /* inter_regular.ttf */,
+				388C5D762A69896300A858D6 /* inter_bold.ttf */,
+				388C5D752A69896300A858D6 /* inter_medium.ttf */,
+				388C5D772A69896400A858D6 /* inter_regular.ttf */,
+				388C5D742A69896300A858D6 /* inter_light.ttf */,
 			);
 			path = font;
 			sourceTree = "<group>";
@@ -182,14 +182,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				38FE597D2A617496006EBF5E /* inter_regular.ttf in Resources */,
-				38FE597B2A617496006EBF5E /* inter_bold.ttf in Resources */,
 				38137D772A584D1900A687CC /* Settings.bundle in Resources */,
-				38FE597C2A617496006EBF5E /* inter_medium.ttf in Resources */,
-				38FE597E2A617496006EBF5E /* inter_light.ttf in Resources */,
 				8333493F2A4CCCEF00F464FE /* Preview Assets.xcassets in Resources */,
 				8333493C2A4CCCEF00F464FE /* Assets.xcassets in Resources */,
 				83AB60062A520078007FC216 /* GoogleService-Info.plist in Resources */,
+				388C5D7B2A6989B600A858D6 /* inter_light.ttf in Resources */,
+				388C5D792A6989B600A858D6 /* inter_regular.ttf in Resources */,
+				388C5D7A2A6989B600A858D6 /* inter_medium.ttf in Resources */,
+				388C5D782A6989B600A858D6 /* inter_bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
