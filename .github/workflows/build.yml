@@ -157,7 +157,7 @@ jobs:
           cache-disabled: true
 
       - name: Build Desktop App
-        run: ./gradlew jvmTest :desktop-app:package
+        run: ./gradlew jvmTest :desktop-app:packageDistributionForCurrentOS
 
       - name: Upload build outputs
         if: always()
