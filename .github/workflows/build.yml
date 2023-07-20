@@ -274,9 +274,7 @@ jobs:
           cache-disabled: true
 
       - name: iosX64Test
-        # Disabling resources tests due to issue with Compose Multiplatform
-        # https://github.com/JetBrains/compose-multiplatform/issues/3135
-        run: ./gradlew iosX64Test -x :common:ui:resources:iosX64Test
+        run: ./gradlew iosX64Test
 
       - name: Upload reports
         if: always()

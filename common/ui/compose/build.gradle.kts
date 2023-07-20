@@ -19,7 +19,8 @@ kotlin {
                 api(projects.common.ui.screens)
                 api(libs.circuit.foundation)
 
-                api(projects.common.ui.resources)
+                implementation(projects.common.ui.resources.fonts)
+                api(projects.common.ui.resources.strings)
                 api(libs.lyricist.library)
 
                 implementation(compose.foundation)
