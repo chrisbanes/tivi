@@ -58,14 +58,33 @@ internal actual class GestureNavDecoration actual constructor(
         content: @Composable (T) -> Unit,
     ) {
         if (Build.VERSION.SDK_INT < 34) {
-            return NavigatorDefaults.DefaultDecoration.DecoratedContent(
+            // on API 33 and below, we just use the default decoration
+            NavigatorDefaults.DefaultDecoration.DecoratedContent(
                 arg = arg,
                 backStackDepth = backStackDepth,
                 modifier = modifier,
                 content = content,
             )
+        } else {
+            GestureDecoratedContent(
+                arg = arg,
+                previous = previous,
+                backStackDepth = backStackDepth,
+                modifier = modifier,
+                content = content,
+            )
         }
+    }
 
+    @RequiresApi(34)
+    @Composable
+    private fun <T> GestureDecoratedContent(
+        arg: T,
+        previous: T?,
+        backStackDepth: Int,
+        modifier: Modifier,
+        content: @Composable (T) -> Unit,
+    ) {
         Box(modifier = modifier) {
             var showPrevious by remember { mutableStateOf(false) }
             var recordPoppedFromGesture by remember { mutableStateOf<T?>(null) }
