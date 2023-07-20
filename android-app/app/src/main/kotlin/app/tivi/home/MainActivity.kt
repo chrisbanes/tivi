@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.view.WindowCompat
+import app.tivi.BuildConfig
 import app.tivi.TiviActivity
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
@@ -47,7 +48,7 @@ class MainActivity : TiviActivity() {
                     // Enables testTag -> UiAutomator resource id
                     // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
                     @OptIn(ExperimentalComposeUiApi::class)
-                    testTagsAsResourceId = true
+                    testTagsAsResourceId = BuildConfig.DEBUG
                 },
             )
         }
