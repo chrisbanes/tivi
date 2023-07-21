@@ -120,13 +120,12 @@ internal fun DatePickerImpl(
 ) {
     val pagerState = rememberPagerState(
         initialPage = (state.selected.year - state.yearRange.first) * 12 + state.selected.monthNumber - 1,
+        pageCount = { (state.yearRange.last - state.yearRange.first + 1) * 12 },
     )
-    val pageCount = (state.yearRange.last - state.yearRange.first + 1) * 12
 
     Column(Modifier.fillMaxWidth()) {
         CalendarHeader(title, state, locale)
         HorizontalPager(
-            pageCount = pageCount,
             state = pagerState,
             verticalAlignment = Alignment.Top,
             modifier = Modifier.height(336.dp),
@@ -140,7 +139,7 @@ internal fun DatePickerImpl(
             }
 
             Column {
-                CalendarViewHeader(viewDate, state, pagerState, locale, pageCount)
+                CalendarViewHeader(viewDate, state, pagerState, locale, pagerState.pageCount)
                 Box {
                     androidx.compose.animation.AnimatedVisibility(
                         state.yearPickerShowing,
