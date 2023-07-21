@@ -81,7 +81,7 @@ fun <T : Any> LazyGridScope.items(
             val item = items.peek(index)
             when {
                 item != null && span != null -> span(item)
-                else -> GridItemSpan(0)
+                else -> GridItemSpan(1)
             }
         },
         contentType = { index ->
