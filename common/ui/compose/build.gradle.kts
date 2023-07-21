@@ -39,10 +39,6 @@ kotlin {
 
         val jvmCommon by creating {
             dependsOn(commonMain)
-
-            dependencies {
-                implementation(projects.thirdparty.composeMaterialDialogs.datetime)
-            }
         }
 
         val jvmMain by getting {
