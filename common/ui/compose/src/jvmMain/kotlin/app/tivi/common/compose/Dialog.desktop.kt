@@ -4,6 +4,7 @@
 package app.tivi.common.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 
 @Composable
@@ -12,7 +13,7 @@ actual fun Dialog(
     properties: DialogProperties,
     content: @Composable () -> Unit,
 ) {
-    androidx.compose.ui.window.Dialog(
+    DialogWindow(
         onCloseRequest = onDismissRequest,
         state = rememberDialogState(size = properties.size),
         title = properties.title,
