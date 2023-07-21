@@ -58,7 +58,6 @@ actual fun TimePickerDialog(
     selectedTime: LocalTime,
     confirmLabel: String,
     title: String,
-    is24Hour: Boolean,
 ) {
     DatePickerViewController(
         selectedDate = NSCalendar.currentCalendar().dateBySettingHour(
