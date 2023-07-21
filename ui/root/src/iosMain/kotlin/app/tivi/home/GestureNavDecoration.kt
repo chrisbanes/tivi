@@ -11,7 +11,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -114,7 +114,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                     when {
                         // adding to back stack
                         backStackDepth > prevStackDepth -> {
-                            slideInHorizontally(initialOffsetX = End) with slideOutHorizontally(
+                            slideInHorizontally(initialOffsetX = End) togetherWith slideOutHorizontally(
                                 targetOffsetX = { width ->
                                     0 - (swipeProperties.enterScreenOffsetFraction * width).roundToInt()
                                 },
@@ -125,13 +125,14 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                         backStackDepth < prevStackDepth -> {
                             when {
                                 dismissState.offset.value != 0f -> {
-                                    EnterTransition.None with ExitTransition.None
+                                    EnterTransition.None togetherWith ExitTransition.None
                                 }
+
                                 else -> {
                                     slideInHorizontally { width ->
                                         0 - (swipeProperties.enterScreenOffsetFraction * width).roundToInt()
                                     }
-                                        .with(slideOutHorizontally(targetOffsetX = End))
+                                        .togetherWith(slideOutHorizontally(targetOffsetX = End))
                                         .apply {
                                             targetContentZIndex = -1f
                                         }
@@ -140,7 +141,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                         }
 
                         // Root reset. Crossfade
-                        else -> fadeIn() with fadeOut()
+                        else -> fadeIn() togetherWith fadeOut()
                     }
                 },
                 modifier = modifier,

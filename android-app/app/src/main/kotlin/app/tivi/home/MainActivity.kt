@@ -38,13 +38,13 @@ class MainActivity : TiviActivity() {
             val navigator = rememberCircuitNavigator(backstack)
 
             component.tiviContent(
-                backstack = backstack,
-                navigator = navigator,
-                onOpenUrl = { url ->
+                backstack,
+                navigator,
+                { url ->
                     val intent = CustomTabsIntent.Builder().build()
                     intent.launchUrl(this@MainActivity, Uri.parse(url))
                 },
-                modifier = Modifier.semantics {
+                Modifier.semantics {
                     // Enables testTag -> UiAutomator resource id
                     // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
                     @OptIn(ExperimentalComposeUiApi::class)

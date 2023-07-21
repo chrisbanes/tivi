@@ -4,9 +4,10 @@ androidxlifecycle = "2.6.1"
 androidxactivity = "1.7.2"
 chucker = "4.0.0"
 circuit = "0.11.0"
+compose-multiplatform = "1.5.0-dev1114"
 coroutines = "1.7.2"
 debugdrawer = "0.9.8"
-kotlin = "1.8.20"
+kotlin = "1.9.0"
 kotlininject = "0.6.1"
 ktlint = "0.49.1"
 lyricist = "1.4.2"
@@ -15,7 +16,6 @@ okhttp = "4.11.0"
 kermit = "1.2.2" # Pinned back as Store uses Kermit 1.x
 ktor = "2.3.2"
 paging-multiplatform = "3.2.0-alpha05-0.2.3"
-materialdialogs = "0.9.3"
 retrofit = "2.9.0"
 spotless = "6.20.0"
 sqldelight = "2.0.0-rc02"
@@ -27,10 +27,10 @@ android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 buildConfig = "com.github.gmazzo.buildconfig:4.1.2"
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.2" }
-composeMultiplatform = { id = "org.jetbrains.compose", version = "1.4.1" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:1.8.20-1.0.11"
+ksp = "com.google.devtools.ksp:1.9.0-1.0.12"
 gms-googleServices = "com.google.gms.google-services:4.3.15"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.7"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
@@ -72,9 +72,6 @@ circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = 
 circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
 
 compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.2.0"
-
-materialdialogs-core = { module = "ca.gosyer:compose-material-dialogs-core", version.ref = "materialdialogs" }
-materialdialogs-datetime =  { module = "ca.gosyer:compose-material-dialogs-datetime", version.ref = "materialdialogs" }
 
 tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.0.3"
 
@@ -149,3 +146,4 @@ uuid = "com.benasher44:uuid:0.7.1"
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
+compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-multiplatform" }

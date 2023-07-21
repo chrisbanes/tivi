@@ -5,7 +5,7 @@
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.composeMultiplatform)
+    id("app.tivi.compose")
 }
 
 kotlin {
@@ -39,10 +39,6 @@ kotlin {
 
         val jvmCommon by creating {
             dependsOn(commonMain)
-
-            dependencies {
-                implementation(projects.thirdparty.composeMaterialDialogs.datetime)
-            }
         }
 
         val jvmMain by getting {

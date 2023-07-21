@@ -157,7 +157,7 @@ jobs:
           cache-disabled: true
 
       - name: Build Desktop App
-        run: ./gradlew jvmTest :desktop-app:package
+        run: ./gradlew jvmTest :desktop-app:packageDistributionForCurrentOS
 
       - name: Upload build outputs
         if: always()
@@ -274,7 +274,8 @@ jobs:
           cache-disabled: true
 
       - name: iosX64Test
-        run: ./gradlew iosX64Test
+        # Disable CC due to https://github.com/google/ksp/issues/1463
+        run: ./gradlew iosX64Test --no-configuration-cache
 
       - name: Upload reports
         if: always()

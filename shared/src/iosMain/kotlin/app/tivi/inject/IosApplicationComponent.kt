@@ -11,6 +11,7 @@ import app.tivi.core.analytics.Analytics
 import app.tivi.data.traktauth.TraktLoginAction
 import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.data.traktauth.TraktRefreshTokenAction
+import kotlin.experimental.ExperimentalNativeApi
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
@@ -26,6 +27,7 @@ abstract class IosApplicationComponent(
 
     abstract val initializers: AppInitializers
 
+    @OptIn(ExperimentalNativeApi::class)
     @ApplicationScope
     @Provides
     fun provideApplicationId(): ApplicationInfo = ApplicationInfo(
@@ -35,10 +37,7 @@ abstract class IosApplicationComponent(
         versionName = NSBundle.mainBundle.infoDictionary
             ?.get("CFBundleShortVersionString") as? String
             ?: "",
-        versionCode = (
-            NSBundle.mainBundle.infoDictionary
-                ?.get("CFBundleVersion") as? String
-            )
+        versionCode = (NSBundle.mainBundle.infoDictionary?.get("CFBundleVersion") as? String)
             ?.toIntOrNull()
             ?: 0,
     )
