@@ -528,7 +528,7 @@ private fun EpisodeDetailsAppBar(
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
+        colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = Color.Transparent,
             actionIconContentColor = LocalContentColor.current,
         ),

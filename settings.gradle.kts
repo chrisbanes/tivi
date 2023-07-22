@@ -18,8 +18,11 @@ dependencyResolutionManagement {
         mavenCentral()
         mavenLocal()
 
-        // Prerelease versions of Compose Multiplatform
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        // Needed when using the 'dev' Compose Compiler
+        // maven("https://androidx.dev/storage/compose-compiler/repository/")
+
+        // Jetpack Compose SNAPSHOTs if needed
+        // maven("https://androidx.dev/snapshots/builds/$composeSnapshot/artifacts/repository/")
 
         // Used for snapshots if needed
         // maven("https://oss.sonatype.org/content/repositories/snapshots/")
@@ -66,7 +69,7 @@ buildCache {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 // https://docs.gradle.org/7.6/userguide/configuration_cache.html#config_cache:stable
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+// enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 rootProject.name = "tivi"
 
@@ -124,4 +127,5 @@ include(
     ":android-app:common-test",
     ":desktop-app",
     ":thirdparty:swipe",
+    ":thirdparty:compose-material-dialogs:datetime",
 )

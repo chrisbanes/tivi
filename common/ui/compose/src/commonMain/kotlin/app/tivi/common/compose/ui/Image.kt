@@ -10,7 +10,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
+import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -104,10 +104,10 @@ fun AsyncImage(
         transitionSpec = {
             val (_, xfade) = targetState
             when {
-                xfade -> fadeIn(tween(200)) togetherWith fadeOut(tween(200))
+                xfade -> fadeIn(tween(200)) with fadeOut(tween(200))
                 else -> {
                     // If it's loaded from the memory cache, don't fade it in
-                    EnterTransition.None togetherWith ExitTransition.None
+                    EnterTransition.None with ExitTransition.None
                 }
             }
         },

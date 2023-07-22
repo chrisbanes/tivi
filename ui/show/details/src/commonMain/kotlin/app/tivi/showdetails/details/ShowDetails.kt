@@ -635,7 +635,7 @@ private fun RelatedShows(
             snapLayoutInfoProvider = remember(lazyListState) {
                 SnapLayoutInfoProvider(
                     lazyListState = lazyListState,
-                    positionInLayout = { _, _, _ -> 0 }, // start
+                    positionInLayout = { _, _ -> 0f }, // start
                 )
             },
         ),
