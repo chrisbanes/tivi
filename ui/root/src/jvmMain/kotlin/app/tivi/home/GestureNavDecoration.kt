@@ -5,6 +5,7 @@ package app.tivi.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.slack.circuit.foundation.NavigatorDefaults
 import com.slack.circuit.runtime.Navigator
 
 internal actual class GestureNavDecoration actual constructor(
@@ -19,7 +20,7 @@ internal actual class GestureNavDecoration actual constructor(
         content: @Composable (T) -> Unit,
     ) {
         // On Desktop we just use the built-in DefaultDecoration
-        DefaultDecoration.DecoratedContent(
+        NavigatorDefaults.DefaultDecoration.DecoratedContent(
             arg = arg,
             backStackDepth = backStackDepth,
             modifier = modifier,

@@ -34,4 +34,5 @@ expect fun TimePickerDialog(
     },
     confirmLabel: String = LocalStrings.current.buttonConfirm,
     title: String = "",
+    is24Hour: Boolean = false,
 )

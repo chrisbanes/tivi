@@ -31,7 +31,6 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.spotless.gradlePlugin)
-    compileOnly(libs.compose.gradlePlugin)
 }
 
 gradlePlugin {
@@ -64,11 +63,6 @@ gradlePlugin {
         register("androidTest") {
             id = "app.tivi.android.test"
             implementationClass = "app.tivi.gradle.AndroidTestConventionPlugin"
-        }
-
-        register("compose") {
-            id = "app.tivi.compose"
-            implementationClass = "app.tivi.gradle.ComposeMultiplatformConventionPlugin"
         }
     }
 }

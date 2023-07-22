@@ -8,6 +8,7 @@ import org.gradle.api.Project
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -27,7 +28,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
 
             jvm()
             if (pluginManager.hasPlugin("com.android.library")) {
-                androidTarget()
+                android()
             }
 
             listOf(
@@ -42,30 +43,13 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
 
             targets.withType<KotlinNativeTarget>().configureEach {
                 binaries.all {
+                    // Enable debug symbols:
+                    // https://kotlinlang.org/docs/native-ios-symbolication.html
+                    freeCompilerArgs += "-Xadd-light-debug=enable"
+
                     // Add linker flag for SQLite. See:
                     // https://github.com/touchlab/SQLiter/issues/77
                     linkerOpts("-lsqlite3")
-                }
-
-                compilations.configureEach {
-                    compilerOptions.configure {
-                        // Try out preview custom allocator in K/N 1.9
-                        // https://kotlinlang.org/docs/whatsnew19.html#preview-of-custom-memory-allocator
-                        freeCompilerArgs.add("-Xallocator=custom")
-
-                        // https://kotlinlang.org/docs/whatsnew19.html#compiler-option-for-c-interop-implicit-integer-conversions
-                        freeCompilerArgs.add("-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion")
-
-                        // Enable debug symbols:
-                        // https://kotlinlang.org/docs/native-ios-symbolication.html
-                        freeCompilerArgs.add("-Xadd-light-debug=enable")
-
-                        // Various opt-ins
-                        freeCompilerArgs.addAll(
-                            "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-                            "-opt-in=kotlinx.cinterop.BetaInteropApi",
-                        )
-                    }
                 }
             }
 
@@ -77,6 +61,24 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
 
 fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("", dependencyNotation)
 fun Project.addKspTestDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("Test", dependencyNotation)
+
+fun Project.addKspDependencyForCommon(dependencyNotation: Any) {
+    dependencies {
+        add("kspCommonMainMetadata", dependencyNotation)
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
+        if (name != "kspCommonMainKotlinMetadata") {
+            dependsOn("kspCommonMainKotlinMetadata")
+        }
+    }
+
+    extensions.configure<KotlinMultiplatformExtension> {
+        sourceSets["commonMain"].apply {
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+        }
+    }
+}
 
 private fun Project.addKspDependencyForAllTargets(
     configurationNameSuffix: String,

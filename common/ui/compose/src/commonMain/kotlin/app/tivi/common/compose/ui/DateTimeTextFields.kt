@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -126,7 +126,7 @@ fun ClickableReadOnlyOutlinedTextField(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     label: (@Composable () -> Unit)? = null,
-    shape: Shape = OutlinedTextFieldDefaults.shape,
+    shape: Shape = TextFieldDefaults.outlinedShape,
 ) {
     val borderColor = MaterialTheme.colorScheme.primary.copy(
         alpha = if (value.isNotEmpty()) 1f else 0.4f,

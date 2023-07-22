@@ -11,7 +11,7 @@ plugins {
     // We have to use KMP due to Moko-resources
     // https://github.com/icerockdev/moko-resources/issues/263
     id("app.tivi.kotlin.multiplatform")
-    id("app.tivi.compose")
+    alias(libs.plugins.composeMultiplatform)
 }
 
 kotlin {

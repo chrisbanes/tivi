@@ -145,10 +145,7 @@ internal fun ShowSeasons(
         }
     }
 
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = { state.seasons.size },
-    )
+    val pagerState = rememberPagerState()
 
     var pagerBeenScrolled by remember { mutableStateOf(false) }
     LaunchedEffect(pagerState.isScrollInProgress) {
@@ -273,6 +270,7 @@ private fun SeasonsPager(
     modifier: Modifier = Modifier,
 ) {
     HorizontalPager(
+        pageCount = seasons.size,
         state = pagerState,
         flingBehavior = PagerDefaults.flingBehavior(
             state = pagerState,
@@ -281,7 +279,7 @@ private fun SeasonsPager(
         modifier = modifier,
     ) { page ->
         EpisodesList(
-            episodes = seasons.getOrNull(page)?.episodes ?: emptyList(),
+            episodes = seasons[page].episodes,
             onEpisodeClick = openEpisodeDetails,
             modifier = Modifier.fillMaxSize(),
         )
