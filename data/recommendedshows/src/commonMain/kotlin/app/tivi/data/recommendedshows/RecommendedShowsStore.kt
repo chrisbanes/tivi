@@ -45,7 +45,7 @@ class RecommendedShowsStore(
             }
         }
     },
-    sourceOfTruth = SourceOfTruth.of(
+    sourceOfTruth = SourceOfTruth.of<Int, List<RecommendedShowEntry>, List<RecommendedShowEntry>>(
         reader = { page -> recommendedDao.entriesForPage(page) },
         writer = { page, response ->
             transactionRunner {
