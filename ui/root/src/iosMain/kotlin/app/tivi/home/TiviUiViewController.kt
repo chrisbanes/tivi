@@ -35,7 +35,7 @@ fun TiviUiViewController(
     // Android default value of 8.dp
     // https://github.com/JetBrains/compose-multiplatform/issues/3397
     val vc = LocalViewConfiguration.current.withTouchSlop(
-        with(LocalDensity.current) { 8.dp.toPx() }
+        with(LocalDensity.current) { 8.dp.toPx() },
     )
 
     CompositionLocalProvider(LocalViewConfiguration provides vc) {
@@ -52,7 +52,7 @@ fun TiviUiViewController(
 }
 
 private fun ViewConfiguration.withTouchSlop(
-    touchSlop: Float
+    touchSlop: Float,
 ): ViewConfiguration = object : ViewConfiguration by this {
     override val touchSlop: Float = touchSlop
 }
