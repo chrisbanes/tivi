@@ -1,5 +1,5 @@
 [versions]
-agp = "8.0.2"
+agp = "8.1.0"
 androidxlifecycle = "2.6.1"
 androidxactivity = "1.7.2"
 chucker = "4.0.0"
