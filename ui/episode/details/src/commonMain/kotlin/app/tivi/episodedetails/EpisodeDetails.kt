@@ -162,7 +162,7 @@ internal fun EpisodeDetails(
 
     Surface(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .testTag("episode_details"),
     ) {
         Column {
