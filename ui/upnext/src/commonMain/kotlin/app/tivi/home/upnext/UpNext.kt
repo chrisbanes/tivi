@@ -58,14 +58,13 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateLoading
+import app.cash.paging.compose.itemKey
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
-import app.tivi.common.compose.items
 import app.tivi.common.compose.rememberCoroutineScope
-import app.tivi.common.compose.rememberLazyGridState
 import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.EmptyContent
@@ -217,7 +216,6 @@ internal fun UpNext(
             val gutter = Layout.gutter
 
             LazyVerticalGrid(
-                state = rememberLazyGridState(state.items.itemCount == 0),
                 columns = GridCells.Fixed(columns / 4),
                 contentPadding = paddingValues + PaddingValues(
                     horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
@@ -258,9 +256,10 @@ internal fun UpNext(
                 }
 
                 items(
-                    items = state.items,
-                    key = { it.show.id },
-                ) { entry ->
+                    count = state.items.itemCount,
+                    key = state.items.itemKey { it.show.id },
+                ) { index ->
+                    val entry = state.items[index]
                     if (entry != null) {
                         SwipeUpNextItem(
                             onSwipe = { openTrackEpisode(entry.episode.id) },
