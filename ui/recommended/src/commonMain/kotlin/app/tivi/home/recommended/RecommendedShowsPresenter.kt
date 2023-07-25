@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import app.cash.paging.PagingConfig
 import app.cash.paging.compose.collectAsLazyPagingItems
+import app.tivi.common.compose.rememberCachedPagingFlow
 import app.tivi.domain.observers.ObservePagedRecommendedShows
 import app.tivi.screens.RecommendedShowsScreen
 import app.tivi.screens.ShowDetailsScreen
@@ -39,7 +40,9 @@ class RecommendedShowsPresenter(
 
     @Composable
     override fun present(): RecommendedShowsUiState {
-        val items = pagingInteractor.flow.collectAsLazyPagingItems()
+        val items = pagingInteractor.flow
+            .rememberCachedPagingFlow()
+            .collectAsLazyPagingItems()
 
         LaunchedEffect(Unit) {
             pagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))

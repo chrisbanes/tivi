@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import app.cash.paging.PagingConfig
 import app.cash.paging.compose.collectAsLazyPagingItems
+import app.tivi.common.compose.rememberCachedPagingFlow
 import app.tivi.domain.observers.ObservePagedTrendingShows
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.TrendingShowsScreen
@@ -39,7 +40,9 @@ class TrendingShowsPresenter(
 
     @Composable
     override fun present(): TrendingShowsUiState {
-        val items = pagingInteractor.flow.collectAsLazyPagingItems()
+        val items = pagingInteractor.flow
+            .rememberCachedPagingFlow()
+            .collectAsLazyPagingItems()
 
         LaunchedEffect(Unit) {
             pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))

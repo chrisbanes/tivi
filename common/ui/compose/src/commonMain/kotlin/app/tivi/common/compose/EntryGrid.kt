@@ -47,6 +47,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateLoading
 import app.cash.paging.compose.LazyPagingItems
+import app.cash.paging.compose.itemKey
 import app.tivi.common.compose.ui.PlaceholderPosterCard
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
@@ -130,7 +131,6 @@ fun <E : Entry> EntryGrid(
             val gutter = Layout.gutter
 
             LazyVerticalGrid(
-                state = rememberLazyGridState(lazyPagingItems.itemCount == 0),
                 columns = GridCells.Fixed((columns / 1.5).roundToInt()),
                 contentPadding = paddingValues +
                     PaddingValues(horizontal = bodyMargin, vertical = gutter),
@@ -143,9 +143,10 @@ fun <E : Entry> EntryGrid(
                     .fillMaxHeight(),
             ) {
                 items(
-                    items = lazyPagingItems,
-                    key = { it.show.id },
-                ) { entry ->
+                    count = lazyPagingItems.itemCount,
+                    key = lazyPagingItems.itemKey { it.show.id },
+                ) { index ->
+                    val entry = lazyPagingItems[index]
                     val mod = Modifier
                         .animateItemPlacement()
                         .aspectRatio(2 / 3f)

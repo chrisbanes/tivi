@@ -15,6 +15,7 @@ import app.cash.paging.PagingConfig
 import app.cash.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
+import app.tivi.common.compose.rememberCachedPagingFlow
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.models.SortOption
 import app.tivi.data.traktauth.TraktAuthState
@@ -73,7 +74,9 @@ class UpNextPresenter(
 
         val uiMessageManager = remember { UiMessageManager() }
 
-        val items = observePagedUpNextShows.flow.collectAsLazyPagingItems()
+        val items = observePagedUpNextShows.flow
+            .rememberCachedPagingFlow(scope)
+            .collectAsLazyPagingItems()
 
         var sort by remember { mutableStateOf(SortOption.LAST_WATCHED) }
 

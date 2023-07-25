@@ -62,15 +62,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateLoading
 import app.cash.paging.compose.LazyPagingItems
+import app.cash.paging.compose.itemKey
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
-import app.tivi.common.compose.items
 import app.tivi.common.compose.rememberCoroutineScope
-import app.tivi.common.compose.rememberLazyGridState
 import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
@@ -254,7 +253,6 @@ private fun LibraryGrid(
     var filterExpanded by remember { mutableStateOf(false) }
 
     LazyVerticalGrid(
-        state = rememberLazyGridState(lazyPagingItems.itemCount == 0),
         columns = GridCells.Fixed(columns / 4),
         flingBehavior = rememberTiviFlingBehavior(),
         contentPadding = paddingValues + PaddingValues(
@@ -355,9 +353,10 @@ private fun LibraryGrid(
         }
 
         items(
-            items = lazyPagingItems,
-            key = { it.show.id },
-        ) { entry ->
+            count = state.items.itemCount,
+            key = state.items.itemKey { it.show.id },
+        ) { index ->
+            val entry = state.items[index]
             if (entry != null) {
                 LibraryItem(
                     show = entry.show,
