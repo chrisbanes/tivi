@@ -39,9 +39,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import com.slack.circuit.runtime.Navigator
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -52,6 +55,7 @@ import kotlinx.coroutines.flow.filter
 class SwipeProperties(
     val enterScreenOffsetFraction: Float = 0.25f,
     val swipeThreshold: ThresholdConfig = FractionalThreshold(0.4f),
+    val swipeAreaWidth: Dp = 16.dp,
 )
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
@@ -149,6 +153,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                 SwipeableContent(
                     state = dismissState,
                     swipeEnabled = backStackDepth > 1,
+                    swipeAreaWidth = swipeProperties.swipeAreaWidth,
                     dismissThreshold = swipeProperties.swipeThreshold,
                     content = { content(record) },
                 )
@@ -167,31 +172,45 @@ private val End: (Int) -> Int = { it }
 @ExperimentalMaterialApi
 internal fun SwipeableContent(
     state: DismissState,
+    swipeAreaWidth: Dp,
     dismissThreshold: ThresholdConfig,
     modifier: Modifier = Modifier,
     swipeEnabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     BoxWithConstraints(modifier) {
-        val width = constraints.maxWidth.toFloat()
+        val width = constraints.maxWidth
+
+        // All credit to @alexzhirkevich for this hack to reduce the Modifier.swipeable() hit area
+        // https://github.com/alexzhirkevich/compose-look-and-feel/blob/master/lookandfeel/src/commonMain/kotlin/moe/tlaster/precompose/navigation/NavHost.kt
+        val shift = with(LocalDensity.current) {
+            remember(this, width, swipeAreaWidth) {
+                width - swipeAreaWidth.roundToPx().coerceIn(0, width)
+            }
+        }
 
         Box(
-            modifier = Modifier.swipeable(
-                state = state,
-                anchors = mapOf(
-                    0f to DismissValue.Default,
-                    width to DismissValue.DismissedToEnd,
-                ),
-                thresholds = { _, _ -> dismissThreshold },
-                orientation = Orientation.Horizontal,
-                enabled = swipeEnabled,
-                reverseDirection = LocalLayoutDirection.current == LayoutDirection.Rtl,
-                resistance = ResistanceConfig(
-                    basis = width,
-                    factorAtMin = SwipeableDefaults.StiffResistanceFactor,
-                    factorAtMax = SwipeableDefaults.StandardResistanceFactor,
-                ),
-            ),
+            modifier = Modifier
+                // Offset so only the end-most swipeAreaWidth is visible
+                .offset { IntOffset(x = -shift, y = 0) }
+                .swipeable(
+                    state = state,
+                    anchors = mapOf(
+                        0f to DismissValue.Default,
+                        width.toFloat() to DismissValue.DismissedToEnd,
+                    ),
+                    thresholds = { _, _ -> dismissThreshold },
+                    orientation = Orientation.Horizontal,
+                    enabled = swipeEnabled,
+                    reverseDirection = LocalLayoutDirection.current == LayoutDirection.Rtl,
+                    resistance = ResistanceConfig(
+                        basis = width.toFloat(),
+                        factorAtMin = SwipeableDefaults.StiffResistanceFactor,
+                        factorAtMax = SwipeableDefaults.StandardResistanceFactor,
+                    ),
+                )
+                // Offset back to origin
+                .offset { IntOffset(x = shift, y = 0) }
         ) {
             Box(
                 modifier = Modifier
