@@ -38,12 +38,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.runtime.Navigator
 import kotlin.math.absoluteValue
@@ -131,6 +136,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                                 dismissState.offset.value != 0f -> {
                                     EnterTransition.None with ExitTransition.None
                                 }
+
                                 else -> {
                                     slideInHorizontally { width ->
                                         0 - (swipeProperties.enterScreenOffsetFraction * width).roundToInt()
@@ -181,6 +187,10 @@ internal fun SwipeableContent(
     BoxWithConstraints(modifier) {
         val width = constraints.maxWidth
 
+        val nestedScrollConnection = remember(state) {
+            SwipeDismissNestedScrollConnection(state)
+        }
+
         // All credit to @alexzhirkevich for this hack to reduce the Modifier.swipeable() hit area
         // https://github.com/alexzhirkevich/compose-look-and-feel/blob/master/lookandfeel/src/commonMain/kotlin/moe/tlaster/precompose/navigation/NavHost.kt
         val shift = with(LocalDensity.current) {
@@ -191,6 +201,7 @@ internal fun SwipeableContent(
 
         Box(
             modifier = Modifier
+                .nestedScroll(connection = nestedScrollConnection)
                 // Offset so only the end-most swipeAreaWidth is visible
                 .offset { IntOffset(x = -shift, y = 0) }
                 .swipeable(
@@ -210,7 +221,7 @@ internal fun SwipeableContent(
                     ),
                 )
                 // Offset back to origin
-                .offset { IntOffset(x = shift, y = 0) }
+                .offset { IntOffset(x = shift, y = 0) },
         ) {
             Box(
                 modifier = Modifier
@@ -219,5 +230,48 @@ internal fun SwipeableContent(
                 content()
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+private class SwipeDismissNestedScrollConnection(
+    private val state: DismissState,
+) : NestedScrollConnection {
+    override fun onPreScroll(
+        available: Offset,
+        source: NestedScrollSource,
+    ): Offset = when {
+        available.x < 0 && source == NestedScrollSource.Drag -> {
+            // If we're being swiped back to origin, let the SwipeDismiss handle it first
+            Offset(x = state.performDrag(available.x), y = 0f)
+        }
+
+        else -> Offset.Zero
+    }
+
+    override fun onPostScroll(
+        consumed: Offset,
+        available: Offset,
+        source: NestedScrollSource,
+    ): Offset = when (source) {
+        NestedScrollSource.Drag -> Offset(x = state.performDrag(available.x), y = 0f)
+        else -> Offset.Zero
+    }
+
+    override suspend fun onPreFling(available: Velocity): Velocity = when {
+        available.x > 0 && state.offset.value > 0 -> {
+            state.performFling(velocity = available.x)
+            available
+        }
+
+        else -> Velocity.Zero
+    }
+
+    override suspend fun onPostFling(
+        consumed: Velocity,
+        available: Velocity,
+    ): Velocity {
+        state.performFling(velocity = available.x)
+        return available
     }
 }
