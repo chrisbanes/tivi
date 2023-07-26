@@ -19,7 +19,7 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 api(projects.core.analytics)
-                api(projects.core.logging)
+                api(projects.core.logging.implementation)
                 api(projects.core.performance)
                 api(projects.core.powercontroller)
                 api(projects.core.preferences)
