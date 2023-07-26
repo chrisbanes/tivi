@@ -11,7 +11,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(projects.core.base)
+                api(projects.core.base)
+                api(projects.core.logging.api)
                 implementation(libs.kermit.kermit)
                 implementation(libs.kotlininject.runtime)
             }

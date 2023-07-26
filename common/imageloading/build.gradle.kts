@@ -13,7 +13,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(projects.core.base)
-                implementation(projects.core.logging)
+                implementation(projects.core.logging.api)
                 implementation(projects.core.powercontroller)
 
                 implementation(projects.data.models)

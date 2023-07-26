@@ -12,7 +12,7 @@ import app.tivi.data.traktauth.TraktRefreshTokenAction
 import app.tivi.inject.ApplicationScope
 import app.tivi.tmdb.TmdbCommonComponent
 import app.tivi.trakt.TraktCommonComponent
-import app.tivi.util.LoggerComponent
+import app.tivi.util.Logger
 import app.tivi.utils.SuccessRefreshTokenAction
 import app.tivi.utils.SuccessTraktLoginAction
 import kotlin.test.AfterTest
@@ -33,7 +33,6 @@ abstract class DatabaseTest {
 abstract class TestApplicationComponent :
     TmdbCommonComponent,
     TraktCommonComponent,
-    LoggerComponent,
     TestDataSourceComponent(),
     TestDatabaseComponent {
 
@@ -58,6 +57,9 @@ abstract class TestApplicationComponent :
             inMemory = true,
         )
     }
+
+    @Provides
+    fun provideLogger(): Logger = object : Logger {}
 
     abstract val sqlDriver: SqlDriver
 }
