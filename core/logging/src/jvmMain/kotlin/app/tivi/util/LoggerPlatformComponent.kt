@@ -3,11 +3,9 @@
 
 package app.tivi.util
 
-import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 actual interface LoggerPlatformComponent {
-    @ApplicationScope
     @Provides
-    fun provideLogger(bind: KermitLogger): Logger = bind
+    fun provideLogger(): Logger = KermitLogger
 }

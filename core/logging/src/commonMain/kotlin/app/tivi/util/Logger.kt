@@ -5,19 +5,22 @@ package app.tivi.util
 
 interface Logger {
 
-    fun setup(debugMode: Boolean)
+    fun setup(debugMode: Boolean) = Unit
 
-    fun setUserId(id: String)
-
-    /** Log a verbose exception and a message with optional format args.  */
-    fun v(throwable: Throwable? = null, message: () -> String = { "" })
+    fun setUserId(id: String) = Unit
 
     /** Log a verbose exception and a message with optional format args.  */
-    fun d(throwable: Throwable? = null, message: () -> String = { "" })
+    fun v(throwable: Throwable? = null, message: () -> String = { "" }) = Unit
 
-    /** Log a verbose exception and a message with optional format args.  */
-    fun i(throwable: Throwable? = null, message: () -> String = { "" })
+    /** Log a debug exception and a message with optional format args.  */
+    fun d(throwable: Throwable? = null, message: () -> String = { "" }) = Unit
 
-    /** Log a verbose exception and a message with optional format args.  */
-    fun e(throwable: Throwable? = null, message: () -> String = { "" })
+    /** Log a info exception and a message with optional format args.  */
+    fun i(throwable: Throwable? = null, message: () -> String = { "" }) = Unit
+
+    /** Log an exception and a message with optional format args.  */
+    fun e(throwable: Throwable? = null, message: () -> String = { "" }) = Unit
+
+    /** Log a warning exception and a message with optional format args.  */
+    fun w(throwable: Throwable? = null, message: () -> String = { "" }) = Unit
 }

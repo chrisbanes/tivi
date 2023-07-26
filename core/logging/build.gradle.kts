@@ -19,8 +19,14 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                implementation(libs.google.firebase.crashlytics)
+                implementation(libs.crashkios.crashlytics)
                 implementation(libs.timber)
+            }
+        }
+
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.crashkios.crashlytics)
             }
         }
     }

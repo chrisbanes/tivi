@@ -3,11 +3,17 @@
 
 package app.tivi.util
 
+import app.tivi.appinitializers.AppInitializer
 import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 actual interface LoggerPlatformComponent {
     @ApplicationScope
     @Provides
-    fun provideLogger(bind: TimberLogger): Logger = bind
+    fun provideLogger(): Logger = TimberLogger
+
+    @Provides
+    @IntoSet
+    fun provideCrashKiOSInitializer(): AppInitializer = AndroidCrashKiOSInitializer
 }

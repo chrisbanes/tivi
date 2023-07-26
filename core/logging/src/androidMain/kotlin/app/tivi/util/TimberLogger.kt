@@ -5,29 +5,23 @@ package app.tivi.util
 
 import android.os.Build
 import android.util.Log
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import me.tatarka.inject.annotations.Inject
+import co.touchlab.crashkios.crashlytics.CrashlyticsKotlin
 import timber.log.Timber
 
-@Inject
-class TimberLogger : Logger {
+internal object TimberLogger : Logger {
     override fun setup(debugMode: Boolean) {
         if (debugMode) {
             Timber.plant(TiviDebugTree())
         }
         try {
-            Timber.plant(CrashlyticsTree(FirebaseCrashlytics.getInstance()))
+            Timber.plant(CrashlyticsTree())
         } catch (e: IllegalStateException) {
             // Firebase is likely not setup in this project. Ignore the exception
         }
     }
 
     override fun setUserId(id: String) {
-        try {
-            FirebaseCrashlytics.getInstance().setUserId(id)
-        } catch (e: IllegalStateException) {
-            // Firebase is likely not setup in this project. Ignore the exception
-        }
+        CrashlyticsKotlin.setCustomValue("username", id)
     }
 
     override fun v(throwable: Throwable?, message: () -> String) {
@@ -44,6 +38,10 @@ class TimberLogger : Logger {
 
     override fun e(throwable: Throwable?, message: () -> String) {
         Timber.e(throwable, message())
+    }
+
+    override fun w(throwable: Throwable?, message: () -> String) {
+        Timber.w(throwable, message())
     }
 }
 
@@ -81,17 +79,15 @@ private class TiviDebugTree : Timber.DebugTree() {
     }
 }
 
-private class CrashlyticsTree(
-    private val firebaseCrashlytics: FirebaseCrashlytics,
-) : Timber.Tree() {
+private class CrashlyticsTree : Timber.Tree() {
     override fun isLoggable(tag: String?, priority: Int): Boolean {
         return priority >= Log.INFO
     }
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        firebaseCrashlytics.log(message)
+        CrashlyticsKotlin.logMessage(message)
         if (t != null) {
-            firebaseCrashlytics.recordException(t)
+            CrashlyticsKotlin.sendHandledException(t)
         }
     }
 }
