@@ -18,7 +18,7 @@ ktor = "2.3.2"
 paging-multiplatform = "3.2.0-alpha05-0.2.3"
 retrofit = "2.9.0"
 spotless = "6.20.0"
-sqldelight = "2.0.0-rc02"
+sqldelight = "2.0.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
