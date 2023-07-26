@@ -152,25 +152,17 @@ class DiscoverPresenter(
             }
         }
 
-        LaunchedEffect(authState) {
+        LaunchedEffect(Unit) {
             observeTrendingShows(ObserveTrendingShows.Params(10))
             observePopularShows(ObservePopularShows.Params(10))
+            observeRecommendedShows(ObserveRecommendedShows.Params(10))
             observeNextShowEpisodeToWatch(Unit)
             observeTraktAuthState(Unit)
             observeUserDetails(ObserveUserDetails.Params("me"))
-
-            if (authState == TraktAuthState.LOGGED_IN) {
-                observeRecommendedShows(ObserveRecommendedShows.Params(10))
-            }
-
-            eventSink(DiscoverUiEvent.Refresh(false))
         }
 
-        LaunchedEffect(observeTraktAuthState) {
-            // Each time the auth state changes, tickle the refresh signal...
-            observeTraktAuthState.flow.collect {
-                eventSink(DiscoverUiEvent.Refresh(false))
-            }
+        LaunchedEffect(authState) {
+            eventSink(DiscoverUiEvent.Refresh(false))
         }
 
         return DiscoverUiState(

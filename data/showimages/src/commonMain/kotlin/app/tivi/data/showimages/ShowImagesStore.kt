@@ -57,5 +57,7 @@ class ShowImagesStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by { lastRequestStore.isRequestValid(it.showId, 180.days) },
+    Validator.by {
+        it.images.isNotEmpty() && lastRequestStore.isRequestValid(it.showId, 180.days)
+    },
 ).build()

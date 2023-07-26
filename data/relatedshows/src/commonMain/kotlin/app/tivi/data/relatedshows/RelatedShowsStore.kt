@@ -75,7 +75,9 @@ class RelatedShowsStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by { lastRequestStore.isRequestValid(it.showId, 28.days) },
+    Validator.by {
+        it.related.isNotEmpty() && lastRequestStore.isRequestValid(it.showId, 28.days)
+    },
 ).build()
 
 data class RelatedShows(val showId: Long, val related: List<RelatedShowEntry>)
