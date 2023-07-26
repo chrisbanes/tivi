@@ -31,7 +31,7 @@
 		388C5D752A69896300A858D6 /* inter_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_medium.ttf; path = ../../common/ui/resources/fonts/src/commonMain/resources/font/inter_medium.ttf; sourceTree = SOURCE_ROOT; };
 		388C5D762A69896300A858D6 /* inter_bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_bold.ttf; path = ../../common/ui/resources/fonts/src/commonMain/resources/font/inter_bold.ttf; sourceTree = SOURCE_ROOT; };
 		388C5D772A69896400A858D6 /* inter_regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = inter_regular.ttf; path = ../../common/ui/resources/fonts/src/commonMain/resources/font/inter_regular.ttf; sourceTree = SOURCE_ROOT; };
-		833349342A4CCCEE00F464FE /* Tivi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tivi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		833349342A4CCCEE00F464FE /* Tivi dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tivi dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		833349372A4CCCEE00F464FE /* TiviApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiviApp.swift; sourceTree = "<group>"; };
 		833349392A4CCCEE00F464FE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8333493B2A4CCCEF00F464FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -77,7 +77,7 @@
 		833349352A4CCCEE00F464FE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				833349342A4CCCEE00F464FE /* Tivi.app */,
+				833349342A4CCCEE00F464FE /* Tivi dev.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -137,7 +137,7 @@
 				38137D6F2A55BA8A00A687CC /* AppAuth */,
 			);
 			productName = Tivi;
-			productReference = 833349342A4CCCEE00F464FE /* Tivi.app */;
+			productReference = 833349342A4CCCEE00F464FE /* Tivi dev.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -272,6 +272,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_ID_SUFFIX = .dev;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -318,7 +319,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -332,6 +333,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_ID_SUFFIX = "";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -372,7 +374,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -415,8 +417,8 @@
 					TiviKt,
 					"-lsqlite3",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.tivi.client;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = app.tivi.client$BUNDLE_ID_SUFFIX;
+				PRODUCT_NAME = "$(TARGET_NAME) dev";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -458,7 +460,7 @@
 					TiviKt,
 					"-lsqlite3",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.tivi.client;
+				PRODUCT_BUNDLE_IDENTIFIER = app.tivi.client$BUNDLE_ID_SUFFIX;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore app.tivi.client";
