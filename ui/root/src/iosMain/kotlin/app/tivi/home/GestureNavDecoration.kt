@@ -24,7 +24,6 @@ import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.ResistanceConfig
 import androidx.compose.material.SwipeableDefaults
 import androidx.compose.material.ThresholdConfig
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -89,23 +88,23 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                 prevStackDepth = backStackDepth
             }
 
-            val dismissState = rememberDismissState()
+            val dismissState = rememberDismissState(arg)
+            var offsetWhenPopped by remember { mutableStateOf(0f) }
 
             LaunchedEffect(dismissState) {
                 snapshotFlow { dismissState.isDismissed(DismissDirection.StartToEnd) }
                     .filter { it }
-                    .collect { navigator.pop() }
-            }
-
-            LaunchedEffect(arg) {
-                // Each time the top record changes, reset the dismiss state.
-                // We don't use reset() as that animates, and we need a snap.
-                dismissState.snapTo(DismissValue.Default)
+                    .collect {
+                        navigator.pop()
+                        offsetWhenPopped = dismissState.offset.value
+                    }
             }
 
             if (previous != null) {
                 // Previous content is only visible if the swipe-dismiss offset != 0
-                val showPrevious by remember { derivedStateOf { dismissState.offset.value != 0f } }
+                val showPrevious by remember(dismissState) {
+                    derivedStateOf { dismissState.offset.value != 0f }
+                }
 
                 PreviousContent(
                     isVisible = { showPrevious },
@@ -133,7 +132,9 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                         // come back from back stack
                         backStackDepth < prevStackDepth -> {
                             when {
-                                dismissState.offset.value != 0f -> {
+                                offsetWhenPopped != 0f -> {
+                                    // If the record change was caused by a swipe gesture, let's
+                                    // jump cut
                                     EnterTransition.None togetherWith ExitTransition.None
                                 }
 
@@ -142,9 +143,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                                         0 - (swipeProperties.enterScreenOffsetFraction * width).roundToInt()
                                     }
                                         .togetherWith(slideOutHorizontally(targetOffsetX = End))
-                                        .apply {
-                                            targetContentZIndex = -1f
-                                        }
+                                        .apply { targetContentZIndex = -1f }
                                 }
                             }
                         }
@@ -163,6 +162,11 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                     dismissThreshold = swipeProperties.swipeThreshold,
                     content = { content(record) },
                 )
+            }
+
+            LaunchedEffect(arg) {
+                // Reset the offsetWhenPopped when the top record changes
+                offsetWhenPopped = 0f
             }
         }
     }
@@ -201,7 +205,12 @@ internal fun SwipeableContent(
 
         Box(
             modifier = Modifier
-                .nestedScroll(connection = nestedScrollConnection)
+                .let { modifier ->
+                    when {
+                        swipeEnabled -> modifier.nestedScroll(nestedScrollConnection)
+                        else -> modifier
+                    }
+                }
                 // Offset so only the end-most swipeAreaWidth is visible
                 .offset { IntOffset(x = -shift, y = 0) }
                 .swipeable(
@@ -273,5 +282,17 @@ private class SwipeDismissNestedScrollConnection(
     ): Velocity {
         state.performFling(velocity = available.x)
         return available
+    }
+}
+
+@Composable
+@ExperimentalMaterialApi
+private fun rememberDismissState(
+    vararg inputs: Any?,
+    initialValue: DismissValue = DismissValue.Default,
+    confirmStateChange: (DismissValue) -> Boolean = { true },
+): DismissState {
+    return rememberSaveable(inputs, saver = DismissState.Saver(confirmStateChange)) {
+        DismissState(initialValue, confirmStateChange)
     }
 }
