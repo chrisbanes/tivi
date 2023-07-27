@@ -57,7 +57,7 @@ class RelatedShowsStore(
             }
             .let { RelatedShows(showId, it) }
     },
-    sourceOfTruth = SourceOfTruth.of<Long, RelatedShows, RelatedShows>(
+    sourceOfTruth = SourceOfTruth.of(
         reader = { showId ->
             relatedShowsDao.entriesObservable(showId)
                 .map { RelatedShows(showId, it) }

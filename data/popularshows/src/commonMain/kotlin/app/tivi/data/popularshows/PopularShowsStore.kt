@@ -42,7 +42,7 @@ class PopularShowsStore(
             }
         }
     },
-    sourceOfTruth = SourceOfTruth.of<Int, List<PopularShowEntry>, List<PopularShowEntry>>(
+    sourceOfTruth = SourceOfTruth.of(
         reader = { page -> popularShowsDao.entriesObservable(page) },
         writer = { page, response ->
             transactionRunner {

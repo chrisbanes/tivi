@@ -43,7 +43,7 @@ class WatchedShowsStore(
             }
         }
     },
-    sourceOfTruth = SourceOfTruth.of<Unit, List<WatchedShowEntry>, List<WatchedShowEntry>>(
+    sourceOfTruth = SourceOfTruth.of(
         reader = { watchedShowsDao.entriesObservable() },
         writer = { _: Unit, response ->
             val syncer = syncerForEntity(

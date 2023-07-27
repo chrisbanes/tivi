@@ -50,7 +50,7 @@ class ShowStore(
 
         throw traktResult.exceptionOrNull()!!
     },
-    sourceOfTruth = SourceOfTruth.of<Long, TiviShow, TiviShow>(
+    sourceOfTruth = SourceOfTruth.of(
         reader = { showId -> showDao.getShowWithIdFlow(showId) },
         writer = { id, response ->
             transactionRunner {

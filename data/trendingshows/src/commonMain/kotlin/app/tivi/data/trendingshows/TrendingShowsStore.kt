@@ -45,7 +45,7 @@ class TrendingShowsStore(
             }
         }
     },
-    sourceOfTruth = SourceOfTruth.of<Int, List<TrendingShowEntry>, List<TrendingShowEntry>>(
+    sourceOfTruth = SourceOfTruth.of(
         reader = { page -> trendingShowsDao.entriesObservable(page) },
         writer = { page, response ->
             transactionRunner {
