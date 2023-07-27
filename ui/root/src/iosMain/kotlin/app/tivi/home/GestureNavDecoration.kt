@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -100,10 +101,12 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                     }
             }
 
+            val transition = updateTransition(targetState = arg, label = "GestureNavDecoration")
+
             if (previous != null) {
                 // Previous content is only visible if the swipe-dismiss offset != 0
                 val showPrevious by remember(dismissState) {
-                    derivedStateOf { dismissState.offset.value != 0f }
+                    derivedStateOf { dismissState.offset.value != 0f || transition.isRunning }
                 }
 
                 PreviousContent(
@@ -116,8 +119,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                 )
             }
 
-            AnimatedContent(
-                targetState = arg,
+            transition.AnimatedContent(
                 transitionSpec = {
                     when {
                         // adding to back stack
@@ -153,7 +155,6 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                     }
                 },
                 modifier = modifier,
-                label = "GestureNavDecoration",
             ) { record ->
                 SwipeableContent(
                     state = dismissState,
