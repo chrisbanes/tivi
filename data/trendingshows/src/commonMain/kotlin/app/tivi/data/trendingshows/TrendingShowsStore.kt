@@ -65,5 +65,5 @@ class TrendingShowsStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by { it.isNotEmpty() && lastRequestStore.isRequestValid(3.hours) },
+    Validator.by { lastRequestStore.isRequestValid(3.hours) },
 ).build()

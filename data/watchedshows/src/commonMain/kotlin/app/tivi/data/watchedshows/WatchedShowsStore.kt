@@ -71,5 +71,5 @@ class WatchedShowsStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by { it.isNotEmpty() && lastRequestStore.isRequestValid(6.hours) },
+    Validator.by { lastRequestStore.isRequestValid(6.hours) },
 ).build()
