@@ -19,7 +19,7 @@ actual interface SqlDelightDatabasePlatformComponent {
         return when {
             configuration.inMemory -> inMemoryDriver(Database.Schema)
             else -> {
-                FixedNativeSqliteDriver(
+                WorkaroundNativeSqliteDriver(
                     schema = Database.Schema,
                     name = "tivi.db",
                     maxReaderConnections = 4,
@@ -35,22 +35,25 @@ actual interface SqlDelightDatabasePlatformComponent {
  * [NativeSqliteDriver] wrapper to try and workaround
  * https://github.com/cashapp/sqldelight/issues/4376
  */
-private class FixedNativeSqliteDriver(
+private class WorkaroundNativeSqliteDriver(
     schema: SqlSchema<QueryResult.Value<Unit>>,
     name: String,
     maxReaderConnections: Int = 1,
 ) : SqlDriver by NativeSqliteDriver(schema, name, maxReaderConnections) {
-    private val listeners = mutableMapOf<String, MutableSet<Query.Listener>>()
+    // We can't use a mutable collection in a HashMap, as the value's hash
+    // will change as the collection changes, which then makes HashMap happy.
+    // In K/N this causes an IllegalStateException (but not on JVM)
+    private val listeners = mutableMapOf<String, Set<Query.Listener>>()
 
     override fun addListener(vararg queryKeys: String, listener: Query.Listener) {
-        queryKeys.forEach {
-            listeners.getOrPut(it) { mutableSetOf() }.add(listener)
+        queryKeys.forEach { key ->
+            listeners[key] = (listeners[key] ?: emptySet()) + listener
         }
     }
 
     override fun removeListener(vararg queryKeys: String, listener: Query.Listener) {
-        queryKeys.forEach {
-            listeners[it]?.remove(listener)
+        queryKeys.forEach { key ->
+            listeners[key] = (listeners[key] ?: emptySet()) - listener
         }
     }
 
