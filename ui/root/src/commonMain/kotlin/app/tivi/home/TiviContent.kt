@@ -28,8 +28,8 @@ import app.tivi.util.TiviTextCreator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.slack.circuit.backstack.SaveableBackStack
+import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.CircuitConfig
 import com.slack.circuit.foundation.screen
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -52,7 +52,7 @@ fun TiviContent(
     @Assisted navigator: Navigator,
     @Assisted onOpenUrl: (String) -> Unit,
     rootViewModel: (CoroutineScope) -> RootViewModel,
-    circuitConfig: CircuitConfig,
+    circuit: Circuit,
     analytics: Analytics,
     tiviDateFormatter: TiviDateFormatter,
     tiviTextCreator: TiviTextCreator,
@@ -85,7 +85,7 @@ fun TiviContent(
             LocalTiviTextCreator provides tiviTextCreator,
             LocalWindowSizeClass provides calculateWindowSizeClass(),
         ) {
-            CircuitCompositionLocals(circuitConfig) {
+            CircuitCompositionLocals(circuit) {
                 TiviTheme(
                     useDarkColors = preferences.shouldUseDarkColors(),
                     useDynamicColors = preferences.shouldUseDynamicColors(),

@@ -20,9 +20,9 @@ import com.slack.circuit.backstack.BackStack
 import com.slack.circuit.backstack.ProvidedValues
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.backstack.providedValuesForBackStack
-import com.slack.circuit.foundation.CircuitConfig
+import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitContent
-import com.slack.circuit.foundation.LocalCircuitConfig
+import com.slack.circuit.foundation.LocalCircuit
 import com.slack.circuit.foundation.screen
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -44,15 +44,15 @@ fun NavigableCircuitContentWithPrevious(
     navigator: Navigator,
     backstack: SaveableBackStack,
     modifier: Modifier = Modifier,
-    circuitConfig: CircuitConfig = requireNotNull(LocalCircuitConfig.current),
+    circuit: Circuit = requireNotNull(LocalCircuit.current),
     providedValues: Map<out BackStack.Record, ProvidedValues> = providedValuesForBackStack(backstack),
     decoration: NavDecorationWithPrevious,
     unavailableRoute: (@Composable (screen: Screen, modifier: Modifier) -> Unit) =
-        circuitConfig.onUnavailableContent,
+        circuit.onUnavailableContent,
 ) {
     val activeContentProviders = backstack.buildCircuitContentProviders(
         navigator = navigator,
-        circuitConfig = circuitConfig,
+        circuit = circuit,
         unavailableRoute = unavailableRoute,
     )
 
@@ -82,13 +82,13 @@ internal data class RecordContentProvider(
 @Composable
 private fun SaveableBackStack.buildCircuitContentProviders(
     navigator: Navigator,
-    circuitConfig: CircuitConfig,
+    circuit: Circuit,
     unavailableRoute: @Composable (screen: Screen, modifier: Modifier) -> Unit,
 ): List<RecordContentProvider> {
     val previousContentProviders = remember { mutableMapOf<String, RecordContentProvider>() }
 
     val lastNavigator by rememberUpdatedState(navigator)
-    val lastCircuitConfig by rememberUpdatedState(circuitConfig)
+    val lastCircuit by rememberUpdatedState(circuit)
     val lastUnavailableRoute by rememberUpdatedState(unavailableRoute)
 
     return iterator()
@@ -104,7 +104,7 @@ private fun SaveableBackStack.buildCircuitContentProviders(
                             screen = record.screen,
                             modifier = Modifier,
                             navigator = lastNavigator,
-                            circuitConfig = lastCircuitConfig,
+                            circuit = lastCircuit,
                             unavailableContent = lastUnavailableRoute,
                         )
                     },

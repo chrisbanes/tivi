@@ -20,7 +20,7 @@ import app.tivi.settings.SettingsComponent
 import app.tivi.showdetails.details.ShowDetailsComponent
 import app.tivi.showdetails.seasons.ShowSeasonsComponent
 import cafe.adriel.lyricist.Lyricist
-import com.slack.circuit.foundation.CircuitConfig
+import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.Provides
@@ -51,10 +51,10 @@ interface UiComponent :
 
     @Provides
     @ActivityScope
-    fun provideCircuitConfig(
+    fun provideCircuit(
         uiFactories: Set<Ui.Factory>,
         presenterFactories: Set<Presenter.Factory>,
-    ): CircuitConfig = CircuitConfig.Builder()
+    ): Circuit = Circuit.Builder()
         .addUiFactories(uiFactories)
         .addPresenterFactories(presenterFactories)
         .build()
