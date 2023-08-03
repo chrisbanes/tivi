@@ -98,8 +98,7 @@ jobs:
 #          ./gradlew api31QaDebugAndroidTest \
 #            -Dorg.gradle.workers.max=1 \
 #            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect" \
-#            --info \
-#            --no-configuration-cache
+#            --info
 
       - name: Clean secrets
         if: always()
@@ -274,8 +273,7 @@ jobs:
           cache-disabled: true
 
       - name: iosX64Test
-        # Disable CC due to https://github.com/google/ksp/issues/1463
-        run: ./gradlew iosX64Test --no-configuration-cache
+        run: ./gradlew iosX64Test
 
       - name: Upload reports
         if: always()
