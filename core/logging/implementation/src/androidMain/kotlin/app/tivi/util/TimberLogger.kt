@@ -21,7 +21,11 @@ internal object TimberLogger : Logger {
     }
 
     override fun setUserId(id: String) {
-        CrashlyticsKotlin.setCustomValue("username", id)
+        try {
+            CrashlyticsKotlin.setCustomValue("username", id)
+        } catch (t: Throwable) {
+            // Firebase might not be setup
+        }
     }
 
     override fun v(throwable: Throwable?, message: () -> String) {
