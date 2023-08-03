@@ -110,13 +110,11 @@ private fun UiDevice.testEpisodeDetails(): Boolean {
     return true
 }
 
-fun UiDevice.waitForObject(selector: BySelector, timeout: Duration = 5.seconds): UiObject2 {
-    if (wait(Until.hasObject(selector), timeout)) {
-        return findObject(selector)
-    }
-    error("Object with selector [$selector] not found")
-}
+private fun UiDevice.waitForObject(
+    selector: BySelector,
+    timeout: Duration = 5.seconds
+): UiObject2 = wait(Until.findObject(selector), timeout)
 
-fun <R> UiDevice.wait(condition: SearchCondition<R>, timeout: Duration): R {
+private fun <R> UiDevice.wait(condition: SearchCondition<R>, timeout: Duration): R {
     return wait(condition, timeout.inWholeMilliseconds)
 }
