@@ -9,16 +9,26 @@ import app.tivi.util.AppCoroutineDispatchers
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
 import com.russhwolf.settings.set
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
+import platform.Foundation.CFBridgingRetain
+import platform.Security.kSecAttrAccessible
+import platform.Security.kSecAttrAccessibleAfterFirstUnlock
+import platform.Security.kSecAttrService
 
-@OptIn(ExperimentalSettingsImplementation::class)
+@OptIn(ExperimentalSettingsImplementation::class, ExperimentalForeignApi::class)
 @Inject
 class IosAuthStore(
     private val applicationInfo: ApplicationInfo,
     private val dispatchers: AppCoroutineDispatchers,
 ) : AuthStore {
-    private val keyChainSettings by lazy { KeychainSettings(applicationInfo.packageName) }
+    private val keyChainSettings by lazy {
+        KeychainSettings(
+            kSecAttrService to CFBridgingRetain("${applicationInfo.packageName}.auth"),
+            kSecAttrAccessible to kSecAttrAccessibleAfterFirstUnlock,
+        )
+    }
 
     override suspend fun get(): AuthState? = withContext(dispatchers.io) {
         val accessToken = keyChainSettings.getStringOrNull(KEY_ACCESS_TOKEN)
