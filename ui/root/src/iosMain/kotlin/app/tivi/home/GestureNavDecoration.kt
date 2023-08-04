@@ -112,8 +112,15 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                 PreviousContent(
                     isVisible = { showPrevious },
                     modifier = Modifier.graphicsLayer {
-                        translationX = (dismissState.offset.value.absoluteValue - size.width) *
-                            swipeProperties.enterScreenOffsetFraction
+                        translationX = when {
+                            // If we're running in a transition, let it handle any translation
+                            transition.isRunning -> 0f
+                            else -> {
+                                // Otherwise we'll react to the swipe dismiss state
+                                (dismissState.offset.value.absoluteValue - size.width) *
+                                    swipeProperties.enterScreenOffsetFraction
+                            }
+                        }
                     },
                     content = { content(previous) },
                 )
