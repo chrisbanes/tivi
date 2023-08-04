@@ -43,6 +43,7 @@ import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.asImageBitmap
 import com.seiko.imageloader.model.ImageAction
+import com.seiko.imageloader.model.ImageEvent
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageRequestBuilder
 import com.seiko.imageloader.model.ImageResult
@@ -54,6 +55,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -81,28 +83,44 @@ fun AsyncImage(
         }
     }
 
-    var crossfade by remember(request) { mutableStateOf(true) }
-    var result by remember { mutableStateOf<ImageResult?>(null) }
+    var result by remember { mutableStateOf<ImageResultWithSource?>(null) }
 
     LaunchedEffect(imageLoader) {
+        var remoteFetchStarted = false
+        var diskFetchStarted = false
+
         snapshotFlow { request }
+            .onEach {
+                remoteFetchStarted = false
+                diskFetchStarted = false
+            }
             .filterNotNull()
             .flatMapLatest { imageLoader.async(it) }
             .collect { action ->
                 onAction?.invoke(action)
 
-                if (action is ImageResult) {
-                    // Crossfade if the current result is null
-                    crossfade = result == null
-                    result = action
+                when (action) {
+                    ImageEvent.StartWithDisk -> diskFetchStarted = true
+                    ImageEvent.StartWithFetch -> remoteFetchStarted = true
+                    is ImageResult -> {
+                        result = ImageResultWithSource(
+                            result = action,
+                            source = when {
+                                remoteFetchStarted -> ImageResultSource.REMOTE
+                                diskFetchStarted -> ImageResultSource.DISK
+                                else -> ImageResultSource.MEMORY
+                            },
+                        )
+                    }
+                    else -> Unit
                 }
             }
     }
 
     AnimatedContent(
-        targetState = result to crossfade,
+        targetState = result,
         transitionSpec = {
-            val (_, xfade) = targetState
+            val xfade = targetState?.source != ImageResultSource.MEMORY
             when {
                 xfade -> fadeIn(tween(200)) togetherWith fadeOut(tween(200))
                 else -> {
@@ -112,9 +130,9 @@ fun AsyncImage(
             }
         },
         modifier = modifier,
-    ) { (r, _) ->
+    ) {
         ResultImage(
-            result = r,
+            result = it?.result,
             alignment = alignment,
             contentDescription = contentDescription,
             contentScale = contentScale,
@@ -126,6 +144,15 @@ fun AsyncImage(
             filterQuality = filterQuality,
         )
     }
+}
+
+private data class ImageResultWithSource(
+    val result: ImageResult,
+    val source: ImageResultSource,
+)
+
+enum class ImageResultSource {
+    MEMORY, DISK, REMOTE
 }
 
 @Composable
