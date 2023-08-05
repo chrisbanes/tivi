@@ -16,6 +16,7 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
 import platform.Foundation.NSUserDefaults
+import platform.UIKit.UIScreen
 
 @Component
 @ApplicationScope
@@ -52,7 +53,7 @@ abstract class IosApplicationComponent(
     }
 
     @Provides
-    fun provideDensity(): Density = Density(density = 1f) // FIXME
+    fun provideDensity(): Density = Density(density = UIScreen.mainScreen.scale.toFloat())
 
     companion object
 }
