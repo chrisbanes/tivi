@@ -55,7 +55,7 @@ internal fun updateImageLoadingTransition(
                 tween(duration.inWholeMilliseconds.toInt() * 3 / 4)
             }
         },
-        targetValueByState = { if (it == null) 0.8f else 1f },
+        targetValueByState = { if (it == null) -0.2f else 0f },
     )
 
     val saturation = transition.animateFloat(
@@ -91,18 +91,11 @@ fun ColorMatrix.setSaturation(sat: Float): ColorMatrix {
     return this
 }
 
-fun ColorMatrix.setBrightness(brightness: Float): ColorMatrix {
-    // We subtract to make the picture look darker, it will automatically clamp
-    val darkening = (1 - brightness) * MAX_DARKEN_PERCENTAGE * 255
-    this[0, 4] = -darkening
-    this[1, 4] = -darkening
-    this[2, 4] = -darkening
-
-    return this
-}
-
-// This means that we darken the image by 20%
-private const val MAX_DARKEN_PERCENTAGE = 0.2f
+/**
+ * Required as Skiko treats the final column differently.
+ * See https://github.com/JetBrains/compose-multiplatform/issues/3461
+ */
+expect fun ColorMatrix.setBrightness(value: Float): ColorMatrix
 
 fun ColorMatrix.setAlpha(alpha: Float): ColorMatrix {
     this[3, 3] = alpha
