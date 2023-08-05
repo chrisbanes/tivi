@@ -7,6 +7,7 @@ import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.ImageLoaderConfigBuilder
 import com.seiko.imageloader.cache.memory.maxSizePercent
 import com.seiko.imageloader.component.setupDefaultComponents
+import kotlinx.cinterop.ExperimentalForeignApi
 import okio.Path
 import okio.Path.Companion.toPath
 import platform.Foundation.NSCachesDirectory
@@ -14,6 +15,7 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
 internal object IosImageLoaderFactory : ImageLoaderFactory {
+    @OptIn(ExperimentalForeignApi::class)
     private val cacheDir: Path by lazy {
         NSFileManager.defaultManager.URLForDirectory(
             directory = NSCachesDirectory,
@@ -31,10 +33,7 @@ internal object IosImageLoaderFactory : ImageLoaderFactory {
             setupDefaultComponents()
         }
         interceptor {
-            memoryCacheConfig {
-                // Set the max size to 25% of the app's available memory.
-                maxSizePercent(0.25)
-            }
+            memoryCacheConfig { maxSizePercent() }
             diskCacheConfig {
                 directory(cacheDir.resolve("image_cache"))
                 maxSizeBytes(512L * 1024 * 1024) // 512MB
