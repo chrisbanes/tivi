@@ -48,7 +48,7 @@ UPDATE related_shows SET
 WHERE id = :id;
 
 insert:
-INSERT INTO related_shows (
+INSERT OR IGNORE INTO related_shows (
     `id`,
     `show_id`,
     `other_show_id`,
