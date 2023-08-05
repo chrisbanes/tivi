@@ -25,8 +25,7 @@ internal class AndroidImageLoaderFactory(
         }
         interceptor {
             memoryCacheConfig {
-                // Set the max size to 25% of the app's available memory.
-                maxSizePercent(context.applicationContext, 0.25)
+                maxSizePercent(context.applicationContext)
             }
             diskCacheConfig {
                 directory(context.cacheDir.resolve("image_cache").toOkioPath())

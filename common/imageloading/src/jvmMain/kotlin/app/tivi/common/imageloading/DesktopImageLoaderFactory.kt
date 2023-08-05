@@ -25,10 +25,7 @@ internal object DesktopImageLoaderFactory : ImageLoaderFactory {
             setupDefaultComponents()
         }
         interceptor {
-            memoryCacheConfig {
-                // Set the max size to 25% of the app's available memory.
-                maxSizePercent(0.25)
-            }
+            memoryCacheConfig { maxSizePercent() }
             diskCacheConfig {
                 directory(getCacheDir().resolve("image_cache").toOkioPath())
                 maxSizeBytes(512L * 1024 * 1024) // 512MB
