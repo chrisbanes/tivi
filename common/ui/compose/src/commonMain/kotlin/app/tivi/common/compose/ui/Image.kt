@@ -66,10 +66,13 @@ fun AsyncImage(
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ) {
-    val sizeResolver = ConstraintsSizeResolver()
+    val sizeResolver = remember { ConstraintsSizeResolver() }
     val lastRequestBuilder by rememberUpdatedState(requestBuilder)
 
-    val request by produceState(ImageRequest(Unit), model, contentScale) {
+    val request by produceState(
+        initialValue = ImageRequest { data(model) },
+        key1 = model,
+    ) {
         value = ImageRequest {
             data(model)
             size(sizeResolver)
