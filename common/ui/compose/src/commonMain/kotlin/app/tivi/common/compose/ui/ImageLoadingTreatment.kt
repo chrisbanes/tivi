@@ -91,11 +91,12 @@ fun ColorMatrix.setSaturation(sat: Float): ColorMatrix {
     return this
 }
 
-/**
- * Required as Skiko treats the final column differently.
- * See https://github.com/JetBrains/compose-multiplatform/issues/3461
- */
-expect fun ColorMatrix.setBrightness(value: Float): ColorMatrix
+fun ColorMatrix.setBrightness(value: Float): ColorMatrix {
+    this[0, 4] = value * 255
+    this[1, 4] = value * 255
+    this[2, 4] = value * 255
+    return this
+}
 
 fun ColorMatrix.setAlpha(alpha: Float): ColorMatrix {
     this[3, 3] = alpha
