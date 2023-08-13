@@ -30,18 +30,18 @@ fun <T> Flow<StoreReadResponse<T>>.filterForResult(): Flow<StoreReadResponse<T>>
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun <Key : Any, Model : Any> storeBuilder(
-    fetcher: Fetcher<Key, Model>,
-    sourceOfTruth: SourceOfTruth<Key, Model>,
-): StoreBuilder<Key, Model> = StoreBuilder.from(fetcher, sourceOfTruth)
+inline fun <Key : Any, Local : Any, Output : Any> storeBuilder(
+    fetcher: Fetcher<Key, Local>,
+    sourceOfTruth: SourceOfTruth<Key, Local, Output>,
+): StoreBuilder<Key, Output> = StoreBuilder.from(fetcher, sourceOfTruth)
 
-fun <Key : Any, Local : Any> SourceOfTruth<Key, Local>.usingDispatchers(
+fun <Key : Any, Local : Any, Output : Any> SourceOfTruth<Key, Local, Output>.usingDispatchers(
     readDispatcher: CoroutineDispatcher,
     writeDispatcher: CoroutineDispatcher,
-): SourceOfTruth<Key, Local> {
+): SourceOfTruth<Key, Local, Output> {
     val wrapped = this
-    return object : SourceOfTruth<Key, Local> {
-        override fun reader(key: Key): Flow<Local?> = wrapped.reader(key).flowOn(readDispatcher)
+    return object : SourceOfTruth<Key, Local, Output> {
+        override fun reader(key: Key): Flow<Output?> = wrapped.reader(key).flowOn(readDispatcher)
 
         override suspend fun write(key: Key, value: Local) = withContext(writeDispatcher) {
             wrapped.write(key, value)

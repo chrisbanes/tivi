@@ -41,7 +41,7 @@ class ShowImagesStore(
             ShowImages(showId, emptyList())
         }
     },
-    sourceOfTruth = SourceOfTruth.of(
+    sourceOfTruth = SourceOfTruth.of<Long, ShowImages, ShowImages>(
         reader = { showId ->
             showTmdbImagesDao.getImagesForShowId(showId).map { ShowImages(showId, it) }
         },
