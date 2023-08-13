@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
@@ -68,7 +69,6 @@ import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.theme.TiviTheme
-import app.tivi.common.compose.ui.AlertDialog
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
