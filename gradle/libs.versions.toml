@@ -90,7 +90,7 @@ junit = "junit:junit:4.13.2"
 kermit-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kermit-crashlytics = { module = "co.touchlab:kermit-crashlytics", version.ref = "kermit" }
 
-kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.21.0"
+kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.22.0"
 kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
