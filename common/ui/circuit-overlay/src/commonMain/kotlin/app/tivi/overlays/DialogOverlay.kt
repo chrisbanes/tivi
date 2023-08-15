@@ -3,11 +3,10 @@
 
 package app.tivi.overlays
 
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.window.Dialog
 import app.tivi.common.compose.rememberCoroutineScope
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
@@ -22,11 +21,10 @@ class DialogOverlay<Model : Any, Result : Any>(
     private val onDismiss: () -> Result,
     private val content: @Composable (Model, OverlayNavigator<Result>) -> Unit,
 ) : Overlay<Result> {
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content(navigator: OverlayNavigator<Result>) {
         val coroutineScope = rememberCoroutineScope()
-        AlertDialog(
+        Dialog(
             onDismissRequest = { navigator.finish(onDismiss()) },
         ) {
             Surface(
