@@ -392,7 +392,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1000;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "\"Tivi/Preview Content\"";
 				DEVELOPMENT_TEAM = GLF74Y6P9T;
 				ENABLE_PREVIEWS = YES;
