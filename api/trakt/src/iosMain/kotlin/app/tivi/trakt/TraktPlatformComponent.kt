@@ -28,7 +28,7 @@ actual interface TraktPlatformComponent {
         traktAuthRepository: Lazy<TraktAuthRepository>,
     ): Trakt = Trakt {
         traktApiKey = oauthInfo.clientId
-        maxRetriesOnException = 3
+        maxRetries = 3
 
         logging {
             logger = object : io.ktor.client.plugins.logging.Logger {

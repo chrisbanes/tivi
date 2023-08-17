@@ -27,7 +27,7 @@ actual interface TraktPlatformComponent {
         traktAuthRepository: Lazy<TraktAuthRepository>,
     ): Trakt = Trakt {
         traktApiKey = oauthInfo.clientId
-        maxRetriesOnException = 3
+        maxRetries = 3
 
         httpClient(OkHttp) {
             // Probably want to move to using Ktor's caching, timeouts, etc eventually
