@@ -6,7 +6,6 @@ package app.tivi.home
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -43,13 +42,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.thenIf
 import com.slack.circuit.runtime.Navigator
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -58,12 +57,12 @@ import kotlinx.coroutines.flow.filter
 @ExperimentalMaterialApi
 @Immutable
 class SwipeProperties(
-    val enterScreenOffsetFraction: Float = 0.25f,
+    val enterOffsetFraction: Float = 0.25f,
     val swipeThreshold: ThresholdConfig = FractionalThreshold(0.4f),
     val swipeAreaWidth: Dp = 16.dp,
 )
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
     private val navigator: Navigator,
     private val swipeProperties: SwipeProperties,
@@ -118,7 +117,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                             else -> {
                                 // Otherwise we'll react to the swipe dismiss state
                                 (dismissState.offset.value.absoluteValue - size.width) *
-                                    swipeProperties.enterScreenOffsetFraction
+                                    swipeProperties.enterOffsetFraction
                             }
                         }
                     },
@@ -131,28 +130,28 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                     when {
                         // adding to back stack
                         backStackDepth > prevStackDepth -> {
-                            slideInHorizontally(initialOffsetX = End) togetherWith slideOutHorizontally(
-                                targetOffsetX = { width ->
-                                    0 - (swipeProperties.enterScreenOffsetFraction * width).roundToInt()
+                            slideInHorizontally(
+                                initialOffsetX = End,
+                            ).togetherWith(
+                                slideOutHorizontally { width ->
+                                    -(swipeProperties.enterOffsetFraction * width).roundToInt()
                                 },
                             )
                         }
 
                         // come back from back stack
                         backStackDepth < prevStackDepth -> {
-                            when {
-                                offsetWhenPopped != 0f -> {
-                                    // If the record change was caused by a swipe gesture, let's
-                                    // jump cut
-                                    EnterTransition.None togetherWith ExitTransition.None
-                                }
-
-                                else -> {
-                                    slideInHorizontally { width ->
-                                        0 - (swipeProperties.enterScreenOffsetFraction * width).roundToInt()
-                                    }
-                                        .togetherWith(slideOutHorizontally(targetOffsetX = End))
-                                        .apply { targetContentZIndex = -1f }
+                            if (offsetWhenPopped != 0f) {
+                                // If the record change was caused by a swipe gesture, let's
+                                // jump cut
+                                EnterTransition.None togetherWith ExitTransition.None
+                            } else {
+                                slideInHorizontally { width ->
+                                    -(swipeProperties.enterOffsetFraction * width).roundToInt()
+                                }.togetherWith(
+                                    slideOutHorizontally(targetOffsetX = End),
+                                ).apply {
+                                    targetContentZIndex = -1f
                                 }
                             }
                         }
@@ -190,7 +189,7 @@ private val End: (Int) -> Int = { it }
 @ExperimentalMaterialApi
 internal fun SwipeableContent(
     state: DismissState,
-    swipeAreaWidth: Dp,
+    @Suppress("UNUSED_PARAMETER") swipeAreaWidth: Dp,
     dismissThreshold: ThresholdConfig,
     modifier: Modifier = Modifier,
     swipeEnabled: Boolean = true,
@@ -203,24 +202,9 @@ internal fun SwipeableContent(
             SwipeDismissNestedScrollConnection(state)
         }
 
-        // All credit to @alexzhirkevich for this hack to reduce the Modifier.swipeable() hit area
-        // https://github.com/alexzhirkevich/compose-look-and-feel/blob/master/lookandfeel/src/commonMain/kotlin/moe/tlaster/precompose/navigation/NavHost.kt
-        val shift = with(LocalDensity.current) {
-            remember(this, width, swipeAreaWidth) {
-                width - swipeAreaWidth.roundToPx().coerceIn(0, width)
-            }
-        }
-
         Box(
             modifier = Modifier
-                .let { modifier ->
-                    when {
-                        swipeEnabled -> modifier.nestedScroll(nestedScrollConnection)
-                        else -> modifier
-                    }
-                }
-                // Offset so only the end-most swipeAreaWidth is visible
-                .offset { IntOffset(x = -shift, y = 0) }
+                .thenIf(swipeEnabled) { nestedScroll(nestedScrollConnection) }
                 .swipeable(
                     state = state,
                     anchors = mapOf(
@@ -236,9 +220,7 @@ internal fun SwipeableContent(
                         factorAtMin = SwipeableDefaults.StiffResistanceFactor,
                         factorAtMax = SwipeableDefaults.StandardResistanceFactor,
                     ),
-                )
-                // Offset back to origin
-                .offset { IntOffset(x = shift, y = 0) },
+                ),
         ) {
             Box(
                 modifier = Modifier
