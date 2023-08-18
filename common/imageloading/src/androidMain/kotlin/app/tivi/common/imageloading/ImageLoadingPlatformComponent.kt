@@ -4,9 +4,11 @@
 package app.tivi.common.imageloading
 
 import android.app.Application
+import app.tivi.appinitializers.AppInitializer
 import app.tivi.util.Logger
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.intercept.Interceptor
+import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 actual interface ImageLoadingPlatformComponent {
@@ -22,4 +24,10 @@ actual interface ImageLoadingPlatformComponent {
             addInterceptors(interceptors)
         }
     }
+
+    @Provides
+    @IntoSet
+    fun bindCoilCleanupInitializer(
+        initializer: CoilCleanupInitializer,
+    ): AppInitializer = initializer
 }

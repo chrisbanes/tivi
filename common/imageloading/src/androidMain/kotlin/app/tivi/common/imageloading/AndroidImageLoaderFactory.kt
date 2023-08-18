@@ -28,7 +28,9 @@ internal class AndroidImageLoaderFactory(
                 maxSizePercent(context.applicationContext)
             }
             diskCacheConfig {
-                directory(context.cacheDir.resolve("image_cache").toOkioPath())
+                // We can't use `image_cache` as that is what Coil uses, and therefore users
+                // migrating from old versions will have a broken cache.
+                directory(context.cacheDir.resolve("image_loader_cache").toOkioPath())
                 maxSizeBytes(512L * 1024 * 1024) // 512MB
             }
         }
