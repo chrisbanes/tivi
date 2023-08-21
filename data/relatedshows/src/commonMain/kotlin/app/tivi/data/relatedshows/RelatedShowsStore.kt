@@ -13,6 +13,7 @@ import app.tivi.data.util.usingDispatchers
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -75,7 +76,13 @@ class RelatedShowsStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by { lastRequestStore.isRequestValid(it.showId, 28.days) },
+    Validator.by { result ->
+        if (result.related.isNotEmpty()) {
+            lastRequestStore.isRequestValid(result.showId, 28.days)
+        } else {
+            lastRequestStore.isRequestValid(result.showId, 1.hours)
+        }
+    },
 ).build()
 
 data class RelatedShows(val showId: Long, val related: List<RelatedShowEntry>)

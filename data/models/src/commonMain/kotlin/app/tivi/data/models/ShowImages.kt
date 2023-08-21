@@ -9,9 +9,9 @@ data class ShowImages(
     val showId: Long,
     val images: List<ShowTmdbImage>,
 ) {
-    val backdrop by unsafeLazy { findHighestRatedForType(ImageType.BACKDROP) }
+    val backdrop: ShowTmdbImage? by unsafeLazy { findHighestRatedForType(ImageType.BACKDROP) }
 
-    val poster by unsafeLazy { findHighestRatedForType(ImageType.POSTER) }
+    val poster: ShowTmdbImage? by unsafeLazy { findHighestRatedForType(ImageType.POSTER) }
 
     private fun findHighestRatedForType(type: ImageType): ShowTmdbImage? {
         return images.filter { it.type == type }

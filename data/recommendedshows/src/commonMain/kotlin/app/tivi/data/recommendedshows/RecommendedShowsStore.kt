@@ -14,6 +14,7 @@ import app.tivi.data.util.usingDispatchers
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -65,5 +66,11 @@ class RecommendedShowsStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by { lastRequestStore.isRequestValid(3.days) },
+    Validator.by { result ->
+        if (result.isNotEmpty()) {
+            lastRequestStore.isRequestValid(3.days)
+        } else {
+            lastRequestStore.isRequestValid(30.minutes)
+        }
+    },
 ).build()
