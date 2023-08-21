@@ -13,6 +13,7 @@ import app.tivi.data.util.usingDispatchers
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
@@ -34,9 +35,9 @@ class ShowImagesStore(
         val show = showDao.getShowWithId(showId)
         if (show?.tmdbId != null) {
             dataSource.getShowImages(show)
-                .also { lastRequestStore.updateLastRequest(showId) }
                 .map { it.copy(showId = showId) }
                 .let { ShowImages(showId, it) }
+                .also { lastRequestStore.updateLastRequest(showId) }
         } else {
             ShowImages(showId, emptyList())
         }
@@ -57,5 +58,11 @@ class ShowImagesStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by { lastRequestStore.isRequestValid(it.showId, 180.days) },
+    Validator.by { result ->
+        if (result.images.isNotEmpty()) {
+            lastRequestStore.isRequestValid(result.showId, 180.days)
+        } else {
+            lastRequestStore.isRequestValid(result.showId, 1.hours)
+        }
+    },
 ).build()
