@@ -3,9 +3,11 @@
 
 package app.tivi.util
 
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 actual interface PowerControllerComponent {
     @Provides
-    fun providePowerController(): PowerController = EmptyPowerController
+    @ApplicationScope
+    fun providePowerController(bind: DefaultPowerController): PowerController = bind
 }
