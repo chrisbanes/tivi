@@ -178,12 +178,6 @@ if (file("google-services.json").exists()) {
     }
 }
 
-fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
-    @Suppress("UNCHECKED_CAST")
-    val propertyValue = properties[propertyName] as T?
-    return propertyValue ?: defaultValue
-}
-
 fun DependencyHandler.qaImplementation(dependencyNotation: Any) =
     add("qaImplementation", dependencyNotation)
 
