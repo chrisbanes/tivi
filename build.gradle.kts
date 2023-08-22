@@ -40,7 +40,7 @@ allprojects {
             // Treat all Kotlin warnings as errors
             allWarningsAsErrors = true
 
-            if (project.hasProperty("tivi.enableComposeCompilerReports")) {
+            if (project.providers.gradleProperty("tivi.enableComposeCompilerReports").isPresent) {
                 freeCompilerArgs.addAll(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
