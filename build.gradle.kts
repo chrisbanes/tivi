@@ -38,7 +38,7 @@ allprojects {
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions {
             // Treat all Kotlin warnings as errors
-            allWarningsAsErrors.set(true)
+            allWarningsAsErrors = true
 
             if (project.hasProperty("tivi.enableComposeCompilerReports")) {
                 freeCompilerArgs.addAll(
