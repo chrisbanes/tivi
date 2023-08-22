@@ -44,12 +44,12 @@ allprojects {
                 freeCompilerArgs.addAll(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
-                        project.layout.buildDirectory.asFile.get().absolutePath + "/compose_metrics",
+                        layout.buildDirectory.asFile.get().absolutePath + "/compose_metrics",
                 )
                 freeCompilerArgs.addAll(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
-                        project.layout.buildDirectory.asFile.get().absolutePath + "/compose_metrics",
+                        layout.buildDirectory.asFile.get().absolutePath + "/compose_metrics",
                 )
             }
         }
