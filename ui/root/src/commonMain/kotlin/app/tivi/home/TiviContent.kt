@@ -23,6 +23,7 @@ import app.tivi.overlays.LocalNavigator
 import app.tivi.screens.TiviScreen
 import app.tivi.screens.UrlScreen
 import app.tivi.settings.TiviPreferences
+import app.tivi.util.Logger
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
 import com.seiko.imageloader.ImageLoader
@@ -58,13 +59,14 @@ fun TiviContent(
     tiviTextCreator: TiviTextCreator,
     preferences: TiviPreferences,
     imageLoader: ImageLoader,
+    logger: Logger,
     @Assisted modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
     remember { rootViewModel(coroutineScope) }
 
     val tiviNavigator: Navigator = remember(navigator) {
-        TiviNavigator(navigator, onOpenUrl)
+        TiviNavigator(navigator, backstack, onOpenUrl, logger)
     }
 
     // Launch an effect to track changes to the current back stack entry, and push them
@@ -93,6 +95,7 @@ fun TiviContent(
                     Home(
                         backstack = backstack,
                         navigator = tiviNavigator,
+                        logger = logger,
                         modifier = modifier,
                     )
                 }
@@ -103,16 +106,26 @@ fun TiviContent(
 
 private class TiviNavigator(
     private val navigator: Navigator,
+    private val backStack: SaveableBackStack,
     private val onOpenUrl: (String) -> Unit,
+    private val logger: Logger,
 ) : Navigator {
     override fun goTo(screen: Screen) {
+        logger.d { "goTo. Screen: $screen. Current stack: ${backStack.toList()}" }
+
         when (screen) {
             is UrlScreen -> onOpenUrl(screen.url)
             else -> navigator.goTo(screen)
         }
     }
 
-    override fun pop(): Screen? = navigator.pop()
+    override fun pop(): Screen? {
+        logger.d { "pop. Current stack: ${backStack.toList()}" }
+        return navigator.pop()
+    }
 
-    override fun resetRoot(newRoot: Screen): List<Screen> = navigator.resetRoot(newRoot)
+    override fun resetRoot(newRoot: Screen): List<Screen> {
+        logger.d { "resetRoot: newRoot:$newRoot. Current stack: ${backStack.toList()}" }
+        return navigator.resetRoot(newRoot)
+    }
 }
