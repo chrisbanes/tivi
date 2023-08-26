@@ -26,7 +26,7 @@ kotlin {
                 implementation(projects.common.ui.screens)
                 implementation(libs.circuit.foundation)
                 implementation(libs.circuit.overlay)
-                implementation(projects.common.ui.circuitOverlay)
+                implementation(projects.common.ui.circuit)
 
                 implementation(compose.foundation)
                 implementation(compose.material)

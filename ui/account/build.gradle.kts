@@ -22,7 +22,7 @@ kotlin {
                 implementation(projects.data.traktauth) // This should really be used through an interactor
 
                 api(projects.common.ui.screens)
-                api(projects.common.ui.circuitOverlay) // Only for LocalNavigator
+                api(projects.common.ui.circuit) // Only for LocalNavigator
                 api(libs.circuit.foundation)
 
                 implementation(compose.foundation)

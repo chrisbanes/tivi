@@ -21,7 +21,7 @@ kotlin {
                 implementation(projects.common.ui.compose)
 
                 api(projects.common.ui.screens)
-                api(projects.common.ui.circuitOverlay)
+                api(projects.common.ui.circuit)
                 api(libs.circuit.foundation)
 
                 implementation(libs.paging.compose)

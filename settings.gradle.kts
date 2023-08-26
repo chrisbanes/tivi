@@ -78,7 +78,7 @@ include(
     ":core:performance",
     ":core:powercontroller",
     ":core:preferences",
-    ":common:ui:circuit-overlay",
+    ":common:ui:circuit",
     ":common:ui:resources:fonts",
     ":common:ui:resources:strings",
     ":common:ui:compose",
