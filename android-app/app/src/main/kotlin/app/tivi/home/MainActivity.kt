@@ -15,13 +15,13 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.view.WindowCompat
 import app.tivi.BuildConfig
 import app.tivi.TiviActivity
+import app.tivi.circuit.push
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.UiComponent
 import app.tivi.screens.DiscoverScreen
-import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.push
+import app.tivi.circuit.rememberTiviBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
@@ -34,7 +34,7 @@ class MainActivity : TiviActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+            val backstack = rememberTiviBackStack { push(DiscoverScreen) }
             val navigator = rememberCircuitNavigator(backstack)
 
             component.tiviContent(

@@ -7,6 +7,7 @@ circuit = "0.12.1"
 compose-multiplatform = "1.5.0-rc06"
 coroutines = "1.7.3"
 debugdrawer = "0.9.8"
+essenty = "1.1.0"
 kotlin = "1.9.0"
 kotlininject = "0.6.1"
 ktlint = "0.49.1"
@@ -76,6 +77,9 @@ compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-s
 crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.2"
 
 tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.0.3"
+
+essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
+essenty-instancekeeper = { module = "com.arkivanov.essenty:instance-keeper", version.ref = "essenty" }
 
 google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.3.0"
 google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.4.1"

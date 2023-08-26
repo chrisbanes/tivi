@@ -7,8 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.LocalUIViewController
 import androidx.compose.ui.window.ComposeUIViewController
 import app.tivi.screens.DiscoverScreen
-import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.push
+import app.tivi.circuit.rememberTiviBackStack
+import app.tivi.circuit.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSURL
@@ -21,7 +21,7 @@ typealias TiviUiViewController = () -> UIViewController
 fun TiviUiViewController(
     tiviContent: TiviContent,
 ): UIViewController = ComposeUIViewController {
-    val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+    val backstack = rememberTiviBackStack { push(DiscoverScreen) }
     val navigator = rememberCircuitNavigator(backstack, onRootPop = { /* no-op */ })
     val uiViewController = LocalUIViewController.current
 

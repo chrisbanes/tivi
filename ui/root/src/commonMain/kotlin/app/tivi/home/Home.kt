@@ -44,6 +44,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import app.tivi.circuit.TiviBackStack
+import app.tivi.circuit.screen
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.ui.resources.TiviStrings
@@ -55,8 +57,6 @@ import com.moriatsushi.insetsx.navigationBars
 import com.moriatsushi.insetsx.safeContentPadding
 import com.moriatsushi.insetsx.statusBars
 import com.moriatsushi.insetsx.systemBars
-import com.slack.circuit.backstack.SaveableBackStack
-import com.slack.circuit.foundation.screen
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
@@ -64,7 +64,7 @@ import com.slack.circuit.runtime.Screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Home(
-    backstack: SaveableBackStack,
+    backstack: TiviBackStack,
     navigator: Navigator,
     modifier: Modifier = Modifier,
 ) {

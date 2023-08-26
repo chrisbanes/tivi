@@ -15,15 +15,15 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
+import app.tivi.circuit.TiviBackStack
+import app.tivi.circuit.screen
 import app.tivi.extensions.fluentIf
 import com.slack.circuit.backstack.BackStack
 import com.slack.circuit.backstack.ProvidedValues
-import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.backstack.providedValuesForBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.LocalCircuit
-import com.slack.circuit.foundation.screen
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 
@@ -42,7 +42,7 @@ interface NavDecorationWithPrevious {
 @Composable
 fun NavigableCircuitContentWithPrevious(
     navigator: Navigator,
-    backstack: SaveableBackStack,
+    backstack: TiviBackStack,
     modifier: Modifier = Modifier,
     circuit: Circuit = requireNotNull(LocalCircuit.current),
     providedValues: Map<out BackStack.Record, ProvidedValues> = providedValuesForBackStack(backstack),
@@ -75,12 +75,12 @@ fun NavigableCircuitContentWithPrevious(
 
 @Immutable
 internal data class RecordContentProvider(
-    val backStackRecord: SaveableBackStack.Record,
-    val content: @Composable (SaveableBackStack.Record) -> Unit,
+    val backStackRecord: TiviBackStack.Record,
+    val content: @Composable (TiviBackStack.Record) -> Unit,
 )
 
 @Composable
-private fun SaveableBackStack.buildCircuitContentProviders(
+private fun TiviBackStack.buildCircuitContentProviders(
     navigator: Navigator,
     circuit: Circuit,
     unavailableRoute: @Composable (screen: Screen, modifier: Modifier) -> Unit,

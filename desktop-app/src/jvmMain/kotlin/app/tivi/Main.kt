@@ -12,8 +12,7 @@ import app.tivi.inject.DesktopApplicationComponent
 import app.tivi.inject.WindowComponent
 import app.tivi.inject.create
 import app.tivi.screens.DiscoverScreen
-import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.push
+import app.tivi.circuit.rememberTiviBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 
 fun main() = application {
@@ -33,7 +32,7 @@ fun main() = application {
             WindowComponent.create(applicationComponent)
         }
 
-        val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+        val backstack = rememberTiviBackStack { push(DiscoverScreen) }
         val navigator = rememberCircuitNavigator(backstack) { /* no-op */ }
 
         component.tiviContent(

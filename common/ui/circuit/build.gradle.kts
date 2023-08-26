@@ -24,6 +24,11 @@ kotlin {
 
                 api(libs.circuit.foundation)
                 api(libs.circuit.overlay)
+
+                api(libs.essenty.lifecycle)
+                api(libs.essenty.instancekeeper)
+
+                implementation(libs.uuid)
             }
         }
     }

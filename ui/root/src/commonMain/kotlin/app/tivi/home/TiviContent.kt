@@ -27,10 +27,10 @@ import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
-import com.slack.circuit.backstack.SaveableBackStack
+import app.tivi.circuit.TiviBackStack
+import app.tivi.circuit.screen
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.screen
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.Screen
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +38,7 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias TiviContent = @Composable (
-    backstack: SaveableBackStack,
+    backstack: TiviBackStack,
     navigator: Navigator,
     onOpenUrl: (String) -> Unit,
     modifier: Modifier,
@@ -48,7 +48,7 @@ typealias TiviContent = @Composable (
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun TiviContent(
-    @Assisted backstack: SaveableBackStack,
+    @Assisted backstack: TiviBackStack,
     @Assisted navigator: Navigator,
     @Assisted onOpenUrl: (String) -> Unit,
     rootViewModel: (CoroutineScope) -> RootViewModel,
