@@ -6,10 +6,10 @@ package app.tivi.home
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.LocalUIViewController
 import androidx.compose.ui.window.ComposeUIViewController
-import app.tivi.screens.DiscoverScreen
-import app.tivi.circuit.rememberTiviBackStack
 import app.tivi.circuit.push
-import com.slack.circuit.foundation.rememberCircuitNavigator
+import app.tivi.circuit.rememberCircuitNavigator
+import app.tivi.circuit.rememberTiviBackStack
+import app.tivi.screens.DiscoverScreen
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSURL
 import platform.SafariServices.SFSafariViewController

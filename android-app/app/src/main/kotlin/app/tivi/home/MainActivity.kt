@@ -6,6 +6,7 @@ package app.tivi.home
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -16,13 +17,13 @@ import androidx.core.view.WindowCompat
 import app.tivi.BuildConfig
 import app.tivi.TiviActivity
 import app.tivi.circuit.push
+import app.tivi.circuit.rememberCircuitNavigator
+import app.tivi.circuit.rememberTiviBackStack
 import app.tivi.inject.ActivityComponent
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.UiComponent
 import app.tivi.screens.DiscoverScreen
-import app.tivi.circuit.rememberTiviBackStack
-import com.slack.circuit.foundation.rememberCircuitNavigator
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -35,7 +36,10 @@ class MainActivity : TiviActivity() {
 
         setContent {
             val backstack = rememberTiviBackStack { push(DiscoverScreen) }
-            val navigator = rememberCircuitNavigator(backstack)
+            val navigator = rememberCircuitNavigator(backstack) {
+                onBackPressedDispatcher.onBackPressed()
+            }
+            BackHandler(enabled = backstack.size > 1, onBack = navigator::pop)
 
             component.tiviContent(
                 backstack,

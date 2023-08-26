@@ -10,6 +10,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import app.tivi.circuit.TiviBackStack
+import app.tivi.circuit.screen
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
@@ -27,8 +29,6 @@ import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
-import app.tivi.circuit.TiviBackStack
-import app.tivi.circuit.screen
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.runtime.Navigator

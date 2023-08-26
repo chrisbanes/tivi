@@ -144,8 +144,8 @@ fun TiviBackStack.push(screen: Screen) {
         createRecord(
             route = checkNotNull(screen::class.simpleName),
             args = mapOf("screen" to screen),
-            key = screen.hashCode().toString()
-        )
+            key = screen.hashCode().toString(),
+        ),
     )
 }
 
