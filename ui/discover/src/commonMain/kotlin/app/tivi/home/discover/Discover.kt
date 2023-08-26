@@ -124,7 +124,7 @@ internal fun Discover(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun Discover(
     state: DiscoverUiState,
@@ -202,7 +202,7 @@ internal fun Discover(
                 }
 
                 state.nextEpisodeWithShowToWatch?.let { nextEpisodeToWatch ->
-                    item {
+                    item(key = "next_episode_to_watch") {
                         NextEpisodeToWatch(
                             show = nextEpisodeToWatch.show,
                             season = nextEpisodeToWatch.season,
@@ -216,6 +216,7 @@ internal fun Discover(
                             },
                             modifier = Modifier
                                 .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+                                .animateItemPlacement()
                                 .fillMaxWidth(),
                         )
                     }
@@ -225,7 +226,7 @@ internal fun Discover(
                     }
                 }
 
-                item {
+                item(key = "carousel_trending") {
                     CarouselWithHeader(
                         items = state.trendingItems,
                         title = LocalStrings.current.discoverTrendingTitle,
@@ -234,10 +235,11 @@ internal fun Discover(
                             openShowDetails(it.id, null, null)
                         },
                         onMoreClick = openTrendingShows,
+                        modifier = Modifier.animateItemPlacement(),
                     )
                 }
 
-                item {
+                item(key = "carousel_recommended") {
                     CarouselWithHeader(
                         items = state.recommendedItems,
                         title = LocalStrings.current.discoverRecommendedTitle,
@@ -246,16 +248,18 @@ internal fun Discover(
                             openShowDetails(it.id, null, null)
                         },
                         onMoreClick = openRecommendedShows,
+                        modifier = Modifier.animateItemPlacement(),
                     )
                 }
 
-                item {
+                item(key = "carousel_refreshing") {
                     CarouselWithHeader(
                         items = state.popularItems,
                         title = LocalStrings.current.discoverPopularTitle,
                         refreshing = state.popularRefreshing,
                         onItemClick = { openShowDetails(it.id, null, null) },
                         onMoreClick = openPopularShows,
+                        modifier = Modifier.animateItemPlacement(),
                     )
                 }
 
