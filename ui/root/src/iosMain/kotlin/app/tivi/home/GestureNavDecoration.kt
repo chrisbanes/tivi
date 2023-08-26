@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.thenIf
+import app.tivi.util.Logger
 import com.slack.circuit.runtime.Navigator
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -65,13 +66,15 @@ class SwipeProperties(
 @OptIn(ExperimentalMaterialApi::class)
 internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
     private val navigator: Navigator,
+    private val logger: Logger,
     private val swipeProperties: SwipeProperties,
 ) : NavDecorationWithPrevious {
 
     @OptIn(ExperimentalMaterialApi::class)
     actual constructor(
         navigator: Navigator,
-    ) : this(navigator, SwipeProperties())
+        logger: Logger,
+    ) : this(navigator, logger, SwipeProperties())
 
     @Composable
     override fun <T> DecoratedContent(
@@ -81,6 +84,12 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
         modifier: Modifier,
         content: @Composable (T) -> Unit,
     ) {
+        SideEffect {
+            logger.d {
+                "DecoratedContent. arg: $arg. previous: $previous. backStackDepth: $backStackDepth"
+            }
+        }
+
         Box(modifier = modifier) {
             // Remember the previous stack depth so we know if the navigation is going "back".
             var prevStackDepth by rememberSaveable { mutableStateOf(backStackDepth) }

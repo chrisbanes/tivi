@@ -3,7 +3,6 @@
 
 package app.tivi.home
 
-import android.annotation.SuppressLint
 import android.os.Build
 import android.window.BackEvent
 import android.window.OnBackAnimationCallback
@@ -11,7 +10,6 @@ import android.window.OnBackInvokedDispatcher
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
@@ -41,13 +39,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import app.tivi.animations.lerp
+import app.tivi.util.Logger
 import com.slack.circuit.runtime.Navigator
 import kotlin.math.absoluteValue
 
-@SuppressLint("NewApi")
-@OptIn(ExperimentalAnimationApi::class)
 internal actual class GestureNavDecoration actual constructor(
     private val navigator: Navigator,
+    logger: Logger,
 ) : NavDecorationWithPrevious {
 
     @Composable

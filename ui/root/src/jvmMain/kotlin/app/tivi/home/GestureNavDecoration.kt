@@ -5,10 +5,12 @@ package app.tivi.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import app.tivi.util.Logger
 import com.slack.circuit.runtime.Navigator
 
 internal actual class GestureNavDecoration actual constructor(
     navigator: Navigator,
+    logger: Logger,
 ) : NavDecorationWithPrevious {
     @Composable
     override fun <T> DecoratedContent(
