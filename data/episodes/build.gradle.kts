@@ -10,6 +10,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(projects.core.preferences)
                 api(projects.data.models)
                 api(projects.data.traktauth)
                 implementation(projects.data.db)

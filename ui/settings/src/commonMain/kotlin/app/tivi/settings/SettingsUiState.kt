@@ -14,6 +14,7 @@ data class SettingsUiState(
     val dynamicColorsAvailable: Boolean,
     val useDynamicColors: Boolean,
     val useLessData: Boolean,
+    val ignoreSpecials: Boolean,
     val applicationInfo: ApplicationInfo,
     val eventSink: (SettingsUiEvent) -> Unit,
 ) : CircuitUiState
@@ -23,5 +24,6 @@ sealed interface SettingsUiEvent : CircuitUiEvent {
     object NavigatePrivacyPolicy : SettingsUiEvent
     object ToggleUseDynamicColors : SettingsUiEvent
     object ToggleUseLessData : SettingsUiEvent
+    object ToggleIgnoreSpecials : SettingsUiEvent
     data class SetTheme(val theme: TiviPreferences.Theme) : SettingsUiEvent
 }

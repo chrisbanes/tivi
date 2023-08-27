@@ -49,6 +49,9 @@ class SettingsPresenter(
         val useLessData by remember { preferences.observeUseLessData() }
             .collectAsState(false)
 
+        val ignoreSpecials by remember { preferences.observeIgnoreSpecials() }
+            .collectAsState(true)
+
         fun eventSink(event: SettingsUiEvent) {
             when (event) {
                 SettingsUiEvent.NavigateUp -> navigator.pop()
@@ -61,6 +64,9 @@ class SettingsPresenter(
                 SettingsUiEvent.ToggleUseLessData -> {
                     preferences.useLessData = !preferences.useLessData
                 }
+                SettingsUiEvent.ToggleIgnoreSpecials -> {
+                    preferences.ignoreSpecials = !preferences.ignoreSpecials
+                }
                 SettingsUiEvent.NavigatePrivacyPolicy -> {
                     navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))
                 }
@@ -72,6 +78,7 @@ class SettingsPresenter(
             useDynamicColors = useDynamicColors,
             dynamicColorsAvailable = DynamicColorsAvailable,
             useLessData = useLessData,
+            ignoreSpecials = ignoreSpecials,
             applicationInfo = applicationInfo,
             eventSink = ::eventSink,
         )

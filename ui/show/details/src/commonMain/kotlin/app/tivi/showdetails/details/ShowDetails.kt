@@ -55,6 +55,7 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -66,6 +67,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -777,73 +779,81 @@ private fun SeasonRow(
     modifier: Modifier = Modifier,
     nextToAirDate: Instant? = null,
 ) {
-    Row(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.medium)
-            .clickable(enabled = !season.ignored) {
-                openSeason(season.id)
-            }
-            .heightIn(min = 48.dp)
-            .wrapContentHeight(Alignment.CenterVertically)
-            .padding(contentPadding),
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .align(Alignment.CenterVertically),
+    val contentColor = when {
+        season.ignored -> LocalContentColor.current.copy(alpha = 0.4f)
+        else -> LocalContentColor.current
+    }
+
+    CompositionLocalProvider(LocalContentColor provides contentColor) {
+        Row(
+            modifier = modifier
+                .clip(MaterialTheme.shapes.medium)
+                .clickable(enabled = !season.ignored) {
+                    openSeason(season.id)
+                }
+                .heightIn(min = 48.dp)
+                .wrapContentHeight(Alignment.CenterVertically)
+                .padding(contentPadding),
         ) {
-            val textCreator = LocalTiviTextCreator.current
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically),
+            ) {
+                val textCreator = LocalTiviTextCreator.current
 
-            Text(
-                text = season.title ?: LocalStrings.current.seasonTitleFallback(season.number!!),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-
-            Spacer(Modifier.height(4.dp))
-
-            Text(
-                text = textCreator.seasonSummaryText(
-                    watched = episodesWatched,
-                    toWatch = episodesToWatch,
-                    toAir = episodesToAir,
-                    nextToAirDate = nextToAirDate,
-                ).toString(),
-                style = MaterialTheme.typography.bodySmall,
-            )
-
-            if (!season.ignored && episodesAired > 0) {
-                LinearProgressIndicator(
-                    progress = episodesWatched / episodesAired.toFloat(),
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .fillMaxWidth(),
+                Text(
+                    text = season.title
+                        ?: LocalStrings.current.seasonTitleFallback(season.number!!),
+                    style = MaterialTheme.typography.bodyLarge,
                 )
-            }
-        }
 
-        Box(modifier = Modifier.align(Alignment.CenterVertically)) {
-            var showMenu by remember { mutableStateOf(false) }
+                Spacer(Modifier.height(4.dp))
 
-            IconButton(onClick = { showMenu = true }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = LocalStrings.current.cdOpenOverflow,
+                Text(
+                    text = textCreator.seasonSummaryText(
+                        watched = episodesWatched,
+                        toWatch = episodesToWatch,
+                        toAir = episodesToAir,
+                        nextToAirDate = nextToAirDate,
+                    ).toString(),
+                    style = MaterialTheme.typography.bodySmall,
                 )
+
+                if (!season.ignored && episodesAired > 0) {
+                    LinearProgressIndicator(
+                        progress = episodesWatched / episodesAired.toFloat(),
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .fillMaxWidth(),
+                    )
+                }
             }
 
-            SeasonDropdownMenu(
-                expanded = showMenu,
-                onDismissRequest = { showMenu = false },
-                season = season,
-                episodesAired = episodesAired,
-                episodesWatched = episodesWatched,
-                episodesToAir = episodesToAir,
-                onSeasonFollowed = onSeasonFollowed,
-                onSeasonUnfollowed = onSeasonUnfollowed,
-                unfollowPreviousSeasons = unfollowPreviousSeasons,
-                onMarkSeasonWatched = onMarkSeasonWatched,
-                onMarkSeasonUnwatched = onMarkSeasonUnwatched,
-            )
+            Box(modifier = Modifier.align(Alignment.CenterVertically)) {
+                var showMenu by remember { mutableStateOf(false) }
+
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = LocalStrings.current.cdOpenOverflow,
+                    )
+                }
+
+                SeasonDropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false },
+                    season = season,
+                    episodesAired = episodesAired,
+                    episodesWatched = episodesWatched,
+                    episodesToAir = episodesToAir,
+                    onSeasonFollowed = onSeasonFollowed,
+                    onSeasonUnfollowed = onSeasonUnfollowed,
+                    unfollowPreviousSeasons = unfollowPreviousSeasons,
+                    onMarkSeasonWatched = onMarkSeasonWatched,
+                    onMarkSeasonUnwatched = onMarkSeasonUnwatched,
+                )
+            }
         }
     }
 }

@@ -69,6 +69,14 @@ class TiviPreferencesImpl(
     override fun observeUpNextFollowedOnly(): Flow<Boolean> {
         return flowSettings.getBooleanFlow(KEY_UPNEXT_FOLLOWED_ONLY, false)
     }
+
+    override var ignoreSpecials: Boolean
+        get() = settings.getBoolean(KEY_IGNORE_SPECIALS, true)
+        set(value) = settings.putBoolean(KEY_IGNORE_SPECIALS, value)
+
+    override fun observeIgnoreSpecials(): Flow<Boolean> {
+        return flowSettings.getBooleanFlow(KEY_IGNORE_SPECIALS, true)
+    }
 }
 
 private val Theme.storageKey: String
@@ -90,6 +98,7 @@ internal const val KEY_DATA_SAVER = "pref_data_saver"
 internal const val KEY_LIBRARY_FOLLOWED_ACTIVE = "pref_library_followed_active"
 internal const val KEY_LIBRARY_WATCHED_ACTIVE = "pref_library_watched_active"
 internal const val KEY_UPNEXT_FOLLOWED_ONLY = "pref_upnext_followedonly_active"
+internal const val KEY_IGNORE_SPECIALS = "pref_ignore_specials"
 
 internal const val THEME_LIGHT_VALUE = "light"
 internal const val THEME_DARK_VALUE = "dark"
