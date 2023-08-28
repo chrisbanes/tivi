@@ -25,6 +25,9 @@ interface TiviPreferences {
     var upNextFollowedOnly: Boolean
     fun observeUpNextFollowedOnly(): Flow<Boolean>
 
+    var ignoreSpecials: Boolean
+    fun observeIgnoreSpecials(): Flow<Boolean>
+
     enum class Theme {
         LIGHT,
         DARK,

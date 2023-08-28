@@ -4,7 +4,6 @@
 package app.tivi.settings
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -138,6 +137,15 @@ internal fun Settings(
                 )
             }
 
+            item {
+                CheckboxPreference(
+                    title = strings.settingsIgnoreSpecialsTitle,
+                    summaryOff = strings.settingsIgnoreSpecialsSummary,
+                    onCheckClicked = { eventSink(SettingsUiEvent.ToggleIgnoreSpecials) },
+                    checked = state.ignoreSpecials,
+                )
+            }
+
             itemSpacer(24.dp)
 
             stickyHeader {
@@ -249,7 +257,6 @@ private fun CheckboxPreference(
         title = title,
         summary = {
             if (summaryOff != null && summaryOn != null) {
-                @OptIn(ExperimentalAnimationApi::class)
                 AnimatedContent(checked) { target ->
                     Text(text = if (target) summaryOn else summaryOff)
                 }

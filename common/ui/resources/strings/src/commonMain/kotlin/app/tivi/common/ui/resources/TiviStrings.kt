@@ -141,6 +141,8 @@ data class TiviStrings(
     val settingsDataSaverTitle: String,
     val settingsDynamicColorSummary: String,
     val settingsDynamicColorTitle: String,
+    val settingsIgnoreSpecialsTitle: String,
+    val settingsIgnoreSpecialsSummary: String,
     val settingsOpenSource: String,
     val settingsOpenSourceSummary: String,
     val settingsThemeTitle: String,
