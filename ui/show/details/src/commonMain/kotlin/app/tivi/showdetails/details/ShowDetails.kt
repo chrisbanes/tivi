@@ -290,7 +290,7 @@ private fun ShowDetailsScrollingContent(
         modifier = modifier,
         flingBehavior = rememberTiviFlingBehavior(),
     ) {
-        item {
+        item(key = "backdrop") {
             Backdrop(
                 imageModel = show.asImageModel(ImageType.BACKDROP),
                 modifier = Modifier
@@ -304,7 +304,7 @@ private fun ShowDetailsScrollingContent(
             Spacer(modifier = Modifier.height(max(gutter, bodyMargin)))
         }
 
-        item {
+        item(key = "poster_info") {
             PosterInfoRow(
                 show = show,
                 modifier = Modifier.fillMaxWidth(),
@@ -313,12 +313,12 @@ private fun ShowDetailsScrollingContent(
 
         gutterSpacer()
 
-        item {
+        item(key = "header_summary") {
             Header(LocalStrings.current.detailsAbout)
         }
 
         if (show.summary != null) {
-            item {
+            item(key = "summary") {
                 ExpandingText(
                     text = show.summary!!,
                     modifier = Modifier
@@ -329,7 +329,7 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (show.genres.isNotEmpty()) {
-            item {
+            item(key = "genres") {
                 Genres(show.genres)
             }
         }
@@ -337,10 +337,10 @@ private fun ShowDetailsScrollingContent(
         if (nextEpisodeToWatch?.episode != null) {
             gutterSpacer()
 
-            item {
+            item(key = "header_next_episode_watch") {
                 Header(LocalStrings.current.detailsNextEpisodeToWatch)
             }
-            item {
+            item(key = "next_episode_watch") {
                 NextEpisodeToWatch(
                     season = nextEpisodeToWatch.season,
                     episode = nextEpisodeToWatch.episode,
@@ -352,10 +352,10 @@ private fun ShowDetailsScrollingContent(
         if (relatedShows.isNotEmpty()) {
             gutterSpacer()
 
-            item {
+            item(key = "header_related_shows") {
                 Header(LocalStrings.current.detailsRelated)
             }
-            item {
+            item(key = "related_shows") {
                 RelatedShows(
                     related = relatedShows,
                     openShowDetails = openShowDetails,
@@ -367,10 +367,10 @@ private fun ShowDetailsScrollingContent(
         if (watchStats != null) {
             gutterSpacer()
 
-            item {
+            item(key = "header_watch_stats") {
                 Header(LocalStrings.current.detailsViewStats)
             }
-            item {
+            item(key = "watch_stats") {
                 WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
             }
         }
@@ -378,11 +378,14 @@ private fun ShowDetailsScrollingContent(
         if (seasons.isNotEmpty()) {
             gutterSpacer()
 
-            item {
+            item(key = "header_seasons") {
                 Header(LocalStrings.current.showDetailsSeasons)
             }
 
-            items(items = seasons) { season ->
+            items(
+                items = seasons,
+                key = { "season_${it.season.id}" },
+            ) { season ->
                 SeasonRow(
                     season = season.season,
                     episodesAired = season.numberAired,
