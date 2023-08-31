@@ -6,7 +6,7 @@
 	<array>
 		<dict>
 			<key>DefaultValue</key>
-			<string>0.1 (1000)</string>
+			<string>1.0 (1000)</string>
 			<key>Key</key>
 			<string>SNAppVersion</string>
 			<key>Title</key>
