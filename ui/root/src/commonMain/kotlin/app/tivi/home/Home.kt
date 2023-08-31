@@ -57,6 +57,7 @@ import com.moriatsushi.insetsx.safeContentPadding
 import com.moriatsushi.insetsx.statusBars
 import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.backstack.SaveableBackStack
+import com.slack.circuit.backstack.isAtRoot
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
@@ -74,7 +75,7 @@ internal fun Home(
         NavigationType.forWindowSizeSize(windowSizeClass)
     }
 
-    val rootScreen by remember {
+    val rootScreen by remember(backstack) {
         derivedStateOf { backstack.last().screen }
     }
 
@@ -87,7 +88,7 @@ internal fun Home(
                 HomeNavigationBar(
                     selectedNavigation = rootScreen,
                     navigationItems = navigationItems,
-                    onNavigationSelected = { navigator.resetRoot(it) },
+                    onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             } else {
@@ -111,7 +112,7 @@ internal fun Home(
                 HomeNavigationRail(
                     selectedNavigation = rootScreen,
                     navigationItems = navigationItems,
-                    onNavigationSelected = { navigator.resetRoot(it) },
+                    onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
                     modifier = Modifier.fillMaxHeight(),
                 )
 
@@ -298,4 +299,13 @@ private fun buildNavigationItems(strings: TiviStrings): List<HomeNavigationItem>
             iconImageVector = Icons.Default.Search,
         ),
     )
+}
+
+private fun Navigator.resetRootIfDifferent(
+    screen: Screen,
+    backstack: SaveableBackStack,
+) {
+    if (!backstack.isAtRoot || backstack.topRecord?.screen != screen) {
+        resetRoot(screen)
+    }
 }
