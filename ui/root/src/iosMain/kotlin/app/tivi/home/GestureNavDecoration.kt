@@ -50,9 +50,11 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.thenIf
 import app.tivi.util.Logger
+import com.slack.circuit.backstack.NavDecoration
 import com.slack.circuit.runtime.Navigator
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.filter
 
 @ExperimentalMaterialApi
@@ -68,7 +70,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
     private val navigator: Navigator,
     private val logger: Logger,
     private val swipeProperties: SwipeProperties,
-) : NavDecorationWithPrevious {
+) : NavDecoration {
 
     @OptIn(ExperimentalMaterialApi::class)
     actual constructor(
@@ -78,15 +80,17 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
 
     @Composable
     override fun <T> DecoratedContent(
-        arg: T,
-        previous: T?,
+        args: ImmutableList<T>,
         backStackDepth: Int,
         modifier: Modifier,
         content: @Composable (T) -> Unit,
     ) {
+        val current = args.first()
+        val previous = args.getOrNull(1)
+
         SideEffect {
             logger.d {
-                "DecoratedContent. arg: $arg. previous: $previous. backStackDepth: $backStackDepth"
+                "DecoratedContent. arg: $current. previous: $previous. backStackDepth: $backStackDepth"
             }
         }
 
@@ -97,7 +101,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                 prevStackDepth = backStackDepth
             }
 
-            val dismissState = rememberDismissState(arg)
+            val dismissState = rememberDismissState(current)
             var offsetWhenPopped by remember { mutableStateOf(0f) }
 
             LaunchedEffect(dismissState) {
@@ -109,7 +113,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                     }
             }
 
-            val transition = updateTransition(targetState = arg, label = "GestureNavDecoration")
+            val transition = updateTransition(targetState = current, label = "GestureNavDecoration")
 
             if (previous != null) {
                 // Previous content is only visible if the swipe-dismiss offset != 0
@@ -180,7 +184,7 @@ internal actual class GestureNavDecoration @ExperimentalMaterialApi constructor(
                 )
             }
 
-            LaunchedEffect(arg) {
+            LaunchedEffect(current) {
                 // Reset the offsetWhenPopped when the top record changes
                 offsetWhenPopped = 0f
             }

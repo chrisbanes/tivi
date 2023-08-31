@@ -57,10 +57,10 @@ import com.moriatsushi.insetsx.safeContentPadding
 import com.moriatsushi.insetsx.statusBars
 import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.backstack.SaveableBackStack
-import com.slack.circuit.foundation.screen
+import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 
 @Composable
 internal fun Home(
@@ -130,10 +130,12 @@ internal fun Home(
             }
 
             ContentWithOverlays {
-                NavigableCircuitContentWithPrevious(
+                NavigableCircuitContent(
                     navigator = navigator,
                     backstack = backstack,
-                    decoration = GestureNavDecoration(navigator, logger),
+                    decoration = remember(navigator, logger) {
+                        GestureNavDecoration(navigator, logger)
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),

@@ -9,7 +9,7 @@ import app.tivi.common.compose.EntryGrid
 import app.tivi.common.compose.LocalStrings
 import app.tivi.screens.TrendingShowsScreen
 import com.slack.circuit.runtime.CircuitContext
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import me.tatarka.inject.annotations.Inject

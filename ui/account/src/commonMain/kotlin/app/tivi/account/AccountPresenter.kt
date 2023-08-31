@@ -18,8 +18,8 @@ import app.tivi.screens.AccountScreen
 import app.tivi.screens.SettingsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.Screen
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.screen.Screen
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -43,7 +43,6 @@ class AccountPresenter(
     private val logoutTrakt: LogoutTrakt,
     private val observeTraktAuthState: ObserveTraktAuthState,
     private val observeUserDetails: ObserveUserDetails,
-
 ) : Presenter<AccountUiState> {
 
     @Composable

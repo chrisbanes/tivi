@@ -74,7 +74,7 @@ import app.tivi.screens.DiscoverScreen
 import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import kotlinx.coroutines.launch
