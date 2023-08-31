@@ -25,13 +25,12 @@ kotlin {
 
                 implementation(projects.common.ui.screens)
                 implementation(libs.circuit.foundation)
+                implementation(libs.circuit.gestureNavigation)
                 implementation(libs.circuit.overlay)
                 implementation(projects.common.ui.circuitOverlay)
 
                 implementation(compose.foundation)
-                implementation(compose.material)
                 implementation(compose.materialIconsExtended)
-                implementation(compose.animation)
             }
         }
 
