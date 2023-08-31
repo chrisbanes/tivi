@@ -13,7 +13,7 @@ import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.overlay.Overlay
 import com.slack.circuit.overlay.OverlayHost
 import com.slack.circuit.overlay.OverlayNavigator
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 import kotlinx.coroutines.launch
 
 class DialogOverlay<Model : Any, Result : Any>(

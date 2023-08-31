@@ -45,7 +45,7 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.screens.EpisodeTrackScreen
 import com.slack.circuit.runtime.CircuitContext
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import kotlinx.datetime.LocalDate

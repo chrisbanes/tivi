@@ -40,34 +40,35 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import app.tivi.animations.lerp
 import app.tivi.util.Logger
+import com.slack.circuit.backstack.NavDecoration
+import com.slack.circuit.foundation.NavigatorDefaults
 import com.slack.circuit.runtime.Navigator
 import kotlin.math.absoluteValue
+import kotlinx.collections.immutable.ImmutableList
 
 internal actual class GestureNavDecoration actual constructor(
     private val navigator: Navigator,
     logger: Logger,
-) : NavDecorationWithPrevious {
+) : NavDecoration {
 
     @Composable
     override fun <T> DecoratedContent(
-        arg: T,
-        previous: T?,
+        args: ImmutableList<T>,
         backStackDepth: Int,
         modifier: Modifier,
         content: @Composable (T) -> Unit,
     ) {
         if (Build.VERSION.SDK_INT < 34) {
             // on API 33 and below, we just use the default decoration
-            DefaultDecoration.DecoratedContent(
-                arg = arg,
+            NavigatorDefaults.DefaultDecoration.DecoratedContent(
+                args = args,
                 backStackDepth = backStackDepth,
                 modifier = modifier,
                 content = content,
             )
         } else {
             GestureDecoratedContent(
-                arg = arg,
-                previous = previous,
+                args = args,
                 backStackDepth = backStackDepth,
                 modifier = modifier,
                 content = content,
@@ -78,12 +79,14 @@ internal actual class GestureNavDecoration actual constructor(
     @RequiresApi(34)
     @Composable
     private fun <T> GestureDecoratedContent(
-        arg: T,
-        previous: T?,
+        args: ImmutableList<T>,
         backStackDepth: Int,
         modifier: Modifier,
         content: @Composable (T) -> Unit,
     ) {
+        val current = args.first()
+        val previous = args.getOrNull(1)
+
         Box(modifier = modifier) {
             var showPrevious by remember { mutableStateOf(false) }
             var recordPoppedFromGesture by remember { mutableStateOf<T?>(null) }
@@ -100,7 +103,7 @@ internal actual class GestureNavDecoration actual constructor(
                 prevStackDepth = backStackDepth
             }
 
-            val transition = updateTransition(targetState = arg, label = "GestureNavDecoration")
+            val transition = updateTransition(targetState = current, label = "GestureNavDecoration")
 
             LaunchedEffect(transition.currentState) {
                 // When the current state has changed (i.e. any transition has completed),
@@ -123,7 +126,8 @@ internal actual class GestureNavDecoration actual constructor(
                         // come back from back stack
                         backStackDepth < prevStackDepth -> {
                             if (recordPoppedFromGesture == initialState) {
-                                EnterTransition.None togetherWith scaleOut(targetScale = 0.8f) + fadeOut()
+                                EnterTransition.None togetherWith
+                                    scaleOut(targetScale = 0.8f) + fadeOut()
                             } else {
                                 slideInHorizontally(tween(), SlightlyLeft) + fadeIn() togetherWith
                                     slideOutHorizontally(tween(), SlightlyRight) + fadeOut()

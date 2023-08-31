@@ -21,7 +21,6 @@ import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.UiComponent
 import app.tivi.screens.DiscoverScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides

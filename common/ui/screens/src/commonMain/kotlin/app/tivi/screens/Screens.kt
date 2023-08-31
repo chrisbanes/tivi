@@ -3,7 +3,7 @@
 
 package app.tivi.screens
 
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 
 @CommonParcelize
 object AccountScreen : TiviScreen(name = "AccountUi()")

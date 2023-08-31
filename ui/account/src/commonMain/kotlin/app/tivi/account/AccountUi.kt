@@ -40,7 +40,7 @@ import app.tivi.overlays.LocalNavigator
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.SettingsScreen
 import com.slack.circuit.runtime.CircuitContext
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import kotlinx.datetime.LocalDateTime

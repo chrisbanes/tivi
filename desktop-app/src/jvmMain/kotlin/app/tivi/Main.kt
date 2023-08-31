@@ -13,7 +13,6 @@ import app.tivi.inject.WindowComponent
 import app.tivi.inject.create
 import app.tivi.screens.DiscoverScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
 
 fun main() = application {

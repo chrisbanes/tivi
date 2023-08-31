@@ -113,7 +113,7 @@ import app.tivi.screens.ShowDetailsScreen
 import com.moriatsushi.insetsx.navigationBars
 import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import kotlinx.datetime.Instant

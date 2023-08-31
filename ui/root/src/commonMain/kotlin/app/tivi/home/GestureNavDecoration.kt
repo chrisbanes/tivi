@@ -4,9 +4,10 @@
 package app.tivi.home
 
 import app.tivi.util.Logger
+import com.slack.circuit.backstack.NavDecoration
 import com.slack.circuit.runtime.Navigator
 
 internal expect class GestureNavDecoration(
     navigator: Navigator,
     logger: Logger,
-) : NavDecorationWithPrevious
+) : NavDecoration
