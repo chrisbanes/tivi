@@ -36,14 +36,13 @@ class EpisodeCoilInterceptor(
 
         return repository.getEpisode(model.id)?.tmdbBackdropPath?.let { backdropPath ->
             val size = chain.options.sizeResolver.run { density().size() }
+            val url = tmdbImageUrlProvider.value.getBackdropUrl(
+                path = backdropPath,
+                imageWidth = size.width.roundToInt(),
+            )
 
-            chain.request.newBuilder {
-                data(
-                    tmdbImageUrlProvider.value.getBackdropUrl(
-                        path = backdropPath,
-                        imageWidth = size.width.roundToInt(),
-                    ),
-                )
+            ImageRequest(chain.request) {
+                data(url)
             }
         } ?: chain.request
     }

@@ -10,6 +10,7 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.PowerController
 import app.tivi.util.SaveData
 import com.seiko.imageloader.intercept.Interceptor
+import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageResult
 import kotlin.math.roundToInt
 import me.tatarka.inject.annotations.Inject
@@ -25,7 +26,7 @@ class TmdbImageEntityCoilInterceptor(
 
         val request = when (val data = chain.request.data) {
             is TmdbImageEntity -> {
-                chain.request.newBuilder {
+                ImageRequest(chain.request) {
                     data(map(data, size))
                 }
             }

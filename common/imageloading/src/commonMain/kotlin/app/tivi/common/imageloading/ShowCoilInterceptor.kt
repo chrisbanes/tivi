@@ -50,7 +50,7 @@ class ShowCoilInterceptor(
                 is SaveData.Enabled -> size.width.roundToInt() / 2
             }
 
-            chain.request.newBuilder {
+            ImageRequest(chain.request) {
                 data(tmdbImageUrlProvider.value.buildUrl(entity, model.imageType, width))
             }
         } else {
