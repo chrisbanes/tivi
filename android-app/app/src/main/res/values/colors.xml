@@ -17,14 +17,7 @@
   -->
 
 <resources>
-    <color name="tv_test_grey">#c0c0c0</color>
-    <color name="tv_test_yellow">#bdc200</color>
-    <color name="tv_test_cyan">#00c6c2</color>
-    <color name="tv_test_green">#00c800</color>
-    <color name="tv_test_magenta">#e400cb</color>
-    <color name="tv_test_red">#e10000</color>
-    <color name="tv_test_blue">#2400cd</color>
-    <color name="launcher_icon_background">#333333</color>
+    <color name="launcher_icon_background">#111111</color>
 
     <color name="system_ui_scrim_light">#B3FFFFFF</color> <!-- 70% white -->
     <color name="system_ui_scrim_dark">#30000000</color> <!-- 19% black -->
