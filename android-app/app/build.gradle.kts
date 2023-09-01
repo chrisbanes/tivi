@@ -152,6 +152,7 @@ dependencies {
     implementation(libs.androidx.browser)
     implementation(libs.androidx.emoji)
     implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.splashscreen)
 
     implementation(libs.kotlin.coroutines.android)
 

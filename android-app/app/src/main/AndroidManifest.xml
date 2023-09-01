@@ -42,7 +42,7 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:exported="true"
-            android:theme="@style/Theme.Tivi.Home"
+            android:theme="@style/Theme.Tivi.Starting"
             tools:targetApi="n">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
