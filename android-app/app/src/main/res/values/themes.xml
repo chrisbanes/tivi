@@ -20,23 +20,27 @@
 
     <style name="Platform.Theme.Tivi" parent="android:Theme.Material.Light" />
 
-    <style name="Base.Theme.Tivi" parent="Platform.Theme.Tivi">
-        <item name="android:windowActionModeOverlay">true</item>
-    </style>
-
-    <style name="Theme.Tivi" parent="Base.Theme.Tivi">
-    </style>
-
-    <style name="Theme.Tivi.NoActionBar">
+    <style name="Theme.Tivi" parent="Platform.Theme.Tivi">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-    </style>
 
-    <style name="Theme.Tivi.Immerse" parent="Theme.Tivi.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
 
         <item name="android:navigationBarColor">@color/nav_bar_scrim</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">@bool/use_light_nav_bar</item>
+    </style>
+
+    <style name="Theme.Tivi.Immerse" parent="Theme.Tivi">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <item name="android:navigationBarColor">@color/nav_bar_scrim</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">@bool/use_light_nav_bar</item>
+    </style>
+
+    <style name="Theme.Tivi.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/launcher_icon_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.Tivi.Home</item>
     </style>
 
     <style name="Theme.Tivi.Home" parent="Theme.Tivi.Immerse">
