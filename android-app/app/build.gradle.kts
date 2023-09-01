@@ -67,6 +67,10 @@ android {
             "/*.properties",
             "fabric/*.properties",
             "META-INF/*.properties",
+            // License files
+            "LICENSE*",
+            // Exclude Kotlin unused files
+            "META-INF/**/previous-compilation-data.bin",
         )
     }
 
