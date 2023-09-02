@@ -19,7 +19,7 @@ import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.get
 
 @Inject
-class ShowCoilInterceptor(
+class ShowImageModelInterceptor(
     private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
     private val showImagesStore: ShowImagesStore,
     private val powerController: PowerController,
