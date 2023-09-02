@@ -20,7 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.LocalStrings
-import app.tivi.common.compose.ui.PreferenceHeader
+import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.screens.DevSettingsScreen
 import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext
@@ -48,8 +48,6 @@ internal fun DevSettings(
     state: DevSettingsUiState,
     modifier: Modifier = Modifier,
 ) {
-    // Need to extract the eventSink out to a local val, so that the Compose Compiler
-    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
     val eventSink = state.eventSink
 
     Scaffold(
@@ -75,8 +73,12 @@ internal fun DevSettings(
             contentPadding = contentPadding,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            stickyHeader {
-                PreferenceHeader(LocalStrings.current.settingsUiCategoryTitle)
+            item {
+                CheckboxPreference(
+                    checked = state.hideArtwork,
+                    title = "Hide artwork",
+                    onCheckClicked = { state.eventSink(DevSettingsUiEvent.ToggleHideArtwork) },
+                )
             }
         }
     }

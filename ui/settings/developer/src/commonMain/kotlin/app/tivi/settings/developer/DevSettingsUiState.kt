@@ -9,9 +9,11 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class DevSettingsUiState(
+    val hideArtwork: Boolean,
     val eventSink: (DevSettingsUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface DevSettingsUiEvent : CircuitUiEvent {
     data object NavigateUp : DevSettingsUiEvent
+    data object ToggleHideArtwork : DevSettingsUiEvent
 }

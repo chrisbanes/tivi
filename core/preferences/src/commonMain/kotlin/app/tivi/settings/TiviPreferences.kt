@@ -3,6 +3,7 @@
 
 package app.tivi.settings
 
+import kotlin.reflect.KMutableProperty0
 import kotlinx.coroutines.flow.Flow
 
 interface TiviPreferences {
@@ -28,9 +29,16 @@ interface TiviPreferences {
     var ignoreSpecials: Boolean
     fun observeIgnoreSpecials(): Flow<Boolean>
 
+    var developerHideArtwork: Boolean
+    fun observeDeveloperHideArtwork(): Flow<Boolean>
+
     enum class Theme {
         LIGHT,
         DARK,
         SYSTEM,
     }
+}
+
+inline fun KMutableProperty0<Boolean>.toggle() {
+    set(!get())
 }

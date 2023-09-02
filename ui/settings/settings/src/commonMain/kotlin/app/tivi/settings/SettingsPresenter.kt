@@ -60,15 +60,9 @@ class SettingsPresenter(
                 is SettingsUiEvent.SetTheme -> {
                     preferences.theme = event.theme
                 }
-                SettingsUiEvent.ToggleUseDynamicColors -> {
-                    preferences.useDynamicColors = !preferences.useDynamicColors
-                }
-                SettingsUiEvent.ToggleUseLessData -> {
-                    preferences.useLessData = !preferences.useLessData
-                }
-                SettingsUiEvent.ToggleIgnoreSpecials -> {
-                    preferences.ignoreSpecials = !preferences.ignoreSpecials
-                }
+                SettingsUiEvent.ToggleUseDynamicColors -> preferences::useDynamicColors.toggle()
+                SettingsUiEvent.ToggleUseLessData -> preferences::useLessData.toggle()
+                SettingsUiEvent.ToggleIgnoreSpecials -> preferences::ignoreSpecials.toggle()
                 SettingsUiEvent.NavigatePrivacyPolicy -> {
                     navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))
                 }
