@@ -44,6 +44,7 @@ val EnTiviStrings = TiviStrings(
     detailsNextEpisodeToWatch = "Next episode to watch",
     detailsRelated = "Related shows",
     detailsViewStats = "View stats",
+    developerSettingsTitle = "Developer settings",
     dialogDismiss = "Dismiss",
     discoverKeepWatchingTitle = "Up next",
     discoverPopularTitle = "Popular",

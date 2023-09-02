@@ -148,6 +148,7 @@ data class TiviStrings(
     val settingsThemeTitle: String,
     val settingsTitle: String,
     val settingsUiCategoryTitle: String,
+    val developerSettingsTitle: String,
     val showDetailsSeasons: String,
     val showdetailsNavigationTitle: String,
     val statusActive: String,

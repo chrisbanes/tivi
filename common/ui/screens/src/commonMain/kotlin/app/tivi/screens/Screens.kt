@@ -37,6 +37,9 @@ object SearchScreen : TiviScreen(name = "Search()")
 object SettingsScreen : TiviScreen(name = "Settings()")
 
 @CommonParcelize
+object DevSettingsScreen : TiviScreen(name = "DevelopmentSettings()")
+
+@CommonParcelize
 data class UrlScreen(val url: String) : TiviScreen(name = "UrlScreen()") {
     override val arguments get() = mapOf("url" to url)
 }

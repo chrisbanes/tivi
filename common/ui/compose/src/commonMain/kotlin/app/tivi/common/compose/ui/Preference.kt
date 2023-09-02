@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
@@ -94,4 +95,9 @@ fun PreferenceHeader(title: String) {
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
         )
     }
+}
+
+@Composable
+fun PreferenceDivider() {
+    Divider(Modifier.padding(horizontal = 16.dp))
 }

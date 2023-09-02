@@ -16,14 +16,16 @@ data class SettingsUiState(
     val useLessData: Boolean,
     val ignoreSpecials: Boolean,
     val applicationInfo: ApplicationInfo,
+    val showDeveloperSettings: Boolean,
     val eventSink: (SettingsUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface SettingsUiEvent : CircuitUiEvent {
-    object NavigateUp : SettingsUiEvent
-    object NavigatePrivacyPolicy : SettingsUiEvent
-    object ToggleUseDynamicColors : SettingsUiEvent
-    object ToggleUseLessData : SettingsUiEvent
-    object ToggleIgnoreSpecials : SettingsUiEvent
+    data object NavigateUp : SettingsUiEvent
+    data object NavigatePrivacyPolicy : SettingsUiEvent
+    data object NavigateDeveloperSettings : SettingsUiEvent
+    data object ToggleUseDynamicColors : SettingsUiEvent
+    data object ToggleUseLessData : SettingsUiEvent
+    data object ToggleIgnoreSpecials : SettingsUiEvent
     data class SetTheme(val theme: TiviPreferences.Theme) : SettingsUiEvent
 }

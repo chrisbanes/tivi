@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
@@ -18,7 +17,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoMode
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
@@ -34,6 +32,7 @@ import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.common.compose.ui.Preference
+import app.tivi.common.compose.ui.PreferenceDivider
 import app.tivi.common.compose.ui.PreferenceHeader
 import app.tivi.screens.SettingsScreen
 import com.moriatsushi.insetsx.systemBars
@@ -103,9 +102,7 @@ internal fun Settings(
                 )
             }
 
-            item {
-                Divider(Modifier.padding(horizontal = 16.dp))
-            }
+            item { PreferenceDivider() }
 
             if (state.dynamicColorsAvailable) {
                 item {
@@ -117,9 +114,7 @@ internal fun Settings(
                     )
                 }
 
-                item {
-                    Divider(Modifier.padding(horizontal = 16.dp))
-                }
+                item { PreferenceDivider() }
             }
 
             item {
@@ -131,6 +126,8 @@ internal fun Settings(
                     checked = state.useLessData,
                 )
             }
+
+            item { PreferenceDivider() }
 
             item {
                 CheckboxPreference(
@@ -161,9 +158,7 @@ internal fun Settings(
                 )
             }
 
-            item {
-                Divider(Modifier.padding(horizontal = 16.dp))
-            }
+            item { PreferenceDivider() }
 
             item {
                 Preference(
@@ -172,6 +167,19 @@ internal fun Settings(
                         eventSink(SettingsUiEvent.NavigatePrivacyPolicy)
                     },
                 )
+            }
+
+            if (state.showDeveloperSettings) {
+                item { PreferenceDivider() }
+
+                item {
+                    Preference(
+                        title = LocalStrings.current.developerSettingsTitle,
+                        modifier = Modifier.clickable {
+                            eventSink(SettingsUiEvent.NavigateDeveloperSettings)
+                        },
+                    )
+                }
             }
         }
     }
