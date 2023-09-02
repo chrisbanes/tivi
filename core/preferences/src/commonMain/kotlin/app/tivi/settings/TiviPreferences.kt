@@ -39,6 +39,6 @@ interface TiviPreferences {
     }
 }
 
-inline fun KMutableProperty0<Boolean>.toggle() {
+fun KMutableProperty0<Boolean>.toggle() {
     set(!get())
 }
