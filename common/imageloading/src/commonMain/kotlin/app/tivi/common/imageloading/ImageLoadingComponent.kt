@@ -16,7 +16,7 @@ interface ImageLoadingComponent : ImageLoadingPlatformComponent {
 
     @Provides
     @IntoSet
-    fun provideShowCoilInterceptor(interceptor: ShowCoilInterceptor): Interceptor = interceptor
+    fun provideShowCoilInterceptor(interceptor: ShowImageModelInterceptor): Interceptor = interceptor
 
     @Provides
     @IntoSet
@@ -24,5 +24,9 @@ interface ImageLoadingComponent : ImageLoadingPlatformComponent {
 
     @Provides
     @IntoSet
-    fun provideEpisodeCoilInterceptor(interceptor: EpisodeCoilInterceptor): Interceptor = interceptor
+    fun provideEpisodeCoilInterceptor(interceptor: EpisodeImageModelInterceptor): Interceptor = interceptor
+
+    @Provides
+    @IntoSet
+    fun provideHideArtworkInterceptor(interceptor: HideArtworkInterceptor): Interceptor = interceptor
 }

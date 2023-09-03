@@ -16,7 +16,7 @@ import kotlin.time.Duration.Companion.days
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class EpisodeCoilInterceptor(
+class EpisodeImageModelInterceptor(
     private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
     private val repository: SeasonsEpisodesRepository,
     private val density: () -> Density,

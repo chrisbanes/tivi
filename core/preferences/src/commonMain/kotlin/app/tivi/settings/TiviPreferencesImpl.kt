@@ -9,6 +9,8 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.getStringFlow
 import com.russhwolf.settings.coroutines.toFlowSettings
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
@@ -30,52 +32,59 @@ class TiviPreferencesImpl(
             .map(::getThemeForStorageValue)
     }
 
-    override var useDynamicColors: Boolean
-        get() = settings.getBoolean(KEY_USE_DYNAMIC_COLORS, true)
-        set(value) = settings.putBoolean(KEY_USE_DYNAMIC_COLORS, value)
+    override var useDynamicColors: Boolean by BooleanDelegate(KEY_USE_DYNAMIC_COLORS, true)
 
     override fun observeUseDynamicColors(): Flow<Boolean> {
         return flowSettings.getBooleanFlow(KEY_USE_DYNAMIC_COLORS, true)
     }
 
-    override var useLessData: Boolean
-        get() = settings.getBoolean(KEY_DATA_SAVER, false)
-        set(value) = settings.putBoolean(KEY_DATA_SAVER, value)
+    override var useLessData: Boolean by BooleanDelegate(KEY_DATA_SAVER, false)
 
     override fun observeUseLessData(): Flow<Boolean> {
         return flowSettings.getBooleanFlow(KEY_DATA_SAVER, false)
     }
 
-    override var libraryFollowedActive: Boolean
-        get() = settings.getBoolean(KEY_LIBRARY_FOLLOWED_ACTIVE, true)
-        set(value) = settings.putBoolean(KEY_LIBRARY_FOLLOWED_ACTIVE, value)
+    override var libraryFollowedActive: Boolean by BooleanDelegate(KEY_LIBRARY_FOLLOWED_ACTIVE, true)
 
     override fun observeLibraryFollowedActive(): Flow<Boolean> {
         return flowSettings.getBooleanFlow(KEY_LIBRARY_FOLLOWED_ACTIVE, true)
     }
 
-    override var libraryWatchedActive: Boolean
-        get() = settings.getBoolean(KEY_LIBRARY_WATCHED_ACTIVE, true)
-        set(value) = settings.putBoolean(KEY_LIBRARY_WATCHED_ACTIVE, value)
+    override var libraryWatchedActive: Boolean by BooleanDelegate(KEY_LIBRARY_WATCHED_ACTIVE, true)
 
     override fun observeLibraryWatchedActive(): Flow<Boolean> {
         return flowSettings.getBooleanFlow(KEY_LIBRARY_WATCHED_ACTIVE, true)
     }
 
-    override var upNextFollowedOnly: Boolean
-        get() = settings.getBoolean(KEY_UPNEXT_FOLLOWED_ONLY, false)
-        set(value) = settings.putBoolean(KEY_UPNEXT_FOLLOWED_ONLY, value)
+    override var upNextFollowedOnly: Boolean by BooleanDelegate(KEY_UPNEXT_FOLLOWED_ONLY, false)
 
     override fun observeUpNextFollowedOnly(): Flow<Boolean> {
         return flowSettings.getBooleanFlow(KEY_UPNEXT_FOLLOWED_ONLY, false)
     }
 
-    override var ignoreSpecials: Boolean
-        get() = settings.getBoolean(KEY_IGNORE_SPECIALS, true)
-        set(value) = settings.putBoolean(KEY_IGNORE_SPECIALS, value)
+    override var ignoreSpecials: Boolean by BooleanDelegate(KEY_IGNORE_SPECIALS, true)
 
     override fun observeIgnoreSpecials(): Flow<Boolean> {
         return flowSettings.getBooleanFlow(KEY_IGNORE_SPECIALS, true)
+    }
+
+    override var developerHideArtwork: Boolean by BooleanDelegate(KEY_DEV_HIDE_ARTWORK, false)
+
+    override fun observeDeveloperHideArtwork(): Flow<Boolean> {
+        return flowSettings.getBooleanFlow(KEY_DEV_HIDE_ARTWORK, false)
+    }
+
+    private class BooleanDelegate(
+        private val key: String,
+        private val defaultValue: Boolean,
+    ) : ReadWriteProperty<TiviPreferencesImpl, Boolean> {
+        override fun getValue(thisRef: TiviPreferencesImpl, property: KProperty<*>): Boolean {
+            return thisRef.settings.getBoolean(key, defaultValue)
+        }
+
+        override fun setValue(thisRef: TiviPreferencesImpl, property: KProperty<*>, value: Boolean) {
+            thisRef.settings.putBoolean(key, value)
+        }
     }
 }
 
@@ -99,6 +108,8 @@ internal const val KEY_LIBRARY_FOLLOWED_ACTIVE = "pref_library_followed_active"
 internal const val KEY_LIBRARY_WATCHED_ACTIVE = "pref_library_watched_active"
 internal const val KEY_UPNEXT_FOLLOWED_ONLY = "pref_upnext_followedonly_active"
 internal const val KEY_IGNORE_SPECIALS = "pref_ignore_specials"
+
+internal const val KEY_DEV_HIDE_ARTWORK = "pref_dev_hide_artwork"
 
 internal const val THEME_LIGHT_VALUE = "light"
 internal const val THEME_DARK_VALUE = "dark"

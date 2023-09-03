@@ -17,6 +17,7 @@ import app.tivi.home.search.SearchComponent
 import app.tivi.home.trending.TrendingShowsComponent
 import app.tivi.home.upnext.UpNextComponent
 import app.tivi.settings.SettingsComponent
+import app.tivi.settings.developer.DevSettingsComponent
 import app.tivi.showdetails.details.ShowDetailsComponent
 import app.tivi.showdetails.seasons.ShowSeasonsComponent
 import cafe.adriel.lyricist.Lyricist
@@ -35,6 +36,7 @@ interface UiComponent :
     RecommendedShowsComponent,
     SearchComponent,
     SettingsComponent,
+    DevSettingsComponent,
     ShowDetailsComponent,
     ShowSeasonsComponent,
     TrendingShowsComponent,
