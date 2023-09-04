@@ -4,9 +4,6 @@
 package app.tivi.util
 
 interface Logger {
-
-    fun setup(debugMode: Boolean) = Unit
-
     fun setUserId(id: String) = Unit
 
     /** Log a verbose exception and a message with optional format args.  */

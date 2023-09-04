@@ -3,12 +3,22 @@
 
 package app.tivi.util
 
+import app.tivi.app.ApplicationInfo
+import app.tivi.app.Flavor
 import co.touchlab.kermit.Logger as Kermit
 import co.touchlab.kermit.Severity
+import me.tatarka.inject.annotations.Inject
 
-internal object KermitLogger : Logger {
-    override fun setup(debugMode: Boolean) {
-        Kermit.setMinSeverity(if (debugMode) Severity.Debug else Severity.Error)
+@Inject
+class KermitLogger(applicationInfo: ApplicationInfo) : Logger {
+    init {
+        Kermit.setMinSeverity(
+            when {
+                applicationInfo.debugBuild -> Severity.Debug
+                applicationInfo.flavor == Flavor.Qa -> Severity.Debug
+                else -> Severity.Error
+            },
+        )
     }
 
     override fun v(throwable: Throwable?, message: () -> String) {

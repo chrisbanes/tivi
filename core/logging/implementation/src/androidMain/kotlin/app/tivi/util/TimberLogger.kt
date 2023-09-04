@@ -5,14 +5,20 @@ package app.tivi.util
 
 import android.os.Build
 import android.util.Log
+import app.tivi.app.ApplicationInfo
+import app.tivi.app.Flavor
 import co.touchlab.crashkios.crashlytics.CrashlyticsKotlin
+import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
 
-internal object TimberLogger : Logger {
-    override fun setup(debugMode: Boolean) {
-        if (debugMode) {
+@Inject
+class TimberLogger(applicationInfo: ApplicationInfo) : Logger {
+
+    init {
+        if (applicationInfo.debugBuild || applicationInfo.flavor == Flavor.Qa) {
             Timber.plant(TiviDebugTree())
         }
+
         try {
             Timber.plant(CrashlyticsTree())
         } catch (e: IllegalStateException) {

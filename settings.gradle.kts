@@ -106,6 +106,7 @@ include(
     ":tasks",
     ":domain",
     ":shared",
+    ":ui:developer:log",
     ":ui:developer:settings",
     ":ui:discover",
     ":ui:episode:details",

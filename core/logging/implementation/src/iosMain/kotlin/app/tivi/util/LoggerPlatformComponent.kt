@@ -11,7 +11,9 @@ import me.tatarka.inject.annotations.Provides
 actual interface LoggerPlatformComponent {
     @Provides
     @ApplicationScope
-    fun provideLogger(): Logger = CompositeLogger(KermitLogger, CrashKIosLogger)
+    fun provideLogger(
+        kermitLogger: KermitLogger,
+    ): Logger = CompositeLogger(kermitLogger, CrashKIosLogger)
 
     @Provides
     @IntoSet

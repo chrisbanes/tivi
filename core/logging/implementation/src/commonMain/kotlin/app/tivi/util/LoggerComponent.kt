@@ -3,14 +3,13 @@
 
 package app.tivi.util
 
-import app.tivi.appinitializers.AppInitializer
-import me.tatarka.inject.annotations.IntoSet
+import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 expect interface LoggerPlatformComponent
 
 interface LoggerComponent : LoggerPlatformComponent {
+    @ApplicationScope
     @Provides
-    @IntoSet
-    fun provideLoggerInitializer(bind: LoggerInitializer): AppInitializer = bind
+    fun bindRecordingLogger(): RecordingLogger = RecordingLoggerImpl()
 }
