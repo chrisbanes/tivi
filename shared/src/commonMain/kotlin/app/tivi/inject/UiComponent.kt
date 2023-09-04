@@ -7,6 +7,7 @@ import app.tivi.account.AccountComponent
 import app.tivi.common.ui.resources.Locales
 import app.tivi.common.ui.resources.Strings
 import app.tivi.common.ui.resources.TiviStrings
+import app.tivi.developer.log.DevLogComponent
 import app.tivi.episode.track.EpisodeTrackComponent
 import app.tivi.episodedetails.EpisodeDetailsComponent
 import app.tivi.home.discover.DiscoverComponent
@@ -37,6 +38,7 @@ interface UiComponent :
     SearchComponent,
     SettingsComponent,
     DevSettingsComponent,
+    DevLogComponent,
     ShowDetailsComponent,
     ShowSeasonsComponent,
     TrendingShowsComponent,

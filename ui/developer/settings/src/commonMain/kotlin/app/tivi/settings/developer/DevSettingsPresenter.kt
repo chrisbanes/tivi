@@ -6,6 +6,7 @@ package app.tivi.settings.developer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import app.tivi.screens.DevLogScreen
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.toggle
@@ -43,6 +44,7 @@ class DevSettingsPresenter(
         fun eventSink(event: DevSettingsUiEvent) {
             when (event) {
                 DevSettingsUiEvent.NavigateUp -> navigator.pop()
+                DevSettingsUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
                 DevSettingsUiEvent.ToggleHideArtwork -> preferences::developerHideArtwork.toggle()
             }
         }

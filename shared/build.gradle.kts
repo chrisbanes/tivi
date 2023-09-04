@@ -33,6 +33,7 @@ kotlin {
                 api(projects.common.ui.compose)
 
                 api(projects.ui.account)
+                api(projects.ui.developer.log)
                 api(projects.ui.developer.settings)
                 api(projects.ui.discover)
                 api(projects.ui.episode.details)

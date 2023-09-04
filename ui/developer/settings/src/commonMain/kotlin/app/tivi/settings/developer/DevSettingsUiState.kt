@@ -15,5 +15,6 @@ data class DevSettingsUiState(
 
 sealed interface DevSettingsUiEvent : CircuitUiEvent {
     data object NavigateUp : DevSettingsUiEvent
+    data object NavigateLog : DevSettingsUiEvent
     data object ToggleHideArtwork : DevSettingsUiEvent
 }

@@ -11,7 +11,10 @@ import me.tatarka.inject.annotations.Provides
 actual interface LoggerPlatformComponent {
     @ApplicationScope
     @Provides
-    fun provideLogger(): Logger = TimberLogger
+    fun provideLogger(
+        timberLogger: TimberLogger,
+        recordingLogger: RecordingLogger,
+    ): Logger = CompositeLogger(timberLogger, recordingLogger)
 
     @Provides
     @IntoSet

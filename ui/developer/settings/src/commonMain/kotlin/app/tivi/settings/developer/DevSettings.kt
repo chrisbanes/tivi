@@ -4,6 +4,7 @@
 package app.tivi.settings.developer
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.ui.CheckboxPreference
+import app.tivi.common.compose.ui.Preference
 import app.tivi.screens.DevSettingsScreen
 import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext
@@ -78,6 +80,15 @@ internal fun DevSettings(
                     checked = state.hideArtwork,
                     title = "Hide artwork",
                     onCheckClicked = { state.eventSink(DevSettingsUiEvent.ToggleHideArtwork) },
+                )
+            }
+
+            item {
+                Preference(
+                    title = "Open log",
+                    modifier = Modifier.clickable {
+                        state.eventSink(DevSettingsUiEvent.NavigateLog)
+                    },
                 )
             }
         }
