@@ -33,6 +33,7 @@ kotlin {
                 api(projects.common.ui.compose)
 
                 api(projects.ui.account)
+                api(projects.ui.developer.settings)
                 api(projects.ui.discover)
                 api(projects.ui.episode.details)
                 api(projects.ui.episode.track)
@@ -44,8 +45,7 @@ kotlin {
                 api(projects.ui.show.details)
                 api(projects.ui.show.seasons)
                 api(projects.ui.root)
-                api(projects.ui.settings.settings)
-                api(projects.ui.settings.developer)
+                api(projects.ui.settings)
                 api(projects.ui.upnext)
             }
         }
