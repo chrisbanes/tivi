@@ -94,7 +94,6 @@ fun TiviContent(
                     Home(
                         backstack = backstack,
                         navigator = tiviNavigator,
-                        logger = logger,
                         modifier = modifier,
                     )
                 }

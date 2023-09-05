@@ -51,7 +51,6 @@ import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
 import app.tivi.screens.SearchScreen
 import app.tivi.screens.UpNextScreen
-import app.tivi.util.Logger
 import com.moriatsushi.insetsx.navigationBars
 import com.moriatsushi.insetsx.safeContentPadding
 import com.moriatsushi.insetsx.statusBars
@@ -62,12 +61,12 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuitx.gesturenavigation.GestureNavigationDecoration
 
 @Composable
 internal fun Home(
     backstack: SaveableBackStack,
     navigator: Navigator,
-    logger: Logger,
     modifier: Modifier = Modifier,
 ) {
     val windowSizeClass = LocalWindowSizeClass.current
@@ -134,8 +133,8 @@ internal fun Home(
                 NavigableCircuitContent(
                     navigator = navigator,
                     backstack = backstack,
-                    decoration = remember(navigator, logger) {
-                        GestureNavDecoration(navigator, logger)
+                    decoration = remember(navigator) {
+                        GestureNavigationDecoration(onBackInvoked = navigator::pop)
                     },
                     modifier = Modifier
                         .weight(1f)
