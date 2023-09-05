@@ -34,7 +34,7 @@ abstract class IosApplicationComponent(
     fun provideApplicationId(): ApplicationInfo = ApplicationInfo(
         packageName = NSBundle.mainBundle.bundleIdentifier ?: "app.tivi.client",
         debugBuild = Platform.isDebugBinary,
-        flavor = Flavor.Standard,
+        flavor = Flavor.Qa,
         versionName = NSBundle.mainBundle.infoDictionary
             ?.get("CFBundleShortVersionString") as? String
             ?: "",
