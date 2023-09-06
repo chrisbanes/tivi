@@ -3,17 +3,13 @@
 
 package app.tivi.inject
 
-import app.tivi.app.ApplicationInfo
-import app.tivi.app.Flavor
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.core.analytics.Analytics
 import app.tivi.data.traktauth.TraktLoginAction
 import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.data.traktauth.TraktRefreshTokenAction
-import kotlin.experimental.ExperimentalNativeApi
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
-import platform.Foundation.NSBundle
 
 @Component
 @ApplicationScope
@@ -21,24 +17,9 @@ abstract class IosApplicationComponent(
     override val analyticsProvider: () -> Analytics,
     override val traktRefreshTokenActionProvider: (TraktOAuthInfo) -> TraktRefreshTokenAction,
     private val traktLoginActionProvider: (TraktOAuthInfo) -> TraktLoginAction,
-) : SharedIosApplicationComponent {
+) : SharedApplicationComponent, ProdApplicationComponent {
 
     abstract val initializers: AppInitializers
-
-    @OptIn(ExperimentalNativeApi::class)
-    @ApplicationScope
-    @Provides
-    fun provideApplicationId(): ApplicationInfo = ApplicationInfo(
-        packageName = NSBundle.mainBundle.bundleIdentifier ?: "app.tivi.client",
-        debugBuild = Platform.isDebugBinary,
-        flavor = Flavor.Standard,
-        versionName = NSBundle.mainBundle.infoDictionary
-            ?.get("CFBundleShortVersionString") as? String
-            ?: "",
-        versionCode = (NSBundle.mainBundle.infoDictionary?.get("CFBundleVersion") as? String)
-            ?.toIntOrNull()
-            ?: 0,
-    )
 
     @Provides
     @ApplicationScope

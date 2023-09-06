@@ -4,20 +4,11 @@
 package app.tivi.inject
 
 import android.app.Application
-import android.content.Context
 import androidx.compose.ui.unit.Density
-import app.tivi.BuildConfig
-import app.tivi.TiviApplication
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
-import app.tivi.appinitializers.AppInitializer
-import app.tivi.appinitializers.AppInitializers
-import app.tivi.appinitializers.EmojiInitializer
-import app.tivi.tasks.TiviWorkerFactory
 import java.io.File
 import java.util.concurrent.TimeUnit
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 import okhttp3.Cache
 import okhttp3.ConnectionPool
@@ -25,37 +16,24 @@ import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
-@Component
-@ApplicationScope
-abstract class AndroidApplicationComponent(
-    @get:Provides val application: Application,
-) : SharedApplicationComponent,
-    VariantAwareComponent {
+actual interface SharedPlatformApplicationComponent {
 
-    abstract val initializers: AppInitializers
-    abstract val workerFactory: TiviWorkerFactory
-
-    @Suppress("DEPRECATION")
     @ApplicationScope
     @Provides
-    fun provideApplicationInfo(application: Application): ApplicationInfo {
+    fun provideApplicationInfo(
+        application: Application,
+        flavor: Flavor,
+    ): ApplicationInfo {
         val packageInfo = application.packageManager.getPackageInfo(application.packageName, 0)
 
         return ApplicationInfo(
             packageName = application.packageName,
-            debugBuild = BuildConfig.DEBUG,
-            flavor = when (BuildConfig.FLAVOR) {
-                "qa" -> Flavor.Qa
-                else -> Flavor.Standard
-            },
+            debugBuild = false, // FIXME
+            flavor = flavor,
             versionName = packageInfo.versionName,
-            versionCode = packageInfo.versionCode,
+            versionCode = @Suppress("DEPRECATION") packageInfo.versionCode,
         )
     }
-
-    @Provides
-    @IntoSet
-    fun provideEmojiInitializer(bind: EmojiInitializer): AppInitializer = bind
 
     @ApplicationScope
     @Provides
@@ -83,10 +61,4 @@ abstract class AndroidApplicationComponent(
 
     @Provides
     fun provideDensity(application: Application): Density = Density(application)
-
-    companion object {
-        fun from(context: Context): AndroidApplicationComponent {
-            return (context.applicationContext as TiviApplication).component
-        }
-    }
 }

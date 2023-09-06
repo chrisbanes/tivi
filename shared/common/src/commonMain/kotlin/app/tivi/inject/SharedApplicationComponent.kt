@@ -3,8 +3,6 @@
 
 package app.tivi.inject
 
-import app.tivi.appinitializers.AppInitializer
-import app.tivi.appinitializers.TmdbInitializer
 import app.tivi.common.imageloading.ImageLoadingComponent
 import app.tivi.core.analytics.AnalyticsComponent
 import app.tivi.core.perf.PerformanceComponent
@@ -31,45 +29,21 @@ import app.tivi.util.PowerControllerComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
-import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
+expect interface SharedPlatformApplicationComponent
+
 interface SharedApplicationComponent :
-    ApiComponent,
+    SharedPlatformApplicationComponent,
     TasksComponent,
-    CoreComponent,
-    DataComponent,
-    ImageLoadingComponent
-
-interface ApiComponent : TmdbComponent, TraktComponent
-
-interface CoreComponent :
+    ImageLoadingComponent,
+    TmdbComponent,
+    TraktComponent,
     AnalyticsComponent,
     LoggerComponent,
     PerformanceComponent,
     PowerControllerComponent,
-    PreferencesComponent {
-
-    /**
-     * Need to wait to upgrade to Coroutines 1.7.x so we can reference IO from common
-     */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @ApplicationScope
-    @Provides
-    fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
-        io = Dispatchers.IO,
-        databaseWrite = Dispatchers.IO.limitedParallelism(1),
-        databaseRead = Dispatchers.IO.limitedParallelism(4),
-        computation = Dispatchers.Default,
-        main = Dispatchers.Main,
-    )
-
-    @Provides
-    @IntoSet
-    fun provideTmdbInitializer(bind: TmdbInitializer): AppInitializer = bind
-}
-
-interface DataComponent :
+    PreferencesComponent,
     EpisodeBinds,
     FollowedShowsBinds,
     PopularShowsBinds,
@@ -82,4 +56,16 @@ interface DataComponent :
     TraktUsersBinds,
     TrendingShowsBinds,
     WatchedShowsBinds,
-    SqlDelightDatabaseComponent
+    SqlDelightDatabaseComponent {
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @ApplicationScope
+    @Provides
+    fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
+        io = Dispatchers.IO,
+        databaseWrite = Dispatchers.IO.limitedParallelism(1),
+        databaseRead = Dispatchers.IO.limitedParallelism(4),
+        computation = Dispatchers.Default,
+        main = Dispatchers.Main,
+    )
+}

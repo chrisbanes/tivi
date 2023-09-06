@@ -24,6 +24,13 @@ kotlin {
             }
         }
 
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.chucker.library)
+                implementation(libs.okhttp.loggingInterceptor)
+            }
+        }
+
         targets.withType<KotlinNativeTarget>().configureEach {
             binaries.withType<Framework> {
                 isStatic = true

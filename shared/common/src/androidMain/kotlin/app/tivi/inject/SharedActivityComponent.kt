@@ -8,7 +8,7 @@ import androidx.core.os.ConfigurationCompat
 import java.util.Locale
 import me.tatarka.inject.annotations.Provides
 
-interface ActivityComponent {
+interface SharedActivityComponent {
     @get:Provides
     val activity: Activity
 

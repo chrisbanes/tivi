@@ -4,6 +4,7 @@
 package app.tivi.home
 
 import android.app.Activity
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -16,10 +17,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import app.tivi.BuildConfig
 import app.tivi.TiviActivity
-import app.tivi.inject.ActivityComponent
+import app.tivi.TiviApplication
 import app.tivi.inject.ActivityScope
 import app.tivi.inject.AndroidApplicationComponent
-import app.tivi.inject.UiComponent
+import app.tivi.inject.SharedActivityComponent
+import app.tivi.inject.SharedUiComponent
 import app.tivi.screens.DiscoverScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
@@ -62,6 +64,10 @@ class MainActivity : TiviActivity() {
 abstract class MainActivityComponent(
     @get:Provides override val activity: Activity,
     @Component val applicationComponent: AndroidApplicationComponent = AndroidApplicationComponent.from(activity),
-) : ActivityComponent, UiComponent {
+) : SharedActivityComponent, SharedUiComponent {
     abstract val tiviContent: TiviContent
+}
+
+private fun AndroidApplicationComponent.Companion.from(context: Context): AndroidApplicationComponent {
+    return (context.applicationContext as TiviApplication).component
 }

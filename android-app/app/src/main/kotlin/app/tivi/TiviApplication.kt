@@ -12,7 +12,7 @@ import app.tivi.inject.create
 
 class TiviApplication : Application(), Configuration.Provider {
     val component: AndroidApplicationComponent by unsafeLazy {
-        AndroidApplicationComponent::class.create(this)
+        AndroidApplicationComponent.create(this)
     }
 
     private lateinit var workerFactory: WorkerFactory

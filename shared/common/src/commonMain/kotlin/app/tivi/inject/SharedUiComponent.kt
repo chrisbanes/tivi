@@ -42,12 +42,10 @@ interface SharedUiComponent :
 
     @Provides
     @ActivityScope
-    fun provideLyricist(): TiviStrings {
-        return Lyricist(
-            defaultLanguageTag = Locales.EN,
-            translations = Strings,
-        ).strings
-    }
+    fun provideLyricist(): TiviStrings = Lyricist(
+        defaultLanguageTag = Locales.EN,
+        translations = Strings,
+    ).strings
 
     @Provides
     @ActivityScope

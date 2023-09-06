@@ -155,16 +155,13 @@ dependencies {
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.splashscreen)
 
+    qaImplementation(libs.leakCanary)
+
     implementation(libs.kotlin.coroutines.android)
 
     implementation(libs.google.firebase.crashlytics)
 
-    implementation(libs.okhttp.loggingInterceptor)
-
     ksp(libs.kotlininject.compiler)
-
-    qaImplementation(libs.chucker.library)
-    qaImplementation(libs.leakCanary)
 
     androidTestImplementation(projects.androidApp.commonTest)
     androidTestImplementation(libs.androidx.uiautomator)

@@ -1,4 +1,4 @@
-// Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
+// Copyright 2023, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package app.tivi.inject
@@ -6,26 +6,22 @@ package app.tivi.inject
 import androidx.compose.ui.unit.Density
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
-import app.tivi.appinitializers.AppInitializers
 import java.util.concurrent.TimeUnit
 import java.util.prefs.Preferences
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 
-@Component
-@ApplicationScope
-abstract class DesktopApplicationComponent : SharedApplicationComponent {
-    abstract val initializers: AppInitializers
-
+actual interface SharedPlatformApplicationComponent {
     @ApplicationScope
     @Provides
-    fun provideApplicationId(): ApplicationInfo = ApplicationInfo(
+    fun provideApplicationId(
+        flavor: Flavor,
+    ): ApplicationInfo = ApplicationInfo(
         packageName = "app.tivi",
         debugBuild = true,
-        flavor = Flavor.Standard,
+        flavor = flavor,
         versionName = "1.0.0",
         versionCode = 1,
     )
@@ -57,6 +53,4 @@ abstract class DesktopApplicationComponent : SharedApplicationComponent {
         .readTimeout(20, TimeUnit.SECONDS)
         .writeTimeout(20, TimeUnit.SECONDS)
         .build()
-
-    companion object
 }
