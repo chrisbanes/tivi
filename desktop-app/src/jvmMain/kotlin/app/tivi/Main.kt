@@ -8,8 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import app.tivi.inject.DesktopApplicationComponent
-import app.tivi.inject.WindowComponent
 import app.tivi.inject.create
 import app.tivi.screens.DiscoverScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack

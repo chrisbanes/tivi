@@ -12,7 +12,7 @@ import platform.UIKit.UIViewController
 @Component
 abstract class HomeUiControllerComponent(
     @Component val applicationComponent: IosApplicationComponent,
-) : UiComponent {
+) : SharedUiComponent {
     abstract val uiViewControllerFactory: () -> UIViewController
 
     @Provides

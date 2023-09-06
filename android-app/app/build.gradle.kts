@@ -145,7 +145,8 @@ androidComponents {
 }
 
 dependencies {
-    implementation(projects.shared)
+    qaImplementation(projects.shared.qa)
+    standardImplementation(projects.shared.prod)
 
     implementation(libs.androidx.activity.activity)
     implementation(libs.androidx.activity.compose)
@@ -192,3 +193,6 @@ fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
 
 fun DependencyHandler.qaImplementation(dependencyNotation: Any) =
     add("qaImplementation", dependencyNotation)
+
+fun DependencyHandler.standardImplementation(dependencyNotation: Any) =
+    add("standardImplementation", dependencyNotation)

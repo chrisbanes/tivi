@@ -230,7 +230,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Building :shared for $CONFIGURATION\"\n\ncd \"$SRCROOT/../..\"\n\nif [ \"$CONFIGURATION\" = \"QA\" ]; then\n  ./gradlew :shared:embedAndSignAppleFrameworkForXcode --no-configuration-cache\nelse\n  ./gradlew :shared:embedAndSignAppleFrameworkForXcode --no-configuration-cache\nfi\n";
+			shellScript = "cd \"$SRCROOT/../..\"\n\nif [ \"$CONFIGURATION\" = \"Release\" ]; then\n  echo \"Building :shared:prod for $CONFIGURATION\"\n  ./gradlew :shared:prod:embedAndSignAppleFrameworkForXcode --no-configuration-cache\nelse\n    echo \"Building :shared:qa for $CONFIGURATION\"\n  ./gradlew :shared:qa:embedAndSignAppleFrameworkForXcode --no-configuration-cache\nfi\n";
 		};
 		83AB60022A51F473007FC216 /* Upload Crashlytics symbols */ = {
 			isa = PBXShellScriptBuildPhase;

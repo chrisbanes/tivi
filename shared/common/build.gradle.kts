@@ -3,8 +3,6 @@
 
 
 import app.tivi.gradle.addKspDependencyForAllTargets
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     id("app.tivi.android.library")
@@ -33,8 +31,6 @@ kotlin {
                 api(projects.common.ui.compose)
 
                 api(projects.ui.account)
-                api(projects.ui.developer.log)
-                api(projects.ui.developer.settings)
                 api(projects.ui.discover)
                 api(projects.ui.episode.details)
                 api(projects.ui.episode.track)
@@ -56,22 +52,11 @@ kotlin {
                 api(libs.okhttp.okhttp)
             }
         }
-
-        targets.withType<KotlinNativeTarget>().configureEach {
-            binaries.withType<Framework> {
-                isStatic = true
-                baseName = "TiviKt"
-
-                export(projects.ui.root)
-                export(projects.core.analytics)
-                export(projects.data.traktauth)
-            }
-        }
     }
 }
 
 android {
-    namespace = "app.tivi.shared"
+    namespace = "app.tivi.shared.common"
 }
 
 ksp {

@@ -3,7 +3,6 @@
 
 package app.tivi.inject
 
-import androidx.compose.ui.unit.Density
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import app.tivi.appinitializers.AppInitializers
@@ -15,8 +14,6 @@ import kotlin.experimental.ExperimentalNativeApi
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
-import platform.Foundation.NSUserDefaults
-import platform.UIKit.UIScreen
 
 @Component
 @ApplicationScope
@@ -24,7 +21,7 @@ abstract class IosApplicationComponent(
     override val analyticsProvider: () -> Analytics,
     override val traktRefreshTokenActionProvider: (TraktOAuthInfo) -> TraktRefreshTokenAction,
     private val traktLoginActionProvider: (TraktOAuthInfo) -> TraktLoginAction,
-) : SharedApplicationComponent {
+) : SharedIosApplicationComponent {
 
     abstract val initializers: AppInitializers
 
@@ -44,16 +41,10 @@ abstract class IosApplicationComponent(
     )
 
     @Provides
-    fun provideNsUserDefaults(): NSUserDefaults = NSUserDefaults.standardUserDefaults
-
-    @Provides
     @ApplicationScope
     fun provideLoginToTraktInteractor(info: TraktOAuthInfo): TraktLoginAction {
         return traktLoginActionProvider(info)
     }
-
-    @Provides
-    fun provideDensity(): Density = Density(density = UIScreen.mainScreen.scale.toFloat())
 
     companion object
 }
