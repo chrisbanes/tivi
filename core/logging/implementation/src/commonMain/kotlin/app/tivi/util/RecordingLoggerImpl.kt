@@ -4,10 +4,11 @@
 package app.tivi.util
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 internal class RecordingLoggerImpl(
-    private val bufferSize: Int = 50,
+    private val bufferSize: Int = 100,
 ) : RecordingLogger {
 
     private val logs = ArrayDeque<LogMessage>(bufferSize)
@@ -42,4 +43,8 @@ internal class RecordingLoggerImpl(
         logs.add(logMessage)
         _buffer.value = logs.toList()
     }
+}
+
+internal object NoopRecordingLogger: RecordingLogger {
+    override val buffer: StateFlow<List<LogMessage>> = MutableStateFlow(emptyList())
 }

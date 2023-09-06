@@ -3,6 +3,8 @@
 
 package app.tivi.util
 
+import app.tivi.app.ApplicationInfo
+import app.tivi.app.Flavor
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
@@ -11,5 +13,11 @@ expect interface LoggerPlatformComponent
 interface LoggerComponent : LoggerPlatformComponent {
     @ApplicationScope
     @Provides
-    fun bindRecordingLogger(): RecordingLogger = RecordingLoggerImpl()
+    fun bindRecordingLogger(
+        applicationInfo: ApplicationInfo
+    ): RecordingLogger = when {
+        applicationInfo.debugBuild -> RecordingLoggerImpl()
+        applicationInfo.flavor == Flavor.Qa -> RecordingLoggerImpl()
+        else -> NoopRecordingLogger
+    }
 }
