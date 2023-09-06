@@ -4,6 +4,7 @@
 package app.tivi.inject
 
 import android.app.Application
+import android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE
 import androidx.compose.ui.unit.Density
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
@@ -24,11 +25,13 @@ actual interface SharedPlatformApplicationComponent {
         application: Application,
         flavor: Flavor,
     ): ApplicationInfo {
-        val packageInfo = application.packageManager.getPackageInfo(application.packageName, 0)
+        val packageManager = application.packageManager
+        val applicationInfo = packageManager.getApplicationInfo(application.packageName, 0)
+        val packageInfo = packageManager.getPackageInfo(application.packageName, 0)
 
         return ApplicationInfo(
             packageName = application.packageName,
-            debugBuild = false, // FIXME
+            debugBuild = (applicationInfo.flags and FLAG_DEBUGGABLE) != 0,
             flavor = flavor,
             versionName = packageInfo.versionName,
             versionCode = @Suppress("DEPRECATION") packageInfo.versionCode,
