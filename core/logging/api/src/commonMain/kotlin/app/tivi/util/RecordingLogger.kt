@@ -18,10 +18,8 @@ enum class Severity {
     Assert,
 }
 
-class LogMessage(
+data class LogMessage(
     val severity: Severity,
-    message: () -> String,
+    val message: String,
     val throwable: Throwable?,
-) {
-    val message: String by lazy { message() }
-}
+)

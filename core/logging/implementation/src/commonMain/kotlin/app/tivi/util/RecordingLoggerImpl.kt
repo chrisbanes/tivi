@@ -4,10 +4,11 @@
 package app.tivi.util
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 internal class RecordingLoggerImpl(
-    private val bufferSize: Int = 50,
+    private val bufferSize: Int = 100,
 ) : RecordingLogger {
 
     private val logs = ArrayDeque<LogMessage>(bufferSize)
@@ -16,23 +17,23 @@ internal class RecordingLoggerImpl(
     override val buffer get() = _buffer.asStateFlow()
 
     override fun v(throwable: Throwable?, message: () -> String) {
-        addLog(LogMessage(Severity.Verbose, message, throwable))
+        addLog(LogMessage(Severity.Verbose, message(), throwable))
     }
 
     override fun d(throwable: Throwable?, message: () -> String) {
-        addLog(LogMessage(Severity.Debug, message, throwable))
+        addLog(LogMessage(Severity.Debug, message(), throwable))
     }
 
     override fun i(throwable: Throwable?, message: () -> String) {
-        addLog(LogMessage(Severity.Info, message, throwable))
+        addLog(LogMessage(Severity.Info, message(), throwable))
     }
 
     override fun e(throwable: Throwable?, message: () -> String) {
-        addLog(LogMessage(Severity.Error, message, throwable))
+        addLog(LogMessage(Severity.Error, message(), throwable))
     }
 
     override fun w(throwable: Throwable?, message: () -> String) {
-        addLog(LogMessage(Severity.Warn, message, throwable))
+        addLog(LogMessage(Severity.Warn, message(), throwable))
     }
 
     private fun addLog(logMessage: LogMessage) {
@@ -42,4 +43,8 @@ internal class RecordingLoggerImpl(
         logs.add(logMessage)
         _buffer.value = logs.toList()
     }
+}
+
+internal object NoopRecordingLogger : RecordingLogger {
+    override val buffer: StateFlow<List<LogMessage>> = MutableStateFlow(emptyList())
 }

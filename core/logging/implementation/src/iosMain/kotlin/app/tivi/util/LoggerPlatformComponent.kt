@@ -13,7 +13,8 @@ actual interface LoggerPlatformComponent {
     @ApplicationScope
     fun provideLogger(
         kermitLogger: KermitLogger,
-    ): Logger = CompositeLogger(kermitLogger, CrashKIosLogger)
+        recordingLogger: RecordingLogger,
+    ): Logger = CompositeLogger(kermitLogger, recordingLogger, CrashKIosLogger)
 
     @Provides
     @IntoSet

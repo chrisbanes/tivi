@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 api(projects.core.logging.api)
+                api(libs.kotlin.coroutines.core)
                 implementation(libs.kermit.kermit)
                 implementation(libs.kotlininject.runtime)
             }
