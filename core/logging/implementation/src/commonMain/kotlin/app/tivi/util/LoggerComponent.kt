@@ -14,7 +14,7 @@ interface LoggerComponent : LoggerPlatformComponent {
     @ApplicationScope
     @Provides
     fun bindRecordingLogger(
-        applicationInfo: ApplicationInfo
+        applicationInfo: ApplicationInfo,
     ): RecordingLogger = when {
         applicationInfo.debugBuild -> RecordingLoggerImpl()
         applicationInfo.flavor == Flavor.Qa -> RecordingLoggerImpl()
