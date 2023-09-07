@@ -5,7 +5,6 @@
 plugins {
     id("app.tivi.android.application")
     id("app.tivi.kotlin.android")
-    alias(libs.plugins.ksp)
     id("app.tivi.compose")
 }
 
@@ -159,8 +158,6 @@ dependencies {
     implementation(libs.kotlin.coroutines.android)
 
     implementation(libs.google.firebase.crashlytics)
-
-    ksp(libs.kotlininject.compiler)
 
     androidTestImplementation(projects.androidApp.commonTest)
     androidTestImplementation(libs.androidx.uiautomator)
