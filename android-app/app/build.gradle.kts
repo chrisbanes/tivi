@@ -5,7 +5,6 @@
 plugins {
     id("app.tivi.android.application")
     id("app.tivi.kotlin.android")
-    alias(libs.plugins.ksp)
     id("app.tivi.compose")
 }
 
@@ -145,25 +144,20 @@ androidComponents {
 }
 
 dependencies {
-    implementation(projects.shared)
+    qaImplementation(projects.shared.qa)
+    standardImplementation(projects.shared.prod)
 
     implementation(libs.androidx.activity.activity)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.browser)
-    implementation(libs.androidx.emoji)
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.splashscreen)
+
+    qaImplementation(libs.leakCanary)
 
     implementation(libs.kotlin.coroutines.android)
 
     implementation(libs.google.firebase.crashlytics)
-
-    implementation(libs.okhttp.loggingInterceptor)
-
-    ksp(libs.kotlininject.compiler)
-
-    qaImplementation(libs.chucker.library)
-    qaImplementation(libs.leakCanary)
 
     androidTestImplementation(projects.androidApp.commonTest)
     androidTestImplementation(libs.androidx.uiautomator)
@@ -192,3 +186,6 @@ fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
 
 fun DependencyHandler.qaImplementation(dependencyNotation: Any) =
     add("qaImplementation", dependencyNotation)
+
+fun DependencyHandler.standardImplementation(dependencyNotation: Any) =
+    add("standardImplementation", dependencyNotation)

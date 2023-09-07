@@ -182,7 +182,7 @@ jobs:
           path: |
             **/build/test-results/*
 
-  ios-app:
+  ios-qa-app:
     needs: [code-style]
     runs-on: macos-latest
     timeout-minutes: 60
@@ -217,7 +217,7 @@ jobs:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
       - name: Build iOS application
-        run: fastlane ios build
+        run: fastlane ios build_qa
         working-directory: ios-app/Tivi
         env:
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
@@ -232,7 +232,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@v3
         with:
-          name: ios-build-outputs
+          name: ios-qa-build-outputs
           path: |
             ios-app/Tivi/*.ipa
             ios-app/Tivi/*.dSYM.zip
@@ -241,7 +241,70 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: ios-logs
+          name: ios-qa-logs
+          path: |
+            **/fastlane-buildlog
+
+  ios-prod-app:
+    needs: [code-style]
+    runs-on: macos-latest
+    timeout-minutes: 60
+    env:
+      ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET }}
+      ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_URL: ${{ secrets.ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_URL }}
+      ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_USERNAME: ${{ secrets.ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_USERNAME }}
+      ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD }}
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+
+    steps:
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/gradle-build-action@v2
+        with:
+          cache-disabled: true
+
+      - name: Decrypt secrets
+        run: ./release/decrypt-secrets.sh
+        env:
+          ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
+
+      - name: Build iOS application
+        run: fastlane ios build_prod
+        working-directory: ios-app/Tivi
+        env:
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_KEY_CONTENTS: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
+          ISSUER_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
+          TIVI_BUILD_NUMBER: ${{ github.run_number }}
+
+      - name: Upload build outputs
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-prod-build-outputs
+          path: |
+            ios-app/Tivi/*.ipa
+            ios-app/Tivi/*.dSYM.zip
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-prod-logs
           path: |
             **/fastlane-buildlog
 
@@ -295,7 +358,7 @@ jobs:
 
   publish:
     if: github.ref == 'refs/heads/main'
-    needs: [android, ios-app, ios-test, desktop]
+    needs: [android, ios-qa-app, ios-prod-app, ios-test, desktop]
     runs-on: macos-latest
     timeout-minutes: 20
 
@@ -332,11 +395,16 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: ios-build-outputs
+          name: ios-qa-build-outputs
+          path: ios-app/Tivi
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ios-prod-build-outputs
           path: ios-app/Tivi
 
       - name: Publish to TestFlight
-        run: fastlane ios uploadtestflight
+        run: fastlane ios publish_all
         working-directory: ios-app/Tivi
         env:
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}

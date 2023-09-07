@@ -4,7 +4,9 @@
 package app.tivi.tmdb
 
 import app.tivi.app.ApplicationInfo
+import app.tivi.appinitializers.AppInitializer
 import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface TmdbComponent : TmdbCommonComponent, TmdbPlatformComponent
@@ -31,4 +33,8 @@ interface TmdbCommonComponent {
     fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
         return tmdbManager.getLatestImageProvider()
     }
+
+    @Provides
+    @IntoSet
+    fun provideTmdbInitializer(bind: TmdbInitializer): AppInitializer = bind
 }

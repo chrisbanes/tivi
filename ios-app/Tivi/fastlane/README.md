@@ -15,6 +15,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
+### ios certs
+
+```sh
+[bundle exec] fastlane ios certs
+```
+
+
+
 ### ios lint
 
 ```sh
@@ -23,26 +31,34 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
-### ios build
+### ios build_qa
 
 ```sh
-[bundle exec] fastlane ios build
+[bundle exec] fastlane ios build_qa
 ```
 
 
 
-### ios uploadtestflight
+### ios publish_qa
 
 ```sh
-[bundle exec] fastlane ios uploadtestflight
+[bundle exec] fastlane ios publish_qa
 ```
 
 
 
-### ios production
+### ios build_all
 
 ```sh
-[bundle exec] fastlane ios production
+[bundle exec] fastlane ios build_all
+```
+
+
+
+### ios publish_all
+
+```sh
+[bundle exec] fastlane ios publish_all
 ```
 
 
