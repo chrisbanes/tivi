@@ -41,7 +41,7 @@ androidx-activity-activity = { module = "androidx.activity:activity", version.re
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxactivity" }
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.2.0"
 androidx-browser = "androidx.browser:browser:1.6.0"
-androidx-collection = "androidx.collection:collection:1.3.0-beta01"
+androidx-collection = "androidx.collection:collection:1.3.0-rc01"
 androidx-core = "androidx.core:core-ktx:1.10.1"
 androidx-splashscreen = "androidx.core:core-splashscreen:1.0.1"
 
