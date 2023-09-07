@@ -50,7 +50,7 @@ platform :ios do
   end
 
   lane :build_prod do
-    build_tivi(scheme: "Tivi")
+    build_tivi(scheme: "Tivi Prod")
   end
 
   lane :build_all do
