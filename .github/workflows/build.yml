@@ -360,7 +360,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: [android, ios-qa-app, ios-prod-app, ios-test, desktop]
     runs-on: macos-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
