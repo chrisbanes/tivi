@@ -394,7 +394,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Tivi/Preview Content\"";
 				DEVELOPMENT_TEAM = GLF74Y6P9T;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/qa/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/qa/build/xcode-frameworks/$(KOTLIN_FRAMEWORK_BUILD_TYPE)/$(SDK_NAME)";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tivi/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
@@ -438,7 +438,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = GLF74Y6P9T;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/prod/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/prod/build/xcode-frameworks/$(KOTLIN_FRAMEWORK_BUILD_TYPE)/$(SDK_NAME)";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tivi/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
@@ -538,7 +538,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = GLF74Y6P9T;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/qa/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/qa/build/xcode-frameworks/$(KOTLIN_FRAMEWORK_BUILD_TYPE)/$(SDK_NAME)";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tivi/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
