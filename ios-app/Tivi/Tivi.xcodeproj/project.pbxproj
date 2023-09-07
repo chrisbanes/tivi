@@ -328,7 +328,7 @@
 			};
 			name = Debug;
 		};
-		833349412A4CCCEF00F464FE /* Release */ = {
+		833349412A4CCCEF00F464FE /* Prod */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -380,7 +380,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = Release;
+			name = Prod;
 		};
 		833349432A4CCCEF00F464FE /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -425,7 +425,7 @@
 			};
 			name = Debug;
 		};
-		833349442A4CCCEF00F464FE /* Release */ = {
+		833349442A4CCCEF00F464FE /* Prod */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -469,7 +469,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Release;
+			name = Prod;
 		};
 		8350EE502AA8676800B6F51F /* QA */ = {
 			isa = XCBuildConfiguration;
@@ -578,21 +578,21 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				833349402A4CCCEF00F464FE /* Debug */,
-				833349412A4CCCEF00F464FE /* Release */,
+				833349412A4CCCEF00F464FE /* Prod */,
 				8350EE502AA8676800B6F51F /* QA */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Prod;
 		};
 		833349422A4CCCEF00F464FE /* Build configuration list for PBXNativeTarget "Tivi" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				833349432A4CCCEF00F464FE /* Debug */,
-				833349442A4CCCEF00F464FE /* Release */,
+				833349442A4CCCEF00F464FE /* Prod */,
 				8350EE512AA8676800B6F51F /* QA */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Prod;
 		};
 /* End XCConfigurationList section */
 
