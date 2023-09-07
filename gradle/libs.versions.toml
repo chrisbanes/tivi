@@ -42,7 +42,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.2.0"
 androidx-browser = "androidx.browser:browser:1.6.0"
 androidx-collection = "androidx.collection:collection:1.3.0-rc01"
-androidx-core = "androidx.core:core-ktx:1.10.1"
+androidx-core = "androidx.core:core-ktx:1.12.0"
 androidx-splashscreen = "androidx.core:core-splashscreen:1.0.1"
 
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
