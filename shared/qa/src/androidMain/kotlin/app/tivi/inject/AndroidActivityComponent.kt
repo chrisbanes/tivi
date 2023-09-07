@@ -4,9 +4,7 @@
 package app.tivi.inject
 
 import android.app.Activity
-import app.tivi.developer.log.DevLogComponent
 import app.tivi.home.TiviContent
-import app.tivi.settings.developer.DevSettingsComponent
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -15,10 +13,7 @@ import me.tatarka.inject.annotations.Provides
 abstract class AndroidActivityComponent(
     @get:Provides override val activity: Activity,
     @Component val applicationComponent: AndroidApplicationComponent,
-) : SharedActivityComponent,
-    SharedUiComponent,
-    DevSettingsComponent,
-    DevLogComponent {
+) : SharedActivityComponent, QaUiComponent {
     abstract val tiviContent: TiviContent
 
     companion object

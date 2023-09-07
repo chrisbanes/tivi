@@ -14,8 +14,7 @@ import okhttp3.Interceptor
 @ApplicationScope
 abstract class AndroidApplicationComponent(
     @get:Provides val application: Application,
-) : SharedApplicationComponent,
-    ProdApplicationComponent {
+) : SharedApplicationComponent, ProdApplicationComponent {
 
     abstract val initializers: AppInitializers
     abstract val workerFactory: TiviWorkerFactory

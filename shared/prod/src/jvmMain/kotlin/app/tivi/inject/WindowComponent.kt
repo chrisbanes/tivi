@@ -10,7 +10,7 @@ import me.tatarka.inject.annotations.Component
 @Component
 abstract class WindowComponent(
     @Component val applicationComponent: DesktopApplicationComponent,
-) : SharedUiComponent {
+) : ProdUiComponent {
     abstract val tiviContent: TiviContent
 
     companion object
