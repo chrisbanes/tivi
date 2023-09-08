@@ -23,7 +23,6 @@ kotlin {
 
         targets.withType<KotlinNativeTarget>().configureEach {
             binaries.withType<Framework> {
-                isStatic = true
                 baseName = "TiviKt"
 
                 export(projects.ui.root)
