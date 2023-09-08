@@ -217,7 +217,7 @@ jobs:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
       - name: Build iOS application
-        run: bundle exec fastlane ios build_qa
+        run: fastlane ios build_qa
         working-directory: ios-app/Tivi
         env:
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
@@ -280,7 +280,7 @@ jobs:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
       - name: Build iOS application
-        run: bundle exec fastlane ios build_prod
+        run: fastlane ios build_prod
         working-directory: ios-app/Tivi
         env:
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
@@ -399,7 +399,7 @@ jobs:
           path: ios-app/Tivi
 
       - name: Publish QA to TestFlight
-        run: bundle exec fastlane ios publish_qa
+        run: fastlane ios publish_qa
         working-directory: ios-app/Tivi
         env:
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
@@ -419,7 +419,7 @@ jobs:
           path: ios-app/Tivi
 
       - name: Publish prod to TestFlight
-        run: bundle exec fastlane ios publish_prod
+        run: fastlane ios publish_prod
         working-directory: ios-app/Tivi
         env:
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
