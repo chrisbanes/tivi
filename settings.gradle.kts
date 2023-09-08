@@ -115,6 +115,7 @@ include(
     ":ui:episode:details",
     ":ui:episode:track",
     ":ui:trending",
+    ":ui:opensource",
     ":ui:popular",
     ":ui:recommended",
     ":ui:search",

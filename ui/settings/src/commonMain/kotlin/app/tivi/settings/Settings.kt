@@ -169,6 +169,18 @@ internal fun Settings(
                 )
             }
 
+
+            item { PreferenceDivider() }
+
+            item {
+                Preference(
+                    title = LocalStrings.current.viewPrivacyPolicy,
+                    modifier = Modifier.clickable {
+                        eventSink(SettingsUiEvent.NavigateOpenSource)
+                    },
+                )
+            }
+
             if (state.showDeveloperSettings) {
                 item { PreferenceDivider() }
 

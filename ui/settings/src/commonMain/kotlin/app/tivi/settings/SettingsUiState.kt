@@ -23,6 +23,7 @@ data class SettingsUiState(
 sealed interface SettingsUiEvent : CircuitUiEvent {
     data object NavigateUp : SettingsUiEvent
     data object NavigatePrivacyPolicy : SettingsUiEvent
+    data object NavigateOpenSource : SettingsUiEvent
     data object NavigateDeveloperSettings : SettingsUiEvent
     data object ToggleUseDynamicColors : SettingsUiEvent
     data object ToggleUseLessData : SettingsUiEvent

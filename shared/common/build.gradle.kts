@@ -43,6 +43,7 @@ kotlin {
                 api(projects.ui.show.seasons)
                 api(projects.ui.root)
                 api(projects.ui.settings)
+                api(projects.ui.opensource)
                 api(projects.ui.upnext)
             }
         }
