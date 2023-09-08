@@ -207,6 +207,10 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
       - uses: gradle/gradle-build-action@v2
         with:
           cache-disabled: true
@@ -217,7 +221,7 @@ jobs:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
       - name: Build iOS application
-        run: fastlane ios build_qa
+        run: bundle exec fastlane ios build_qa
         working-directory: ios-app/Tivi
         env:
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
@@ -270,6 +274,10 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
       - uses: gradle/gradle-build-action@v2
         with:
           cache-disabled: true
@@ -280,7 +288,7 @@ jobs:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
       - name: Build iOS application
-        run: fastlane ios build_prod
+        run: bundle exec fastlane ios build_prod
         working-directory: ios-app/Tivi
         env:
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
@@ -365,6 +373,10 @@ jobs:
     steps:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
         env:
@@ -399,7 +411,7 @@ jobs:
           path: ios-app/Tivi
 
       - name: Publish QA to TestFlight
-        run: fastlane ios publish_qa
+        run: bundle exec fastlane ios publish_qa
         working-directory: ios-app/Tivi
         env:
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
@@ -419,7 +431,7 @@ jobs:
           path: ios-app/Tivi
 
       - name: Publish prod to TestFlight
-        run: fastlane ios publish_prod
+        run: bundle exec fastlane ios publish_prod
         working-directory: ios-app/Tivi
         env:
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
