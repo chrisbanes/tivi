@@ -58,7 +58,7 @@ platform :ios do
     build_prod
   end
 
-  lane :publish_all do
+  lane :publish_qa do
     app_store_connect_api_key(
       key_id: ENV['API_KEY_ID'],
       issuer_id: ENV['ISSUER_KEY_ID'],
@@ -67,6 +67,16 @@ platform :ios do
     )
 
     upload_to_testflight(app_identifier: "app.tivi.qa")
+  end
+
+  lane :publish_prod do
+    app_store_connect_api_key(
+      key_id: ENV['API_KEY_ID'],
+      issuer_id: ENV['ISSUER_KEY_ID'],
+      key_content: ENV['API_KEY_CONTENTS'],
+      is_key_content_base64: true
+    )
+
     upload_to_testflight(app_identifier: "app.tivi.client")
   end
 

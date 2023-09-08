@@ -39,10 +39,10 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
-### ios publish_qa
+### ios build_prod
 
 ```sh
-[bundle exec] fastlane ios publish_qa
+[bundle exec] fastlane ios build_prod
 ```
 
 
@@ -55,10 +55,18 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
-### ios publish_all
+### ios publish_qa
 
 ```sh
-[bundle exec] fastlane ios publish_all
+[bundle exec] fastlane ios publish_qa
+```
+
+
+
+### ios publish_prod
+
+```sh
+[bundle exec] fastlane ios publish_prod
 ```
 
 
