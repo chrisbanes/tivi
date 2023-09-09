@@ -1,4 +1,26 @@
-default_platform(:ios)
+platform :android do
+
+  lane :publish_qa do
+    upload_to_play_store(
+      package_name: "app.tivi",
+      track: "internal",
+      aab: "android-app/app/build/outputs/bundle/qaRelease/app-qa-release.aab",
+      mapping: "android-app/app/build/outputs/mapping/qaRelease/mapping.txt",
+      json_key: "release/play-account.json"
+    )
+  end
+
+  lane :publish_prod do
+    upload_to_play_store(
+      package_name: "app.tivi",
+      track: "alpha",
+      aab: "android-app/app/build/outputs/bundle/standardRelease/app-standard-release.aab",
+      mapping: "android-app/app/build/outputs/mapping/standardRelease/mapping.txt",
+      json_key: "release/play-account.json"
+    )
+  end
+
+end
 
 platform :ios do
 

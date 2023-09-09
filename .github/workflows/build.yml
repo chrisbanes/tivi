@@ -370,6 +370,12 @@ jobs:
     needs: [android, ios-qa-app, ios-prod-app, ios-test, desktop]
     runs-on: macos-latest
     timeout-minutes: 40
+    env:
+      API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+      API_KEY_CONTENTS: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
+      ISSUER_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+      MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+      MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
 
     steps:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
@@ -388,23 +394,11 @@ jobs:
           name: android-build-outputs
           path: android-app/app/build/outputs
 
-      - name: Publish QA build to internal track
-        uses: r0adkll/upload-google-play@v1.1.1
-        with:
-          serviceAccountJson: release/play-account.json
-          packageName: app.tivi
-          track: internal
-          releaseFiles: android-app/app/build/outputs/bundle/qaRelease/app-qa-release.aab
-          mappingFile: android-app/app/build/outputs/mapping/qaRelease/mapping.txt
+      - name: Publish QA to Google Play
+        run: bundle exec fastlane android publish_qa
 
-      - name: Publish build to alpha track
-        uses: r0adkll/upload-google-play@v1.1.1
-        with:
-          serviceAccountJson: release/play-account.json
-          packageName: app.tivi
-          track: alpha
-          releaseFiles: android-app/app/build/outputs/bundle/standardRelease/app-standard-release.aab
-          mappingFile: android-app/app/build/outputs/mapping/standardRelease/mapping.txt
+      - name: Publish prod to Google Play
+        run: bundle exec fastlane android publish_prod
 
       - uses: actions/download-artifact@v3
         with:
@@ -412,12 +406,6 @@ jobs:
 
       - name: Publish QA to TestFlight
         run: bundle exec fastlane ios publish_qa
-        env:
-          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          API_KEY_CONTENTS: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
-          ISSUER_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
-          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
 
       - name: Delete QA IPA
         run: |
@@ -430,9 +418,3 @@ jobs:
 
       - name: Publish prod to TestFlight
         run: bundle exec fastlane ios publish_prod
-        env:
-          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          API_KEY_CONTENTS: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
-          ISSUER_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
-          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
