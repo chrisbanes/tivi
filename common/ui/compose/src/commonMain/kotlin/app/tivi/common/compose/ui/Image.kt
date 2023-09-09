@@ -37,7 +37,6 @@ import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.asImageBitmap
 import com.seiko.imageloader.model.ImageAction
-import com.seiko.imageloader.model.ImageEvent
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageRequestBuilder
 import com.seiko.imageloader.model.ImageResult
@@ -45,11 +44,15 @@ import com.seiko.imageloader.option.SizeResolver
 import com.seiko.imageloader.toPainter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
@@ -80,37 +83,19 @@ fun AsyncImage(
         }
     }
 
-    var result by remember { mutableStateOf<ImageResultWithSource?>(null) }
+    var result by remember { mutableStateOf<ImageResultExtra?>(null) }
 
     LaunchedEffect(imageLoader) {
-        var remoteFetchStarted = false
-        var diskFetchStarted = false
+        var lastStartTime: Instant = Instant.DISTANT_PAST
 
         snapshotFlow { request }
-            .onEach {
-                remoteFetchStarted = false
-                diskFetchStarted = false
-            }
             .filterNotNull()
+            .onStart { lastStartTime = Clock.System.now() }
             .flatMapLatest { imageLoader.async(it) }
-            .collect { action ->
-                onAction?.invoke(action)
-
-                when (action) {
-                    ImageEvent.StartWithDisk -> diskFetchStarted = true
-                    ImageEvent.StartWithFetch -> remoteFetchStarted = true
-                    is ImageResult -> {
-                        result = ImageResultWithSource(
-                            result = action,
-                            source = when {
-                                remoteFetchStarted -> ImageResultSource.REMOTE
-                                diskFetchStarted -> ImageResultSource.DISK
-                                else -> ImageResultSource.MEMORY
-                            },
-                        )
-                    }
-                    else -> Unit
-                }
+            .onEach { onAction?.invoke(it) }
+            .filterIsInstance<ImageResult>()
+            .collect {
+                result = ImageResultExtra(it, lastStartTime)
             }
     }
 
@@ -145,14 +130,10 @@ fun AsyncImage(
 
 private val IdentityMatrix = ColorMatrix()
 
-data class ImageResultWithSource(
+internal data class ImageResultExtra(
     val result: ImageResult,
-    val source: ImageResultSource,
+    val startTime: Instant,
 )
-
-enum class ImageResultSource {
-    MEMORY, DISK, REMOTE
-}
 
 @Composable
 private fun ResultImage(
