@@ -6,7 +6,9 @@ LEFT JOIN shows_last_watched ON shows_last_watched.show_id = shows_next_to_watch
 INNER JOIN seasons ON seasons.id = shows_next_to_watch.season_id
 INNER JOIN episodes ON episodes.id = shows_next_to_watch.episode_id
 LEFT JOIN episode_watch_entries ON episode_watch_entries.episode_id = shows_last_watched.episode_id
-WHERE :followedOnly = 0 OR myshows_entries.id IS NOT NULL
+WHERE myshows_entries.id IS NOT NULL
+  OR (:followedOnly = 0
+      AND shows_last_watched.episode_id IS NOT NULL)
 GROUP BY shows_next_to_watch.show_id
 ORDER BY CASE
     WHEN :sort = 'recently_aired' THEN datetime(episodes.first_aired)
