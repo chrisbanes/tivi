@@ -2,6 +2,18 @@ default_platform(:ios)
 
 platform :ios do
 
+  before_all do |lane|
+    cleanup_ci_keychain if is_ci
+  end
+
+  after_all do |lane|
+    cleanup_ci_keychain if is_ci
+  end
+
+  error do |lane, exception|
+    cleanup_ci_keychain if is_ci
+  end
+
   lane :certs do |options|
     app_store_connect_api_key(
       key_id: ENV['API_KEY_ID'],
@@ -25,7 +37,7 @@ platform :ios do
   end
 
   private_lane :build_tivi do |options|
-    setup_ci if ENV['CI']
+    setup_ci if is_ci
 
     certs(type: 'appstore') if ENV['MATCH_PASSWORD']
 
@@ -80,4 +92,12 @@ platform :ios do
     upload_to_testflight(app_identifier: "app.tivi.client")
   end
 
+end
+
+def cleanup_ci_keychain(name = "fastlane_tmp_keychain")
+  if File.exist? File.expand_path("~/Library/Keychains/#{name}-db")
+    puts "CI keychain exists. Deleting it and restoring the default keychain"
+    delete_keychain(name: name)
+    sh("security default-keychain -s ~/Library/Keychains/login.keychain-db")
+  end
 end
