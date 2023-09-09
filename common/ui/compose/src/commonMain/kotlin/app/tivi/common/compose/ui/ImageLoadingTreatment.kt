@@ -13,7 +13,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ColorMatrix
+import app.tivi.data.util.inPast
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @Stable
@@ -29,18 +31,20 @@ internal class ImageLoadingTransition(
 
 @Composable
 internal fun updateImageLoadingTransition(
-    result: ImageResultWithSource?,
-    duration: Duration = 1.seconds,
+    result: ImageResultExtra?,
+    transitionLoadTimeCutoff: Duration = 80.milliseconds,
+    transitionDuration: Duration = 1.seconds,
 ): ImageLoadingTransition {
     val transition = updateTransition(result, label = "image fade")
 
     val alpha = transition.animateFloat(
         transitionSpec = {
-            if (targetState?.source == ImageResultSource.MEMORY) {
+            val t = targetState
+            if (t == null || t.startTime > transitionLoadTimeCutoff.inPast) {
                 // If the image was loaded from memory, snap to the end state
                 snap()
             } else {
-                tween(duration.inWholeMilliseconds.toInt() / 2)
+                tween(transitionDuration.inWholeMilliseconds.toInt() / 2)
             }
         },
         targetValueByState = { if (it == null) 0f else 1f },
@@ -48,11 +52,12 @@ internal fun updateImageLoadingTransition(
 
     val brightness = transition.animateFloat(
         transitionSpec = {
-            if (targetState?.source == ImageResultSource.MEMORY) {
+            val t = targetState
+            if (t == null || t.startTime > transitionLoadTimeCutoff.inPast) {
                 // If the image was loaded from memory, snap to the end state
                 snap()
             } else {
-                tween(duration.inWholeMilliseconds.toInt() * 3 / 4)
+                tween(transitionDuration.inWholeMilliseconds.toInt() * 3 / 4)
             }
         },
         targetValueByState = { if (it == null) -0.2f else 0f },
@@ -60,11 +65,12 @@ internal fun updateImageLoadingTransition(
 
     val saturation = transition.animateFloat(
         transitionSpec = {
-            if (targetState?.source == ImageResultSource.MEMORY) {
+            val t = targetState
+            if (t == null || t.startTime > transitionLoadTimeCutoff.inPast) {
                 // If the image was loaded from memory, snap to the end state
                 snap()
             } else {
-                tween(duration.inWholeMilliseconds.toInt())
+                tween(transitionDuration.inWholeMilliseconds.toInt())
             }
         },
         targetValueByState = { if (it == null) 0f else 1f },
