@@ -31,6 +31,7 @@ platform :ios do
   lane :lint do
     swiftlint(
       mode: :lint,
+      path: "ios-app/Tivi",
       strict: true,
       raise_if_swiftlint_error: true
     )
@@ -42,7 +43,7 @@ platform :ios do
     certs(type: 'appstore') if ENV['MATCH_PASSWORD']
 
     increment_build_number(
-      xcodeproj: "Tivi.xcodeproj",
+      xcodeproj: "ios-app/Tivi/Tivi.xcodeproj",
       build_number: ENV['TIVI_BUILD_NUMBER']
     ) if ENV['TIVI_BUILD_NUMBER']
 
@@ -50,6 +51,7 @@ platform :ios do
     skip_packaging = ENV['MATCH_PASSWORD'].nil?
 
     build_app(
+      project: "ios-app/Tivi/Tivi.xcodeproj",
       scheme: options[:scheme],
       buildlog_path: "build/fastlane-buildlog",
       skip_package_ipa: skip_packaging,
