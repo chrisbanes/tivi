@@ -47,6 +47,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -602,6 +603,7 @@ private fun Header(title: String) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Genres(genres: List<Genre>) {
     val textCreator = LocalTiviTextCreator.current
@@ -616,10 +618,20 @@ private fun Genres(genres: List<Genre>) {
                     .toString()
             },
     ) {
-        Text(
-            text = textCreator.genreString(genres).toString(),
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            genres.forEach { genre ->
+                Card {
+                    Text(
+                        text = textCreator.genreLabel(genre),
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    )
+                }
+            }
+        }
     }
 }
 
