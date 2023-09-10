@@ -11,7 +11,6 @@ import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -44,23 +43,27 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.compose.ReportDrawnWhen
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.rememberTiviSnapFlingBehavior
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.ui.BackdropCard
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.data.compoundmodels.EntryWithShow
@@ -366,9 +369,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
             EntryShowCarousel(
                 items = items,
                 onItemClick = onItemClick,
-                modifier = Modifier
-                    .height(192.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
             )
         }
         // TODO empty state
@@ -383,11 +384,12 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
     modifier: Modifier = Modifier,
 ) {
     val lazyListState = rememberLazyListState()
-    val contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
 
     LazyRow(
         state = lazyListState,
-        modifier = modifier,
+        modifier = modifier
+            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+            .clip(MaterialTheme.shapes.extraLarge),
         flingBehavior = rememberTiviSnapFlingBehavior(
             snapLayoutInfoProvider = remember(lazyListState) {
                 SnapLayoutInfoProvider(
@@ -396,21 +398,25 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
                 )
             },
         ),
-        contentPadding = contentPadding,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(
             items = items,
             key = { it.show.id },
         ) { item ->
-            PosterCard(
+            BackdropCard(
                 show = item.show,
                 onClick = { onItemClick(item.show) },
                 modifier = Modifier
                     .testTag("discover_carousel_item")
                     .animateItemPlacement()
-                    .fillParentMaxHeight()
-                    .aspectRatio(2 / 3f),
+                    .width(
+                        when (LocalWindowSizeClass.current.widthSizeClass) {
+                            WindowWidthSizeClass.Expanded -> 320.dp
+                            else -> 240.dp
+                        },
+                    )
+                    .aspectRatio(4 / 3f),
             )
         }
     }
