@@ -169,10 +169,9 @@ internal fun Settings(
                 )
             }
 
-
-            item { PreferenceDivider() }
-
             if (state.openSourceLicenseAvailable) {
+                item { PreferenceDivider() }
+
                 item {
                     Preference(
                         title = LocalStrings.current.viewOpenSourceLicenses,

@@ -176,5 +176,6 @@ val EnTiviStrings = TiviStrings(
     upnextTitle = "Up Next",
     viewPrivacyPolicy = "View Privacy Policy",
     viewOpenSourceLicenses = "View Open Source Licenses",
+    openSourceLicensesTitle = "Open Source Licenses",
     watchedShowsTitle = "Watched",
 )

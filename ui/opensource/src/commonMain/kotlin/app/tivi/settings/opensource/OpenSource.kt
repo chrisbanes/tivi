@@ -53,7 +53,7 @@ internal fun OpenSource(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(LocalStrings.current.developerSettingsTitle) },
+                title = { Text(LocalStrings.current.openSourceLicensesTitle) },
                 navigationIcon = {
                     IconButton(onClick = { eventSink(OpenSourceUiEvent.NavigateUp) }) {
                         Icon(
