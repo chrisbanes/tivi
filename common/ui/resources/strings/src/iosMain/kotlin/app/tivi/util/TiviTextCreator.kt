@@ -6,6 +6,7 @@ package app.tivi.util
 import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.data.models.TiviShow
 import app.tivi.inject.ActivityScope
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.TimeZone
@@ -17,6 +18,7 @@ import platform.Foundation.NSCalendarMatchNextTime
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateComponents
 
+@OptIn(ExperimentalForeignApi::class)
 @ActivityScope
 @Inject
 actual class TiviTextCreator(
