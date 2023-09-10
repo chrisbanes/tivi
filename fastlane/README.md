@@ -13,6 +13,27 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+## Android
+
+### android publish_qa
+
+```sh
+[bundle exec] fastlane android publish_qa
+```
+
+
+
+### android publish_prod
+
+```sh
+[bundle exec] fastlane android publish_prod
+```
+
+
+
+----
+
+
 ## iOS
 
 ### ios certs

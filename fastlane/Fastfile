@@ -1,6 +1,40 @@
-default_platform(:ios)
+platform :android do
+
+  lane :publish_qa do
+    upload_to_play_store(
+      package_name: "app.tivi",
+      track: "internal",
+      aab: "android-app/app/build/outputs/bundle/qaRelease/app-qa-release.aab",
+      mapping: "android-app/app/build/outputs/mapping/qaRelease/mapping.txt",
+      json_key: "release/play-account.json"
+    )
+  end
+
+  lane :publish_prod do
+    upload_to_play_store(
+      package_name: "app.tivi",
+      track: "alpha",
+      aab: "android-app/app/build/outputs/bundle/standardRelease/app-standard-release.aab",
+      mapping: "android-app/app/build/outputs/mapping/standardRelease/mapping.txt",
+      json_key: "release/play-account.json"
+    )
+  end
+
+end
 
 platform :ios do
+
+  before_all do |lane|
+    cleanup_ci_keychain if is_ci
+  end
+
+  after_all do |lane|
+    cleanup_ci_keychain if is_ci
+  end
+
+  error do |lane, exception|
+    cleanup_ci_keychain if is_ci
+  end
 
   lane :certs do |options|
     app_store_connect_api_key(
@@ -19,18 +53,19 @@ platform :ios do
   lane :lint do
     swiftlint(
       mode: :lint,
+      path: "ios-app/Tivi",
       strict: true,
       raise_if_swiftlint_error: true
     )
   end
 
   private_lane :build_tivi do |options|
-    setup_ci if ENV['CI']
+    setup_ci if is_ci
 
     certs(type: 'appstore') if ENV['MATCH_PASSWORD']
 
     increment_build_number(
-      xcodeproj: "Tivi.xcodeproj",
+      xcodeproj: "ios-app/Tivi/Tivi.xcodeproj",
       build_number: ENV['TIVI_BUILD_NUMBER']
     ) if ENV['TIVI_BUILD_NUMBER']
 
@@ -38,6 +73,7 @@ platform :ios do
     skip_packaging = ENV['MATCH_PASSWORD'].nil?
 
     build_app(
+      project: "ios-app/Tivi/Tivi.xcodeproj",
       scheme: options[:scheme],
       buildlog_path: "build/fastlane-buildlog",
       skip_package_ipa: skip_packaging,
@@ -80,4 +116,12 @@ platform :ios do
     upload_to_testflight(app_identifier: "app.tivi.client")
   end
 
+end
+
+def cleanup_ci_keychain(name = "fastlane_tmp_keychain")
+  if File.exist? File.expand_path("~/Library/Keychains/#{name}-db")
+    puts "CI keychain exists. Deleting it and restoring the default keychain"
+    delete_keychain(name: name)
+    sh("security default-keychain -s ~/Library/Keychains/login.keychain-db")
+  end
 end

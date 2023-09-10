@@ -23,7 +23,7 @@ import kotlin.math.pow
  */
 fun Modifier.drawForegroundGradientScrim(
     color: Color,
-    decay: Float = 1.5f,
+    decay: Float = 3.0f,
     numStops: Int = 16,
     startY: Float = 0f,
     endY: Float = 1f,
