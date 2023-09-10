@@ -83,6 +83,7 @@ class SettingsPresenter(
             theme = theme,
             useDynamicColors = useDynamicColors,
             dynamicColorsAvailable = DynamicColorsAvailable,
+            openSourceLicenseAvailable = OpenSourceLicenseAvailable,
             useLessData = useLessData,
             ignoreSpecials = ignoreSpecials,
             applicationInfo = applicationInfo,

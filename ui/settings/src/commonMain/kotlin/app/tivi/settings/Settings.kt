@@ -172,13 +172,15 @@ internal fun Settings(
 
             item { PreferenceDivider() }
 
-            item {
-                Preference(
-                    title = LocalStrings.current.viewOpenSourceLicenses,
-                    modifier = Modifier.clickable {
-                        eventSink(SettingsUiEvent.NavigateOpenSource)
-                    },
-                )
+            if (state.openSourceLicenseAvailable) {
+                item {
+                    Preference(
+                        title = LocalStrings.current.viewOpenSourceLicenses,
+                        modifier = Modifier.clickable {
+                            eventSink(SettingsUiEvent.NavigateOpenSource)
+                        },
+                    )
+                }
             }
 
             if (state.showDeveloperSettings) {

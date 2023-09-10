@@ -4,3 +4,4 @@
 package app.tivi.settings
 
 internal expect val DynamicColorsAvailable: Boolean
+internal expect val OpenSourceLicenseAvailable: Boolean

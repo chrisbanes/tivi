@@ -12,6 +12,7 @@ import com.slack.circuit.runtime.CircuitUiState
 data class SettingsUiState(
     val theme: TiviPreferences.Theme,
     val dynamicColorsAvailable: Boolean,
+    val openSourceLicenseAvailable: Boolean,
     val useDynamicColors: Boolean,
     val useLessData: Boolean,
     val ignoreSpecials: Boolean,
