@@ -50,6 +50,7 @@ interface CommonTiviTextCreator {
         watchedEpisodeCount < episodeCount -> {
             strings.followedWatchStatsToWatch(episodeCount - watchedEpisodeCount)
         }
+
         watchedEpisodeCount > 0 -> strings.followedWatchStatsComplete
         else -> ""
     }
@@ -58,6 +59,7 @@ interface CommonTiviTextCreator {
         season != null && episode != null -> {
             strings.seasonEpisodeNumber(season.number!!, episode.number!!)
         }
+
         else -> ""
     }
 
@@ -109,19 +111,10 @@ interface CommonTiviTextCreator {
         return text
     }
 
-    fun genreString(genres: List<Genre>?): CharSequence? {
-        if (!genres.isNullOrEmpty()) {
-            return buildString {
-                for (i in genres.indices) {
-                    val genre = genres[i]
-                    append(strings.getGenreLabel(genre))
-                    append("\u00A0") // nbsp
-                    append(GenreStringer.getEmoji(genre))
-                    if (i < genres.size - 1) append(" \u2022 ")
-                }
-            }
-        }
-        return null
+    fun genreLabel(genre: Genre): String = buildString {
+        append(strings.getGenreLabel(genre))
+        append("\u00A0") // nbsp
+        append(GenreStringer.getEmoji(genre))
     }
 
     fun genreContentDescription(genres: List<Genre>?): CharSequence? {
