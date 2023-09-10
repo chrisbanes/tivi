@@ -1,6 +1,7 @@
 // Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
+
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -203,7 +204,6 @@ abstract class GenerateLicensesAsset : DefaultTask() {
     @OptIn(ExperimentalStdlibApi::class)
     @TaskAction
     fun generate() {
-
         val json = Json { ignoreUnknownKeys = true }
         val fileContent = licenseeFile.readText()
         val licenseJsonList = json.decodeFromString<List<JsonObject>>(fileContent)
@@ -239,8 +239,6 @@ val generateLicenseTask =
     }
 
 generateLicenseTask.dependsOn("licenseeQaDebug")
-
-//tasks.matching { it.name == "licenseeDebug" }.configureEach { enabled = false }
 
 licensee {
     allow("Apache-2.0")
