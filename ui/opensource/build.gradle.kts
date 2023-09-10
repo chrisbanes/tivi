@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "app.tivi.settings.opensource"
+    namespace = "app.tivi.settings"
 }
 
 kotlin {
@@ -20,7 +20,7 @@ kotlin {
                 implementation(projects.core.preferences)
                 implementation(projects.domain)
                 implementation(projects.common.ui.compose)
-
+                implementation(projects.data.opensource) // This should really be used through an interactor
                 api(projects.common.ui.screens)
                 api(libs.circuit.foundation)
 

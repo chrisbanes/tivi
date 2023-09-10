@@ -1,11 +1,20 @@
 // Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import com.android.build.gradle.internal.tasks.factory.dependsOn
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 
 plugins {
     id("app.tivi.android.application")
     id("app.tivi.kotlin.android")
     id("app.tivi.compose")
+    alias(libs.plugins.licensee)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.moshix)
 }
 
 val appVersionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 1000
@@ -153,6 +162,9 @@ dependencies {
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.splashscreen)
 
+    implementation(libs.moshi.core)
+    implementation(libs.moshi.shimo)
+
     qaImplementation(libs.leakCanary)
 
     implementation(libs.kotlin.coroutines.android)
@@ -176,6 +188,81 @@ if (file("google-services.json").exists()) {
             mappingFileUploadEnabled = false
         }
     }
+}
+
+abstract class GenerateLicensesAsset : DefaultTask() {
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputDirectory
+    abstract val buildDir: DirectoryProperty
+
+    @get:OutputFile abstract val jsonFile: RegularFileProperty
+
+    private val licenseeFile: File
+        get() = File(buildDir.asFile.get(), "reports/licensee/qaDebug/artifacts.json")
+
+    @Suppress("UNCHECKED_CAST")
+    @OptIn(ExperimentalStdlibApi::class)
+    @TaskAction
+    fun generate() {
+
+        val json = Json { ignoreUnknownKeys = true }
+        val fileContent = licenseeFile.readText()
+        val myData = json.decodeFromString<List<JsonObject>>(fileContent)
+        val githubDetails =
+            myData.mapNotNull { entry ->
+                println("entry[\"scm\"]: ${entry["scm"]}")
+                entry["scm"]?.let {
+                    ((it.jsonObject)?.get("url").toString())?.let { url -> parseScm(url) }
+                }
+            }
+
+        println("githubDetails: $githubDetails")
+        val sortedGithubDetails = githubDetails
+            .sortedBy { it.toString().lowercase() }
+            .distinctBy { it.toString().lowercase() }
+        val jsonString = json.encodeToString(sortedGithubDetails)
+        jsonFile.get().asFile.writeText(jsonString)
+    }
+
+    private fun parseScm(url: String): Pair<String, String>? {
+        if ("github.com" !in url) return null
+        val parts =
+            url
+                .substringAfter("github.com")
+                .removePrefix("/")
+                .removePrefix(":")
+                .removeSuffix(".git")
+                .removeSuffix("/issues")
+                .substringAfter(".com/")
+                .trim()
+                .removeSuffix("/")
+                .split("/")
+        val owner = parts.getOrNull(0) ?: return null
+        val name = parts.getOrNull(1) ?: return null
+        return owner to name
+    }
+}
+
+val generateLicenseTask =
+    tasks.register<GenerateLicensesAsset>("generateLicensesAsset") {
+        buildDir.set(project.layout.buildDirectory)
+        jsonFile.set(project.layout.projectDirectory.file("src/main/assets/generated_licenses.json"))
+    }
+
+generateLicenseTask.dependsOn("licenseeQaDebug")
+
+//tasks.matching { it.name == "licenseeDebug" }.configureEach { enabled = false }
+
+licensee {
+    allow("Apache-2.0")
+    allow("MIT")
+    allow("CC0-1.0")
+    allow("BSD-3-Clause")
+    allowUrl("http://opensource.org/licenses/BSD-2-Clause")
+    allowUrl("https://developer.android.com/studio/terms.html")
+    allowUrl("https://jsoup.org/license")
+    // MIT
+    allowUrl("https://github.com/alorma/Compose-Settings/blob/main/LICENSE")
 }
 
 fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {

@@ -6,16 +6,16 @@ pluginManagement {
     includeBuild("gradle/build-logic")
 
     repositories {
-        gradlePluginPortal()
-        google()
         mavenCentral()
+        google()
+        gradlePluginPortal()
     }
 }
 
 dependencyResolutionManagement {
     repositories {
-        google()
         mavenCentral()
+        google()
         mavenLocal()
 
         // Prerelease versions of Compose Multiplatform
@@ -96,6 +96,7 @@ include(
     ":data:recommendedshows",
     ":data:relatedshows",
     ":data:search",
+    ":data:opensource",
     ":data:shows",
     ":data:showimages",
     ":data:traktauth",

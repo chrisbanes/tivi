@@ -4,7 +4,6 @@
 package app.tivi.settings.opensource
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +20,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.LocalStrings
-import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.common.compose.ui.Preference
 import app.tivi.screens.OpenSourceScreen
 import com.moriatsushi.insetsx.systemBars
@@ -75,22 +73,18 @@ internal fun OpenSource(
             contentPadding = contentPadding,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            item {
-                CheckboxPreference(
-                    checked = state.hideArtwork,
-                    title = "Hide artwork",
-                    onCheckClicked = { state.eventSink(OpenSourceUiEvent.ToggleHideArtwork) },
-                )
+            state.opensourceItemList.forEach { item ->
+                item {
+                    Preference(
+                        title = item.second,
+//                        summary = item.author,
+//                        modifier = Modifier.clickable {
+//                            state.eventSink(OpenSourceUiEvent.OpenUrl(item.url))
+//                        },
+                    )
+                }
             }
 
-            item {
-                Preference(
-                    title = "Open log",
-                    modifier = Modifier.clickable {
-                        state.eventSink(OpenSourceUiEvent.NavigateLog)
-                    },
-                )
-            }
         }
     }
 }

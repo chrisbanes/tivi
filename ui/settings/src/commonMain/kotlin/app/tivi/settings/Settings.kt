@@ -174,7 +174,7 @@ internal fun Settings(
 
             item {
                 Preference(
-                    title = LocalStrings.current.viewPrivacyPolicy,
+                    title = LocalStrings.current.viewOpenSourceLicenses,
                     modifier = Modifier.clickable {
                         eventSink(SettingsUiEvent.NavigateOpenSource)
                     },

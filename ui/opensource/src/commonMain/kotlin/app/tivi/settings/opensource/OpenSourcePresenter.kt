@@ -6,10 +6,9 @@ package app.tivi.settings.opensource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import app.tivi.data.opensource.store.OpenSourceStore
 import app.tivi.screens.DevLogScreen
 import app.tivi.screens.OpenSourceScreen
-import app.tivi.settings.TiviPreferences
-import app.tivi.settings.toggle
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -34,23 +33,23 @@ class OpenSourceUiPresenterFactory(
 @Inject
 class OpenSourcePresenter(
     @Assisted private val navigator: Navigator,
-    private val preferences: TiviPreferences,
+    private val openSourceStore: OpenSourceStore,
 ) : Presenter<OpenSourceUiState> {
 
     @Composable
     override fun present(): OpenSourceUiState {
-        val hideArtwork by preferences.observeDeveloperHideArtwork().collectAsState(false)
+        val opensourceItemList by openSourceStore.fetch().openSourceList.collectAsState(emptyList())
 
         fun eventSink(event: OpenSourceUiEvent) {
             when (event) {
                 OpenSourceUiEvent.NavigateUp -> navigator.pop()
                 OpenSourceUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
-                OpenSourceUiEvent.ToggleHideArtwork -> preferences::developerHideArtwork.toggle()
+                OpenSourceUiEvent.ToggleHideArtwork -> navigator.goTo(DevLogScreen)
             }
         }
 
         return OpenSourceUiState(
-            hideArtwork = hideArtwork,
+            opensourceItemList = opensourceItemList,
             eventSink = ::eventSink,
         )
     }

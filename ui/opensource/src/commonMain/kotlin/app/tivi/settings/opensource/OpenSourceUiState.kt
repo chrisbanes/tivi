@@ -4,12 +4,13 @@
 package app.tivi.settings.opensource
 
 import androidx.compose.runtime.Immutable
+import app.tivi.data.opensource.OpenSourceItem
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class OpenSourceUiState(
-    val hideArtwork: Boolean,
+    val opensourceItemList: List<OpenSourceItem> = emptyList(),
     val eventSink: (OpenSourceUiEvent) -> Unit,
 ) : CircuitUiState
 
