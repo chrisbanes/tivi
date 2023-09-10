@@ -16,6 +16,5 @@ data class OpenSourceUiState(
 
 sealed interface OpenSourceUiEvent : CircuitUiEvent {
     data object NavigateUp : OpenSourceUiEvent
-    data object NavigateLog : OpenSourceUiEvent
-    data object ToggleHideArtwork : OpenSourceUiEvent
+    data class NavigateRepository(val url: String) : OpenSourceUiEvent
 }

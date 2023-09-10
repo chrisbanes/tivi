@@ -6,7 +6,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
 
 plugins {
     id("app.tivi.android.application")
@@ -207,20 +206,10 @@ abstract class GenerateLicensesAsset : DefaultTask() {
 
         val json = Json { ignoreUnknownKeys = true }
         val fileContent = licenseeFile.readText()
-        val myData = json.decodeFromString<List<JsonObject>>(fileContent)
-        val githubDetails =
-            myData.mapNotNull { entry ->
-                println("entry[\"scm\"]: ${entry["scm"]}")
-                entry["scm"]?.let {
-                    ((it.jsonObject)?.get("url").toString())?.let { url -> parseScm(url) }
-                }
-            }
-
-        println("githubDetails: $githubDetails")
-        val sortedGithubDetails = githubDetails
-            .sortedBy { it.toString().lowercase() }
-            .distinctBy { it.toString().lowercase() }
-        val jsonString = json.encodeToString(sortedGithubDetails)
+        val licenseJsonList = json.decodeFromString<List<JsonObject>>(fileContent)
+        val sortedLicenseJsonList = licenseJsonList
+            .sortedBy { it.get("name").toString().lowercase() }
+        val jsonString = json.encodeToString(sortedLicenseJsonList)
         jsonFile.get().asFile.writeText(jsonString)
     }
 

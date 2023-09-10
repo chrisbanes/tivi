@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import app.tivi.data.opensource.store.OpenSourceStore
-import app.tivi.screens.DevLogScreen
 import app.tivi.screens.OpenSourceScreen
+import app.tivi.screens.UrlScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -43,8 +43,7 @@ class OpenSourcePresenter(
         fun eventSink(event: OpenSourceUiEvent) {
             when (event) {
                 OpenSourceUiEvent.NavigateUp -> navigator.pop()
-                OpenSourceUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
-                OpenSourceUiEvent.ToggleHideArtwork -> navigator.goTo(DevLogScreen)
+                is OpenSourceUiEvent.NavigateRepository -> navigator.goTo(UrlScreen(event.url))
             }
         }
 

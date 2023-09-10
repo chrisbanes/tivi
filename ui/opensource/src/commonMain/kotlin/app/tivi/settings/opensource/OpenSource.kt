@@ -4,6 +4,7 @@
 package app.tivi.settings.opensource
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -76,12 +77,15 @@ internal fun OpenSource(
             state.opensourceItemList.forEach { item ->
                 item {
                     Preference(
-                        title = item.second,
+                        title = "${(item.name ?: item.artifactId)} - ${item.groupId}",
 //                        summary = item.author,
-//                        modifier = Modifier.clickable {
-//                            state.eventSink(OpenSourceUiEvent.OpenUrl(item.url))
-//                        },
-                    )
+                        modifier = Modifier.clickable {
+                            item.scm?.url?.let {
+                                eventSink(OpenSourceUiEvent.NavigateRepository(it))
+                            }
+                        },
+
+                        )
                 }
             }
 
