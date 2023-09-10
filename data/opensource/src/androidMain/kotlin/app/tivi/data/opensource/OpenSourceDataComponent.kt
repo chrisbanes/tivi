@@ -10,7 +10,6 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface OpenSourceDataComponent {
 
-
     @ApplicationScope
     @Provides
     fun provideOpenSourceStore(store: AndroidOpenSourceStore): OpenSourceStore = store

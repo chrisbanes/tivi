@@ -39,12 +39,10 @@ class AndroidOpenSourceStore(private val context: Application) : OpenSourceStore
     }
 
     override fun save(state: OpenSourceState) {
-
         lastAuthState = state
     }
 
     override fun clear() {
-
         lastAuthState = OpenSourceState.Empty
     }
 }
