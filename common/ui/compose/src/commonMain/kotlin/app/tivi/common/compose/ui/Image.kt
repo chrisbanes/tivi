@@ -33,6 +33,9 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.asImageBitmap
@@ -42,6 +45,7 @@ import com.seiko.imageloader.model.ImageRequestBuilder
 import com.seiko.imageloader.model.ImageResult
 import com.seiko.imageloader.option.SizeResolver
 import com.seiko.imageloader.toPainter
+import kotlin.math.roundToInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterIsInstance
@@ -147,17 +151,19 @@ private fun ResultImage(
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ) {
     Image(
-        painter = when (result) {
-            is ImageResult.Bitmap -> {
-                BitmapPainter(
-                    image = result.bitmap.asImageBitmap(),
-                    filterQuality = filterQuality,
-                )
-            }
+        painter = remember(result) {
+            when (result) {
+                is ImageResult.Bitmap -> {
+                    BitmapPainter(
+                        image = result.bitmap.asImageBitmap(),
+                        filterQuality = filterQuality,
+                    )
+                }
 
-            is ImageResult.Image -> result.image.toPainter()
-            is ImageResult.Painter -> result.painter
-            else -> EmptyPainter
+                is ImageResult.Image -> result.image.toPainter()
+                is ImageResult.Painter -> result.painter
+                else -> EmptyPainter
+            }
         },
         alignment = alignment,
         contentDescription = contentDescription,
@@ -208,4 +214,30 @@ private fun Constraints.toSizeOrNull() = when {
         width = if (hasBoundedWidth) maxWidth.toFloat() else 0f,
         height = if (hasBoundedHeight) maxHeight.toFloat() else 0f,
     )
+}
+
+@Stable
+class ParallaxAlignment(
+    private val horizontalBias: () -> Float = { 0f },
+    private val verticalBias: () -> Float = { 0f },
+) : Alignment {
+    override fun align(
+        size: IntSize,
+        space: IntSize,
+        layoutDirection: LayoutDirection,
+    ): IntOffset {
+        // Convert to Px first and only round at the end, to avoid rounding twice while calculating
+        // the new positions
+        val centerX = (space.width - size.width).toFloat() / 2f
+        val centerY = (space.height - size.height).toFloat() / 2f
+        val resolvedHorizontalBias = if (layoutDirection == LayoutDirection.Ltr) {
+            horizontalBias()
+        } else {
+            -1 * horizontalBias()
+        }
+
+        val x = centerX * (1 + resolvedHorizontalBias)
+        val y = centerY * (1 + verticalBias())
+        return IntOffset(x.roundToInt(), y.roundToInt())
+    }
 }
