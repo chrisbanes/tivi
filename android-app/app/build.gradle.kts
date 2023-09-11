@@ -14,7 +14,6 @@ plugins {
     id("app.tivi.compose")
     alias(libs.plugins.licensee)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.moshix)
 }
 
 val appVersionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 1000
@@ -162,9 +161,6 @@ dependencies {
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.splashscreen)
 
-    implementation(libs.moshi.core)
-    implementation(libs.moshi.shimo)
-
     qaImplementation(libs.leakCanary)
 
     implementation(libs.kotlin.coroutines.android)
@@ -208,27 +204,9 @@ abstract class GenerateLicensesAsset : DefaultTask() {
         val fileContent = licenseeFile.readText()
         val licenseJsonList = json.decodeFromString<List<JsonObject>>(fileContent)
         val sortedLicenseJsonList = licenseJsonList
-            .sortedBy { it.get("name").toString().lowercase() }
+            .sortedBy { it["name"].toString().lowercase() }
         val jsonString = json.encodeToString(sortedLicenseJsonList)
         jsonFile.get().asFile.writeText(jsonString)
-    }
-
-    private fun parseScm(url: String): Pair<String, String>? {
-        if ("github.com" !in url) return null
-        val parts =
-            url
-                .substringAfter("github.com")
-                .removePrefix("/")
-                .removePrefix(":")
-                .removeSuffix(".git")
-                .removeSuffix("/issues")
-                .substringAfter(".com/")
-                .trim()
-                .removeSuffix("/")
-                .split("/")
-        val owner = parts.getOrNull(0) ?: return null
-        val name = parts.getOrNull(1) ?: return null
-        return owner to name
     }
 }
 
@@ -243,13 +221,8 @@ generateLicenseTask.dependsOn("licenseeQaDebug")
 licensee {
     allow("Apache-2.0")
     allow("MIT")
-    allow("CC0-1.0")
     allow("BSD-3-Clause")
-    allowUrl("http://opensource.org/licenses/BSD-2-Clause")
     allowUrl("https://developer.android.com/studio/terms.html")
-    allowUrl("https://jsoup.org/license")
-    // MIT
-    allowUrl("https://github.com/alorma/Compose-Settings/blob/main/LICENSE")
 }
 
 fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {

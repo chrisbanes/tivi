@@ -19,8 +19,6 @@ paging-multiplatform = "3.2.0-alpha05-0.2.3"
 retrofit = "2.9.0"
 spotless = "6.21.0"
 sqldelight = "2.0.0"
-moshix = "0.24.2"
-moshi = "1.15.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -38,7 +36,6 @@ firebase-crashlytics = "com.google.firebase.crashlytics:2.9.9"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 licensee = { id = "app.cash.licensee", version = "1.7.0" }
-moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 
 [libraries]
 androidx-activity-activity = { module = "androidx.activity:activity", version.ref = "androidxactivity" }
@@ -119,9 +116,6 @@ multiplatformsettings-coroutines = { module = "com.russhwolf:multiplatform-setti
 
 okhttp-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-
-moshi-core = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
-moshi-shimo = "com.jakewharton.moshi:shimo:0.1.1"
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
