@@ -5,6 +5,7 @@ package app.tivi.util
 
 import app.tivi.inject.ActivityScope
 import kotlin.time.Duration.Companion.days
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
@@ -30,6 +31,7 @@ import platform.Foundation.NSLocale
 import platform.Foundation.NSRelativeDateTimeFormatter
 import platform.Foundation.NSRelativeDateTimeFormatterStyleNamed
 
+@OptIn(ExperimentalForeignApi::class)
 @ActivityScope
 @Inject
 actual class TiviDateFormatter(
@@ -149,6 +151,7 @@ actual class TiviDateFormatter(
     }
 }
 
+@OptIn(ExperimentalForeignApi::class)
 private fun LocalTime.toNSDateComponents(): NSDateComponents {
     val components = NSDateComponents()
     components.hour = hour.convert()
