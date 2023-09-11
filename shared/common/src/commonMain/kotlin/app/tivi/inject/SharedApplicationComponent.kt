@@ -9,7 +9,7 @@ import app.tivi.core.perf.PerformanceComponent
 import app.tivi.data.SqlDelightDatabaseComponent
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsBinds
-import app.tivi.data.opensource.OpenSourceDataComponent
+import app.tivi.data.licenses.OpenSourceDataComponent
 import app.tivi.data.popularshows.PopularShowsBinds
 import app.tivi.data.recommendedshows.RecommendedShowsBinds
 import app.tivi.data.relatedshows.RelatedShowsBinds

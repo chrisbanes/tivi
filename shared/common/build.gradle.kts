@@ -22,7 +22,7 @@ kotlin {
                 api(projects.core.powercontroller)
                 api(projects.core.preferences)
                 api(projects.data.dbSqldelight)
-                api(projects.data.opensource)
+                api(projects.data.licenses)
                 api(projects.api.trakt)
                 api(projects.api.tmdb)
                 api(projects.domain)
@@ -44,7 +44,7 @@ kotlin {
                 api(projects.ui.show.seasons)
                 api(projects.ui.root)
                 api(projects.ui.settings)
-                api(projects.ui.opensource)
+                api(projects.ui.licenses)
                 api(projects.ui.upnext)
             }
         }
