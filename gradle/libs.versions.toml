@@ -84,7 +84,7 @@ google-firebase-perf = "com.google.firebase:firebase-perf-ktx:20.4.1"
 
 insetsx = "com.moriatsushi.insetsx:insetsx:0.1.0-alpha10"
 
-imageloader = "io.github.qdsfdhvh:image-loader:1.6.6"
+imageloader = "io.github.qdsfdhvh:image-loader:1.6.7"
 
 junit = "junit:junit:4.13.2"
 
