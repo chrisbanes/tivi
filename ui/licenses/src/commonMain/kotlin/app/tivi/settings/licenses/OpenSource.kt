@@ -85,7 +85,7 @@ internal fun OpenSource(
                         }
                     },
 
-                    )
+                )
             }
         }
     }

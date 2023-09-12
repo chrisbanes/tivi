@@ -37,7 +37,7 @@ class OpenSourceUiPresenterFactory(
 @Inject
 class OpenSourcePresenter(
     @Assisted private val navigator: Navigator,
-    private val fetchLicensesList: FetchLicensesList
+    private val fetchLicensesList: FetchLicensesList,
 ) : Presenter<OpenSourceUiState> {
 
     @Composable
@@ -48,7 +48,6 @@ class OpenSourcePresenter(
             val openSourceList = fetchLicensesList(Unit)
             licenseItemList = openSourceList.getOrDefault(emptyList())
         }
-
 
         fun eventSink(event: OpenSourceUiEvent) {
             when (event) {
@@ -63,5 +62,3 @@ class OpenSourcePresenter(
         )
     }
 }
-
-
