@@ -178,7 +178,6 @@ if (file("google-services.json").exists()) {
     }
 }
 
-
 fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
     @Suppress("UNCHECKED_CAST")
     val propertyValue = project.properties[propertyName] as T?
