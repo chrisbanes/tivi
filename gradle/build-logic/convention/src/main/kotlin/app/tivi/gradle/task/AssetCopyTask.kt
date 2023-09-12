@@ -33,9 +33,9 @@ abstract class AssetCopyTask : DefaultTask() {
         inputFile.get().asFile.copyTo(
             target = File(
                 outputDirectory.get().asFile,
-                targetFileName.get()
+                targetFileName.get(),
             ),
-            overwrite = true
+            overwrite = true,
         )
     }
 }

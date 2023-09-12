@@ -12,11 +12,8 @@ import org.gradle.api.reporting.ReportingExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.register
 
-
 fun Project.configureLicensesTasks(reportingExtension: ReportingExtension) {
-
     androidComponents {
-
         onVariants { variant ->
             val capitalizedVariantName = variant.name.replaceFirstChar {
                 if (it.isLowerCase()) {
@@ -34,11 +31,9 @@ fun Project.configureLicensesTasks(reportingExtension: ReportingExtension) {
                 }
             variant.sources.assets?.addGeneratedSourceDirectory(
                 copyArtifactsTask,
-                AssetCopyTask::outputDirectory
+                AssetCopyTask::outputDirectory,
             )
             copyArtifactsTask.dependsOn("licensee$capitalizedVariantName")
-
-
         }
     }
 }
