@@ -14,9 +14,9 @@ import kotlinx.serialization.json.decodeFromStream
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class AndroidLicensesFetcherImpl(private val context: Application): LicensesFetcher{
+class AndroidLicensesFetcherImpl(private val context: Application) : LicensesFetcher {
     @kotlinx.serialization.ExperimentalSerializationApi
-    override suspend fun fetch(): List<LicenseItem>{
+    override suspend fun fetch(): List<LicenseItem> {
         var licenseItemList: List<LicenseItem> = emptyList()
         withContext(Dispatchers.IO) {
             try {

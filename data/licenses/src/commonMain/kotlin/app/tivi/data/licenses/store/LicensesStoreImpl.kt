@@ -8,10 +8,9 @@ import app.tivi.data.licenses.fetcher.LicensesFetcher
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class LicensesStoreImpl(private val fetcher: LicensesFetcher): LicensesStore {
+class LicensesStoreImpl(private val fetcher: LicensesFetcher) : LicensesStore {
 
     override suspend fun getOpenSourceItemList(): List<LicenseItem> {
         return fetcher.fetch()
     }
-
 }
