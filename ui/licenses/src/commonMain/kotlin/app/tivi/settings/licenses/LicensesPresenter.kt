@@ -45,8 +45,8 @@ class LicensesPresenter(
         var licenseItemList by remember { mutableStateOf(emptyList<LicenseItem>()) }
 
         LaunchedEffect(Unit) {
-            val openSourceList = fetchLicensesList(Unit)
-            licenseItemList = openSourceList.getOrDefault(emptyList())
+            val licenseList = fetchLicensesList(Unit)
+            licenseItemList = licenseList.getOrDefault(emptyList())
         }
 
         fun eventSink(event: LicensesUiEvent) {
