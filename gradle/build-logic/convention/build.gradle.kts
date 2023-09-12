@@ -31,7 +31,6 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.spotless.gradlePlugin)
     compileOnly(libs.compose.gradlePlugin)
-//    implementation(libs.)
     implementation(libs.licensee.gradlePlugin)
 }
 
@@ -72,9 +71,5 @@ gradlePlugin {
             implementationClass = "app.tivi.gradle.ComposeMultiplatformConventionPlugin"
         }
 
-//        register("licensee") {
-//            id = "app.tivi.licensee"
-//            implementationClass = "app.tivi.gradle.LicenseePlugin"
-//        }
     }
 }
