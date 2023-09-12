@@ -62,22 +62,21 @@ platform :ios do
   private_lane :build_tivi do |options|
     setup_ci if is_ci
 
-    certs(type: 'appstore') if ENV['MATCH_PASSWORD']
+    skip_certs = env_nil_or_blank('MATCH_PASSWORD')
+
+    certs(type: 'appstore') unless skip_certs
 
     increment_build_number(
       xcodeproj: "ios-app/Tivi/Tivi.xcodeproj",
       build_number: ENV['TIVI_BUILD_NUMBER']
-    ) if ENV['TIVI_BUILD_NUMBER']
-
-    # If match hasn't been setup, skip all code signing and packaging
-    skip_packaging = ENV['MATCH_PASSWORD'].nil?
+    ) unless env_nil_or_blank('TIVI_BUILD_NUMBER')
 
     build_app(
       project: "ios-app/Tivi/Tivi.xcodeproj",
       scheme: options[:scheme],
       buildlog_path: "build/fastlane-buildlog",
-      skip_package_ipa: skip_packaging,
-      skip_codesigning: skip_packaging
+      skip_package_ipa: skip_certs,
+      skip_codesigning: skip_certs
     )
   end
 
@@ -124,4 +123,9 @@ def cleanup_ci_keychain(name = "fastlane_tmp_keychain")
     delete_keychain(name: name)
     sh("security default-keychain -s ~/Library/Keychains/login.keychain-db")
   end
+end
+
+def env_nil_or_blank(name)
+  value = ENV[name]
+  return value.nil? || value.empty?
 end

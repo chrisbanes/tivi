@@ -64,6 +64,7 @@ import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.rememberTiviSnapFlingBehavior
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.BackdropCard
+import app.tivi.common.compose.ui.ParallaxAlignment
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.data.compoundmodels.EntryWithShow
@@ -407,6 +408,19 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
             BackdropCard(
                 show = item.show,
                 onClick = { onItemClick(item.show) },
+                alignment = remember {
+                    ParallaxAlignment(
+                        horizontalBias = {
+                            val layoutInfo = lazyListState.layoutInfo
+                            val itemInfo = layoutInfo.visibleItemsInfo.first {
+                                it.key == item.show.id
+                            }
+
+                            val adjustedOffset = itemInfo.offset - layoutInfo.viewportStartOffset
+                            (adjustedOffset / itemInfo.size.toFloat()).coerceIn(-1f, 1f)
+                        },
+                    )
+                },
                 modifier = Modifier
                     .testTag("discover_carousel_item")
                     .animateItemPlacement()

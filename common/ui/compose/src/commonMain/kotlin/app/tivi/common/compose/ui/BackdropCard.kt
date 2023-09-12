@@ -4,6 +4,7 @@
 package app.tivi.common.compose.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -25,13 +26,17 @@ import app.tivi.data.models.TiviShow
 fun BackdropCard(
     show: TiviShow,
     modifier: Modifier = Modifier,
+    alignment: Alignment = Alignment.Center,
 ) {
     Card(
         shape = MaterialTheme.shapes.extraLarge,
         modifier = modifier,
     ) {
         TiviTheme(useDarkColors = true) {
-            BackdropCardContent(show = show)
+            BackdropCardContent(
+                show = show,
+                alignment = alignment,
+            )
         }
     }
 }
@@ -42,6 +47,7 @@ fun BackdropCard(
     show: TiviShow,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    alignment: Alignment = Alignment.Center,
 ) {
     Card(
         onClick = onClick,
@@ -49,22 +55,33 @@ fun BackdropCard(
         modifier = modifier,
     ) {
         TiviTheme(useDarkColors = true) {
-            BackdropCardContent(show = show)
+            BackdropCardContent(
+                show = show,
+                alignment = alignment,
+            )
         }
     }
 }
 
 @Composable
-private fun BackdropCardContent(show: TiviShow) {
+private fun BackdropCardContent(
+    show: TiviShow,
+    alignment: Alignment = Alignment.Center,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
             model = show.asImageModel(ImageType.BACKDROP),
             contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: "show"),
-            modifier = Modifier
-                .fillMaxSize()
-                .drawForegroundGradientScrim(MaterialTheme.colorScheme.surface),
+            modifier = Modifier.matchParentSize(),
             contentScale = ContentScale.Crop,
+            alignment = alignment,
         )
+
+        Spacer(
+            Modifier.matchParentSize()
+                .drawForegroundGradientScrim(MaterialTheme.colorScheme.surface),
+        )
+
         Text(
             text = show.title ?: "No title",
             style = MaterialTheme.typography.labelLarge,

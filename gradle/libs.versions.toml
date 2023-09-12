@@ -27,7 +27,7 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 buildConfig = "com.github.gmazzo.buildconfig:4.1.2"
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.7.4" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.8.0" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
@@ -85,7 +85,7 @@ google-firebase-perf = "com.google.firebase:firebase-perf-ktx:20.4.1"
 
 insetsx = "com.moriatsushi.insetsx:insetsx:0.1.0-alpha10"
 
-imageloader = "io.github.qdsfdhvh:image-loader:1.6.6"
+imageloader = "io.github.qdsfdhvh:image-loader:1.6.7"
 
 junit = "junit:junit:4.13.2"
 
