@@ -3,11 +3,11 @@
 
 package app.tivi.data.licenses.store
 
-import app.tivi.data.licenses.OpenSourceState
+import app.tivi.data.licenses.LicensesState
 
 interface OpenSourceStore {
-    fun fetch(): OpenSourceState
-    fun save(state: OpenSourceState)
+    suspend fun fetch(): LicensesState
+    fun save(state: LicensesState)
     fun clear()
     fun isAvailable(): Boolean = true
 }

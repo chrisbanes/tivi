@@ -1,7 +1,6 @@
 // Copyright 2023, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 plugins {
     `kotlin-dsl`
     alias(libs.plugins.spotless)
@@ -32,6 +31,8 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.spotless.gradlePlugin)
     compileOnly(libs.compose.gradlePlugin)
+//    implementation(libs.)
+    implementation(libs.licensee.gradlePlugin)
 }
 
 gradlePlugin {
@@ -70,5 +71,10 @@ gradlePlugin {
             id = "app.tivi.compose"
             implementationClass = "app.tivi.gradle.ComposeMultiplatformConventionPlugin"
         }
+
+//        register("licensee") {
+//            id = "app.tivi.licensee"
+//            implementationClass = "app.tivi.gradle.LicenseePlugin"
+//        }
     }
 }

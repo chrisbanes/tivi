@@ -9,7 +9,7 @@ import app.tivi.core.perf.PerformanceComponent
 import app.tivi.data.SqlDelightDatabaseComponent
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsBinds
-import app.tivi.data.licenses.OpenSourceDataComponent
+import app.tivi.data.licenses.LicenseDataComponent
 import app.tivi.data.popularshows.PopularShowsBinds
 import app.tivi.data.recommendedshows.RecommendedShowsBinds
 import app.tivi.data.relatedshows.RelatedShowsBinds
@@ -45,7 +45,7 @@ interface SharedApplicationComponent :
     PerformanceComponent,
     PowerControllerComponent,
     PreferencesComponent,
-    OpenSourceDataComponent,
+    LicenseDataComponent,
     EpisodeBinds,
     FollowedShowsBinds,
     PopularShowsBinds,

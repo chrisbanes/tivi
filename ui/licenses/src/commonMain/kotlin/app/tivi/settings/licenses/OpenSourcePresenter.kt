@@ -4,9 +4,13 @@
 package app.tivi.settings.licenses
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import app.tivi.data.licenses.store.OpenSourceStore
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import app.tivi.data.licenses.LicenseItem
+import app.tivi.domain.interactors.FetchLicensesList
 import app.tivi.screens.OpenSourceScreen
 import app.tivi.screens.UrlScreen
 import com.slack.circuit.runtime.CircuitContext
@@ -33,12 +37,18 @@ class OpenSourceUiPresenterFactory(
 @Inject
 class OpenSourcePresenter(
     @Assisted private val navigator: Navigator,
-    private val openSourceStore: OpenSourceStore,
+    private val fetchLicensesList: FetchLicensesList
 ) : Presenter<OpenSourceUiState> {
 
     @Composable
     override fun present(): OpenSourceUiState {
-        val opensourceItemList by openSourceStore.fetch().openSourceList.collectAsState(emptyList())
+        var licenseItemList by remember { mutableStateOf(emptyList<LicenseItem>()) }
+
+        LaunchedEffect(Unit) {
+            val openSourceList = fetchLicensesList(Unit)
+            licenseItemList = openSourceList.getOrDefault(emptyList())
+        }
+
 
         fun eventSink(event: OpenSourceUiEvent) {
             when (event) {
@@ -48,8 +58,10 @@ class OpenSourcePresenter(
         }
 
         return OpenSourceUiState(
-            opensourceItemList = opensourceItemList,
+            opensourceItemList = licenseItemList,
             eventSink = ::eventSink,
         )
     }
 }
+
+

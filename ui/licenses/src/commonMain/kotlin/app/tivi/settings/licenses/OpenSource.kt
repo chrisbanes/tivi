@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -74,19 +75,17 @@ internal fun OpenSource(
             contentPadding = contentPadding,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            state.opensourceItemList.forEach { item ->
-                item {
-                    Preference(
-                        title = "${(item.name ?: item.artifactId)} - ${item.groupId}",
+            items(state.opensourceItemList) { item ->
+                Preference(
+                    title = "${(item.name ?: item.artifactId)} - ${item.groupId}",
 //                        summary = item.author,
-                        modifier = Modifier.clickable {
-                            item.scm?.url?.let {
-                                eventSink(OpenSourceUiEvent.NavigateRepository(it))
-                            }
-                        },
+                    modifier = Modifier.clickable {
+                        item.scm?.url?.let {
+                            eventSink(OpenSourceUiEvent.NavigateRepository(it))
+                        }
+                    },
 
                     )
-                }
             }
         }
     }

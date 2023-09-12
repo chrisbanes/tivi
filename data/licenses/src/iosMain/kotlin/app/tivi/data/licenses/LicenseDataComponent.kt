@@ -3,14 +3,14 @@
 
 package app.tivi.data.licenses
 
-import app.tivi.data.licenses.store.AndroidOpenSourceStore
-import app.tivi.data.licenses.store.OpenSourceStore
+import app.tivi.data.licenses.fetcher.IosLicensesFetcherImpl
+import app.tivi.data.licenses.fetcher.LicensesFetcher
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-actual interface OpenSourceDataComponent {
+actual interface LicenseDataPlatformComponent {
 
     @ApplicationScope
     @Provides
-    fun provideOpenSourceStore(store: AndroidOpenSourceStore): OpenSourceStore = store
+    fun provideLicensesFetcher(fetcher: IosLicensesFetcherImpl): LicensesFetcher = fetcher
 }

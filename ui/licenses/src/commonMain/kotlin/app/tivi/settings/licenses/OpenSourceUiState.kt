@@ -4,13 +4,13 @@
 package app.tivi.settings.licenses
 
 import androidx.compose.runtime.Immutable
-import app.tivi.data.licenses.OpenSourceItem
+import app.tivi.data.licenses.LicenseItem
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class OpenSourceUiState(
-    val opensourceItemList: List<OpenSourceItem> = emptyList(),
+    val opensourceItemList: List<LicenseItem> = emptyList(),
     val eventSink: (OpenSourceUiEvent) -> Unit,
 ) : CircuitUiState
 

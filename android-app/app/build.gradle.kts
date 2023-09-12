@@ -2,18 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
-import com.android.build.gradle.internal.tasks.factory.dependsOn
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-
 plugins {
     id("app.tivi.android.application")
     id("app.tivi.kotlin.android")
     id("app.tivi.compose")
-    alias(libs.plugins.licensee)
-    alias(libs.plugins.ksp)
 }
 
 val appVersionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 1000
@@ -186,44 +178,6 @@ if (file("google-services.json").exists()) {
     }
 }
 
-abstract class GenerateLicensesAsset : DefaultTask() {
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:InputDirectory
-    abstract val buildDir: DirectoryProperty
-
-    @get:OutputFile abstract val jsonFile: RegularFileProperty
-
-    private val licenseeFile: File
-        get() = File(buildDir.asFile.get(), "reports/licensee/qaDebug/artifacts.json")
-
-    @Suppress("UNCHECKED_CAST")
-    @OptIn(ExperimentalStdlibApi::class)
-    @TaskAction
-    fun generate() {
-        val json = Json { ignoreUnknownKeys = true }
-        val fileContent = licenseeFile.readText()
-        val licenseJsonList = json.decodeFromString<List<JsonObject>>(fileContent)
-        val sortedLicenseJsonList = licenseJsonList
-            .sortedBy { it["name"].toString().lowercase() }
-        val jsonString = json.encodeToString(sortedLicenseJsonList)
-        jsonFile.get().asFile.writeText(jsonString)
-    }
-}
-
-val generateLicenseTask =
-    tasks.register<GenerateLicensesAsset>("generateLicensesAsset") {
-        buildDir.set(project.layout.buildDirectory)
-        jsonFile.set(project.layout.projectDirectory.file("src/main/assets/generated_licenses.json"))
-    }
-
-generateLicenseTask.dependsOn("licenseeQaDebug")
-
-licensee {
-    allow("Apache-2.0")
-    allow("MIT")
-    allow("BSD-3-Clause")
-    allowUrl("https://developer.android.com/studio/terms.html")
-}
 
 fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
     @Suppress("UNCHECKED_CAST")

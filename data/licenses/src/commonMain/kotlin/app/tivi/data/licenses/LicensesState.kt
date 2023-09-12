@@ -3,27 +3,11 @@
 
 package app.tivi.data.licenses
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.serialization.Serializable
 
-interface OpenSourceState {
-    val openSourceList: Flow<List<OpenSourceItem>>
-    fun serializeToJson(): String
-
-    companion object {
-        val Empty: OpenSourceState = object : OpenSourceState {
-            override val openSourceList: Flow<List<OpenSourceItem>> = emptyFlow()
-            override fun serializeToJson(): String = "{}"
-        }
-    }
-}
-
-data class SimpleOpenSourceState(
-    override val openSourceList: Flow<List<OpenSourceItem>>,
-) : OpenSourceState {
-    override fun serializeToJson(): String = openSourceList.toString()
-}
+data class LicensesState(
+    val licenseItemList: List<LicenseItem>,
+)
 
 /**
  * {
@@ -44,7 +28,7 @@ data class SimpleOpenSourceState(
  */
 
 @Serializable
-data class OpenSourceItem(
+data class LicenseItem(
     val groupId: String,
     val artifactId: String,
     val version: String,

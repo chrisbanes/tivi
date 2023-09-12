@@ -17,7 +17,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(projects.core.base)
-                implementation(projects.core.preferences)
                 implementation(projects.domain)
                 implementation(projects.common.ui.compose)
                 implementation(projects.data.licenses) // This should really be used through an interactor
