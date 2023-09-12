@@ -23,7 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.ui.Preference
-import app.tivi.screens.OpenSourceScreen
+import app.tivi.screens.LicensesScreen
 import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
@@ -32,11 +32,11 @@ import com.slack.circuit.runtime.ui.ui
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class OpenSourceUiFactory : Ui.Factory {
+class LicensesUiFactory : Ui.Factory {
     override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is OpenSourceScreen -> {
-            ui<OpenSourceUiState> { state, modifier ->
-                OpenSource(state, modifier)
+        is LicensesScreen -> {
+            ui<LicensesUiState> { state, modifier ->
+                Licenses(state, modifier)
             }
         }
 
@@ -46,8 +46,8 @@ class OpenSourceUiFactory : Ui.Factory {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-internal fun OpenSource(
-    state: OpenSourceUiState,
+internal fun Licenses(
+    state: LicensesUiState,
     modifier: Modifier = Modifier,
 ) {
     val eventSink = state.eventSink
@@ -57,7 +57,7 @@ internal fun OpenSource(
             TopAppBar(
                 title = { Text(LocalStrings.current.openSourceLicensesTitle) },
                 navigationIcon = {
-                    IconButton(onClick = { eventSink(OpenSourceUiEvent.NavigateUp) }) {
+                    IconButton(onClick = { eventSink(LicensesUiEvent.NavigateUp) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = LocalStrings.current.cdNavigateUp,
@@ -75,13 +75,13 @@ internal fun OpenSource(
             contentPadding = contentPadding,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            items(state.opensourceItemList) { item ->
+            items(state.licenseItemList) { item ->
                 Preference(
                     title = "${(item.name ?: item.artifactId)} - ${item.groupId}",
 //                        summary = item.author,
                     modifier = Modifier.clickable {
                         item.scm?.url?.let {
-                            eventSink(OpenSourceUiEvent.NavigateRepository(it))
+                            eventSink(LicensesUiEvent.NavigateRepository(it))
                         }
                     },
 

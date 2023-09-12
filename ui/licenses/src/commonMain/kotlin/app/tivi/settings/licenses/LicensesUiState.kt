@@ -9,12 +9,12 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
-data class OpenSourceUiState(
-    val opensourceItemList: List<LicenseItem> = emptyList(),
-    val eventSink: (OpenSourceUiEvent) -> Unit,
+data class LicensesUiState(
+    val licenseItemList: List<LicenseItem> = emptyList(),
+    val eventSink: (LicensesUiEvent) -> Unit,
 ) : CircuitUiState
 
-sealed interface OpenSourceUiEvent : CircuitUiEvent {
-    data object NavigateUp : OpenSourceUiEvent
-    data class NavigateRepository(val url: String) : OpenSourceUiEvent
+sealed interface LicensesUiEvent : CircuitUiEvent {
+    data object NavigateUp : LicensesUiEvent
+    data class NavigateRepository(val url: String) : LicensesUiEvent
 }

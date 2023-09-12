@@ -17,7 +17,7 @@ import app.tivi.home.search.SearchComponent
 import app.tivi.home.trending.TrendingShowsComponent
 import app.tivi.home.upnext.UpNextComponent
 import app.tivi.settings.SettingsComponent
-import app.tivi.settings.licenses.OpenSourceComponent
+import app.tivi.settings.licenses.LicensesComponent
 import app.tivi.showdetails.details.ShowDetailsComponent
 import app.tivi.showdetails.seasons.ShowSeasonsComponent
 import cafe.adriel.lyricist.Lyricist
@@ -36,7 +36,7 @@ interface SharedUiComponent :
     RecommendedShowsComponent,
     SearchComponent,
     SettingsComponent,
-    OpenSourceComponent,
+    LicensesComponent,
     ShowDetailsComponent,
     ShowSeasonsComponent,
     TrendingShowsComponent,

@@ -9,14 +9,14 @@ import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
-interface OpenSourceComponent {
+interface LicensesComponent {
     @IntoSet
     @Provides
     @ActivityScope
-    fun bindOpenSourcePresenterFactory(factory: OpenSourceUiPresenterFactory): Presenter.Factory = factory
+    fun bindLicensesPresenterFactory(factory: LicensesUiPresenterFactory): Presenter.Factory = factory
 
     @IntoSet
     @Provides
     @ActivityScope
-    fun bindOpenSourceUiFactoryFactory(factory: OpenSourceUiFactory): Ui.Factory = factory
+    fun bindLicensesUiFactoryFactory(factory: LicensesUiFactory): Ui.Factory = factory
 }

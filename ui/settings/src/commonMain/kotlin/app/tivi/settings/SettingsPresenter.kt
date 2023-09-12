@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import app.tivi.screens.DevSettingsScreen
-import app.tivi.screens.OpenSourceScreen
+import app.tivi.screens.LicensesScreen
 import app.tivi.screens.SettingsScreen
 import app.tivi.screens.UrlScreen
 import com.slack.circuit.runtime.CircuitContext
@@ -70,7 +70,7 @@ class SettingsPresenter(
                 }
 
                 SettingsUiEvent.NavigateOpenSource -> {
-                    navigator.goTo(OpenSourceScreen)
+                    navigator.goTo(LicensesScreen)
                 }
 
                 SettingsUiEvent.NavigateDeveloperSettings -> {

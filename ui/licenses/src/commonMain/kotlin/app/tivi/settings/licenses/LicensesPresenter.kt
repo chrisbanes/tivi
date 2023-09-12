@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import app.tivi.data.licenses.LicenseItem
 import app.tivi.domain.interactors.FetchLicensesList
-import app.tivi.screens.OpenSourceScreen
+import app.tivi.screens.LicensesScreen
 import app.tivi.screens.UrlScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -21,27 +21,27 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class OpenSourceUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> OpenSourcePresenter,
+class LicensesUiPresenterFactory(
+    private val presenterFactory: (Navigator) -> LicensesPresenter,
 ) : Presenter.Factory {
     override fun create(
         screen: Screen,
         navigator: Navigator,
         context: CircuitContext,
     ): Presenter<*>? = when (screen) {
-        is OpenSourceScreen -> presenterFactory(navigator)
+        is LicensesScreen -> presenterFactory(navigator)
         else -> null
     }
 }
 
 @Inject
-class OpenSourcePresenter(
+class LicensesPresenter(
     @Assisted private val navigator: Navigator,
     private val fetchLicensesList: FetchLicensesList,
-) : Presenter<OpenSourceUiState> {
+) : Presenter<LicensesUiState> {
 
     @Composable
-    override fun present(): OpenSourceUiState {
+    override fun present(): LicensesUiState {
         var licenseItemList by remember { mutableStateOf(emptyList<LicenseItem>()) }
 
         LaunchedEffect(Unit) {
@@ -49,15 +49,15 @@ class OpenSourcePresenter(
             licenseItemList = openSourceList.getOrDefault(emptyList())
         }
 
-        fun eventSink(event: OpenSourceUiEvent) {
+        fun eventSink(event: LicensesUiEvent) {
             when (event) {
-                OpenSourceUiEvent.NavigateUp -> navigator.pop()
-                is OpenSourceUiEvent.NavigateRepository -> navigator.goTo(UrlScreen(event.url))
+                LicensesUiEvent.NavigateUp -> navigator.pop()
+                is LicensesUiEvent.NavigateRepository -> navigator.goTo(UrlScreen(event.url))
             }
         }
 
-        return OpenSourceUiState(
-            opensourceItemList = licenseItemList,
+        return LicensesUiState(
+            licenseItemList = licenseItemList,
             eventSink = ::eventSink,
         )
     }
