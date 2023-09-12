@@ -4,7 +4,9 @@
 package app.tivi.data.licenses.fetcher
 
 import app.tivi.data.licenses.LicenseItem
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class IosLicensesFetcherImpl : LicensesFetcher {
     override suspend fun fetch(): List<LicenseItem> {
         return emptyList()
