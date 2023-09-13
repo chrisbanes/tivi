@@ -28,6 +28,7 @@ kotlin {
                 api(projects.data.traktusers)
                 api(projects.data.trendingshows)
                 api(projects.data.watchedshows)
+                api(projects.data.licenses)
 
                 implementation(projects.api.tmdb)
 

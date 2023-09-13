@@ -12,6 +12,7 @@ import com.slack.circuit.runtime.CircuitUiState
 data class SettingsUiState(
     val theme: TiviPreferences.Theme,
     val dynamicColorsAvailable: Boolean,
+    val openSourceLicenseAvailable: Boolean,
     val useDynamicColors: Boolean,
     val useLessData: Boolean,
     val ignoreSpecials: Boolean,
@@ -23,6 +24,7 @@ data class SettingsUiState(
 sealed interface SettingsUiEvent : CircuitUiEvent {
     data object NavigateUp : SettingsUiEvent
     data object NavigatePrivacyPolicy : SettingsUiEvent
+    data object NavigateOpenSource : SettingsUiEvent
     data object NavigateDeveloperSettings : SettingsUiEvent
     data object ToggleUseDynamicColors : SettingsUiEvent
     data object ToggleUseLessData : SettingsUiEvent

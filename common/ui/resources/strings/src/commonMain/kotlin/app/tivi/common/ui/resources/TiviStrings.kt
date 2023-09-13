@@ -165,6 +165,8 @@ data class TiviStrings(
     val upnextFilterFollowedShowsOnlyTitle: String,
     val upnextTitle: String,
     val viewPrivacyPolicy: String,
+    val viewOpenSourceLicenses: String,
+    val openSourceLicensesTitle: String,
     val watchedShowsTitle: String,
 )
 

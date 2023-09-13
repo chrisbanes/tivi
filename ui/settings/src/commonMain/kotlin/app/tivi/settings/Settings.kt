@@ -169,6 +169,19 @@ internal fun Settings(
                 )
             }
 
+            if (state.openSourceLicenseAvailable) {
+                item { PreferenceDivider() }
+
+                item {
+                    Preference(
+                        title = LocalStrings.current.viewOpenSourceLicenses,
+                        modifier = Modifier.clickable {
+                            eventSink(SettingsUiEvent.NavigateOpenSource)
+                        },
+                    )
+                }
+            }
+
             if (state.showDeveloperSettings) {
                 item { PreferenceDivider() }
 

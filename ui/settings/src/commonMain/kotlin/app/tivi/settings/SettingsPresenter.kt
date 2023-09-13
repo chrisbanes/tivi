@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import app.tivi.screens.DevSettingsScreen
+import app.tivi.screens.LicensesScreen
 import app.tivi.screens.SettingsScreen
 import app.tivi.screens.UrlScreen
 import com.slack.circuit.runtime.CircuitContext
@@ -60,12 +61,18 @@ class SettingsPresenter(
                 is SettingsUiEvent.SetTheme -> {
                     preferences.theme = event.theme
                 }
+
                 SettingsUiEvent.ToggleUseDynamicColors -> preferences::useDynamicColors.toggle()
                 SettingsUiEvent.ToggleUseLessData -> preferences::useLessData.toggle()
                 SettingsUiEvent.ToggleIgnoreSpecials -> preferences::ignoreSpecials.toggle()
                 SettingsUiEvent.NavigatePrivacyPolicy -> {
                     navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))
                 }
+
+                SettingsUiEvent.NavigateOpenSource -> {
+                    navigator.goTo(LicensesScreen)
+                }
+
                 SettingsUiEvent.NavigateDeveloperSettings -> {
                     navigator.goTo(DevSettingsScreen)
                 }
@@ -76,6 +83,7 @@ class SettingsPresenter(
             theme = theme,
             useDynamicColors = useDynamicColors,
             dynamicColorsAvailable = DynamicColorsAvailable,
+            openSourceLicenseAvailable = OpenSourceLicenseAvailable,
             useLessData = useLessData,
             ignoreSpecials = ignoreSpecials,
             applicationInfo = applicationInfo,

@@ -37,6 +37,9 @@ object SearchScreen : TiviScreen(name = "Search()")
 object SettingsScreen : TiviScreen(name = "Settings()")
 
 @CommonParcelize
+object LicensesScreen : TiviScreen(name = "LicensesScreen()")
+
+@CommonParcelize
 object DevSettingsScreen : TiviScreen(name = "DevelopmentSettings()")
 
 @CommonParcelize
