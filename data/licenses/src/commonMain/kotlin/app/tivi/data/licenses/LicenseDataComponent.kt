@@ -13,5 +13,5 @@ expect interface LicenseDataPlatformComponent
 interface LicenseDataComponent : LicenseDataPlatformComponent {
     @ApplicationScope
     @Provides
-    fun providePreferences(bind: LicensesStoreImpl): LicensesStore = bind
+    fun bindLicensesStore(bind: LicensesStoreImpl): LicensesStore = bind
 }

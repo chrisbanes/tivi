@@ -9,8 +9,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LicensesStoreImpl(private val fetcher: LicensesFetcher) : LicensesStore {
+    private var licenses: List<LicenseItem>? = null
 
     override suspend fun getOpenSourceItemList(): List<LicenseItem> {
-        return fetcher.fetch()
+        return licenses ?: fetcher().also { licenses = it }
     }
 }

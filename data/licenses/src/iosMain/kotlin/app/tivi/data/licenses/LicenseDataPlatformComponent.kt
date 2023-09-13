@@ -12,5 +12,5 @@ actual interface LicenseDataPlatformComponent {
 
     @ApplicationScope
     @Provides
-    fun provideLicensesFetcher(fetcher: IosLicensesFetcherImpl): LicensesFetcher = fetcher
+    fun bindLicensesFetcher(fetcher: IosLicensesFetcherImpl): LicensesFetcher = fetcher
 }

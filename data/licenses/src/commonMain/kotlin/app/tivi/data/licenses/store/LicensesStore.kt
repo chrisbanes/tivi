@@ -4,9 +4,7 @@
 package app.tivi.data.licenses.store
 
 import app.tivi.data.licenses.LicenseItem
-import me.tatarka.inject.annotations.Inject
 
-@Inject
 interface LicensesStore {
     suspend fun getOpenSourceItemList(): List<LicenseItem>
 }
