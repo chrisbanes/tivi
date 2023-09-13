@@ -71,6 +71,10 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
 
             configureSpotless()
             configureKotlin()
+
+            if (path == ":shared:qa" || path == ":shared:prod") {
+                configureLicensee()
+            }
         }
     }
 }
