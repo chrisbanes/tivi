@@ -172,7 +172,10 @@ internal fun Settings(
 
                 item {
                     Preference(
-                        title = LocalStrings.current.viewOpenSourceLicenses,
+                        title = LocalStrings.current.settingsOpenSource,
+                        summary = {
+                            Text(LocalStrings.current.settingsOpenSourceSummary)
+                        },
                         modifier = Modifier.clickable {
                             eventSink(SettingsUiEvent.NavigateOpenSource)
                         },
