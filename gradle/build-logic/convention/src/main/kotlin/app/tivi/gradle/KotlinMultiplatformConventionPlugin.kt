@@ -74,6 +74,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
 
             if (path == ":shared:qa" || path == ":shared:prod") {
                 configureLicensee()
+                configureIosLicensesTasks()
             }
         }
     }

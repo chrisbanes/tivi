@@ -24,7 +24,7 @@ fun Project.configureAndroidLicensesTasks() {
                 "copy${capitalizedVariantName}LicenseeOutputToAndroidAssets",
             ) {
                 inputFile.set(artifactsFile)
-                targetFileName.set("licenses.json")
+                outputFilename.set("licenses.json")
 
                 dependsOn("licensee$capitalizedVariantName")
             }

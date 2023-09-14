@@ -3,10 +3,10 @@
 
 package app.tivi.gradle.task
 
-import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
@@ -26,16 +26,17 @@ abstract class AssetCopyTask : DefaultTask() {
     abstract val inputFile: RegularFileProperty
 
     @get:Input
-    abstract val targetFileName: Property<String>
+    abstract val outputFilename: Property<String>
 
     @TaskAction
     fun action() {
-        inputFile.get().asFile.copyTo(
-            target = File(
-                outputDirectory.get().asFile,
-                targetFileName.get(),
-            ),
-            overwrite = true,
-        )
+        val input = inputFile.get().asFile
+        val output = outputDirectory.get()
+            .file(outputFilename.get())
+            .asFile
+
+        logger.log(LogLevel.INFO, "Copying ${input.canonicalPath} to ${output.canonicalPath}")
+
+        input.copyTo(target = output, overwrite = true)
     }
 }

@@ -120,7 +120,6 @@
 			buildConfigurationList = 833349422A4CCCEF00F464FE /* Build configuration list for PBXNativeTarget "Tivi" */;
 			buildPhases = (
 				833349452A4CCD9F00F464FE /* Build :shared KMP library */,
-				83BB64FC2AB2E4DB0075A2CB /* Generate Licensee report */,
 				833349302A4CCCEE00F464FE /* Sources */,
 				833349312A4CCCEE00F464FE /* Frameworks */,
 				38137D782A584D5300A687CC /* Update Settings version */,
@@ -252,24 +251,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\" || true\n";
-		};
-		83BB64FC2AB2E4DB0075A2CB /* Generate Licensee report */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Generate Licensee report";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/../..\"\n\nMODULE=\"qa\"\nif [ \"$CONFIGURATION\" = \"Prod\" ]; then\n  MODULE=\"prod\"\nfi\n\n# Run licensee\n# TODO: Run the correct target for the current build\n./gradlew :shared:$MODULE:licenseeIosArm64\n\n# Copy the JSON output to the app bundle\ncp \\\n  \"shared/$MODULE/build/reports/licensee/iosArm64/artifacts.json\" \\\n  \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/licenses.json\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
