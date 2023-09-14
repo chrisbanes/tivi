@@ -8,7 +8,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -54,7 +53,6 @@ import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
-import com.moriatsushi.insetsx.systemBars
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -117,7 +115,6 @@ fun <E : Entry> EntryGrid(
                 )
             }
         },
-        contentWindowInsets = WindowInsets.systemBars,
         modifier = modifier,
     ) { paddingValues ->
         val refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading
@@ -206,7 +203,7 @@ private fun EntryGridAppBar(
                 )
             }
         },
-        windowInsets = WindowInsets.systemBars
+        windowInsets = TopAppBarDefaults.windowInsets
             .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
         modifier = modifier,
         scrollBehavior = scrollBehavior,

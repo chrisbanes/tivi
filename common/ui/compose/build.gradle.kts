@@ -30,7 +30,6 @@ kotlin {
                 api(libs.compose.material3.windowsizeclass)
                 implementation(compose.animation)
 
-                api(libs.insetsx)
                 implementation(libs.uuid)
 
                 implementation(libs.paging.compose)

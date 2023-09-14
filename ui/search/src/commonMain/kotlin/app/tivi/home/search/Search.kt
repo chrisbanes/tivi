@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -53,8 +55,6 @@ import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.models.TiviShow
 import app.tivi.screens.SearchScreen
-import com.moriatsushi.insetsx.statusBarsPadding
-import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -129,7 +129,7 @@ internal fun Search(
                 Box(
                     Modifier
                         .padding(horizontal = Layout.bodyMargin, vertical = 8.dp)
-                        .statusBarsPadding()
+                        .windowInsetsPadding(WindowInsets.statusBars)
                         .bodyWidth(),
                 ) {
                     var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
@@ -157,7 +157,6 @@ internal fun Search(
                 )
             }
         },
-        contentWindowInsets = WindowInsets.systemBars,
         modifier = modifier,
     ) { padding ->
         if (state.searchResults.isEmpty() && !state.refreshing) {
