@@ -81,7 +81,7 @@ crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.2"
 tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.0.3"
 
 google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.3.0"
-google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.4.1"
+google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.4.2"
 google-firebase-perf = "com.google.firebase:firebase-perf-ktx:20.4.1"
 
 imageloader = "io.github.qdsfdhvh:image-loader:1.6.7"
