@@ -5,17 +5,16 @@ package app.tivi.common.compose
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.moriatsushi.insetsx.systemBars
 
 object Layout {
     val bodyMargin: Dp
@@ -42,9 +41,8 @@ object Layout {
 
 fun Modifier.bodyWidth() = fillMaxWidth()
     .composed {
-        padding(
+        windowInsetsPadding(
             WindowInsets.systemBars
-                .only(WindowInsetsSides.Horizontal)
-                .asPaddingValues(),
+                .only(WindowInsetsSides.Horizontal),
         )
     }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -76,7 +75,6 @@ import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.screens.ShowSeasonsScreen
-import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -205,7 +203,6 @@ internal fun ShowSeasons(
                 )
             }
         },
-        contentWindowInsets = WindowInsets.systemBars,
         modifier = modifier
             .testTag("show_seasons")
             .fillMaxSize(),

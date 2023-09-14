@@ -12,10 +12,14 @@ import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Subscriptions
@@ -24,7 +28,6 @@ import androidx.compose.material.icons.filled.Weekend
 import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -32,6 +35,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -51,10 +55,6 @@ import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
 import app.tivi.screens.SearchScreen
 import app.tivi.screens.UpNextScreen
-import com.moriatsushi.insetsx.navigationBars
-import com.moriatsushi.insetsx.safeContentPadding
-import com.moriatsushi.insetsx.statusBars
-import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.backstack.isAtRoot
 import com.slack.circuit.foundation.NavigableCircuitContent
@@ -99,7 +99,8 @@ internal fun Home(
             }
         },
         // We let content handle the status bar
-        contentWindowInsets = WindowInsets.systemBars.exclude(WindowInsets.statusBars),
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets
+            .exclude(WindowInsets.statusBars),
         modifier = modifier,
     ) { paddingValues ->
         Row(
@@ -206,12 +207,11 @@ private fun HomeNavigationDrawer(
 ) {
     Column(
         modifier = modifier
-            .safeContentPadding()
+            .windowInsetsPadding(WindowInsets.safeContent)
             .padding(16.dp)
             .widthIn(max = 280.dp),
     ) {
         for (item in navigationItems) {
-            @OptIn(ExperimentalMaterial3Api::class)
             NavigationDrawerItem(
                 icon = {
                     Icon(

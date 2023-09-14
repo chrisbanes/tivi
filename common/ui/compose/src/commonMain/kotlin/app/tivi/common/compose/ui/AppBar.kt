@@ -7,7 +7,6 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.tivi.data.models.TraktUser
-import com.moriatsushi.insetsx.systemBars
 
 /**
  * A wrapper around [TopAppBar] which allows some [bottomContent] below the bar, but within the same
@@ -60,7 +58,7 @@ fun TopAppBarWithBottomContent(
                     titleContentColor = LocalContentColor.current,
                     actionIconContentColor = LocalContentColor.current,
                 ),
-                windowInsets = WindowInsets.systemBars
+                windowInsets = TopAppBarDefaults.windowInsets
                     .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
             )
             bottomContent?.invoke(this)
@@ -82,7 +80,7 @@ fun TiviRootScreenAppBar(
 ) {
     TopAppBar(
         modifier = modifier,
-        windowInsets = WindowInsets.systemBars
+        windowInsets = TopAppBarDefaults.windowInsets
             .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
         scrollBehavior = scrollBehavior,
         title = { Text(text = title) },

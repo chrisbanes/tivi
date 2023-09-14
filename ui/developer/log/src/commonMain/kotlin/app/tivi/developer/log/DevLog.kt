@@ -4,7 +4,6 @@
 package app.tivi.developer.log
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
@@ -20,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import app.tivi.common.compose.LocalStrings
 import app.tivi.screens.DevLogScreen
 import app.tivi.util.Severity
-import com.moriatsushi.insetsx.systemBars
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -72,11 +71,10 @@ internal fun DevLog(
                         )
                     }
                 },
-                windowInsets = WindowInsets.systemBars
+                windowInsets = TopAppBarDefaults.windowInsets
                     .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
             )
         },
-        contentWindowInsets = WindowInsets.systemBars,
         modifier = modifier,
     ) { contentPadding ->
         LazyColumn(
