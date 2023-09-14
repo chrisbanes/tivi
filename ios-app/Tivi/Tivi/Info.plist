@@ -10,6 +10,8 @@
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSMinimumSystemVersion</key>
+	<string>12.0</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>inter-light.ttf</string>
