@@ -155,7 +155,7 @@ val EnTiviStrings = TiviStrings(
     settingsIgnoreSpecialsTitle = "Ignore specials",
     settingsIgnoreSpecialsSummary = "Automatically ignore specials",
     settingsOpenSource = "Open source licenses",
-    settingsOpenSourceSummary = "Tivi 💞open source",
+    settingsOpenSourceSummary = "Tivi 💞 open source",
     settingsThemeTitle = "Theme",
     settingsTitle = "Settings",
     settingsUiCategoryTitle = "User Interface",
@@ -175,7 +175,5 @@ val EnTiviStrings = TiviStrings(
     upnextFilterFollowedShowsOnlyTitle = "Followed only",
     upnextTitle = "Up Next",
     viewPrivacyPolicy = "View Privacy Policy",
-    viewOpenSourceLicenses = "View Open Source Licenses",
-    openSourceLicensesTitle = "Open Source Licenses",
     watchedShowsTitle = "Watched",
 )

@@ -5,7 +5,7 @@
 plugins {
     id("app.tivi.android.library")
     id("app.tivi.kotlin.multiplatform")
-    kotlin("plugin.serialization") version "1.9.10"
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -13,13 +13,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(projects.core.base)
+                api(projects.core.logging.api)
                 implementation(libs.kotlinx.serialization)
-            }
-        }
-
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.androidx.core)
             }
         }
     }

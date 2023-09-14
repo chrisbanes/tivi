@@ -6,5 +6,5 @@ package app.tivi.data.licenses.fetcher
 import app.tivi.data.licenses.LicenseItem
 
 interface LicensesFetcher {
-    suspend fun fetch(): List<LicenseItem>
+    suspend operator fun invoke(): List<LicenseItem>
 }

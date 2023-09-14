@@ -14,6 +14,6 @@ class FetchLicensesList(
 ) : Interactor<Unit, List<LicenseItem>>() {
 
     override suspend fun doWork(params: Unit): List<LicenseItem> {
-        return licensesStore.getOpenSourceItemList()
+        return licensesStore.getLicenses()
     }
 }

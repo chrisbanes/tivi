@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -87,12 +88,17 @@ fun Preference(
 }
 
 @Composable
-fun PreferenceHeader(title: String) {
-    Surface {
+fun PreferenceHeader(
+    title: String,
+    modifier: Modifier = Modifier,
+    tonalElevation: Dp = 0.dp,
+) {
+    Surface(modifier = modifier, tonalElevation = tonalElevation) {
         Text(
             text = title,
             style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 4.dp),
         )
     }
 }

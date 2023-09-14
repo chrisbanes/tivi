@@ -4,19 +4,17 @@
 package app.tivi.settings.licenses
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import app.tivi.data.licenses.LicenseItem
+import androidx.compose.runtime.produceState
 import app.tivi.domain.interactors.FetchLicensesList
 import app.tivi.screens.LicensesScreen
 import app.tivi.screens.UrlScreen
+import app.tivi.util.AppCoroutineDispatchers
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -38,26 +36,40 @@ class LicensesUiPresenterFactory(
 class LicensesPresenter(
     @Assisted private val navigator: Navigator,
     private val fetchLicensesList: FetchLicensesList,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Presenter<LicensesUiState> {
 
     @Composable
     override fun present(): LicensesUiState {
-        var licenseItemList by remember { mutableStateOf(emptyList<LicenseItem>()) }
+        val licenseItemList by produceState(emptyList()) {
+            val list = fetchLicensesList(Unit).getOrDefault(emptyList())
 
-        LaunchedEffect(Unit) {
-            val licenseList = fetchLicensesList(Unit)
-            licenseItemList = licenseList.getOrDefault(emptyList())
+            value = withContext(dispatchers.computation) {
+                list.groupBy { it.groupId }
+                    .map { (groupId, artifacts) ->
+                        LicenseGroup(
+                            id = groupId,
+                            artifacts = artifacts.sortedBy { it.artifactId },
+                        )
+                    }
+                    .sortedBy { it.id }
+            }
         }
 
         fun eventSink(event: LicensesUiEvent) {
             when (event) {
                 LicensesUiEvent.NavigateUp -> navigator.pop()
-                is LicensesUiEvent.NavigateRepository -> navigator.goTo(UrlScreen(event.url))
+                is LicensesUiEvent.NavigateRepository -> {
+                    val url = event.artifact.scm?.url
+                    if (!url.isNullOrEmpty()) {
+                        navigator.goTo(UrlScreen(url))
+                    }
+                }
             }
         }
 
         return LicensesUiState(
-            licenseItemList = licenseItemList,
+            licenses = licenseItemList,
             eventSink = ::eventSink,
         )
     }

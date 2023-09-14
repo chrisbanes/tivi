@@ -12,5 +12,5 @@ actual interface LicenseDataPlatformComponent {
 
     @ApplicationScope
     @Provides
-    fun provideLicensesFetcher(fetcher: AndroidLicensesFetcherImpl): LicensesFetcher = fetcher
+    fun bindLicensesFetcher(fetcher: AndroidLicensesFetcherImpl): LicensesFetcher = fetcher
 }
