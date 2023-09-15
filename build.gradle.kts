@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
-import com.android.build.gradle.internal.lint.AndroidLintAnalysisTask
-import com.android.build.gradle.internal.lint.AndroidLintTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
@@ -23,18 +21,6 @@ plugins {
 }
 
 allprojects {
-    // Workaround for https://issuetracker.google.com/issues/268961156
-    tasks.withType<AndroidLintTask> {
-        tasks.findByName("kspTestKotlin")?.let {
-            dependsOn(it)
-        }
-    }
-    tasks.withType<AndroidLintAnalysisTask> {
-        tasks.findByName("kspTestKotlin")?.let {
-            dependsOn(it)
-        }
-    }
-
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions {
             // Treat all Kotlin warnings as errors
