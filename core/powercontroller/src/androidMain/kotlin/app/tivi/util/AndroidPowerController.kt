@@ -3,11 +3,10 @@
 
 package app.tivi.util
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.net.ConnectivityManager
-import android.os.Build
 import android.os.PowerManager
-import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
 import app.tivi.settings.TiviPreferences
 import me.tatarka.inject.annotations.Inject
@@ -29,14 +28,14 @@ class AndroidPowerController(
             SaveData.Enabled(SaveDataReason.SYSTEM_POWER_SAVER)
         }
 
-        Build.VERSION.SDK_INT >= 24 && isBackgroundDataRestricted() -> {
+        isBackgroundDataRestricted() -> {
             SaveData.Enabled(SaveDataReason.SYSTEM_DATA_SAVER)
         }
 
         else -> SaveData.Disabled
     }
 
-    @RequiresApi(24)
+    @SuppressLint("NewApi")
     private fun isBackgroundDataRestricted(): Boolean {
         return connectivityManager.restrictBackgroundStatus ==
             ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED

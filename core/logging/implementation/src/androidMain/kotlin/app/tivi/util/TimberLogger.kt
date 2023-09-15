@@ -3,7 +3,6 @@
 
 package app.tivi.util
 
-import android.os.Build
 import android.util.Log
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
@@ -76,10 +75,7 @@ private class TiviDebugTree : Timber.DebugTree() {
         }
         tag = tag.substring(tag.lastIndexOf('.') + 1)
         // Tag length limit was removed in API 24.
-        return when {
-            Build.VERSION.SDK_INT >= 24 || tag.length <= MAX_TAG_LENGTH -> tag
-            else -> tag.substring(0, MAX_TAG_LENGTH)
-        }
+        return tag
     }
 
     companion object {
