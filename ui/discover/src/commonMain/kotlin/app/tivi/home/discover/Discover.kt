@@ -6,6 +6,7 @@
 package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,6 +37,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -45,10 +48,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -61,19 +68,25 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.rememberTiviSnapFlingBehavior
+import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.BackdropCard
 import app.tivi.common.compose.ui.ParallaxAlignment
-import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
+import app.tivi.common.compose.ui.drawForegroundGradientScrim
 import app.tivi.data.compoundmodels.EntryWithShow
+import app.tivi.data.imagemodels.EpisodeImageModel
+import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
+import app.tivi.data.models.ImageType
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.DiscoverScreen
+import com.seiko.imageloader.model.ImageResult
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
@@ -218,7 +231,8 @@ internal fun Discover(
                             modifier = Modifier
                                 .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
                                 .animateItemPlacement()
-                                .fillMaxWidth(),
+                                .fillMaxWidth()
+                                .aspectRatio(16 / 9f),
                         )
                     }
 
@@ -290,39 +304,73 @@ private fun NextEpisodeToWatch(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Card(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        Column(Modifier.padding(Layout.gutter * 2)) {
-            Header(
-                title = LocalStrings.current.discoverKeepWatchingTitle,
-                modifier = Modifier.padding(bottom = 16.dp),
-            )
+    TiviTheme(useDarkColors = true) {
+        OutlinedCard(
+            onClick = onClick,
+            modifier = modifier,
+            border = BorderStroke(3.dp, MaterialTheme.colorScheme.outline),
+        ) {
+            Box {
+                var model: Any by remember { mutableStateOf(episode.asImageModel()) }
 
-            Row(Modifier.fillMaxWidth()) {
-                PosterCard(
-                    show = show,
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .width(64.dp)
-                        .aspectRatio(2 / 3f),
+                AsyncImage(
+                    model = model,
+                    onAction = { state ->
+                        if (state is ImageResult.Error && model is EpisodeImageModel) {
+                            // If the episode backdrop request failed, fallback to the show backdrop
+                            model = show.asImageModel(ImageType.BACKDROP)
+                        }
+                    },
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
                 )
 
-                Column(Modifier.align(Alignment.CenterVertically)) {
-                    val textCreator = LocalTiviTextCreator.current
-                    Text(
-                        text = textCreator.seasonEpisodeTitleText(season, episode),
-                        style = MaterialTheme.typography.labelMedium,
-                    )
+                Spacer(
+                    Modifier.matchParentSize()
+                        .drawForegroundGradientScrim(
+                            color = MaterialTheme.colorScheme.surface,
+                            decay = 1.5f,
+                        ),
+                )
 
-                    Spacer(Modifier.height(4.dp))
+                Column(
+                    Modifier
+                        .padding(Layout.gutter),
+                ) {
+                    Card {
+                        Text(
+                            text = LocalStrings.current.discoverKeepWatchingTitle,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier
+                                .padding(horizontal = Layout.gutter, vertical = 4.dp),
+                        )
+                    }
 
-                    Text(
-                        text = episode.title
-                            ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
+                    Spacer(Modifier.weight(1f))
+
+                    Column(
+                        Modifier
+                            .padding(Layout.gutter),
+                    ) {
+                        Text(
+                            text = show.title.orEmpty(),
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(1.dp),
+                        )
+
+                        val textCreator = LocalTiviTextCreator.current
+                        Text(
+                            text = textCreator.seasonEpisodeTitleText(season, episode),
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+
+                        Text(
+                            text = episode.title
+                                ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                    }
                 }
             }
         }
