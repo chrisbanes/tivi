@@ -59,6 +59,13 @@ platform :ios do
     )
   end
 
+  lane :lint_fix do
+    swiftlint(
+      mode: :fix,
+      path: "ios-app/Tivi",
+    )
+  end
+
   private_lane :build_tivi do |options|
     setup_ci if is_ci
 

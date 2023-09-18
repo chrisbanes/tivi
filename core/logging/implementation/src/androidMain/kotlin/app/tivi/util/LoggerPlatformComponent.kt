@@ -21,4 +21,9 @@ actual interface LoggerPlatformComponent {
     @Provides
     @IntoSet
     fun provideCrashKiOSInitializer(): AppInitializer = AndroidCrashKiOSInitializer
+
+    @Provides
+    fun bindSetCrashReportingEnabledAction(): SetCrashReportingEnabledAction {
+        return AndroidSetCrashReportingEnabledAction
+    }
 }

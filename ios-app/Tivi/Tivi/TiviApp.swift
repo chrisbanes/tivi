@@ -8,6 +8,7 @@
 import AppAuth
 import FirebaseAnalytics
 import FirebaseCore
+import FirebaseCrashlytics
 import SwiftUI
 import TiviKt
 
@@ -63,7 +64,7 @@ private func createApplicationComponent(
     appDelegate: AppDelegate
 ) -> IosApplicationComponent {
     return IosApplicationComponent.companion.create(
-        analyticsProvider: { FirebaseAnalytics() },
+        analytics: FirebaseAnalytics(),
         traktRefreshTokenActionProvider: { traktOAuthInfo in
             IosTraktRefreshTokenAction(traktOAuthInfo: traktOAuthInfo)
         },
@@ -75,8 +76,15 @@ private func createApplicationComponent(
                 },
                 traktOAuthInfo: traktOAuthInfo
             )
-        }
+        },
+        setCrashReportingEnabledAction: IosSetCrashReportingEnabledAction()
     )
+}
+
+private class IosSetCrashReportingEnabledAction: ImplementationSetCrashReportingEnabledAction {
+    func invoke(enabled: Bool) {
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(enabled)
+    }
 }
 
 extension UIApplication {
@@ -129,5 +137,9 @@ class FirebaseAnalytics: TiviAnalytics {
         }
 
         Analytics.logEvent(AnalyticsEventSelectContent, parameters: params)
+    }
+
+    func setEnabled(enabled: Bool) {
+        Analytics.setAnalyticsCollectionEnabled(enabled)
     }
 }

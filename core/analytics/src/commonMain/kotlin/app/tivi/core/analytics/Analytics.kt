@@ -13,4 +13,6 @@ interface Analytics {
         name: String,
         arguments: Map<String, *>? = null,
     )
+
+    fun setEnabled(enabled: Boolean)
 }

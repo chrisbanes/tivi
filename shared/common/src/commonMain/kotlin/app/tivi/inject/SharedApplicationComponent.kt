@@ -27,9 +27,11 @@ import app.tivi.trakt.TraktComponent
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.LoggerComponent
 import app.tivi.util.PowerControllerComponent
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.SupervisorJob
 import me.tatarka.inject.annotations.Provides
 
 expect interface SharedPlatformApplicationComponent
@@ -70,4 +72,10 @@ interface SharedApplicationComponent :
         computation = Dispatchers.Default,
         main = Dispatchers.Main,
     )
+
+    @ApplicationScope
+    @Provides
+    fun provideApplicationCoroutineScope(
+        dispatchers: AppCoroutineDispatchers,
+    ): ApplicationCoroutineScope = CoroutineScope(dispatchers.main + SupervisorJob())
 }

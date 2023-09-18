@@ -8,15 +8,17 @@ import app.tivi.core.analytics.Analytics
 import app.tivi.data.traktauth.TraktLoginAction
 import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.data.traktauth.TraktRefreshTokenAction
+import app.tivi.util.SetCrashReportingEnabledAction
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
 @Component
 @ApplicationScope
 abstract class IosApplicationComponent(
-    override val analyticsProvider: () -> Analytics,
+    override val analytics: Analytics,
     override val traktRefreshTokenActionProvider: (TraktOAuthInfo) -> TraktRefreshTokenAction,
     private val traktLoginActionProvider: (TraktOAuthInfo) -> TraktLoginAction,
+    override val setCrashReportingEnabledAction: SetCrashReportingEnabledAction,
 ) : SharedApplicationComponent, QaApplicationComponent {
 
     abstract val initializers: AppInitializers

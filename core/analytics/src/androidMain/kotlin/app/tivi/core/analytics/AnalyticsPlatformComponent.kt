@@ -1,4 +1,4 @@
-// Copyright 2023, Christopher Banes and the Tivi project contributors
+// Copyright 2022, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package app.tivi.core.analytics
@@ -8,10 +8,8 @@ import me.tatarka.inject.annotations.Provides
 
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
-actual interface AnalyticsComponent {
-    val analyticsProvider: () -> Analytics
-
-    @Provides
+actual interface AnalyticsPlatformComponent {
     @ApplicationScope
-    fun provideAnalytics(): Analytics = analyticsProvider()
+    @Provides
+    fun provideTiviFirebaseAnalytics(bind: TiviFirebaseAnalytics): Analytics = bind
 }

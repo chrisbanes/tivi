@@ -37,4 +37,8 @@ class TiviFirebaseAnalytics(
             // Ignore, Firebase might not be setup for this project
         }
     }
+
+    override fun setEnabled(enabled: Boolean) {
+        firebaseAnalytics.setAnalyticsCollectionEnabled(enabled)
+    }
 }
