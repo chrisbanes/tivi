@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.Snapshot
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
@@ -139,11 +140,15 @@ class DiscoverPresenter(
                 DiscoverUiEvent.OpenPopularShows -> navigator.goTo(PopularShowsScreen)
                 DiscoverUiEvent.OpenRecommendedShows -> navigator.goTo(RecommendedShowsScreen)
                 is DiscoverUiEvent.OpenShowDetails -> {
-                    navigator.goTo(ShowDetailsScreen(event.showId))
-                    if (event.seasonId != null) {
-                        navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
-                        if (event.episodeId != null) {
-                            navigator.goTo(EpisodeDetailsScreen(event.episodeId))
+                    // As we pushing a number of different screens onto the back stack,
+                    // we run it in a single snapshot to avoid unnecessary work
+                    Snapshot.withMutableSnapshot {
+                        navigator.goTo(ShowDetailsScreen(event.showId))
+                        if (event.seasonId != null) {
+                            navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
+                            if (event.episodeId != null) {
+                                navigator.goTo(EpisodeDetailsScreen(event.episodeId))
+                            }
                         }
                     }
                 }
