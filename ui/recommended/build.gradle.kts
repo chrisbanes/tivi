@@ -22,6 +22,7 @@ kotlin {
 
                 api(projects.common.ui.screens)
                 api(libs.circuit.foundation)
+                implementation(libs.circuit.retained)
 
                 implementation(libs.paging.compose)
 
