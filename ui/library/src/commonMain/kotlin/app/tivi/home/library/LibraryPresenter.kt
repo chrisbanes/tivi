@@ -31,6 +31,7 @@ import app.tivi.screens.ShowDetailsScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
 import app.tivi.util.onException
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -81,15 +82,13 @@ class LibraryPresenter(
         val loading by updateLibraryShows.inProgress.collectAsState(false)
         val message by uiMessageManager.message.collectAsState(null)
 
-        val user by observeUserDetails.flow.collectAsState(null)
-        val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
+        val user by observeUserDetails.flow.collectAsRetainedState(null)
+        val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
 
-        val includeWatchedShows by produceState(false, preferences) {
-            preferences.observeLibraryWatchedActive().collect { value = it }
-        }
-        val includeFollowedShows by produceState(false, preferences) {
-            preferences.observeLibraryFollowedActive().collect { value = it }
-        }
+        val includeWatchedShows by remember { preferences.observeLibraryWatchedActive() }
+            .collectAsRetainedState(false)
+        val includeFollowedShows by remember { preferences.observeLibraryFollowedActive() }
+            .collectAsRetainedState(false)
 
         fun eventSink(event: LibraryUiEvent) {
             when (event) {

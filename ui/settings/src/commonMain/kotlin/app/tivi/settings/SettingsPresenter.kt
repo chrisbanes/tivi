@@ -4,7 +4,6 @@
 package app.tivi.settings
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import app.tivi.app.ApplicationInfo
@@ -13,6 +12,7 @@ import app.tivi.screens.DevSettingsScreen
 import app.tivi.screens.LicensesScreen
 import app.tivi.screens.SettingsScreen
 import app.tivi.screens.UrlScreen
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -44,16 +44,16 @@ class SettingsPresenter(
     @Composable
     override fun present(): SettingsUiState {
         val theme by remember { preferences.observeTheme() }
-            .collectAsState(TiviPreferences.Theme.SYSTEM)
+            .collectAsRetainedState(TiviPreferences.Theme.SYSTEM)
 
         val useDynamicColors by remember { preferences.observeUseDynamicColors() }
-            .collectAsState(false)
+            .collectAsRetainedState(false)
 
         val useLessData by remember { preferences.observeUseLessData() }
-            .collectAsState(false)
+            .collectAsRetainedState(false)
 
         val ignoreSpecials by remember { preferences.observeIgnoreSpecials() }
-            .collectAsState(true)
+            .collectAsRetainedState(true)
 
         fun eventSink(event: SettingsUiEvent) {
             when (event) {

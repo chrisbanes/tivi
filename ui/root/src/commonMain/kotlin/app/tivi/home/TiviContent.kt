@@ -31,6 +31,8 @@ import com.seiko.imageloader.LocalImageLoader
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
+import com.slack.circuit.retained.LocalRetainedStateRegistry
+import com.slack.circuit.retained.continuityRetainedStateRegistry
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.screen.Screen
 import kotlinx.coroutines.CoroutineScope
@@ -85,6 +87,7 @@ fun TiviContent(
             LocalTiviDateFormatter provides tiviDateFormatter,
             LocalTiviTextCreator provides tiviTextCreator,
             LocalWindowSizeClass provides calculateWindowSizeClass(),
+            LocalRetainedStateRegistry provides continuityRetainedStateRegistry(),
         ) {
             CircuitCompositionLocals(circuit) {
                 TiviTheme(

@@ -33,6 +33,7 @@ import app.tivi.screens.UpNextScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
 import app.tivi.util.onException
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -83,12 +84,11 @@ class UpNextPresenter(
         val loading by updateUpNextEpisodes.inProgress.collectAsState(false)
         val message by uiMessageManager.message.collectAsState(null)
 
-        val user by observeUserDetails.flow.collectAsState(null)
-        val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
+        val user by observeUserDetails.flow.collectAsRetainedState(null)
+        val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
 
-        val followedShowsOnly by produceState(false, preferences) {
-            preferences.observeUpNextFollowedOnly().collect { value = it }
-        }
+        val followedShowsOnly by remember { preferences.observeUpNextFollowedOnly() }
+            .collectAsRetainedState(false)
 
         fun eventSink(event: UpNextUiEvent) {
             when (event) {
