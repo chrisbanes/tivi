@@ -11,10 +11,10 @@ import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 fun Project.configureIosLicensesTasks() {
-    val xcodeTargetPlatform = providers.environmentVariable("PLATFORM_NAME")
-    val xcodeTargetArchs = providers.environmentVariable("ARCHS").map { arch ->
-        arch.split(",", " ").filter { it.isNotBlank() }
-    }
+    val xcodeTargetPlatform = providers.environmentVariable("PLATFORM_NAME").orElse("")
+    val xcodeTargetArchs = providers.environmentVariable("ARCHS")
+        .map { arch -> arch.split(",", " ").filter { it.isNotBlank() } }
+        .orElse(emptyList())
 
     tasks.register<AssetCopyTask>("copyLicenseeOutputToIosBundle") {
         val targetName = xcodeTargetPlatform.zip(xcodeTargetArchs, ::Pair)
@@ -22,8 +22,14 @@ fun Project.configureIosLicensesTasks() {
                 determineIosKonanTargetsFromEnv(targetPlatform, targetArchs)
                     .mapTo(HashSet()) { it.presetName }
             }
-            .map { it.first() }
+            .map { it.firstOrNull().orEmpty() }
             .get()
+
+        if (targetName.isEmpty()) {
+            // If we don't have a target, disable the test and skip the rest of setup
+            enabled = false
+            return@register
+        }
 
         inputFile.set(
             layout.buildDirectory.file("reports/licensee/$targetName/artifacts.json"),
@@ -49,7 +55,14 @@ fun Project.configureIosLicensesTasks() {
     }
 }
 
-internal fun determineIosKonanTargetsFromEnv(platform: String, archs: List<String>): List<KonanTarget> {
+internal fun determineIosKonanTargetsFromEnv(
+    platform: String,
+    archs: List<String>
+): List<KonanTarget> {
+    if (platform.isEmpty() || archs.isEmpty()) {
+        return emptyList()
+    }
+
     val targets: MutableSet<KonanTarget> = mutableSetOf()
 
     when {
