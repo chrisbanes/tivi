@@ -57,7 +57,7 @@ fun Project.configureIosLicensesTasks() {
 
 internal fun determineIosKonanTargetsFromEnv(
     platform: String,
-    archs: List<String>
+    archs: List<String>,
 ): List<KonanTarget> {
     if (platform.isEmpty() || archs.isEmpty()) {
         return emptyList()
