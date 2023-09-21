@@ -21,7 +21,9 @@ kotlin {
                 implementation(projects.common.ui.compose)
                 implementation(projects.data.licenses) // This should really be used through an interactor
                 api(projects.common.ui.screens)
+
                 api(libs.circuit.foundation)
+                implementation(libs.circuit.retained)
 
                 implementation(compose.material3)
                 implementation(compose.animation)

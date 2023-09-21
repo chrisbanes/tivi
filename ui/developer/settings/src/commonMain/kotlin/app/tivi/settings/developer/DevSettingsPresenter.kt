@@ -4,12 +4,13 @@
 package app.tivi.settings.developer
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import app.tivi.screens.DevLogScreen
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.toggle
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -39,7 +40,8 @@ class DevSettingsPresenter(
 
     @Composable
     override fun present(): DevSettingsUiState {
-        val hideArtwork by preferences.observeDeveloperHideArtwork().collectAsState(false)
+        val hideArtwork by remember { preferences.observeDeveloperHideArtwork() }
+            .collectAsRetainedState(false)
 
         fun eventSink(event: DevSettingsUiEvent) {
             when (event) {

@@ -20,6 +20,7 @@ import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.util.Logger
 import app.tivi.util.onException
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -65,7 +66,7 @@ class EpisodeTrackPresenter(
         var selectedDate by remember { mutableStateOf(now.date) }
         var selectedTime by remember { mutableStateOf(now.time) }
 
-        val episodeDetails by observeEpisodeDetails.flow.collectAsState(initial = null)
+        val episodeDetails by observeEpisodeDetails.flow.collectAsRetainedState(initial = null)
 
         val refreshing by updateEpisodeDetails.inProgress.collectAsState(initial = false)
         val submitting by addEpisodeWatch.inProgress.collectAsState(initial = false)

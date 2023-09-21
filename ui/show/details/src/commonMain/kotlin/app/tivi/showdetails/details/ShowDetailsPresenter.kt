@@ -33,6 +33,7 @@ import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
 import app.tivi.util.onException
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -82,8 +83,8 @@ class ShowDetailsPresenter(
 
         val uiMessageManager = remember { UiMessageManager() }
 
-        val isFollowed by observeShowFollowStatus.flow.collectAsState(false)
-        val show by observeShowDetails.flow.collectAsState(TiviShow.EMPTY_SHOW)
+        val isFollowed by observeShowFollowStatus.flow.collectAsRetainedState(false)
+        val show by observeShowDetails.flow.collectAsRetainedState(TiviShow.EMPTY_SHOW)
         val refreshing by produceState(false) {
             combine(
                 updateShowDetails.inProgress,
@@ -92,10 +93,10 @@ class ShowDetailsPresenter(
                 transform = { values -> values.any { it } },
             ).collect { value = it }
         }
-        val relatedShows by observeRelatedShows.flow.collectAsState(emptyList())
-        val nextEpisode by observeNextEpisodeToWatch.flow.collectAsState(null)
-        val seasons by observeShowSeasons.flow.collectAsState(emptyList())
-        val stats by observeShowViewStats.flow.collectAsState(null)
+        val relatedShows by observeRelatedShows.flow.collectAsRetainedState(emptyList())
+        val nextEpisode by observeNextEpisodeToWatch.flow.collectAsRetainedState(null)
+        val seasons by observeShowSeasons.flow.collectAsRetainedState(emptyList())
+        val stats by observeShowViewStats.flow.collectAsRetainedState(null)
         val message by uiMessageManager.message.collectAsState(null)
 
         fun eventSink(event: ShowDetailsUiEvent) {

@@ -20,6 +20,7 @@ import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.util.Logger
 import app.tivi.util.onException
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -61,8 +62,8 @@ class EpisodeDetailsPresenter(
         val refreshing by updateEpisodeDetails.inProgress.collectAsState(false)
         val message by uiMessageManager.message.collectAsState(null)
 
-        val episodeDetails by observeEpisodeDetails.flow.collectAsState(null)
-        val episodeWatches by observeEpisodeWatches.flow.collectAsState(emptyList())
+        val episodeDetails by observeEpisodeDetails.flow.collectAsRetainedState(null)
+        val episodeWatches by observeEpisodeWatches.flow.collectAsRetainedState(emptyList())
 
         fun eventSink(event: EpisodeDetailsUiEvent) {
             when (event) {
