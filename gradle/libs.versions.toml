@@ -60,7 +60,7 @@ androidx-test-core = "androidx.test:core-ktx:1.5.0"
 androidx-test-junit = "androidx.test.ext:junit-ktx:1.1.5"
 androidx-test-rules = "androidx.test:rules:1.5.0"
 androidx-test-runner = "androidx.test:runner:1.5.2"
-androidx-benchmark-macro = "androidx.benchmark:benchmark-macro-junit4:1.2.0-beta05"
+androidx-benchmark-macro = "androidx.benchmark:benchmark-macro-junit4:1.2.0-rc01"
 androidx-uiautomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 
 androidx-work-runtime = "androidx.work:work-runtime-ktx:2.8.1"
@@ -72,6 +72,7 @@ chucker-library = { module = "com.github.chuckerteam.chucker:library", version.r
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
 circuit-gestureNavigation = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
 circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
+circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
 circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
 
 compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.3.1"
