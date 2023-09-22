@@ -77,7 +77,7 @@ circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = 
 
 compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.3.1"
 
-crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.3"
+crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.4"
 
 tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.0.3"
 
