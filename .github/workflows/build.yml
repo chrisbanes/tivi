@@ -19,7 +19,7 @@ jobs:
       ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD }}
 
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
 
       - name: set up JDK
         uses: actions/setup-java@v3
@@ -63,7 +63,7 @@ jobs:
         shell: bash
         run: echo "ORG_GRADLE_PROJECT_TIVI_VERSIONCODE=$(( $GITHUB_RUN_NUMBER + 10000 ))" >> $GITHUB_ENV
 
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
 
       - name: set up JDK
         uses: actions/setup-java@v3
@@ -139,7 +139,7 @@ jobs:
       ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD }}
 
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
 
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
@@ -194,7 +194,7 @@ jobs:
       FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
 
       - name: set up JDK
         uses: actions/setup-java@v3
@@ -257,7 +257,7 @@ jobs:
       FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
 
       - name: set up JDK
         uses: actions/setup-java@v3
@@ -319,7 +319,7 @@ jobs:
       ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD }}
 
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
 
       - name: set up JDK
         uses: actions/setup-java@v3
@@ -364,7 +364,7 @@ jobs:
       MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
 
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
 
       - uses: ruby/setup-ruby@v1
         with:
