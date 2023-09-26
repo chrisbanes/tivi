@@ -5,10 +5,10 @@ package app.tivi.home.discover
 
 import androidx.compose.runtime.Immutable
 import app.tivi.common.compose.UiMessage
-import app.tivi.data.compoundmodels.EpisodeWithSeasonWithShow
 import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import app.tivi.data.compoundmodels.TrendingEntryWithShow
+import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.TraktUser
 import app.tivi.data.traktauth.TraktAuthState
 import com.slack.circuit.runtime.CircuitUiEvent
@@ -24,7 +24,7 @@ data class DiscoverUiState(
     val popularRefreshing: Boolean = false,
     val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
     val recommendedRefreshing: Boolean = false,
-    val nextEpisodeWithShowToWatch: EpisodeWithSeasonWithShow? = null,
+    val nextEpisodeWithShowToWatch: UpNextEntry? = null,
     val message: UiMessage? = null,
     val eventSink: (DiscoverUiEvent) -> Unit,
 ) : CircuitUiState {
