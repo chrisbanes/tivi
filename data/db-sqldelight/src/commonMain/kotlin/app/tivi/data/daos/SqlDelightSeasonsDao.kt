@@ -15,8 +15,6 @@ import app.tivi.data.models.Season
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
@@ -69,44 +67,92 @@ class SqlDelightSeasonsDao(
     }
 
     override fun seasonsWithEpisodesForShowId(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
-        return db.seasonsQueries.seasonsForShowId(showId, ::Season)
+        return db.seasonsQueries.seasonsWithEpisodesWithWatchesForShowId(showId)
             .asFlow()
             .mapToList(dispatchers.io)
-            // This should be flatMapLatest
-            .flatMapLatest { seasons ->
-                val flows = seasons.map { season ->
-                    db.episodesQueries.episodesWithSeasonId(season.id, ::Episode)
-                        .asFlow()
-                        .mapToList(dispatchers.io)
-                        .map { episodes -> season to episodes }
-                        .flatMapLatest { (season, episodes) ->
-                            val watchFlows = episodes.map { episode ->
-                                db.episode_watch_entriesQueries.watchesForEpisodeId(
-                                    episodeId = episode.id,
-                                    mapper = ::EpisodeWatchEntry,
-                                )
-                                    .asFlow()
-                                    .mapToList(dispatchers.io)
-                                    .map { watches -> episode to watches }
-                            }
-
-                            combine(watchFlows) { combined ->
-                                combined.map { (episode, watches) ->
-                                    EpisodeWithWatches(
-                                        episode = episode,
-                                        watches = watches,
-                                    )
-                                }
-                            }.map { episodesWithWatches ->
-                                SeasonWithEpisodesAndWatches(
-                                    season = season,
-                                    episodes = episodesWithWatches,
-                                )
-                            }
+            .map { items ->
+                val seasons = items
+                    .asSequence()
+                    .distinctBy { it.id }
+                    .map {
+                        Season(
+                            id = it.id,
+                            showId = it.show_id,
+                            traktId = it.trakt_id,
+                            tmdbId = it.tmdb_id,
+                            title = it.title,
+                            summary = it.overview,
+                            number = it.number,
+                            network = it.network,
+                            episodeCount = it.ep_count,
+                            episodesAired = it.ep_aired,
+                            traktRating = it.trakt_rating,
+                            traktRatingVotes = it.trakt_votes,
+                            tmdbPosterPath = it.tmdb_poster_path,
+                            tmdbBackdropPath = it.tmdb_backdrop_path,
+                            ignored = it.ignored,
+                        )
+                    }
+                    .toList()
+                    .sortedBy { season ->
+                        when (val number = season.number) {
+                            Season.NUMBER_SPECIALS -> Int.MAX_VALUE
+                            else -> number
                         }
-                }
-                combine(flows) { combined ->
-                    combined.map { it }
+                    }
+
+                val episodes = items
+                    .asSequence()
+                    .distinctBy { it.id_ }
+                    .map {
+                        Episode(
+                            id = it.id_,
+                            seasonId = it.season_id,
+                            traktId = it.trakt_id_,
+                            tmdbId = it.tmdb_id_,
+                            title = it.title_,
+                            summary = it.overview_,
+                            number = it.number_,
+                            firstAired = it.first_aired,
+                            traktRating = it.trakt_rating_,
+                            traktRatingVotes = it.trakt_rating_votes,
+                            tmdbBackdropPath = it.tmdb_backdrop_path_,
+                        )
+                    }
+
+                val watches = items
+                    .asSequence()
+                    .filter { it.id__ != null }
+                    .mapNotNull {
+                        if (it.id__ != null) {
+                            EpisodeWatchEntry(
+                                id = it.id__,
+                                episodeId = it.episode_id!!,
+                                traktId = it.trakt_id__,
+                                watchedAt = it.watched_at!!,
+                                pendingAction = it.pending_action!!,
+                            )
+                        } else {
+                            null
+                        }
+                    }
+                    .toList()
+
+                seasons.map { season ->
+                    val seasonEps = episodes
+                        .filter { it.seasonId == season.id }
+                        .toList()
+                        .sortedBy { it.number }
+
+                    SeasonWithEpisodesAndWatches(
+                        season = season,
+                        episodes = seasonEps.map { episode ->
+                            EpisodeWithWatches(
+                                episode = episode,
+                                watches = watches.filter { it.episodeId == episode.id },
+                            )
+                        },
+                    )
                 }
             }
     }
