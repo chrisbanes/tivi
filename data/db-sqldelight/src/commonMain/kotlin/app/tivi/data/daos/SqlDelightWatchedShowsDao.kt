@@ -73,6 +73,15 @@ class SqlDelightWatchedShowsDao(
         ).executeAsList()
     }
 
+    override fun observeUpNextShow(): Flow<UpNextEntry?> {
+        return provideUpNextShowsQuery(
+            followedOnly = false,
+            sort = SortOption.LAST_WATCHED,
+            limit = 1,
+            offset = 0,
+        ).asFlow().mapToOneOrNull(dispatchers.io)
+    }
+
     override fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats?> {
         return db.shows_view_watch_statsQueries.watchStatsForShowId(showId, ::ShowsWatchStats)
             .asFlow()

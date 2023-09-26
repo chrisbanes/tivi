@@ -26,6 +26,8 @@ interface WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> 
 
     fun getUpNextShows(): List<UpNextEntry>
 
+    fun observeUpNextShow(): Flow<UpNextEntry?>
+
     fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats?>
 
     fun observeNextShowToWatch(): Flow<TiviShow?>
