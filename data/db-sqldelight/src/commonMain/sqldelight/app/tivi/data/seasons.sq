@@ -49,6 +49,12 @@ SELECT trakt_id FROM seasons WHERE id = :id;
 seasonWithTraktId:
 SELECT * FROM seasons WHERE trakt_id = :traktId;
 
+seasonsWithEpisodesWithWatchesForShowId:
+SELECT * FROM seasons
+JOIN episodes ON episodes.season_id = seasons.id
+LEFT JOIN episode_watch_entries ON episode_watch_entries.episode_id = episodes.id
+WHERE seasons.show_id = :showId;
+
 previousSeasonsForShowId:
 SELECT id FROM seasons
 WHERE

@@ -24,6 +24,4 @@ data class EpisodeWithWatches(
     val onlyPendingDeletes by lazy {
         watches.all { it.pendingAction == PendingAction.DELETE }
     }
-
-    val hasAired: Boolean get() = episode.hasAired
 }
