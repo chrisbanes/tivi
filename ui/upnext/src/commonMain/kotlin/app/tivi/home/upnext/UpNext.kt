@@ -78,6 +78,7 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.overlays.showInBottomSheet
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.EpisodeTrackScreen
@@ -125,7 +126,7 @@ internal fun UpNext(
         },
         openTrackEpisode = {
             scope.launch {
-                overlayHost.showInDialog(EpisodeTrackScreen(it))
+                overlayHost.showInBottomSheet(EpisodeTrackScreen(it))
             }
         },
         onMessageShown = { eventSink(UpNextUiEvent.ClearMessage(it)) },
