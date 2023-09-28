@@ -6,6 +6,8 @@ package app.tivi.tasks
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual interface TasksPlatformComponent {
     @ApplicationScope
     @Provides

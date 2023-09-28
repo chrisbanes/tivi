@@ -13,6 +13,8 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.http.HttpStatusCode
 import me.tatarka.inject.annotations.Provides
 
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual interface TmdbPlatformComponent {
     @ApplicationScope
     @Provides
