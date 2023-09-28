@@ -8,8 +8,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import app.tivi.inject.ApplicationScope
+import kotlin.AllowDifferentMembersInActual
 import me.tatarka.inject.annotations.Provides
 
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual interface SqlDelightDatabasePlatformComponent {
     @Provides
     @ApplicationScope

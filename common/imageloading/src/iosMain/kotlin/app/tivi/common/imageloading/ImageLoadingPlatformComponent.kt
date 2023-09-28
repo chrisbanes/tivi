@@ -8,6 +8,8 @@ import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.intercept.Interceptor
 import me.tatarka.inject.annotations.Provides
 
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual interface ImageLoadingPlatformComponent {
     @Provides
     fun provideImageLoader(

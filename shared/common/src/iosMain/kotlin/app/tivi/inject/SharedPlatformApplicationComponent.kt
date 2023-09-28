@@ -12,6 +12,8 @@ import platform.Foundation.NSBundle
 import platform.Foundation.NSUserDefaults
 import platform.UIKit.UIScreen
 
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual interface SharedPlatformApplicationComponent {
     @Provides
     fun provideNsUserDefaults(): NSUserDefaults = NSUserDefaults.standardUserDefaults

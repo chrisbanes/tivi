@@ -9,6 +9,8 @@ import com.russhwolf.settings.ObservableSettings
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSUserDefaults
 
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual interface PreferencesPlatformComponent {
     @ApplicationScope
     @Provides

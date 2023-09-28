@@ -7,6 +7,8 @@ import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual interface TraktAuthComponent {
     @ApplicationScope
     @Provides
