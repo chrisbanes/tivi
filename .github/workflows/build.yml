@@ -354,7 +354,7 @@ jobs:
 
   publish:
     if: github.ref == 'refs/heads/main'
-    needs: [android, ios-qa-app, ios-prod-app, ios-test, desktop]
+    needs: [android, ios-qa-app, ios-prod-app, desktop]
     runs-on: macos-latest
     timeout-minutes: 40
     env:
