@@ -18,6 +18,9 @@ kotlin {
                 api(projects.data.db)
 
                 api(libs.kotlinx.datetime)
+                // Need to force upgrade these for recent Kotlin support
+                api(libs.kotlinx.atomicfu)
+                api(libs.kotlin.coroutines.core)
 
                 implementation(libs.kotlininject.runtime)
 
