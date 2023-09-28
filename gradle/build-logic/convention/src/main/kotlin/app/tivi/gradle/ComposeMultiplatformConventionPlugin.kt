@@ -17,6 +17,5 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
 
 fun Project.configureCompose() {
     with(extensions.getByType<ComposeExtension>()) {
-        kotlinCompilerPlugin.set("1.5.0")
     }
 }

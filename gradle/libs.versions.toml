@@ -4,11 +4,12 @@ androidxlifecycle = "2.6.2"
 androidxactivity = "1.7.2"
 chucker = "4.0.0"
 circuit = "0.15.0"
-compose-multiplatform = "1.5.2"
+compose-multiplatform = "1.5.10-beta02"
 coroutines = "1.7.3"
 debugdrawer = "0.9.8"
-kotlin = "1.9.0"
+kotlin = "1.9.20-Beta2"
 kotlininject = "0.6.3"
+ksp = "1.9.20-Beta2-1.0.13"
 ktlint = "0.49.1"
 lyricist = "1.4.2"
 multiplatformsettings = "1.0.0"
@@ -32,7 +33,7 @@ composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-mu
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:1.9.0-1.0.13"
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 gms-googleServices = "com.google.gms.google-services:4.4.0"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.9"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
