@@ -18,6 +18,9 @@ kotlin {
                 api(projects.data.db)
 
                 api(libs.kotlinx.datetime)
+                // Need to force upgrade these for recent Kotlin support
+                api(libs.kotlinx.atomicfu)
+                api(libs.kotlin.coroutines.core)
 
                 implementation(libs.kotlininject.runtime)
 
@@ -50,7 +53,7 @@ kotlin {
 sqldelight {
     databases {
         create("Database") {
-            packageName.set("app.tivi.data")
+            packageName = "app.tivi.data"
         }
     }
 }
@@ -59,7 +62,7 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
     compilerOptions {
         // Have to disable this as some of the generated code has
         // warnings for unused parameters
-        allWarningsAsErrors.set(false)
+        allWarningsAsErrors = false
     }
 }
 

@@ -23,7 +23,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
         }
 
         extensions.configure<KotlinMultiplatformExtension> {
-            targetHierarchy.default()
+            applyDefaultHierarchyTemplate()
 
             jvm()
             if (pluginManager.hasPlugin("com.android.library")) {
@@ -65,6 +65,14 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                             "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
                             "-opt-in=kotlinx.cinterop.BetaInteropApi",
                         )
+                    }
+                }
+            }
+
+            targets.configureEach {
+                compilations.configureEach {
+                    compilerOptions.configure {
+                        freeCompilerArgs.add("-Xexpect-actual-classes")
                     }
                 }
             }

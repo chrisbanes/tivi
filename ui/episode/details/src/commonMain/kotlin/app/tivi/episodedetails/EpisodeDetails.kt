@@ -80,7 +80,7 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.models.Season
-import app.tivi.overlays.showInDialog
+import app.tivi.overlays.showInBottomSheet
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
 import com.slack.circuit.overlay.LocalOverlayHost
@@ -121,7 +121,7 @@ internal fun EpisodeDetails(
         onRemoveWatch = { id -> viewState.eventSink(EpisodeDetailsUiEvent.RemoveWatchEntry(id)) },
         onAddWatch = {
             scope.launch {
-                overlayHost.showInDialog(EpisodeTrackScreen(viewState.episode!!.id))
+                overlayHost.showInBottomSheet(EpisodeTrackScreen(viewState.episode!!.id))
             }
         },
         onMessageShown = { id -> viewState.eventSink(EpisodeDetailsUiEvent.ClearMessage(id)) },

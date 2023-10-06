@@ -28,25 +28,23 @@ dependencyResolutionManagement {
 }
 
 plugins {
-    id("com.gradle.enterprise") version "3.15"
+    id("com.gradle.enterprise") version "3.15.1"
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
 }
+
+val isCi = providers.environmentVariable("CI").isPresent
 
 gradleEnterprise {
     buildScan {
         termsOfServiceUrl = "https://gradle.com/terms-of-service"
         termsOfServiceAgree = "yes"
 
-        if (System.getenv().containsKey("CI")) {
-            // Always publish on CI
-            publishAlways()
-        }
+        publishAlwaysIf(isCi)
     }
 }
 
 buildCache {
     val remoteBuildCacheUrl = providers.gradleProperty("REMOTE_BUILD_CACHE_URL").orNull ?: return@buildCache
-    val isCi = System.getenv().containsKey("CI")
 
     local {
         isEnabled = !isCi
@@ -59,8 +57,8 @@ buildCache {
         println("Enabling remote build cache. URL: $url. Push enabled: $isPush")
 
         credentials {
-            username = extra["REMOTE_BUILD_CACHE_USERNAME"]?.toString()
-            password = extra["REMOTE_BUILD_CACHE_PASSWORD"]?.toString()
+            username = providers.gradleProperty("REMOTE_BUILD_CACHE_USERNAME").orNull
+            password = providers.gradleProperty("REMOTE_BUILD_CACHE_PASSWORD").orNull
         }
     }
 }

@@ -24,6 +24,7 @@ kotlin {
                 api(projects.common.ui.screens)
                 api(projects.common.ui.circuitOverlay) // Only for LocalNavigator
                 api(libs.circuit.foundation)
+                implementation(libs.circuit.retained)
 
                 implementation(compose.foundation)
                 implementation(compose.material)

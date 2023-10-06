@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.Snapshot
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
@@ -31,6 +32,7 @@ import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.screens.TrendingShowsScreen
 import app.tivi.util.Logger
 import app.tivi.util.onException
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -75,18 +77,18 @@ class DiscoverPresenter(
         val scope = rememberCoroutineScope()
         val uiMessageManager = remember { UiMessageManager() }
 
+        val trendingItems by observeTrendingShows.flow.collectAsRetainedState(emptyList())
         val trendingLoading by updateTrendingShows.inProgress.collectAsState(false)
-        val trendingItems by observeTrendingShows.flow.collectAsState(emptyList())
 
-        val popularItems by observePopularShows.flow.collectAsState(emptyList())
+        val popularItems by observePopularShows.flow.collectAsRetainedState(emptyList())
         val popularLoading by updatePopularShows.inProgress.collectAsState(false)
 
-        val recommendedItems by observeRecommendedShows.flow.collectAsState(emptyList())
+        val recommendedItems by observeRecommendedShows.flow.collectAsRetainedState(emptyList())
         val recommendedLoading by updateRecommendedShows.inProgress.collectAsState(false)
 
-        val nextShow by observeNextShowEpisodeToWatch.flow.collectAsState(null)
-        val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
-        val user by observeUserDetails.flow.collectAsState(null)
+        val nextShow by observeNextShowEpisodeToWatch.flow.collectAsRetainedState(null)
+        val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
+        val user by observeUserDetails.flow.collectAsRetainedState(null)
 
         val message by uiMessageManager.message.collectAsState(null)
 
@@ -139,11 +141,15 @@ class DiscoverPresenter(
                 DiscoverUiEvent.OpenPopularShows -> navigator.goTo(PopularShowsScreen)
                 DiscoverUiEvent.OpenRecommendedShows -> navigator.goTo(RecommendedShowsScreen)
                 is DiscoverUiEvent.OpenShowDetails -> {
-                    navigator.goTo(ShowDetailsScreen(event.showId))
-                    if (event.seasonId != null) {
-                        navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
-                        if (event.episodeId != null) {
-                            navigator.goTo(EpisodeDetailsScreen(event.episodeId))
+                    // As we pushing a number of different screens onto the back stack,
+                    // we run it in a single snapshot to avoid unnecessary work
+                    Snapshot.withMutableSnapshot {
+                        navigator.goTo(ShowDetailsScreen(event.showId))
+                        if (event.seasonId != null) {
+                            navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
+                            if (event.episodeId != null) {
+                                navigator.goTo(EpisodeDetailsScreen(event.episodeId))
+                            }
                         }
                     }
                 }

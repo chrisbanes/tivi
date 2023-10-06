@@ -119,13 +119,11 @@ internal fun EpisodeTrack(
 
     Box(
         modifier = modifier
+            .padding(start = 16.dp, bottom = 16.dp, end = 16.dp)
             .fillMaxWidth()
             .testTag("episode_track"),
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp),
-        ) {
+        Column {
             viewState.episode?.let { episode ->
                 EpisodeHeader(
                     episode = episode,

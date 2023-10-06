@@ -6,6 +6,8 @@ package app.tivi.core.perf
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
+@OptIn(ExperimentalMultiplatform::class)
+@AllowDifferentMembersInActual
 actual interface PerformanceComponent {
     @ApplicationScope
     @Provides

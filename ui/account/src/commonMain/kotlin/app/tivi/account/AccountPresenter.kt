@@ -5,7 +5,6 @@ package app.tivi.account
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.traktauth.TraktAuthState
@@ -16,6 +15,7 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.SettingsScreen
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -47,8 +47,8 @@ class AccountPresenter(
 
     @Composable
     override fun present(): AccountUiState {
-        val user by observeUserDetails.flow.collectAsState(null)
-        val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
+        val user by observeUserDetails.flow.collectAsRetainedState(null)
+        val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
         val scope = rememberCoroutineScope()
 
         LaunchedEffect(Unit) {

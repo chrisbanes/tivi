@@ -19,7 +19,7 @@ android {
     defaultConfig {
         applicationId = "app.tivi"
         versionCode = appVersionCode
-        versionName = "0.9.7"
+        versionName = "0.9.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -176,12 +176,6 @@ if (file("google-services.json").exists()) {
             mappingFileUploadEnabled = false
         }
     }
-}
-
-fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
-    @Suppress("UNCHECKED_CAST")
-    val propertyValue = project.properties[propertyName] as T?
-    return propertyValue ?: defaultValue
 }
 
 fun DependencyHandler.qaImplementation(dependencyNotation: Any) =

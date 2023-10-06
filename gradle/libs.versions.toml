@@ -1,25 +1,26 @@
 [versions]
-agp = "8.1.1"
+agp = "8.1.2"
 androidxlifecycle = "2.6.2"
-androidxactivity = "1.7.2"
+androidxactivity = "1.8.0"
 chucker = "4.0.0"
-circuit = "0.14.1"
-compose-multiplatform = "1.5.1"
+circuit = "0.15.0"
+compose-multiplatform = "1.5.10-beta02"
 coroutines = "1.7.3"
 debugdrawer = "0.9.8"
-kotlin = "1.9.0"
+kotlin = "1.9.20-Beta2"
 kotlininject = "0.6.3"
+ksp = "1.9.20-Beta2-1.0.13"
 ktlint = "0.49.1"
 lyricist = "1.4.2"
 multiplatformsettings = "1.0.0"
 okhttp = "4.11.0"
-kermit = "1.2.2" # Pinned back as Store uses Kermit 1.x
-ktor = "2.3.4"
+kermit = "1.2.3" # Pinned back as Store uses Kermit 1.x
+ktor = "2.3.5"
 paging-multiplatform = "3.2.0-alpha05-0.2.3"
 retrofit = "2.9.0"
-spotless = "6.21.0"
+spotless = "6.22.0"
 sqldelight = "2.0.0"
-licensee = "1.7.0"
+licensee = "1.8.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -27,12 +28,12 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 buildConfig = "com.github.gmazzo.buildconfig:4.1.2"
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.8.0" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "2.8.1" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:1.9.0-1.0.13"
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 gms-googleServices = "com.google.gms.google-services:4.4.0"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.9"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
@@ -43,7 +44,7 @@ androidx-activity-activity = { module = "androidx.activity:activity", version.re
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxactivity" }
 androidx-archCoreTesting = "androidx.arch.core:core-testing:2.2.0"
 androidx-browser = "androidx.browser:browser:1.6.0"
-androidx-collection = "androidx.collection:collection:1.3.0-rc01"
+androidx-collection = "androidx.collection:collection:1.3.0"
 androidx-core = "androidx.core:core-ktx:1.12.0"
 androidx-splashscreen = "androidx.core:core-splashscreen:1.0.1"
 
@@ -60,28 +61,29 @@ androidx-test-core = "androidx.test:core-ktx:1.5.0"
 androidx-test-junit = "androidx.test.ext:junit-ktx:1.1.5"
 androidx-test-rules = "androidx.test:rules:1.5.0"
 androidx-test-runner = "androidx.test:runner:1.5.2"
-androidx-benchmark-macro = "androidx.benchmark:benchmark-macro-junit4:1.2.0-beta05"
+androidx-benchmark-macro = "androidx.benchmark:benchmark-macro-junit4:1.2.0-rc01"
 androidx-uiautomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 
 androidx-work-runtime = "androidx.work:work-runtime-ktx:2.8.1"
 
-appauth = "net.openid:appauth:0.8.1"
+appauth = "net.openid:appauth:0.11.1"
 
 chucker-library = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
 circuit-gestureNavigation = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
 circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
+circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
 circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
 
 compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.3.1"
 
-crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.2"
+crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.5"
 
 tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.0.3"
 
 google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.3.0"
-google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.4.2"
+google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.4.3"
 google-firebase-perf = "com.google.firebase:firebase-perf-ktx:20.4.1"
 
 imageloader = "io.github.qdsfdhvh:image-loader:1.6.7"
@@ -137,7 +139,7 @@ sqldelight-primitive = { module = "app.cash.sqldelight:primitive-adapters", vers
 
 timber = "com.jakewharton.timber:timber:5.0.1"
 
-tmdb-api = "app.moviebase:tmdb-api:1.1.0"
+tmdb-api = "app.moviebase:tmdb-api:1.2.0"
 trakt-api = "app.moviebase:trakt-api:0.6.0"
 
 assertk = "com.willowtreeapps.assertk:assertk:0.27.0"

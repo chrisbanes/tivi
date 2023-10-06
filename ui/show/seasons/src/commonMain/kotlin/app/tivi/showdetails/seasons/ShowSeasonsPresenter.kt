@@ -19,6 +19,7 @@ import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
 import app.tivi.util.onException
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -56,8 +57,9 @@ class ShowSeasonsPresenter(
 
         val uiMessageManager = remember { UiMessageManager() }
 
-        val seasons by observeShowSeasons.flow.collectAsState(emptyList())
-        val show by observeShowDetails.flow.collectAsState(TiviShow.EMPTY_SHOW)
+        val seasons by observeShowSeasons.flow.collectAsRetainedState(emptyList())
+        val show by observeShowDetails.flow.collectAsRetainedState(TiviShow.EMPTY_SHOW)
+
         val refreshing by updateShowSeasons.inProgress.collectAsState(false)
         val message by uiMessageManager.message.collectAsState(null)
 
