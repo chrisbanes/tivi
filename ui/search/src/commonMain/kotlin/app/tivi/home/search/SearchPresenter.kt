@@ -19,6 +19,7 @@ import app.tivi.screens.SearchScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.util.Logger
 import app.tivi.util.onException
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -54,12 +55,13 @@ class SearchPresenter(
     override fun present(): SearchUiState {
         val scope = rememberCoroutineScope()
 
-        var query by remember { mutableStateOf("") }
+        var query by rememberRetained { mutableStateOf("") }
+        var results by rememberRetained { mutableStateOf(emptyList<TiviShow>()) }
+
         val uiMessageManager = remember { UiMessageManager() }
 
         val loading by searchShows.inProgress.collectAsState(false)
         val message by uiMessageManager.message.collectAsState(null)
-        var results by remember { mutableStateOf(emptyList<TiviShow>()) }
 
         LaunchedEffect(query) {
             // delay for 300 milliseconds. This has the same effect as debounce
