@@ -7,9 +7,10 @@ import app.tivi.data.episodes.datasource.EpisodeDataSource
 import app.tivi.data.episodes.datasource.EpisodeWatchesDataSource
 import app.tivi.data.episodes.datasource.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.datasource.TmdbEpisodeDataSourceImpl
+import app.tivi.data.episodes.datasource.TmdbSeasonsEpisodesDataSourceImpl
 import app.tivi.data.episodes.datasource.TraktEpisodeDataSourceImpl
 import app.tivi.data.episodes.datasource.TraktEpisodeWatchesDataSource
-import app.tivi.data.episodes.datasource.TraktSeasonsEpisodesDataSource
+import app.tivi.data.episodes.datasource.TraktSeasonsEpisodesDataSourceImpl
 import me.tatarka.inject.annotations.Provides
 
 interface EpisodeBinds {
@@ -26,8 +27,13 @@ interface EpisodeBinds {
 
     @Provides
     fun provideTraktSeasonsEpisodesDataSource(
-        bind: TraktSeasonsEpisodesDataSource,
-    ): SeasonsEpisodesDataSource = bind
+        bind: TraktSeasonsEpisodesDataSourceImpl,
+    ): TraktSeasonsEpisodesDataSource = bind
+
+    @Provides
+    fun provideTmdbSeasonsEpisodesDataSource(
+        bind: TmdbSeasonsEpisodesDataSourceImpl,
+    ): TmdbSeasonsEpisodesDataSource = bind
 
     @Provides
     fun provideEpisodeWatchesDataSource(
@@ -37,3 +43,6 @@ interface EpisodeBinds {
 
 typealias TmdbEpisodeDataSource = EpisodeDataSource
 typealias TraktEpisodeDataSource = EpisodeDataSource
+
+typealias TmdbSeasonsEpisodesDataSource = SeasonsEpisodesDataSource
+typealias TraktSeasonsEpisodesDataSource = SeasonsEpisodesDataSource

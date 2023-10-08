@@ -43,7 +43,8 @@ class SeasonsEpisodesRepository(
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
     private val seasonsLastRequestStore: SeasonsLastRequestStore,
-    private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
+    private val tmdbSeasonsDataSource: TmdbSeasonsEpisodesDataSource,
+    private val traktSeasonsDataSource: TraktSeasonsEpisodesDataSource,
     private val traktEpisodeDataSource: TraktEpisodeDataSource,
     private val tmdbEpisodeDataSource: TmdbEpisodeDataSource,
     private val traktEpisodeWatchesDataSource: EpisodeWatchesDataSource,
@@ -97,14 +98,25 @@ class SeasonsEpisodesRepository(
         seasonsDao.deleteWithShowId(showId)
     }
 
-    suspend fun updateSeasonsEpisodes(showId: Long) {
-        val response = traktSeasonsDataSource.getSeasonsEpisodes(showId)
-        response.distinctBy { it.first.number }.associate { (season, episodes) ->
-            val localSeason = seasonsDao.seasonWithTraktId(season.traktId!!)
-                ?: Season(showId = showId)
-            val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
+    suspend fun updateSeasonsEpisodes(showId: Long) = coroutineScope {
+        val traktDeferred = async { traktSeasonsDataSource.getSeasonsEpisodes(showId) }
+        val tmdbDeferred = async { tmdbSeasonsDataSource.getSeasonsEpisodes(showId) }
 
-            val mergedEpisodes = episodes.distinctBy(Episode::number).map {
+        val trakt = traktDeferred.await().distinctBy { it.first.number }
+        val tmdb = tmdbDeferred.await().distinctBy { it.first.number }
+
+        trakt.associate { (traktSeason, traktEpisodes) ->
+            val localSeason = seasonsDao.seasonWithTraktId(traktSeason.traktId!!)
+                ?: Season(showId = showId)
+
+            val mergedSeason = mergeSeason(
+                local = localSeason,
+                trakt = traktSeason,
+                tmdb = tmdb.firstOrNull { it.first.number == traktSeason.number }?.first
+                    ?: Season.EMPTY,
+            )
+
+            val mergedEpisodes = traktEpisodes.distinctBy(Episode::number).map {
                 val localEpisode = episodesDao.episodeWithTraktId(it.traktId!!)
                     ?: Episode(seasonId = mergedSeason.id)
                 mergeEpisode(localEpisode, it, Episode.EMPTY)
@@ -121,9 +133,9 @@ class SeasonsEpisodesRepository(
                     episodeSyncer.sync(episodesDao.episodesWithSeasonId(seasonId), updatedEpisodes)
                 }
             }
+        }.also {
+            seasonsLastRequestStore.updateLastRequest(showId)
         }
-
-        seasonsLastRequestStore.updateLastRequest(showId)
     }
 
     suspend fun needEpisodeUpdate(

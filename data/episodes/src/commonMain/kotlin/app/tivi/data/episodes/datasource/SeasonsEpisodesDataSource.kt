@@ -3,9 +3,12 @@
 
 package app.tivi.data.episodes.datasource
 
+import app.moviebase.tmdb.Tmdb3
 import app.moviebase.trakt.TraktExtended
 import app.moviebase.trakt.api.TraktSeasonsApi
+import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.ShowIdToTraktOrImdbIdMapper
+import app.tivi.data.mappers.TmdbSeasonToSeasonWithEpisodes
 import app.tivi.data.mappers.TraktSeasonToSeasonWithEpisodes
 import app.tivi.data.mappers.map
 import app.tivi.data.models.Episode
@@ -17,7 +20,7 @@ interface SeasonsEpisodesDataSource {
 }
 
 @Inject
-class TraktSeasonsEpisodesDataSource(
+class TraktSeasonsEpisodesDataSourceImpl(
     private val showIdToAnyIdMapper: ShowIdToTraktOrImdbIdMapper,
     private val seasonsService: Lazy<TraktSeasonsApi>,
     private val seasonMapper: TraktSeasonToSeasonWithEpisodes,
@@ -30,5 +33,22 @@ class TraktSeasonsEpisodesDataSource(
                 ?: error("No Trakt ID for show with ID: $showId"),
             extended = TraktExtended.FULL_EPISODES,
         ).let(seasonMapper::map)
+    }
+}
+
+@Inject
+class TmdbSeasonsEpisodesDataSourceImpl(
+    private val showIdToTmdbIdMapper: ShowIdToTmdbIdMapper,
+    private val tmdb: Tmdb3,
+    private val seasonMapper: TmdbSeasonToSeasonWithEpisodes,
+) : SeasonsEpisodesDataSource {
+    override suspend fun getSeasonsEpisodes(
+        showId: Long,
+    ): List<Pair<Season, List<Episode>>> {
+        val show = tmdb.show.getDetails(
+            showId = showIdToTmdbIdMapper.map(showId)
+                ?: error("No TMDb ID for show with ID: $showId"),
+        )
+        return show.seasons.map { seasonMapper.map(it) }
     }
 }
