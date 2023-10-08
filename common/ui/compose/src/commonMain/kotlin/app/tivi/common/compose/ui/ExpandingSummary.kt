@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 fun ExpandingText(
     text: String,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
     expandable: Boolean = true,
     collapsedMaxLines: Int = 4,
     expandedMaxLines: Int = Int.MAX_VALUE,
@@ -31,7 +31,7 @@ fun ExpandingText(
 
     Text(
         text = text,
-        style = textStyle,
+        style = style,
         overflow = TextOverflow.Ellipsis,
         maxLines = if (expanded) expandedMaxLines else collapsedMaxLines,
         modifier = Modifier

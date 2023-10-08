@@ -9,6 +9,6 @@ import app.tivi.data.models.Request
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class SeasonsLastRequestStore(
+class ShowSeasonsLastRequestStore(
     dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.SHOW_SEASONS, dao)

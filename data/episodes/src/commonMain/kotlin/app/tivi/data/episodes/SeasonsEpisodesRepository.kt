@@ -8,6 +8,7 @@ import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.db.DatabaseTransactionRunner
+import app.tivi.data.episodes.datasource.EpisodeWatchesDataSource
 import app.tivi.data.models.ActionDate
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -37,13 +38,16 @@ class SeasonsEpisodesRepository(
     private val episodeWatchStore: EpisodeWatchStore,
     private val episodeWatchLastLastRequestStore: EpisodeWatchLastRequestStore,
     private val episodeLastRequestStore: EpisodeLastRequestStore,
+    private val seasonLastRequestStore: SeasonLastRequestStore,
     private val transactionRunner: DatabaseTransactionRunner,
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
-    private val seasonsLastRequestStore: SeasonsLastRequestStore,
-    private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
+    private val showSeasonsLastRequestStore: ShowSeasonsLastRequestStore,
+    private val tmdbSeasonsDataSource: TmdbSeasonsEpisodesDataSource,
+    private val traktSeasonsDataSource: TraktSeasonsEpisodesDataSource,
     private val traktEpisodeDataSource: TraktEpisodeDataSource,
     private val tmdbEpisodeDataSource: TmdbEpisodeDataSource,
+    private val traktEpisodeWatchesDataSource: EpisodeWatchesDataSource,
     private val traktAuthRepository: TraktAuthRepository,
     logger: Logger,
 ) {
@@ -69,8 +73,12 @@ class SeasonsEpisodesRepository(
         return episodesDao.episodeWithIdObservable(episodeId).filterNotNull()
     }
 
-    suspend fun getEpisode(episodeId: Long): Episode? {
+    fun getEpisode(episodeId: Long): Episode? {
         return episodesDao.episodeWithId(episodeId)
+    }
+
+    fun getSeason(seasonId: Long): Season? {
+        return seasonsDao.seasonWithId(seasonId)
     }
 
     fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {
@@ -85,7 +93,7 @@ class SeasonsEpisodesRepository(
     suspend fun needShowSeasonsUpdate(
         showId: Long,
         expiry: Instant? = null,
-    ): Boolean = seasonsLastRequestStore.isRequestBefore(
+    ): Boolean = showSeasonsLastRequestStore.isRequestBefore(
         entityId = showId,
         instant = expiry ?: 7.days.inPast,
     )
@@ -94,14 +102,25 @@ class SeasonsEpisodesRepository(
         seasonsDao.deleteWithShowId(showId)
     }
 
-    suspend fun updateSeasonsEpisodes(showId: Long) {
-        val response = traktSeasonsDataSource.getSeasonsEpisodes(showId)
-        response.distinctBy { it.first.number }.associate { (season, episodes) ->
-            val localSeason = seasonsDao.seasonWithTraktId(season.traktId!!)
-                ?: Season(showId = showId)
-            val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
+    suspend fun updateSeasonsEpisodes(showId: Long) = coroutineScope {
+        val traktDeferred = async { traktSeasonsDataSource.getSeasonsEpisodes(showId) }
+        val tmdbDeferred = async { tmdbSeasonsDataSource.getSeasonsEpisodes(showId) }
 
-            val mergedEpisodes = episodes.distinctBy(Episode::number).map {
+        val trakt = traktDeferred.await().distinctBy { it.first.number }
+        val tmdb = tmdbDeferred.await().distinctBy { it.first.number }
+
+        trakt.associate { (traktSeason, traktEpisodes) ->
+            val localSeason = seasonsDao.seasonWithTraktId(traktSeason.traktId!!)
+                ?: Season(showId = showId)
+
+            val mergedSeason = mergeSeason(
+                local = localSeason,
+                trakt = traktSeason,
+                tmdb = tmdb.firstOrNull { it.first.number == traktSeason.number }?.first
+                    ?: Season.EMPTY,
+            )
+
+            val mergedEpisodes = traktEpisodes.distinctBy(Episode::number).map {
                 val localEpisode = episodesDao.episodeWithTraktId(it.traktId!!)
                     ?: Episode(seasonId = mergedSeason.id)
                 mergeEpisode(localEpisode, it, Episode.EMPTY)
@@ -118,9 +137,9 @@ class SeasonsEpisodesRepository(
                     episodeSyncer.sync(episodesDao.episodesWithSeasonId(seasonId), updatedEpisodes)
                 }
             }
+        }.also {
+            showSeasonsLastRequestStore.updateLastRequest(showId)
         }
-
-        seasonsLastRequestStore.updateLastRequest(showId)
     }
 
     suspend fun needEpisodeUpdate(
@@ -163,6 +182,47 @@ class SeasonsEpisodesRepository(
         )
 
         episodeLastRequestStore.updateLastRequest(episodeId)
+    }
+
+    fun needSeasonUpdate(
+        seasonId: Long,
+        expiry: Instant = 28.days.inPast,
+    ): Boolean {
+        return seasonLastRequestStore.isRequestBefore(seasonId, expiry)
+    }
+
+    suspend fun updateSeason(seasonId: Long) = coroutineScope {
+        val local = seasonsDao.seasonWithId(seasonId) ?: Season.EMPTY
+        val traktDeferred = async {
+            traktSeasonsDataSource.getSeason(local.showId, local.number!!)
+        }
+        val tmdbDeferred = async {
+            runCatching {
+                traktSeasonsDataSource.getSeason(local.showId, local.number!!)
+            }.getOrNull()
+        }
+
+        val trakt = try {
+            traktDeferred.await()
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (e: Exception) {
+            null
+        }
+        val tmdb = try {
+            tmdbDeferred.await()
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (e: Exception) {
+            null
+        }
+        check(trakt != null || tmdb != null)
+
+        seasonsDao.upsert(
+            mergeSeason(local, trakt ?: Season.EMPTY, tmdb ?: Season.EMPTY),
+        )
+
+        seasonLastRequestStore.updateLastRequest(seasonId)
     }
 
     suspend fun syncEpisodeWatchesForShow(showId: Long) {
@@ -302,7 +362,7 @@ class SeasonsEpisodesRepository(
     suspend fun updateShowEpisodeWatches(showId: Long) {
         if (traktAuthRepository.state.value != TraktAuthState.LOGGED_IN) return
 
-        val response = traktSeasonsDataSource.getShowEpisodeWatches(showId)
+        val response = traktEpisodeWatchesDataSource.getShowEpisodeWatches(showId)
 
         val watches = response.mapNotNull { (episode, watchEntry) ->
             val epId = episodesDao.episodeIdWithTraktId(episode.traktId!!)
@@ -314,7 +374,7 @@ class SeasonsEpisodesRepository(
     }
 
     private suspend fun fetchEpisodeWatchesFromRemote(episodeId: Long) {
-        val response = traktSeasonsDataSource.getEpisodeWatches(episodeId, null)
+        val response = traktEpisodeWatchesDataSource.getEpisodeWatches(episodeId, null)
         val watches = response.map { it.copy(episodeId = episodeId) }
         episodeWatchStore.syncEpisodeWatchEntries(episodeId, watches)
     }
@@ -334,7 +394,7 @@ class SeasonsEpisodesRepository(
 
             if (entries.size > localOnlyDeletes.size) {
                 val toRemove = entries.filter { it.traktId != null }
-                traktSeasonsDataSource.removeEpisodeWatches(toRemove)
+                traktEpisodeWatchesDataSource.removeEpisodeWatches(toRemove)
                 // Now update the database
                 episodeWatchStore.deleteEntriesWithIds(entries.map(EpisodeWatchEntry::id))
                 return true
@@ -353,7 +413,7 @@ class SeasonsEpisodesRepository(
      */
     private suspend fun processPendingAdditions(entries: List<EpisodeWatchEntry>): Boolean {
         if (traktAuthRepository.state.value == TraktAuthState.LOGGED_IN) {
-            traktSeasonsDataSource.addEpisodeWatches(entries)
+            traktEpisodeWatchesDataSource.addEpisodeWatches(entries)
             // Now update the database
             episodeWatchStore.updateEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
             return true
