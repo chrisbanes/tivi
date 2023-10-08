@@ -14,8 +14,6 @@ fun Project.configureSpotless() {
         return
     }
 
-    val ktlintVersion = libs.findVersion("ktlint").get().requiredVersion
-
     with(pluginManager) {
         apply("com.diffplug.spotless")
     }
@@ -26,7 +24,7 @@ fun Project.configureSpotless() {
 
         kotlin {
             target("src/**/*.kt")
-            ktlint(ktlintVersion)
+            ktlint()
             licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"))
                 .named("google")
                 .onlyIfContentMatches("Copyright \\d+,* Google")
@@ -40,7 +38,7 @@ fun Project.configureSpotless() {
 
         kotlinGradle {
             target("*.kts")
-            ktlint(ktlintVersion)
+            ktlint()
             licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
                 .named("google")
                 .onlyIfContentMatches("Copyright \\d+,* Google")
