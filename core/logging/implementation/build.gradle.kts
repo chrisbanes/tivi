@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 api(projects.core.logging.api)
+                api(projects.core.preferences)
                 api(libs.kotlin.coroutines.core)
                 implementation(libs.kermit.kermit)
                 implementation(libs.kotlininject.runtime)
@@ -22,6 +23,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(libs.crashkios.crashlytics)
+                implementation(libs.google.firebase.crashlytics)
                 implementation(libs.timber)
             }
         }

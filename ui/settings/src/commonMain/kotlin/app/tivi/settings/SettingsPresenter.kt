@@ -55,6 +55,12 @@ class SettingsPresenter(
         val ignoreSpecials by remember { preferences.observeIgnoreSpecials() }
             .collectAsRetainedState(true)
 
+        val crashDataReportingEnabled by remember { preferences.observeReportAppCrashes() }
+            .collectAsRetainedState(true)
+
+        val analyticsDataReportingEnabled by remember { preferences.observeReportAnalytics() }
+            .collectAsRetainedState(true)
+
         fun eventSink(event: SettingsUiEvent) {
             when (event) {
                 SettingsUiEvent.NavigateUp -> navigator.pop()
@@ -65,6 +71,8 @@ class SettingsPresenter(
                 SettingsUiEvent.ToggleUseDynamicColors -> preferences::useDynamicColors.toggle()
                 SettingsUiEvent.ToggleUseLessData -> preferences::useLessData.toggle()
                 SettingsUiEvent.ToggleIgnoreSpecials -> preferences::ignoreSpecials.toggle()
+                SettingsUiEvent.ToggleCrashDataReporting -> preferences::reportAppCrashes.toggle()
+                SettingsUiEvent.ToggleAnalyticsDataReporting -> preferences::reportAnalytics.toggle()
                 SettingsUiEvent.NavigatePrivacyPolicy -> {
                     navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))
                 }
@@ -86,6 +94,8 @@ class SettingsPresenter(
             openSourceLicenseAvailable = OpenSourceLicenseAvailable,
             useLessData = useLessData,
             ignoreSpecials = ignoreSpecials,
+            crashDataReportingEnabled = crashDataReportingEnabled,
+            analyticsDataReportingEnabled = analyticsDataReportingEnabled,
             applicationInfo = applicationInfo,
             showDeveloperSettings = applicationInfo.flavor == Flavor.Qa,
             eventSink = ::eventSink,

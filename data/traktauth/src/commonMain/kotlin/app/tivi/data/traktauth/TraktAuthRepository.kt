@@ -4,12 +4,12 @@
 package app.tivi.data.traktauth
 
 import app.tivi.data.traktauth.store.AuthStore
+import app.tivi.inject.ApplicationCoroutineScope
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +23,7 @@ import me.tatarka.inject.annotations.Inject
 @ApplicationScope
 @Inject
 class TraktAuthRepository(
+    private val scope: ApplicationCoroutineScope,
     private val dispatchers: AppCoroutineDispatchers,
     private val authStore: AuthStore,
     private val loginAction: Lazy<TraktLoginAction>,
@@ -37,7 +38,7 @@ class TraktAuthRepository(
 
     init {
         // Read the auth state from the AuthStore
-        GlobalScope.launch(dispatchers.main) {
+        scope.launch {
             val state = getAuthState() ?: AuthState.Empty
             updateAuthState(authState = state, skipPersist = true)
         }

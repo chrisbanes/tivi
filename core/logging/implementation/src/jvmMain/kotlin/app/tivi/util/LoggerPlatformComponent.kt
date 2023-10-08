@@ -15,4 +15,13 @@ actual interface LoggerPlatformComponent {
         kermitLogger: KermitLogger,
         recordingLogger: RecordingLogger,
     ): Logger = CompositeLogger(kermitLogger, recordingLogger)
+
+    @Provides
+    fun bindSetCrashReportingEnabledAction(): SetCrashReportingEnabledAction {
+        return NoopSetCrashReportingEnabledAction
+    }
+}
+
+private object NoopSetCrashReportingEnabledAction : SetCrashReportingEnabledAction {
+    override fun invoke(enabled: Boolean) {}
 }

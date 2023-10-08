@@ -6,21 +6,26 @@ package app.tivi.tmdb
 import app.moviebase.tmdb.Tmdb3
 import app.moviebase.tmdb.model.TmdbConfiguration
 import app.tivi.inject.ApplicationScope
+import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
 @Inject
 class TmdbManager(
     private val tmdbClient: Tmdb3,
+    private val dispatchers: AppCoroutineDispatchers,
 ) {
     private val imageProvider = MutableStateFlow(TmdbImageUrlProvider())
 
     fun getLatestImageProvider() = imageProvider.value
 
     suspend fun refreshConfiguration() {
-        val response = runCatching {
-            tmdbClient.configuration.getApiConfiguration()
+        val response = withContext(dispatchers.io) {
+            runCatching {
+                tmdbClient.configuration.getApiConfiguration()
+            }
         }
 
         if (response.isSuccess) {

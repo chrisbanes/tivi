@@ -29,6 +29,12 @@ interface TiviPreferences {
     var ignoreSpecials: Boolean
     fun observeIgnoreSpecials(): Flow<Boolean>
 
+    var reportAppCrashes: Boolean
+    fun observeReportAppCrashes(): Flow<Boolean>
+
+    var reportAnalytics: Boolean
+    fun observeReportAnalytics(): Flow<Boolean>
+
     var developerHideArtwork: Boolean
     fun observeDeveloperHideArtwork(): Flow<Boolean>
 

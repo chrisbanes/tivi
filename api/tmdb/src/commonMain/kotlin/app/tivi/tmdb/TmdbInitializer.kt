@@ -4,20 +4,17 @@
 package app.tivi.tmdb
 
 import app.tivi.appinitializers.AppInitializer
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import app.tivi.inject.ApplicationCoroutineScope
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbInitializer(
     private val tmdbManager: TmdbManager,
-    private val dispatchers: AppCoroutineDispatchers,
+    private val scope: ApplicationCoroutineScope,
 ) : AppInitializer {
     override fun initialize() {
-        @OptIn(DelicateCoroutinesApi::class)
-        GlobalScope.launch(dispatchers.main) {
+        scope.launch {
             tmdbManager.refreshConfiguration()
         }
     }

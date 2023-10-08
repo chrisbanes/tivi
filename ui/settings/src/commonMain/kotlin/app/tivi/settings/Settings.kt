@@ -139,6 +139,43 @@ internal fun Settings(
             itemSpacer(24.dp)
 
             stickyHeader {
+                PreferenceHeader(LocalStrings.current.settingsPrivacyCategoryTitle)
+            }
+
+            item {
+                Preference(
+                    title = LocalStrings.current.viewPrivacyPolicy,
+                    modifier = Modifier.clickable {
+                        eventSink(SettingsUiEvent.NavigatePrivacyPolicy)
+                    },
+                )
+            }
+
+            item { PreferenceDivider() }
+
+            item {
+                CheckboxPreference(
+                    title = strings.settingsCrashDataCollectionTitle,
+                    summaryOff = strings.settingsCrashDataCollectionSummary,
+                    onCheckClicked = { eventSink(SettingsUiEvent.ToggleCrashDataReporting) },
+                    checked = state.crashDataReportingEnabled,
+                )
+            }
+
+            item { PreferenceDivider() }
+
+            item {
+                CheckboxPreference(
+                    title = strings.settingsAnalyticsDataCollectionTitle,
+                    summaryOff = strings.settingsAnalyticsDataCollectionSummary,
+                    onCheckClicked = { eventSink(SettingsUiEvent.ToggleAnalyticsDataReporting) },
+                    checked = state.analyticsDataReportingEnabled,
+                )
+            }
+
+            itemSpacer(24.dp)
+
+            stickyHeader {
                 PreferenceHeader(LocalStrings.current.settingsAboutCategoryTitle)
             }
 
@@ -152,17 +189,6 @@ internal fun Settings(
                                 state.applicationInfo.versionCode,
                             ),
                         )
-                    },
-                )
-            }
-
-            item { PreferenceDivider() }
-
-            item {
-                Preference(
-                    title = LocalStrings.current.viewPrivacyPolicy,
-                    modifier = Modifier.clickable {
-                        eventSink(SettingsUiEvent.NavigatePrivacyPolicy)
                     },
                 )
             }

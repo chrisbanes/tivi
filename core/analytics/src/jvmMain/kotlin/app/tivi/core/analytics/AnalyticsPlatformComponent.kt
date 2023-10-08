@@ -8,10 +8,11 @@ import me.tatarka.inject.annotations.Provides
 
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
-actual interface AnalyticsComponent {
+actual interface AnalyticsPlatformComponent {
     @Provides
     @ApplicationScope
     fun provideAnalytics(): Analytics = object : Analytics {
         override fun trackScreenView(name: String, arguments: Map<String, *>?) = Unit
+        override fun setEnabled(enabled: Boolean) = Unit
     }
 }

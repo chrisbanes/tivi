@@ -12,6 +12,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(projects.core.base)
+                api(projects.core.preferences)
             }
         }
 

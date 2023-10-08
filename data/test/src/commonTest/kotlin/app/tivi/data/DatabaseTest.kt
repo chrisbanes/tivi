@@ -9,6 +9,7 @@ import app.moviebase.trakt.Trakt
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.data.traktauth.TraktLoginAction
 import app.tivi.data.traktauth.TraktRefreshTokenAction
+import app.tivi.inject.ApplicationCoroutineScope
 import app.tivi.inject.ApplicationScope
 import app.tivi.tmdb.TmdbCommonComponent
 import app.tivi.trakt.TraktCommonComponent
@@ -16,6 +17,8 @@ import app.tivi.util.Logger
 import app.tivi.utils.SuccessRefreshTokenAction
 import app.tivi.utils.SuccessTraktLoginAction
 import kotlin.test.AfterTest
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -60,6 +63,10 @@ abstract class TestApplicationComponent :
 
     @Provides
     fun provideLogger(): Logger = object : Logger {}
+
+    @OptIn(DelicateCoroutinesApi::class)
+    @Provides
+    fun provideCoroutineScope(): ApplicationCoroutineScope = GlobalScope
 
     abstract val sqlDriver: SqlDriver
 }

@@ -83,6 +83,7 @@ jobs:
       - name: Build Android App (skipping benchmark variant)
         run: |
           ./gradlew \
+            testDebugUnitTest \
             :android-app:app:bundle \
             :android-app:app:build \
             lint \

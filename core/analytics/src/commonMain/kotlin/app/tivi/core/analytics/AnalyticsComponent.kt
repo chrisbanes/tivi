@@ -3,4 +3,14 @@
 
 package app.tivi.core.analytics
 
-expect interface AnalyticsComponent
+import app.tivi.appinitializers.AppInitializer
+import me.tatarka.inject.annotations.IntoSet
+import me.tatarka.inject.annotations.Provides
+
+expect interface AnalyticsPlatformComponent
+
+interface AnalyticsComponent : AnalyticsPlatformComponent {
+    @Provides
+    @IntoSet
+    fun provideAnalyticsInitializer(impl: AnalyticsInitializer): AppInitializer = impl
+}

@@ -68,6 +68,18 @@ class TiviPreferencesImpl(
         return flowSettings.getBooleanFlow(KEY_IGNORE_SPECIALS, true)
     }
 
+    override var reportAppCrashes: Boolean by BooleanDelegate(KEY_OPT_IN_CRASH_REPORTING, true)
+
+    override fun observeReportAppCrashes(): Flow<Boolean> {
+        return flowSettings.getBooleanFlow(KEY_OPT_IN_CRASH_REPORTING, true)
+    }
+
+    override var reportAnalytics: Boolean by BooleanDelegate(KEY_OPT_IN_ANALYTICS_REPORTING, true)
+
+    override fun observeReportAnalytics(): Flow<Boolean> {
+        return flowSettings.getBooleanFlow(KEY_OPT_IN_ANALYTICS_REPORTING, true)
+    }
+
     override var developerHideArtwork: Boolean by BooleanDelegate(KEY_DEV_HIDE_ARTWORK, false)
 
     override fun observeDeveloperHideArtwork(): Flow<Boolean> {
@@ -82,7 +94,11 @@ class TiviPreferencesImpl(
             return thisRef.settings.getBoolean(key, defaultValue)
         }
 
-        override fun setValue(thisRef: TiviPreferencesImpl, property: KProperty<*>, value: Boolean) {
+        override fun setValue(
+            thisRef: TiviPreferencesImpl,
+            property: KProperty<*>,
+            value: Boolean,
+        ) {
             thisRef.settings.putBoolean(key, value)
         }
     }
@@ -108,6 +124,9 @@ internal const val KEY_LIBRARY_FOLLOWED_ACTIVE = "pref_library_followed_active"
 internal const val KEY_LIBRARY_WATCHED_ACTIVE = "pref_library_watched_active"
 internal const val KEY_UPNEXT_FOLLOWED_ONLY = "pref_upnext_followedonly_active"
 internal const val KEY_IGNORE_SPECIALS = "pref_ignore_specials"
+
+internal const val KEY_OPT_IN_CRASH_REPORTING = "pref_opt_in_crash_reporting"
+internal const val KEY_OPT_IN_ANALYTICS_REPORTING = "pref_opt_in_analytics_reporting"
 
 internal const val KEY_DEV_HIDE_ARTWORK = "pref_dev_hide_artwork"
 
