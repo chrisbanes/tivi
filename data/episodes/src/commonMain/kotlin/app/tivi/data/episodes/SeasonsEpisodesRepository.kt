@@ -9,7 +9,6 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.episodes.datasource.EpisodeWatchesDataSource
-import app.tivi.data.episodes.datasource.SeasonsEpisodesDataSource
 import app.tivi.data.models.ActionDate
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -39,10 +38,11 @@ class SeasonsEpisodesRepository(
     private val episodeWatchStore: EpisodeWatchStore,
     private val episodeWatchLastLastRequestStore: EpisodeWatchLastRequestStore,
     private val episodeLastRequestStore: EpisodeLastRequestStore,
+    private val seasonLastRequestStore: SeasonLastRequestStore,
     private val transactionRunner: DatabaseTransactionRunner,
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
-    private val seasonsLastRequestStore: SeasonsLastRequestStore,
+    private val showSeasonsLastRequestStore: ShowSeasonsLastRequestStore,
     private val tmdbSeasonsDataSource: TmdbSeasonsEpisodesDataSource,
     private val traktSeasonsDataSource: TraktSeasonsEpisodesDataSource,
     private val traktEpisodeDataSource: TraktEpisodeDataSource,
@@ -73,8 +73,12 @@ class SeasonsEpisodesRepository(
         return episodesDao.episodeWithIdObservable(episodeId).filterNotNull()
     }
 
-    suspend fun getEpisode(episodeId: Long): Episode? {
+    fun getEpisode(episodeId: Long): Episode? {
         return episodesDao.episodeWithId(episodeId)
+    }
+
+    fun getSeason(seasonId: Long): Season? {
+        return seasonsDao.seasonWithId(seasonId)
     }
 
     fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {
@@ -89,7 +93,7 @@ class SeasonsEpisodesRepository(
     suspend fun needShowSeasonsUpdate(
         showId: Long,
         expiry: Instant? = null,
-    ): Boolean = seasonsLastRequestStore.isRequestBefore(
+    ): Boolean = showSeasonsLastRequestStore.isRequestBefore(
         entityId = showId,
         instant = expiry ?: 7.days.inPast,
     )
@@ -134,7 +138,7 @@ class SeasonsEpisodesRepository(
                 }
             }
         }.also {
-            seasonsLastRequestStore.updateLastRequest(showId)
+            showSeasonsLastRequestStore.updateLastRequest(showId)
         }
     }
 
@@ -178,6 +182,47 @@ class SeasonsEpisodesRepository(
         )
 
         episodeLastRequestStore.updateLastRequest(episodeId)
+    }
+
+    fun needSeasonUpdate(
+        seasonId: Long,
+        expiry: Instant = 28.days.inPast,
+    ): Boolean {
+        return seasonLastRequestStore.isRequestBefore(seasonId, expiry)
+    }
+
+    suspend fun updateSeason(seasonId: Long) = coroutineScope {
+        val local = seasonsDao.seasonWithId(seasonId) ?: Season.EMPTY
+        val traktDeferred = async {
+            traktSeasonsDataSource.getSeason(local.showId, local.number!!)
+        }
+        val tmdbDeferred = async {
+            runCatching {
+                traktSeasonsDataSource.getSeason(local.showId, local.number!!)
+            }.getOrNull()
+        }
+
+        val trakt = try {
+            traktDeferred.await()
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (e: Exception) {
+            null
+        }
+        val tmdb = try {
+            tmdbDeferred.await()
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (e: Exception) {
+            null
+        }
+        check(trakt != null || tmdb != null)
+
+        seasonsDao.upsert(
+            mergeSeason(local, trakt ?: Season.EMPTY, tmdb ?: Season.EMPTY),
+        )
+
+        seasonLastRequestStore.updateLastRequest(seasonId)
     }
 
     suspend fun syncEpisodeWatchesForShow(showId: Long) {
