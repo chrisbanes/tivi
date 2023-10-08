@@ -14,8 +14,9 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.insert
 import app.tivi.data.episodes.EpisodeWatchStore
 import app.tivi.data.episodes.SeasonsEpisodesRepository
+import app.tivi.data.episodes.TmdbSeasonsEpisodesDataSource
+import app.tivi.data.episodes.TraktSeasonsEpisodesDataSource
 import app.tivi.data.episodes.datasource.EpisodeWatchesDataSource
-import app.tivi.data.episodes.datasource.SeasonsEpisodesDataSource
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.utils.FakeEpisodeWatchesDataSource
 import app.tivi.utils.FakeSeasonsEpisodesDataSource
@@ -49,7 +50,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     private lateinit var episodesDao: EpisodesDao
     private lateinit var watchStore: EpisodeWatchStore
     private lateinit var repository: SeasonsEpisodesRepository
-    private lateinit var seasonsDataSource: FakeSeasonsEpisodesDataSource
+    private lateinit var traktSeasonDataSource: FakeSeasonsEpisodesDataSource
+    private lateinit var tmdbSeasonDataSource: FakeSeasonsEpisodesDataSource
     private lateinit var watchesDataSource: FakeEpisodeWatchesDataSource
     private lateinit var traktAuthRepository: TraktAuthRepository
 
@@ -62,7 +64,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao = component.episodesDao
         watchStore = component.watchStore
         repository = component.repository
-        seasonsDataSource = component.seasonsDataSource as FakeSeasonsEpisodesDataSource
+        traktSeasonDataSource = component.traktSeasonsDataSource as FakeSeasonsEpisodesDataSource
+        tmdbSeasonDataSource = component.tmdbSeasonsDataSource as FakeSeasonsEpisodesDataSource
         watchesDataSource = component.episodeWatchesDataSource as FakeEpisodeWatchesDataSource
         traktAuthRepository = component.traktAuthRepository
 
@@ -141,7 +144,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     fun testSyncSeasonsEpisodes() = runTest {
         // Return a response with 2 items
 
-        seasonsDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
+        traktSeasonDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -155,7 +158,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s1_episodes)
 
         // Return a response with the same items
-        seasonsDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
+        traktSeasonDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -169,7 +172,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s1_episodes)
 
         // Return an empty response
-        seasonsDataSource.getSeasonsEpisodesResult = Result.success(emptyList())
+        traktSeasonDataSource.getSeasonsEpisodesResult = Result.success(emptyList())
         repository.updateSeasonsEpisodes(showId)
 
         // Assert the database is empty
@@ -184,7 +187,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s2_episodes)
 
         // Return a response with just the first season
-        seasonsDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
+        traktSeasonDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -199,7 +202,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s2_episodes)
 
         // Return a response with both seasons, but just a single episodes in each
-        seasonsDataSource.getSeasonsEpisodesResult =
+        traktSeasonDataSource.getSeasonsEpisodesResult =
             Result.success(listOf(s1 to listOf(s1e1), s2 to listOf(s2e1)))
         repository.updateSeasonsEpisodes(showId)
 
@@ -237,7 +240,8 @@ abstract class SeasonsEpisodesRepositoryTestComponent(
     abstract val episodesDao: EpisodesDao
     abstract val watchStore: EpisodeWatchStore
     abstract val repository: SeasonsEpisodesRepository
-    abstract val seasonsDataSource: SeasonsEpisodesDataSource
+    abstract val traktSeasonsDataSource: TraktSeasonsEpisodesDataSource
+    abstract val tmdbSeasonsDataSource: TmdbSeasonsEpisodesDataSource
     abstract val episodeWatchesDataSource: EpisodeWatchesDataSource
     abstract val traktAuthRepository: TraktAuthRepository
 }

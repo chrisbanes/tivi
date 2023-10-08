@@ -7,13 +7,15 @@ package app.tivi.data
 
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.episodes.TmdbEpisodeDataSource
+import app.tivi.data.episodes.TmdbSeasonsEpisodesDataSource
 import app.tivi.data.episodes.TraktEpisodeDataSource
+import app.tivi.data.episodes.TraktSeasonsEpisodesDataSource
 import app.tivi.data.episodes.datasource.EpisodeWatchesDataSource
-import app.tivi.data.episodes.datasource.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.datasource.TmdbEpisodeDataSourceImpl
+import app.tivi.data.episodes.datasource.TmdbSeasonsEpisodesDataSourceImpl
 import app.tivi.data.episodes.datasource.TraktEpisodeDataSourceImpl
 import app.tivi.data.episodes.datasource.TraktEpisodeWatchesDataSource
-import app.tivi.data.episodes.datasource.TraktSeasonsEpisodesDataSource
+import app.tivi.data.episodes.datasource.TraktSeasonsEpisodesDataSourceImpl
 import app.tivi.data.followedshows.FollowedShowsBinds
 import app.tivi.data.followedshows.FollowedShowsDataSource
 import app.tivi.data.followedshows.TraktFollowedShowsDataSource
@@ -66,8 +68,14 @@ abstract class TestDataSourceComponent :
     @ApplicationScope
     @Provides
     override fun provideTraktSeasonsEpisodesDataSource(
-        bind: TraktSeasonsEpisodesDataSource,
-    ): SeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource()
+        bind: TraktSeasonsEpisodesDataSourceImpl,
+    ): TraktSeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource()
+
+    @ApplicationScope
+    @Provides
+    override fun provideTmdbSeasonsEpisodesDataSource(
+        bind: TmdbSeasonsEpisodesDataSourceImpl,
+    ): TmdbSeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource()
 
     @ApplicationScope
     @Provides
