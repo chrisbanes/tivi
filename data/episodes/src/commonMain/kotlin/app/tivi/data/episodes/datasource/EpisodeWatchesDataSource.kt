@@ -1,10 +1,9 @@
 // Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package app.tivi.data.episodes
+package app.tivi.data.episodes.datasource
 
 import app.moviebase.trakt.TraktExtended
-import app.moviebase.trakt.api.TraktSeasonsApi
 import app.moviebase.trakt.api.TraktSyncApi
 import app.moviebase.trakt.api.TraktUsersApi
 import app.moviebase.trakt.model.TraktItemIds
@@ -14,41 +13,48 @@ import app.moviebase.trakt.model.TraktSyncItems
 import app.tivi.data.mappers.EpisodeIdToTraktIdMapper
 import app.tivi.data.mappers.SeasonIdToTraktIdMapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
-import app.tivi.data.mappers.ShowIdToTraktOrImdbIdMapper
 import app.tivi.data.mappers.TraktHistoryEntryToEpisode
 import app.tivi.data.mappers.TraktHistoryItemToEpisodeWatchEntry
-import app.tivi.data.mappers.TraktSeasonToSeasonWithEpisodes
 import app.tivi.data.mappers.map
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
-import app.tivi.data.models.Season
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 
+interface EpisodeWatchesDataSource {
+
+    suspend fun getShowEpisodeWatches(
+        showId: Long,
+        since: Instant? = null,
+    ): List<Pair<Episode, EpisodeWatchEntry>>
+
+    suspend fun getEpisodeWatches(
+        episodeId: Long,
+        since: Instant? = null,
+    ): List<EpisodeWatchEntry>
+
+    suspend fun getSeasonWatches(
+        seasonId: Long,
+        since: Instant? = null,
+    ): List<Pair<Episode, EpisodeWatchEntry>>
+
+    suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>)
+    suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>)
+}
+
 @Inject
-class TraktSeasonsEpisodesDataSource(
-    private val showIdToAnyIdMapper: ShowIdToTraktOrImdbIdMapper,
+class TraktEpisodeWatchesDataSource(
     private val showIdToTraktIdMapper: ShowIdToTraktIdMapper,
     private val seasonIdToTraktIdMapper: SeasonIdToTraktIdMapper,
     private val episodeIdToTraktIdMapper: EpisodeIdToTraktIdMapper,
-    private val seasonsService: Lazy<TraktSeasonsApi>,
     private val usersService: Lazy<TraktUsersApi>,
     private val syncService: Lazy<TraktSyncApi>,
-    private val seasonMapper: TraktSeasonToSeasonWithEpisodes,
     private val episodeMapper: TraktHistoryEntryToEpisode,
     private val historyItemMapper: TraktHistoryItemToEpisodeWatchEntry,
-) : SeasonsEpisodesDataSource {
+) : EpisodeWatchesDataSource {
 
     private val showEpisodeWatchesMapper = pairMapperOf(episodeMapper, historyItemMapper)
-
-    override suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>> {
-        return seasonsService.value.getSummary(
-            showId = showIdToAnyIdMapper.map(showId)
-                ?: error("No Trakt ID for show with ID: $showId"),
-            extended = TraktExtended.FULL_EPISODES,
-        ).let { seasonMapper.map(it) }
-    }
 
     override suspend fun getShowEpisodeWatches(
         showId: Long,

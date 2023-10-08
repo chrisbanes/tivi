@@ -8,6 +8,8 @@ import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.db.DatabaseTransactionRunner
+import app.tivi.data.episodes.datasource.EpisodeWatchesDataSource
+import app.tivi.data.episodes.datasource.SeasonsEpisodesDataSource
 import app.tivi.data.models.ActionDate
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -44,6 +46,7 @@ class SeasonsEpisodesRepository(
     private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
     private val traktEpisodeDataSource: TraktEpisodeDataSource,
     private val tmdbEpisodeDataSource: TmdbEpisodeDataSource,
+    private val traktEpisodeWatchesDataSource: EpisodeWatchesDataSource,
     private val traktAuthRepository: TraktAuthRepository,
     logger: Logger,
 ) {
@@ -302,7 +305,7 @@ class SeasonsEpisodesRepository(
     suspend fun updateShowEpisodeWatches(showId: Long) {
         if (traktAuthRepository.state.value != TraktAuthState.LOGGED_IN) return
 
-        val response = traktSeasonsDataSource.getShowEpisodeWatches(showId)
+        val response = traktEpisodeWatchesDataSource.getShowEpisodeWatches(showId)
 
         val watches = response.mapNotNull { (episode, watchEntry) ->
             val epId = episodesDao.episodeIdWithTraktId(episode.traktId!!)
@@ -314,7 +317,7 @@ class SeasonsEpisodesRepository(
     }
 
     private suspend fun fetchEpisodeWatchesFromRemote(episodeId: Long) {
-        val response = traktSeasonsDataSource.getEpisodeWatches(episodeId, null)
+        val response = traktEpisodeWatchesDataSource.getEpisodeWatches(episodeId, null)
         val watches = response.map { it.copy(episodeId = episodeId) }
         episodeWatchStore.syncEpisodeWatchEntries(episodeId, watches)
     }
@@ -334,7 +337,7 @@ class SeasonsEpisodesRepository(
 
             if (entries.size > localOnlyDeletes.size) {
                 val toRemove = entries.filter { it.traktId != null }
-                traktSeasonsDataSource.removeEpisodeWatches(toRemove)
+                traktEpisodeWatchesDataSource.removeEpisodeWatches(toRemove)
                 // Now update the database
                 episodeWatchStore.deleteEntriesWithIds(entries.map(EpisodeWatchEntry::id))
                 return true
@@ -353,7 +356,7 @@ class SeasonsEpisodesRepository(
      */
     private suspend fun processPendingAdditions(entries: List<EpisodeWatchEntry>): Boolean {
         if (traktAuthRepository.state.value == TraktAuthState.LOGGED_IN) {
-            traktSeasonsDataSource.addEpisodeWatches(entries)
+            traktEpisodeWatchesDataSource.addEpisodeWatches(entries)
             // Now update the database
             episodeWatchStore.updateEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
             return true

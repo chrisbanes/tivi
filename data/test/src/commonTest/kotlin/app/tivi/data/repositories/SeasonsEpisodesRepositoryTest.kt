@@ -13,9 +13,11 @@ import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.insert
 import app.tivi.data.episodes.EpisodeWatchStore
-import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.SeasonsEpisodesRepository
+import app.tivi.data.episodes.datasource.EpisodeWatchesDataSource
+import app.tivi.data.episodes.datasource.SeasonsEpisodesDataSource
 import app.tivi.data.traktauth.TraktAuthRepository
+import app.tivi.utils.FakeEpisodeWatchesDataSource
 import app.tivi.utils.FakeSeasonsEpisodesDataSource
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
@@ -48,6 +50,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
     private lateinit var watchStore: EpisodeWatchStore
     private lateinit var repository: SeasonsEpisodesRepository
     private lateinit var seasonsDataSource: FakeSeasonsEpisodesDataSource
+    private lateinit var watchesDataSource: FakeEpisodeWatchesDataSource
     private lateinit var traktAuthRepository: TraktAuthRepository
 
     @BeforeTest
@@ -60,6 +63,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         watchStore = component.watchStore
         repository = component.repository
         seasonsDataSource = component.seasonsDataSource as FakeSeasonsEpisodesDataSource
+        watchesDataSource = component.episodeWatchesDataSource as FakeEpisodeWatchesDataSource
         traktAuthRepository = component.traktAuthRepository
 
         // We'll assume that there's a show in the db
@@ -72,7 +76,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         episodesDao.insert(s1_episodes)
 
         // Return a response with 2 items
-        seasonsDataSource.getShowEpisodeWatchesResult =
+        watchesDataSource.getShowEpisodeWatchesResult =
             Result.success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         traktAuthRepository.login()
         // Sync
@@ -90,7 +94,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Insert both the watches
         episodeWatchDao.insert(s1e1w, s1e1w2)
         // Return a response with the same items
-        seasonsDataSource.getShowEpisodeWatchesResult =
+        watchesDataSource.getShowEpisodeWatchesResult =
             Result.success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         // Now re-sync with the same response
         repository.syncEpisodeWatchesForShow(showId)
@@ -107,7 +111,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Insert both the watches
         episodeWatchDao.insert(s1e1w, s1e1w2)
         // Return a response with just the second item
-        seasonsDataSource.getShowEpisodeWatchesResult = Result.success(listOf(s1e1 to s1e1w2))
+        watchesDataSource.getShowEpisodeWatchesResult = Result.success(listOf(s1e1 to s1e1w2))
 
         traktAuthRepository.login()
         // Now re-sync
@@ -125,7 +129,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Insert both the watches
         episodeWatchDao.insert(s1e1w, s1e1w2)
         // Return a empty response
-        seasonsDataSource.getShowEpisodeWatchesResult = Result.success(emptyList())
+        watchesDataSource.getShowEpisodeWatchesResult = Result.success(emptyList())
         traktAuthRepository.login()
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
@@ -214,8 +218,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
             assertThat(awaitItem()?.episode).isEqualTo(s1e1)
 
             // Now mark s1e1 as watched
-            seasonsDataSource.addEpisodeWatchesResult = Result.success(Unit)
-            seasonsDataSource.getEpisodeWatchesResult = Result.success(listOf(s1e1w))
+            watchesDataSource.addEpisodeWatchesResult = Result.success(Unit)
+            watchesDataSource.getEpisodeWatchesResult = Result.success(listOf(s1e1w))
             repository.addEpisodeWatch(s1e1.id, Clock.System.now())
 
             assertThat(awaitItem()?.episode).isEqualTo(s1e2)
@@ -234,5 +238,6 @@ abstract class SeasonsEpisodesRepositoryTestComponent(
     abstract val watchStore: EpisodeWatchStore
     abstract val repository: SeasonsEpisodesRepository
     abstract val seasonsDataSource: SeasonsEpisodesDataSource
+    abstract val episodeWatchesDataSource: EpisodeWatchesDataSource
     abstract val traktAuthRepository: TraktAuthRepository
 }

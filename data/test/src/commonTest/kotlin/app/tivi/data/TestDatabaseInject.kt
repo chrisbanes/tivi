@@ -6,12 +6,14 @@
 package app.tivi.data
 
 import app.tivi.data.episodes.EpisodeBinds
-import app.tivi.data.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.episodes.TmdbEpisodeDataSource
-import app.tivi.data.episodes.TmdbEpisodeDataSourceImpl
 import app.tivi.data.episodes.TraktEpisodeDataSource
-import app.tivi.data.episodes.TraktEpisodeDataSourceImpl
-import app.tivi.data.episodes.TraktSeasonsEpisodesDataSource
+import app.tivi.data.episodes.datasource.EpisodeWatchesDataSource
+import app.tivi.data.episodes.datasource.SeasonsEpisodesDataSource
+import app.tivi.data.episodes.datasource.TmdbEpisodeDataSourceImpl
+import app.tivi.data.episodes.datasource.TraktEpisodeDataSourceImpl
+import app.tivi.data.episodes.datasource.TraktEpisodeWatchesDataSource
+import app.tivi.data.episodes.datasource.TraktSeasonsEpisodesDataSource
 import app.tivi.data.followedshows.FollowedShowsBinds
 import app.tivi.data.followedshows.FollowedShowsDataSource
 import app.tivi.data.followedshows.TraktFollowedShowsDataSource
@@ -28,6 +30,7 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.utils.AuthorizedAuthStore
 import app.tivi.utils.FakeEpisodeDataSource
+import app.tivi.utils.FakeEpisodeWatchesDataSource
 import app.tivi.utils.FakeFollowedShowsDataSource
 import app.tivi.utils.FakeSeasonsEpisodesDataSource
 import app.tivi.utils.SuccessFakeShowDataSource
@@ -65,6 +68,12 @@ abstract class TestDataSourceComponent :
     override fun provideTraktSeasonsEpisodesDataSource(
         bind: TraktSeasonsEpisodesDataSource,
     ): SeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource()
+
+    @ApplicationScope
+    @Provides
+    override fun provideEpisodeWatchesDataSource(
+        bind: TraktEpisodeWatchesDataSource,
+    ): EpisodeWatchesDataSource = FakeEpisodeWatchesDataSource()
 
     @ApplicationScope
     @Provides
