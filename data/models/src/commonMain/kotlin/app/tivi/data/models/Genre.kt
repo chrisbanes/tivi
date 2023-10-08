@@ -1,9 +1,10 @@
 // Copyright 2017, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
+@file:Suppress("ktlint:standard:trailing-comma-on-declaration-site")
+
 package app.tivi.data.models
 
-/* ktlint-disable trailing-comma-on-declaration-site */
 enum class Genre(val traktValue: String) {
     DRAMA("drama"),
     FANTASY("fantasy"),

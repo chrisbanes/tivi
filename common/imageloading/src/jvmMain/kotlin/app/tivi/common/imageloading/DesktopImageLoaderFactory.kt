@@ -37,7 +37,10 @@ internal object DesktopImageLoaderFactory : ImageLoaderFactory {
 }
 
 internal enum class OperatingSystem {
-    Windows, Linux, MacOS, Unknown
+    Windows,
+    Linux,
+    MacOS,
+    Unknown,
 }
 
 private val currentOperatingSystem: OperatingSystem
