@@ -6,6 +6,7 @@ package app.tivi.data.traktauth
 import app.tivi.app.ApplicationInfo
 import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.util.AppCoroutineDispatchers
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
 import com.russhwolf.settings.set
@@ -17,7 +18,11 @@ import platform.Security.kSecAttrAccessible
 import platform.Security.kSecAttrAccessibleAfterFirstUnlock
 import platform.Security.kSecAttrService
 
-@OptIn(ExperimentalSettingsImplementation::class, ExperimentalForeignApi::class)
+@OptIn(
+    ExperimentalSettingsImplementation::class,
+    ExperimentalForeignApi::class,
+    ExperimentalSettingsApi::class,
+)
 @Inject
 class IosAuthStore(
     private val applicationInfo: ApplicationInfo,
