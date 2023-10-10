@@ -197,9 +197,7 @@ class SeasonsEpisodesRepository(
             traktSeasonsDataSource.getSeason(local.showId, local.number!!)
         }
         val tmdbDeferred = async {
-            runCatching {
-                traktSeasonsDataSource.getSeason(local.showId, local.number!!)
-            }.getOrNull()
+            tmdbSeasonsDataSource.getSeason(local.showId, local.number!!)
         }
 
         val trakt = try {
@@ -218,9 +216,7 @@ class SeasonsEpisodesRepository(
         }
         check(trakt != null || tmdb != null)
 
-        seasonsDao.upsert(
-            mergeSeason(local, trakt ?: Season.EMPTY, tmdb ?: Season.EMPTY),
-        )
+        seasonsDao.upsert(mergeSeason(local, trakt ?: Season.EMPTY, tmdb ?: Season.EMPTY))
 
         seasonLastRequestStore.updateLastRequest(seasonId)
     }
