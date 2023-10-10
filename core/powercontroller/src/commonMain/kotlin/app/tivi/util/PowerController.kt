@@ -16,7 +16,9 @@ sealed class SaveData {
 }
 
 enum class SaveDataReason {
-    PREFERENCE, SYSTEM_DATA_SAVER, SYSTEM_POWER_SAVER
+    PREFERENCE,
+    SYSTEM_DATA_SAVER,
+    SYSTEM_POWER_SAVER,
 }
 
 @Inject
