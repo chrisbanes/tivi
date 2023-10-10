@@ -85,7 +85,7 @@ google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.3.0"
 google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.4.3"
 google-firebase-perf = "com.google.firebase:firebase-perf-ktx:20.4.1"
 
-imageloader = "io.github.qdsfdhvh:image-loader:1.6.7"
+imageloader = "io.github.qdsfdhvh:image-loader:1.6.8"
 
 junit = "junit:junit:4.13.2"
 
