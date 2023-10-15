@@ -16,6 +16,14 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
 }
 
 fun Project.configureCompose() {
-    with(extensions.getByType<ComposeExtension>()) {
+    val composeVersion = libs.findVersion("compose-multiplatform").get().requiredVersion
+
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            val group = requested.group
+            if (group.startsWith("org.jetbrains.compose") && !group.endsWith("compiler")) {
+                useVersion(composeVersion)
+            }
+        }
     }
 }
