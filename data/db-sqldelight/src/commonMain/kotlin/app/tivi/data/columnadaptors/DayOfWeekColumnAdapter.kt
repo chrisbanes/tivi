@@ -4,13 +4,12 @@
 package app.tivi.data.columnadaptors
 
 import app.cash.sqldelight.ColumnAdapter
-import app.tivi.extensions.unsafeLazy
 import kotlinx.datetime.DayOfWeek
 
 internal object DayOfWeekColumnAdapter : ColumnAdapter<DayOfWeek, Long> {
-    private val values by unsafeLazy { DayOfWeek.values().associateBy { it.dbValue } }
-
-    override fun decode(databaseValue: Long): DayOfWeek = values.getValue(databaseValue.toInt())
+    override fun decode(databaseValue: Long): DayOfWeek {
+        return DayOfWeek.entries.first { it.dbValue.toLong() == databaseValue }
+    }
 
     override fun encode(value: DayOfWeek): Long = value.dbValue.toLong()
 }

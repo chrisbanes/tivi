@@ -5,12 +5,11 @@ package app.tivi.data.columnadaptors
 
 import app.cash.sqldelight.ColumnAdapter
 import app.tivi.data.models.PendingAction
-import app.tivi.extensions.unsafeLazy
 
 internal object PendingActionColumnAdapter : ColumnAdapter<PendingAction, String> {
-    private val values by unsafeLazy { PendingAction.values().associateBy(PendingAction::value) }
-
-    override fun decode(databaseValue: String): PendingAction = values.getValue(databaseValue)
+    override fun decode(databaseValue: String): PendingAction {
+        return PendingAction.entries.first { it.value == databaseValue }
+    }
 
     override fun encode(value: PendingAction): String = value.value
 }
