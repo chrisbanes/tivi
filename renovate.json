@@ -5,12 +5,12 @@
   ],
   "packageRules": [
     {
-      "groupName": "Kotlin, KSP and Compose Compiler",
+      "groupName": "Kotlin, KSP and Compose Multiplatform",
       "groupSlug": "kotlin",
       "matchPackageNames": [
         "com.google.devtools.ksp",
-        "androidx.compose.compiler",
-        "org.jetbrains.kotlin"
+        "org.jetbrains.kotlin",
+        "org.jetbrains.compose"
       ]
     },
     {
