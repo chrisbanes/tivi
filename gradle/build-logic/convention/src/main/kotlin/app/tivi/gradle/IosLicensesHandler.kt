@@ -51,7 +51,7 @@ fun Project.configureIosLicensesTasks() {
     }
 
     tasks.named("embedAndSignAppleFrameworkForXcode") {
-        dependsOn("copyLicenseeOutputToIosBundle")
+        // dependsOn("copyLicenseeOutputToIosBundle")
     }
 }
 
