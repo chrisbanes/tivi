@@ -86,8 +86,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.sp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
@@ -203,7 +205,7 @@ internal fun ShowDetails(
   Scaffold(
     topBar = {
       ShowDetailsAppBar(
-        title = viewState.show.title ?: "",
+        title = null,
         isRefreshing = viewState.refreshing,
         onNavigateUp = navigateUp,
         onRefresh = refresh,
@@ -298,14 +300,27 @@ private fun ShowDetailsScrollingContent(
       Backdrop(
         imageModel = show.asImageModel(ImageType.BACKDROP),
         modifier = Modifier
-          .padding(horizontal = bodyMargin, vertical = gutter)
+          .padding(horizontal = bodyMargin)
+          .padding(top = gutter)
           .fillMaxWidth()
           .aspectRatio(16f / 10),
       )
     }
 
     item {
-      Spacer(modifier = Modifier.height(max(gutter, bodyMargin)))
+      val title = show.title?.takeIf { it.isNotEmpty() }
+      if (title != null) {
+        Text(
+          text = title,
+          style = MaterialTheme.typography.displaySmall,
+          letterSpacing = (-1).sp,
+          lineHeight = 36.sp,
+          fontWeight = FontWeight.Bold,
+          modifier = Modifier
+            .padding(horizontal = bodyMargin, vertical = max(gutter, bodyMargin))
+            .fillMaxWidth()
+        )
+      }
     }
 
     item(key = "poster_info") {
@@ -951,9 +966,10 @@ private fun SeasonDropdownMenu(
   }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShowDetailsAppBar(
-  title: String,
+  title: String?,
   isRefreshing: Boolean,
   onNavigateUp: () -> Unit,
   onRefresh: () -> Unit,
@@ -961,7 +977,11 @@ private fun ShowDetailsAppBar(
   scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
   TopAppBar(
-    title = { Text(text = title) },
+    title = {
+      if (title != null) {
+        Text(text = title)
+      }
+    },
     navigationIcon = {
       IconButton(onClick = onNavigateUp) {
         Icon(
