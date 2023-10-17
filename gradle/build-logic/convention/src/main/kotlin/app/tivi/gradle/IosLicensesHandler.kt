@@ -48,7 +48,7 @@ fun Project.configureIosLicensesTasks() {
     }
 
     tasks.named("embedAndSignAppleFrameworkForXcode") {
-        // dependsOn("copyLicenseeOutputToIosBundle")
+        dependsOn("copyLicenseeOutputToIosBundle")
     }
 }
 
@@ -74,6 +74,7 @@ internal fun determineIosKonanTargetsFromEnv(
                 },
             )
         }
+
         platform.startsWith("iphonesimulator") -> {
             targets.addAll(
                 archs.map { arch ->
@@ -85,6 +86,7 @@ internal fun determineIosKonanTargetsFromEnv(
                 },
             )
         }
+
         else -> error("Unknown iOS platform: '$platform'")
     }
 

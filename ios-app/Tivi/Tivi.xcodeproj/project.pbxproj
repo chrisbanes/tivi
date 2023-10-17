@@ -230,7 +230,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/../..\"\n\nMODULE=\"qa\"\nif [ \"$CONFIGURATION\" = \"Prod\" ]; then\n  MODULE=\"prod\"\nfi\n\necho \"Building :shared:$MODULE for $CONFIGURATION\"\n./gradlew :shared:$MODULE:embedAndSignAppleFrameworkForXcode --no-configuration-cache --stacktrace\n";
+			shellScript = "cd \"$SRCROOT/../..\"\n\nMODULE=\"qa\"\nif [ \"$CONFIGURATION\" = \"Prod\" ]; then\n  MODULE=\"prod\"\nfi\n\necho \"Building :shared:$MODULE for $CONFIGURATION\"\n./gradlew :shared:$MODULE:embedAndSignAppleFrameworkForXcode --stacktrace\n";
 		};
 		83AB60022A51F473007FC216 /* Upload Crashlytics symbols */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -306,7 +306,6 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -369,7 +368,6 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -516,7 +514,6 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
