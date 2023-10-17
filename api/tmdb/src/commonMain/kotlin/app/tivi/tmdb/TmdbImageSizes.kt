@@ -5,7 +5,7 @@ package app.tivi.tmdb
 
 object TmdbImageSizes {
 
-    const val baseImageUrl = "https://image.tmdb.org/t/p/"
+    const val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/"
 
     val posterSizes = listOf(
         "w92",

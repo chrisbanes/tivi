@@ -122,7 +122,7 @@ fun AsyncImage(
         contentScale = contentScale,
         alpha = alpha,
         colorFilter = when {
-            colorMatrix != IdentityMatrix -> ColorFilter.colorMatrix(colorMatrix)
+            colorMatrix != IDENTITY_MATRIX -> ColorFilter.colorMatrix(colorMatrix)
             else -> colorFilter
         },
         modifier = modifier
@@ -132,7 +132,7 @@ fun AsyncImage(
     )
 }
 
-private val IdentityMatrix = ColorMatrix()
+private val IDENTITY_MATRIX by lazy { ColorMatrix() }
 
 internal data class ImageResultExtra(
     val result: ImageResult,
@@ -182,10 +182,10 @@ private object EmptyPainter : Painter() {
 /** A [SizeResolver] that computes the size from the constrains passed during the layout phase. */
 internal class ConstraintsSizeResolver : SizeResolver, LayoutModifier {
 
-    private val _constraints = MutableStateFlow(Constraints())
+    private val constraints = MutableStateFlow(Constraints())
 
     override suspend fun Density.size(): Size {
-        return _constraints.mapNotNull(Constraints::toSizeOrNull).first()
+        return constraints.mapNotNull(Constraints::toSizeOrNull).first()
     }
 
     override fun MeasureScope.measure(
@@ -193,7 +193,7 @@ internal class ConstraintsSizeResolver : SizeResolver, LayoutModifier {
         constraints: Constraints,
     ): MeasureResult {
         // Cache the current constraints.
-        _constraints.value = constraints
+        this@ConstraintsSizeResolver.constraints.value = constraints
 
         // Measure and layout the content.
         val placeable = measurable.measure(constraints)
@@ -203,7 +203,7 @@ internal class ConstraintsSizeResolver : SizeResolver, LayoutModifier {
     }
 
     fun setConstraints(constraints: Constraints) {
-        _constraints.value = constraints
+        this.constraints.value = constraints
     }
 }
 

@@ -6,7 +6,7 @@ package app.tivi.tmdb
 private val IMAGE_SIZE_PATTERN = "w(\\d+)$".toRegex()
 
 data class TmdbImageUrlProvider(
-    private val baseImageUrl: String = TmdbImageSizes.baseImageUrl,
+    private val baseImageUrl: String = TmdbImageSizes.BASE_IMAGE_URL,
     private val posterSizes: List<String> = TmdbImageSizes.posterSizes,
     private val backdropSizes: List<String> = TmdbImageSizes.backdropSizes,
     private val logoSizes: List<String> = TmdbImageSizes.logoSizes,

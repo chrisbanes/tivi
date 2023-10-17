@@ -22,9 +22,11 @@ fun Project.configureSpotless() {
         // Workaround for https://github.com/diffplug/spotless/issues/1644
         lineEndings = LineEnding.PLATFORM_NATIVE
 
+        val ktlintVersion = libs.findVersion("ktlint").get().requiredVersion
+
         kotlin {
             target("src/**/*.kt")
-            ktlint()
+            ktlint(ktlintVersion)
             licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"))
                 .named("google")
                 .onlyIfContentMatches("Copyright \\d+,* Google")
@@ -38,7 +40,7 @@ fun Project.configureSpotless() {
 
         kotlinGradle {
             target("*.kts")
-            ktlint()
+            ktlint(ktlintVersion)
             licenseHeaderFile(rootProject.file("spotless/google-copyright.txt"), "(^(?![\\/ ]\\**).*$)")
                 .named("google")
                 .onlyIfContentMatches("Copyright \\d+,* Google")

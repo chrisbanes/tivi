@@ -81,18 +81,18 @@ internal fun updateImageLoadingTransition(
 
 fun ColorMatrix.setSaturation(sat: Float): ColorMatrix {
     val invSat = 1 - sat
-    val R = 0.213f * invSat
-    val G = 0.715f * invSat
-    val B = 0.072f * invSat
-    this[0, 0] = R + sat
-    this[0, 1] = G
-    this[0, 2] = B
-    this[1, 0] = R
-    this[1, 1] = G + sat
-    this[1, 2] = B
-    this[2, 0] = R
-    this[2, 1] = G
-    this[2, 2] = B + sat
+    val red = 0.213f * invSat
+    val green = 0.715f * invSat
+    val blue = 0.072f * invSat
+    this[0, 0] = red + sat
+    this[0, 1] = green
+    this[0, 2] = blue
+    this[1, 0] = red
+    this[1, 1] = green + sat
+    this[1, 2] = blue
+    this[2, 0] = red
+    this[2, 1] = green
+    this[2, 2] = blue + sat
 
     return this
 }

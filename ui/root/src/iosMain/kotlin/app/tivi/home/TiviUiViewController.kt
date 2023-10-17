@@ -17,6 +17,7 @@ import platform.UIKit.UIViewController
 typealias TiviUiViewController = () -> UIViewController
 
 @Inject
+@Suppress("ktlint:standard:function-naming")
 fun TiviUiViewController(
     tiviContent: TiviContent,
 ): UIViewController = ComposeUIViewController {

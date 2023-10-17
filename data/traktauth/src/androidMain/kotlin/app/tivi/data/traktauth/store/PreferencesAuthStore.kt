@@ -17,23 +17,23 @@ class PreferencesAuthStore(
 ) : AuthStore {
     override suspend fun get(): AuthState? {
         return authPrefs.value
-            .getString(PreferenceAuthKey, null)
+            .getString(KEY, null)
             ?.let(::AppAuthAuthStateWrapper)
     }
 
     override suspend fun save(state: AuthState) {
         authPrefs.value.edit(commit = true) {
-            putString(PreferenceAuthKey, state.serializeToJson())
+            putString(KEY, state.serializeToJson())
         }
     }
 
     override suspend fun clear() {
         authPrefs.value.edit(commit = true) {
-            remove(PreferenceAuthKey)
+            remove(KEY)
         }
     }
 
     private companion object {
-        private const val PreferenceAuthKey = "stateJson"
+        private const val KEY = "stateJson"
     }
 }

@@ -27,22 +27,22 @@ fun UiMessage(
 class UiMessageManager {
     private val mutex = Mutex()
 
-    private val _messages = MutableStateFlow(emptyList<UiMessage>())
+    private val _message = MutableStateFlow(emptyList<UiMessage>())
 
     /**
      * A flow emitting the current message to display.
      */
-    val message: Flow<UiMessage?> = _messages.map { it.firstOrNull() }.distinctUntilChanged()
+    val message: Flow<UiMessage?> = _message.map { it.firstOrNull() }.distinctUntilChanged()
 
     suspend fun emitMessage(message: UiMessage) {
         mutex.withLock {
-            _messages.value = _messages.value + message
+            _message.value = _message.value + message
         }
     }
 
     suspend fun clearMessage(id: Long) {
         mutex.withLock {
-            _messages.value = _messages.value.filterNot { it.id == id }
+            _message.value = _message.value.filterNot { it.id == id }
         }
     }
 }

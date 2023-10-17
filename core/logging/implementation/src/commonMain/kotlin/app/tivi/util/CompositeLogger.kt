@@ -5,7 +5,7 @@ package app.tivi.util
 
 internal fun CompositeLogger(
     vararg loggers: Logger?,
-): Logger = CompositeLogger(loggers = loggers.filterNotNull())
+): CompositeLogger = CompositeLogger(loggers = loggers.filterNotNull())
 
 private class CompositeLogger(
     private val loggers: Collection<Logger>,
