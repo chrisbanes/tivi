@@ -20,8 +20,10 @@ fun RefreshButton(
   refreshing: Boolean,
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
+  showScrim: Boolean = false,
 ) {
-  IconButton(
+  ScrimmedIconButton(
+    showScrim = showScrim,
     onClick = onClick,
     enabled = !refreshing,
     modifier = modifier,

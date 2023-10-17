@@ -69,6 +69,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -81,6 +82,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -103,6 +105,9 @@ import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.ScrimmedIconButton
+import app.tivi.common.compose.ui.copy
+import app.tivi.common.compose.ui.plus
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
@@ -200,7 +205,7 @@ internal fun ShowDetails(
     }
   }
 
-  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+  val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
   Scaffold(
     topBar = {
@@ -241,7 +246,8 @@ internal fun ShowDetails(
     // The nav bar is handled by the root Scaffold
     contentWindowInsets = ScaffoldDefaults.contentWindowInsets
       .exclude(WindowInsets.navigationBars),
-    modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    modifier = modifier
+      .nestedScroll(scrollBehavior.nestedScrollConnection),
   ) { contentPadding ->
     Surface(modifier = Modifier.bodyWidth()) {
       ShowDetailsScrollingContent(
@@ -292,18 +298,17 @@ private fun ShowDetailsScrollingContent(
 
   LazyColumn(
     state = listState,
-    contentPadding = contentPadding,
+    contentPadding = contentPadding.copy(copyTop = false),
     modifier = modifier,
     flingBehavior = rememberTiviFlingBehavior(),
   ) {
     item(key = "backdrop") {
       Backdrop(
         imageModel = show.asImageModel(ImageType.BACKDROP),
+        shape = RectangleShape,
         modifier = Modifier
-          .padding(horizontal = bodyMargin)
-          .padding(top = gutter)
           .fillMaxWidth()
-          .aspectRatio(16f / 10),
+          .aspectRatio(16f / 11),
       )
     }
 
@@ -318,7 +323,7 @@ private fun ShowDetailsScrollingContent(
           fontWeight = FontWeight.Bold,
           modifier = Modifier
             .padding(horizontal = bodyMargin, vertical = max(gutter, bodyMargin))
-            .fillMaxWidth()
+            .fillMaxWidth(),
         )
       }
     }
@@ -974,7 +979,7 @@ private fun ShowDetailsAppBar(
   onNavigateUp: () -> Unit,
   onRefresh: () -> Unit,
   modifier: Modifier = Modifier,
-  scrollBehavior: TopAppBarScrollBehavior? = null,
+  scrollBehavior: TopAppBarScrollBehavior,
 ) {
   TopAppBar(
     title = {
@@ -983,7 +988,10 @@ private fun ShowDetailsAppBar(
       }
     },
     navigationIcon = {
-      IconButton(onClick = onNavigateUp) {
+      ScrimmedIconButton(
+        showScrim = scrollBehavior.state.contentOffset > -4,
+        onClick = onNavigateUp,
+      ) {
         Icon(
           imageVector = Icons.Default.ArrowBack,
           contentDescription = LocalStrings.current.cdNavigateUp,
@@ -992,10 +1000,15 @@ private fun ShowDetailsAppBar(
     },
     actions = {
       RefreshButton(
-        onClick = onRefresh,
+        showScrim = scrollBehavior.state.contentOffset > -4,
         refreshing = !isRefreshing,
+        onClick = onRefresh,
       )
     },
+    colors = TopAppBarDefaults.topAppBarColors(
+      containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0f),
+      scrolledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+    ),
     scrollBehavior = scrollBehavior,
     windowInsets = TopAppBarDefaults.windowInsets
       .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
