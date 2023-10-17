@@ -11,7 +11,7 @@ on:
 
 jobs:
   code-style:
-    runs-on: macos-13
+    runs-on: macos-latest
     timeout-minutes: 60
     env:
       ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_URL: ${{ secrets.ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_URL }}
@@ -46,7 +46,7 @@ jobs:
 
   android:
     needs: [code-style]
-    runs-on: macos-13
+    runs-on: macos-latest
     timeout-minutes: 60
     env:
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
@@ -368,7 +368,7 @@ jobs:
   publish:
     if: github.ref == 'refs/heads/main'
     needs: [android, ios-qa-app, ios-prod-app, desktop]
-    runs-on: macos-13
+    runs-on: macos-latest
     timeout-minutes: 40
     env:
       API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
