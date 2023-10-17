@@ -12,44 +12,44 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface SqlDelightDatabasePlatformComponent {
-    @Provides
-    @ApplicationScope
-    fun provideDriverFactory(
-        configuration: DatabaseConfiguration,
-    ): SqlDriver = JdbcSqliteDriver(
-        url = when {
-            configuration.inMemory -> JdbcSqliteDriver.IN_MEMORY
-            else -> "jdbc:sqlite:${getDatabaseFile().absolutePath}"
-        },
-    ).also { db ->
-        Database.Schema.create(db)
-        db.execute(null, "PRAGMA foreign_keys=ON", 0)
-    }
+  @Provides
+  @ApplicationScope
+  fun provideDriverFactory(
+    configuration: DatabaseConfiguration,
+  ): SqlDriver = JdbcSqliteDriver(
+    url = when {
+      configuration.inMemory -> JdbcSqliteDriver.IN_MEMORY
+      else -> "jdbc:sqlite:${getDatabaseFile().absolutePath}"
+    },
+  ).also { db ->
+    Database.Schema.create(db)
+    db.execute(null, "PRAGMA foreign_keys=ON", 0)
+  }
 }
 
 private fun getDatabaseFile(): File {
-    return File(
-        appDir.also { if (!it.exists()) it.mkdirs() },
-        "tivi.db",
-    )
+  return File(
+    appDir.also { if (!it.exists()) it.mkdirs() },
+    "tivi.db",
+  )
 }
 
 private val appDir: File
-    get() {
-        val os = System.getProperty("os.name").lowercase()
-        return when {
-            os.contains("win") -> {
-                File(System.getenv("AppData"), "tivi/db")
-            }
+  get() {
+    val os = System.getProperty("os.name").lowercase()
+    return when {
+      os.contains("win") -> {
+        File(System.getenv("AppData"), "tivi/db")
+      }
 
-            os.contains("nix") || os.contains("nux") || os.contains("aix") -> {
-                File(System.getProperty("user.home"), ".tivi")
-            }
+      os.contains("nix") || os.contains("nux") || os.contains("aix") -> {
+        File(System.getProperty("user.home"), ".tivi")
+      }
 
-            os.contains("mac") -> {
-                File(System.getProperty("user.home"), "Library/Application Support/tivi")
-            }
+      os.contains("mac") -> {
+        File(System.getProperty("user.home"), "Library/Application Support/tivi")
+      }
 
-            else -> error("Unsupported operating system")
-        }
+      else -> error("Unsupported operating system")
     }
+  }

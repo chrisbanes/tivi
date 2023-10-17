@@ -7,5 +7,5 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
 
 fun interface WatchedShowsDataSource {
-    suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>>
+  suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>>
 }

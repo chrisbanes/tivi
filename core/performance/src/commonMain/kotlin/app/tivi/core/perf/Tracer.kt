@@ -4,8 +4,8 @@
 package app.tivi.core.perf
 
 fun interface Tracer {
-    fun trace(
-        name: String,
-        block: () -> Unit,
-    )
+  fun trace(
+    name: String,
+    block: () -> Unit,
+  )
 }

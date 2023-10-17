@@ -12,7 +12,7 @@ import platform.Foundation.NSUserDefaults
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface PreferencesPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideSettings(delegate: NSUserDefaults): ObservableSettings = NSUserDefaultsSettings(delegate)
+  @ApplicationScope
+  @Provides
+  fun provideSettings(delegate: NSUserDefaults): ObservableSettings = NSUserDefaultsSettings(delegate)
 }

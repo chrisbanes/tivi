@@ -14,21 +14,21 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktTrendingShowsDataSource(
-    private val showsApi: Lazy<TraktShowsApi>,
-    showMapper: TraktTrendingShowToTiviShow,
-    entryMapper: TraktTrendingShowToTrendingShowEntry,
+  private val showsApi: Lazy<TraktShowsApi>,
+  showMapper: TraktTrendingShowToTiviShow,
+  entryMapper: TraktTrendingShowToTrendingShowEntry,
 ) : TrendingShowsDataSource {
 
-    private val responseMapper = pairMapperOf(showMapper, entryMapper)
+  private val responseMapper = pairMapperOf(showMapper, entryMapper)
 
-    override suspend operator fun invoke(
-        page: Int,
-        pageSize: Int,
-    ): List<Pair<TiviShow, TrendingShowEntry>> =
-        showsApi.value.getTrending(
-            // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
-            page = page + 1,
-            limit = pageSize,
-            extended = TraktExtended.NO_SEASONS,
-        ).let { responseMapper(it) }
+  override suspend operator fun invoke(
+    page: Int,
+    pageSize: Int,
+  ): List<Pair<TiviShow, TrendingShowEntry>> =
+    showsApi.value.getTrending(
+      // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
+      page = page + 1,
+      limit = pageSize,
+      extended = TraktExtended.NO_SEASONS,
+    ).let { responseMapper(it) }
 }

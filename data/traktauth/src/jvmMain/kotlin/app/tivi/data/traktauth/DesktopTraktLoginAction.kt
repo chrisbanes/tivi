@@ -7,7 +7,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DesktopTraktLoginAction : TraktLoginAction {
-    override suspend operator fun invoke(): AuthState? {
-        return null
-    }
+  override suspend operator fun invoke(): AuthState? {
+    return null
+  }
 }

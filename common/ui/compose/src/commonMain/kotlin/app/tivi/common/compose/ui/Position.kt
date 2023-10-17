@@ -16,19 +16,19 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.toSize
 
 inline val LayoutCoordinates.positionInParent: Offset
-    get() = parentCoordinates?.localPositionOf(this, Offset.Zero) ?: Offset.Zero
+  get() = parentCoordinates?.localPositionOf(this, Offset.Zero) ?: Offset.Zero
 
 inline val LayoutCoordinates.boundsInParent: Rect
-    get() = Rect(positionInParent, size.toSize())
+  get() = Rect(positionInParent, size.toSize())
 
 fun Modifier.onPositionInParentChanged(
-    onChange: (LayoutCoordinates) -> Unit,
+  onChange: (LayoutCoordinates) -> Unit,
 ) = composed {
-    var lastPosition by remember { mutableStateOf(Offset.Zero) }
-    Modifier.onGloballyPositioned { coordinates ->
-        if (coordinates.positionInParent != lastPosition) {
-            lastPosition = coordinates.positionInParent
-            onChange(coordinates)
-        }
+  var lastPosition by remember { mutableStateOf(Offset.Zero) }
+  Modifier.onGloballyPositioned { coordinates ->
+    if (coordinates.positionInParent != lastPosition) {
+      lastPosition = coordinates.positionInParent
+      onChange(coordinates)
     }
+  }
 }

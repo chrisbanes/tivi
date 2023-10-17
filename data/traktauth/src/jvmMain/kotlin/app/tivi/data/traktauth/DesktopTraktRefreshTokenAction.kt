@@ -7,8 +7,8 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DesktopTraktRefreshTokenAction : TraktRefreshTokenAction {
-    override suspend fun invoke(state: AuthState): AuthState? {
-        // TODO
-        return null
-    }
+  override suspend fun invoke(state: AuthState): AuthState? {
+    // TODO
+    return null
+  }
 }

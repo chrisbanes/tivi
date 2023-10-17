@@ -10,5 +10,5 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class PopularShowsLastRequestStore(
-    dao: LastRequestDao,
+  dao: LastRequestDao,
 ) : GroupLastRequestStore(Request.POPULAR_SHOWS, dao)

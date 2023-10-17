@@ -7,5 +7,5 @@ import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 
 interface SearchDataSource {
-    suspend fun search(query: String): List<Pair<TiviShow, List<ShowTmdbImage>>>
+  suspend fun search(query: String): List<Pair<TiviShow, List<ShowTmdbImage>>>
 }

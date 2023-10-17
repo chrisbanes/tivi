@@ -10,10 +10,10 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class DevLogUiState(
-    val logs: List<LogMessage>,
-    val eventSink: (DevLogUiEvent) -> Unit,
+  val logs: List<LogMessage>,
+  val eventSink: (DevLogUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface DevLogUiEvent : CircuitUiEvent {
-    data object NavigateUp : DevLogUiEvent
+  data object NavigateUp : DevLogUiEvent
 }

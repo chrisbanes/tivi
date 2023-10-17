@@ -12,24 +12,24 @@ import app.tivi.extensions.fluentIf
 
 @Composable
 internal fun PreviousContent(
-    isVisible: () -> Boolean = { true },
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+  isVisible: () -> Boolean = { true },
+  modifier: Modifier = Modifier,
+  content: @Composable () -> Unit,
 ) {
-    Box(
-        modifier = modifier
-            // If we're not visible, don't measure, layout (or draw)
-            .fluentIf(!isVisible()) { emptyLayout() }
-            // Content in the back stack should not be interactive until they're on top
-            .pointerInput(Unit) {},
-    ) {
-        content()
-    }
+  Box(
+    modifier = modifier
+      // If we're not visible, don't measure, layout (or draw)
+      .fluentIf(!isVisible()) { emptyLayout() }
+      // Content in the back stack should not be interactive until they're on top
+      .pointerInput(Unit) {},
+  ) {
+    content()
+  }
 }
 
 /**
  * This no-ops measure + layout (and thus draw) for child content.
  */
 private fun Modifier.emptyLayout(): Modifier = layout { _, constraints ->
-    layout(constraints.minWidth, constraints.minHeight) {}
+  layout(constraints.minWidth, constraints.minHeight) {}
 }

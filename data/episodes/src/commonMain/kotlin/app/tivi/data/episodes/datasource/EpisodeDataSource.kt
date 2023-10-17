@@ -13,47 +13,47 @@ import app.tivi.data.models.Episode
 import me.tatarka.inject.annotations.Inject
 
 interface EpisodeDataSource {
-    suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Episode
+  suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Episode
 }
 
 @Inject
 class TraktEpisodeDataSourceImpl(
-    private val idMapper: ShowIdToTraktOrImdbIdMapper,
-    private val service: Lazy<TraktEpisodesApi>,
-    private val episodeMapper: TraktEpisodeToEpisode,
+  private val idMapper: ShowIdToTraktOrImdbIdMapper,
+  private val service: Lazy<TraktEpisodesApi>,
+  private val episodeMapper: TraktEpisodeToEpisode,
 ) : EpisodeDataSource {
 
-    override suspend fun getEpisode(
-        showId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int,
-    ): Episode {
-        val id = idMapper.map(showId) ?: error("No Trakt allowed ID for show with ID: $showId")
+  override suspend fun getEpisode(
+    showId: Long,
+    seasonNumber: Int,
+    episodeNumber: Int,
+  ): Episode {
+    val id = idMapper.map(showId) ?: error("No Trakt allowed ID for show with ID: $showId")
 
-        return service.value
-            .getSummary(id, seasonNumber, episodeNumber)
-            .let { episodeMapper.map(it) }
-    }
+    return service.value
+      .getSummary(id, seasonNumber, episodeNumber)
+      .let { episodeMapper.map(it) }
+  }
 }
 
 @Inject
 class TmdbEpisodeDataSourceImpl(
-    private val tmdbIdMapper: ShowIdToTmdbIdMapper,
-    private val tmdb: Tmdb3,
-    private val episodeMapper: TmdbEpisodeDetailToEpisode,
+  private val tmdbIdMapper: ShowIdToTmdbIdMapper,
+  private val tmdb: Tmdb3,
+  private val episodeMapper: TmdbEpisodeDetailToEpisode,
 ) : EpisodeDataSource {
-    override suspend fun getEpisode(
-        showId: Long,
-        seasonNumber: Int,
-        episodeNumber: Int,
-    ): Episode {
-        val tmdbShowId = tmdbIdMapper.map(showId)
-        require(tmdbShowId != null) { "No Tmdb ID for show with ID: $showId" }
+  override suspend fun getEpisode(
+    showId: Long,
+    seasonNumber: Int,
+    episodeNumber: Int,
+  ): Episode {
+    val tmdbShowId = tmdbIdMapper.map(showId)
+    require(tmdbShowId != null) { "No Tmdb ID for show with ID: $showId" }
 
-        return tmdb.showEpisodes.getDetails(
-            showId = tmdbShowId,
-            seasonNumber = seasonNumber,
-            episodeNumber = episodeNumber,
-        ).let { episodeMapper.map(it) }
-    }
+    return tmdb.showEpisodes.getDetails(
+      showId = tmdbShowId,
+      seasonNumber = seasonNumber,
+      episodeNumber = episodeNumber,
+    ).let { episodeMapper.map(it) }
+  }
 }

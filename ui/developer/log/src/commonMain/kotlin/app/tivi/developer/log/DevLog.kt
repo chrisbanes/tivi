@@ -40,93 +40,93 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DevLogUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is DevLogScreen -> {
-            ui<DevLogUiState> { state, modifier ->
-                DevLog(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is DevLogScreen -> {
+      ui<DevLogUiState> { state, modifier ->
+        DevLog(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DevLog(
-    state: DevLogUiState,
-    modifier: Modifier = Modifier,
+  state: DevLogUiState,
+  modifier: Modifier = Modifier,
 ) {
-    val eventSink = state.eventSink
+  val eventSink = state.eventSink
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Log") },
-                navigationIcon = {
-                    IconButton(onClick = { eventSink(DevLogUiEvent.NavigateUp) }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = LocalStrings.current.cdNavigateUp,
-                        )
-                    }
-                },
-                windowInsets = TopAppBarDefaults.windowInsets
-                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
+  Scaffold(
+    topBar = {
+      TopAppBar(
+        title = { Text("Log") },
+        navigationIcon = {
+          IconButton(onClick = { eventSink(DevLogUiEvent.NavigateUp) }) {
+            Icon(
+              imageVector = Icons.Default.ArrowBack,
+              contentDescription = LocalStrings.current.cdNavigateUp,
             )
+          }
         },
-        modifier = modifier,
-    ) { contentPadding ->
-        LazyColumn(
-            contentPadding = contentPadding,
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            items(state.logs) { logMessage ->
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = when (logMessage.severity) {
-                                    Severity.Verbose -> Color.Blue
-                                    Severity.Debug -> Color.Blue
-                                    Severity.Info -> Color.Yellow
-                                    Severity.Warn -> Color.Magenta
-                                    Severity.Error -> Color.Red
-                                    Severity.Assert -> Color.Red
-                                },
-                            ),
-                        ) {
-                            append(
-                                when (logMessage.severity) {
-                                    Severity.Verbose -> "[V]"
-                                    Severity.Debug -> "[D]"
-                                    Severity.Info -> "[I]"
-                                    Severity.Warn -> "[W]"
-                                    Severity.Error -> "[E]"
-                                    Severity.Assert -> "[A]"
-                                },
-                            )
-                        }
-                        append(' ')
-                        append(logMessage.message)
-                    },
-                    fontFamily = FontFamily.Monospace,
-                    fontSize = 13.sp,
-                    modifier = modifier.padding(horizontal = 16.dp, vertical = 2.dp),
-                )
-
-                if (logMessage.throwable != null) {
-                    Text(
-                        text = logMessage.throwable.toString(),
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 12.sp,
-                        modifier = modifier.padding(horizontal = 16.dp, vertical = 2.dp),
-                    )
-                }
-
-                Divider()
+        windowInsets = TopAppBarDefaults.windowInsets
+          .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
+      )
+    },
+    modifier = modifier,
+  ) { contentPadding ->
+    LazyColumn(
+      contentPadding = contentPadding,
+      verticalArrangement = Arrangement.spacedBy(2.dp),
+      modifier = Modifier.fillMaxWidth(),
+    ) {
+      items(state.logs) { logMessage ->
+        Text(
+          text = buildAnnotatedString {
+            withStyle(
+              style = SpanStyle(
+                color = when (logMessage.severity) {
+                  Severity.Verbose -> Color.Blue
+                  Severity.Debug -> Color.Blue
+                  Severity.Info -> Color.Yellow
+                  Severity.Warn -> Color.Magenta
+                  Severity.Error -> Color.Red
+                  Severity.Assert -> Color.Red
+                },
+              ),
+            ) {
+              append(
+                when (logMessage.severity) {
+                  Severity.Verbose -> "[V]"
+                  Severity.Debug -> "[D]"
+                  Severity.Info -> "[I]"
+                  Severity.Warn -> "[W]"
+                  Severity.Error -> "[E]"
+                  Severity.Assert -> "[A]"
+                },
+              )
             }
+            append(' ')
+            append(logMessage.message)
+          },
+          fontFamily = FontFamily.Monospace,
+          fontSize = 13.sp,
+          modifier = modifier.padding(horizontal = 16.dp, vertical = 2.dp),
+        )
+
+        if (logMessage.throwable != null) {
+          Text(
+            text = logMessage.throwable.toString(),
+            fontFamily = FontFamily.Monospace,
+            fontSize = 12.sp,
+            modifier = modifier.padding(horizontal = 16.dp, vertical = 2.dp),
+          )
         }
+
+        Divider()
+      }
     }
+  }
 }

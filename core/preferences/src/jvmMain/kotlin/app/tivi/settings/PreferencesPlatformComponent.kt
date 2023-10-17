@@ -12,7 +12,7 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface PreferencesPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideSettings(delegate: Preferences): ObservableSettings = PreferencesSettings(delegate)
+  @ApplicationScope
+  @Provides
+  fun provideSettings(delegate: Preferences): ObservableSettings = PreferencesSettings(delegate)
 }

@@ -13,20 +13,20 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AndroidShowTasks(
-    private val workManager: WorkManager,
+  private val workManager: WorkManager,
 ) : ShowTasks {
-    override fun register() {
-        val nightlyConstraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.UNMETERED)
-            .setRequiresCharging(true)
-            .build()
+  override fun register() {
+    val nightlyConstraints = Constraints.Builder()
+      .setRequiredNetworkType(NetworkType.UNMETERED)
+      .setRequiresCharging(true)
+      .build()
 
-        workManager.enqueueUniquePeriodicWork(
-            SyncLibraryShows.NIGHTLY_SYNC_TAG,
-            ExistingPeriodicWorkPolicy.KEEP,
-            PeriodicWorkRequestBuilder<SyncLibraryShows>(24, TimeUnit.HOURS)
-                .setConstraints(nightlyConstraints)
-                .build(),
-        )
-    }
+    workManager.enqueueUniquePeriodicWork(
+      SyncLibraryShows.NIGHTLY_SYNC_TAG,
+      ExistingPeriodicWorkPolicy.KEEP,
+      PeriodicWorkRequestBuilder<SyncLibraryShows>(24, TimeUnit.HOURS)
+        .setConstraints(nightlyConstraints)
+        .build(),
+    )
+  }
 }

@@ -15,30 +15,30 @@ import me.tatarka.inject.annotations.Provides
 
 interface EpisodeBinds {
 
-    @Provides
-    fun provideTraktEpisodeDataSource(
-        bind: TraktEpisodeDataSourceImpl,
-    ): TraktEpisodeDataSource = bind
+  @Provides
+  fun provideTraktEpisodeDataSource(
+    bind: TraktEpisodeDataSourceImpl,
+  ): TraktEpisodeDataSource = bind
 
-    @Provides
-    fun provideTmdbEpisodeDataSource(
-        bind: TmdbEpisodeDataSourceImpl,
-    ): TmdbEpisodeDataSource = bind
+  @Provides
+  fun provideTmdbEpisodeDataSource(
+    bind: TmdbEpisodeDataSourceImpl,
+  ): TmdbEpisodeDataSource = bind
 
-    @Provides
-    fun provideTraktSeasonsEpisodesDataSource(
-        bind: TraktSeasonsEpisodesDataSourceImpl,
-    ): TraktSeasonsEpisodesDataSource = bind
+  @Provides
+  fun provideTraktSeasonsEpisodesDataSource(
+    bind: TraktSeasonsEpisodesDataSourceImpl,
+  ): TraktSeasonsEpisodesDataSource = bind
 
-    @Provides
-    fun provideTmdbSeasonsEpisodesDataSource(
-        bind: TmdbSeasonsEpisodesDataSourceImpl,
-    ): TmdbSeasonsEpisodesDataSource = bind
+  @Provides
+  fun provideTmdbSeasonsEpisodesDataSource(
+    bind: TmdbSeasonsEpisodesDataSourceImpl,
+  ): TmdbSeasonsEpisodesDataSource = bind
 
-    @Provides
-    fun provideEpisodeWatchesDataSource(
-        bind: TraktEpisodeWatchesDataSource,
-    ): EpisodeWatchesDataSource = bind
+  @Provides
+  fun provideEpisodeWatchesDataSource(
+    bind: TraktEpisodeWatchesDataSource,
+  ): EpisodeWatchesDataSource = bind
 }
 
 typealias TmdbEpisodeDataSource = EpisodeDataSource

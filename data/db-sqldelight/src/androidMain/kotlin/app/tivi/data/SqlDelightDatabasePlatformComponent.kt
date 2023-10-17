@@ -14,23 +14,23 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface SqlDelightDatabasePlatformComponent {
-    @Provides
-    @ApplicationScope
-    fun provideDriverFactory(
-        application: Application,
-        configuration: DatabaseConfiguration,
-    ): SqlDriver = AndroidSqliteDriver(
-        schema = Database.Schema,
-        context = application,
-        name = when {
-            configuration.inMemory -> null
-            else -> "shows.db"
-        },
-        callback = object : AndroidSqliteDriver.Callback(Database.Schema) {
-            override fun onConfigure(db: SupportSQLiteDatabase) {
-                db.enableWriteAheadLogging()
-                db.setForeignKeyConstraintsEnabled(true)
-            }
-        },
-    )
+  @Provides
+  @ApplicationScope
+  fun provideDriverFactory(
+    application: Application,
+    configuration: DatabaseConfiguration,
+  ): SqlDriver = AndroidSqliteDriver(
+    schema = Database.Schema,
+    context = application,
+    name = when {
+      configuration.inMemory -> null
+      else -> "shows.db"
+    },
+    callback = object : AndroidSqliteDriver.Callback(Database.Schema) {
+      override fun onConfigure(db: SupportSQLiteDatabase) {
+        db.enableWriteAheadLogging()
+        db.setForeignKeyConstraintsEnabled(true)
+      }
+    },
+  )
 }

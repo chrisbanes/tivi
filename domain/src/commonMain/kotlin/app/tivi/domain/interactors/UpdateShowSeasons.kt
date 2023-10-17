@@ -13,23 +13,23 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateShowSeasons(
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params, Unit>() {
-    override suspend fun doWork(params: Params) {
-        withContext(dispatchers.io) {
-            // Then update the seasons/episodes
-            if (params.forceRefresh || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
-                seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
-            }
+  override suspend fun doWork(params: Params) {
+    withContext(dispatchers.io) {
+      // Then update the seasons/episodes
+      if (params.forceRefresh || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
+        seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
+      }
 
-            ensureActive()
-            // Finally update any watched progress
-            if (params.forceRefresh || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
-                seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)
-            }
-        }
+      ensureActive()
+      // Finally update any watched progress
+      if (params.forceRefresh || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
+        seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)
+      }
     }
+  }
 
-    data class Params(val showId: Long, val forceRefresh: Boolean)
+  data class Params(val showId: Long, val forceRefresh: Boolean)
 }

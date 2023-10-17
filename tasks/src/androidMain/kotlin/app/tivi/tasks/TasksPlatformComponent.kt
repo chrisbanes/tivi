@@ -11,13 +11,13 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface TasksPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideShowTasks(bind: AndroidShowTasks): ShowTasks = bind
+  @ApplicationScope
+  @Provides
+  fun provideShowTasks(bind: AndroidShowTasks): ShowTasks = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideWorkManager(application: Application): WorkManager {
-        return WorkManager.getInstance(application)
-    }
+  @ApplicationScope
+  @Provides
+  fun provideWorkManager(application: Application): WorkManager {
+    return WorkManager.getInstance(application)
+  }
 }

@@ -14,49 +14,49 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ChangeShowFollowStatus(
-    private val followedShowsRepository: FollowedShowsRepository,
-    private val showStore: ShowStore,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val followedShowsRepository: FollowedShowsRepository,
+  private val showStore: ShowStore,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ChangeShowFollowStatus.Params, Unit>() {
-    override suspend fun doWork(params: Params) {
-        withContext(dispatchers.io) {
-            params.showIds.forEach { showId ->
-                when (params.action) {
-                    Action.TOGGLE -> {
-                        if (followedShowsRepository.isShowFollowed(showId)) {
-                            unfollow(showId)
-                        } else {
-                            follow(showId)
-                        }
-                    }
-
-                    Action.FOLLOW -> follow(showId)
-                    Action.UNFOLLOW -> unfollow(showId)
-                }
+  override suspend fun doWork(params: Params) {
+    withContext(dispatchers.io) {
+      params.showIds.forEach { showId ->
+        when (params.action) {
+          Action.TOGGLE -> {
+            if (followedShowsRepository.isShowFollowed(showId)) {
+              unfollow(showId)
+            } else {
+              follow(showId)
             }
-            // Finally, sync the changes to Trakt
-            val result = followedShowsRepository.syncFollowedShows()
+          }
 
-            result.added.parallelForEach {
-                showStore.fetch(it.showId)
-            }
+          Action.FOLLOW -> follow(showId)
+          Action.UNFOLLOW -> unfollow(showId)
         }
-    }
+      }
+      // Finally, sync the changes to Trakt
+      val result = followedShowsRepository.syncFollowedShows()
 
-    private suspend fun unfollow(showId: Long) {
-        followedShowsRepository.removeFollowedShow(showId)
+      result.added.parallelForEach {
+        showStore.fetch(it.showId)
+      }
     }
+  }
 
-    private suspend fun follow(showId: Long) {
-        followedShowsRepository.addFollowedShow(showId)
-    }
+  private suspend fun unfollow(showId: Long) {
+    followedShowsRepository.removeFollowedShow(showId)
+  }
 
-    data class Params(
-        val showIds: Collection<Long>,
-        val action: Action,
-    ) {
-        constructor(showId: Long, action: Action) : this(listOf(showId), action)
-    }
+  private suspend fun follow(showId: Long) {
+    followedShowsRepository.addFollowedShow(showId)
+  }
 
-    enum class Action { FOLLOW, UNFOLLOW, TOGGLE }
+  data class Params(
+    val showIds: Collection<Long>,
+    val action: Action,
+  ) {
+    constructor(showId: Long, action: Action) : this(listOf(showId), action)
+  }
+
+  enum class Action { FOLLOW, UNFOLLOW, TOGGLE }
 }

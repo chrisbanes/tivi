@@ -9,11 +9,11 @@ import app.tivi.data.showimages.ShowImagesDataSource
 import app.tivi.data.shows.ShowDataSource
 
 object SuccessFakeShowDataSource : ShowDataSource {
-    override suspend fun getShow(show: TiviShow): TiviShow = show
+  override suspend fun getShow(show: TiviShow): TiviShow = show
 }
 
 object SuccessFakeShowImagesDataSource : ShowImagesDataSource {
-    override suspend fun getShowImages(show: TiviShow): List<ShowTmdbImage> {
-        return listOf(showPoster)
-    }
+  override suspend fun getShowImages(show: TiviShow): List<ShowTmdbImage> {
+    return listOf(showPoster)
+  }
 }

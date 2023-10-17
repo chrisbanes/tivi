@@ -17,37 +17,37 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DevLogUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> DevLogPresenter,
+  private val presenterFactory: (Navigator) -> DevLogPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is DevLogScreen -> presenterFactory(navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is DevLogScreen -> presenterFactory(navigator)
+    else -> null
+  }
 }
 
 @Inject
 class DevLogPresenter(
-    @Assisted private val navigator: Navigator,
-    private val recordingLogger: RecordingLogger,
+  @Assisted private val navigator: Navigator,
+  private val recordingLogger: RecordingLogger,
 ) : Presenter<DevLogUiState> {
 
-    @Composable
-    override fun present(): DevLogUiState {
-        val logs by recordingLogger.buffer.collectAsState()
+  @Composable
+  override fun present(): DevLogUiState {
+    val logs by recordingLogger.buffer.collectAsState()
 
-        fun eventSink(event: DevLogUiEvent) {
-            when (event) {
-                DevLogUiEvent.NavigateUp -> navigator.pop()
-            }
-        }
-
-        return DevLogUiState(
-            logs = logs,
-            eventSink = ::eventSink,
-        )
+    fun eventSink(event: DevLogUiEvent) {
+      when (event) {
+        DevLogUiEvent.NavigateUp -> navigator.pop()
+      }
     }
+
+    return DevLogUiState(
+      logs = logs,
+      eventSink = ::eventSink,
+    )
+  }
 }

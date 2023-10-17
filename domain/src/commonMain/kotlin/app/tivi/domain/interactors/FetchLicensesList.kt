@@ -10,10 +10,10 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class FetchLicensesList(
-    private val licensesStore: LicensesStore,
+  private val licensesStore: LicensesStore,
 ) : Interactor<Unit, List<LicenseItem>>() {
 
-    override suspend fun doWork(params: Unit): List<LicenseItem> {
-        return licensesStore.getLicenses()
-    }
+  override suspend fun doWork(params: Unit): List<LicenseItem> {
+    return licensesStore.getLicenses()
+  }
 }

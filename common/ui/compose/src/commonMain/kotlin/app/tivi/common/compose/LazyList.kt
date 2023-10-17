@@ -17,54 +17,54 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 
 inline fun LazyListScope.itemSpacer(height: Dp) {
-    item {
-        Spacer(
-            Modifier
-                .height(height)
-                .fillParentMaxWidth(),
-        )
-    }
+  item {
+    Spacer(
+      Modifier
+        .height(height)
+        .fillParentMaxWidth(),
+    )
+  }
 }
 
 inline fun LazyListScope.gutterSpacer() {
-    item {
-        Spacer(
-            Modifier
-                .height(Layout.gutter)
-                .fillParentMaxWidth(),
-        )
-    }
+  item {
+    Spacer(
+      Modifier
+        .height(Layout.gutter)
+        .fillParentMaxWidth(),
+    )
+  }
 }
 
 inline fun LazyGridScope.gutterSpacer() {
-    fullSpanItem {
-        Spacer(
-            Modifier
-                .height(Layout.gutter)
-                .fillMaxWidth(),
-        )
-    }
+  fullSpanItem {
+    Spacer(
+      Modifier
+        .height(Layout.gutter)
+        .fillMaxWidth(),
+    )
+  }
 }
 
 inline fun LazyGridScope.itemSpacer(height: Dp) {
-    fullSpanItem {
-        Spacer(
-            Modifier
-                .height(height)
-                .fillMaxWidth(),
-        )
-    }
+  fullSpanItem {
+    Spacer(
+      Modifier
+        .height(height)
+        .fillMaxWidth(),
+    )
+  }
 }
 
 inline fun LazyGridScope.fullSpanItem(
-    key: Any? = null,
-    contentType: Any? = null,
-    noinline content: @Composable LazyGridItemScope.() -> Unit,
+  key: Any? = null,
+  contentType: Any? = null,
+  noinline content: @Composable LazyGridItemScope.() -> Unit,
 ) {
-    item(
-        key = key,
-        span = { GridItemSpan(maxLineSpan) },
-        contentType = contentType,
-        content = content,
-    )
+  item(
+    key = key,
+    span = { GridItemSpan(maxLineSpan) },
+    contentType = contentType,
+    content = content,
+  )
 }

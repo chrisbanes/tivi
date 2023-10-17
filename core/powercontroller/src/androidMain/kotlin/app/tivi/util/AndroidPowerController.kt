@@ -13,31 +13,31 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AndroidPowerController(
-    private val context: Application,
-    private val preferences: TiviPreferences,
+  private val context: Application,
+  private val preferences: TiviPreferences,
 ) : PowerController {
-    private val powerManager: PowerManager by lazy { context.getSystemService()!! }
-    private val connectivityManager: ConnectivityManager by lazy { context.getSystemService()!! }
+  private val powerManager: PowerManager by lazy { context.getSystemService()!! }
+  private val connectivityManager: ConnectivityManager by lazy { context.getSystemService()!! }
 
-    override fun shouldSaveData(): SaveData = when {
-        preferences.useLessData -> {
-            SaveData.Enabled(SaveDataReason.PREFERENCE)
-        }
-
-        powerManager.isPowerSaveMode -> {
-            SaveData.Enabled(SaveDataReason.SYSTEM_POWER_SAVER)
-        }
-
-        isBackgroundDataRestricted() -> {
-            SaveData.Enabled(SaveDataReason.SYSTEM_DATA_SAVER)
-        }
-
-        else -> SaveData.Disabled
+  override fun shouldSaveData(): SaveData = when {
+    preferences.useLessData -> {
+      SaveData.Enabled(SaveDataReason.PREFERENCE)
     }
 
-    @SuppressLint("NewApi")
-    private fun isBackgroundDataRestricted(): Boolean {
-        return connectivityManager.restrictBackgroundStatus ==
-            ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED
+    powerManager.isPowerSaveMode -> {
+      SaveData.Enabled(SaveDataReason.SYSTEM_POWER_SAVER)
     }
+
+    isBackgroundDataRestricted() -> {
+      SaveData.Enabled(SaveDataReason.SYSTEM_DATA_SAVER)
+    }
+
+    else -> SaveData.Disabled
+  }
+
+  @SuppressLint("NewApi")
+  private fun isBackgroundDataRestricted(): Boolean {
+    return connectivityManager.restrictBackgroundStatus ==
+      ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED
+  }
 }

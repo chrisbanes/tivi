@@ -6,8 +6,8 @@ package app.tivi.data.models
 import kotlinx.datetime.Instant
 
 data class WatchedShowEntry(
-    override val id: Long = 0,
-    override val showId: Long,
-    val lastWatched: Instant,
-    val lastUpdated: Instant,
+  override val id: Long = 0,
+  override val showId: Long,
+  val lastWatched: Instant,
+  val lastUpdated: Instant,
 ) : Entry

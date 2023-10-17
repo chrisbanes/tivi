@@ -24,53 +24,53 @@ import org.mobilenativefoundation.store.store5.Validator
 @ApplicationScope
 @Inject
 class RecommendedShowsStore(
-    dataSource: RecommendedShowsDataSource,
-    recommendedDao: RecommendedDao,
-    showDao: TiviShowDao,
-    lastRequestStore: RecommendedShowsLastRequestStore,
-    transactionRunner: DatabaseTransactionRunner,
-    dispatchers: AppCoroutineDispatchers,
+  dataSource: RecommendedShowsDataSource,
+  recommendedDao: RecommendedDao,
+  showDao: TiviShowDao,
+  lastRequestStore: RecommendedShowsLastRequestStore,
+  transactionRunner: DatabaseTransactionRunner,
+  dispatchers: AppCoroutineDispatchers,
 ) : Store<Int, List<RecommendedShowEntry>> by storeBuilder(
-    fetcher = Fetcher.of { page: Int ->
-        dataSource(page, 20).let { response ->
-            transactionRunner {
-                if (page == 0) {
-                    lastRequestStore.updateLastRequest()
-                }
-                response.map { show ->
-                    RecommendedShowEntry(
-                        showId = showDao.getIdOrSavePlaceholder(show),
-                        page = page,
-                    )
-                }
-            }
+  fetcher = Fetcher.of { page: Int ->
+    dataSource(page, 20).let { response ->
+      transactionRunner {
+        if (page == 0) {
+          lastRequestStore.updateLastRequest()
         }
-    },
-    sourceOfTruth = SourceOfTruth.of<Int, List<RecommendedShowEntry>, List<RecommendedShowEntry>>(
-        reader = { page -> recommendedDao.entriesForPage(page) },
-        writer = { page, response ->
-            transactionRunner {
-                if (page == 0) {
-                    // If we've requested page 0, remove any existing entries first
-                    recommendedDao.deleteAll()
-                    recommendedDao.upsert(response)
-                } else {
-                    recommendedDao.updatePage(page, response)
-                }
-            }
-        },
-        delete = recommendedDao::deletePage,
-        deleteAll = { transactionRunner(recommendedDao::deleteAll) },
-    ).usingDispatchers(
-        readDispatcher = dispatchers.databaseRead,
-        writeDispatcher = dispatchers.databaseWrite,
-    ),
-).validator(
-    Validator.by { result ->
-        if (result.isNotEmpty()) {
-            lastRequestStore.isRequestValid(3.days)
+        response.map { show ->
+          RecommendedShowEntry(
+            showId = showDao.getIdOrSavePlaceholder(show),
+            page = page,
+          )
+        }
+      }
+    }
+  },
+  sourceOfTruth = SourceOfTruth.of<Int, List<RecommendedShowEntry>, List<RecommendedShowEntry>>(
+    reader = { page -> recommendedDao.entriesForPage(page) },
+    writer = { page, response ->
+      transactionRunner {
+        if (page == 0) {
+          // If we've requested page 0, remove any existing entries first
+          recommendedDao.deleteAll()
+          recommendedDao.upsert(response)
         } else {
-            lastRequestStore.isRequestValid(30.minutes)
+          recommendedDao.updatePage(page, response)
         }
+      }
     },
+    delete = recommendedDao::deletePage,
+    deleteAll = { transactionRunner(recommendedDao::deleteAll) },
+  ).usingDispatchers(
+    readDispatcher = dispatchers.databaseRead,
+    writeDispatcher = dispatchers.databaseWrite,
+  ),
+).validator(
+  Validator.by { result ->
+    if (result.isNotEmpty()) {
+      lastRequestStore.isRequestValid(3.days)
+    } else {
+      lastRequestStore.isRequestValid(30.minutes)
+    }
+  },
 ).build()

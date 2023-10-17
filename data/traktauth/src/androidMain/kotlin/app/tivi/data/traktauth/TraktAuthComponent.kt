@@ -21,48 +21,48 @@ import net.openid.appauth.ClientSecretBasic
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface TraktAuthComponent {
-    @ApplicationScope
-    @Provides
-    fun provideAuthConfig(): AuthorizationServiceConfiguration {
-        return AuthorizationServiceConfiguration(
-            Uri.parse("https://trakt.tv/oauth/authorize"),
-            Uri.parse("https://trakt.tv/oauth/token"),
-        )
-    }
+  @ApplicationScope
+  @Provides
+  fun provideAuthConfig(): AuthorizationServiceConfiguration {
+    return AuthorizationServiceConfiguration(
+      Uri.parse("https://trakt.tv/oauth/authorize"),
+      Uri.parse("https://trakt.tv/oauth/token"),
+    )
+  }
 
-    @ApplicationScope
-    @Provides
-    fun provideClientAuth(
-        info: TraktOAuthInfo,
-    ): ClientAuthentication = ClientSecretBasic(info.clientSecret)
+  @ApplicationScope
+  @Provides
+  fun provideClientAuth(
+    info: TraktOAuthInfo,
+  ): ClientAuthentication = ClientSecretBasic(info.clientSecret)
 
-    @ApplicationScope
-    @Provides
-    fun provideAuthSharedPrefs(
-        application: Application,
-    ): AuthSharedPreferences {
-        return application.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
-    }
+  @ApplicationScope
+  @Provides
+  fun provideAuthSharedPrefs(
+    application: Application,
+  ): AuthSharedPreferences {
+    return application.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
+  }
 
-    @ApplicationScope
-    @Provides
-    fun provideAuthService(application: Application): AuthorizationService {
-        return AuthorizationService(application)
-    }
+  @ApplicationScope
+  @Provides
+  fun provideAuthService(application: Application): AuthorizationService {
+    return AuthorizationService(application)
+  }
 
-    @ApplicationScope
-    @Provides
-    fun provideTraktRefreshTokenAction(impl: AndroidTraktRefreshTokenAction): TraktRefreshTokenAction = impl
+  @ApplicationScope
+  @Provides
+  fun provideTraktRefreshTokenAction(impl: AndroidTraktRefreshTokenAction): TraktRefreshTokenAction = impl
 
-    @ApplicationScope
-    @Provides
-    fun provideTraktLoginAction(impl: AndroidTraktLoginAction): TraktLoginAction = impl
+  @ApplicationScope
+  @Provides
+  fun provideTraktLoginAction(impl: AndroidTraktLoginAction): TraktLoginAction = impl
 
-    @IntoSet
-    @Provides
-    fun provideTraktAuthInitializer(bind: TraktAuthInitializer): AppInitializer = bind
+  @IntoSet
+  @Provides
+  fun provideTraktAuthInitializer(bind: TraktAuthInitializer): AppInitializer = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideAuthStore(store: TiviAuthStore): AuthStore = store
+  @ApplicationScope
+  @Provides
+  fun provideAuthStore(store: TiviAuthStore): AuthStore = store
 }

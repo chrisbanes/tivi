@@ -6,8 +6,8 @@ package app.tivi.data.recommendedshows
 import me.tatarka.inject.annotations.Provides
 
 interface RecommendedShowsBinds {
-    @Provides
-    fun provideTraktRecommendedShowsDataSource(
-        bind: TraktRecommendedShowsDataSource,
-    ): RecommendedShowsDataSource = bind
+  @Provides
+  fun provideTraktRecommendedShowsDataSource(
+    bind: TraktRecommendedShowsDataSource,
+  ): RecommendedShowsDataSource = bind
 }

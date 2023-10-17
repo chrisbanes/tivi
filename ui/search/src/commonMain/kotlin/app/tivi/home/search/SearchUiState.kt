@@ -11,15 +11,15 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class SearchUiState(
-    val query: String = "",
-    val searchResults: List<TiviShow> = emptyList(),
-    val refreshing: Boolean = false,
-    val message: UiMessage? = null,
-    val eventSink: (SearchUiEvent) -> Unit,
+  val query: String = "",
+  val searchResults: List<TiviShow> = emptyList(),
+  val refreshing: Boolean = false,
+  val message: UiMessage? = null,
+  val eventSink: (SearchUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface SearchUiEvent : CircuitUiEvent {
-    data class ClearMessage(val id: Long) : SearchUiEvent
-    data class UpdateQuery(val query: String) : SearchUiEvent
-    data class OpenShowDetails(val showId: Long) : SearchUiEvent
+  data class ClearMessage(val id: Long) : SearchUiEvent
+  data class UpdateQuery(val query: String) : SearchUiEvent
+  data class OpenShowDetails(val showId: Long) : SearchUiEvent
 }

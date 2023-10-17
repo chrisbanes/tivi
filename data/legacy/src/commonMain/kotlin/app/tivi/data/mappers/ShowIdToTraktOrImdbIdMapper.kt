@@ -9,11 +9,11 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowIdToTraktOrImdbIdMapper(
-    private val showDao: TiviShowDao,
-    private val transactionRunner: DatabaseTransactionRunner,
+  private val showDao: TiviShowDao,
+  private val transactionRunner: DatabaseTransactionRunner,
 ) : Mapper<Long, String?> {
-    override fun map(from: Long): String? = transactionRunner {
-        showDao.getTraktIdForShowId(from)?.toString()
-            ?: showDao.getImdbIdForShowId(from)
-    }
+  override fun map(from: Long): String? = transactionRunner {
+    showDao.getTraktIdForShowId(from)?.toString()
+      ?: showDao.getImdbIdForShowId(from)
+  }
 }

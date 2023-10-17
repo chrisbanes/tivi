@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.flow
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 suspend fun <T> Collection<T>.parallelForEach(
-    concurrency: Int = DEFAULT_CONCURRENCY,
-    block: suspend (value: T) -> Unit,
+  concurrency: Int = DEFAULT_CONCURRENCY,
+  block: suspend (value: T) -> Unit,
 ) {
-    asFlow().flatMapMerge(concurrency = concurrency) { item ->
-        flow {
-            block(item)
-            emit(Unit)
-        }
-    }.collect()
+  asFlow().flatMapMerge(concurrency = concurrency) { item ->
+    flow {
+      block(item)
+      emit(Unit)
+    }
+  }.collect()
 }

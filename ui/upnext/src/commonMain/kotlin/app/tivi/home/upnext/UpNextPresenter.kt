@@ -44,132 +44,132 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpNextUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> UpNextPresenter,
+  private val presenterFactory: (Navigator) -> UpNextPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is UpNextScreen -> presenterFactory(navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is UpNextScreen -> presenterFactory(navigator)
+    else -> null
+  }
 }
 
 @Inject
 class UpNextPresenter(
-    @Assisted private val navigator: Navigator,
-    private val observePagedUpNextShows: ObservePagedUpNextShows,
-    private val updateUpNextEpisodes: UpdateUpNextEpisodes,
-    private val observeTraktAuthState: ObserveTraktAuthState,
-    private val observeUserDetails: ObserveUserDetails,
-    private val getTraktAuthState: GetTraktAuthState,
-    private val preferences: TiviPreferences,
-    private val logger: Logger,
+  @Assisted private val navigator: Navigator,
+  private val observePagedUpNextShows: ObservePagedUpNextShows,
+  private val updateUpNextEpisodes: UpdateUpNextEpisodes,
+  private val observeTraktAuthState: ObserveTraktAuthState,
+  private val observeUserDetails: ObserveUserDetails,
+  private val getTraktAuthState: GetTraktAuthState,
+  private val preferences: TiviPreferences,
+  private val logger: Logger,
 ) : Presenter<UpNextUiState> {
 
-    @Composable
-    override fun present(): UpNextUiState {
-        val scope = rememberCoroutineScope()
+  @Composable
+  override fun present(): UpNextUiState {
+    val scope = rememberCoroutineScope()
 
-        val uiMessageManager = remember { UiMessageManager() }
+    val uiMessageManager = remember { UiMessageManager() }
 
-        val items = observePagedUpNextShows.flow
-            .rememberCachedPagingFlow(scope)
-            .collectAsLazyPagingItems()
+    val items = observePagedUpNextShows.flow
+      .rememberCachedPagingFlow(scope)
+      .collectAsLazyPagingItems()
 
-        var sort by remember { mutableStateOf(SortOption.LAST_WATCHED) }
+    var sort by remember { mutableStateOf(SortOption.LAST_WATCHED) }
 
-        val loading by updateUpNextEpisodes.inProgress.collectAsState(false)
-        val message by uiMessageManager.message.collectAsState(null)
+    val loading by updateUpNextEpisodes.inProgress.collectAsState(false)
+    val message by uiMessageManager.message.collectAsState(null)
 
-        val user by observeUserDetails.flow.collectAsRetainedState(null)
-        val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
+    val user by observeUserDetails.flow.collectAsRetainedState(null)
+    val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
 
-        val followedShowsOnly by remember { preferences.observeUpNextFollowedOnly() }
-            .collectAsRetainedState(false)
+    val followedShowsOnly by remember { preferences.observeUpNextFollowedOnly() }
+      .collectAsRetainedState(false)
 
-        fun eventSink(event: UpNextUiEvent) {
-            when (event) {
-                is UpNextUiEvent.ChangeSort -> sort = event.sort
-                is UpNextUiEvent.ClearMessage -> {
-                    scope.launch {
-                        uiMessageManager.clearMessage(event.id)
-                    }
-                }
+    fun eventSink(event: UpNextUiEvent) {
+      when (event) {
+        is UpNextUiEvent.ChangeSort -> sort = event.sort
+        is UpNextUiEvent.ClearMessage -> {
+          scope.launch {
+            uiMessageManager.clearMessage(event.id)
+          }
+        }
 
-                is UpNextUiEvent.Refresh -> {
-                    scope.launch {
-                        if (getTraktAuthState.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
-                            updateUpNextEpisodes(
-                                UpdateUpNextEpisodes.Params(event.fromUser),
-                            ).onException { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
-                        }
-                    }
-                }
-
-                UpNextUiEvent.ToggleFollowedShowsOnly -> {
-                    preferences.upNextFollowedOnly = !preferences.upNextFollowedOnly
-                }
-
-                UpNextUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
-                is UpNextUiEvent.OpenShowDetails -> {
-                    navigator.goTo(ShowDetailsScreen(event.showId))
-                    navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
-                    navigator.goTo(EpisodeDetailsScreen(event.episodeId))
-                }
+        is UpNextUiEvent.Refresh -> {
+          scope.launch {
+            if (getTraktAuthState.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
+              updateUpNextEpisodes(
+                UpdateUpNextEpisodes.Params(event.fromUser),
+              ).onException { e ->
+                logger.i(e)
+                uiMessageManager.emitMessage(UiMessage(e))
+              }
             }
+          }
         }
 
-        LaunchedEffect(Unit) {
-            observeTraktAuthState(Unit)
-            observeUserDetails(ObserveUserDetails.Params("me"))
+        UpNextUiEvent.ToggleFollowedShowsOnly -> {
+          preferences.upNextFollowedOnly = !preferences.upNextFollowedOnly
         }
 
-        LaunchedEffect(observeTraktAuthState) {
-            observeTraktAuthState.flow
-                .filter { it == TraktAuthState.LOGGED_IN }
-                .collect {
-                    eventSink(UpNextUiEvent.Refresh(false))
-                }
+        UpNextUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
+        is UpNextUiEvent.OpenShowDetails -> {
+          navigator.goTo(ShowDetailsScreen(event.showId))
+          navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
+          navigator.goTo(EpisodeDetailsScreen(event.episodeId))
         }
-
-        LaunchedEffect(sort, followedShowsOnly) {
-            // When the filter and sort options change, update the data source
-            observePagedUpNextShows(
-                ObservePagedUpNextShows.Parameters(
-                    sort = sort,
-                    followedOnly = followedShowsOnly,
-                    pagingConfig = PAGING_CONFIG,
-                ),
-            )
-        }
-
-        return UpNextUiState(
-            items = items,
-            user = user,
-            authState = authState,
-            isLoading = loading,
-            availableSorts = AVAILABLE_SORT_OPTIONS,
-            sort = sort,
-            message = message,
-            followedShowsOnly = followedShowsOnly,
-            eventSink = ::eventSink,
-        )
+      }
     }
 
-    companion object {
-        private val PAGING_CONFIG = PagingConfig(
-            pageSize = 16,
-            initialLoadSize = 32,
-        )
-
-        private val AVAILABLE_SORT_OPTIONS = listOf(
-            SortOption.LAST_WATCHED,
-            SortOption.AIR_DATE,
-        )
+    LaunchedEffect(Unit) {
+      observeTraktAuthState(Unit)
+      observeUserDetails(ObserveUserDetails.Params("me"))
     }
+
+    LaunchedEffect(observeTraktAuthState) {
+      observeTraktAuthState.flow
+        .filter { it == TraktAuthState.LOGGED_IN }
+        .collect {
+          eventSink(UpNextUiEvent.Refresh(false))
+        }
+    }
+
+    LaunchedEffect(sort, followedShowsOnly) {
+      // When the filter and sort options change, update the data source
+      observePagedUpNextShows(
+        ObservePagedUpNextShows.Parameters(
+          sort = sort,
+          followedOnly = followedShowsOnly,
+          pagingConfig = PAGING_CONFIG,
+        ),
+      )
+    }
+
+    return UpNextUiState(
+      items = items,
+      user = user,
+      authState = authState,
+      isLoading = loading,
+      availableSorts = AVAILABLE_SORT_OPTIONS,
+      sort = sort,
+      message = message,
+      followedShowsOnly = followedShowsOnly,
+      eventSink = ::eventSink,
+    )
+  }
+
+  companion object {
+    private val PAGING_CONFIG = PagingConfig(
+      pageSize = 16,
+      initialLoadSize = 32,
+    )
+
+    private val AVAILABLE_SORT_OPTIONS = listOf(
+      SortOption.LAST_WATCHED,
+      SortOption.AIR_DATE,
+    )
+  }
 }

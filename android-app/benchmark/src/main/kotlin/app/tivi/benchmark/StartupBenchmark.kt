@@ -13,17 +13,17 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class StartupBenchmark {
-    @get:Rule
-    val benchmarkRule = MacrobenchmarkRule()
+  @get:Rule
+  val benchmarkRule = MacrobenchmarkRule()
 
-    @Test
-    fun startup() = benchmarkRule.measureRepeated(
-        packageName = "app.tivi",
-        metrics = listOf(StartupTimingMetric()),
-        iterations = 5,
-        startupMode = StartupMode.COLD,
-    ) {
-        pressHome()
-        startActivityAndWait()
-    }
+  @Test
+  fun startup() = benchmarkRule.measureRepeated(
+    packageName = "app.tivi",
+    metrics = listOf(StartupTimingMetric()),
+    iterations = 5,
+    startupMode = StartupMode.COLD,
+  ) {
+    pressHome()
+    startActivityAndWait()
+  }
 }

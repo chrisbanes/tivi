@@ -22,47 +22,47 @@ expect interface TraktPlatformComponent
 
 interface TraktCommonComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideTraktOAuthInfo(
-        appInfo: ApplicationInfo,
-    ): TraktOAuthInfo = TraktOAuthInfo(
-        clientId = when {
-            appInfo.debugBuild -> {
-                BuildConfig.TRAKT_DEBUG_CLIENT_ID.ifEmpty { BuildConfig.TRAKT_CLIENT_ID }
-            }
+  @ApplicationScope
+  @Provides
+  fun provideTraktOAuthInfo(
+    appInfo: ApplicationInfo,
+  ): TraktOAuthInfo = TraktOAuthInfo(
+    clientId = when {
+      appInfo.debugBuild -> {
+        BuildConfig.TRAKT_DEBUG_CLIENT_ID.ifEmpty { BuildConfig.TRAKT_CLIENT_ID }
+      }
 
-            else -> BuildConfig.TRAKT_CLIENT_ID
-        },
-        clientSecret = when {
-            appInfo.debugBuild -> {
-                BuildConfig.TRAKT_DEBUG_CLIENT_SECRET
-                    .ifEmpty { BuildConfig.TRAKT_CLIENT_SECRET }
-            }
+      else -> BuildConfig.TRAKT_CLIENT_ID
+    },
+    clientSecret = when {
+      appInfo.debugBuild -> {
+        BuildConfig.TRAKT_DEBUG_CLIENT_SECRET
+          .ifEmpty { BuildConfig.TRAKT_CLIENT_SECRET }
+      }
 
-            else -> BuildConfig.TRAKT_CLIENT_SECRET
-        },
-        redirectUri = "${appInfo.packageName}://auth/oauth2callback",
-    )
+      else -> BuildConfig.TRAKT_CLIENT_SECRET
+    },
+    redirectUri = "${appInfo.packageName}://auth/oauth2callback",
+  )
 
-    @Provides
-    fun provideTraktUsersService(trakt: Trakt): TraktUsersApi = trakt.users
+  @Provides
+  fun provideTraktUsersService(trakt: Trakt): TraktUsersApi = trakt.users
 
-    @Provides
-    fun provideTraktShowsService(trakt: Trakt): TraktShowsApi = trakt.shows
+  @Provides
+  fun provideTraktShowsService(trakt: Trakt): TraktShowsApi = trakt.shows
 
-    @Provides
-    fun provideTraktEpisodesService(trakt: Trakt): TraktEpisodesApi = trakt.episodes
+  @Provides
+  fun provideTraktEpisodesService(trakt: Trakt): TraktEpisodesApi = trakt.episodes
 
-    @Provides
-    fun provideTraktSeasonsService(trakt: Trakt): TraktSeasonsApi = trakt.seasons
+  @Provides
+  fun provideTraktSeasonsService(trakt: Trakt): TraktSeasonsApi = trakt.seasons
 
-    @Provides
-    fun provideTraktSyncService(trakt: Trakt): TraktSyncApi = trakt.sync
+  @Provides
+  fun provideTraktSyncService(trakt: Trakt): TraktSyncApi = trakt.sync
 
-    @Provides
-    fun provideTraktSearchService(trakt: Trakt): TraktSearchApi = trakt.search
+  @Provides
+  fun provideTraktSearchService(trakt: Trakt): TraktSearchApi = trakt.search
 
-    @Provides
-    fun provideTraktRecommendationsService(trakt: Trakt): TraktRecommendationsApi = trakt.recommendations
+  @Provides
+  fun provideTraktRecommendationsService(trakt: Trakt): TraktRecommendationsApi = trakt.recommendations
 }

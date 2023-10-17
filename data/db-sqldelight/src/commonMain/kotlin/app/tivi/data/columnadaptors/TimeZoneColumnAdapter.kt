@@ -7,6 +7,6 @@ import app.cash.sqldelight.ColumnAdapter
 import kotlinx.datetime.TimeZone
 
 internal object TimeZoneColumnAdapter : ColumnAdapter<TimeZone, String> {
-    override fun decode(databaseValue: String): TimeZone = TimeZone.of(databaseValue)
-    override fun encode(value: TimeZone): String = value.id
+  override fun decode(databaseValue: String): TimeZone = TimeZone.of(databaseValue)
+  override fun encode(value: TimeZone): String = value.id
 }

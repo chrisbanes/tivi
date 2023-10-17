@@ -12,17 +12,17 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class CoilCleanupInitializer(
-    private val application: Application,
-    private val scope: ApplicationCoroutineScope,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val application: Application,
+  private val scope: ApplicationCoroutineScope,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : AppInitializer {
-    override fun initialize() {
-        scope.launch(dispatchers.io) {
-            // We delete Coil's image_cache folder to claim back space for the user
-            val coilCache = application.cacheDir.resolve("image_cache")
-            if (coilCache.exists()) {
-                coilCache.deleteRecursively()
-            }
-        }
+  override fun initialize() {
+    scope.launch(dispatchers.io) {
+      // We delete Coil's image_cache folder to claim back space for the user
+      val coilCache = application.cacheDir.resolve("image_cache")
+      if (coilCache.exists()) {
+        coilCache.deleteRecursively()
+      }
     }
+  }
 }

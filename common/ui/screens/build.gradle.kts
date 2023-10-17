@@ -3,21 +3,21 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.kotlin.parcelize)
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.multiplatform")
+  alias(libs.plugins.kotlin.parcelize)
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(libs.circuit.runtime)
-            }
-        }
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        api(libs.circuit.runtime)
+      }
     }
+  }
 }
 
 android {
-    namespace = "app.tivi.screens"
+  namespace = "app.tivi.screens"
 }

@@ -9,10 +9,10 @@ import kotlin.native.ObjCName
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(swiftName = "TiviAnalytics")
 interface Analytics {
-    fun trackScreenView(
-        name: String,
-        arguments: Map<String, *>? = null,
-    )
+  fun trackScreenView(
+    name: String,
+    arguments: Map<String, *>? = null,
+  )
 
-    fun setEnabled(enabled: Boolean)
+  fun setEnabled(enabled: Boolean)
 }

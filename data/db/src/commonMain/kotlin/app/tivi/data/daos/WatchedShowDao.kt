@@ -14,21 +14,21 @@ import kotlinx.coroutines.flow.Flow
 
 interface WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
 
-    fun entryWithShowId(showId: Long): WatchedShowEntry?
+  fun entryWithShowId(showId: Long): WatchedShowEntry?
 
-    fun entries(): List<WatchedShowEntry>
+  fun entries(): List<WatchedShowEntry>
 
-    fun entriesObservable(): Flow<List<WatchedShowEntry>>
+  fun entriesObservable(): Flow<List<WatchedShowEntry>>
 
-    override fun deleteAll()
+  override fun deleteAll()
 
-    fun pagedUpNextShows(followedOnly: Boolean = false, sort: SortOption): PagingSource<Int, UpNextEntry>
+  fun pagedUpNextShows(followedOnly: Boolean = false, sort: SortOption): PagingSource<Int, UpNextEntry>
 
-    fun getUpNextShows(): List<UpNextEntry>
+  fun getUpNextShows(): List<UpNextEntry>
 
-    fun observeUpNextShow(): Flow<UpNextEntry?>
+  fun observeUpNextShow(): Flow<UpNextEntry?>
 
-    fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats?>
+  fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats?>
 
-    fun observeNextShowToWatch(): Flow<TiviShow?>
+  fun observeNextShowToWatch(): Flow<TiviShow?>
 }

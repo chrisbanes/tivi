@@ -3,23 +3,23 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.kotlin.serialization)
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.multiplatform")
+  alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(projects.core.base)
-                api(projects.core.logging.api)
-                implementation(libs.kotlinx.serialization)
-            }
-        }
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        api(projects.core.base)
+        api(projects.core.logging.api)
+        implementation(libs.kotlinx.serialization)
+      }
     }
+  }
 }
 
 android {
-    namespace = "app.tivi.data.licenses"
+  namespace = "app.tivi.data.licenses"
 }

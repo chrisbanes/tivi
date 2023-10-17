@@ -22,88 +22,88 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CheckboxPreference(
-    checked: Boolean,
-    onCheckClicked: () -> Unit,
-    title: String,
-    modifier: Modifier = Modifier,
-    summaryOff: String? = null,
-    summaryOn: String? = null,
+  checked: Boolean,
+  onCheckClicked: () -> Unit,
+  title: String,
+  modifier: Modifier = Modifier,
+  summaryOff: String? = null,
+  summaryOn: String? = null,
 ) {
-    Preference(
-        title = title,
-        summary = {
-            if (summaryOff != null && summaryOn != null) {
-                AnimatedContent(checked) { target ->
-                    Text(text = if (target) summaryOn else summaryOff)
-                }
-            } else if (summaryOff != null) {
-                Text(text = summaryOff)
-            }
-        },
-        control = {
-            Switch(
-                checked = checked,
-                onCheckedChange = { onCheckClicked() },
-            )
-        },
-        modifier = modifier,
-    )
+  Preference(
+    title = title,
+    summary = {
+      if (summaryOff != null && summaryOn != null) {
+        AnimatedContent(checked) { target ->
+          Text(text = if (target) summaryOn else summaryOff)
+        }
+      } else if (summaryOff != null) {
+        Text(text = summaryOff)
+      }
+    },
+    control = {
+      Switch(
+        checked = checked,
+        onCheckedChange = { onCheckClicked() },
+      )
+    },
+    modifier = modifier,
+  )
 }
 
 @Composable
 fun Preference(
-    title: String,
-    modifier: Modifier = Modifier,
-    summary: (@Composable () -> Unit)? = null,
-    control: (@Composable () -> Unit)? = null,
+  title: String,
+  modifier: Modifier = Modifier,
+  summary: (@Composable () -> Unit)? = null,
+  control: (@Composable () -> Unit)? = null,
 ) {
-    Surface(modifier = modifier) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
+  Surface(modifier = modifier) {
+    Row(
+      modifier = Modifier.padding(16.dp),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      Column(
+        modifier = Modifier.weight(1f),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+      ) {
+        Text(
+          text = title,
+          style = MaterialTheme.typography.bodyLarge,
+        )
 
-                if (summary != null) {
-                    ProvideTextStyle(
-                        MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        ),
-                    ) {
-                        summary()
-                    }
-                }
-            }
-
-            control?.invoke()
+        if (summary != null) {
+          ProvideTextStyle(
+            MaterialTheme.typography.bodyMedium.copy(
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
+          ) {
+            summary()
+          }
         }
+      }
+
+      control?.invoke()
     }
+  }
 }
 
 @Composable
 fun PreferenceHeader(
-    title: String,
-    modifier: Modifier = Modifier,
-    tonalElevation: Dp = 0.dp,
+  title: String,
+  modifier: Modifier = Modifier,
+  tonalElevation: Dp = 0.dp,
 ) {
-    Surface(modifier = modifier, tonalElevation = tonalElevation) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 4.dp),
-        )
-    }
+  Surface(modifier = modifier, tonalElevation = tonalElevation) {
+    Text(
+      text = title,
+      style = MaterialTheme.typography.labelLarge,
+      modifier = Modifier
+        .padding(horizontal = 16.dp, vertical = 4.dp),
+    )
+  }
 }
 
 @Composable
 fun PreferenceDivider() {
-    Divider(Modifier.padding(horizontal = 16.dp))
+  Divider(Modifier.padding(horizontal = 16.dp))
 }

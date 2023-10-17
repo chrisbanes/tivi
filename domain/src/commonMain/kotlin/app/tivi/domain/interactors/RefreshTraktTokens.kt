@@ -10,7 +10,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class RefreshTraktTokens(
-    private val traktAuthRepository: TraktAuthRepository,
+  private val traktAuthRepository: TraktAuthRepository,
 ) : Interactor<Unit, AuthState?>() {
-    override suspend fun doWork(params: Unit) = traktAuthRepository.refreshTokens()
+  override suspend fun doWork(params: Unit) = traktAuthRepository.refreshTokens()
 }

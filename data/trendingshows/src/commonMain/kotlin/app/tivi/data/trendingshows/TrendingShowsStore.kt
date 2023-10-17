@@ -25,52 +25,52 @@ import org.mobilenativefoundation.store.store5.Validator
 @ApplicationScope
 @Inject
 class TrendingShowsStore(
-    dataSource: TrendingShowsDataSource,
-    trendingShowsDao: TrendingDao,
-    showDao: TiviShowDao,
-    lastRequestStore: TrendingShowsLastRequestStore,
-    transactionRunner: DatabaseTransactionRunner,
-    dispatchers: AppCoroutineDispatchers,
+  dataSource: TrendingShowsDataSource,
+  trendingShowsDao: TrendingDao,
+  showDao: TiviShowDao,
+  lastRequestStore: TrendingShowsLastRequestStore,
+  transactionRunner: DatabaseTransactionRunner,
+  dispatchers: AppCoroutineDispatchers,
 ) : Store<Int, List<TrendingShowEntry>> by storeBuilder(
-    fetcher = Fetcher.of { page: Int ->
-        dataSource(page, 20).let { response ->
-            withContext(dispatchers.databaseWrite) {
-                transactionRunner {
-                    if (page == 0) {
-                        lastRequestStore.updateLastRequest()
-                    }
-                    response.map { (show, entry) ->
-                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
-                    }
-                }
-            }
+  fetcher = Fetcher.of { page: Int ->
+    dataSource(page, 20).let { response ->
+      withContext(dispatchers.databaseWrite) {
+        transactionRunner {
+          if (page == 0) {
+            lastRequestStore.updateLastRequest()
+          }
+          response.map { (show, entry) ->
+            entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
+          }
         }
-    },
-    sourceOfTruth = SourceOfTruth.of<Int, List<TrendingShowEntry>, List<TrendingShowEntry>>(
-        reader = { page -> trendingShowsDao.entriesObservable(page) },
-        writer = { page, response ->
-            transactionRunner {
-                if (page == 0) {
-                    // If we've requested page 0, remove any existing entries first
-                    trendingShowsDao.deleteAll()
-                    trendingShowsDao.upsert(response)
-                } else {
-                    trendingShowsDao.updatePage(page, response)
-                }
-            }
-        },
-        delete = trendingShowsDao::deletePage,
-        deleteAll = { transactionRunner(trendingShowsDao::deleteAll) },
-    ).usingDispatchers(
-        readDispatcher = dispatchers.databaseRead,
-        writeDispatcher = dispatchers.databaseWrite,
-    ),
-).validator(
-    Validator.by { result ->
-        if (result.isNotEmpty()) {
-            lastRequestStore.isRequestValid(3.hours)
+      }
+    }
+  },
+  sourceOfTruth = SourceOfTruth.of<Int, List<TrendingShowEntry>, List<TrendingShowEntry>>(
+    reader = { page -> trendingShowsDao.entriesObservable(page) },
+    writer = { page, response ->
+      transactionRunner {
+        if (page == 0) {
+          // If we've requested page 0, remove any existing entries first
+          trendingShowsDao.deleteAll()
+          trendingShowsDao.upsert(response)
         } else {
-            lastRequestStore.isRequestValid(30.minutes)
+          trendingShowsDao.updatePage(page, response)
         }
+      }
     },
+    delete = trendingShowsDao::deletePage,
+    deleteAll = { transactionRunner(trendingShowsDao::deleteAll) },
+  ).usingDispatchers(
+    readDispatcher = dispatchers.databaseRead,
+    writeDispatcher = dispatchers.databaseWrite,
+  ),
+).validator(
+  Validator.by { result ->
+    if (result.isNotEmpty()) {
+      lastRequestStore.isRequestValid(3.hours)
+    } else {
+      lastRequestStore.isRequestValid(30.minutes)
+    }
+  },
 ).build()

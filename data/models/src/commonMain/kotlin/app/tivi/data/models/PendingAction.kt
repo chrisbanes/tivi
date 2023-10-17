@@ -4,7 +4,7 @@
 package app.tivi.data.models
 
 enum class PendingAction(val value: String) {
-    NOTHING("nothing"),
-    UPLOAD("upload"),
-    DELETE("delete"),
+  NOTHING("nothing"),
+  UPLOAD("upload"),
+  DELETE("delete"),
 }

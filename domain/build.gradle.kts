@@ -3,39 +3,39 @@
 
 
 plugins {
-    id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.kotlin.multiplatform")
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.core.base)
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(projects.core.base)
 
-                api(projects.data.models)
-                implementation(projects.data.db) // remove this eventually
-                api(projects.data.legacy) // remove this eventually
+        api(projects.data.models)
+        implementation(projects.data.db) // remove this eventually
+        api(projects.data.legacy) // remove this eventually
 
-                api(projects.data.episodes)
-                api(projects.data.followedshows)
-                api(projects.data.popularshows)
-                api(projects.data.recommendedshows)
-                api(projects.data.relatedshows)
-                api(projects.data.search)
-                api(projects.data.showimages)
-                api(projects.data.shows)
-                api(projects.data.traktauth)
-                api(projects.data.traktusers)
-                api(projects.data.trendingshows)
-                api(projects.data.watchedshows)
-                api(projects.data.licenses)
+        api(projects.data.episodes)
+        api(projects.data.followedshows)
+        api(projects.data.popularshows)
+        api(projects.data.recommendedshows)
+        api(projects.data.relatedshows)
+        api(projects.data.search)
+        api(projects.data.showimages)
+        api(projects.data.shows)
+        api(projects.data.traktauth)
+        api(projects.data.traktusers)
+        api(projects.data.trendingshows)
+        api(projects.data.watchedshows)
+        api(projects.data.licenses)
 
-                implementation(projects.api.tmdb)
+        implementation(projects.api.tmdb)
 
-                api(libs.paging.common)
+        api(libs.paging.common)
 
-                implementation(libs.kotlininject.runtime)
-            }
-        }
+        implementation(libs.kotlininject.runtime)
+      }
     }
+  }
 }

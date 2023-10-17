@@ -17,36 +17,36 @@ import net.openid.appauth.ResponseTypeValues
 
 @Inject
 class LoginTraktActivityResultContract(
-    private val authService: Lazy<AuthorizationService>,
-    private val authServiceConfig: Lazy<AuthorizationServiceConfiguration>,
-    private val oAuthInfo: TraktOAuthInfo,
+  private val authService: Lazy<AuthorizationService>,
+  private val authServiceConfig: Lazy<AuthorizationServiceConfiguration>,
+  private val oAuthInfo: TraktOAuthInfo,
 ) : ActivityResultContract<Unit, LoginTraktActivityResultContract.Result?>() {
-    override fun createIntent(context: Context, input: Unit): Intent {
-        return authService.value.getAuthorizationRequestIntent(
-            AuthorizationRequest.Builder(
-                authServiceConfig.value,
-                oAuthInfo.clientId,
-                ResponseTypeValues.CODE,
-                oAuthInfo.redirectUri.toUri(),
-            ).apply {
-                // Disable PKCE since Trakt does not support it
-                setCodeVerifier(null)
-            }.build(),
-        )
-    }
-
-    override fun parseResult(
-        resultCode: Int,
-        intent: Intent?,
-    ): Result? = intent?.let {
-        Result(
-            response = AuthorizationResponse.fromIntent(it),
-            exception = AuthorizationException.fromIntent(it),
-        )
-    }
-
-    data class Result(
-        val response: AuthorizationResponse?,
-        val exception: AuthorizationException?,
+  override fun createIntent(context: Context, input: Unit): Intent {
+    return authService.value.getAuthorizationRequestIntent(
+      AuthorizationRequest.Builder(
+        authServiceConfig.value,
+        oAuthInfo.clientId,
+        ResponseTypeValues.CODE,
+        oAuthInfo.redirectUri.toUri(),
+      ).apply {
+        // Disable PKCE since Trakt does not support it
+        setCodeVerifier(null)
+      }.build(),
     )
+  }
+
+  override fun parseResult(
+    resultCode: Int,
+    intent: Intent?,
+  ): Result? = intent?.let {
+    Result(
+      response = AuthorizationResponse.fromIntent(it),
+      exception = AuthorizationException.fromIntent(it),
+    )
+  }
+
+  data class Result(
+    val response: AuthorizationResponse?,
+    val exception: AuthorizationException?,
+  )
 }

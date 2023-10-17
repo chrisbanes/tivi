@@ -10,12 +10,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObserveShowFollowStatus(
-    private val followedShowsRepository: FollowedShowsRepository,
+  private val followedShowsRepository: FollowedShowsRepository,
 ) : SubjectInteractor<ObserveShowFollowStatus.Params, Boolean>() {
 
-    override fun createObservable(params: Params): Flow<Boolean> {
-        return followedShowsRepository.observeIsShowFollowed(params.showId)
-    }
+  override fun createObservable(params: Params): Flow<Boolean> {
+    return followedShowsRepository.observeIsShowFollowed(params.showId)
+  }
 
-    data class Params(val showId: Long)
+  data class Params(val showId: Long)
 }

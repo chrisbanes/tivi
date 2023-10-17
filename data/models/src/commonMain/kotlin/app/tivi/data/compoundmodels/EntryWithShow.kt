@@ -13,8 +13,8 @@ import app.tivi.data.models.TrendingShowEntry
 import app.tivi.data.models.WatchedShowEntry
 
 data class EntryWithShow<ET : Entry>(
-    val entry: ET,
-    val show: TiviShow,
+  val entry: ET,
+  val show: TiviShow,
 )
 
 typealias FollowedShowEntryWithShow = EntryWithShow<FollowedShowEntry>

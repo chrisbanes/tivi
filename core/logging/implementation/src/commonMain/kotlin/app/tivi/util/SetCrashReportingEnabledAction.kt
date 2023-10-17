@@ -4,5 +4,5 @@
 package app.tivi.util
 
 fun interface SetCrashReportingEnabledAction {
-    operator fun invoke(enabled: Boolean)
+  operator fun invoke(enabled: Boolean)
 }

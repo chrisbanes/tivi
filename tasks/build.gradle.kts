@@ -3,35 +3,35 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.multiplatform")
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.logging.api)
-                implementation(projects.domain)
-                implementation(libs.kotlininject.runtime)
-            }
-        }
-
-        val androidMain by getting {
-            dependencies {
-                api(libs.androidx.work.runtime)
-            }
-        }
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(projects.core.base)
+        implementation(projects.core.logging.api)
+        implementation(projects.domain)
+        implementation(libs.kotlininject.runtime)
+      }
     }
+
+    val androidMain by getting {
+      dependencies {
+        api(libs.androidx.work.runtime)
+      }
+    }
+  }
 }
 
 android {
-    namespace = "app.tivi.tasks"
+  namespace = "app.tivi.tasks"
 
-    defaultConfig {
-        manifestPlaceholders += mapOf(
-            "appAuthRedirectScheme" to "empty",
-        )
-    }
+  defaultConfig {
+    manifestPlaceholders += mapOf(
+      "appAuthRedirectScheme" to "empty",
+    )
+  }
 }

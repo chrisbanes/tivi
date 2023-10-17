@@ -10,5 +10,5 @@ import androidx.compose.runtime.remember
 
 @Composable
 actual fun decayAnimationSpec(): DecayAnimationSpec<Float> {
-    return remember { exponentialDecay(frictionMultiplier = 0.93f) }
+  return remember { exponentialDecay(frictionMultiplier = 0.93f) }
 }

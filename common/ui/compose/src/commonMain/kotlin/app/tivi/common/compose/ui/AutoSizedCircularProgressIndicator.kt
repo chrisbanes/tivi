@@ -17,22 +17,22 @@ import kotlin.math.roundToInt
 
 @Composable
 fun AutoSizedCircularProgressIndicator(
-    modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.primary,
+  modifier: Modifier = Modifier,
+  color: Color = MaterialTheme.colorScheme.primary,
 ) {
-    BoxWithConstraints(modifier) {
-        val diameter = with(LocalDensity.current) {
-            // We need to minus the padding added within CircularProgressIndicator
-            min(constraints.maxWidth.toDp(), constraints.maxHeight.toDp()) - InternalPadding
-        }
-
-        CircularProgressIndicator(
-            strokeWidth = (diameter.value * StrokeDiameterFraction)
-                .roundToInt().dp
-                .coerceAtLeast(2.dp),
-            color = color,
-        )
+  BoxWithConstraints(modifier) {
+    val diameter = with(LocalDensity.current) {
+      // We need to minus the padding added within CircularProgressIndicator
+      min(constraints.maxWidth.toDp(), constraints.maxHeight.toDp()) - InternalPadding
     }
+
+    CircularProgressIndicator(
+      strokeWidth = (diameter.value * StrokeDiameterFraction)
+        .roundToInt().dp
+        .coerceAtLeast(2.dp),
+      color = color,
+    )
+  }
 }
 
 // Default stroke size

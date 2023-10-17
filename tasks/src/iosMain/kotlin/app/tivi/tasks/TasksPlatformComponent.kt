@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface TasksPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideShowTasks(bind: IosShowTasks): ShowTasks = bind
+  @ApplicationScope
+  @Provides
+  fun provideShowTasks(bind: IosShowTasks): ShowTasks = bind
 }

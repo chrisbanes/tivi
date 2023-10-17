@@ -9,12 +9,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbEpisodeDetailToEpisode : Mapper<TmdbEpisodeDetail, Episode> {
-    override fun map(from: TmdbEpisodeDetail): Episode = Episode(
-        seasonId = 0,
-        tmdbId = from.id,
-        title = from.name,
-        number = from.episodeNumber,
-        summary = from.overview,
-        tmdbBackdropPath = from.stillPath,
-    )
+  override fun map(from: TmdbEpisodeDetail): Episode = Episode(
+    seasonId = 0,
+    tmdbId = from.id,
+    title = from.name,
+    number = from.episodeNumber,
+    summary = from.overview,
+    tmdbBackdropPath = from.stillPath,
+  )
 }

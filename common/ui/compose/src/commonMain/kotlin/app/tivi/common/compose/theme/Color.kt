@@ -15,15 +15,15 @@ internal val Orange500 = Color(0xFFF9AA33)
 internal val Orange700 = Color(0xFFC78522)
 
 val TiviLightColors = lightColorScheme(
-    primary = Slate800,
-    onPrimary = Color.White,
-    secondary = Orange700,
-    onSecondary = Color.Black,
+  primary = Slate800,
+  onPrimary = Color.White,
+  secondary = Orange700,
+  onSecondary = Color.Black,
 )
 
 val TiviDarkColors = darkColorScheme(
-    primary = Slate200,
-    onPrimary = Color.Black,
-    secondary = Orange500,
-    onSecondary = Color.Black,
+  primary = Slate200,
+  onPrimary = Color.Black,
+  secondary = Orange500,
+  onSecondary = Color.Black,
 )

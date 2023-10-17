@@ -10,15 +10,15 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktBaseShowToWatchedShowEntry(
-    private val showMapper: TraktShowToTiviShow,
+  private val showMapper: TraktShowToTiviShow,
 ) : Mapper<TraktMediaItem, Pair<TiviShow, WatchedShowEntry>> {
 
-    override fun map(from: TraktMediaItem): Pair<TiviShow, WatchedShowEntry> {
-        val watchedShowEntry = WatchedShowEntry(
-            showId = 0,
-            lastWatched = from.lastWatchedAt!!,
-            lastUpdated = from.lastUpdatedAt!!,
-        )
-        return showMapper.map(from.show!!) to watchedShowEntry
-    }
+  override fun map(from: TraktMediaItem): Pair<TiviShow, WatchedShowEntry> {
+    val watchedShowEntry = WatchedShowEntry(
+      showId = 0,
+      lastWatched = from.lastWatchedAt!!,
+      lastUpdated = from.lastUpdatedAt!!,
+    )
+    return showMapper.map(from.show!!) to watchedShowEntry
+  }
 }

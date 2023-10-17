@@ -10,50 +10,50 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightLastRequestDao(
-    override val db: Database,
+  override val db: Database,
 ) : LastRequestDao, SqlDelightEntityDao<LastRequest> {
-    override fun insert(entity: LastRequest): Long {
-        db.last_requestsQueries.insert(
-            id = entity.id,
-            entity_id = entity.entityId,
-            request = entity.request,
-            timestamp = entity.timestamp,
-        )
-        return db.last_requestsQueries.lastInsertRowId().executeAsOne()
-    }
-
-    override fun update(entity: LastRequest) {
-        db.last_requestsQueries.update(
-            id = entity.id,
-            entity_id = entity.entityId,
-            request = entity.request,
-            timestamp = entity.timestamp,
-        )
-    }
-
-    override fun upsert(entity: LastRequest): Long = upsert(
-        entity = entity,
-        insert = ::insert,
-        update = ::update,
+  override fun insert(entity: LastRequest): Long {
+    db.last_requestsQueries.insert(
+      id = entity.id,
+      entity_id = entity.entityId,
+      request = entity.request,
+      timestamp = entity.timestamp,
     )
+    return db.last_requestsQueries.lastInsertRowId().executeAsOne()
+  }
 
-    override fun lastRequest(
-        request: Request,
-        entityId: Long,
-    ): LastRequest? {
-        return db.last_requestsQueries.getLastRequestForId(request, entityId, ::LastRequest)
-            .executeAsOneOrNull()
-    }
+  override fun update(entity: LastRequest) {
+    db.last_requestsQueries.update(
+      id = entity.id,
+      entity_id = entity.entityId,
+      request = entity.request,
+      timestamp = entity.timestamp,
+    )
+  }
 
-    override fun requestCount(
-        request: Request,
-        entityId: Long,
-    ): Int {
-        return db.last_requestsQueries.requestCount(request, entityId)
-            .executeAsOne().toInt()
-    }
+  override fun upsert(entity: LastRequest): Long = upsert(
+    entity = entity,
+    insert = ::insert,
+    update = ::update,
+  )
 
-    override fun deleteEntity(entity: LastRequest) {
-        db.last_requestsQueries.delete(entity.id)
-    }
+  override fun lastRequest(
+    request: Request,
+    entityId: Long,
+  ): LastRequest? {
+    return db.last_requestsQueries.getLastRequestForId(request, entityId, ::LastRequest)
+      .executeAsOneOrNull()
+  }
+
+  override fun requestCount(
+    request: Request,
+    entityId: Long,
+  ): Int {
+    return db.last_requestsQueries.requestCount(request, entityId)
+      .executeAsOne().toInt()
+  }
+
+  override fun deleteEntity(entity: LastRequest) {
+    db.last_requestsQueries.delete(entity.id)
+  }
 }

@@ -15,19 +15,19 @@ import me.tatarka.inject.annotations.Provides
 @Component
 @ApplicationScope
 abstract class IosApplicationComponent(
-    override val analytics: Analytics,
-    override val traktRefreshTokenActionProvider: (TraktOAuthInfo) -> TraktRefreshTokenAction,
-    private val traktLoginActionProvider: (TraktOAuthInfo) -> TraktLoginAction,
-    override val setCrashReportingEnabledAction: SetCrashReportingEnabledAction,
+  override val analytics: Analytics,
+  override val traktRefreshTokenActionProvider: (TraktOAuthInfo) -> TraktRefreshTokenAction,
+  private val traktLoginActionProvider: (TraktOAuthInfo) -> TraktLoginAction,
+  override val setCrashReportingEnabledAction: SetCrashReportingEnabledAction,
 ) : SharedApplicationComponent, ProdApplicationComponent {
 
-    abstract val initializers: AppInitializers
+  abstract val initializers: AppInitializers
 
-    @Provides
-    @ApplicationScope
-    fun provideLoginToTraktInteractor(info: TraktOAuthInfo): TraktLoginAction {
-        return traktLoginActionProvider(info)
-    }
+  @Provides
+  @ApplicationScope
+  fun provideLoginToTraktInteractor(info: TraktOAuthInfo): TraktLoginAction {
+    return traktLoginActionProvider(info)
+  }
 
-    companion object
+  companion object
 }

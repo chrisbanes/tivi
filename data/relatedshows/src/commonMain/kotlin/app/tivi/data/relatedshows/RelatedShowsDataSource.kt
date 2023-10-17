@@ -7,7 +7,7 @@ import app.tivi.data.models.RelatedShowEntry
 import app.tivi.data.models.TiviShow
 
 fun interface RelatedShowsDataSource {
-    suspend operator fun invoke(
-        showId: Long,
-    ): List<Pair<TiviShow, RelatedShowEntry>>
+  suspend operator fun invoke(
+    showId: Long,
+  ): List<Pair<TiviShow, RelatedShowEntry>>
 }

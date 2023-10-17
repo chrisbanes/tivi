@@ -17,20 +17,21 @@ import platform.UIKit.UIViewController
 typealias TiviUiViewController = () -> UIViewController
 
 @Inject
+@Suppress("ktlint:standard:function-naming")
 fun TiviUiViewController(
-    tiviContent: TiviContent,
+  tiviContent: TiviContent,
 ): UIViewController = ComposeUIViewController {
-    val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
-    val navigator = rememberCircuitNavigator(backstack, onRootPop = { /* no-op */ })
-    val uiViewController = LocalUIViewController.current
+  val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+  val navigator = rememberCircuitNavigator(backstack, onRootPop = { /* no-op */ })
+  val uiViewController = LocalUIViewController.current
 
-    tiviContent(
-        backstack,
-        navigator,
-        { url ->
-            val safari = SFSafariViewController(NSURL(string = url))
-            uiViewController.presentViewController(safari, animated = true, completion = null)
-        },
-        Modifier,
-    )
+  tiviContent(
+    backstack,
+    navigator,
+    { url ->
+      val safari = SFSafariViewController(NSURL(string = url))
+      uiViewController.presentViewController(safari, animated = true, completion = null)
+    },
+    Modifier,
+  )
 }

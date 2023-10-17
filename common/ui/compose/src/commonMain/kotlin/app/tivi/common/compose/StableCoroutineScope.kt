@@ -15,8 +15,8 @@ import kotlinx.coroutines.CoroutineScope
  */
 @Composable
 fun rememberCoroutineScope(): StableCoroutineScope {
-    val scope = androidx.compose.runtime.rememberCoroutineScope()
-    return remember { StableCoroutineScope(scope) }
+  val scope = androidx.compose.runtime.rememberCoroutineScope()
+  return remember { StableCoroutineScope(scope) }
 }
 
 /** @see rememberCoroutineScope */

@@ -11,11 +11,11 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Stable // 'only' stable due to LazyPagingItems
 data class TrendingShowsUiState(
-    val items: LazyPagingItems<TrendingEntryWithShow>,
-    val eventSink: (TrendingShowsUiEvent) -> Unit,
+  val items: LazyPagingItems<TrendingEntryWithShow>,
+  val eventSink: (TrendingShowsUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface TrendingShowsUiEvent : CircuitUiEvent {
-    data class OpenShowDetails(val showId: Long) : TrendingShowsUiEvent
-    object NavigateUp : TrendingShowsUiEvent
+  data class OpenShowDetails(val showId: Long) : TrendingShowsUiEvent
+  object NavigateUp : TrendingShowsUiEvent
 }

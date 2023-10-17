@@ -9,8 +9,8 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktHistoryEntryToEpisode(
-    private val mapper: TraktEpisodeToEpisode,
+  private val mapper: TraktEpisodeToEpisode,
 ) : Mapper<TraktHistoryItem, Episode> {
 
-    override fun map(from: TraktHistoryItem) = mapper.map(requireNotNull(from.episode))
+  override fun map(from: TraktHistoryItem) = mapper.map(requireNotNull(from.episode))
 }

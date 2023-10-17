@@ -11,38 +11,38 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 open class GroupLastRequestStore(
-    private val request: Request,
-    private val dao: LastRequestDao,
+  private val request: Request,
+  private val dao: LastRequestDao,
 ) {
-    fun getRequestInstant(): Instant? {
-        return dao.lastRequest(request, DEFAULT_ID)?.timestamp
-    }
+  fun getRequestInstant(): Instant? {
+    return dao.lastRequest(request, DEFAULT_ID)?.timestamp
+  }
 
-    fun isRequestExpired(threshold: Duration): Boolean {
-        return isRequestBefore(Clock.System.now() - threshold)
-    }
+  fun isRequestExpired(threshold: Duration): Boolean {
+    return isRequestBefore(Clock.System.now() - threshold)
+  }
 
-    fun isRequestValid(threshold: Duration): Boolean {
-        return !isRequestExpired(threshold)
-    }
+  fun isRequestValid(threshold: Duration): Boolean {
+    return !isRequestExpired(threshold)
+  }
 
-    fun isRequestBefore(instant: Instant): Boolean {
-        return getRequestInstant()?.let { it < instant } ?: true
-    }
+  fun isRequestBefore(instant: Instant): Boolean {
+    return getRequestInstant()?.let { it < instant } ?: true
+  }
 
-    fun updateLastRequest(timestamp: Instant = Clock.System.now()) {
-        dao.upsert(
-            LastRequest(
-                request = request,
-                entityId = DEFAULT_ID,
-                _timestamp = timestamp.toEpochMilliseconds(),
-            ),
-        )
-    }
+  fun updateLastRequest(timestamp: Instant = Clock.System.now()) {
+    dao.upsert(
+      LastRequest(
+        request = request,
+        entityId = DEFAULT_ID,
+        _timestamp = timestamp.toEpochMilliseconds(),
+      ),
+    )
+  }
 
-    fun invalidateLastRequest() = updateLastRequest(Instant.DISTANT_PAST)
+  fun invalidateLastRequest() = updateLastRequest(Instant.DISTANT_PAST)
 
-    companion object {
-        private const val DEFAULT_ID = 0L
-    }
+  companion object {
+    private const val DEFAULT_ID = 0L
+  }
 }

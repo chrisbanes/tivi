@@ -7,6 +7,6 @@ import app.tivi.app.Flavor
 import me.tatarka.inject.annotations.Provides
 
 interface ProdApplicationComponent {
-    @Provides
-    fun provideFlavor(): Flavor = Flavor.Standard
+  @Provides
+  fun provideFlavor(): Flavor = Flavor.Standard
 }

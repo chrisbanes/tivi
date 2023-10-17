@@ -16,17 +16,17 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface PreferencesPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideSettings(delegate: AppSharedPreferences): ObservableSettings {
-        return SharedPreferencesSettings(delegate)
-    }
+  @ApplicationScope
+  @Provides
+  fun provideSettings(delegate: AppSharedPreferences): ObservableSettings {
+    return SharedPreferencesSettings(delegate)
+  }
 
-    @ApplicationScope
-    @Provides
-    fun provideAppPreferences(
-        context: Application,
-    ): AppSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+  @ApplicationScope
+  @Provides
+  fun provideAppPreferences(
+    context: Application,
+  ): AppSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 }
 
 typealias AppSharedPreferences = SharedPreferences

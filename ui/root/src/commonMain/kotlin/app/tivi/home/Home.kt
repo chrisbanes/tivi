@@ -65,246 +65,246 @@ import com.slack.circuitx.gesturenavigation.GestureNavigationDecoration
 
 @Composable
 internal fun Home(
-    backstack: SaveableBackStack,
-    navigator: Navigator,
-    modifier: Modifier = Modifier,
+  backstack: SaveableBackStack,
+  navigator: Navigator,
+  modifier: Modifier = Modifier,
 ) {
-    val windowSizeClass = LocalWindowSizeClass.current
-    val navigationType = remember(windowSizeClass) {
-        NavigationType.forWindowSizeSize(windowSizeClass)
+  val windowSizeClass = LocalWindowSizeClass.current
+  val navigationType = remember(windowSizeClass) {
+    NavigationType.forWindowSizeSize(windowSizeClass)
+  }
+
+  val rootScreen by remember(backstack) {
+    derivedStateOf { backstack.last().screen }
+  }
+
+  val strings = LocalStrings.current
+  val navigationItems = remember(strings) { buildNavigationItems(strings) }
+
+  Scaffold(
+    bottomBar = {
+      if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
+        HomeNavigationBar(
+          selectedNavigation = rootScreen,
+          navigationItems = navigationItems,
+          onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
+          modifier = Modifier.fillMaxWidth(),
+        )
+      } else {
+        Spacer(
+          Modifier
+            .windowInsetsBottomHeight(WindowInsets.navigationBars)
+            .fillMaxWidth(),
+        )
+      }
+    },
+    // We let content handle the status bar
+    contentWindowInsets = ScaffoldDefaults.contentWindowInsets
+      .exclude(WindowInsets.statusBars),
+    modifier = modifier,
+  ) { paddingValues ->
+    Row(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(paddingValues),
+    ) {
+      if (navigationType == NavigationType.RAIL) {
+        HomeNavigationRail(
+          selectedNavigation = rootScreen,
+          navigationItems = navigationItems,
+          onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
+          modifier = Modifier.fillMaxHeight(),
+        )
+
+        Divider(
+          Modifier
+            .fillMaxHeight()
+            .width(1.dp),
+        )
+      } else if (navigationType == NavigationType.PERMANENT_DRAWER) {
+        HomeNavigationDrawer(
+          selectedNavigation = rootScreen,
+          navigationItems = navigationItems,
+          onNavigationSelected = { navigator.resetRoot(it) },
+          modifier = Modifier.fillMaxHeight(),
+        )
+      }
+
+      ContentWithOverlays {
+        NavigableCircuitContent(
+          navigator = navigator,
+          backstack = backstack,
+          decoration = remember(navigator) {
+            GestureNavigationDecoration(onBackInvoked = navigator::pop)
+          },
+          modifier = Modifier
+            .weight(1f)
+            .fillMaxHeight(),
+        )
+      }
     }
-
-    val rootScreen by remember(backstack) {
-        derivedStateOf { backstack.last().screen }
-    }
-
-    val strings = LocalStrings.current
-    val navigationItems = remember(strings) { buildNavigationItems(strings) }
-
-    Scaffold(
-        bottomBar = {
-            if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
-                HomeNavigationBar(
-                    selectedNavigation = rootScreen,
-                    navigationItems = navigationItems,
-                    onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            } else {
-                Spacer(
-                    Modifier
-                        .windowInsetsBottomHeight(WindowInsets.navigationBars)
-                        .fillMaxWidth(),
-                )
-            }
-        },
-        // We let content handle the status bar
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets
-            .exclude(WindowInsets.statusBars),
-        modifier = modifier,
-    ) { paddingValues ->
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-        ) {
-            if (navigationType == NavigationType.RAIL) {
-                HomeNavigationRail(
-                    selectedNavigation = rootScreen,
-                    navigationItems = navigationItems,
-                    onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
-                    modifier = Modifier.fillMaxHeight(),
-                )
-
-                Divider(
-                    Modifier
-                        .fillMaxHeight()
-                        .width(1.dp),
-                )
-            } else if (navigationType == NavigationType.PERMANENT_DRAWER) {
-                HomeNavigationDrawer(
-                    selectedNavigation = rootScreen,
-                    navigationItems = navigationItems,
-                    onNavigationSelected = { navigator.resetRoot(it) },
-                    modifier = Modifier.fillMaxHeight(),
-                )
-            }
-
-            ContentWithOverlays {
-                NavigableCircuitContent(
-                    navigator = navigator,
-                    backstack = backstack,
-                    decoration = remember(navigator) {
-                        GestureNavigationDecoration(onBackInvoked = navigator::pop)
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                )
-            }
-        }
-    }
+  }
 }
 
 @Composable
 private fun HomeNavigationBar(
-    selectedNavigation: Screen,
-    navigationItems: List<HomeNavigationItem>,
-    onNavigationSelected: (Screen) -> Unit,
-    modifier: Modifier = Modifier,
+  selectedNavigation: Screen,
+  navigationItems: List<HomeNavigationItem>,
+  onNavigationSelected: (Screen) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    NavigationBar(
-        modifier = modifier,
-        windowInsets = WindowInsets.navigationBars,
-    ) {
-        for (item in navigationItems) {
-            NavigationBarItem(
-                icon = {
-                    HomeNavigationItemIcon(
-                        item = item,
-                        selected = selectedNavigation == item.screen,
-                    )
-                },
-                label = { Text(text = item.label) },
-                selected = selectedNavigation == item.screen,
-                onClick = { onNavigationSelected(item.screen) },
-            )
-        }
+  NavigationBar(
+    modifier = modifier,
+    windowInsets = WindowInsets.navigationBars,
+  ) {
+    for (item in navigationItems) {
+      NavigationBarItem(
+        icon = {
+          HomeNavigationItemIcon(
+            item = item,
+            selected = selectedNavigation == item.screen,
+          )
+        },
+        label = { Text(text = item.label) },
+        selected = selectedNavigation == item.screen,
+        onClick = { onNavigationSelected(item.screen) },
+      )
     }
+  }
 }
 
 @Composable
 private fun HomeNavigationRail(
-    selectedNavigation: Screen,
-    navigationItems: List<HomeNavigationItem>,
-    onNavigationSelected: (Screen) -> Unit,
-    modifier: Modifier = Modifier,
+  selectedNavigation: Screen,
+  navigationItems: List<HomeNavigationItem>,
+  onNavigationSelected: (Screen) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    NavigationRail(modifier = modifier) {
-        for (item in navigationItems) {
-            NavigationRailItem(
-                icon = {
-                    HomeNavigationItemIcon(
-                        item = item,
-                        selected = selectedNavigation == item.screen,
-                    )
-                },
-                alwaysShowLabel = false,
-                label = { Text(text = item.label) },
-                selected = selectedNavigation == item.screen,
-                onClick = { onNavigationSelected(item.screen) },
-            )
-        }
+  NavigationRail(modifier = modifier) {
+    for (item in navigationItems) {
+      NavigationRailItem(
+        icon = {
+          HomeNavigationItemIcon(
+            item = item,
+            selected = selectedNavigation == item.screen,
+          )
+        },
+        alwaysShowLabel = false,
+        label = { Text(text = item.label) },
+        selected = selectedNavigation == item.screen,
+        onClick = { onNavigationSelected(item.screen) },
+      )
     }
+  }
 }
 
 @Composable
 private fun HomeNavigationDrawer(
-    selectedNavigation: Screen,
-    navigationItems: List<HomeNavigationItem>,
-    onNavigationSelected: (Screen) -> Unit,
-    modifier: Modifier = Modifier,
+  selectedNavigation: Screen,
+  navigationItems: List<HomeNavigationItem>,
+  onNavigationSelected: (Screen) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .windowInsetsPadding(WindowInsets.safeContent)
-            .padding(16.dp)
-            .widthIn(max = 280.dp),
-    ) {
-        for (item in navigationItems) {
-            NavigationDrawerItem(
-                icon = {
-                    Icon(
-                        imageVector = item.iconImageVector,
-                        contentDescription = item.contentDescription,
-                    )
-                },
-                label = { Text(text = item.label) },
-                selected = selectedNavigation == item.screen,
-                onClick = { onNavigationSelected(item.screen) },
-            )
-        }
+  Column(
+    modifier = modifier
+      .windowInsetsPadding(WindowInsets.safeContent)
+      .padding(16.dp)
+      .widthIn(max = 280.dp),
+  ) {
+    for (item in navigationItems) {
+      NavigationDrawerItem(
+        icon = {
+          Icon(
+            imageVector = item.iconImageVector,
+            contentDescription = item.contentDescription,
+          )
+        },
+        label = { Text(text = item.label) },
+        selected = selectedNavigation == item.screen,
+        onClick = { onNavigationSelected(item.screen) },
+      )
     }
+  }
 }
 
 @Composable
 private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) {
-    if (item.selectedImageVector != null) {
-        Crossfade(targetState = selected) { s ->
-            Icon(
-                imageVector = if (s) item.selectedImageVector else item.iconImageVector,
-                contentDescription = item.contentDescription,
-            )
-        }
-    } else {
-        Icon(
-            imageVector = item.iconImageVector,
-            contentDescription = item.contentDescription,
-        )
+  if (item.selectedImageVector != null) {
+    Crossfade(targetState = selected) { s ->
+      Icon(
+        imageVector = if (s) item.selectedImageVector else item.iconImageVector,
+        contentDescription = item.contentDescription,
+      )
     }
+  } else {
+    Icon(
+      imageVector = item.iconImageVector,
+      contentDescription = item.contentDescription,
+    )
+  }
 }
 
 @Immutable
 private data class HomeNavigationItem(
-    val screen: Screen,
-    val label: String,
-    val contentDescription: String,
-    val iconImageVector: ImageVector,
-    val selectedImageVector: ImageVector? = null,
+  val screen: Screen,
+  val label: String,
+  val contentDescription: String,
+  val iconImageVector: ImageVector,
+  val selectedImageVector: ImageVector? = null,
 )
 
 internal enum class NavigationType {
-    BOTTOM_NAVIGATION,
-    RAIL,
-    PERMANENT_DRAWER,
-    ;
+  BOTTOM_NAVIGATION,
+  RAIL,
+  PERMANENT_DRAWER,
+  ;
 
-    companion object {
-        fun forWindowSizeSize(windowSizeClass: WindowSizeClass): NavigationType = when {
-            windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact -> BOTTOM_NAVIGATION
-            windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact -> BOTTOM_NAVIGATION
-            windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium -> RAIL
-            else -> PERMANENT_DRAWER
-        }
+  companion object {
+    fun forWindowSizeSize(windowSizeClass: WindowSizeClass): NavigationType = when {
+      windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact -> BOTTOM_NAVIGATION
+      windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact -> BOTTOM_NAVIGATION
+      windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium -> RAIL
+      else -> PERMANENT_DRAWER
     }
+  }
 }
 
 private fun buildNavigationItems(strings: TiviStrings): List<HomeNavigationItem> {
-    return listOf(
-        HomeNavigationItem(
-            screen = DiscoverScreen,
-            label = strings.discoverTitle,
-            contentDescription = strings.cdDiscoverTitle,
-            iconImageVector = Icons.Outlined.Weekend,
-            selectedImageVector = Icons.Default.Weekend,
-        ),
-        HomeNavigationItem(
-            screen = UpNextScreen,
-            label = strings.upnextTitle,
-            contentDescription = strings.cdUpnextTitle,
-            iconImageVector = Icons.Default.Subscriptions,
-        ),
-        HomeNavigationItem(
-            screen = LibraryScreen,
-            label = strings.libraryTitle,
-            contentDescription = strings.cdLibraryTitle,
-            iconImageVector = Icons.Outlined.VideoLibrary,
-            selectedImageVector = Icons.Default.VideoLibrary,
-        ),
-        HomeNavigationItem(
-            screen = SearchScreen,
-            label = strings.searchNavigationTitle,
-            contentDescription = strings.cdSearchNavigationTitle,
-            iconImageVector = Icons.Default.Search,
-        ),
-    )
+  return listOf(
+    HomeNavigationItem(
+      screen = DiscoverScreen,
+      label = strings.discoverTitle,
+      contentDescription = strings.cdDiscoverTitle,
+      iconImageVector = Icons.Outlined.Weekend,
+      selectedImageVector = Icons.Default.Weekend,
+    ),
+    HomeNavigationItem(
+      screen = UpNextScreen,
+      label = strings.upnextTitle,
+      contentDescription = strings.cdUpnextTitle,
+      iconImageVector = Icons.Default.Subscriptions,
+    ),
+    HomeNavigationItem(
+      screen = LibraryScreen,
+      label = strings.libraryTitle,
+      contentDescription = strings.cdLibraryTitle,
+      iconImageVector = Icons.Outlined.VideoLibrary,
+      selectedImageVector = Icons.Default.VideoLibrary,
+    ),
+    HomeNavigationItem(
+      screen = SearchScreen,
+      label = strings.searchNavigationTitle,
+      contentDescription = strings.cdSearchNavigationTitle,
+      iconImageVector = Icons.Default.Search,
+    ),
+  )
 }
 
 private fun Navigator.resetRootIfDifferent(
-    screen: Screen,
-    backstack: SaveableBackStack,
+  screen: Screen,
+  backstack: SaveableBackStack,
 ) {
-    if (!backstack.isAtRoot || backstack.topRecord?.screen != screen) {
-        resetRoot(screen)
-    }
+  if (!backstack.isAtRoot || backstack.topRecord?.screen != screen) {
+    resetRoot(screen)
+  }
 }

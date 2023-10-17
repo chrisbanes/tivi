@@ -9,20 +9,20 @@ import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 
 fun Project.configureLauncherTasks() {
-    androidComponents {
-        onVariants { variant ->
-            tasks.register("open${variant.name.capitalized()}") {
-                dependsOn(tasks.named("install${variant.name.capitalized()}"))
+  androidComponents {
+    onVariants { variant ->
+      tasks.register("open${variant.name.capitalized()}") {
+        dependsOn(tasks.named("install${variant.name.capitalized()}"))
 
-                doLast {
-                    exec {
-                        commandLine = "adb shell monkey -p ${variant.applicationId.get()} -c android.intent.category.LAUNCHER 1".split(" ")
-                    }
-                }
-            }
+        doLast {
+          exec {
+            commandLine = "adb shell monkey -p ${variant.applicationId.get()} -c android.intent.category.LAUNCHER 1".split(" ")
+          }
         }
+      }
     }
+  }
 }
 
 private fun Project.androidComponents(action: ApplicationAndroidComponentsExtension.() -> Unit) =
-    extensions.configure<ApplicationAndroidComponentsExtension>(action)
+  extensions.configure<ApplicationAndroidComponentsExtension>(action)

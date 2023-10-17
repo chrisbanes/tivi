@@ -24,45 +24,45 @@ import org.mobilenativefoundation.store.store5.Validator
 @ApplicationScope
 @Inject
 class ShowImagesStore(
-    showTmdbImagesDao: ShowTmdbImagesDao,
-    showDao: TiviShowDao,
-    lastRequestStore: ShowImagesLastRequestStore,
-    dataSource: ShowImagesDataSource,
-    transactionRunner: DatabaseTransactionRunner,
-    dispatchers: AppCoroutineDispatchers,
+  showTmdbImagesDao: ShowTmdbImagesDao,
+  showDao: TiviShowDao,
+  lastRequestStore: ShowImagesLastRequestStore,
+  dataSource: ShowImagesDataSource,
+  transactionRunner: DatabaseTransactionRunner,
+  dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, ShowImages> by storeBuilder(
-    fetcher = Fetcher.of { showId: Long ->
-        val show = showDao.getShowWithId(showId)
-        if (show?.tmdbId != null) {
-            dataSource.getShowImages(show)
-                .map { it.copy(showId = showId) }
-                .let { ShowImages(showId, it) }
-                .also { lastRequestStore.updateLastRequest(showId) }
-        } else {
-            ShowImages(showId, emptyList())
-        }
+  fetcher = Fetcher.of { showId: Long ->
+    val show = showDao.getShowWithId(showId)
+    if (show?.tmdbId != null) {
+      dataSource.getShowImages(show)
+        .map { it.copy(showId = showId) }
+        .let { ShowImages(showId, it) }
+        .also { lastRequestStore.updateLastRequest(showId) }
+    } else {
+      ShowImages(showId, emptyList())
+    }
+  },
+  sourceOfTruth = SourceOfTruth.of<Long, ShowImages, ShowImages>(
+    reader = { showId ->
+      showTmdbImagesDao.getImagesForShowId(showId).map { ShowImages(showId, it) }
     },
-    sourceOfTruth = SourceOfTruth.of<Long, ShowImages, ShowImages>(
-        reader = { showId ->
-            showTmdbImagesDao.getImagesForShowId(showId).map { ShowImages(showId, it) }
-        },
-        writer = { showId, images ->
-            transactionRunner {
-                showTmdbImagesDao.saveImages(showId, images.images)
-            }
-        },
-        delete = showTmdbImagesDao::deleteForShowId,
-        deleteAll = { transactionRunner(showTmdbImagesDao::deleteAll) },
-    ).usingDispatchers(
-        readDispatcher = dispatchers.databaseRead,
-        writeDispatcher = dispatchers.databaseWrite,
-    ),
+    writer = { showId, images ->
+      transactionRunner {
+        showTmdbImagesDao.saveImages(showId, images.images)
+      }
+    },
+    delete = showTmdbImagesDao::deleteForShowId,
+    deleteAll = { transactionRunner(showTmdbImagesDao::deleteAll) },
+  ).usingDispatchers(
+    readDispatcher = dispatchers.databaseRead,
+    writeDispatcher = dispatchers.databaseWrite,
+  ),
 ).validator(
-    Validator.by { result ->
-        if (result.images.isNotEmpty()) {
-            lastRequestStore.isRequestValid(result.showId, 180.days)
-        } else {
-            lastRequestStore.isRequestValid(result.showId, 1.hours)
-        }
-    },
+  Validator.by { result ->
+    if (result.images.isNotEmpty()) {
+      lastRequestStore.isRequestValid(result.showId, 180.days)
+    } else {
+      lastRequestStore.isRequestValid(result.showId, 1.hours)
+    }
+  },
 ).build()

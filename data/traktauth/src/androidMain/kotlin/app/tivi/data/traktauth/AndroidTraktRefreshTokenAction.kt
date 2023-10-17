@@ -14,26 +14,26 @@ import net.openid.appauth.TokenRequest
 
 @Inject
 class AndroidTraktRefreshTokenAction(
-    private val authService: Lazy<AuthorizationService>,
-    private val authServiceConfig: Lazy<AuthorizationServiceConfiguration>,
-    private val info: TraktOAuthInfo,
+  private val authService: Lazy<AuthorizationService>,
+  private val authServiceConfig: Lazy<AuthorizationServiceConfiguration>,
+  private val info: TraktOAuthInfo,
 ) : TraktRefreshTokenAction {
-    override suspend operator fun invoke(state: AuthState): AuthState? {
-        return suspendCoroutine { cont ->
-            authService.value.performTokenRequest(
-                TokenRequest.Builder(authServiceConfig.value, info.clientId)
-                    .setGrantType(GrantTypeValues.REFRESH_TOKEN)
-                    .setScope(null)
-                    .setRefreshToken(state.refreshToken)
-                    // Disable PKCE since Trakt does not support it
-                    .setCodeVerifier(null)
-                    .build(),
-            ) { tokenResponse, ex ->
-                val newState = AppAuthState()
-                    .apply { update(tokenResponse, ex) }
-                    .let(::AppAuthAuthStateWrapper)
-                cont.resume(newState)
-            }
-        }
+  override suspend operator fun invoke(state: AuthState): AuthState? {
+    return suspendCoroutine { cont ->
+      authService.value.performTokenRequest(
+        TokenRequest.Builder(authServiceConfig.value, info.clientId)
+          .setGrantType(GrantTypeValues.REFRESH_TOKEN)
+          .setScope(null)
+          .setRefreshToken(state.refreshToken)
+          // Disable PKCE since Trakt does not support it
+          .setCodeVerifier(null)
+          .build(),
+      ) { tokenResponse, ex ->
+        val newState = AppAuthState()
+          .apply { update(tokenResponse, ex) }
+          .let(::AppAuthAuthStateWrapper)
+        cont.resume(newState)
+      }
     }
+  }
 }

@@ -12,12 +12,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktUsersDataSource(
-    private val usersService: Lazy<TraktUsersApi>,
-    private val mapper: UserToTraktUser,
+  private val usersService: Lazy<TraktUsersApi>,
+  private val mapper: UserToTraktUser,
 ) : UsersDataSource {
 
-    override suspend fun getUser(slug: String): TraktUser =
-        usersService.value
-            .getProfile(TraktUserSlug(slug), TraktExtended.FULL)
-            .let { mapper.map(it) }
+  override suspend fun getUser(slug: String): TraktUser =
+    usersService.value
+      .getProfile(TraktUserSlug(slug), TraktExtended.FULL)
+      .let { mapper.map(it) }
 }

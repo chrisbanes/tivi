@@ -27,51 +27,51 @@ import app.tivi.data.models.SortOption
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SortChip(
-    sortOptions: List<SortOption>,
-    currentSortOption: SortOption,
-    modifier: Modifier = Modifier,
-    onSortSelected: (SortOption) -> Unit,
+  sortOptions: List<SortOption>,
+  currentSortOption: SortOption,
+  modifier: Modifier = Modifier,
+  onSortSelected: (SortOption) -> Unit,
 ) {
-    Box(modifier) {
-        var expanded by remember { mutableStateOf(false) }
+  Box(modifier) {
+    var expanded by remember { mutableStateOf(false) }
 
-        FilterChip(
-            selected = true,
-            onClick = { expanded = true },
-            label = {
-                Text(
-                    text = currentSortOption.label(LocalStrings.current),
-                    modifier = Modifier.animateContentSize(),
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Sort,
-                    contentDescription = "",
-                    modifier = Modifier.size(16.dp),
-                )
-            },
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = null, // decorative
-                    modifier = Modifier.size(16.dp),
-                )
-            },
+    FilterChip(
+      selected = true,
+      onClick = { expanded = true },
+      label = {
+        Text(
+          text = currentSortOption.label(LocalStrings.current),
+          modifier = Modifier.animateContentSize(),
         )
+      },
+      leadingIcon = {
+        Icon(
+          imageVector = Icons.Default.Sort,
+          contentDescription = "",
+          modifier = Modifier.size(16.dp),
+        )
+      },
+      trailingIcon = {
+        Icon(
+          imageVector = Icons.Default.ArrowDropDown,
+          contentDescription = null, // decorative
+          modifier = Modifier.size(16.dp),
+        )
+      },
+    )
 
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            SortDropdownMenuContent(
-                sortOptions = sortOptions,
-                currentSortOption = currentSortOption,
-                onItemClick = {
-                    onSortSelected(it)
-                    expanded = false
-                },
-            )
-        }
+    DropdownMenu(
+      expanded = expanded,
+      onDismissRequest = { expanded = false },
+    ) {
+      SortDropdownMenuContent(
+        sortOptions = sortOptions,
+        currentSortOption = currentSortOption,
+        onItemClick = {
+          onSortSelected(it)
+          expanded = false
+        },
+      )
     }
+  }
 }

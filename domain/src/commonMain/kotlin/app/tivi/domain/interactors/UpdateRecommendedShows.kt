@@ -19,28 +19,28 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateRecommendedShows(
-    private val recommendedShowsStore: RecommendedShowsStore,
-    private val showStore: ShowStore,
-    private val dispatchers: AppCoroutineDispatchers,
-    private val traktAuthRepository: TraktAuthRepository,
-    private val logger: Logger,
+  private val recommendedShowsStore: RecommendedShowsStore,
+  private val showStore: ShowStore,
+  private val dispatchers: AppCoroutineDispatchers,
+  private val traktAuthRepository: TraktAuthRepository,
+  private val logger: Logger,
 ) : Interactor<Params, Unit>() {
-    override suspend fun doWork(params: Params) {
-        // If we're not logged in, we can't load the recommended shows
-        if (traktAuthRepository.state.value != TraktAuthState.LOGGED_IN) return
+  override suspend fun doWork(params: Params) {
+    // If we're not logged in, we can't load the recommended shows
+    if (traktAuthRepository.state.value != TraktAuthState.LOGGED_IN) return
 
-        withContext(dispatchers.io) {
-            recommendedShowsStore.fetch(0, forceFresh = params.forceRefresh).parallelForEach {
-                try {
-                    showStore.fetch(it.showId)
-                } catch (ce: CancellationException) {
-                    throw ce
-                } catch (t: Throwable) {
-                    logger.e(t) { "Error while show info: ${it.showId}" }
-                }
-            }
+    withContext(dispatchers.io) {
+      recommendedShowsStore.fetch(0, forceFresh = params.forceRefresh).parallelForEach {
+        try {
+          showStore.fetch(it.showId)
+        } catch (ce: CancellationException) {
+          throw ce
+        } catch (t: Throwable) {
+          logger.e(t) { "Error while show info: ${it.showId}" }
         }
+      }
     }
+  }
 
-    data class Params(val forceRefresh: Boolean = false)
+  data class Params(val forceRefresh: Boolean = false)
 }

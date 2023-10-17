@@ -13,24 +13,24 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateUpNextEpisodes(
-    private val watchedShowsDao: WatchedShowDao,
-    private val seasonEpisodeRepository: SeasonsEpisodesRepository,
-    private val updateLibraryShows: UpdateLibraryShows,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val watchedShowsDao: WatchedShowDao,
+  private val seasonEpisodeRepository: SeasonsEpisodesRepository,
+  private val updateLibraryShows: UpdateLibraryShows,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateUpNextEpisodes.Params, Unit>() {
 
-    override suspend fun doWork(params: Params) {
-        updateLibraryShows(UpdateLibraryShows.Params(params.forceRefresh))
+  override suspend fun doWork(params: Params) {
+    updateLibraryShows(UpdateLibraryShows.Params(params.forceRefresh))
 
-        // Now update the next episodes, to fetch images, etc
-        withContext(dispatchers.io) {
-            watchedShowsDao.getUpNextShows().parallelForEach { entry ->
-                if (seasonEpisodeRepository.needEpisodeUpdate(entry.episode.id)) {
-                    seasonEpisodeRepository.updateEpisode(entry.episode.id)
-                }
-            }
+    // Now update the next episodes, to fetch images, etc
+    withContext(dispatchers.io) {
+      watchedShowsDao.getUpNextShows().parallelForEach { entry ->
+        if (seasonEpisodeRepository.needEpisodeUpdate(entry.episode.id)) {
+          seasonEpisodeRepository.updateEpisode(entry.episode.id)
         }
+      }
     }
+  }
 
-    data class Params(val forceRefresh: Boolean)
+  data class Params(val forceRefresh: Boolean)
 }

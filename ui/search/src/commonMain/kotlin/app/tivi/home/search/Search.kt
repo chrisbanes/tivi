@@ -63,196 +63,196 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SearchUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is SearchScreen -> {
-            ui<SearchUiState> { state, modifier ->
-                Search(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is SearchScreen -> {
+      ui<SearchUiState> { state, modifier ->
+        Search(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @Composable
 internal fun Search(
-    state: SearchUiState,
-    modifier: Modifier = Modifier,
+  state: SearchUiState,
+  modifier: Modifier = Modifier,
 ) {
-    // Need to extract the eventSink out to a local val, so that the Compose Compiler
-    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
-    val eventSink = state.eventSink
+  // Need to extract the eventSink out to a local val, so that the Compose Compiler
+  // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+  val eventSink = state.eventSink
 
-    Search(
-        state = state,
-        openShowDetails = { eventSink(SearchUiEvent.OpenShowDetails(it)) },
-        onSearchQueryChanged = { eventSink(SearchUiEvent.UpdateQuery(it)) },
-        onMessageShown = { eventSink(SearchUiEvent.ClearMessage(it)) },
-        modifier = modifier,
-    )
+  Search(
+    state = state,
+    openShowDetails = { eventSink(SearchUiEvent.OpenShowDetails(it)) },
+    onSearchQueryChanged = { eventSink(SearchUiEvent.UpdateQuery(it)) },
+    onMessageShown = { eventSink(SearchUiEvent.ClearMessage(it)) },
+    modifier = modifier,
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun Search(
-    state: SearchUiState,
-    openShowDetails: (showId: Long) -> Unit,
-    onSearchQueryChanged: (query: String) -> Unit,
-    onMessageShown: (id: Long) -> Unit,
-    modifier: Modifier = Modifier,
+  state: SearchUiState,
+  openShowDetails: (showId: Long) -> Unit,
+  onSearchQueryChanged: (query: String) -> Unit,
+  onMessageShown: (id: Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+  val snackbarHostState = remember { SnackbarHostState() }
 
-    val dismissSnackbarState = rememberDismissState { value ->
-        if (value != DismissValue.Default) {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            true
-        } else {
-            false
-        }
+  val dismissSnackbarState = rememberDismissState { value ->
+    if (value != DismissValue.Default) {
+      snackbarHostState.currentSnackbarData?.dismiss()
+      true
+    } else {
+      false
     }
+  }
 
-    state.message?.let { message ->
-        LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(message.message)
-            onMessageShown(message.id)
-        }
+  state.message?.let { message ->
+    LaunchedEffect(message) {
+      snackbarHostState.showSnackbar(message.message)
+      onMessageShown(message.id)
     }
+  }
 
-    Scaffold(
-        topBar = {
-            Surface(
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Box(
-                    Modifier
-                        .padding(horizontal = Layout.bodyMargin, vertical = 8.dp)
-                        .windowInsetsPadding(WindowInsets.statusBars)
-                        .bodyWidth(),
-                ) {
-                    var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
-                    SearchTextField(
-                        value = searchQuery,
-                        onValueChange = { value ->
-                            searchQuery = value
-                            onSearchQueryChanged(value.text)
-                        },
-                        hint = LocalStrings.current.searchHint,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-            }
+  Scaffold(
+    topBar = {
+      Surface(
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.fillMaxWidth(),
+      ) {
+        Box(
+          Modifier
+            .padding(horizontal = Layout.bodyMargin, vertical = 8.dp)
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .bodyWidth(),
+        ) {
+          var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
+          SearchTextField(
+            value = searchQuery,
+            onValueChange = { value ->
+              searchQuery = value
+              onSearchQueryChanged(value.text)
+            },
+            hint = LocalStrings.current.searchHint,
+            modifier = Modifier.fillMaxWidth(),
+          )
+        }
+      }
+    },
+    snackbarHost = {
+      SnackbarHost(hostState = snackbarHostState) { data ->
+        SwipeToDismiss(
+          state = dismissSnackbarState,
+          background = {},
+          dismissContent = { Snackbar(snackbarData = data) },
+          modifier = Modifier
+            .padding(horizontal = Layout.bodyMargin)
+            .fillMaxWidth(),
+        )
+      }
+    },
+    modifier = modifier,
+  ) { padding ->
+    if (state.searchResults.isEmpty() && !state.refreshing) {
+      EmptyContent(
+        title = {
+          if (state.query.isEmpty()) {
+            Text(text = LocalStrings.current.searchEmptyTitle)
+          } else {
+            Text(text = LocalStrings.current.searchNoresultsPrompt)
+          }
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                SwipeToDismiss(
-                    state = dismissSnackbarState,
-                    background = {},
-                    dismissContent = { Snackbar(snackbarData = data) },
-                    modifier = Modifier
-                        .padding(horizontal = Layout.bodyMargin)
-                        .fillMaxWidth(),
-                )
-            }
+        prompt = {
+          if (state.query.isNotEmpty()) {
+            Text(text = LocalStrings.current.searchNoresultsPrompt)
+          }
         },
-        modifier = modifier,
-    ) { padding ->
-        if (state.searchResults.isEmpty() && !state.refreshing) {
-            EmptyContent(
-                title = {
-                    if (state.query.isEmpty()) {
-                        Text(text = LocalStrings.current.searchEmptyTitle)
-                    } else {
-                        Text(text = LocalStrings.current.searchNoresultsPrompt)
-                    }
-                },
-                prompt = {
-                    if (state.query.isNotEmpty()) {
-                        Text(text = LocalStrings.current.searchNoresultsPrompt)
-                    }
-                },
-                graphic = { Text(text = "\uD83D\uDD75️\u200D♂️") },
-                modifier = Modifier.fillMaxSize(),
-            )
-        } else {
-            SearchList(
-                results = state.searchResults,
-                contentPadding = padding + PaddingValues(horizontal = Layout.bodyMargin),
-                onShowClicked = { openShowDetails(it.id) },
-                modifier = Modifier.bodyWidth(),
-            )
-        }
+        graphic = { Text(text = "\uD83D\uDD75️\u200D♂️") },
+        modifier = Modifier.fillMaxSize(),
+      )
+    } else {
+      SearchList(
+        results = state.searchResults,
+        contentPadding = padding + PaddingValues(horizontal = Layout.bodyMargin),
+        onShowClicked = { openShowDetails(it.id) },
+        modifier = Modifier.bodyWidth(),
+      )
     }
+  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SearchList(
-    results: List<TiviShow>,
-    onShowClicked: (TiviShow) -> Unit,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+  results: List<TiviShow>,
+  onShowClicked: (TiviShow) -> Unit,
+  modifier: Modifier = Modifier,
+  contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-    val arrangement = Arrangement.spacedBy(Layout.gutter)
+  val arrangement = Arrangement.spacedBy(Layout.gutter)
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(Layout.columns / 4),
-        contentPadding = contentPadding,
-        verticalArrangement = arrangement,
-        horizontalArrangement = arrangement,
-        flingBehavior = rememberTiviFlingBehavior(),
-        modifier = modifier,
-    ) {
-        items(
-            items = results,
-            key = { it.id },
-        ) { show ->
-            SearchRow(
-                show = show,
-                modifier = Modifier
-                    .animateItemPlacement()
-                    .fillMaxWidth()
-                    .clickable { onShowClicked(show) },
-            )
-        }
+  LazyVerticalGrid(
+    columns = GridCells.Fixed(Layout.columns / 4),
+    contentPadding = contentPadding,
+    verticalArrangement = arrangement,
+    horizontalArrangement = arrangement,
+    flingBehavior = rememberTiviFlingBehavior(),
+    modifier = modifier,
+  ) {
+    items(
+      items = results,
+      key = { it.id },
+    ) { show ->
+      SearchRow(
+        show = show,
+        modifier = Modifier
+          .animateItemPlacement()
+          .fillMaxWidth()
+          .clickable { onShowClicked(show) },
+      )
     }
+  }
 }
 
 @Composable
 private fun SearchRow(
-    show: TiviShow,
-    modifier: Modifier = Modifier,
+  show: TiviShow,
+  modifier: Modifier = Modifier,
 ) {
-    Row(modifier.padding(vertical = 8.dp)) {
-        PosterCard(
-            show = show,
-            modifier = Modifier
-                .fillMaxWidth(0.2f) // 20% of width
-                .aspectRatio(2 / 3f),
+  Row(modifier.padding(vertical = 8.dp)) {
+    PosterCard(
+      show = show,
+      modifier = Modifier
+        .fillMaxWidth(0.2f) // 20% of width
+        .aspectRatio(2 / 3f),
+    )
+
+    Spacer(Modifier.width(16.dp))
+
+    Column(
+      Modifier
+        .weight(1f)
+        .align(Alignment.CenterVertically),
+    ) {
+      Text(
+        text = show.title ?: "No title",
+        style = MaterialTheme.typography.titleMedium,
+      )
+
+      if (!show.summary.isNullOrEmpty()) {
+        Text(
+          text = show.summary!!,
+          style = MaterialTheme.typography.bodySmall,
+          overflow = TextOverflow.Ellipsis,
+          maxLines = 2,
         )
-
-        Spacer(Modifier.width(16.dp))
-
-        Column(
-            Modifier
-                .weight(1f)
-                .align(Alignment.CenterVertically),
-        ) {
-            Text(
-                text = show.title ?: "No title",
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            if (!show.summary.isNullOrEmpty()) {
-                Text(
-                    text = show.summary!!,
-                    style = MaterialTheme.typography.bodySmall,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 2,
-                )
-            }
-        }
+      }
     }
+  }
 }

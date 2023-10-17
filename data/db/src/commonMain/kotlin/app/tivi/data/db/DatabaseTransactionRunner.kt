@@ -4,5 +4,5 @@
 package app.tivi.data.db
 
 interface DatabaseTransactionRunner {
-    operator fun <T> invoke(block: () -> T): T
+  operator fun <T> invoke(block: () -> T): T
 }

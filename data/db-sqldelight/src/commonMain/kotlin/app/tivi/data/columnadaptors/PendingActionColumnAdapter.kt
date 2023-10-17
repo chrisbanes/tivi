@@ -8,9 +8,9 @@ import app.tivi.data.models.PendingAction
 import app.tivi.extensions.unsafeLazy
 
 internal object PendingActionColumnAdapter : ColumnAdapter<PendingAction, String> {
-    private val values by unsafeLazy { PendingAction.values().associateBy(PendingAction::value) }
+  private val values by unsafeLazy { PendingAction.values().associateBy(PendingAction::value) }
 
-    override fun decode(databaseValue: String): PendingAction = values.getValue(databaseValue)
+  override fun decode(databaseValue: String): PendingAction = values.getValue(databaseValue)
 
-    override fun encode(value: PendingAction): String = value.value
+  override fun encode(value: PendingAction): String = value.value
 }

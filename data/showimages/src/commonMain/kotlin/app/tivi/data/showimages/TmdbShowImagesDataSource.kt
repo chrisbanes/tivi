@@ -12,15 +12,15 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbShowImagesDataSource(
-    private val tmdb: Tmdb3,
-    private val mapper: TmdbShowDetailToShowImages,
+  private val tmdb: Tmdb3,
+  private val mapper: TmdbShowDetailToShowImages,
 ) : ShowImagesDataSource {
-    override suspend fun getShowImages(show: TiviShow): List<ShowTmdbImage> {
-        val tmdbId = show.tmdbId
-            ?: throw IllegalArgumentException("TmdbId for show does not exist [$show]")
+  override suspend fun getShowImages(show: TiviShow): List<ShowTmdbImage> {
+    val tmdbId = show.tmdbId
+      ?: throw IllegalArgumentException("TmdbId for show does not exist [$show]")
 
-        return tmdb.show
-            .getDetails(showId = tmdbId, appendResponses = listOf(AppendResponse.IMAGES))
-            .let { mapper.map(it) }
-    }
+    return tmdb.show
+      .getDetails(showId = tmdbId, appendResponses = listOf(AppendResponse.IMAGES))
+      .let { mapper.map(it) }
+  }
 }

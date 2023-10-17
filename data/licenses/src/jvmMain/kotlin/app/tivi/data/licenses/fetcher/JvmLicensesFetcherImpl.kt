@@ -8,7 +8,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class JvmLicensesFetcherImpl : LicensesFetcher {
-    override suspend fun invoke(): List<LicenseItem> {
-        return emptyList()
-    }
+  override suspend fun invoke(): List<LicenseItem> {
+    return emptyList()
+  }
 }

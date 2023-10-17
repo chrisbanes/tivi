@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface AnalyticsPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideTiviFirebaseAnalytics(bind: TiviFirebaseAnalytics): Analytics = bind
+  @ApplicationScope
+  @Provides
+  fun provideTiviFirebaseAnalytics(bind: TiviFirebaseAnalytics): Analytics = bind
 }

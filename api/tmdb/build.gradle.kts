@@ -3,52 +3,52 @@
 
 
 plugins {
-    id("app.tivi.kotlin.multiplatform")
-    alias(libs.plugins.buildConfig)
+  id("app.tivi.kotlin.multiplatform")
+  alias(libs.plugins.buildConfig)
 }
 
 buildConfig {
-    packageName("app.tivi.tmdb")
+  packageName("app.tivi.tmdb")
 
-    buildConfigField(
-        type = "String",
-        name = "TMDB_DEBUG_API_KEY",
-        value = "\"${properties["TIVI_DEBUG_TMDB_API_KEY"]?.toString() ?: ""}\"",
-    )
-    buildConfigField(
-        type = "String",
-        name = "TMDB_API_KEY",
-        value = "\"${properties["TIVI_TMDB_API_KEY"]?.toString() ?: ""}\"",
-    )
+  buildConfigField(
+    type = "String",
+    name = "TMDB_DEBUG_API_KEY",
+    value = "\"${properties["TIVI_DEBUG_TMDB_API_KEY"]?.toString() ?: ""}\"",
+  )
+  buildConfigField(
+    type = "String",
+    name = "TMDB_API_KEY",
+    value = "\"${properties["TIVI_TMDB_API_KEY"]?.toString() ?: ""}\"",
+  )
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.logging.api)
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(projects.core.base)
+        implementation(projects.core.logging.api)
 
-                api(libs.tmdb.api)
-                implementation(libs.ktor.client.core)
+        api(libs.tmdb.api)
+        implementation(libs.ktor.client.core)
 
-                api(libs.kotlin.coroutines.core)
+        api(libs.kotlin.coroutines.core)
 
-                api(libs.kotlininject.runtime)
-            }
-        }
-
-        val jvmMain by getting {
-            dependencies {
-                api(libs.okhttp.okhttp)
-                implementation(libs.ktor.client.okhttp)
-            }
-        }
-
-        val iosMain by getting {
-            dependencies {
-                implementation(libs.ktor.client.darwin)
-            }
-        }
+        api(libs.kotlininject.runtime)
+      }
     }
+
+    val jvmMain by getting {
+      dependencies {
+        api(libs.okhttp.okhttp)
+        implementation(libs.ktor.client.okhttp)
+      }
+    }
+
+    val iosMain by getting {
+      dependencies {
+        implementation(libs.ktor.client.darwin)
+      }
+    }
+  }
 }

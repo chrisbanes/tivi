@@ -12,17 +12,17 @@ import me.tatarka.inject.annotations.Provides
 @AllowDifferentMembersInActual
 actual interface LoggerPlatformComponent {
 
-    @get:Provides
-    val setCrashReportingEnabledAction: SetCrashReportingEnabledAction
+  @get:Provides
+  val setCrashReportingEnabledAction: SetCrashReportingEnabledAction
 
-    @Provides
-    @ApplicationScope
-    fun provideLogger(
-        kermitLogger: KermitLogger,
-        recordingLogger: RecordingLogger,
-    ): Logger = CompositeLogger(kermitLogger, recordingLogger, CrashKIosLogger)
+  @Provides
+  @ApplicationScope
+  fun provideLogger(
+    kermitLogger: KermitLogger,
+    recordingLogger: RecordingLogger,
+  ): Logger = CompositeLogger(kermitLogger, recordingLogger, CrashKIosLogger)
 
-    @Provides
-    @IntoSet
-    fun provideCrashKiOSInitializer(): AppInitializer = IosCrashKiOSInitializer
+  @Provides
+  @IntoSet
+  fun provideCrashKiOSInitializer(): AppInitializer = IosCrashKiOSInitializer
 }

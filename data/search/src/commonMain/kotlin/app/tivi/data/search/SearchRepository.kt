@@ -18,52 +18,52 @@ import me.tatarka.inject.annotations.Inject
 @ApplicationScope
 @Inject
 class SearchRepository(
-    private val showTmdbImagesDao: ShowTmdbImagesDao,
-    private val showDao: TiviShowDao,
-    private val tmdbDataSource: SearchDataSource,
-    private val transactionRunner: DatabaseTransactionRunner,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val showTmdbImagesDao: ShowTmdbImagesDao,
+  private val showDao: TiviShowDao,
+  private val tmdbDataSource: SearchDataSource,
+  private val transactionRunner: DatabaseTransactionRunner,
+  private val dispatchers: AppCoroutineDispatchers,
 ) {
-    private val cache by lazy { LruCache<String, List<Long>>(20) }
+  private val cache by lazy { LruCache<String, List<Long>>(20) }
 
-    suspend fun search(query: String): List<TiviShow> {
-        if (query.isBlank()) {
-            return emptyList()
-        }
-
-        val cacheValues = cache[query]
-        if (cacheValues != null) {
-            return cacheValues
-                .mapNotNull { showDao.getShowWithId(it) }
-        }
-
-        // We need to hit TMDb
-        val remoteResult = runCatching {
-            fetchFromTmdb(query)
-                .also { results ->
-                    // We need to save the search results
-                    cache.put(query, results)
-                }
-                .mapNotNull { showDao.getShowWithId(it) }
-        }
-        return remoteResult.getOrDefault(emptyList())
+  suspend fun search(query: String): List<TiviShow> {
+    if (query.isBlank()) {
+      return emptyList()
     }
 
-    private suspend fun fetchFromTmdb(query: String): List<Long> {
-        return tmdbDataSource.search(query)
-            .map { (show, images) ->
-                withContext(dispatchers.databaseWrite) {
-                    transactionRunner {
-                        val showId = showDao.getIdOrSavePlaceholder(show)
-                        if (images.isNotEmpty()) {
-                            showTmdbImagesDao.saveImagesIfEmpty(
-                                showId = showId,
-                                images = images.map { it.copy(showId = showId) },
-                            )
-                        }
-                        showId
-                    }
-                }
+    val cacheValues = cache[query]
+    if (cacheValues != null) {
+      return cacheValues
+        .mapNotNull { showDao.getShowWithId(it) }
+    }
+
+    // We need to hit TMDb
+    val remoteResult = runCatching {
+      fetchFromTmdb(query)
+        .also { results ->
+          // We need to save the search results
+          cache.put(query, results)
+        }
+        .mapNotNull { showDao.getShowWithId(it) }
+    }
+    return remoteResult.getOrDefault(emptyList())
+  }
+
+  private suspend fun fetchFromTmdb(query: String): List<Long> {
+    return tmdbDataSource.search(query)
+      .map { (show, images) ->
+        withContext(dispatchers.databaseWrite) {
+          transactionRunner {
+            val showId = showDao.getIdOrSavePlaceholder(show)
+            if (images.isNotEmpty()) {
+              showTmdbImagesDao.saveImagesIfEmpty(
+                showId = showId,
+                images = images.map { it.copy(showId = showId) },
+              )
             }
-    }
+            showId
+          }
+        }
+      }
+  }
 }

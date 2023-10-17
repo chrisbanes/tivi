@@ -11,9 +11,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObserveNextShowEpisodeToWatch(
-    private val watchedShowDao: WatchedShowDao,
+  private val watchedShowDao: WatchedShowDao,
 ) : SubjectInteractor<Unit, UpNextEntry?>() {
-    override fun createObservable(params: Unit): Flow<UpNextEntry?> {
-        return watchedShowDao.observeUpNextShow()
-    }
+  override fun createObservable(params: Unit): Flow<UpNextEntry?> {
+    return watchedShowDao.observeUpNextShow()
+  }
 }

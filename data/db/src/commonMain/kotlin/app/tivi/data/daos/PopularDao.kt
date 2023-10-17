@@ -10,15 +10,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface PopularDao : PaginatedEntryDao<PopularShowEntry, PopularEntryWithShow> {
 
-    fun entriesObservable(page: Int): Flow<List<PopularShowEntry>>
+  fun entriesObservable(page: Int): Flow<List<PopularShowEntry>>
 
-    fun entriesObservable(count: Int, offset: Int): Flow<List<PopularEntryWithShow>>
+  fun entriesObservable(count: Int, offset: Int): Flow<List<PopularEntryWithShow>>
 
-    fun entriesPagingSource(): PagingSource<Int, PopularEntryWithShow>
+  fun entriesPagingSource(): PagingSource<Int, PopularEntryWithShow>
 
-    override fun deletePage(page: Int)
+  override fun deletePage(page: Int)
 
-    override fun deleteAll()
+  override fun deleteAll()
 
-    override fun getLastPage(): Int?
+  override fun getLastPage(): Int?
 }

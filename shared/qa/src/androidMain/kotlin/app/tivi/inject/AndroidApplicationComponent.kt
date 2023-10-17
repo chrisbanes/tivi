@@ -16,28 +16,28 @@ import okhttp3.logging.HttpLoggingInterceptor
 @Component
 @ApplicationScope
 abstract class AndroidApplicationComponent(
-    @get:Provides val application: Application,
+  @get:Provides val application: Application,
 ) : SharedApplicationComponent,
-    QaApplicationComponent {
+  QaApplicationComponent {
 
-    abstract val initializers: AppInitializers
-    abstract val workerFactory: TiviWorkerFactory
+  abstract val initializers: AppInitializers
+  abstract val workerFactory: TiviWorkerFactory
 
-    @ApplicationScope
-    @IntoSet
-    @Provides
-    fun provideHttpLoggingInterceptor(): Interceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BASIC
-    }
+  @ApplicationScope
+  @IntoSet
+  @Provides
+  fun provideHttpLoggingInterceptor(): Interceptor = HttpLoggingInterceptor().apply {
+    level = HttpLoggingInterceptor.Level.BASIC
+  }
 
-    @ApplicationScope
-    @IntoSet
-    @Provides
-    fun provideChuckerInterceptor(
-        context: Application,
-    ): Interceptor = ChuckerInterceptor.Builder(context)
-        .redactHeaders("trakt-api-key", "Authorization")
-        .build()
+  @ApplicationScope
+  @IntoSet
+  @Provides
+  fun provideChuckerInterceptor(
+    context: Application,
+  ): Interceptor = ChuckerInterceptor.Builder(context)
+    .redactHeaders("trakt-api-key", "Authorization")
+    .build()
 
-    companion object
+  companion object
 }

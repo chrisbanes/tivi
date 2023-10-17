@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface EpisodeDetailsComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindEpisodeDetailsPresenterFactory(factory: EpisodeDetailsUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindEpisodeDetailsPresenterFactory(factory: EpisodeDetailsUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindEpisodeDetailsUiFactoryFactory(factory: EpisodeDetailsUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindEpisodeDetailsUiFactoryFactory(factory: EpisodeDetailsUiFactory): Ui.Factory = factory
 }

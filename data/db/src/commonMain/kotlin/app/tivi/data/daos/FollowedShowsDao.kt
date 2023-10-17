@@ -10,23 +10,23 @@ import kotlinx.coroutines.flow.Flow
 
 interface FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithShow> {
 
-    fun entries(): List<FollowedShowEntry>
+  fun entries(): List<FollowedShowEntry>
 
-    override fun deleteAll()
+  override fun deleteAll()
 
-    fun entryWithShowId(showId: Long): FollowedShowEntry?
+  fun entryWithShowId(showId: Long): FollowedShowEntry?
 
-    fun entryCountWithShowIdNotPendingDeleteObservable(showId: Long): Flow<Int>
+  fun entryCountWithShowIdNotPendingDeleteObservable(showId: Long): Flow<Int>
 
-    fun entryCountWithShowId(showId: Long): Int
+  fun entryCountWithShowId(showId: Long): Int
 
-    fun entriesWithNoPendingAction(): List<FollowedShowEntry>
+  fun entriesWithNoPendingAction(): List<FollowedShowEntry>
 
-    fun entriesWithSendPendingActions(): List<FollowedShowEntry>
+  fun entriesWithSendPendingActions(): List<FollowedShowEntry>
 
-    fun entriesWithDeletePendingActions(): List<FollowedShowEntry>
+  fun entriesWithDeletePendingActions(): List<FollowedShowEntry>
 
-    fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction)
+  fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: PendingAction)
 
-    fun deleteWithIds(ids: List<Long>)
+  fun deleteWithIds(ids: List<Long>)
 }

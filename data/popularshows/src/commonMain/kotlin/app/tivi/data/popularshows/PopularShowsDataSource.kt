@@ -7,8 +7,8 @@ import app.tivi.data.models.PopularShowEntry
 import app.tivi.data.models.TiviShow
 
 fun interface PopularShowsDataSource {
-    suspend operator fun invoke(
-        page: Int,
-        pageSize: Int,
-    ): List<Pair<TiviShow, PopularShowEntry>>
+  suspend operator fun invoke(
+    page: Int,
+    pageSize: Int,
+  ): List<Pair<TiviShow, PopularShowEntry>>
 }

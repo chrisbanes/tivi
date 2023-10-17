@@ -32,113 +32,113 @@ import kotlinx.coroutines.test.runTest
 import me.tatarka.inject.annotations.Component
 
 class FollowedShowRepositoryTest : DatabaseTest() {
-    private lateinit var showsDao: TiviShowDao
-    private lateinit var followShowsDao: FollowedShowsDao
-    private lateinit var followedShowsRepository: FollowedShowsRepository
-    private lateinit var followedShowsDataSource: FakeFollowedShowsDataSource
-    private lateinit var traktAuthRepository: TraktAuthRepository
+  private lateinit var showsDao: TiviShowDao
+  private lateinit var followShowsDao: FollowedShowsDao
+  private lateinit var followedShowsRepository: FollowedShowsRepository
+  private lateinit var followedShowsDataSource: FakeFollowedShowsDataSource
+  private lateinit var traktAuthRepository: TraktAuthRepository
 
-    @BeforeTest
-    fun setup() {
-        val component = FollowedShowsRepositoryTestComponent::class.create(applicationComponent)
-        showsDao = component.showsDao
-        followShowsDao = component.followShowsDao
-        followedShowsRepository = component.followedShowsRepository
-        followedShowsDataSource = component.followedShowsDataSource as FakeFollowedShowsDataSource
-        traktAuthRepository = component.traktAuthRepository
+  @BeforeTest
+  fun setup() {
+    val component = FollowedShowsRepositoryTestComponent::class.create(applicationComponent)
+    showsDao = component.showsDao
+    followShowsDao = component.followShowsDao
+    followedShowsRepository = component.followedShowsRepository
+    followedShowsDataSource = component.followedShowsDataSource as FakeFollowedShowsDataSource
+    traktAuthRepository = component.traktAuthRepository
 
-        // We'll assume that there's a show in the db
-        showsDao.insert(show)
-        showsDao.insert(show2)
-    }
+    // We'll assume that there's a show in the db
+    showsDao.insert(show)
+    showsDao.insert(show2)
+  }
 
-    @Test
-    fun testSync() = runTest {
-        followedShowsDataSource.getFollowedListIdResult =
-            Result.success(TraktList(ids = TraktListIds(trakt = 0)))
-        followedShowsDataSource.getListShowsResult =
-            Result.success(listOf(followedShow1Network to show))
+  @Test
+  fun testSync() = runTest {
+    followedShowsDataSource.getFollowedListIdResult =
+      Result.success(TraktList(ids = TraktListIds(trakt = 0)))
+    followedShowsDataSource.getListShowsResult =
+      Result.success(listOf(followedShow1Network to show))
 
-        traktAuthRepository.login()
+    traktAuthRepository.login()
 
-        followedShowsRepository.syncFollowedShows()
+    followedShowsRepository.syncFollowedShows()
 
-        assertThat(followedShowsRepository.getFollowedShows())
-            .containsExactly(followedShow1Local)
-    }
+    assertThat(followedShowsRepository.getFollowedShows())
+      .containsExactly(followedShow1Local)
+  }
 
-    @Test
-    fun testSync_emptyResponse() = runTest {
-        followShowsDao.insert(followedShow1Local)
+  @Test
+  fun testSync_emptyResponse() = runTest {
+    followShowsDao.insert(followedShow1Local)
 
-        followedShowsDataSource.getFollowedListIdResult =
-            Result.success(TraktList(ids = TraktListIds(trakt = 0)))
-        followedShowsDataSource.getListShowsResult = Result.success(emptyList())
+    followedShowsDataSource.getFollowedListIdResult =
+      Result.success(TraktList(ids = TraktListIds(trakt = 0)))
+    followedShowsDataSource.getListShowsResult = Result.success(emptyList())
 
-        traktAuthRepository.login()
+    traktAuthRepository.login()
 
-        followedShowsRepository.syncFollowedShows()
+    followedShowsRepository.syncFollowedShows()
 
-        assertThat(followedShowsRepository.getFollowedShows()).isEmpty()
-    }
+    assertThat(followedShowsRepository.getFollowedShows()).isEmpty()
+  }
 
-    @Test
-    fun testSync_responseDifferentShow() = runTest {
-        followShowsDao.insert(followedShow1Local)
+  @Test
+  fun testSync_responseDifferentShow() = runTest {
+    followShowsDao.insert(followedShow1Local)
 
-        followedShowsDataSource.getFollowedListIdResult =
-            Result.success(TraktList(ids = TraktListIds(trakt = 0)))
-        followedShowsDataSource.getListShowsResult =
-            Result.success(listOf(followedShow2Network to show2))
+    followedShowsDataSource.getFollowedListIdResult =
+      Result.success(TraktList(ids = TraktListIds(trakt = 0)))
+    followedShowsDataSource.getListShowsResult =
+      Result.success(listOf(followedShow2Network to show2))
 
-        traktAuthRepository.login()
+    traktAuthRepository.login()
 
-        followedShowsRepository.syncFollowedShows()
+    followedShowsRepository.syncFollowedShows()
 
-        assertThat(followedShowsRepository.getFollowedShows())
-            .containsExactly(followedShow2Local)
-    }
+    assertThat(followedShowsRepository.getFollowedShows())
+      .containsExactly(followedShow2Local)
+  }
 
-    @Test
-    fun testSync_pendingDelete() = runTest {
-        followShowsDao.insert(followedShow1PendingDelete)
+  @Test
+  fun testSync_pendingDelete() = runTest {
+    followShowsDao.insert(followedShow1PendingDelete)
 
-        // Return error for the list ID so that we disable syncing
-        followedShowsDataSource.getFollowedListIdResult =
-            Result.failure(IllegalArgumentException())
+    // Return error for the list ID so that we disable syncing
+    followedShowsDataSource.getFollowedListIdResult =
+      Result.failure(IllegalArgumentException())
 
-        traktAuthRepository.login()
+    traktAuthRepository.login()
 
-        followedShowsRepository.syncFollowedShows()
+    followedShowsRepository.syncFollowedShows()
 
-        assertThat(followedShowsRepository.getFollowedShows()).isEmpty()
-    }
+    assertThat(followedShowsRepository.getFollowedShows()).isEmpty()
+  }
 
-    @Test
-    fun testSync_pendingAdd() = runTest {
-        followShowsDao.insert(followedShow1PendingUpload)
+  @Test
+  fun testSync_pendingAdd() = runTest {
+    followShowsDao.insert(followedShow1PendingUpload)
 
-        // Return an error for the list ID so that we disable syncing
-        followedShowsDataSource.getFollowedListIdResult = Result.failure(IllegalArgumentException())
+    // Return an error for the list ID so that we disable syncing
+    followedShowsDataSource.getFollowedListIdResult = Result.failure(IllegalArgumentException())
 
-        traktAuthRepository.login()
+    traktAuthRepository.login()
 
-        followedShowsRepository.syncFollowedShows()
+    followedShowsRepository.syncFollowedShows()
 
-        assertThat(followedShowsRepository.getFollowedShows())
-            .containsExactly(followedShow1Local)
-    }
+    assertThat(followedShowsRepository.getFollowedShows())
+      .containsExactly(followedShow1Local)
+  }
 }
 
 @Component
 abstract class FollowedShowsRepositoryTestComponent(
-    @Component val applicationComponent: TestApplicationComponent,
+  @Component val applicationComponent: TestApplicationComponent,
 ) {
-    abstract val showsDao: TiviShowDao
-    abstract val followShowsDao: FollowedShowsDao
-    abstract val followedShowsRepository: FollowedShowsRepository
-    abstract val followedShowsDataSource: FollowedShowsDataSource
-    abstract val traktAuthRepository: TraktAuthRepository
+  abstract val showsDao: TiviShowDao
+  abstract val followShowsDao: FollowedShowsDao
+  abstract val followedShowsRepository: FollowedShowsRepository
+  abstract val followedShowsDataSource: FollowedShowsDataSource
+  abstract val traktAuthRepository: TraktAuthRepository
 
-    abstract val sqlDriver: SqlDriver
+  abstract val sqlDriver: SqlDriver
 }

@@ -9,11 +9,11 @@ import assertk.assertions.isEqualTo
 import kotlin.test.Test
 
 class StringFormattingTest {
-    private val strings = EnTiviStrings
+  private val strings = EnTiviStrings
 
-    @Test
-    fun rating() {
-        assertThat(strings.traktRatingText(76.74f)).isEqualTo("77%")
-        assertThat(strings.traktRatingText(40.00f)).isEqualTo("40%")
-    }
+  @Test
+  fun rating() {
+    assertThat(strings.traktRatingText(76.74f)).isEqualTo("77%")
+    assertThat(strings.traktRatingText(40.00f)).isEqualTo("40%")
+  }
 }

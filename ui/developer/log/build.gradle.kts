@@ -3,30 +3,30 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.multiplatform")
-    id("app.tivi.compose")
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.compose")
 }
 
 android {
-    namespace = "app.tivi.developer.log"
+  namespace = "app.tivi.developer.log"
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.logging.api)
-                implementation(projects.common.ui.compose)
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(projects.core.base)
+        implementation(projects.core.logging.api)
+        implementation(projects.common.ui.compose)
 
-                api(projects.common.ui.screens)
-                api(libs.circuit.foundation)
-                implementation(libs.circuit.retained)
+        api(projects.common.ui.screens)
+        api(libs.circuit.foundation)
+        implementation(libs.circuit.retained)
 
-                implementation(compose.material3)
-                implementation(compose.animation)
-            }
-        }
+        implementation(compose.material3)
+        implementation(compose.animation)
+      }
     }
+  }
 }

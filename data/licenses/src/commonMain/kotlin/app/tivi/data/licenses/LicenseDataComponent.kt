@@ -11,7 +11,7 @@ import me.tatarka.inject.annotations.Provides
 expect interface LicenseDataPlatformComponent
 
 interface LicenseDataComponent : LicenseDataPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun bindLicensesStore(bind: LicensesStoreImpl): LicensesStore = bind
+  @ApplicationScope
+  @Provides
+  fun bindLicensesStore(bind: LicensesStoreImpl): LicensesStore = bind
 }

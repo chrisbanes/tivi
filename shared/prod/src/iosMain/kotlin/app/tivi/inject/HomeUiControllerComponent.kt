@@ -11,13 +11,13 @@ import platform.UIKit.UIViewController
 @ActivityScope
 @Component
 abstract class HomeUiControllerComponent(
-    @Component val applicationComponent: IosApplicationComponent,
+  @Component val applicationComponent: IosApplicationComponent,
 ) : ProdUiComponent {
-    abstract val uiViewControllerFactory: () -> UIViewController
+  abstract val uiViewControllerFactory: () -> UIViewController
 
-    @Provides
-    @ActivityScope
-    fun uiViewController(bind: TiviUiViewController): UIViewController = bind()
+  @Provides
+  @ActivityScope
+  fun uiViewController(bind: TiviUiViewController): UIViewController = bind()
 
-    companion object
+  companion object
 }

@@ -6,9 +6,9 @@ package app.tivi.data.models
 import kotlinx.datetime.Instant
 
 data class FollowedShowEntry(
-    override val id: Long = 0,
-    override val showId: Long,
-    val followedAt: Instant? = null,
-    val pendingAction: PendingAction = PendingAction.NOTHING,
-    val traktId: Long? = null,
+  override val id: Long = 0,
+  override val showId: Long,
+  val followedAt: Instant? = null,
+  val pendingAction: PendingAction = PendingAction.NOTHING,
+  val traktId: Long? = null,
 ) : Entry

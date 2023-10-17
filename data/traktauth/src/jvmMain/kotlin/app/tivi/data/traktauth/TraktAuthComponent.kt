@@ -10,15 +10,15 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface TraktAuthComponent {
-    @ApplicationScope
-    @Provides
-    fun provideAuthStore(store: DesktopAuthStore): AuthStore = store
+  @ApplicationScope
+  @Provides
+  fun provideAuthStore(store: DesktopAuthStore): AuthStore = store
 
-    @ApplicationScope
-    @Provides
-    fun provideTraktRefreshTokenAction(impl: DesktopTraktRefreshTokenAction): TraktRefreshTokenAction = impl
+  @ApplicationScope
+  @Provides
+  fun provideTraktRefreshTokenAction(impl: DesktopTraktRefreshTokenAction): TraktRefreshTokenAction = impl
 
-    @Provides
-    @ApplicationScope
-    fun provideTraktLoginAction(impl: DesktopTraktLoginAction): TraktLoginAction = impl
+  @Provides
+  @ApplicationScope
+  fun provideTraktLoginAction(impl: DesktopTraktLoginAction): TraktLoginAction = impl
 }

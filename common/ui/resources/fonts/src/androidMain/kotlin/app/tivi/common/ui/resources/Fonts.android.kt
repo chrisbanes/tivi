@@ -15,9 +15,9 @@ private val idCache = mutableMapOf<String, Int>()
 @SuppressLint("DiscouragedApi")
 @Composable
 actual fun font(fontName: String, resourceId: String, weight: FontWeight, style: FontStyle): Font {
-    val context = LocalContext.current
-    val id = idCache.getOrPut(resourceId) {
-        context.resources.getIdentifier(resourceId, "font", context.packageName)
-    }
-    return Font(resId = id, weight = weight, style = style)
+  val context = LocalContext.current
+  val id = idCache.getOrPut(resourceId) {
+    context.resources.getIdentifier(resourceId, "font", context.packageName)
+  }
+  return Font(resId = id, weight = weight, style = style)
 }

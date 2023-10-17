@@ -90,385 +90,385 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowSeasonsUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is ShowSeasonsScreen -> {
-            ui<ShowSeasonsUiState> { state, modifier ->
-                ShowSeasons(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is ShowSeasonsScreen -> {
+      ui<ShowSeasonsUiState> { state, modifier ->
+        ShowSeasons(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @Composable
 internal fun ShowSeasons(
-    state: ShowSeasonsUiState,
-    modifier: Modifier = Modifier,
+  state: ShowSeasonsUiState,
+  modifier: Modifier = Modifier,
 ) {
-    // Need to extract the eventSink out to a local val, so that the Compose Compiler
-    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
-    val eventSink = state.eventSink
+  // Need to extract the eventSink out to a local val, so that the Compose Compiler
+  // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+  val eventSink = state.eventSink
 
-    ShowSeasons(
-        state = state,
-        navigateUp = { eventSink(ShowSeasonsUiEvent.NavigateBack) },
-        openEpisodeDetails = { eventSink(ShowSeasonsUiEvent.OpenEpisodeDetails(it)) },
-        refresh = { eventSink(ShowSeasonsUiEvent.Refresh()) },
-        onMessageShown = { eventSink(ShowSeasonsUiEvent.ClearMessage(it)) },
-        modifier = modifier,
-    )
+  ShowSeasons(
+    state = state,
+    navigateUp = { eventSink(ShowSeasonsUiEvent.NavigateBack) },
+    openEpisodeDetails = { eventSink(ShowSeasonsUiEvent.OpenEpisodeDetails(it)) },
+    refresh = { eventSink(ShowSeasonsUiEvent.Refresh()) },
+    onMessageShown = { eventSink(ShowSeasonsUiEvent.ClearMessage(it)) },
+    modifier = modifier,
+  )
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun ShowSeasons(
-    state: ShowSeasonsUiState,
-    navigateUp: () -> Unit,
-    openEpisodeDetails: (episodeId: Long) -> Unit,
-    refresh: () -> Unit,
-    onMessageShown: (id: Long) -> Unit,
-    modifier: Modifier = Modifier,
+  state: ShowSeasonsUiState,
+  navigateUp: () -> Unit,
+  openEpisodeDetails: (episodeId: Long) -> Unit,
+  refresh: () -> Unit,
+  onMessageShown: (id: Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+  val snackbarHostState = remember { SnackbarHostState() }
 
-    val dismissSnackbarState = rememberDismissState { value ->
-        if (value != DismissValue.Default) {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            true
-        } else {
-            false
-        }
+  val dismissSnackbarState = rememberDismissState { value ->
+    if (value != DismissValue.Default) {
+      snackbarHostState.currentSnackbarData?.dismiss()
+      true
+    } else {
+      false
     }
+  }
 
-    state.message?.let { message ->
-        LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(message.message)
-            // Notify the view model that the message has been dismissed
-            onMessageShown(message.id)
-        }
+  state.message?.let { message ->
+    LaunchedEffect(message) {
+      snackbarHostState.showSnackbar(message.message)
+      // Notify the view model that the message has been dismissed
+      onMessageShown(message.id)
     }
+  }
 
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = { state.seasons.size },
-    )
+  val pagerState = rememberPagerState(
+    initialPage = 0,
+    pageCount = { state.seasons.size },
+  )
 
-    var pagerBeenScrolled by remember { mutableStateOf(false) }
-    LaunchedEffect(pagerState.isScrollInProgress) {
-        if (pagerState.isScrollInProgress) pagerBeenScrolled = true
+  var pagerBeenScrolled by remember { mutableStateOf(false) }
+  LaunchedEffect(pagerState.isScrollInProgress) {
+    if (pagerState.isScrollInProgress) pagerBeenScrolled = true
+  }
+
+  if (state.initialSeasonId != null && !pagerBeenScrolled && pagerState.canScrollForward) {
+    val initialIndex = state.seasons.indexOfFirst { it.season.id == state.initialSeasonId }
+    LaunchedEffect(initialIndex) {
+      pagerState.scrollToPage(initialIndex)
     }
+  }
 
-    if (state.initialSeasonId != null && !pagerBeenScrolled && pagerState.canScrollForward) {
-        val initialIndex = state.seasons.indexOfFirst { it.season.id == state.initialSeasonId }
-        LaunchedEffect(initialIndex) {
-            pagerState.scrollToPage(initialIndex)
-        }
-    }
-
-    Scaffold(
-        topBar = {
-            TopAppBarWithBottomContent(
-                title = { Text(text = state.show.title ?: "") },
-                navigationIcon = {
-                    IconButton(onClick = navigateUp) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = LocalStrings.current.cdNavigateUp,
-                        )
-                    }
-                },
-                actions = {
-                    RefreshButton(
-                        refreshing = state.refreshing,
-                        onClick = refresh,
-                    )
-                },
-                bottomContent = {
-                    SeasonPagerTabs(
-                        pagerState = pagerState,
-                        seasons = state.seasons.map { it.season },
-                        modifier = Modifier.fillMaxWidth(),
-                        containerColor = Color.Transparent,
-                        contentColor = LocalContentColor.current,
-                    )
-
-                    Divider(Modifier.fillMaxWidth())
-                },
+  Scaffold(
+    topBar = {
+      TopAppBarWithBottomContent(
+        title = { Text(text = state.show.title ?: "") },
+        navigationIcon = {
+          IconButton(onClick = navigateUp) {
+            Icon(
+              Icons.Default.ArrowBack,
+              contentDescription = LocalStrings.current.cdNavigateUp,
             )
+          }
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                SwipeToDismiss(
-                    state = dismissSnackbarState,
-                    background = {},
-                    dismissContent = { Snackbar(snackbarData = data) },
-                    modifier = Modifier
-                        .padding(horizontal = Layout.bodyMargin)
-                        .fillMaxWidth(),
-                )
-            }
+        actions = {
+          RefreshButton(
+            refreshing = state.refreshing,
+            onClick = refresh,
+          )
         },
-        modifier = modifier
-            .testTag("show_seasons")
-            .fillMaxSize(),
-    ) { contentPadding ->
-        SeasonsPager(
-            seasons = state.seasons,
+        bottomContent = {
+          SeasonPagerTabs(
             pagerState = pagerState,
-            openEpisodeDetails = openEpisodeDetails,
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxHeight()
-                .bodyWidth(),
+            seasons = state.seasons.map { it.season },
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = Color.Transparent,
+            contentColor = LocalContentColor.current,
+          )
+
+          Divider(Modifier.fillMaxWidth())
+        },
+      )
+    },
+    snackbarHost = {
+      SnackbarHost(hostState = snackbarHostState) { data ->
+        SwipeToDismiss(
+          state = dismissSnackbarState,
+          background = {},
+          dismissContent = { Snackbar(snackbarData = data) },
+          modifier = Modifier
+            .padding(horizontal = Layout.bodyMargin)
+            .fillMaxWidth(),
         )
-    }
+      }
+    },
+    modifier = modifier
+      .testTag("show_seasons")
+      .fillMaxSize(),
+  ) { contentPadding ->
+    SeasonsPager(
+      seasons = state.seasons,
+      pagerState = pagerState,
+      openEpisodeDetails = openEpisodeDetails,
+      modifier = Modifier
+        .padding(contentPadding)
+        .fillMaxHeight()
+        .bodyWidth(),
+    )
+  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SeasonPagerTabs(
-    pagerState: PagerState,
-    seasons: List<Season>,
-    modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surface,
-    contentColor: Color = contentColorFor(containerColor),
+  pagerState: PagerState,
+  seasons: List<Season>,
+  modifier: Modifier = Modifier,
+  containerColor: Color = MaterialTheme.colorScheme.surface,
+  contentColor: Color = contentColorFor(containerColor),
 ) {
-    if (seasons.isEmpty()) return
+  if (seasons.isEmpty()) return
 
-    val coroutineScope = rememberCoroutineScope()
+  val coroutineScope = rememberCoroutineScope()
 
-    ScrollableTabRow(
-        // Our selected tab is our current page
-        selectedTabIndex = pagerState.currentPage,
-        containerColor = containerColor,
-        contentColor = contentColor,
-        indicator = { tabPositions ->
-            TabRowDefaults.Indicator(
-                Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
-            )
+  ScrollableTabRow(
+    // Our selected tab is our current page
+    selectedTabIndex = pagerState.currentPage,
+    containerColor = containerColor,
+    contentColor = contentColor,
+    indicator = { tabPositions ->
+      TabRowDefaults.Indicator(
+        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
+      )
+    },
+    divider = {},
+    modifier = modifier,
+  ) {
+    // Add tabs for all of our pages
+    seasons.forEachIndexed { index, season ->
+      Tab(
+        text = { Text(text = LocalTiviTextCreator.current.seasonTitle(season)) },
+        selected = pagerState.currentPage == index,
+        onClick = {
+          // Animate to the selected page when clicked
+          coroutineScope.launch {
+            pagerState.animateScrollToPage(index)
+          }
         },
-        divider = {},
-        modifier = modifier,
-    ) {
-        // Add tabs for all of our pages
-        seasons.forEachIndexed { index, season ->
-            Tab(
-                text = { Text(text = LocalTiviTextCreator.current.seasonTitle(season)) },
-                selected = pagerState.currentPage == index,
-                onClick = {
-                    // Animate to the selected page when clicked
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(index)
-                    }
-                },
-            )
-        }
+      )
     }
+  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SeasonsPager(
-    seasons: List<SeasonWithEpisodesAndWatches>,
-    pagerState: PagerState,
-    openEpisodeDetails: (episodeId: Long) -> Unit,
-    modifier: Modifier = Modifier,
+  seasons: List<SeasonWithEpisodesAndWatches>,
+  pagerState: PagerState,
+  openEpisodeDetails: (episodeId: Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    HorizontalPager(
-        state = pagerState,
-        flingBehavior = PagerDefaults.flingBehavior(
-            state = pagerState,
-            highVelocityAnimationSpec = rememberTiviDecayAnimationSpec(),
-        ),
-        modifier = modifier,
-    ) { page ->
-        val seasonWithEps = seasons.getOrNull(page) ?: return@HorizontalPager
-        SeasonPage(
-            season = seasonWithEps.season,
-            episodes = seasonWithEps.episodes,
-            onEpisodeClick = openEpisodeDetails,
-            modifier = Modifier.fillMaxSize(),
-        )
-    }
+  HorizontalPager(
+    state = pagerState,
+    flingBehavior = PagerDefaults.flingBehavior(
+      state = pagerState,
+      highVelocityAnimationSpec = rememberTiviDecayAnimationSpec(),
+    ),
+    modifier = modifier,
+  ) { page ->
+    val seasonWithEps = seasons.getOrNull(page) ?: return@HorizontalPager
+    SeasonPage(
+      season = seasonWithEps.season,
+      episodes = seasonWithEps.episodes,
+      onEpisodeClick = openEpisodeDetails,
+      modifier = Modifier.fillMaxSize(),
+    )
+  }
 }
 
 @Composable
 private fun SeasonPage(
-    season: Season,
-    episodes: List<EpisodeWithWatches>,
-    onEpisodeClick: (episodeId: Long) -> Unit,
-    modifier: Modifier = Modifier,
+  season: Season,
+  episodes: List<EpisodeWithWatches>,
+  onEpisodeClick: (episodeId: Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        modifier = modifier,
-        flingBehavior = rememberTiviFlingBehavior(),
-    ) {
-        item {
-            SeasonInfoRow(
-                season = season,
-                modifier = Modifier.fillParentMaxWidth(),
-            )
-        }
-
-        items(episodes, key = { it.episode.id }) { item ->
-            EpisodeWithWatchesRow(
-                episode = item.episode,
-                isWatched = item.hasWatches,
-                hasPending = item.hasPending,
-                onlyPendingDeletes = item.onlyPendingDeletes,
-                modifier = Modifier
-                    .testTag("show_seasons_episode_item")
-                    .fillParentMaxWidth()
-                    .clickable { onEpisodeClick(item.episode.id) },
-            )
-        }
+  LazyColumn(
+    modifier = modifier,
+    flingBehavior = rememberTiviFlingBehavior(),
+  ) {
+    item {
+      SeasonInfoRow(
+        season = season,
+        modifier = Modifier.fillParentMaxWidth(),
+      )
     }
+
+    items(episodes, key = { it.episode.id }) { item ->
+      EpisodeWithWatchesRow(
+        episode = item.episode,
+        isWatched = item.hasWatches,
+        hasPending = item.hasPending,
+        onlyPendingDeletes = item.onlyPendingDeletes,
+        modifier = Modifier
+          .testTag("show_seasons_episode_item")
+          .fillParentMaxWidth()
+          .clickable { onEpisodeClick(item.episode.id) },
+      )
+    }
+  }
 }
 
 @Composable
 private fun SeasonInfoRow(
-    season: Season,
-    modifier: Modifier = Modifier,
+  season: Season,
+  modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier = modifier,
-        tonalElevation = 2.dp,
-    ) {
-        Row(Modifier.padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(0.25f)
-                    .aspectRatio(2 / 3f),
-            ) {
-                AsyncImage(
-                    model = season.asImageModel(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
+  Surface(
+    modifier = modifier,
+    tonalElevation = 2.dp,
+  ) {
+    Row(Modifier.padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)) {
+      Card(
+        modifier = Modifier
+          .fillMaxWidth(0.25f)
+          .aspectRatio(2 / 3f),
+      ) {
+        AsyncImage(
+          model = season.asImageModel(),
+          contentDescription = null,
+          contentScale = ContentScale.Crop,
+          modifier = Modifier.fillMaxSize(),
+        )
+      }
 
-            Spacer(Modifier.width(Layout.gutter * 2))
+      Spacer(Modifier.width(Layout.gutter * 2))
 
-            Column(Modifier.align(Alignment.CenterVertically)) {
-                val textCreator = LocalTiviTextCreator.current
-                Text(
-                    text = textCreator.seasonTitle(season),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                if (!season.summary.isNullOrEmpty()) {
-                    ExpandingText(
-                        text = season.summary.orEmpty(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        collapsedMaxLines = 6,
-                    )
-                }
-            }
+      Column(Modifier.align(Alignment.CenterVertically)) {
+        val textCreator = LocalTiviTextCreator.current
+        Text(
+          text = textCreator.seasonTitle(season),
+          style = MaterialTheme.typography.titleMedium,
+        )
+        if (!season.summary.isNullOrEmpty()) {
+          ExpandingText(
+            text = season.summary.orEmpty(),
+            style = MaterialTheme.typography.bodyMedium,
+            collapsedMaxLines = 6,
+          )
         }
+      }
     }
+  }
 }
 
 @Composable
 private fun EpisodeWithWatchesRow(
-    episode: Episode,
-    isWatched: Boolean,
-    hasPending: Boolean,
-    onlyPendingDeletes: Boolean,
-    modifier: Modifier = Modifier,
+  episode: Episode,
+  isWatched: Boolean,
+  hasPending: Boolean,
+  onlyPendingDeletes: Boolean,
+  modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier
-            .heightIn(min = 48.dp)
-            .wrapContentHeight(Alignment.CenterVertically)
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            val textCreator = LocalTiviTextCreator.current
+  Row(
+    modifier = modifier
+      .heightIn(min = 48.dp)
+      .wrapContentHeight(Alignment.CenterVertically)
+      .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
+  ) {
+    Column(modifier = Modifier.weight(1f)) {
+      val textCreator = LocalTiviTextCreator.current
 
-            Text(
-                text = textCreator.episodeNumberText(episode).toString(),
-                style = MaterialTheme.typography.bodySmall,
-            )
+      Text(
+        text = textCreator.episodeNumberText(episode).toString(),
+        style = MaterialTheme.typography.bodySmall,
+      )
 
-            Spacer(Modifier.height(2.dp))
+      Spacer(Modifier.height(2.dp))
 
-            Text(
-                text = episode.title
-                    ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-
-        var needSpacer = false
-        if (hasPending) {
-            Icon(
-                imageVector = Icons.Default.CloudUpload,
-                contentDescription = LocalStrings.current.cdEpisodeSyncing,
-                modifier = Modifier.align(Alignment.CenterVertically),
-            )
-            needSpacer = true
-        }
-        if (isWatched) {
-            if (needSpacer) Spacer(Modifier.width(4.dp))
-
-            Icon(
-                imageVector = when {
-                    onlyPendingDeletes -> Icons.Default.VisibilityOff
-                    else -> Icons.Default.Visibility
-                },
-                contentDescription = when {
-                    onlyPendingDeletes -> LocalStrings.current.cdEpisodeDeleted
-                    else -> LocalStrings.current.cdEpisodeWatched
-                },
-                modifier = Modifier.align(Alignment.CenterVertically),
-            )
-        }
+      Text(
+        text = episode.title
+          ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
+        style = MaterialTheme.typography.bodyMedium,
+      )
     }
+
+    var needSpacer = false
+    if (hasPending) {
+      Icon(
+        imageVector = Icons.Default.CloudUpload,
+        contentDescription = LocalStrings.current.cdEpisodeSyncing,
+        modifier = Modifier.align(Alignment.CenterVertically),
+      )
+      needSpacer = true
+    }
+    if (isWatched) {
+      if (needSpacer) Spacer(Modifier.width(4.dp))
+
+      Icon(
+        imageVector = when {
+          onlyPendingDeletes -> Icons.Default.VisibilityOff
+          else -> Icons.Default.Visibility
+        },
+        contentDescription = when {
+          onlyPendingDeletes -> LocalStrings.current.cdEpisodeDeleted
+          else -> LocalStrings.current.cdEpisodeWatched
+        },
+        modifier = Modifier.align(Alignment.CenterVertically),
+      )
+    }
+  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 private fun Modifier.pagerTabIndicatorOffset(
-    pagerState: PagerState,
-    tabPositions: List<TabPosition>,
-    pageIndexMapping: (Int) -> Int = { it },
+  pagerState: PagerState,
+  tabPositions: List<TabPosition>,
+  pageIndexMapping: (Int) -> Int = { it },
 ): Modifier = layout { measurable, constraints ->
-    if (tabPositions.isEmpty()) {
-        // If there are no pages, nothing to show
-        layout(constraints.maxWidth, 0) {}
+  if (tabPositions.isEmpty()) {
+    // If there are no pages, nothing to show
+    layout(constraints.maxWidth, 0) {}
+  } else {
+    val currentPage = minOf(tabPositions.lastIndex, pageIndexMapping(pagerState.currentPage))
+    val currentTab = tabPositions[currentPage]
+    val previousTab = tabPositions.getOrNull(currentPage - 1)
+    val nextTab = tabPositions.getOrNull(currentPage + 1)
+    val fraction = pagerState.currentPageOffsetFraction
+    val indicatorWidth = if (fraction > 0 && nextTab != null) {
+      lerp(currentTab.width, nextTab.width, fraction).roundToPx()
+    } else if (fraction < 0 && previousTab != null) {
+      lerp(currentTab.width, previousTab.width, -fraction).roundToPx()
     } else {
-        val currentPage = minOf(tabPositions.lastIndex, pageIndexMapping(pagerState.currentPage))
-        val currentTab = tabPositions[currentPage]
-        val previousTab = tabPositions.getOrNull(currentPage - 1)
-        val nextTab = tabPositions.getOrNull(currentPage + 1)
-        val fraction = pagerState.currentPageOffsetFraction
-        val indicatorWidth = if (fraction > 0 && nextTab != null) {
-            lerp(currentTab.width, nextTab.width, fraction).roundToPx()
-        } else if (fraction < 0 && previousTab != null) {
-            lerp(currentTab.width, previousTab.width, -fraction).roundToPx()
-        } else {
-            currentTab.width.roundToPx()
-        }
-        val indicatorOffset = if (fraction > 0 && nextTab != null) {
-            lerp(currentTab.left, nextTab.left, fraction).roundToPx()
-        } else if (fraction < 0 && previousTab != null) {
-            lerp(currentTab.left, previousTab.left, -fraction).roundToPx()
-        } else {
-            currentTab.left.roundToPx()
-        }
-        val placeable = measurable.measure(
-            Constraints(
-                minWidth = indicatorWidth,
-                maxWidth = indicatorWidth,
-                minHeight = 0,
-                maxHeight = constraints.maxHeight,
-            ),
-        )
-        layout(constraints.maxWidth, maxOf(placeable.height, constraints.minHeight)) {
-            placeable.placeRelative(
-                indicatorOffset,
-                maxOf(constraints.minHeight - placeable.height, 0),
-            )
-        }
+      currentTab.width.roundToPx()
     }
+    val indicatorOffset = if (fraction > 0 && nextTab != null) {
+      lerp(currentTab.left, nextTab.left, fraction).roundToPx()
+    } else if (fraction < 0 && previousTab != null) {
+      lerp(currentTab.left, previousTab.left, -fraction).roundToPx()
+    } else {
+      currentTab.left.roundToPx()
+    }
+    val placeable = measurable.measure(
+      Constraints(
+        minWidth = indicatorWidth,
+        maxWidth = indicatorWidth,
+        minHeight = 0,
+        maxHeight = constraints.maxHeight,
+      ),
+    )
+    layout(constraints.maxWidth, maxOf(placeable.height, constraints.minHeight)) {
+      placeable.placeRelative(
+        indicatorOffset,
+        maxOf(constraints.minHeight - placeable.height, 0),
+      )
+    }
+  }
 }

@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface AnalyticsPlatformComponent {
-    @get:Provides
-    @get:ApplicationScope
-    val analytics: Analytics
+  @get:Provides
+  @get:ApplicationScope
+  val analytics: Analytics
 }

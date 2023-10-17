@@ -4,16 +4,16 @@
 package app.tivi.data.views
 
 data class ShowsWatchStats(
-    val showId: Long,
-    val episodeCount: Int,
-    val watchedEpisodeCount: Int,
+  val showId: Long,
+  val episodeCount: Int,
+  val watchedEpisodeCount: Int,
 )
 
 /**
  * Only exists to make it easier to map from SqlDelight
  */
 fun ShowsWatchStats(
-    showId: Long,
-    episodeCount: Long,
-    watchedEpisodeCount: Long,
+  showId: Long,
+  episodeCount: Long,
+  watchedEpisodeCount: Long,
 ): ShowsWatchStats = ShowsWatchStats(showId, episodeCount.toInt(), watchedEpisodeCount.toInt())

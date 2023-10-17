@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbShowDataSourceImpl(
-    private val tmdb: Tmdb3,
-    private val mapper: TmdbShowDetailToTiviShow,
+  private val tmdb: Tmdb3,
+  private val mapper: TmdbShowDetailToTiviShow,
 ) : ShowDataSource {
-    override suspend fun getShow(show: TiviShow): TiviShow {
-        val tmdbId = show.tmdbId
-            ?: throw IllegalArgumentException("TmdbId for show does not exist [$show]")
+  override suspend fun getShow(show: TiviShow): TiviShow {
+    val tmdbId = show.tmdbId
+      ?: throw IllegalArgumentException("TmdbId for show does not exist [$show]")
 
-        return tmdb.show.getDetails(tmdbId).let { mapper.map(it) }
-    }
+    return tmdb.show.getDetails(tmdbId).let { mapper.map(it) }
+  }
 }

@@ -8,6 +8,6 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toLocalDateTime
 
 internal object LocalDateTimeColumnAdapter : ColumnAdapter<LocalDateTime, String> {
-    override fun decode(databaseValue: String): LocalDateTime = databaseValue.toLocalDateTime()
-    override fun encode(value: LocalDateTime): String = value.toString()
+  override fun decode(databaseValue: String): LocalDateTime = databaseValue.toLocalDateTime()
+  override fun encode(value: LocalDateTime): String = value.toString()
 }

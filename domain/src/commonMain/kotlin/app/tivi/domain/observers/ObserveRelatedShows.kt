@@ -11,12 +11,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObserveRelatedShows(
-    private val relatedShowsDao: RelatedShowsDao,
+  private val relatedShowsDao: RelatedShowsDao,
 ) : SubjectInteractor<ObserveRelatedShows.Params, List<RelatedShowEntryWithShow>>() {
 
-    override fun createObservable(params: Params): Flow<List<RelatedShowEntryWithShow>> {
-        return relatedShowsDao.entriesWithShowsObservable(params.showId)
-    }
+  override fun createObservable(params: Params): Flow<List<RelatedShowEntryWithShow>> {
+    return relatedShowsDao.entriesWithShowsObservable(params.showId)
+  }
 
-    data class Params(val showId: Long)
+  data class Params(val showId: Long)
 }

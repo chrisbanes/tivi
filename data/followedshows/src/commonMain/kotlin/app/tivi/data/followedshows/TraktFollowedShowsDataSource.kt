@@ -19,39 +19,39 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktFollowedShowsDataSource(
-    usersApi: Lazy<TraktUsersApi>,
-    listEntryToShowMapper: TraktListItemToTiviShow,
-    listEntryToFollowedEntry: TraktListItemToFollowedShowEntry,
+  usersApi: Lazy<TraktUsersApi>,
+  listEntryToShowMapper: TraktListItemToTiviShow,
+  listEntryToFollowedEntry: TraktListItemToFollowedShowEntry,
 ) : FollowedShowsDataSource {
-    private companion object {
-        const val LIST_NAME = "Following"
-        val FOLLOWED_LIST = TraktList(name = LIST_NAME, privacy = TraktListPrivacy.PRIVATE)
-    }
+  private companion object {
+    const val LIST_NAME = "Following"
+    val FOLLOWED_LIST = TraktList(name = LIST_NAME, privacy = TraktListPrivacy.PRIVATE)
+  }
 
-    private val listShowsMapper = pairMapperOf(listEntryToFollowedEntry, listEntryToShowMapper)
-    private val usersApi by usersApi
+  private val listShowsMapper = pairMapperOf(listEntryToFollowedEntry, listEntryToShowMapper)
+  private val usersApi by usersApi
 
-    override suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>) {
-        usersApi.addListItems(listId = listId.toString(), items = shows.toSyncItems())
-    }
+  override suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>) {
+    usersApi.addListItems(listId = listId.toString(), items = shows.toSyncItems())
+  }
 
-    override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>) {
-        usersApi.removeListItems(listId = listId.toString(), items = shows.toSyncItems())
-    }
+  override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>) {
+    usersApi.removeListItems(listId = listId.toString(), items = shows.toSyncItems())
+  }
 
-    override suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>> {
-        return usersApi.getListItems(listId = listId.toString(), extended = TraktExtended.NO_SEASONS)
-            .filter { it.show != null }
-            .let { listShowsMapper.invoke(it) }
-    }
+  override suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>> {
+    return usersApi.getListItems(listId = listId.toString(), extended = TraktExtended.NO_SEASONS)
+      .filter { it.show != null }
+      .let { listShowsMapper.invoke(it) }
+  }
 
-    override suspend fun getFollowedListId(): TraktList =
-        usersApi.getLists().find { it.name == LIST_NAME }
-            ?: usersApi.createList(list = FOLLOWED_LIST)
+  override suspend fun getFollowedListId(): TraktList =
+    usersApi.getLists().find { it.name == LIST_NAME }
+      ?: usersApi.createList(list = FOLLOWED_LIST)
 
-    private fun List<TiviShow>.toSyncItems() = TraktSyncItems(shows = map { it.toSyncItem() })
+  private fun List<TiviShow>.toSyncItems() = TraktSyncItems(shows = map { it.toSyncItem() })
 
-    private fun TiviShow.toSyncItem() = TraktSyncShow(
-        ids = TraktItemIds(trakt = traktId, imdb = imdbId, tmdb = tmdbId),
-    )
+  private fun TiviShow.toSyncItem() = TraktSyncShow(
+    ids = TraktItemIds(trakt = traktId, imdb = imdbId, tmdb = tmdbId),
+  )
 }

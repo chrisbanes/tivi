@@ -11,6 +11,6 @@ import kotlinx.coroutines.flow.Flow
  * This interface represents a DAO which contains entities which are part of a collective list for a given show.
  */
 interface PairEntryDao<EC : MultipleEntry, LI : EntryWithShow<EC>> : EntityDao<EC> {
-    fun entriesWithShowsObservable(showId: Long): Flow<List<LI>>
-    fun deleteWithShowId(showId: Long)
+  fun entriesWithShowsObservable(showId: Long): Flow<List<LI>>
+  fun deleteWithShowId(showId: Long)
 }

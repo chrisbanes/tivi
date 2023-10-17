@@ -22,74 +22,74 @@ import net.openid.appauth.ClientAuthentication
 @ApplicationScope
 @Inject
 class AndroidTraktLoginAction(
-    private val application: Application,
-    private val loginTraktActivityResultContract: Lazy<LoginTraktActivityResultContract>,
-    private val clientAuth: Lazy<ClientAuthentication>,
-    private val authService: Lazy<AuthorizationService>,
-    private val logger: Logger,
+  private val application: Application,
+  private val loginTraktActivityResultContract: Lazy<LoginTraktActivityResultContract>,
+  private val clientAuth: Lazy<ClientAuthentication>,
+  private val authService: Lazy<AuthorizationService>,
+  private val logger: Logger,
 ) : TraktLoginAction {
-    private lateinit var launcher: ActivityResultLauncher<Unit>
+  private lateinit var launcher: ActivityResultLauncher<Unit>
 
-    private val resultChannel = Channel<AuthState?>()
+  private val resultChannel = Channel<AuthState?>()
 
-    internal fun registerActivityWatcher() {
-        val callback = object : ActivityLifecycleCallbacksAdapter() {
-            val launcherIntent = Intent(Intent.ACTION_MAIN, null).apply {
-                addCategory(Intent.CATEGORY_LAUNCHER)
-            }
-            val appList = application.packageManager.queryIntentActivities(launcherIntent, 0)
+  internal fun registerActivityWatcher() {
+    val callback = object : ActivityLifecycleCallbacksAdapter() {
+      val launcherIntent = Intent(Intent.ACTION_MAIN, null).apply {
+        addCategory(Intent.CATEGORY_LAUNCHER)
+      }
+      val appList = application.packageManager.queryIntentActivities(launcherIntent, 0)
 
-            override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
-                if (activity is ComponentActivity &&
-                    appList.any { it.activityInfo.name == activity::class.qualifiedName }
-                ) {
-                    register(activity)
-                }
-            }
+      override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
+        if (activity is ComponentActivity &&
+          appList.any { it.activityInfo.name == activity::class.qualifiedName }
+        ) {
+          register(activity)
         }
-        application.registerActivityLifecycleCallbacks(callback)
+      }
     }
+    application.registerActivityLifecycleCallbacks(callback)
+  }
 
-    private fun register(activity: ComponentActivity) {
-        launcher = activity.registerForActivityResult(
-            loginTraktActivityResultContract.value,
-        ) { result ->
-            if (result == null) return@registerForActivityResult
+  private fun register(activity: ComponentActivity) {
+    launcher = activity.registerForActivityResult(
+      loginTraktActivityResultContract.value,
+    ) { result ->
+      if (result == null) return@registerForActivityResult
 
-            val (response, error) = result
-            when {
-                response != null -> {
-                    authService.value.performTokenRequest(
-                        response.createTokenExchangeRequest(),
-                        clientAuth.value,
-                    ) { tokenResponse, ex ->
-                        val state = AppAuthAuthState()
-                            .apply { update(tokenResponse, ex) }
-                            .let(::AppAuthAuthStateWrapper)
-                        resultChannel.trySend(state)
-                    }
-                }
-
-                error != null -> {
-                    logger.d(error) { "AuthException" }
-                    resultChannel.trySend(null)
-                }
-            }
+      val (response, error) = result
+      when {
+        response != null -> {
+          authService.value.performTokenRequest(
+            response.createTokenExchangeRequest(),
+            clientAuth.value,
+          ) { tokenResponse, ex ->
+            val state = AppAuthAuthState()
+              .apply { update(tokenResponse, ex) }
+              .let(::AppAuthAuthStateWrapper)
+            resultChannel.trySend(state)
+          }
         }
-    }
 
-    override suspend operator fun invoke(): AuthState? {
-        launcher.launch(Unit)
-        return resultChannel.receiveAsFlow().first()
+        error != null -> {
+          logger.d(error) { "AuthException" }
+          resultChannel.trySend(null)
+        }
+      }
     }
+  }
+
+  override suspend operator fun invoke(): AuthState? {
+    launcher.launch(Unit)
+    return resultChannel.receiveAsFlow().first()
+  }
 }
 
 private open class ActivityLifecycleCallbacksAdapter : Application.ActivityLifecycleCallbacks {
-    override fun onActivityCreated(activity: Activity, bundle: Bundle?) = Unit
-    override fun onActivityStarted(activity: Activity) = Unit
-    override fun onActivityResumed(activity: Activity) = Unit
-    override fun onActivityPaused(activity: Activity) = Unit
-    override fun onActivityStopped(activity: Activity) = Unit
-    override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) = Unit
-    override fun onActivityDestroyed(activity: Activity) = Unit
+  override fun onActivityCreated(activity: Activity, bundle: Bundle?) = Unit
+  override fun onActivityStarted(activity: Activity) = Unit
+  override fun onActivityResumed(activity: Activity) = Unit
+  override fun onActivityPaused(activity: Activity) = Unit
+  override fun onActivityStopped(activity: Activity) = Unit
+  override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) = Unit
+  override fun onActivityDestroyed(activity: Activity) = Unit
 }

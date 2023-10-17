@@ -9,9 +9,9 @@ import me.tatarka.inject.annotations.Component
 @ActivityScope
 @Component
 abstract class WindowComponent(
-    @Component val applicationComponent: DesktopApplicationComponent,
+  @Component val applicationComponent: DesktopApplicationComponent,
 ) : ProdUiComponent {
-    abstract val tiviContent: TiviContent
+  abstract val tiviContent: TiviContent
 
-    companion object
+  companion object
 }

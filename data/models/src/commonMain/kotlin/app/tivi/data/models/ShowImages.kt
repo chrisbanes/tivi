@@ -6,15 +6,15 @@ package app.tivi.data.models
 import app.tivi.extensions.unsafeLazy
 
 data class ShowImages(
-    val showId: Long,
-    val images: List<ShowTmdbImage>,
+  val showId: Long,
+  val images: List<ShowTmdbImage>,
 ) {
-    val backdrop: ShowTmdbImage? by unsafeLazy { findHighestRatedForType(ImageType.BACKDROP) }
+  val backdrop: ShowTmdbImage? by unsafeLazy { findHighestRatedForType(ImageType.BACKDROP) }
 
-    val poster: ShowTmdbImage? by unsafeLazy { findHighestRatedForType(ImageType.POSTER) }
+  val poster: ShowTmdbImage? by unsafeLazy { findHighestRatedForType(ImageType.POSTER) }
 
-    private fun findHighestRatedForType(type: ImageType): ShowTmdbImage? {
-        return images.filter { it.type == type }
-            .maxByOrNull { it.rating + (if (it.isPrimary) 10f else 0f) }
-    }
+  private fun findHighestRatedForType(type: ImageType): ShowTmdbImage? {
+    return images.filter { it.type == type }
+      .maxByOrNull { it.rating + (if (it.isPrimary) 10f else 0f) }
+  }
 }

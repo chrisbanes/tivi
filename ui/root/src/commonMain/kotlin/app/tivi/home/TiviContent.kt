@@ -40,93 +40,93 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 typealias TiviContent = @Composable (
-    backstack: SaveableBackStack,
-    navigator: Navigator,
-    onOpenUrl: (String) -> Unit,
-    modifier: Modifier,
+  backstack: SaveableBackStack,
+  navigator: Navigator,
+  onOpenUrl: (String) -> Unit,
+  modifier: Modifier,
 ) -> Unit
 
 @Inject
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun TiviContent(
-    @Assisted backstack: SaveableBackStack,
-    @Assisted navigator: Navigator,
-    @Assisted onOpenUrl: (String) -> Unit,
-    rootViewModel: (CoroutineScope) -> RootViewModel,
-    circuit: Circuit,
-    analytics: Analytics,
-    tiviDateFormatter: TiviDateFormatter,
-    tiviTextCreator: TiviTextCreator,
-    preferences: TiviPreferences,
-    imageLoader: ImageLoader,
-    logger: Logger,
-    @Assisted modifier: Modifier = Modifier,
+  @Assisted backstack: SaveableBackStack,
+  @Assisted navigator: Navigator,
+  @Assisted onOpenUrl: (String) -> Unit,
+  rootViewModel: (CoroutineScope) -> RootViewModel,
+  circuit: Circuit,
+  analytics: Analytics,
+  tiviDateFormatter: TiviDateFormatter,
+  tiviTextCreator: TiviTextCreator,
+  preferences: TiviPreferences,
+  imageLoader: ImageLoader,
+  logger: Logger,
+  @Assisted modifier: Modifier = Modifier,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    remember { rootViewModel(coroutineScope) }
+  val coroutineScope = rememberCoroutineScope()
+  remember { rootViewModel(coroutineScope) }
 
-    val tiviNavigator: Navigator = remember(navigator) {
-        TiviNavigator(navigator, backstack, onOpenUrl, logger)
-    }
+  val tiviNavigator: Navigator = remember(navigator) {
+    TiviNavigator(navigator, backstack, onOpenUrl, logger)
+  }
 
-    // Launch an effect to track changes to the current back stack entry, and push them
-    // as a screen views to analytics
-    LaunchedEffect(backstack.topRecord) {
-        val topScreen = backstack.topRecord?.screen as? TiviScreen
-        analytics.trackScreenView(
-            name = topScreen?.name ?: "unknown screen",
-            arguments = topScreen?.arguments,
-        )
-    }
+  // Launch an effect to track changes to the current back stack entry, and push them
+  // as a screen views to analytics
+  LaunchedEffect(backstack.topRecord) {
+    val topScreen = backstack.topRecord?.screen as? TiviScreen
+    analytics.trackScreenView(
+      name = topScreen?.name ?: "unknown screen",
+      arguments = topScreen?.arguments,
+    )
+  }
 
-    ProvideStrings {
-        CompositionLocalProvider(
-            LocalNavigator provides tiviNavigator,
-            LocalImageLoader provides imageLoader,
-            LocalTiviDateFormatter provides tiviDateFormatter,
-            LocalTiviTextCreator provides tiviTextCreator,
-            LocalWindowSizeClass provides calculateWindowSizeClass(),
-            LocalRetainedStateRegistry provides continuityRetainedStateRegistry(),
+  ProvideStrings {
+    CompositionLocalProvider(
+      LocalNavigator provides tiviNavigator,
+      LocalImageLoader provides imageLoader,
+      LocalTiviDateFormatter provides tiviDateFormatter,
+      LocalTiviTextCreator provides tiviTextCreator,
+      LocalWindowSizeClass provides calculateWindowSizeClass(),
+      LocalRetainedStateRegistry provides continuityRetainedStateRegistry(),
+    ) {
+      CircuitCompositionLocals(circuit) {
+        TiviTheme(
+          useDarkColors = preferences.shouldUseDarkColors(),
+          useDynamicColors = preferences.shouldUseDynamicColors(),
         ) {
-            CircuitCompositionLocals(circuit) {
-                TiviTheme(
-                    useDarkColors = preferences.shouldUseDarkColors(),
-                    useDynamicColors = preferences.shouldUseDynamicColors(),
-                ) {
-                    Home(
-                        backstack = backstack,
-                        navigator = tiviNavigator,
-                        modifier = modifier,
-                    )
-                }
-            }
+          Home(
+            backstack = backstack,
+            navigator = tiviNavigator,
+            modifier = modifier,
+          )
         }
+      }
     }
+  }
 }
 
 private class TiviNavigator(
-    private val navigator: Navigator,
-    private val backStack: SaveableBackStack,
-    private val onOpenUrl: (String) -> Unit,
-    private val logger: Logger,
+  private val navigator: Navigator,
+  private val backStack: SaveableBackStack,
+  private val onOpenUrl: (String) -> Unit,
+  private val logger: Logger,
 ) : Navigator {
-    override fun goTo(screen: Screen) {
-        logger.d { "goTo. Screen: $screen. Current stack: ${backStack.toList()}" }
+  override fun goTo(screen: Screen) {
+    logger.d { "goTo. Screen: $screen. Current stack: ${backStack.toList()}" }
 
-        when (screen) {
-            is UrlScreen -> onOpenUrl(screen.url)
-            else -> navigator.goTo(screen)
-        }
+    when (screen) {
+      is UrlScreen -> onOpenUrl(screen.url)
+      else -> navigator.goTo(screen)
     }
+  }
 
-    override fun pop(): Screen? {
-        logger.d { "pop. Current stack: ${backStack.toList()}" }
-        return navigator.pop()
-    }
+  override fun pop(): Screen? {
+    logger.d { "pop. Current stack: ${backStack.toList()}" }
+    return navigator.pop()
+  }
 
-    override fun resetRoot(newRoot: Screen): List<Screen> {
-        logger.d { "resetRoot: newRoot:$newRoot. Current stack: ${backStack.toList()}" }
-        return navigator.resetRoot(newRoot)
-    }
+  override fun resetRoot(newRoot: Screen): List<Screen> {
+    logger.d { "resetRoot: newRoot:$newRoot. Current stack: ${backStack.toList()}" }
+    return navigator.resetRoot(newRoot)
+  }
 }

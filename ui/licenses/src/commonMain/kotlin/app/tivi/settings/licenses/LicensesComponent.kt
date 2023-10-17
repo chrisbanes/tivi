@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface LicensesComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindLicensesPresenterFactory(factory: LicensesUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindLicensesPresenterFactory(factory: LicensesUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindLicensesUiFactoryFactory(factory: LicensesUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindLicensesUiFactoryFactory(factory: LicensesUiFactory): Ui.Factory = factory
 }

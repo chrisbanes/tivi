@@ -11,14 +11,14 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbSearchDataSource(
-    private val tmdb: Tmdb3,
-    private val mapper: TmdbShowPageResultToTiviShows,
+  private val tmdb: Tmdb3,
+  private val mapper: TmdbShowPageResultToTiviShows,
 ) : SearchDataSource {
-    override suspend fun search(
-        query: String,
-    ): List<Pair<TiviShow, List<ShowTmdbImage>>> {
-        return tmdb.search
-            .findShows(query, 1)
-            .let { mapper.map(it) }
-    }
+  override suspend fun search(
+    query: String,
+  ): List<Pair<TiviShow, List<ShowTmdbImage>>> {
+    return tmdb.search
+      .findShows(query, 1)
+      .let { mapper.map(it) }
+  }
 }

@@ -37,45 +37,45 @@ import me.tatarka.inject.annotations.Provides
 expect interface SharedPlatformApplicationComponent
 
 interface SharedApplicationComponent :
-    SharedPlatformApplicationComponent,
-    TasksComponent,
-    ImageLoadingComponent,
-    TmdbComponent,
-    TraktComponent,
-    AnalyticsComponent,
-    LoggerComponent,
-    PerformanceComponent,
-    PowerControllerComponent,
-    PreferencesComponent,
-    LicenseDataComponent,
-    EpisodeBinds,
-    FollowedShowsBinds,
-    PopularShowsBinds,
-    RecommendedShowsBinds,
-    RelatedShowsBinds,
-    SearchBinds,
-    ShowImagesBinds,
-    ShowsBinds,
-    TraktAuthComponent,
-    TraktUsersBinds,
-    TrendingShowsBinds,
-    WatchedShowsBinds,
-    SqlDelightDatabaseComponent {
+  SharedPlatformApplicationComponent,
+  TasksComponent,
+  ImageLoadingComponent,
+  TmdbComponent,
+  TraktComponent,
+  AnalyticsComponent,
+  LoggerComponent,
+  PerformanceComponent,
+  PowerControllerComponent,
+  PreferencesComponent,
+  LicenseDataComponent,
+  EpisodeBinds,
+  FollowedShowsBinds,
+  PopularShowsBinds,
+  RecommendedShowsBinds,
+  RelatedShowsBinds,
+  SearchBinds,
+  ShowImagesBinds,
+  ShowsBinds,
+  TraktAuthComponent,
+  TraktUsersBinds,
+  TrendingShowsBinds,
+  WatchedShowsBinds,
+  SqlDelightDatabaseComponent {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @ApplicationScope
-    @Provides
-    fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
-        io = Dispatchers.IO,
-        databaseWrite = Dispatchers.IO.limitedParallelism(1),
-        databaseRead = Dispatchers.IO.limitedParallelism(4),
-        computation = Dispatchers.Default,
-        main = Dispatchers.Main,
-    )
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @ApplicationScope
+  @Provides
+  fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
+    io = Dispatchers.IO,
+    databaseWrite = Dispatchers.IO.limitedParallelism(1),
+    databaseRead = Dispatchers.IO.limitedParallelism(4),
+    computation = Dispatchers.Default,
+    main = Dispatchers.Main,
+  )
 
-    @ApplicationScope
-    @Provides
-    fun provideApplicationCoroutineScope(
-        dispatchers: AppCoroutineDispatchers,
-    ): ApplicationCoroutineScope = CoroutineScope(dispatchers.main + SupervisorJob())
+  @ApplicationScope
+  @Provides
+  fun provideApplicationCoroutineScope(
+    dispatchers: AppCoroutineDispatchers,
+  ): ApplicationCoroutineScope = CoroutineScope(dispatchers.main + SupervisorJob())
 }

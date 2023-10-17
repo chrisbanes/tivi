@@ -8,7 +8,7 @@ import app.tivi.data.models.WatchedShowEntry
 import app.tivi.data.views.ShowsWatchStats
 
 data class LibraryShow(
-    val show: TiviShow,
-    val stats: ShowsWatchStats?,
-    val watchedEntry: WatchedShowEntry?,
+  val show: TiviShow,
+  val stats: ShowsWatchStats?,
+  val watchedEntry: WatchedShowEntry?,
 )

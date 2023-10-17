@@ -11,16 +11,16 @@ import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 expect fun font(
-    fontName: String,
-    resourceId: String,
-    weight: FontWeight,
-    style: FontStyle = FontStyle.Normal,
+  fontName: String,
+  resourceId: String,
+  weight: FontWeight,
+  style: FontStyle = FontStyle.Normal,
 ): Font
 
 val InterFontFamily: FontFamily
-    @Composable get() = FontFamily(
-        font(fontName = "Inter", resourceId = "inter_light", weight = FontWeight.Light),
-        font(fontName = "Inter", resourceId = "inter_regular", weight = FontWeight.Normal),
-        font(fontName = "Inter", resourceId = "inter_medium", weight = FontWeight.Medium),
-        font(fontName = "Inter", resourceId = "inter_bold", weight = FontWeight.Bold),
-    )
+  @Composable get() = FontFamily(
+    font(fontName = "Inter", resourceId = "inter_light", weight = FontWeight.Light),
+    font(fontName = "Inter", resourceId = "inter_regular", weight = FontWeight.Normal),
+    font(fontName = "Inter", resourceId = "inter_medium", weight = FontWeight.Medium),
+    font(fontName = "Inter", resourceId = "inter_bold", weight = FontWeight.Bold),
+  )

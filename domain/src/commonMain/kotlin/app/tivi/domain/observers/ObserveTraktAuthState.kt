@@ -11,9 +11,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObserveTraktAuthState(
-    private val traktAuthRepository: TraktAuthRepository,
+  private val traktAuthRepository: TraktAuthRepository,
 ) : SubjectInteractor<Unit, TraktAuthState>() {
-    override fun createObservable(params: Unit): Flow<TraktAuthState> {
-        return traktAuthRepository.state
-    }
+  override fun createObservable(params: Unit): Flow<TraktAuthState> {
+    return traktAuthRepository.state
+  }
 }

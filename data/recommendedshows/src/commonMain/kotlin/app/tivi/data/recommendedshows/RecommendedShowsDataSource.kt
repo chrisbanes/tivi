@@ -6,5 +6,5 @@ package app.tivi.data.recommendedshows
 import app.tivi.data.models.TiviShow
 
 interface RecommendedShowsDataSource {
-    suspend operator fun invoke(page: Int, pageSize: Int): List<TiviShow>
+  suspend operator fun invoke(page: Int, pageSize: Int): List<TiviShow>
 }

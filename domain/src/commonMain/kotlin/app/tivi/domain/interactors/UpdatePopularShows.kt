@@ -16,32 +16,32 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdatePopularShows(
-    private val popularShowStore: PopularShowsStore,
-    private val popularDao: PopularDao,
-    private val showStore: ShowStore,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val popularShowStore: PopularShowsStore,
+  private val popularDao: PopularDao,
+  private val showStore: ShowStore,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params, Unit>() {
-    override suspend fun doWork(params: Params) {
-        withContext(dispatchers.io) {
-            val page = when {
-                params.page >= 0 -> params.page
-                params.page == UpdateTrendingShows.Page.NEXT_PAGE -> {
-                    val lastPage = popularDao.getLastPage()
-                    if (lastPage != null) lastPage + 1 else 0
-                }
-                else -> 0
-            }
-
-            popularShowStore.fetch(page, forceFresh = params.forceRefresh).parallelForEach {
-                showStore.fetch(it.showId)
-            }
+  override suspend fun doWork(params: Params) {
+    withContext(dispatchers.io) {
+      val page = when {
+        params.page >= 0 -> params.page
+        params.page == UpdateTrendingShows.Page.NEXT_PAGE -> {
+          val lastPage = popularDao.getLastPage()
+          if (lastPage != null) lastPage + 1 else 0
         }
-    }
+        else -> 0
+      }
 
-    data class Params(val page: Int, val forceRefresh: Boolean = false)
-
-    object Page {
-        const val NEXT_PAGE = -1
-        const val REFRESH = -2
+      popularShowStore.fetch(page, forceFresh = params.forceRefresh).parallelForEach {
+        showStore.fetch(it.showId)
+      }
     }
+  }
+
+  data class Params(val page: Int, val forceRefresh: Boolean = false)
+
+  object Page {
+    const val NEXT_PAGE = -1
+    const val REFRESH = -2
+  }
 }

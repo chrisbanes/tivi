@@ -15,22 +15,22 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObservePagedUpNextShows(
-    private val watchedShowsDao: WatchedShowDao,
+  private val watchedShowsDao: WatchedShowDao,
 ) : PagingInteractor<ObservePagedUpNextShows.Parameters, UpNextEntry>() {
 
-    @OptIn(app.cash.paging.ExperimentalPagingApi::class)
-    override fun createObservable(
-        params: Parameters,
-    ): Flow<PagingData<UpNextEntry>> = Pager(config = params.pagingConfig) {
-        watchedShowsDao.pagedUpNextShows(
-            followedOnly = params.followedOnly,
-            sort = params.sort,
-        )
-    }.flow
+  @OptIn(app.cash.paging.ExperimentalPagingApi::class)
+  override fun createObservable(
+    params: Parameters,
+  ): Flow<PagingData<UpNextEntry>> = Pager(config = params.pagingConfig) {
+    watchedShowsDao.pagedUpNextShows(
+      followedOnly = params.followedOnly,
+      sort = params.sort,
+    )
+  }.flow
 
-    data class Parameters(
-        val sort: SortOption,
-        val followedOnly: Boolean,
-        override val pagingConfig: PagingConfig,
-    ) : PagingInteractor.Parameters<UpNextEntry>
+  data class Parameters(
+    val sort: SortOption,
+    val followedOnly: Boolean,
+    override val pagingConfig: PagingConfig,
+  ) : PagingInteractor.Parameters<UpNextEntry>
 }

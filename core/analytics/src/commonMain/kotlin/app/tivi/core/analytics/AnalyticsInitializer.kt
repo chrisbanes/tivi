@@ -11,15 +11,15 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AnalyticsInitializer(
-    private val preferences: TiviPreferences,
-    private val scope: ApplicationCoroutineScope,
-    private val analytics: Analytics,
+  private val preferences: TiviPreferences,
+  private val scope: ApplicationCoroutineScope,
+  private val analytics: Analytics,
 ) : AppInitializer {
-    override fun initialize() {
-        scope.launch {
-            preferences.observeReportAnalytics().collect { enabled ->
-                analytics.setEnabled(enabled)
-            }
-        }
+  override fun initialize() {
+    scope.launch {
+      preferences.observeReportAnalytics().collect { enabled ->
+        analytics.setEnabled(enabled)
+      }
     }
+  }
 }

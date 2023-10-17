@@ -22,36 +22,36 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun EmptyContent(
-    graphic: @Composable () -> Unit,
-    title: @Composable () -> Unit,
-    prompt: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
+  graphic: @Composable () -> Unit,
+  title: @Composable () -> Unit,
+  prompt: @Composable () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier) {
-        Column(modifier = Modifier.align(Alignment.Center)) {
-            val density = LocalDensity.current
-            val emojiHeaderGraphicTextStyle = remember(density) {
-                TextStyle(
-                    // We don't want font scaling to affect this size
-                    fontSize = 96.dp.asEm(density),
-                    // Any opaque color will work here
-                    color = Color.Magenta,
-                )
-            }
+  Box(modifier = modifier) {
+    Column(modifier = Modifier.align(Alignment.Center)) {
+      val density = LocalDensity.current
+      val emojiHeaderGraphicTextStyle = remember(density) {
+        TextStyle(
+          // We don't want font scaling to affect this size
+          fontSize = 96.dp.asEm(density),
+          // Any opaque color will work here
+          color = Color.Magenta,
+        )
+      }
 
-            ProvideTextStyle(emojiHeaderGraphicTextStyle) {
-                Box(Modifier.align(Alignment.CenterHorizontally)) {
-                    graphic()
-                }
-            }
-            ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
-                title()
-            }
-            ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
-                prompt()
-            }
+      ProvideTextStyle(emojiHeaderGraphicTextStyle) {
+        Box(Modifier.align(Alignment.CenterHorizontally)) {
+          graphic()
         }
+      }
+      ProvideTextStyle(MaterialTheme.typography.headlineMedium) {
+        title()
+      }
+      ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
+        prompt()
+      }
     }
+  }
 }
 
 private fun Dp.asEm(density: Density): TextUnit = (value / density.fontScale).sp

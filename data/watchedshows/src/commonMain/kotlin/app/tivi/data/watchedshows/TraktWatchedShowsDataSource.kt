@@ -13,10 +13,10 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktWatchedShowsDataSource(
-    private val syncApi: Lazy<TraktSyncApi>,
-    private val mapper: TraktBaseShowToWatchedShowEntry,
+  private val syncApi: Lazy<TraktSyncApi>,
+  private val mapper: TraktBaseShowToWatchedShowEntry,
 ) : WatchedShowsDataSource {
 
-    override suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>> =
-        syncApi.value.getWatchedShows(extended = TraktExtended.NO_SEASONS).let { mapper.map(it) }
+  override suspend operator fun invoke(): List<Pair<TiviShow, WatchedShowEntry>> =
+    syncApi.value.getWatchedShows(extended = TraktExtended.NO_SEASONS).let { mapper.map(it) }
 }

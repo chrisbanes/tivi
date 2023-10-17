@@ -3,42 +3,42 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.multiplatform")
-    id("app.tivi.compose")
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.compose")
 }
 
 android {
-    namespace = "app.tivi.home"
+  namespace = "app.tivi.home"
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.analytics)
-                implementation(projects.common.ui.compose)
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(projects.core.base)
+        implementation(projects.core.analytics)
+        implementation(projects.common.ui.compose)
 
-                implementation(projects.domain)
-                implementation(projects.data.traktauth)
+        implementation(projects.domain)
+        implementation(projects.data.traktauth)
 
-                implementation(projects.common.ui.screens)
-                implementation(libs.circuit.foundation)
-                implementation(libs.circuit.retained)
-                implementation(libs.circuit.gestureNavigation)
-                implementation(libs.circuit.overlay)
-                implementation(projects.common.ui.circuitOverlay)
+        implementation(projects.common.ui.screens)
+        implementation(libs.circuit.foundation)
+        implementation(libs.circuit.retained)
+        implementation(libs.circuit.gestureNavigation)
+        implementation(libs.circuit.overlay)
+        implementation(projects.common.ui.circuitOverlay)
 
-                implementation(compose.foundation)
-                implementation(compose.materialIconsExtended)
-            }
-        }
-
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.androidx.activity.compose)
-            }
-        }
+        implementation(compose.foundation)
+        implementation(compose.materialIconsExtended)
+      }
     }
+
+    val androidMain by getting {
+      dependencies {
+        implementation(libs.androidx.activity.compose)
+      }
+    }
+  }
 }

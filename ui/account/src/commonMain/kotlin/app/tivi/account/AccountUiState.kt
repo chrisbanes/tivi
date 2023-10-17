@@ -11,13 +11,13 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class AccountUiState(
-    val user: TraktUser? = null,
-    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
-    val eventSink: (AccountUiEvent) -> Unit,
+  val user: TraktUser? = null,
+  val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
+  val eventSink: (AccountUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface AccountUiEvent : CircuitUiEvent {
-    object Login : AccountUiEvent
-    object Logout : AccountUiEvent
-    object NavigateToSettings : AccountUiEvent
+  object Login : AccountUiEvent
+  object Logout : AccountUiEvent
+  object NavigateToSettings : AccountUiEvent
 }

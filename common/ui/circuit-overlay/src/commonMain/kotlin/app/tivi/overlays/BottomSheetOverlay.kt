@@ -26,64 +26,64 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 class BottomSheetOverlay<Model : Any, Result : Any>(
-    private val model: Model,
-    private val onDismiss: () -> Result,
-    private val tonalElevation: Dp = BottomSheetDefaults.Elevation,
-    private val scrimColor: Color = Color.Unspecified,
-    private val content: @Composable (Model, OverlayNavigator<Result>) -> Unit,
+  private val model: Model,
+  private val onDismiss: () -> Result,
+  private val tonalElevation: Dp = BottomSheetDefaults.Elevation,
+  private val scrimColor: Color = Color.Unspecified,
+  private val content: @Composable (Model, OverlayNavigator<Result>) -> Unit,
 ) : Overlay<Result> {
-    @Composable
-    override fun Content(navigator: OverlayNavigator<Result>) {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+  @Composable
+  override fun Content(navigator: OverlayNavigator<Result>) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-        val coroutineScope = rememberCoroutineScope()
-        BackHandler(enabled = sheetState.isVisible) {
-            coroutineScope
-                .launch { sheetState.hide() }
-                .invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        navigator.finish(onDismiss())
-                    }
-                }
+    val coroutineScope = rememberCoroutineScope()
+    BackHandler(enabled = sheetState.isVisible) {
+      coroutineScope
+        .launch { sheetState.hide() }
+        .invokeOnCompletion {
+          if (!sheetState.isVisible) {
+            navigator.finish(onDismiss())
+          }
         }
-
-        ModalBottomSheet(
-            modifier = Modifier.fillMaxWidth(),
-            content = {
-                // Delay setting the result until we've finished dismissing
-                content(model) { result ->
-                    // This is the OverlayNavigator.finish() callback
-                    coroutineScope.launch {
-                        try {
-                            sheetState.hide()
-                        } finally {
-                            navigator.finish(result)
-                        }
-                    }
-                }
-            },
-            tonalElevation = tonalElevation,
-            scrimColor = if (scrimColor.isSpecified) scrimColor else BottomSheetDefaults.ScrimColor,
-            sheetState = sheetState,
-            onDismissRequest = { navigator.finish(onDismiss()) },
-        )
-
-        LaunchedEffect(Unit) { sheetState.show() }
     }
+
+    ModalBottomSheet(
+      modifier = Modifier.fillMaxWidth(),
+      content = {
+        // Delay setting the result until we've finished dismissing
+        content(model) { result ->
+          // This is the OverlayNavigator.finish() callback
+          coroutineScope.launch {
+            try {
+              sheetState.hide()
+            } finally {
+              navigator.finish(result)
+            }
+          }
+        }
+      },
+      tonalElevation = tonalElevation,
+      scrimColor = if (scrimColor.isSpecified) scrimColor else BottomSheetDefaults.ScrimColor,
+      sheetState = sheetState,
+      onDismissRequest = { navigator.finish(onDismiss()) },
+    )
+
+    LaunchedEffect(Unit) { sheetState.show() }
+  }
 }
 
 suspend fun OverlayHost.showInBottomSheet(
-    screen: Screen,
+  screen: Screen,
 ): Unit = show(
-    BottomSheetOverlay(model = Unit, onDismiss = {}) { _, navigator ->
-        CircuitContent(
-            screen = screen,
-            onNavEvent = { event ->
-                when (event) {
-                    NavEvent.Pop -> navigator.finish(Unit)
-                    else -> Unit
-                }
-            },
-        )
-    },
+  BottomSheetOverlay(model = Unit, onDismiss = {}) { _, navigator ->
+    CircuitContent(
+      screen = screen,
+      onNavEvent = { event ->
+        when (event) {
+          NavEvent.Pop -> navigator.finish(Unit)
+          else -> Unit
+        }
+      },
+    )
+  },
 )

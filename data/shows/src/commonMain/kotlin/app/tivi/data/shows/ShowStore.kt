@@ -23,48 +23,48 @@ import org.mobilenativefoundation.store.store5.Validator
 @ApplicationScope
 @Inject
 class ShowStore(
-    showDao: TiviShowDao,
-    lastRequestStore: ShowLastRequestStore,
-    traktDataSource: TraktShowDataSource,
-    tmdbDataSource: TmdbShowDataSource,
-    transactionRunner: DatabaseTransactionRunner,
-    dispatchers: AppCoroutineDispatchers,
+  showDao: TiviShowDao,
+  lastRequestStore: ShowLastRequestStore,
+  traktDataSource: TraktShowDataSource,
+  tmdbDataSource: TmdbShowDataSource,
+  transactionRunner: DatabaseTransactionRunner,
+  dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, TiviShow> by storeBuilder(
-    fetcher = Fetcher.of { id: Long ->
-        val savedShow = withContext(dispatchers.databaseWrite) {
-            showDao.getShowWithIdOrThrow(id)
-        }
+  fetcher = Fetcher.of { id: Long ->
+    val savedShow = withContext(dispatchers.databaseWrite) {
+      showDao.getShowWithIdOrThrow(id)
+    }
 
-        val traktResult = runCatching { traktDataSource.getShow(savedShow) }
-        if (traktResult.isSuccess) {
-            lastRequestStore.updateLastRequest(id)
-            return@of traktResult.getOrThrow()
-        }
+    val traktResult = runCatching { traktDataSource.getShow(savedShow) }
+    if (traktResult.isSuccess) {
+      lastRequestStore.updateLastRequest(id)
+      return@of traktResult.getOrThrow()
+    }
 
-        // If trakt fails, try TMDb
-        val tmdbResult = runCatching { tmdbDataSource.getShow(savedShow) }
-        if (tmdbResult.isSuccess) {
-            lastRequestStore.updateLastRequest(id)
-            return@of tmdbResult.getOrThrow()
-        }
+    // If trakt fails, try TMDb
+    val tmdbResult = runCatching { tmdbDataSource.getShow(savedShow) }
+    if (tmdbResult.isSuccess) {
+      lastRequestStore.updateLastRequest(id)
+      return@of tmdbResult.getOrThrow()
+    }
 
-        throw traktResult.exceptionOrNull()!!
+    throw traktResult.exceptionOrNull()!!
+  },
+  sourceOfTruth = SourceOfTruth.of<Long, TiviShow, TiviShow>(
+    reader = { showId -> showDao.getShowWithIdFlow(showId) },
+    writer = { id, response ->
+      transactionRunner {
+        showDao.upsert(
+          mergeShows(local = showDao.getShowWithIdOrThrow(id), trakt = response),
+        )
+      }
     },
-    sourceOfTruth = SourceOfTruth.of<Long, TiviShow, TiviShow>(
-        reader = { showId -> showDao.getShowWithIdFlow(showId) },
-        writer = { id, response ->
-            transactionRunner {
-                showDao.upsert(
-                    mergeShows(local = showDao.getShowWithIdOrThrow(id), trakt = response),
-                )
-            }
-        },
-        delete = showDao::delete,
-        deleteAll = { transactionRunner(showDao::deleteAll) },
-    ).usingDispatchers(
-        readDispatcher = dispatchers.databaseRead,
-        writeDispatcher = dispatchers.databaseWrite,
-    ),
+    delete = showDao::delete,
+    deleteAll = { transactionRunner(showDao::deleteAll) },
+  ).usingDispatchers(
+    readDispatcher = dispatchers.databaseRead,
+    writeDispatcher = dispatchers.databaseWrite,
+  ),
 ).validator(
-    Validator.by { lastRequestStore.isRequestValid(it.id, 14.days) },
+  Validator.by { lastRequestStore.isRequestValid(it.id, 14.days) },
 ).build()

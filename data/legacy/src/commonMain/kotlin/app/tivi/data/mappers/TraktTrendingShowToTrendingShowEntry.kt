@@ -10,11 +10,11 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TraktTrendingShowToTrendingShowEntry : Mapper<TraktTrendingShow, TrendingShowEntry> {
 
-    override fun map(from: TraktTrendingShow): TrendingShowEntry {
-        return TrendingShowEntry(
-            showId = 0,
-            watchers = from.watchers ?: 0,
-            page = 0,
-        )
-    }
+  override fun map(from: TraktTrendingShow): TrendingShowEntry {
+    return TrendingShowEntry(
+      showId = 0,
+      watchers = from.watchers ?: 0,
+      page = 0,
+    )
+  }
 }

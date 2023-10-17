@@ -7,6 +7,6 @@ import app.tivi.developer.log.DevLogComponent
 import app.tivi.settings.developer.DevSettingsComponent
 
 interface QaUiComponent :
-    SharedUiComponent,
-    DevLogComponent,
-    DevSettingsComponent
+  SharedUiComponent,
+  DevLogComponent,
+  DevSettingsComponent

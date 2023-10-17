@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface PowerControllerComponent {
-    @Provides
-    @ApplicationScope
-    fun providePowerController(bind: AndroidPowerController): PowerController = bind
+  @Provides
+  @ApplicationScope
+  fun providePowerController(bind: AndroidPowerController): PowerController = bind
 }

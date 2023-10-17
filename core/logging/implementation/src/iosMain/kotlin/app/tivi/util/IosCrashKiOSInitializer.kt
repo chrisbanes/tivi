@@ -8,9 +8,9 @@ import co.touchlab.crashkios.crashlytics.enableCrashlytics
 import co.touchlab.crashkios.crashlytics.setCrashlyticsUnhandledExceptionHook
 
 internal object IosCrashKiOSInitializer : AppInitializer {
-    override fun initialize() {
-        // https://crashkios.touchlab.co/docs/crashlytics#step-2---add-crashkios
-        enableCrashlytics()
-        setCrashlyticsUnhandledExceptionHook()
-    }
+  override fun initialize() {
+    // https://crashkios.touchlab.co/docs/crashlytics#step-2---add-crashkios
+    enableCrashlytics()
+    setCrashlyticsUnhandledExceptionHook()
+  }
 }

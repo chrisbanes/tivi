@@ -9,13 +9,13 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbSeasonToSeason : Mapper<TmdbSeason, Season> {
-    override fun map(from: TmdbSeason) = Season(
-        showId = 0,
-        tmdbId = from.id,
-        number = from.seasonNumber,
-        title = from.name,
-        summary = from.overview,
-        episodeCount = from.episodeCount,
-        tmdbPosterPath = from.posterPath,
-    )
+  override fun map(from: TmdbSeason) = Season(
+    showId = 0,
+    tmdbId = from.id,
+    number = from.seasonNumber,
+    title = from.name,
+    summary = from.overview,
+    episodeCount = from.episodeCount,
+    tmdbPosterPath = from.posterPath,
+  )
 }

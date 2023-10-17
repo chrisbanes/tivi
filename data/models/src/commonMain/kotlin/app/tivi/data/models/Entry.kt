@@ -4,13 +4,13 @@
 package app.tivi.data.models
 
 interface Entry : TiviEntity {
-    val showId: Long
+  val showId: Long
 }
 
 interface MultipleEntry : Entry {
-    val otherShowId: Long
+  val otherShowId: Long
 }
 
 interface PaginatedEntry : Entry {
-    val page: Int
+  val page: Int
 }

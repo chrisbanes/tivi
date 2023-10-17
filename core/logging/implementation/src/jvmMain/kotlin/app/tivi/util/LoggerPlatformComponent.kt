@@ -9,19 +9,19 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface LoggerPlatformComponent {
-    @Provides
-    @ApplicationScope
-    fun provideLogger(
-        kermitLogger: KermitLogger,
-        recordingLogger: RecordingLogger,
-    ): Logger = CompositeLogger(kermitLogger, recordingLogger)
+  @Provides
+  @ApplicationScope
+  fun provideLogger(
+    kermitLogger: KermitLogger,
+    recordingLogger: RecordingLogger,
+  ): Logger = CompositeLogger(kermitLogger, recordingLogger)
 
-    @Provides
-    fun bindSetCrashReportingEnabledAction(): SetCrashReportingEnabledAction {
-        return NoopSetCrashReportingEnabledAction
-    }
+  @Provides
+  fun bindSetCrashReportingEnabledAction(): SetCrashReportingEnabledAction {
+    return NoopSetCrashReportingEnabledAction
+  }
 }
 
 private object NoopSetCrashReportingEnabledAction : SetCrashReportingEnabledAction {
-    override fun invoke(enabled: Boolean) {}
+  override fun invoke(enabled: Boolean) {}
 }

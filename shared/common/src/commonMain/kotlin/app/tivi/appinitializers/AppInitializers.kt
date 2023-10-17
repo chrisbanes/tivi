@@ -8,14 +8,14 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AppInitializers(
-    private val initializers: Set<AppInitializer>,
-    private val tracer: Tracer,
+  private val initializers: Set<AppInitializer>,
+  private val tracer: Tracer,
 ) : AppInitializer {
-    override fun initialize() {
-        tracer.trace("AppInitializers") {
-            for (initializer in initializers) {
-                initializer.initialize()
-            }
-        }
+  override fun initialize() {
+    tracer.trace("AppInitializers") {
+      for (initializer in initializers) {
+        initializer.initialize()
+      }
     }
+  }
 }

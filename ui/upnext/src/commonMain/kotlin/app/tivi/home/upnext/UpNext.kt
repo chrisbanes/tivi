@@ -96,328 +96,328 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpNextUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is UpNextScreen -> {
-            ui<UpNextUiState> { state, modifier ->
-                UpNext(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is UpNextScreen -> {
+      ui<UpNextUiState> { state, modifier ->
+        UpNext(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @Composable
 internal fun UpNext(
-    state: UpNextUiState,
-    modifier: Modifier = Modifier,
+  state: UpNextUiState,
+  modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    val overlayHost = LocalOverlayHost.current
+  val scope = rememberCoroutineScope()
+  val overlayHost = LocalOverlayHost.current
 
-    // Need to extract the eventSink out to a local val, so that the Compose Compiler
-    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
-    val eventSink = state.eventSink
+  // Need to extract the eventSink out to a local val, so that the Compose Compiler
+  // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+  val eventSink = state.eventSink
 
-    UpNext(
-        state = state,
-        openShowDetails = { showId, seasonId, episodeId ->
-            eventSink(UpNextUiEvent.OpenShowDetails(showId, seasonId, episodeId))
-        },
-        openTrackEpisode = {
-            scope.launch {
-                overlayHost.showInBottomSheet(EpisodeTrackScreen(it))
-            }
-        },
-        onMessageShown = { eventSink(UpNextUiEvent.ClearMessage(it)) },
-        openUser = {
-            scope.launch {
-                overlayHost.showInDialog(AccountScreen)
-            }
-        },
-        refresh = { eventSink(UpNextUiEvent.Refresh()) },
-        onSortSelected = { eventSink(UpNextUiEvent.ChangeSort(it)) },
-        onToggleFollowedShowsOnly = { eventSink(UpNextUiEvent.ToggleFollowedShowsOnly) },
-        modifier = modifier,
-    )
+  UpNext(
+    state = state,
+    openShowDetails = { showId, seasonId, episodeId ->
+      eventSink(UpNextUiEvent.OpenShowDetails(showId, seasonId, episodeId))
+    },
+    openTrackEpisode = {
+      scope.launch {
+        overlayHost.showInBottomSheet(EpisodeTrackScreen(it))
+      }
+    },
+    onMessageShown = { eventSink(UpNextUiEvent.ClearMessage(it)) },
+    openUser = {
+      scope.launch {
+        overlayHost.showInDialog(AccountScreen)
+      }
+    },
+    refresh = { eventSink(UpNextUiEvent.Refresh()) },
+    onSortSelected = { eventSink(UpNextUiEvent.ChangeSort(it)) },
+    onToggleFollowedShowsOnly = { eventSink(UpNextUiEvent.ToggleFollowedShowsOnly) },
+    modifier = modifier,
+  )
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun UpNext(
-    state: UpNextUiState,
-    openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
-    openTrackEpisode: (episodeId: Long) -> Unit,
-    onMessageShown: (id: Long) -> Unit,
-    refresh: () -> Unit,
-    openUser: () -> Unit,
-    onSortSelected: (SortOption) -> Unit,
-    onToggleFollowedShowsOnly: () -> Unit,
-    modifier: Modifier = Modifier,
+  state: UpNextUiState,
+  openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
+  openTrackEpisode: (episodeId: Long) -> Unit,
+  onMessageShown: (id: Long) -> Unit,
+  refresh: () -> Unit,
+  openUser: () -> Unit,
+  onSortSelected: (SortOption) -> Unit,
+  onToggleFollowedShowsOnly: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+  val snackbarHostState = remember { SnackbarHostState() }
 
-    val dismissSnackbarState = rememberDismissState { value ->
-        if (value != DismissValue.Default) {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            true
-        } else {
-            false
-        }
+  val dismissSnackbarState = rememberDismissState { value ->
+    if (value != DismissValue.Default) {
+      snackbarHostState.currentSnackbarData?.dismiss()
+      true
+    } else {
+      false
     }
+  }
 
-    state.message?.let { message ->
-        LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(message.message)
-            // Notify the view model that the message has been dismissed
-            onMessageShown(message.id)
-        }
+  state.message?.let { message ->
+    LaunchedEffect(message) {
+      snackbarHostState.showSnackbar(message.message)
+      // Notify the view model that the message has been dismissed
+      onMessageShown(message.id)
     }
+  }
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    Scaffold(
-        topBar = {
-            TiviRootScreenAppBar(
-                title = LocalStrings.current.upnextTitle,
-                loggedIn = state.authState == TraktAuthState.LOGGED_IN,
-                user = state.user,
-                scrollBehavior = scrollBehavior,
-                refreshing = state.isLoading,
-                onRefreshActionClick = refresh,
-                onUserActionClick = openUser,
-                modifier = Modifier
-                    .fillMaxWidth(),
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                SwipeToDismiss(
-                    state = dismissSnackbarState,
-                    background = {},
-                    dismissContent = { Snackbar(snackbarData = data) },
-                    modifier = Modifier
-                        .padding(horizontal = Layout.bodyMargin)
-                        .fillMaxWidth(),
-                )
-            }
-        },
-        modifier = modifier.fillMaxSize(),
-    ) { paddingValues ->
-        val refreshState = rememberPullRefreshState(
-            refreshing = state.isLoading,
-            onRefresh = refresh,
+  Scaffold(
+    topBar = {
+      TiviRootScreenAppBar(
+        title = LocalStrings.current.upnextTitle,
+        loggedIn = state.authState == TraktAuthState.LOGGED_IN,
+        user = state.user,
+        scrollBehavior = scrollBehavior,
+        refreshing = state.isLoading,
+        onRefreshActionClick = refresh,
+        onUserActionClick = openUser,
+        modifier = Modifier
+          .fillMaxWidth(),
+      )
+    },
+    snackbarHost = {
+      SnackbarHost(hostState = snackbarHostState) { data ->
+        SwipeToDismiss(
+          state = dismissSnackbarState,
+          background = {},
+          dismissContent = { Snackbar(snackbarData = data) },
+          modifier = Modifier
+            .padding(horizontal = Layout.bodyMargin)
+            .fillMaxWidth(),
         )
-        Box(modifier = Modifier.pullRefresh(state = refreshState)) {
-            val columns = Layout.columns
-            val bodyMargin = Layout.bodyMargin
-            val gutter = Layout.gutter
+      }
+    },
+    modifier = modifier.fillMaxSize(),
+  ) { paddingValues ->
+    val refreshState = rememberPullRefreshState(
+      refreshing = state.isLoading,
+      onRefresh = refresh,
+    )
+    Box(modifier = Modifier.pullRefresh(state = refreshState)) {
+      val columns = Layout.columns
+      val bodyMargin = Layout.bodyMargin
+      val gutter = Layout.gutter
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(columns / 4),
-                contentPadding = paddingValues + PaddingValues(
-                    horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-                    vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
-                ),
-                // We minus 8.dp off the grid padding, as we use content padding on the items below
-                horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
-                verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
-                flingBehavior = rememberTiviFlingBehavior(),
-                modifier = Modifier
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-                    .bodyWidth()
-                    .fillMaxHeight(),
-            ) {
-                fullSpanItem {
-                    UpNextFilterRow(
-                        followedShowsOnly = state.followedShowsOnly,
-                        onToggleFollowedShowsOnly = onToggleFollowedShowsOnly,
-                        availableSorts = state.availableSorts,
-                        currentSort = state.sort,
-                        onSortSelected = onSortSelected,
-                    )
-                }
-
-                if (state.items.itemCount == 0 &&
-                    state.items.loadState.refresh != LoadStateLoading
-                ) {
-                    fullSpanItem {
-                        EmptyContent(
-                            title = { Text(text = LocalStrings.current.upnextEmptyTitle) },
-                            prompt = { Text(text = LocalStrings.current.upnextEmptyPrompt) },
-                            graphic = { Text(text = "\uD83D\uDC7B") },
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(vertical = 64.dp),
-                        )
-                    }
-                }
-
-                items(
-                    count = state.items.itemCount,
-                    key = state.items.itemKey { it.show.id },
-                ) { index ->
-                    val entry = state.items[index]
-                    if (entry != null) {
-                        SwipeUpNextItem(
-                            onSwipe = { openTrackEpisode(entry.episode.id) },
-                            modifier = Modifier
-                                .animateItemPlacement()
-                                .fillMaxWidth(),
-                        ) {
-                            UpNextItem(
-                                show = entry.show,
-                                season = entry.season,
-                                episode = entry.episode,
-                                onClick = {
-                                    openShowDetails(entry.show.id, entry.season.id, entry.episode.id)
-                                },
-                                contentPadding = PaddingValues(8.dp),
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
-                    }
-                }
-            }
-
-            PullRefreshIndicator(
-                refreshing = state.isLoading,
-                state = refreshState,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(paddingValues),
-                scale = true,
-            )
+      LazyVerticalGrid(
+        columns = GridCells.Fixed(columns / 4),
+        contentPadding = paddingValues + PaddingValues(
+          horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
+          vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+        ),
+        // We minus 8.dp off the grid padding, as we use content padding on the items below
+        horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
+        verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
+        flingBehavior = rememberTiviFlingBehavior(),
+        modifier = Modifier
+          .nestedScroll(scrollBehavior.nestedScrollConnection)
+          .bodyWidth()
+          .fillMaxHeight(),
+      ) {
+        fullSpanItem {
+          UpNextFilterRow(
+            followedShowsOnly = state.followedShowsOnly,
+            onToggleFollowedShowsOnly = onToggleFollowedShowsOnly,
+            availableSorts = state.availableSorts,
+            currentSort = state.sort,
+            onSortSelected = onSortSelected,
+          )
         }
+
+        if (state.items.itemCount == 0 &&
+          state.items.loadState.refresh != LoadStateLoading
+        ) {
+          fullSpanItem {
+            EmptyContent(
+              title = { Text(text = LocalStrings.current.upnextEmptyTitle) },
+              prompt = { Text(text = LocalStrings.current.upnextEmptyPrompt) },
+              graphic = { Text(text = "\uD83D\uDC7B") },
+              modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 64.dp),
+            )
+          }
+        }
+
+        items(
+          count = state.items.itemCount,
+          key = state.items.itemKey { it.show.id },
+        ) { index ->
+          val entry = state.items[index]
+          if (entry != null) {
+            SwipeUpNextItem(
+              onSwipe = { openTrackEpisode(entry.episode.id) },
+              modifier = Modifier
+                .animateItemPlacement()
+                .fillMaxWidth(),
+            ) {
+              UpNextItem(
+                show = entry.show,
+                season = entry.season,
+                episode = entry.episode,
+                onClick = {
+                  openShowDetails(entry.show.id, entry.season.id, entry.episode.id)
+                },
+                contentPadding = PaddingValues(8.dp),
+                modifier = Modifier.fillMaxWidth(),
+              )
+            }
+          }
+        }
+      }
+
+      PullRefreshIndicator(
+        refreshing = state.isLoading,
+        state = refreshState,
+        modifier = Modifier
+          .align(Alignment.TopCenter)
+          .padding(paddingValues),
+        scale = true,
+      )
     }
+  }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun UpNextFilterRow(
-    followedShowsOnly: Boolean,
-    onToggleFollowedShowsOnly: () -> Unit,
-    availableSorts: List<SortOption>,
-    currentSort: SortOption,
-    onSortSelected: (SortOption) -> Unit,
-    modifier: Modifier = Modifier,
+  followedShowsOnly: Boolean,
+  onToggleFollowedShowsOnly: () -> Unit,
+  availableSorts: List<SortOption>,
+  currentSort: SortOption,
+  onSortSelected: (SortOption) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-        modifier = modifier
-            .padding(vertical = 8.dp, horizontal = 8.dp),
-    ) {
-        FilterChip(
-            selected = followedShowsOnly,
-            leadingIcon = {
-                AnimatedVisibility(visible = followedShowsOnly) {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = null,
-                    )
-                }
-            },
-            onClick = onToggleFollowedShowsOnly,
-            label = {
-                Text(text = LocalStrings.current.upnextFilterFollowedShowsOnlyTitle)
-            },
-        )
+  Row(
+    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+    modifier = modifier
+      .padding(vertical = 8.dp, horizontal = 8.dp),
+  ) {
+    FilterChip(
+      selected = followedShowsOnly,
+      leadingIcon = {
+        AnimatedVisibility(visible = followedShowsOnly) {
+          Icon(
+            imageVector = Icons.Default.Done,
+            contentDescription = null,
+          )
+        }
+      },
+      onClick = onToggleFollowedShowsOnly,
+      label = {
+        Text(text = LocalStrings.current.upnextFilterFollowedShowsOnlyTitle)
+      },
+    )
 
-        Spacer(modifier = Modifier.weight(1f))
+    Spacer(modifier = Modifier.weight(1f))
 
-        SortChip(
-            sortOptions = availableSorts,
-            currentSortOption = currentSort,
-            onSortSelected = onSortSelected,
-        )
-    }
+    SortChip(
+      sortOptions = availableSorts,
+      currentSortOption = currentSort,
+      onSortSelected = onSortSelected,
+    )
+  }
 }
 
 @Composable
 private fun SwipeUpNextItem(
-    onSwipe: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable BoxScope.() -> Unit,
+  onSwipe: () -> Unit,
+  modifier: Modifier = Modifier,
+  content: @Composable BoxScope.() -> Unit,
 ) {
-    val trackEpisode = SwipeAction(
-        icon = {
-            Icon(
-                imageVector = Icons.Outlined.Visibility,
-                contentDescription = null, // decorative
-                modifier = Modifier
-                    .padding(vertical = 16.dp, horizontal = 24.dp),
-            )
-        },
-        background = MaterialTheme.colorScheme.secondary,
-        onSwipe = onSwipe,
-    )
+  val trackEpisode = SwipeAction(
+    icon = {
+      Icon(
+        imageVector = Icons.Outlined.Visibility,
+        contentDescription = null, // decorative
+        modifier = Modifier
+          .padding(vertical = 16.dp, horizontal = 24.dp),
+      )
+    },
+    background = MaterialTheme.colorScheme.secondary,
+    onSwipe = onSwipe,
+  )
 
-    SwipeableActionsBox(
-        endActions = listOf(trackEpisode),
-        swipeThreshold = 80.dp, // icon + padding + 8.dp
-        backgroundUntilSwipeThreshold = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
-        modifier = modifier,
-        content = content,
-    )
+  SwipeableActionsBox(
+    endActions = listOf(trackEpisode),
+    swipeThreshold = 80.dp, // icon + padding + 8.dp
+    backgroundUntilSwipeThreshold = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+    modifier = modifier,
+    content = content,
+  )
 }
 
 @Composable
 private fun UpNextItem(
-    show: TiviShow,
-    episode: Episode,
-    season: Season,
-    onClick: () -> Unit,
-    contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
+  show: TiviShow,
+  episode: Episode,
+  season: Season,
+  onClick: () -> Unit,
+  contentPadding: PaddingValues,
+  modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier
-            .clip(MaterialTheme.shapes.medium)
-            .clickable(onClick = onClick)
-            .padding(contentPadding),
+  Row(
+    modifier
+      .clip(MaterialTheme.shapes.medium)
+      .clickable(onClick = onClick)
+      .padding(contentPadding),
+  ) {
+    Card(
+      modifier = Modifier
+        .fillMaxWidth(0.3f) // 30% of the width
+        .aspectRatio(16 / 11f),
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(0.3f) // 30% of the width
-                .aspectRatio(16 / 11f),
-        ) {
-            var model: Any by remember { mutableStateOf(episode.asImageModel()) }
+      var model: Any by remember { mutableStateOf(episode.asImageModel()) }
 
-            AsyncImage(
-                model = model,
-                onAction = { state ->
-                    if (state is ImageResult.Error && model is EpisodeImageModel) {
-                        // If the episode backdrop request failed, fallback to the show backdrop
-                        model = show.asImageModel(ImageType.BACKDROP)
-                    }
-                },
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-            )
-        }
-
-        Spacer(Modifier.width(16.dp))
-
-        Column {
-            val textCreator = LocalTiviTextCreator.current
-
-            Text(
-                text = textCreator.showTitle(show = show).toString(),
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            Text(
-                text = textCreator.seasonEpisodeTitleText(season, episode),
-                style = MaterialTheme.typography.bodySmall,
-            )
-
-            Text(
-                text = episode.title ?: "",
-                style = MaterialTheme.typography.bodySmall,
-            )
-
-            Spacer(Modifier.height(8.dp))
-        }
+      AsyncImage(
+        model = model,
+        onAction = { state ->
+          if (state is ImageResult.Error && model is EpisodeImageModel) {
+            // If the episode backdrop request failed, fallback to the show backdrop
+            model = show.asImageModel(ImageType.BACKDROP)
+          }
+        },
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop,
+      )
     }
+
+    Spacer(Modifier.width(16.dp))
+
+    Column {
+      val textCreator = LocalTiviTextCreator.current
+
+      Text(
+        text = textCreator.showTitle(show = show).toString(),
+        style = MaterialTheme.typography.titleMedium,
+      )
+
+      Text(
+        text = textCreator.seasonEpisodeTitleText(season, episode),
+        style = MaterialTheme.typography.bodySmall,
+      )
+
+      Text(
+        text = episode.title ?: "",
+        style = MaterialTheme.typography.bodySmall,
+      )
+
+      Spacer(Modifier.height(8.dp))
+    }
+  }
 }

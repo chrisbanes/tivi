@@ -4,7 +4,7 @@
 package app.tivi.data.views
 
 data class ShowsNextToWatch(
-    val showId: Long,
-    val seasonId: Long,
-    val episodeId: Long,
+  val showId: Long,
+  val seasonId: Long,
+  val episodeId: Long,
 )

@@ -58,169 +58,169 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun <E : Entry> EntryGrid(
-    lazyPagingItems: LazyPagingItems<EntryWithShow<E>>,
-    title: String,
-    onNavigateUp: () -> Unit,
-    onOpenShowDetails: (Long) -> Unit,
-    modifier: Modifier = Modifier,
+  lazyPagingItems: LazyPagingItems<EntryWithShow<E>>,
+  title: String,
+  onNavigateUp: () -> Unit,
+  onOpenShowDetails: (Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+  val snackbarHostState = remember { SnackbarHostState() }
+  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    val dismissSnackbarState = rememberDismissState { value ->
-        if (value != DismissValue.Default) {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            true
-        } else {
-            false
-        }
+  val dismissSnackbarState = rememberDismissState { value ->
+    if (value != DismissValue.Default) {
+      snackbarHostState.currentSnackbarData?.dismiss()
+      true
+    } else {
+      false
     }
+  }
 
-    lazyPagingItems.loadState.prependErrorOrNull()?.let { message ->
-        LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(message.message)
-        }
+  lazyPagingItems.loadState.prependErrorOrNull()?.let { message ->
+    LaunchedEffect(message) {
+      snackbarHostState.showSnackbar(message.message)
     }
-    lazyPagingItems.loadState.appendErrorOrNull()?.let { message ->
-        LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(message.message)
-        }
+  }
+  lazyPagingItems.loadState.appendErrorOrNull()?.let { message ->
+    LaunchedEffect(message) {
+      snackbarHostState.showSnackbar(message.message)
     }
-    lazyPagingItems.loadState.refreshErrorOrNull()?.let { message ->
-        LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(message.message)
-        }
+  }
+  lazyPagingItems.loadState.refreshErrorOrNull()?.let { message ->
+    LaunchedEffect(message) {
+      snackbarHostState.showSnackbar(message.message)
     }
+  }
 
-    Scaffold(
-        topBar = {
-            EntryGridAppBar(
-                title = title,
-                onNavigateUp = onNavigateUp,
-                refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading,
-                onRefreshActionClick = { lazyPagingItems.refresh() },
-                modifier = Modifier.fillMaxWidth(),
-                scrollBehavior = scrollBehavior,
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                SwipeToDismiss(
-                    state = dismissSnackbarState,
-                    background = {},
-                    dismissContent = { Snackbar(snackbarData = data) },
-                    modifier = Modifier
-                        .padding(horizontal = Layout.bodyMargin)
-                        .fillMaxWidth(),
-                )
-            }
-        },
-        modifier = modifier,
-    ) { paddingValues ->
-        val refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading
-        val refreshState = rememberPullRefreshState(
-            refreshing = refreshing,
-            onRefresh = lazyPagingItems::refresh,
+  Scaffold(
+    topBar = {
+      EntryGridAppBar(
+        title = title,
+        onNavigateUp = onNavigateUp,
+        refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading,
+        onRefreshActionClick = { lazyPagingItems.refresh() },
+        modifier = Modifier.fillMaxWidth(),
+        scrollBehavior = scrollBehavior,
+      )
+    },
+    snackbarHost = {
+      SnackbarHost(hostState = snackbarHostState) { data ->
+        SwipeToDismiss(
+          state = dismissSnackbarState,
+          background = {},
+          dismissContent = { Snackbar(snackbarData = data) },
+          modifier = Modifier
+            .padding(horizontal = Layout.bodyMargin)
+            .fillMaxWidth(),
         )
-        Box(modifier = Modifier.pullRefresh(state = refreshState)) {
-            val columns = Layout.columns
-            val bodyMargin = Layout.bodyMargin
-            val gutter = Layout.gutter
+      }
+    },
+    modifier = modifier,
+  ) { paddingValues ->
+    val refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading
+    val refreshState = rememberPullRefreshState(
+      refreshing = refreshing,
+      onRefresh = lazyPagingItems::refresh,
+    )
+    Box(modifier = Modifier.pullRefresh(state = refreshState)) {
+      val columns = Layout.columns
+      val bodyMargin = Layout.bodyMargin
+      val gutter = Layout.gutter
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed((columns / 1.5).roundToInt()),
-                contentPadding = paddingValues +
-                    PaddingValues(horizontal = bodyMargin, vertical = gutter),
-                horizontalArrangement = Arrangement.spacedBy(gutter),
-                verticalArrangement = Arrangement.spacedBy(gutter),
-                flingBehavior = rememberTiviFlingBehavior(),
-                modifier = Modifier
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-                    .bodyWidth()
-                    .fillMaxHeight(),
-            ) {
-                items(
-                    count = lazyPagingItems.itemCount,
-                    key = lazyPagingItems.itemKey { it.show.id },
-                ) { index ->
-                    val entry = lazyPagingItems[index]
-                    val mod = Modifier
-                        .animateItemPlacement()
-                        .aspectRatio(2 / 3f)
-                        .fillMaxWidth()
-                    if (entry != null) {
-                        PosterCard(
-                            show = entry.show,
-                            onClick = { onOpenShowDetails(entry.show.id) },
-                            modifier = mod,
-                        )
-                    } else {
-                        PlaceholderPosterCard(mod)
-                    }
-                }
-
-                if (lazyPagingItems.loadState.append == LoadStateLoading) {
-                    fullSpanItem {
-                        Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(24.dp),
-                        ) {
-                            CircularProgressIndicator(Modifier.align(Alignment.Center))
-                        }
-                    }
-                }
-            }
-
-            PullRefreshIndicator(
-                refreshing = refreshing,
-                state = refreshState,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(paddingValues),
-                scale = true,
+      LazyVerticalGrid(
+        columns = GridCells.Fixed((columns / 1.5).roundToInt()),
+        contentPadding = paddingValues +
+          PaddingValues(horizontal = bodyMargin, vertical = gutter),
+        horizontalArrangement = Arrangement.spacedBy(gutter),
+        verticalArrangement = Arrangement.spacedBy(gutter),
+        flingBehavior = rememberTiviFlingBehavior(),
+        modifier = Modifier
+          .nestedScroll(scrollBehavior.nestedScrollConnection)
+          .bodyWidth()
+          .fillMaxHeight(),
+      ) {
+        items(
+          count = lazyPagingItems.itemCount,
+          key = lazyPagingItems.itemKey { it.show.id },
+        ) { index ->
+          val entry = lazyPagingItems[index]
+          val mod = Modifier
+            .animateItemPlacement()
+            .aspectRatio(2 / 3f)
+            .fillMaxWidth()
+          if (entry != null) {
+            PosterCard(
+              show = entry.show,
+              onClick = { onOpenShowDetails(entry.show.id) },
+              modifier = mod,
             )
+          } else {
+            PlaceholderPosterCard(mod)
+          }
         }
+
+        if (lazyPagingItems.loadState.append == LoadStateLoading) {
+          fullSpanItem {
+            Box(
+              Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            ) {
+              CircularProgressIndicator(Modifier.align(Alignment.Center))
+            }
+          }
+        }
+      }
+
+      PullRefreshIndicator(
+        refreshing = refreshing,
+        state = refreshState,
+        modifier = Modifier
+          .align(Alignment.TopCenter)
+          .padding(paddingValues),
+        scale = true,
+      )
     }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EntryGridAppBar(
-    title: String,
-    refreshing: Boolean,
-    onNavigateUp: () -> Unit,
-    onRefreshActionClick: () -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior,
-    modifier: Modifier = Modifier,
+  title: String,
+  refreshing: Boolean,
+  onNavigateUp: () -> Unit,
+  onRefreshActionClick: () -> Unit,
+  scrollBehavior: TopAppBarScrollBehavior,
+  modifier: Modifier = Modifier,
 ) {
-    TopAppBar(
-        navigationIcon = {
-            IconButton(onClick = onNavigateUp) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = LocalStrings.current.cdNavigateUp,
-                )
-            }
-        },
-        windowInsets = TopAppBarDefaults.windowInsets
-            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
-        modifier = modifier,
-        scrollBehavior = scrollBehavior,
-        title = { Text(text = title) },
-        actions = {
-            // This button refresh allows screen-readers, etc to trigger a refresh.
-            // We only show the button to trigger a refresh, not to indicate that
-            // we're currently refreshing, otherwise we have 4 indicators showing the
-            // same thing.
-            Crossfade(
-                targetState = refreshing,
-                modifier = Modifier.align(Alignment.CenterVertically),
-            ) { isRefreshing ->
-                if (!isRefreshing) {
-                    RefreshButton(onClick = onRefreshActionClick)
-                }
-            }
-        },
-    )
+  TopAppBar(
+    navigationIcon = {
+      IconButton(onClick = onNavigateUp) {
+        Icon(
+          imageVector = Icons.Default.ArrowBack,
+          contentDescription = LocalStrings.current.cdNavigateUp,
+        )
+      }
+    },
+    windowInsets = TopAppBarDefaults.windowInsets
+      .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
+    modifier = modifier,
+    scrollBehavior = scrollBehavior,
+    title = { Text(text = title) },
+    actions = {
+      // This button refresh allows screen-readers, etc to trigger a refresh.
+      // We only show the button to trigger a refresh, not to indicate that
+      // we're currently refreshing, otherwise we have 4 indicators showing the
+      // same thing.
+      Crossfade(
+        targetState = refreshing,
+        modifier = Modifier.align(Alignment.CenterVertically),
+      ) { isRefreshing ->
+        if (!isRefreshing) {
+          RefreshButton(onClick = onRefreshActionClick)
+        }
+      }
+    },
+  )
 }

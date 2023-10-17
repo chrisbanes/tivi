@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Provides
 expect interface PreferencesPlatformComponent
 
 interface PreferencesComponent : PreferencesPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind
+  @ApplicationScope
+  @Provides
+  fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind
 }

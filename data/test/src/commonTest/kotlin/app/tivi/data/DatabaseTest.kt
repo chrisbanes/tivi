@@ -23,50 +23,50 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
 abstract class DatabaseTest {
-    val applicationComponent = TestApplicationComponent::class.create()
+  val applicationComponent = TestApplicationComponent::class.create()
 
-    @AfterTest
-    fun closeDatabase() {
-        applicationComponent.sqlDriver.close()
-    }
+  @AfterTest
+  fun closeDatabase() {
+    applicationComponent.sqlDriver.close()
+  }
 }
 
 @Component
 @ApplicationScope
 abstract class TestApplicationComponent :
-    TmdbCommonComponent,
-    TraktCommonComponent,
-    TestDataSourceComponent(),
-    TestDatabaseComponent {
+  TmdbCommonComponent,
+  TraktCommonComponent,
+  TestDataSourceComponent(),
+  TestDatabaseComponent {
 
-    @Provides
-    fun provideTraktAuthState(): TraktAuthState = TraktAuthState.LOGGED_IN
+  @Provides
+  fun provideTraktAuthState(): TraktAuthState = TraktAuthState.LOGGED_IN
 
-    @Provides
-    fun provideRefreshTraktTokensInteractor(): TraktRefreshTokenAction = SuccessRefreshTokenAction
+  @Provides
+  fun provideRefreshTraktTokensInteractor(): TraktRefreshTokenAction = SuccessRefreshTokenAction
 
-    @Provides
-    fun provideTraktLoginAction(): TraktLoginAction = SuccessTraktLoginAction
+  @Provides
+  fun provideTraktLoginAction(): TraktLoginAction = SuccessTraktLoginAction
 
-    @Provides
-    fun provideTrakt(): Trakt = Trakt("fakefakefake")
+  @Provides
+  fun provideTrakt(): Trakt = Trakt("fakefakefake")
 
-    @Provides
-    fun provideTmdb(): Tmdb3 = Tmdb3("fakefakefake")
+  @Provides
+  fun provideTmdb(): Tmdb3 = Tmdb3("fakefakefake")
 
-    @Provides
-    override fun provideDatabaseConfiguration(): DatabaseConfiguration {
-        return super.provideDatabaseConfiguration().copy(
-            inMemory = true,
-        )
-    }
+  @Provides
+  override fun provideDatabaseConfiguration(): DatabaseConfiguration {
+    return super.provideDatabaseConfiguration().copy(
+      inMemory = true,
+    )
+  }
 
-    @Provides
-    fun provideLogger(): Logger = object : Logger {}
+  @Provides
+  fun provideLogger(): Logger = object : Logger {}
 
-    @OptIn(DelicateCoroutinesApi::class)
-    @Provides
-    fun provideCoroutineScope(): ApplicationCoroutineScope = GlobalScope
+  @OptIn(DelicateCoroutinesApi::class)
+  @Provides
+  fun provideCoroutineScope(): ApplicationCoroutineScope = GlobalScope
 
-    abstract val sqlDriver: SqlDriver
+  abstract val sqlDriver: SqlDriver
 }

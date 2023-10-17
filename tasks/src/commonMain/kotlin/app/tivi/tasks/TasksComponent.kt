@@ -9,10 +9,10 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface TasksComponent : TasksPlatformComponent {
-    @ApplicationScope
-    @Provides
-    @IntoSet
-    fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer = bind
+  @ApplicationScope
+  @Provides
+  @IntoSet
+  fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer = bind
 }
 
 expect interface TasksPlatformComponent

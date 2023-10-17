@@ -15,20 +15,20 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktPopularShowsDataSource(
-    private val showService: Lazy<TraktShowsApi>,
-    showMapper: TraktShowToTiviShow,
+  private val showService: Lazy<TraktShowsApi>,
+  showMapper: TraktShowToTiviShow,
 ) : PopularShowsDataSource {
-    private val entryMapper = IndexedMapper<TraktShow, PopularShowEntry> { index, _ ->
-        PopularShowEntry(showId = 0, pageOrder = index, page = 0)
-    }
+  private val entryMapper = IndexedMapper<TraktShow, PopularShowEntry> { index, _ ->
+    PopularShowEntry(showId = 0, pageOrder = index, page = 0)
+  }
 
-    private val resultsMapper = pairMapperOf(showMapper, entryMapper)
+  private val resultsMapper = pairMapperOf(showMapper, entryMapper)
 
-    override suspend operator fun invoke(
-        page: Int,
-        pageSize: Int,
-    ): List<Pair<TiviShow, PopularShowEntry>> =
-        showService.value
-            .getPopular(page = page + 1, limit = pageSize, extended = TraktExtended.NO_SEASONS)
-            .let { resultsMapper(it) }
+  override suspend operator fun invoke(
+    page: Int,
+    pageSize: Int,
+  ): List<Pair<TiviShow, PopularShowEntry>> =
+    showService.value
+      .getPopular(page = page + 1, limit = pageSize, extended = TraktExtended.NO_SEASONS)
+      .let { resultsMapper(it) }
 }

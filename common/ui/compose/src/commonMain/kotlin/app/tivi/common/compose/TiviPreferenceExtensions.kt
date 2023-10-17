@@ -11,17 +11,17 @@ import app.tivi.settings.TiviPreferences
 
 @Composable
 fun TiviPreferences.shouldUseDarkColors(): Boolean {
-    val themePreference = remember { observeTheme() }.collectAsState(initial = theme)
-    return when (themePreference.value) {
-        TiviPreferences.Theme.LIGHT -> false
-        TiviPreferences.Theme.DARK -> true
-        else -> isSystemInDarkTheme()
-    }
+  val themePreference = remember { observeTheme() }.collectAsState(initial = theme)
+  return when (themePreference.value) {
+    TiviPreferences.Theme.LIGHT -> false
+    TiviPreferences.Theme.DARK -> true
+    else -> isSystemInDarkTheme()
+  }
 }
 
 @Composable
 fun TiviPreferences.shouldUseDynamicColors(): Boolean {
-    return remember { observeUseDynamicColors() }
-        .collectAsState(initial = useDynamicColors)
-        .value
+  return remember { observeUseDynamicColors() }
+    .collectAsState(initial = useDynamicColors)
+    .value
 }

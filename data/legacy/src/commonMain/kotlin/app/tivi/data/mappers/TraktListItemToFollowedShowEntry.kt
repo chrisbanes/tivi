@@ -9,9 +9,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktListItemToFollowedShowEntry : Mapper<TraktUserListItem, FollowedShowEntry> {
-    override fun map(from: TraktUserListItem) = FollowedShowEntry(
-        showId = 0,
-        followedAt = from.listedAt,
-        traktId = from.id,
-    )
+  override fun map(from: TraktUserListItem) = FollowedShowEntry(
+    showId = 0,
+    followedAt = from.listedAt,
+    traktId = from.id,
+  )
 }

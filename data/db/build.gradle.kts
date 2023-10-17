@@ -3,17 +3,17 @@
 
 
 plugins {
-    id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.kotlin.multiplatform")
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.core.base)
-                api(projects.data.models)
-                api(libs.paging.common)
-            }
-        }
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(projects.core.base)
+        api(projects.data.models)
+        api(libs.paging.common)
+      }
     }
+  }
 }

@@ -18,33 +18,33 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObservePagedTrendingShows(
-    private val trendingShowsDao: TrendingDao,
-    private val updateTrendingShows: UpdateTrendingShows,
-    private val logger: Logger,
+  private val trendingShowsDao: TrendingDao,
+  private val updateTrendingShows: UpdateTrendingShows,
+  private val logger: Logger,
 ) : PagingInteractor<ObservePagedTrendingShows.Params, TrendingEntryWithShow>() {
-    @OptIn(app.cash.paging.ExperimentalPagingApi::class)
-    override fun createObservable(
-        params: Params,
-    ): Flow<PagingData<TrendingEntryWithShow>> {
-        return Pager(
-            config = params.pagingConfig,
-            remoteMediator = PaginatedEntryRemoteMediator { page ->
-                try {
-                    updateTrendingShows(
-                        UpdateTrendingShows.Params(page = page, forceRefresh = true),
-                    )
-                } catch (ce: CancellationException) {
-                    throw ce
-                } catch (t: Throwable) {
-                    logger.e(t) { "Error while fetching from RemoteMediator" }
-                    throw t
-                }
-            },
-            pagingSourceFactory = trendingShowsDao::entriesPagingSource,
-        ).flow
-    }
+  @OptIn(app.cash.paging.ExperimentalPagingApi::class)
+  override fun createObservable(
+    params: Params,
+  ): Flow<PagingData<TrendingEntryWithShow>> {
+    return Pager(
+      config = params.pagingConfig,
+      remoteMediator = PaginatedEntryRemoteMediator { page ->
+        try {
+          updateTrendingShows(
+            UpdateTrendingShows.Params(page = page, forceRefresh = true),
+          )
+        } catch (ce: CancellationException) {
+          throw ce
+        } catch (t: Throwable) {
+          logger.e(t) { "Error while fetching from RemoteMediator" }
+          throw t
+        }
+      },
+      pagingSourceFactory = trendingShowsDao::entriesPagingSource,
+    ).flow
+  }
 
-    data class Params(
-        override val pagingConfig: PagingConfig,
-    ) : Parameters<TrendingEntryWithShow>
+  data class Params(
+    override val pagingConfig: PagingConfig,
+  ) : Parameters<TrendingEntryWithShow>
 }

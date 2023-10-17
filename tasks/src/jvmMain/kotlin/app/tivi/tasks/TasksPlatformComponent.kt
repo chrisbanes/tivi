@@ -9,11 +9,11 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface TasksPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideShowTasks(): ShowTasks = EmptyShowTasks
+  @ApplicationScope
+  @Provides
+  fun provideShowTasks(): ShowTasks = EmptyShowTasks
 }
 
 object EmptyShowTasks : ShowTasks {
-    override fun register() = Unit
+  override fun register() = Unit
 }

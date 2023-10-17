@@ -97,426 +97,426 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DiscoverUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is DiscoverScreen -> {
-            ui<DiscoverUiState> { state, modifier ->
-                Discover(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is DiscoverScreen -> {
+      ui<DiscoverUiState> { state, modifier ->
+        Discover(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @Composable
 internal fun Discover(
-    state: DiscoverUiState,
-    modifier: Modifier = Modifier,
+  state: DiscoverUiState,
+  modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    val overlayHost = LocalOverlayHost.current
+  val scope = rememberCoroutineScope()
+  val overlayHost = LocalOverlayHost.current
 
-    // Need to extract the eventSink out to a local val, so that the Compose Compiler
-    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
-    val eventSink = state.eventSink
+  // Need to extract the eventSink out to a local val, so that the Compose Compiler
+  // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+  val eventSink = state.eventSink
 
-    Discover(
-        state = state,
-        refresh = { eventSink(DiscoverUiEvent.Refresh(true)) },
-        openUser = {
-            scope.launch {
-                overlayHost.showInDialog(AccountScreen)
-            }
-        },
-        openShowDetails = { showId, seasonId, episodeId ->
-            eventSink(DiscoverUiEvent.OpenShowDetails(showId, seasonId, episodeId))
-        },
-        openTrendingShows = { eventSink(DiscoverUiEvent.OpenTrendingShows) },
-        openRecommendedShows = { eventSink(DiscoverUiEvent.OpenRecommendedShows) },
-        openPopularShows = { eventSink(DiscoverUiEvent.OpenPopularShows) },
-        onMessageShown = { eventSink(DiscoverUiEvent.ClearMessage(it)) },
-        modifier = modifier,
-    )
+  Discover(
+    state = state,
+    refresh = { eventSink(DiscoverUiEvent.Refresh(true)) },
+    openUser = {
+      scope.launch {
+        overlayHost.showInDialog(AccountScreen)
+      }
+    },
+    openShowDetails = { showId, seasonId, episodeId ->
+      eventSink(DiscoverUiEvent.OpenShowDetails(showId, seasonId, episodeId))
+    },
+    openTrendingShows = { eventSink(DiscoverUiEvent.OpenTrendingShows) },
+    openRecommendedShows = { eventSink(DiscoverUiEvent.OpenRecommendedShows) },
+    openPopularShows = { eventSink(DiscoverUiEvent.OpenPopularShows) },
+    onMessageShown = { eventSink(DiscoverUiEvent.ClearMessage(it)) },
+    modifier = modifier,
+  )
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun Discover(
-    state: DiscoverUiState,
-    refresh: () -> Unit,
-    openUser: () -> Unit,
-    openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
-    openTrendingShows: () -> Unit,
-    openRecommendedShows: () -> Unit,
-    openPopularShows: () -> Unit,
-    onMessageShown: (id: Long) -> Unit,
-    modifier: Modifier = Modifier,
+  state: DiscoverUiState,
+  refresh: () -> Unit,
+  openUser: () -> Unit,
+  openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
+  openTrendingShows: () -> Unit,
+  openRecommendedShows: () -> Unit,
+  openPopularShows: () -> Unit,
+  onMessageShown: (id: Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+  val snackbarHostState = remember { SnackbarHostState() }
 
-    val dismissSnackbarState = rememberDismissState { value ->
-        if (value != DismissValue.Default) {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            true
-        } else {
-            false
+  val dismissSnackbarState = rememberDismissState { value ->
+    if (value != DismissValue.Default) {
+      snackbarHostState.currentSnackbarData?.dismiss()
+      true
+    } else {
+      false
+    }
+  }
+
+  state.message?.let { message ->
+    LaunchedEffect(message) {
+      snackbarHostState.showSnackbar(message.message)
+      // Notify the view model that the message has been dismissed
+      onMessageShown(message.id)
+    }
+  }
+
+  ReportDrawnWhen {
+    !state.popularRefreshing &&
+      !state.trendingRefreshing &&
+      state.popularItems.isNotEmpty() &&
+      state.trendingItems.isNotEmpty()
+  }
+
+  Scaffold(
+    topBar = {
+      TiviRootScreenAppBar(
+        title = LocalStrings.current.discoverTitle,
+        loggedIn = state.authState == TraktAuthState.LOGGED_IN,
+        user = state.user,
+        refreshing = state.refreshing,
+        onRefreshActionClick = refresh,
+        onUserActionClick = openUser,
+        modifier = Modifier.fillMaxWidth(),
+      )
+    },
+    snackbarHost = {
+      SnackbarHost(hostState = snackbarHostState) { data ->
+        SwipeToDismiss(
+          state = dismissSnackbarState,
+          background = {},
+          dismissContent = { Snackbar(snackbarData = data) },
+          modifier = Modifier
+            .padding(horizontal = Layout.bodyMargin)
+            .fillMaxWidth(),
+        )
+      }
+    },
+    modifier = modifier,
+  ) { paddingValues ->
+    val refreshState = rememberPullRefreshState(refreshing = false, onRefresh = refresh)
+    Box(modifier = Modifier.pullRefresh(state = refreshState)) {
+      LazyColumn(
+        contentPadding = paddingValues,
+        flingBehavior = rememberTiviFlingBehavior(),
+        modifier = Modifier.bodyWidth(),
+      ) {
+        item {
+          Spacer(Modifier.height(Layout.gutter))
         }
-    }
 
-    state.message?.let { message ->
-        LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(message.message)
-            // Notify the view model that the message has been dismissed
-            onMessageShown(message.id)
-        }
-    }
-
-    ReportDrawnWhen {
-        !state.popularRefreshing &&
-            !state.trendingRefreshing &&
-            state.popularItems.isNotEmpty() &&
-            state.trendingItems.isNotEmpty()
-    }
-
-    Scaffold(
-        topBar = {
-            TiviRootScreenAppBar(
-                title = LocalStrings.current.discoverTitle,
-                loggedIn = state.authState == TraktAuthState.LOGGED_IN,
-                user = state.user,
-                refreshing = state.refreshing,
-                onRefreshActionClick = refresh,
-                onUserActionClick = openUser,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                SwipeToDismiss(
-                    state = dismissSnackbarState,
-                    background = {},
-                    dismissContent = { Snackbar(snackbarData = data) },
-                    modifier = Modifier
-                        .padding(horizontal = Layout.bodyMargin)
-                        .fillMaxWidth(),
+        state.nextEpisodeWithShowToWatch?.let { nextEpisodeToWatch ->
+          item(key = "next_episode_to_watch") {
+            NextEpisodeToWatch(
+              show = nextEpisodeToWatch.show,
+              season = nextEpisodeToWatch.season,
+              episode = nextEpisodeToWatch.episode,
+              onClick = {
+                openShowDetails(
+                  nextEpisodeToWatch.show.id,
+                  nextEpisodeToWatch.episode.seasonId,
+                  nextEpisodeToWatch.episode.id,
                 )
-            }
-        },
-        modifier = modifier,
-    ) { paddingValues ->
-        val refreshState = rememberPullRefreshState(refreshing = false, onRefresh = refresh)
-        Box(modifier = Modifier.pullRefresh(state = refreshState)) {
-            LazyColumn(
-                contentPadding = paddingValues,
-                flingBehavior = rememberTiviFlingBehavior(),
-                modifier = Modifier.bodyWidth(),
-            ) {
-                item {
-                    Spacer(Modifier.height(Layout.gutter))
-                }
-
-                state.nextEpisodeWithShowToWatch?.let { nextEpisodeToWatch ->
-                    item(key = "next_episode_to_watch") {
-                        NextEpisodeToWatch(
-                            show = nextEpisodeToWatch.show,
-                            season = nextEpisodeToWatch.season,
-                            episode = nextEpisodeToWatch.episode,
-                            onClick = {
-                                openShowDetails(
-                                    nextEpisodeToWatch.show.id,
-                                    nextEpisodeToWatch.episode.seasonId,
-                                    nextEpisodeToWatch.episode.id,
-                                )
-                            },
-                            modifier = Modifier
-                                .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
-                                .animateItemPlacement()
-                                .fillMaxWidth()
-                                .aspectRatio(16 / 9f),
-                        )
-                    }
-
-                    item {
-                        Spacer(Modifier.height(Layout.gutter))
-                    }
-                }
-
-                item(key = "carousel_trending") {
-                    CarouselWithHeader(
-                        items = state.trendingItems,
-                        title = LocalStrings.current.discoverTrendingTitle,
-                        refreshing = state.trendingRefreshing,
-                        onItemClick = {
-                            openShowDetails(it.id, null, null)
-                        },
-                        onMoreClick = openTrendingShows,
-                        modifier = Modifier.animateItemPlacement(),
-                    )
-                }
-
-                item(key = "carousel_recommended") {
-                    CarouselWithHeader(
-                        items = state.recommendedItems,
-                        title = LocalStrings.current.discoverRecommendedTitle,
-                        refreshing = state.recommendedRefreshing,
-                        onItemClick = {
-                            openShowDetails(it.id, null, null)
-                        },
-                        onMoreClick = openRecommendedShows,
-                        modifier = Modifier.animateItemPlacement(),
-                    )
-                }
-
-                item(key = "carousel_refreshing") {
-                    CarouselWithHeader(
-                        items = state.popularItems,
-                        title = LocalStrings.current.discoverPopularTitle,
-                        refreshing = state.popularRefreshing,
-                        onItemClick = { openShowDetails(it.id, null, null) },
-                        onMoreClick = openPopularShows,
-                        modifier = Modifier.animateItemPlacement(),
-                    )
-                }
-
-                item {
-                    Spacer(Modifier.height(Layout.gutter))
-                }
-            }
-
-            PullRefreshIndicator(
-                refreshing = state.refreshing,
-                state = refreshState,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(paddingValues),
-                scale = true,
+              },
+              modifier = Modifier
+                .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+                .animateItemPlacement()
+                .fillMaxWidth()
+                .aspectRatio(16 / 9f),
             )
+          }
+
+          item {
+            Spacer(Modifier.height(Layout.gutter))
+          }
         }
+
+        item(key = "carousel_trending") {
+          CarouselWithHeader(
+            items = state.trendingItems,
+            title = LocalStrings.current.discoverTrendingTitle,
+            refreshing = state.trendingRefreshing,
+            onItemClick = {
+              openShowDetails(it.id, null, null)
+            },
+            onMoreClick = openTrendingShows,
+            modifier = Modifier.animateItemPlacement(),
+          )
+        }
+
+        item(key = "carousel_recommended") {
+          CarouselWithHeader(
+            items = state.recommendedItems,
+            title = LocalStrings.current.discoverRecommendedTitle,
+            refreshing = state.recommendedRefreshing,
+            onItemClick = {
+              openShowDetails(it.id, null, null)
+            },
+            onMoreClick = openRecommendedShows,
+            modifier = Modifier.animateItemPlacement(),
+          )
+        }
+
+        item(key = "carousel_refreshing") {
+          CarouselWithHeader(
+            items = state.popularItems,
+            title = LocalStrings.current.discoverPopularTitle,
+            refreshing = state.popularRefreshing,
+            onItemClick = { openShowDetails(it.id, null, null) },
+            onMoreClick = openPopularShows,
+            modifier = Modifier.animateItemPlacement(),
+          )
+        }
+
+        item {
+          Spacer(Modifier.height(Layout.gutter))
+        }
+      }
+
+      PullRefreshIndicator(
+        refreshing = state.refreshing,
+        state = refreshState,
+        modifier = Modifier
+          .align(Alignment.TopCenter)
+          .padding(paddingValues),
+        scale = true,
+      )
     }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NextEpisodeToWatch(
-    show: TiviShow,
-    season: Season,
-    episode: Episode,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+  show: TiviShow,
+  season: Season,
+  episode: Episode,
+  modifier: Modifier = Modifier,
+  onClick: () -> Unit,
 ) {
-    TiviTheme(useDarkColors = true) {
-        OutlinedCard(
-            onClick = onClick,
-            modifier = modifier,
-            border = BorderStroke(3.dp, MaterialTheme.colorScheme.outline),
-        ) {
-            Box {
-                var model: Any by remember { mutableStateOf(episode.asImageModel()) }
+  TiviTheme(useDarkColors = true) {
+    OutlinedCard(
+      onClick = onClick,
+      modifier = modifier,
+      border = BorderStroke(3.dp, MaterialTheme.colorScheme.outline),
+    ) {
+      Box {
+        var model: Any by remember { mutableStateOf(episode.asImageModel()) }
 
-                AsyncImage(
-                    model = model,
-                    onAction = { state ->
-                        if (state is ImageResult.Error && model is EpisodeImageModel) {
-                            // If the episode backdrop request failed, fallback to the show backdrop
-                            model = show.asImageModel(ImageType.BACKDROP)
-                        }
-                    },
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
-
-                Spacer(
-                    Modifier.matchParentSize()
-                        .drawForegroundGradientScrim(
-                            color = MaterialTheme.colorScheme.surface,
-                            decay = 1.5f,
-                        ),
-                )
-
-                Column(
-                    Modifier
-                        .padding(Layout.gutter),
-                ) {
-                    Card {
-                        Text(
-                            text = LocalStrings.current.discoverKeepWatchingTitle,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier
-                                .padding(horizontal = Layout.gutter, vertical = 4.dp),
-                        )
-                    }
-
-                    Spacer(Modifier.weight(1f))
-
-                    Column(
-                        Modifier
-                            .padding(Layout.gutter),
-                    ) {
-                        Text(
-                            text = show.title.orEmpty(),
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.padding(1.dp),
-                        )
-
-                        val textCreator = LocalTiviTextCreator.current
-                        Text(
-                            text = textCreator.seasonEpisodeTitleText(season, episode),
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-
-                        Text(
-                            text = episode.title
-                                ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                    }
-                }
+        AsyncImage(
+          model = model,
+          onAction = { state ->
+            if (state is ImageResult.Error && model is EpisodeImageModel) {
+              // If the episode backdrop request failed, fallback to the show backdrop
+              model = show.asImageModel(ImageType.BACKDROP)
             }
+          },
+          contentDescription = null,
+          modifier = Modifier.fillMaxSize(),
+          contentScale = ContentScale.Crop,
+        )
+
+        Spacer(
+          Modifier.matchParentSize()
+            .drawForegroundGradientScrim(
+              color = MaterialTheme.colorScheme.surface,
+              decay = 1.5f,
+            ),
+        )
+
+        Column(
+          Modifier
+            .padding(Layout.gutter),
+        ) {
+          Card {
+            Text(
+              text = LocalStrings.current.discoverKeepWatchingTitle,
+              style = MaterialTheme.typography.titleMedium,
+              modifier = Modifier
+                .padding(horizontal = Layout.gutter, vertical = 4.dp),
+            )
+          }
+
+          Spacer(Modifier.weight(1f))
+
+          Column(
+            Modifier
+              .padding(Layout.gutter),
+          ) {
+            Text(
+              text = show.title.orEmpty(),
+              style = MaterialTheme.typography.labelLarge,
+              modifier = Modifier.padding(1.dp),
+            )
+
+            val textCreator = LocalTiviTextCreator.current
+            Text(
+              text = textCreator.seasonEpisodeTitleText(season, episode),
+              style = MaterialTheme.typography.labelMedium,
+            )
+
+            Text(
+              text = episode.title
+                ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
+              style = MaterialTheme.typography.titleLarge,
+            )
+          }
         }
+      }
     }
+  }
 }
 
 @Composable
 private fun <T : EntryWithShow<*>> CarouselWithHeader(
-    items: List<T>,
-    title: String,
-    refreshing: Boolean,
-    onItemClick: (TiviShow) -> Unit,
-    onMoreClick: () -> Unit,
-    modifier: Modifier = Modifier,
+  items: List<T>,
+  title: String,
+  refreshing: Boolean,
+  onItemClick: (TiviShow) -> Unit,
+  onMoreClick: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .testTag("discover_carousel"),
-    ) {
-        if (refreshing || items.isNotEmpty()) {
-            Spacer(Modifier.height(Layout.gutter))
+  Column(
+    modifier = modifier
+      .testTag("discover_carousel"),
+  ) {
+    if (refreshing || items.isNotEmpty()) {
+      Spacer(Modifier.height(Layout.gutter))
 
-            Header(
-                title = title,
-                loading = refreshing,
-                modifier = Modifier
-                    .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth(),
-            ) {
-                TextButton(
-                    onClick = onMoreClick,
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.secondary,
-                    ),
-                    modifier = Modifier.alignBy(FirstBaseline),
-                ) {
-                    Text(text = LocalStrings.current.headerMore)
-                }
-            }
+      Header(
+        title = title,
+        loading = refreshing,
+        modifier = Modifier
+          .padding(horizontal = Layout.bodyMargin)
+          .fillMaxWidth(),
+      ) {
+        TextButton(
+          onClick = onMoreClick,
+          colors = ButtonDefaults.textButtonColors(
+            contentColor = MaterialTheme.colorScheme.secondary,
+          ),
+          modifier = Modifier.alignBy(FirstBaseline),
+        ) {
+          Text(text = LocalStrings.current.headerMore)
         }
-        if (items.isNotEmpty()) {
-            EntryShowCarousel(
-                items = items,
-                onItemClick = onItemClick,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-        // TODO empty state
+      }
     }
+    if (items.isNotEmpty()) {
+      EntryShowCarousel(
+        items = items,
+        onItemClick = onItemClick,
+        modifier = Modifier.fillMaxWidth(),
+      )
+    }
+    // TODO empty state
+  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun <T : EntryWithShow<*>> EntryShowCarousel(
-    items: List<T>,
-    onItemClick: (TiviShow) -> Unit,
-    modifier: Modifier = Modifier,
+  items: List<T>,
+  onItemClick: (TiviShow) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val lazyListState = rememberLazyListState()
+  val lazyListState = rememberLazyListState()
 
-    LazyRow(
-        state = lazyListState,
-        modifier = modifier
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
-            .clip(MaterialTheme.shapes.extraLarge),
-        flingBehavior = rememberTiviSnapFlingBehavior(
-            snapLayoutInfoProvider = remember(lazyListState) {
-                SnapLayoutInfoProvider(
-                    lazyListState = lazyListState,
-                    positionInLayout = { _, _, _ -> 0 }, // start
-                )
+  LazyRow(
+    state = lazyListState,
+    modifier = modifier
+      .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+      .clip(MaterialTheme.shapes.extraLarge),
+    flingBehavior = rememberTiviSnapFlingBehavior(
+      snapLayoutInfoProvider = remember(lazyListState) {
+        SnapLayoutInfoProvider(
+          lazyListState = lazyListState,
+          positionInLayout = { _, _, _ -> 0 }, // start
+        )
+      },
+    ),
+    horizontalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    items(
+      items = items,
+      key = { it.show.id },
+    ) { item ->
+      BackdropCard(
+        show = item.show,
+        onClick = { onItemClick(item.show) },
+        alignment = remember {
+          ParallaxAlignment(
+            horizontalBias = {
+              val layoutInfo = lazyListState.layoutInfo
+              val itemInfo = layoutInfo.visibleItemsInfo.first {
+                it.key == item.show.id
+              }
+
+              val adjustedOffset = itemInfo.offset - layoutInfo.viewportStartOffset
+              (adjustedOffset / itemInfo.size.toFloat()).coerceIn(-1f, 1f)
             },
-        ),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(
-            items = items,
-            key = { it.show.id },
-        ) { item ->
-            BackdropCard(
-                show = item.show,
-                onClick = { onItemClick(item.show) },
-                alignment = remember {
-                    ParallaxAlignment(
-                        horizontalBias = {
-                            val layoutInfo = lazyListState.layoutInfo
-                            val itemInfo = layoutInfo.visibleItemsInfo.first {
-                                it.key == item.show.id
-                            }
-
-                            val adjustedOffset = itemInfo.offset - layoutInfo.viewportStartOffset
-                            (adjustedOffset / itemInfo.size.toFloat()).coerceIn(-1f, 1f)
-                        },
-                    )
-                },
-                modifier = Modifier
-                    .testTag("discover_carousel_item")
-                    .animateItemPlacement()
-                    .width(
-                        when (LocalWindowSizeClass.current.widthSizeClass) {
-                            WindowWidthSizeClass.Expanded -> 320.dp
-                            else -> 240.dp
-                        },
-                    )
-                    .aspectRatio(16 / 11f),
-            )
-        }
+          )
+        },
+        modifier = Modifier
+          .testTag("discover_carousel_item")
+          .animateItemPlacement()
+          .width(
+            when (LocalWindowSizeClass.current.widthSizeClass) {
+              WindowWidthSizeClass.Expanded -> 320.dp
+              else -> 240.dp
+            },
+          )
+          .aspectRatio(16 / 11f),
+      )
     }
+  }
 }
 
 @Composable
 private fun Header(
-    title: String,
-    modifier: Modifier = Modifier,
-    loading: Boolean = false,
-    content: @Composable RowScope.() -> Unit = {},
+  title: String,
+  modifier: Modifier = Modifier,
+  loading: Boolean = false,
+  content: @Composable RowScope.() -> Unit = {},
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier,
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-        )
+  Row(
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = modifier,
+  ) {
+    Text(
+      text = title,
+      style = MaterialTheme.typography.titleMedium,
+    )
 
-        Spacer(Modifier.weight(1f))
+    Spacer(Modifier.weight(1f))
 
-        AnimatedVisibility(visible = loading) {
-            AutoSizedCircularProgressIndicator(
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(16.dp),
-            )
-        }
-
-        content()
+    AnimatedVisibility(visible = loading) {
+      AutoSizedCircularProgressIndicator(
+        color = MaterialTheme.colorScheme.secondary,
+        modifier = Modifier.size(16.dp),
+      )
     }
+
+    content()
+  }
 }
 
 // @Preview
 @Composable
 private fun PreviewHeader() {
-    Surface(Modifier.fillMaxWidth()) {
-        Header(
-            title = "Being watched now",
-            loading = true,
-        )
-    }
+  Surface(Modifier.fillMaxWidth()) {
+    Header(
+      title = "Being watched now",
+      loading = true,
+    )
+  }
 }

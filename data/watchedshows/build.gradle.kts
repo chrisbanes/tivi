@@ -3,25 +3,25 @@
 
 
 plugins {
-    id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.kotlin.multiplatform")
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(projects.data.models)
-                implementation(projects.data.db)
-                implementation(projects.data.legacy) // remove this eventually
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        api(projects.data.models)
+        implementation(projects.data.db)
+        implementation(projects.data.legacy) // remove this eventually
 
-                implementation(projects.api.trakt)
-                implementation(projects.api.tmdb)
+        implementation(projects.api.trakt)
+        implementation(projects.api.tmdb)
 
-                api(libs.store)
-                implementation(libs.kotlinx.atomicfu)
+        api(libs.store)
+        implementation(libs.kotlinx.atomicfu)
 
-                implementation(libs.kotlininject.runtime)
-            }
-        }
+        implementation(libs.kotlininject.runtime)
+      }
     }
+  }
 }

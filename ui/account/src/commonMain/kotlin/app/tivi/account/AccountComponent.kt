@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface AccountComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindAccountPresenterFactory(factory: AccountUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindAccountPresenterFactory(factory: AccountUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindAccountUiFactory(factory: AccountUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindAccountUiFactory(factory: AccountUiFactory): Ui.Factory = factory
 }

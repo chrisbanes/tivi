@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface PerformanceComponent {
-    @ApplicationScope
-    @Provides
-    fun provideTracer(bind: AndroidTracer): Tracer = bind
+  @ApplicationScope
+  @Provides
+  fun provideTracer(bind: AndroidTracer): Tracer = bind
 }

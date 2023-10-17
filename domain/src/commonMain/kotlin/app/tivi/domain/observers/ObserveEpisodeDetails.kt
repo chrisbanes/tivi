@@ -11,12 +11,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObserveEpisodeDetails(
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+  private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
 ) : SubjectInteractor<ObserveEpisodeDetails.Params, EpisodeWithSeason>() {
 
-    override fun createObservable(params: Params): Flow<EpisodeWithSeason> {
-        return seasonsEpisodesRepository.observeEpisode(params.episodeId)
-    }
+  override fun createObservable(params: Params): Flow<EpisodeWithSeason> {
+    return seasonsEpisodesRepository.observeEpisode(params.episodeId)
+  }
 
-    data class Params(val episodeId: Long)
+  data class Params(val episodeId: Long)
 }

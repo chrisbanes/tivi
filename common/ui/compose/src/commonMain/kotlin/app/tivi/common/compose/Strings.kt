@@ -18,13 +18,13 @@ val LocalStrings: ProvidableCompositionLocal<TiviStrings> = compositionLocalOf {
 
 @Composable
 fun rememberStrings(
-    languageTag: LanguageTag = "en",
+  languageTag: LanguageTag = "en",
 ): Lyricist<TiviStrings> = rememberStrings(Strings, languageTag)
 
 @Composable
 fun ProvideStrings(
-    lyricist: Lyricist<TiviStrings> = rememberStrings(),
-    content: @Composable () -> Unit,
+  lyricist: Lyricist<TiviStrings> = rememberStrings(),
+  content: @Composable () -> Unit,
 ) {
-    ProvideStrings(lyricist, LocalStrings, content)
+  ProvideStrings(lyricist, LocalStrings, content)
 }

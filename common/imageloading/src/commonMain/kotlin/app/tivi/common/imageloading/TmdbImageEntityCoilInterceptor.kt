@@ -17,32 +17,32 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbImageEntityCoilInterceptor(
-    private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
-    private val powerController: PowerController,
-    private val density: () -> Density,
+  private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
+  private val powerController: PowerController,
+  private val density: () -> Density,
 ) : Interceptor {
-    override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
-        val size = chain.options.sizeResolver.run { density().size() }
+  override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
+    val size = chain.options.sizeResolver.run { density().size() }
 
-        val request = when (val data = chain.request.data) {
-            is TmdbImageEntity -> {
-                ImageRequest(chain.request) {
-                    data(map(data, size))
-                }
-            }
-
-            else -> chain.request
+    val request = when (val data = chain.request.data) {
+      is TmdbImageEntity -> {
+        ImageRequest(chain.request) {
+          data(map(data, size))
         }
+      }
 
-        return chain.proceed(request)
+      else -> chain.request
     }
 
-    private fun map(data: TmdbImageEntity, size: Size): String {
-        val width = when (powerController.shouldSaveData()) {
-            is SaveData.Disabled -> size.width.roundToInt()
-            // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
-            is SaveData.Enabled -> size.width.roundToInt() / 2
-        }
-        return tmdbImageUrlProvider.value.buildUrl(data, data.type, width)
+    return chain.proceed(request)
+  }
+
+  private fun map(data: TmdbImageEntity, size: Size): String {
+    val width = when (powerController.shouldSaveData()) {
+      is SaveData.Disabled -> size.width.roundToInt()
+      // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
+      is SaveData.Enabled -> size.width.roundToInt() / 2
     }
+    return tmdbImageUrlProvider.value.buildUrl(data, data.type, width)
+  }
 }

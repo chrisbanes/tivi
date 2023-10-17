@@ -6,5 +6,5 @@ package app.tivi.utils
 import app.tivi.data.db.DatabaseTransactionRunner
 
 internal object TestTransactionRunner : DatabaseTransactionRunner {
-    override fun <T> invoke(block: () -> T): T = block()
+  override fun <T> invoke(block: () -> T): T = block()
 }

@@ -15,25 +15,25 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObservePagedLibraryShows(
-    private val libraryShowsDao: LibraryShowsDao,
+  private val libraryShowsDao: LibraryShowsDao,
 ) : PagingInteractor<ObservePagedLibraryShows.Parameters, LibraryShow>() {
-    @OptIn(app.cash.paging.ExperimentalPagingApi::class)
-    override fun createObservable(
-        params: Parameters,
-    ): Flow<PagingData<LibraryShow>> = Pager(config = params.pagingConfig) {
-        libraryShowsDao.pagedListLastWatched(
-            sort = params.sort,
-            filter = if (params.filter.isNullOrEmpty()) null else params.filter,
-            includeWatched = params.includeWatched,
-            includeFollowed = params.includeFollowed,
-        )
-    }.flow
+  @OptIn(app.cash.paging.ExperimentalPagingApi::class)
+  override fun createObservable(
+    params: Parameters,
+  ): Flow<PagingData<LibraryShow>> = Pager(config = params.pagingConfig) {
+    libraryShowsDao.pagedListLastWatched(
+      sort = params.sort,
+      filter = if (params.filter.isNullOrEmpty()) null else params.filter,
+      includeWatched = params.includeWatched,
+      includeFollowed = params.includeFollowed,
+    )
+  }.flow
 
-    data class Parameters(
-        val sort: SortOption,
-        val filter: String? = null,
-        val includeWatched: Boolean = true,
-        val includeFollowed: Boolean = true,
-        override val pagingConfig: PagingConfig,
-    ) : PagingInteractor.Parameters<LibraryShow>
+  data class Parameters(
+    val sort: SortOption,
+    val filter: String? = null,
+    val includeWatched: Boolean = true,
+    val includeFollowed: Boolean = true,
+    override val pagingConfig: PagingConfig,
+  ) : PagingInteractor.Parameters<LibraryShow>
 }

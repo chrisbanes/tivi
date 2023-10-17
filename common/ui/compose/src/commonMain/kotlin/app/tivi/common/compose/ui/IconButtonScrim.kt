@@ -18,49 +18,49 @@ import app.tivi.common.compose.theme.TiviTheme
 
 @Composable
 fun ScrimmedIconButton(
-    showScrim: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    invertThemeOnScrim: Boolean = true,
-    icon: @Composable () -> Unit,
+  showScrim: Boolean,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  invertThemeOnScrim: Boolean = true,
+  icon: @Composable () -> Unit,
 ) {
-    IconButton(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        if (invertThemeOnScrim) {
-            val isLight = MaterialTheme.colorScheme.surface.luminance() > 0.5
+  IconButton(
+    onClick = onClick,
+    modifier = modifier,
+  ) {
+    if (invertThemeOnScrim) {
+      val isLight = MaterialTheme.colorScheme.surface.luminance() > 0.5
 
-            Crossfade(targetState = showScrim) { show ->
-                TiviTheme(useDarkColors = if (show) isLight else !isLight) {
-                    ScrimSurface(showScrim = show, icon = icon)
-                }
-            }
-        } else {
-            ScrimSurface(showScrim = showScrim, icon = icon)
+      Crossfade(targetState = showScrim) { show ->
+        TiviTheme(useDarkColors = if (show) isLight else !isLight) {
+          ScrimSurface(showScrim = show, icon = icon)
         }
+      }
+    } else {
+      ScrimSurface(showScrim = showScrim, icon = icon)
     }
+  }
 }
 
 @Composable
 private fun ScrimSurface(
-    modifier: Modifier = Modifier,
-    showScrim: Boolean = true,
-    alpha: Float = 0.3f,
-    icon: @Composable () -> Unit,
+  modifier: Modifier = Modifier,
+  showScrim: Boolean = true,
+  alpha: Float = 0.3f,
+  icon: @Composable () -> Unit,
 ) {
-    Surface(
-        color = when {
-            showScrim -> MaterialTheme.colorScheme.surface.copy(alpha = alpha)
-            else -> Color.Transparent
-        },
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        shape = MaterialTheme.shapes.small,
-        modifier = modifier,
-        content = {
-            Box(Modifier.padding(4.dp)) {
-                icon()
-            }
-        },
-    )
+  Surface(
+    color = when {
+      showScrim -> MaterialTheme.colorScheme.surface.copy(alpha = alpha)
+      else -> Color.Transparent
+    },
+    contentColor = MaterialTheme.colorScheme.onSurface,
+    shape = MaterialTheme.shapes.small,
+    modifier = modifier,
+    content = {
+      Box(Modifier.padding(4.dp)) {
+        icon()
+      }
+    },
+  )
 }
