@@ -7,7 +7,7 @@ internal fun CompositeLogger(
   vararg loggers: Logger?,
 ): CompositeLogger = CompositeLogger(loggers = loggers.filterNotNull())
 
-private class CompositeLogger(
+internal class CompositeLogger(
   private val loggers: Collection<Logger>,
 ) : Logger {
   override fun setUserId(id: String) {
