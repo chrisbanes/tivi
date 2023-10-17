@@ -7,21 +7,21 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class ComposeMultiplatformConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) = with(target) {
-        pluginManager.apply("org.jetbrains.compose")
-        configureCompose()
-    }
+  override fun apply(target: Project) = with(target) {
+    pluginManager.apply("org.jetbrains.compose")
+    configureCompose()
+  }
 }
 
 fun Project.configureCompose() {
-    val composeVersion = libs.findVersion("compose-multiplatform").get().requiredVersion
+  val composeVersion = libs.findVersion("compose-multiplatform").get().requiredVersion
 
-    configurations.configureEach {
-        resolutionStrategy.eachDependency {
-            val group = requested.group
-            if (group.startsWith("org.jetbrains.compose") && !group.endsWith("compiler")) {
-                useVersion(composeVersion)
-            }
-        }
+  configurations.configureEach {
+    resolutionStrategy.eachDependency {
+      val group = requested.group
+      if (group.startsWith("org.jetbrains.compose") && !group.endsWith("compiler")) {
+        useVersion(composeVersion)
+      }
     }
+  }
 }

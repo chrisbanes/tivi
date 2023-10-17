@@ -8,14 +8,14 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
 fun Project.configureLicensee() {
-    with(pluginManager) {
-        apply("app.cash.licensee")
-    }
+  with(pluginManager) {
+    apply("app.cash.licensee")
+  }
 
-    configure<LicenseeExtension> {
-        allow("Apache-2.0")
-        allow("MIT")
-        allow("BSD-3-Clause")
-        allowUrl("https://developer.android.com/studio/terms.html")
-    }
+  configure<LicenseeExtension> {
+    allow("Apache-2.0")
+    allow("MIT")
+    allow("BSD-3-Clause")
+    allowUrl("https://developer.android.com/studio/terms.html")
+  }
 }

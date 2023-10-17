@@ -9,24 +9,24 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
 fun Project.configureAndroid() {
-    android {
-        compileSdkVersion(Versions.compileSdk)
+  android {
+    compileSdkVersion(Versions.COMPILE_SDK)
 
-        defaultConfig {
-            minSdk = Versions.minSdk
-            targetSdk = Versions.targetSdk
-        }
-
-        compileOptions {
-            // https://developer.android.com/studio/write/java8-support
-            isCoreLibraryDesugaringEnabled = true
-        }
+    defaultConfig {
+      minSdk = Versions.MIN_SDK
+      targetSdk = Versions.TARGET_SDK
     }
 
-    dependencies {
-        // https://developer.android.com/studio/write/java8-support
-        "coreLibraryDesugaring"(libs.findLibrary("tools.desugarjdklibs").get())
+    compileOptions {
+      // https://developer.android.com/studio/write/java8-support
+      isCoreLibraryDesugaringEnabled = true
     }
+  }
+
+  dependencies {
+    // https://developer.android.com/studio/write/java8-support
+    "coreLibraryDesugaring"(libs.findLibrary("tools.desugarjdklibs").get())
+  }
 }
 
 private fun Project.android(action: BaseExtension.() -> Unit) = extensions.configure<BaseExtension>(action)
