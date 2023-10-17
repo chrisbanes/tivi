@@ -122,8 +122,8 @@
 				833349452A4CCD9F00F464FE /* Build :shared KMP library */,
 				833349302A4CCCEE00F464FE /* Sources */,
 				833349312A4CCCEE00F464FE /* Frameworks */,
-				38137D782A584D5300A687CC /* Update Settings version */,
 				833349322A4CCCEE00F464FE /* Resources */,
+				38137D782A584D5300A687CC /* Update Settings version */,
 				83AB60022A51F473007FC216 /* Upload Crashlytics symbols */,
 			);
 			buildRules = (
@@ -209,10 +209,11 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Settings.bundle/Root.plist,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "version=\"$MARKETING_VERSION ($CURRENT_PROJECT_VERSION)\"\n/usr/libexec/PlistBuddy \"$SRCROOT/Settings.bundle/Root.plist\" -c \"set PreferenceSpecifiers:0:DefaultValue $version\"\n";
+			shellScript = "version=\"$MARKETING_VERSION ($CURRENT_PROJECT_VERSION)\"\n/usr/libexec/PlistBuddy \\\n  \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Settings.bundle/Root.plist\" \\\n  -c \"set PreferenceSpecifiers:0:DefaultValue $version\"\n";
 		};
 		833349452A4CCD9F00F464FE /* Build :shared KMP library */ = {
 			isa = PBXShellScriptBuildPhase;
