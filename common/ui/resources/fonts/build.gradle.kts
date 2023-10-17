@@ -3,32 +3,32 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.multiplatform")
-    id("app.tivi.compose")
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.compose")
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(compose.ui)
-            }
-        }
-
-        val iosMain by getting {
-            dependencies {
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.components.resources)
-            }
-        }
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        api(compose.ui)
+      }
     }
+
+    val iosMain by getting {
+      dependencies {
+        @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+        implementation(compose.components.resources)
+      }
+    }
+  }
 }
 
 android {
-    namespace = "app.tivi.common.ui.resources"
+  namespace = "app.tivi.common.ui.resources"
 
-    sourceSets["main"].apply {
-        res.srcDirs("src/androidMain/res", "src/commonMain/resources")
-    }
+  sourceSets["main"].apply {
+    res.srcDirs("src/androidMain/res", "src/commonMain/resources")
+  }
 }

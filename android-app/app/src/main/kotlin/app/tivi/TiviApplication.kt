@@ -11,23 +11,23 @@ import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.create
 
 class TiviApplication : Application(), Configuration.Provider {
-    val component: AndroidApplicationComponent by unsafeLazy {
-        AndroidApplicationComponent.create(this)
-    }
+  val component: AndroidApplicationComponent by unsafeLazy {
+    AndroidApplicationComponent.create(this)
+  }
 
-    private lateinit var workerFactory: WorkerFactory
+  private lateinit var workerFactory: WorkerFactory
 
-    override fun onCreate() {
-        super.onCreate()
+  override fun onCreate() {
+    super.onCreate()
 
-        workerFactory = component.workerFactory
+    workerFactory = component.workerFactory
 
-        component.initializers.initialize()
-    }
+    component.initializers.initialize()
+  }
 
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
-    }
+  override fun getWorkManagerConfiguration(): Configuration {
+    return Configuration.Builder()
+      .setWorkerFactory(workerFactory)
+      .build()
+  }
 }

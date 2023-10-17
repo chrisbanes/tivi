@@ -4,8 +4,8 @@
 package app.tivi.data.models
 
 data class PopularShowEntry(
-    override val id: Long = 0,
-    override val showId: Long,
-    override val page: Int,
-    val pageOrder: Int,
+  override val id: Long = 0,
+  override val showId: Long,
+  override val page: Int,
+  val pageOrder: Int,
 ) : PaginatedEntry

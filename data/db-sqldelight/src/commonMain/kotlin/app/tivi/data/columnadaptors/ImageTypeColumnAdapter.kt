@@ -8,9 +8,9 @@ import app.tivi.data.models.ImageType
 import app.tivi.extensions.unsafeLazy
 
 internal object ImageTypeColumnAdapter : ColumnAdapter<ImageType, String> {
-    private val values by unsafeLazy { ImageType.values().associateBy(ImageType::storageKey) }
+  private val values by unsafeLazy { ImageType.values().associateBy(ImageType::storageKey) }
 
-    override fun decode(databaseValue: String): ImageType = values.getValue(databaseValue)
+  override fun decode(databaseValue: String): ImageType = values.getValue(databaseValue)
 
-    override fun encode(value: ImageType): String = value.storageKey
+  override fun encode(value: ImageType): String = value.storageKey
 }

@@ -24,82 +24,82 @@ import app.tivi.data.models.TiviShow
 
 @Composable
 fun BackdropCard(
-    show: TiviShow,
-    modifier: Modifier = Modifier,
-    alignment: Alignment = Alignment.Center,
+  show: TiviShow,
+  modifier: Modifier = Modifier,
+  alignment: Alignment = Alignment.Center,
 ) {
-    Card(
-        shape = MaterialTheme.shapes.extraLarge,
-        modifier = modifier,
-    ) {
-        TiviTheme(useDarkColors = true) {
-            BackdropCardContent(
-                show = show,
-                alignment = alignment,
-            )
-        }
+  Card(
+    shape = MaterialTheme.shapes.extraLarge,
+    modifier = modifier,
+  ) {
+    TiviTheme(useDarkColors = true) {
+      BackdropCardContent(
+        show = show,
+        alignment = alignment,
+      )
     }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackdropCard(
-    show: TiviShow,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    alignment: Alignment = Alignment.Center,
+  show: TiviShow,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  alignment: Alignment = Alignment.Center,
 ) {
-    Card(
-        onClick = onClick,
-        shape = MaterialTheme.shapes.extraLarge,
-        modifier = modifier,
-    ) {
-        TiviTheme(useDarkColors = true) {
-            BackdropCardContent(
-                show = show,
-                alignment = alignment,
-            )
-        }
+  Card(
+    onClick = onClick,
+    shape = MaterialTheme.shapes.extraLarge,
+    modifier = modifier,
+  ) {
+    TiviTheme(useDarkColors = true) {
+      BackdropCardContent(
+        show = show,
+        alignment = alignment,
+      )
     }
+  }
 }
 
 @Composable
 private fun BackdropCardContent(
-    show: TiviShow,
-    alignment: Alignment = Alignment.Center,
+  show: TiviShow,
+  alignment: Alignment = Alignment.Center,
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        AsyncImage(
-            model = show.asImageModel(ImageType.BACKDROP),
-            contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: "show"),
-            modifier = Modifier.matchParentSize(),
-            contentScale = ContentScale.Crop,
-            alignment = alignment,
-        )
+  Box(modifier = Modifier.fillMaxSize()) {
+    AsyncImage(
+      model = show.asImageModel(ImageType.BACKDROP),
+      contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: "show"),
+      modifier = Modifier.matchParentSize(),
+      contentScale = ContentScale.Crop,
+      alignment = alignment,
+    )
 
-        Spacer(
-            Modifier.matchParentSize()
-                .drawForegroundGradientScrim(MaterialTheme.colorScheme.surface),
-        )
+    Spacer(
+      Modifier.matchParentSize()
+        .drawForegroundGradientScrim(MaterialTheme.colorScheme.surface),
+    )
 
-        Text(
-            text = show.title ?: "No title",
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.BottomStart),
-        )
-    }
+    Text(
+      text = show.title ?: "No title",
+      style = MaterialTheme.typography.labelLarge,
+      color = MaterialTheme.colorScheme.onSurface,
+      modifier = Modifier
+        .padding(16.dp)
+        .align(Alignment.BottomStart),
+    )
+  }
 }
 
 @Composable
 fun PlaceholderBackdropCard(
-    modifier: Modifier = Modifier,
+  modifier: Modifier = Modifier,
 ) {
-    Card(modifier = modifier) {
-        Box {
-            // TODO: display something better
-        }
+  Card(modifier = modifier) {
+    Box {
+      // TODO: display something better
     }
+  }
 }

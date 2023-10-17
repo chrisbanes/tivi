@@ -8,8 +8,8 @@ import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.TiviShow
 
 interface FollowedShowsDataSource {
-    suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>>
-    suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>)
-    suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>)
-    suspend fun getFollowedListId(): TraktList
+  suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>>
+  suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>)
+  suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>)
+  suspend fun getFollowedListId(): TraktList
 }

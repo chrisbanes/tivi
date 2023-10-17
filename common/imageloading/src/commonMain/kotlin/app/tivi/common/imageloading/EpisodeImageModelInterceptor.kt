@@ -17,33 +17,33 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class EpisodeImageModelInterceptor(
-    private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
-    private val repository: SeasonsEpisodesRepository,
-    private val density: () -> Density,
+  private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
+  private val repository: SeasonsEpisodesRepository,
+  private val density: () -> Density,
 ) : Interceptor {
-    override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
-        val request = when (val data = chain.request.data) {
-            is EpisodeImageModel -> handle(chain, data)
-            else -> chain.request
-        }
-        return chain.proceed(request)
+  override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
+    val request = when (val data = chain.request.data) {
+      is EpisodeImageModel -> handle(chain, data)
+      else -> chain.request
+    }
+    return chain.proceed(request)
+  }
+
+  private suspend fun handle(chain: Interceptor.Chain, model: EpisodeImageModel): ImageRequest {
+    if (repository.needEpisodeUpdate(model.id, expiry = 180.days.inPast)) {
+      runCatching { repository.updateEpisode(model.id) }
     }
 
-    private suspend fun handle(chain: Interceptor.Chain, model: EpisodeImageModel): ImageRequest {
-        if (repository.needEpisodeUpdate(model.id, expiry = 180.days.inPast)) {
-            runCatching { repository.updateEpisode(model.id) }
-        }
+    return repository.getEpisode(model.id)?.tmdbBackdropPath?.let { backdropPath ->
+      val size = chain.options.sizeResolver.run { density().size() }
+      val url = tmdbImageUrlProvider.value.getBackdropUrl(
+        path = backdropPath,
+        imageWidth = size.width.roundToInt(),
+      )
 
-        return repository.getEpisode(model.id)?.tmdbBackdropPath?.let { backdropPath ->
-            val size = chain.options.sizeResolver.run { density().size() }
-            val url = tmdbImageUrlProvider.value.getBackdropUrl(
-                path = backdropPath,
-                imageWidth = size.width.roundToInt(),
-            )
-
-            ImageRequest(chain.request) {
-                data(url)
-            }
-        } ?: chain.request
-    }
+      ImageRequest(chain.request) {
+        data(url)
+      }
+    } ?: chain.request
+  }
 }

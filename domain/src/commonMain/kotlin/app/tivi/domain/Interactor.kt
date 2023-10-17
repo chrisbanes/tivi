@@ -19,72 +19,72 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withTimeout
 
 abstract class Interactor<in P, R> {
-    private val count = atomic(0)
-    private val loadingState = MutableStateFlow(count.value)
+  private val count = atomic(0)
+  private val loadingState = MutableStateFlow(count.value)
 
-    val inProgress: Flow<Boolean> = loadingState
-        .map { it > 0 }
-        .distinctUntilChanged()
+  val inProgress: Flow<Boolean> = loadingState
+    .map { it > 0 }
+    .distinctUntilChanged()
 
-    private fun addLoader() {
-        loadingState.value = count.incrementAndGet()
+  private fun addLoader() {
+    loadingState.value = count.incrementAndGet()
+  }
+
+  private fun removeLoader() {
+    loadingState.value = count.decrementAndGet()
+  }
+
+  suspend operator fun invoke(
+    params: P,
+    timeout: Duration = DefaultTimeout,
+  ): Result<R> = try {
+    addLoader()
+    runCatching {
+      withTimeout(timeout) {
+        doWork(params)
+      }
     }
+  } finally {
+    removeLoader()
+  }
 
-    private fun removeLoader() {
-        loadingState.value = count.decrementAndGet()
-    }
+  protected abstract suspend fun doWork(params: P): R
 
-    suspend operator fun invoke(
-        params: P,
-        timeout: Duration = DefaultTimeout,
-    ): Result<R> = try {
-        addLoader()
-        runCatching {
-            withTimeout(timeout) {
-                doWork(params)
-            }
-        }
-    } finally {
-        removeLoader()
-    }
-
-    protected abstract suspend fun doWork(params: P): R
-
-    companion object {
-        internal val DefaultTimeout = 5.minutes
-    }
+  companion object {
+    internal val DefaultTimeout = 5.minutes
+  }
 }
 
 suspend operator fun <R> Interactor<Unit, R>.invoke(
-    timeout: Duration = Interactor.DefaultTimeout,
+  timeout: Duration = Interactor.DefaultTimeout,
 ) = invoke(Unit, timeout)
 
 abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T : Any> : SubjectInteractor<P, PagingData<T>>() {
-    interface Parameters<T : Any> {
-        val pagingConfig: PagingConfig
-    }
+  interface Parameters<T : Any> {
+    val pagingConfig: PagingConfig
+  }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
 abstract class SubjectInteractor<P : Any, T> {
-    // Ideally this would be buffer = 0, since we use flatMapLatest below, BUT invoke is not
-    // suspending. This means that we can't suspend while flatMapLatest cancels any
-    // existing flows. The buffer of 1 means that we can use tryEmit() and buffer the value
-    // instead, resulting in mostly the same result.
-    private val paramState = MutableSharedFlow<P>(
-        replay = 1,
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
+  // Ideally this would be buffer = 0, since we use flatMapLatest below, BUT invoke is not
+  // suspending. This means that we can't suspend while flatMapLatest cancels any
+  // existing flows. The buffer of 1 means that we can use tryEmit() and buffer the value
+  // instead, resulting in mostly the same result.
+  private val paramState = MutableSharedFlow<P>(
+    replay = 1,
+    extraBufferCapacity = 1,
+    onBufferOverflow = BufferOverflow.DROP_OLDEST,
+  )
 
-    val flow: Flow<T> = paramState
-        .distinctUntilChanged()
-        .flatMapLatest { createObservable(it) }
-        .distinctUntilChanged()
+  val flow: Flow<T> = paramState
+    .distinctUntilChanged()
+    .flatMapLatest { createObservable(it) }
+    .distinctUntilChanged()
 
-    operator fun invoke(params: P) {
-        paramState.tryEmit(params)
-    }
+  operator fun invoke(params: P) {
+    paramState.tryEmit(params)
+  }
 
-    protected abstract fun createObservable(params: P): Flow<T>
+  protected abstract fun createObservable(params: P): Flow<T>
 }

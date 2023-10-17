@@ -19,32 +19,32 @@ import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun ExpandingText(
-    text: String,
-    modifier: Modifier = Modifier,
-    style: TextStyle = MaterialTheme.typography.bodyMedium,
-    expandable: Boolean = true,
-    collapsedMaxLines: Int = 4,
-    expandedMaxLines: Int = Int.MAX_VALUE,
+  text: String,
+  modifier: Modifier = Modifier,
+  style: TextStyle = MaterialTheme.typography.bodyMedium,
+  expandable: Boolean = true,
+  collapsedMaxLines: Int = 4,
+  expandedMaxLines: Int = Int.MAX_VALUE,
 ) {
-    var canTextExpand by remember(text) { mutableStateOf(true) }
-    var expanded by remember { mutableStateOf(false) }
+  var canTextExpand by remember(text) { mutableStateOf(true) }
+  var expanded by remember { mutableStateOf(false) }
 
-    Text(
-        text = text,
-        style = style,
-        overflow = TextOverflow.Ellipsis,
-        maxLines = if (expanded) expandedMaxLines else collapsedMaxLines,
-        modifier = Modifier
-            .clickable(
-                enabled = expandable && canTextExpand,
-                onClick = { expanded = !expanded },
-            )
-            .animateContentSize(animationSpec = spring())
-            .then(modifier),
-        onTextLayout = {
-            if (!expanded) {
-                canTextExpand = it.hasVisualOverflow
-            }
-        },
-    )
+  Text(
+    text = text,
+    style = style,
+    overflow = TextOverflow.Ellipsis,
+    maxLines = if (expanded) expandedMaxLines else collapsedMaxLines,
+    modifier = Modifier
+      .clickable(
+        enabled = expandable && canTextExpand,
+        onClick = { expanded = !expanded },
+      )
+      .animateContentSize(animationSpec = spring())
+      .then(modifier),
+    onTextLayout = {
+      if (!expanded) {
+        canTextExpand = it.hasVisualOverflow
+      }
+    },
+  )
 }

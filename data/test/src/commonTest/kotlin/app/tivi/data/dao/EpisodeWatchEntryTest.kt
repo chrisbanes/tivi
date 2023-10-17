@@ -30,78 +30,78 @@ import kotlin.test.assertFails
 import me.tatarka.inject.annotations.Component
 
 class EpisodeWatchEntryTest : DatabaseTest() {
-    private lateinit var showsDao: TiviShowDao
-    private lateinit var episodesDao: EpisodesDao
-    private lateinit var seasonsDao: SeasonsDao
-    private lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
+  private lateinit var showsDao: TiviShowDao
+  private lateinit var episodesDao: EpisodesDao
+  private lateinit var seasonsDao: SeasonsDao
+  private lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
 
-    @BeforeTest
-    fun setup() {
-        val component = EpisodeWatchEntryTestComponent::class.create(applicationComponent)
-        showsDao = component.showsDao
-        seasonsDao = component.seasonsDao
-        episodesDao = component.episodesDao
-        episodeWatchEntryDao = component.episodeWatchEntryDao
+  @BeforeTest
+  fun setup() {
+    val component = EpisodeWatchEntryTestComponent::class.create(applicationComponent)
+    showsDao = component.showsDao
+    seasonsDao = component.seasonsDao
+    episodesDao = component.episodesDao
+    episodeWatchEntryDao = component.episodeWatchEntryDao
 
-        // We'll assume that there's a show, season and s1_episodes in the db
-        showsDao.insert(show)
-        seasonsDao.insert(s1)
-        episodesDao.insert(s1_episodes)
+    // We'll assume that there's a show, season and s1_episodes in the db
+    showsDao.insert(show)
+    seasonsDao.insert(s1)
+    episodesDao.insert(s1_episodes)
+  }
+
+  @Test
+  fun insert() {
+    episodeWatchEntryDao.insert(s1e1w)
+    assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id)).isEqualTo(s1e1w)
+  }
+
+  @Test
+  fun insert_withSameTraktId() {
+    episodeWatchEntryDao.insert(s1e1w)
+
+    assertFails {
+      // Make a copy with a 0 id
+      val copy = s1e1w.copy(id = 0)
+      episodeWatchEntryDao.insert(copy)
     }
+  }
 
-    @Test
-    fun insert() {
-        episodeWatchEntryDao.insert(s1e1w)
-        assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id)).isEqualTo(s1e1w)
-    }
+  @Test
+  fun fetchEntries_WithPendingSendAction() {
+    episodeWatchEntryDao.insert(s1e1w, episodeWatch2PendingSend)
+    assertThat(episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId))
+      .containsExactly(episodeWatch2PendingSend)
+  }
 
-    @Test
-    fun insert_withSameTraktId() {
-        episodeWatchEntryDao.insert(s1e1w)
+  @Test
+  fun fetchEntries_WithPendingDeleteAction() {
+    episodeWatchEntryDao.insert(s1e1w, episodeWatch2PendingDelete)
+    assertThat(episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId))
+      .containsExactly(episodeWatch2PendingDelete)
+  }
 
-        assertFails {
-            // Make a copy with a 0 id
-            val copy = s1e1w.copy(id = 0)
-            episodeWatchEntryDao.insert(copy)
-        }
-    }
+  @Test
+  fun delete() {
+    episodeWatchEntryDao.insert(s1e1w)
+    episodeWatchEntryDao.deleteEntity(s1e1w)
+    assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id)).isNull()
+  }
 
-    @Test
-    fun fetchEntries_WithPendingSendAction() {
-        episodeWatchEntryDao.insert(s1e1w, episodeWatch2PendingSend)
-        assertThat(episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId))
-            .containsExactly(episodeWatch2PendingSend)
-    }
-
-    @Test
-    fun fetchEntries_WithPendingDeleteAction() {
-        episodeWatchEntryDao.insert(s1e1w, episodeWatch2PendingDelete)
-        assertThat(episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId))
-            .containsExactly(episodeWatch2PendingDelete)
-    }
-
-    @Test
-    fun delete() {
-        episodeWatchEntryDao.insert(s1e1w)
-        episodeWatchEntryDao.deleteEntity(s1e1w)
-        assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id)).isNull()
-    }
-
-    @Test
-    fun deleteEpisode_deletesWatch() {
-        episodeWatchEntryDao.insert(s1e1w)
-        // Now delete episode
-        episodesDao.deleteEntity(s1e1)
-        assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id)).isNull()
-    }
+  @Test
+  fun deleteEpisode_deletesWatch() {
+    episodeWatchEntryDao.insert(s1e1w)
+    // Now delete episode
+    episodesDao.deleteEntity(s1e1)
+    assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id)).isNull()
+  }
 }
 
 @Component
 abstract class EpisodeWatchEntryTestComponent(
-    @Component val applicationComponent: TestApplicationComponent,
+  @Component val applicationComponent: TestApplicationComponent,
 ) {
-    abstract val showsDao: TiviShowDao
-    abstract val episodesDao: EpisodesDao
-    abstract val seasonsDao: SeasonsDao
-    abstract val episodeWatchEntryDao: EpisodeWatchEntryDao
+  abstract val showsDao: TiviShowDao
+  abstract val episodesDao: EpisodesDao
+  abstract val seasonsDao: SeasonsDao
+  abstract val episodeWatchEntryDao: EpisodeWatchEntryDao
 }

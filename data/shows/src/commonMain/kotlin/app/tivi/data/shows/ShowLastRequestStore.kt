@@ -12,5 +12,5 @@ import me.tatarka.inject.annotations.Inject
 @ApplicationScope
 @Inject
 class ShowLastRequestStore(
-    dao: LastRequestDao,
+  dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.SHOW_DETAILS, dao)

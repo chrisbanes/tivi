@@ -6,5 +6,5 @@ package app.tivi.data.traktusers
 import app.tivi.data.models.TraktUser
 
 fun interface UsersDataSource {
-    suspend fun getUser(slug: String): TraktUser
+  suspend fun getUser(slug: String): TraktUser
 }

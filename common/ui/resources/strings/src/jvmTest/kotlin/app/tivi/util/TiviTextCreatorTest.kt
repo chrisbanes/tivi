@@ -14,22 +14,22 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 
 class TiviTextCreatorTest {
-    private val tiviDateFormatter = TiviDateFormatter(
-        locale = Locale.UK,
-        timeZone = TimeZone.UTC,
-    )
-    private val strings = EnTiviStrings
-    private val textCreator = TiviTextCreator(tiviDateFormatter, strings)
+  private val tiviDateFormatter = TiviDateFormatter(
+    locale = Locale.UK,
+    timeZone = TimeZone.UTC,
+  )
+  private val strings = EnTiviStrings
+  private val textCreator = TiviTextCreator(tiviDateFormatter, strings)
 
-    private val tiviShow = TiviShow(
-        title = "My Show",
-        airsDay = DayOfWeek.SUNDAY,
-        airsTime = LocalTime(20, 0, 0, 0),
-        airsTimeZone = TimeZone.UTC,
-    )
+  private val tiviShow = TiviShow(
+    title = "My Show",
+    airsDay = DayOfWeek.SUNDAY,
+    airsTime = LocalTime(20, 0, 0, 0),
+    airsTimeZone = TimeZone.UTC,
+  )
 
-    @Test
-    fun airsDate() {
-        assertThat(textCreator.airsText(tiviShow)).isEqualTo("Sun at 20:00")
-    }
+  @Test
+  fun airsDate() {
+    assertThat(textCreator.airsText(tiviShow)).isEqualTo("Sun at 20:00")
+  }
 }

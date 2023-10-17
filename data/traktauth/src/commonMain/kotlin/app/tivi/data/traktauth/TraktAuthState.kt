@@ -4,6 +4,6 @@
 package app.tivi.data.traktauth
 
 enum class TraktAuthState {
-    LOGGED_IN,
-    LOGGED_OUT,
+  LOGGED_IN,
+  LOGGED_OUT,
 }

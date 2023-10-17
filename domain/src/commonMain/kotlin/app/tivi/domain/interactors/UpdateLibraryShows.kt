@@ -24,61 +24,61 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateLibraryShows(
-    private val followedShowsRepository: FollowedShowsRepository,
-    private val seasonEpisodeRepository: SeasonsEpisodesRepository,
-    private val showStore: ShowStore,
-    private val watchedShowsLastRequestStore: WatchedShowsLastRequestStore,
-    private val watchedShowsStore: WatchedShowsStore,
-    private val watchedShowDao: WatchedShowDao,
-    private val logger: Logger,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val followedShowsRepository: FollowedShowsRepository,
+  private val seasonEpisodeRepository: SeasonsEpisodesRepository,
+  private val showStore: ShowStore,
+  private val watchedShowsLastRequestStore: WatchedShowsLastRequestStore,
+  private val watchedShowsStore: WatchedShowsStore,
+  private val watchedShowDao: WatchedShowDao,
+  private val logger: Logger,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateLibraryShows.Params, Unit>() {
 
-    override suspend fun doWork(params: Params): Unit = withContext(dispatchers.io) {
-        val watchedShowsDeferred = async {
-            // We use a low threshold here as the data contains a 'last updated' value.
-            // It's a quick way to know whether to cascade the updates below
-            watchedShowsStore.fetch(
-                key = Unit,
-                forceFresh = params.forceRefresh ||
-                    watchedShowsLastRequestStore.isRequestExpired(1.hours),
-            )
-        }
-        val followedShowsJob = launch {
-            if (params.forceRefresh || followedShowsRepository.needFollowedShowsSync()) {
-                followedShowsRepository.syncFollowedShows()
-            }
-        }
-
-        // await the watched shows and followed shows update. We need both
-        followedShowsJob.join()
-        // Finally sync the seasons/episodes and watches
-        watchedShowsDeferred.await().parallelForEach { entry ->
-            ensureActive()
-            showStore.fetch(entry.showId)
-
-            ensureActive()
-            try {
-                with(seasonEpisodeRepository) {
-                    val watchedEntry = watchedShowDao.entryWithShowId(entry.showId)
-
-                    if (needShowSeasonsUpdate(entry.showId, watchedEntry?.lastUpdated)) {
-                        updateSeasonsEpisodes(entry.showId)
-                    }
-
-                    ensureActive()
-
-                    if (needShowEpisodeWatchesSync(entry.showId, watchedEntry?.lastUpdated)) {
-                        updateShowEpisodeWatches(entry.showId)
-                    }
-                }
-            } catch (ce: CancellationException) {
-                throw ce
-            } catch (t: Throwable) {
-                logger.e(t) { "Error while updating show seasons/episodes: ${entry.showId}" }
-            }
-        }
+  override suspend fun doWork(params: Params): Unit = withContext(dispatchers.io) {
+    val watchedShowsDeferred = async {
+      // We use a low threshold here as the data contains a 'last updated' value.
+      // It's a quick way to know whether to cascade the updates below
+      watchedShowsStore.fetch(
+        key = Unit,
+        forceFresh = params.forceRefresh ||
+          watchedShowsLastRequestStore.isRequestExpired(1.hours),
+      )
+    }
+    val followedShowsJob = launch {
+      if (params.forceRefresh || followedShowsRepository.needFollowedShowsSync()) {
+        followedShowsRepository.syncFollowedShows()
+      }
     }
 
-    data class Params(val forceRefresh: Boolean)
+    // await the watched shows and followed shows update. We need both
+    followedShowsJob.join()
+    // Finally sync the seasons/episodes and watches
+    watchedShowsDeferred.await().parallelForEach { entry ->
+      ensureActive()
+      showStore.fetch(entry.showId)
+
+      ensureActive()
+      try {
+        with(seasonEpisodeRepository) {
+          val watchedEntry = watchedShowDao.entryWithShowId(entry.showId)
+
+          if (needShowSeasonsUpdate(entry.showId, watchedEntry?.lastUpdated)) {
+            updateSeasonsEpisodes(entry.showId)
+          }
+
+          ensureActive()
+
+          if (needShowEpisodeWatchesSync(entry.showId, watchedEntry?.lastUpdated)) {
+            updateShowEpisodeWatches(entry.showId)
+          }
+        }
+      } catch (ce: CancellationException) {
+        throw ce
+      } catch (t: Throwable) {
+        logger.e(t) { "Error while updating show seasons/episodes: ${entry.showId}" }
+      }
+    }
+  }
+
+  data class Params(val forceRefresh: Boolean)
 }

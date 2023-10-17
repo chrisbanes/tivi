@@ -3,28 +3,28 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.multiplatform")
-    id("app.tivi.compose")
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.compose")
 }
 
 android {
-    namespace = "app.tivi.ui.overlays"
+  namespace = "app.tivi.ui.overlays"
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.common.ui.compose)
-                implementation(projects.common.ui.screens)
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(projects.common.ui.compose)
+        implementation(projects.common.ui.screens)
 
-                implementation(compose.material3)
-                implementation(compose.animation)
+        implementation(compose.material3)
+        implementation(compose.animation)
 
-                api(libs.circuit.foundation)
-                api(libs.circuit.overlay)
-            }
-        }
+        api(libs.circuit.foundation)
+        api(libs.circuit.overlay)
+      }
     }
+  }
 }

@@ -15,26 +15,26 @@ import platform.UIKit.UIScreen
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface SharedPlatformApplicationComponent {
-    @Provides
-    fun provideNsUserDefaults(): NSUserDefaults = NSUserDefaults.standardUserDefaults
+  @Provides
+  fun provideNsUserDefaults(): NSUserDefaults = NSUserDefaults.standardUserDefaults
 
-    @Provides
-    fun provideDensity(): Density = Density(density = UIScreen.mainScreen.scale.toFloat())
+  @Provides
+  fun provideDensity(): Density = Density(density = UIScreen.mainScreen.scale.toFloat())
 
-    @OptIn(ExperimentalNativeApi::class)
-    @ApplicationScope
-    @Provides
-    fun provideApplicationId(
-        flavor: Flavor,
-    ): ApplicationInfo = ApplicationInfo(
-        packageName = NSBundle.mainBundle.bundleIdentifier ?: error("Bundle ID not found"),
-        debugBuild = Platform.isDebugBinary,
-        flavor = flavor,
-        versionName = NSBundle.mainBundle.infoDictionary
-            ?.get("CFBundleShortVersionString") as? String
-            ?: "",
-        versionCode = (NSBundle.mainBundle.infoDictionary?.get("CFBundleVersion") as? String)
-            ?.toIntOrNull()
-            ?: 0,
-    )
+  @OptIn(ExperimentalNativeApi::class)
+  @ApplicationScope
+  @Provides
+  fun provideApplicationId(
+    flavor: Flavor,
+  ): ApplicationInfo = ApplicationInfo(
+    packageName = NSBundle.mainBundle.bundleIdentifier ?: error("Bundle ID not found"),
+    debugBuild = Platform.isDebugBinary,
+    flavor = flavor,
+    versionName = NSBundle.mainBundle.infoDictionary
+      ?.get("CFBundleShortVersionString") as? String
+      ?: "",
+    versionCode = (NSBundle.mainBundle.infoDictionary?.get("CFBundleVersion") as? String)
+      ?.toIntOrNull()
+      ?: 0,
+  )
 }

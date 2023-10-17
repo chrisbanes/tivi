@@ -9,9 +9,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbShowToTiviShow : Mapper<TmdbShow, TiviShow> {
-    override fun map(from: TmdbShow) = TiviShow(
-        tmdbId = from.id,
-        title = from.name,
-        summary = from.overview,
-    )
+  override fun map(from: TmdbShow) = TiviShow(
+    tmdbId = from.id,
+    title = from.name,
+    summary = from.overview,
+  )
 }

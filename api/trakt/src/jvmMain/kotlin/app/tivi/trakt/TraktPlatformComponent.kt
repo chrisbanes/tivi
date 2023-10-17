@@ -20,50 +20,50 @@ import okhttp3.OkHttpClient
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface TraktPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideTrakt(
-        client: OkHttpClient,
-        authStore: AuthStore,
-        oauthInfo: TraktOAuthInfo,
-        traktAuthRepository: Lazy<TraktAuthRepository>,
-    ): Trakt = Trakt {
-        traktApiKey = oauthInfo.clientId
-        maxRetries = 3
+  @ApplicationScope
+  @Provides
+  fun provideTrakt(
+    client: OkHttpClient,
+    authStore: AuthStore,
+    oauthInfo: TraktOAuthInfo,
+    traktAuthRepository: Lazy<TraktAuthRepository>,
+  ): Trakt = Trakt {
+    traktApiKey = oauthInfo.clientId
+    maxRetries = 3
 
-        httpClient(OkHttp) {
-            // Probably want to move to using Ktor's caching, timeouts, etc eventually
-            engine {
-                preconfigured = client
-            }
+    httpClient(OkHttp) {
+      // Probably want to move to using Ktor's caching, timeouts, etc eventually
+      engine {
+        preconfigured = client
+      }
 
-            install(HttpRequestRetry) {
-                retryIf(5) { _, httpResponse ->
-                    when {
-                        httpResponse.status.value in 500..599 -> true
-                        httpResponse.status == HttpStatusCode.TooManyRequests -> true
-                        else -> false
-                    }
-                }
-            }
-
-            install(Auth) {
-                bearer {
-                    loadTokens {
-                        traktAuthRepository.value.getAuthState()
-                            ?.let { BearerTokens(it.accessToken, it.refreshToken) }
-                    }
-
-                    refreshTokens {
-                        traktAuthRepository.value.refreshTokens()
-                            ?.let { BearerTokens(it.accessToken, it.refreshToken) }
-                    }
-
-                    sendWithoutRequest { request ->
-                        request.url.host == "api.trakt.tv"
-                    }
-                }
-            }
+      install(HttpRequestRetry) {
+        retryIf(5) { _, httpResponse ->
+          when {
+            httpResponse.status.value in 500..599 -> true
+            httpResponse.status == HttpStatusCode.TooManyRequests -> true
+            else -> false
+          }
         }
+      }
+
+      install(Auth) {
+        bearer {
+          loadTokens {
+            traktAuthRepository.value.getAuthState()
+              ?.let { BearerTokens(it.accessToken, it.refreshToken) }
+          }
+
+          refreshTokens {
+            traktAuthRepository.value.refreshTokens()
+              ?.let { BearerTokens(it.accessToken, it.refreshToken) }
+          }
+
+          sendWithoutRequest { request ->
+            request.url.host == "api.trakt.tv"
+          }
+        }
+      }
     }
+  }
 }

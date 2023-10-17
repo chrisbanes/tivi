@@ -14,15 +14,15 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AndroidLicensesFetcherImpl(
-    private val context: Application,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val context: Application,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : LicensesFetcher {
-    @ExperimentalSerializationApi
-    override suspend fun invoke(): List<LicenseItem> = withContext(dispatchers.io) {
-        val json = Json {
-            ignoreUnknownKeys = true
-            explicitNulls = false
-        }
-        json.decodeFromStream(context.assets.open("licenses.json"))
+  @ExperimentalSerializationApi
+  override suspend fun invoke(): List<LicenseItem> = withContext(dispatchers.io) {
+    val json = Json {
+      ignoreUnknownKeys = true
+      explicitNulls = false
     }
+    json.decodeFromStream(context.assets.open("licenses.json"))
+  }
 }

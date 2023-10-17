@@ -20,53 +20,53 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TrendingShowsUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> TrendingShowsPresenter,
+  private val presenterFactory: (Navigator) -> TrendingShowsPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is TrendingShowsScreen -> presenterFactory(navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is TrendingShowsScreen -> presenterFactory(navigator)
+    else -> null
+  }
 }
 
 @Inject
 class TrendingShowsPresenter(
-    @Assisted private val navigator: Navigator,
-    private val pagingInteractor: ObservePagedTrendingShows,
+  @Assisted private val navigator: Navigator,
+  private val pagingInteractor: ObservePagedTrendingShows,
 ) : Presenter<TrendingShowsUiState> {
 
-    @Composable
-    override fun present(): TrendingShowsUiState {
-        val items = pagingInteractor.flow
-            .rememberCachedPagingFlow()
-            .collectAsLazyPagingItems()
+  @Composable
+  override fun present(): TrendingShowsUiState {
+    val items = pagingInteractor.flow
+      .rememberCachedPagingFlow()
+      .collectAsLazyPagingItems()
 
-        LaunchedEffect(Unit) {
-            pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
-        }
-
-        fun eventSink(event: TrendingShowsUiEvent) {
-            when (event) {
-                TrendingShowsUiEvent.NavigateUp -> navigator.pop()
-                is TrendingShowsUiEvent.OpenShowDetails -> {
-                    navigator.goTo(ShowDetailsScreen(event.showId))
-                }
-            }
-        }
-
-        return TrendingShowsUiState(
-            items = items,
-            eventSink = ::eventSink,
-        )
+    LaunchedEffect(Unit) {
+      pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
     }
 
-    companion object {
-        val PAGING_CONFIG = PagingConfig(
-            pageSize = 60,
-            initialLoadSize = 60,
-        )
+    fun eventSink(event: TrendingShowsUiEvent) {
+      when (event) {
+        TrendingShowsUiEvent.NavigateUp -> navigator.pop()
+        is TrendingShowsUiEvent.OpenShowDetails -> {
+          navigator.goTo(ShowDetailsScreen(event.showId))
+        }
+      }
     }
+
+    return TrendingShowsUiState(
+      items = items,
+      eventSink = ::eventSink,
+    )
+  }
+
+  companion object {
+    val PAGING_CONFIG = PagingConfig(
+      pageSize = 60,
+      initialLoadSize = 60,
+    )
+  }
 }

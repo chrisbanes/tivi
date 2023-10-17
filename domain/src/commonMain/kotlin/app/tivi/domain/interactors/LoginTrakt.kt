@@ -10,7 +10,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LoginTrakt(
-    private val traktAuthRepository: TraktAuthRepository,
+  private val traktAuthRepository: TraktAuthRepository,
 ) : Interactor<Unit, AuthState?>() {
-    override suspend fun doWork(params: Unit) = traktAuthRepository.login()
+  override suspend fun doWork(params: Unit) = traktAuthRepository.login()
 }

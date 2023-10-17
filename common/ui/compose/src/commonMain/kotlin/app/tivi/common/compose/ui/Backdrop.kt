@@ -22,62 +22,62 @@ import app.tivi.common.compose.LocalStrings
 
 @Composable
 fun Backdrop(
-    imageModel: Any?,
-    modifier: Modifier = Modifier,
-    shape: Shape = MaterialTheme.shapes.medium,
-    overline: (@Composable () -> Unit)? = null,
-    title: (@Composable () -> Unit)? = null,
+  imageModel: Any?,
+  modifier: Modifier = Modifier,
+  shape: Shape = MaterialTheme.shapes.medium,
+  overline: (@Composable () -> Unit)? = null,
+  title: (@Composable () -> Unit)? = null,
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.onSurface
-            .copy(alpha = 0.2f)
-            .compositeOver(MaterialTheme.colorScheme.surface),
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        shape = shape,
-        modifier = modifier,
-    ) {
-        Box {
-            if (imageModel != null) {
-                val strings = LocalStrings.current
+  Surface(
+    color = MaterialTheme.colorScheme.onSurface
+      .copy(alpha = 0.2f)
+      .compositeOver(MaterialTheme.colorScheme.surface),
+    contentColor = MaterialTheme.colorScheme.onSurface,
+    shape = shape,
+    modifier = modifier,
+  ) {
+    Box {
+      if (imageModel != null) {
+        val strings = LocalStrings.current
 
-                AsyncImage(
-                    model = imageModel,
-                    contentDescription = strings.cdShowPoster,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .let { mod ->
-                            if (title != null) {
-                                mod.drawForegroundGradientScrim(
-                                    MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
-                                )
-                            } else {
-                                mod
-                            }
-                        },
+        AsyncImage(
+          model = imageModel,
+          contentDescription = strings.cdShowPoster,
+          contentScale = ContentScale.Crop,
+          modifier = Modifier
+            .fillMaxSize()
+            .let { mod ->
+              if (title != null) {
+                mod.drawForegroundGradientScrim(
+                  MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
                 )
-            }
+              } else {
+                mod
+              }
+            },
+        )
+      }
 
-            Column(
-                Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(Layout.gutter * 2),
-            ) {
-                if (overline != null) {
-                    CompositionLocalProvider(
-                        LocalTextStyle provides MaterialTheme.typography.labelSmall,
-                    ) {
-                        overline()
-                    }
-                }
-                if (title != null) {
-                    CompositionLocalProvider(
-                        LocalTextStyle provides MaterialTheme.typography.headlineSmall,
-                    ) {
-                        title()
-                    }
-                }
-            }
+      Column(
+        Modifier
+          .align(Alignment.BottomStart)
+          .padding(Layout.gutter * 2),
+      ) {
+        if (overline != null) {
+          CompositionLocalProvider(
+            LocalTextStyle provides MaterialTheme.typography.labelSmall,
+          ) {
+            overline()
+          }
         }
+        if (title != null) {
+          CompositionLocalProvider(
+            LocalTextStyle provides MaterialTheme.typography.headlineSmall,
+          ) {
+            title()
+          }
+        }
+      }
     }
+  }
 }

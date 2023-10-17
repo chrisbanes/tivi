@@ -16,20 +16,20 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktRelatedShowsDataSourceImpl(
-    private val idMapper: ShowIdToTraktOrImdbIdMapper,
-    private val showService: Lazy<TraktShowsApi>,
-    showMapper: TraktShowToTiviShow,
+  private val idMapper: ShowIdToTraktOrImdbIdMapper,
+  private val showService: Lazy<TraktShowsApi>,
+  showMapper: TraktShowToTiviShow,
 ) : TraktRelatedShowsDataSource {
-    private val entryMapper = IndexedMapper<TraktShow, RelatedShowEntry> { index, _ ->
-        RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
-    }
-    private val resultMapper = pairMapperOf(showMapper, entryMapper)
+  private val entryMapper = IndexedMapper<TraktShow, RelatedShowEntry> { index, _ ->
+    RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
+  }
+  private val resultMapper = pairMapperOf(showMapper, entryMapper)
 
-    override suspend operator fun invoke(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
-        val id = idMapper.map(showId) ?: error("No Trakt allowed ID for show with ID: $showId")
+  override suspend operator fun invoke(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
+    val id = idMapper.map(showId) ?: error("No Trakt allowed ID for show with ID: $showId")
 
-        return showService.value
-            .getRelated(id, 0, 10, TraktExtended.NO_SEASONS)
-            .let { resultMapper(it) }
-    }
+    return showService.value
+      .getRelated(id, 0, 10, TraktExtended.NO_SEASONS)
+      .let { resultMapper(it) }
+  }
 }

@@ -27,81 +27,81 @@ val show2 = TiviShow(id = show2Id, title = "G'day mate", traktId = 546)
 
 const val s1_id = 1L
 val s1 = Season(
-    id = s1_id,
-    showId = showId,
-    title = "Season 1",
-    number = 1,
-    traktId = 5443,
+  id = s1_id,
+  showId = showId,
+  title = "Season 1",
+  number = 1,
+  traktId = 5443,
 )
 
 const val s2_id = 2L
 val s2 = Season(
-    id = s2_id,
-    showId = showId,
-    title = "Season 2",
-    number = 2,
-    traktId = 5434,
+  id = s2_id,
+  showId = showId,
+  title = "Season 2",
+  number = 2,
+  traktId = 5434,
 )
 
 const val s0_id = 3L
 val s0 = Season(
-    id = s0_id,
-    showId = showId,
-    title = "Specials",
-    number = Season.NUMBER_SPECIALS,
-    traktId = 7042,
+  id = s0_id,
+  showId = showId,
+  title = "Specials",
+  number = Season.NUMBER_SPECIALS,
+  traktId = 7042,
 )
 
 private val s1e1AirDate = LocalDateTime(
-    year = 2000,
-    monthNumber = 7,
-    dayOfMonth = 1,
-    hour = 18,
-    minute = 0,
-    second = 0,
-    nanosecond = 0,
+  year = 2000,
+  monthNumber = 7,
+  dayOfMonth = 1,
+  hour = 18,
+  minute = 0,
+  second = 0,
+  nanosecond = 0,
 ).toInstant(UtcOffset.ZERO)
 
 val s1e1 = Episode(
-    id = 1,
-    title = "Kangaroo Court",
-    seasonId = s1.id,
-    number = 0,
-    traktId = 59830,
-    firstAired = s1e1AirDate,
+  id = 1,
+  title = "Kangaroo Court",
+  seasonId = s1.id,
+  number = 0,
+  traktId = 59830,
+  firstAired = s1e1AirDate,
 )
 val s1e2 = Episode(
-    id = 2,
-    title = "Bushtucker",
-    seasonId = s1.id,
-    number = 1,
-    traktId = 33435,
-    firstAired = s1e1AirDate + 7.days,
+  id = 2,
+  title = "Bushtucker",
+  seasonId = s1.id,
+  number = 1,
+  traktId = 33435,
+  firstAired = s1e1AirDate + 7.days,
 )
 val s1e3 = Episode(
-    id = 3,
-    title = "Wallaby Bungee",
-    seasonId = s1.id,
-    number = 2,
-    traktId = 44542,
-    firstAired = s1e1AirDate + 14.days,
+  id = 3,
+  title = "Wallaby Bungee",
+  seasonId = s1.id,
+  number = 2,
+  traktId = 44542,
+  firstAired = s1e1AirDate + 14.days,
 )
 
 val s2e1 = Episode(
-    id = 4,
-    title = "Noosa Pool",
-    seasonId = s2.id,
-    number = 0,
-    traktId = 5656,
-    firstAired = s1e1AirDate + 21.days,
+  id = 4,
+  title = "Noosa Pool",
+  seasonId = s2.id,
+  number = 0,
+  traktId = 5656,
+  firstAired = s1e1AirDate + 21.days,
 )
 val s2e2 = Episode(
-    id = 5,
-    title = "Alice Springer",
-    seasonId = s2.id,
-    number = 1,
-    traktId = 8731,
-    firstAired = s1e1AirDate + 28.days,
+  id = 5,
+  title = "Alice Springer",
+  seasonId = s2.id,
+  number = 1,
+  traktId = 8731,
+  firstAired = s1e1AirDate + 28.days,
 )
 
 val s1_episodes = listOf(s1e1, s1e2, s1e3)
@@ -109,10 +109,10 @@ val s2_episodes = listOf(s2e1, s2e2)
 
 const val s1e1w_id = 1L
 val s1e1w = EpisodeWatchEntry(
-    id = s1e1w_id,
-    watchedAt = Clock.System.now(),
-    episodeId = s1e1.id,
-    traktId = 435214,
+  id = s1e1w_id,
+  watchedAt = Clock.System.now(),
+  episodeId = s1e1.id,
+  traktId = 435214,
 )
 
 const val s1e1w2_id = 2L

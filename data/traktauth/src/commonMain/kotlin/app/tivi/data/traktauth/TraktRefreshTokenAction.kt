@@ -4,5 +4,5 @@
 package app.tivi.data.traktauth
 
 interface TraktRefreshTokenAction {
-    suspend operator fun invoke(state: AuthState): AuthState?
+  suspend operator fun invoke(state: AuthState): AuthState?
 }

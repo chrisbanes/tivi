@@ -18,31 +18,31 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObservePagedRecommendedShows(
-    private val recommendedShowsDao: RecommendedDao,
-    private val updateRecommendedShows: UpdateRecommendedShows,
-    private val logger: Logger,
+  private val recommendedShowsDao: RecommendedDao,
+  private val updateRecommendedShows: UpdateRecommendedShows,
+  private val logger: Logger,
 ) : PagingInteractor<ObservePagedRecommendedShows.Params, RecommendedEntryWithShow>() {
-    @OptIn(app.cash.paging.ExperimentalPagingApi::class)
-    override fun createObservable(
-        params: Params,
-    ): Flow<PagingData<RecommendedEntryWithShow>> {
-        return Pager(
-            config = params.pagingConfig,
-            remoteMediator = RefreshOnlyRemoteMediator {
-                try {
-                    updateRecommendedShows(UpdateRecommendedShows.Params(forceRefresh = true))
-                } catch (ce: CancellationException) {
-                    throw ce
-                } catch (t: Throwable) {
-                    logger.e(t) { "Error while fetching from RemoteMediator" }
-                    throw t
-                }
-            },
-            pagingSourceFactory = recommendedShowsDao::entriesPagingSource,
-        ).flow
-    }
+  @OptIn(app.cash.paging.ExperimentalPagingApi::class)
+  override fun createObservable(
+    params: Params,
+  ): Flow<PagingData<RecommendedEntryWithShow>> {
+    return Pager(
+      config = params.pagingConfig,
+      remoteMediator = RefreshOnlyRemoteMediator {
+        try {
+          updateRecommendedShows(UpdateRecommendedShows.Params(forceRefresh = true))
+        } catch (ce: CancellationException) {
+          throw ce
+        } catch (t: Throwable) {
+          logger.e(t) { "Error while fetching from RemoteMediator" }
+          throw t
+        }
+      },
+      pagingSourceFactory = recommendedShowsDao::entriesPagingSource,
+    ).flow
+  }
 
-    data class Params(
-        override val pagingConfig: PagingConfig,
-    ) : Parameters<RecommendedEntryWithShow>
+  data class Params(
+    override val pagingConfig: PagingConfig,
+  ) : Parameters<RecommendedEntryWithShow>
 }

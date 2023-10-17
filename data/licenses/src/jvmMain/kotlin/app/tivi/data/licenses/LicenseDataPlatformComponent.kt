@@ -12,7 +12,7 @@ import me.tatarka.inject.annotations.Provides
 @AllowDifferentMembersInActual
 actual interface LicenseDataPlatformComponent {
 
-    @ApplicationScope
-    @Provides
-    fun bindLicensesFetcher(fetcher: JvmLicensesFetcherImpl): LicensesFetcher = fetcher
+  @ApplicationScope
+  @Provides
+  fun bindLicensesFetcher(fetcher: JvmLicensesFetcherImpl): LicensesFetcher = fetcher
 }

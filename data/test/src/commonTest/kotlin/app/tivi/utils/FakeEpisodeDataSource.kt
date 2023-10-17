@@ -7,9 +7,9 @@ import app.tivi.data.episodes.TraktEpisodeDataSource
 import app.tivi.data.models.Episode
 
 class FakeEpisodeDataSource : TraktEpisodeDataSource {
-    var result = Result.success(Episode.EMPTY)
+  var result = Result.success(Episode.EMPTY)
 
-    override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Episode {
-        return result.getOrThrow()
-    }
+  override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Episode {
+    return result.getOrThrow()
+  }
 }

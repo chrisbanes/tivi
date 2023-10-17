@@ -16,36 +16,36 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class ShowDetailsUiState(
-    val isFollowed: Boolean = false,
-    val show: TiviShow = TiviShow.EMPTY_SHOW,
-    val relatedShows: List<RelatedShowEntryWithShow> = emptyList(),
-    val nextEpisodeToWatch: EpisodeWithSeason? = null,
-    val watchStats: ShowsWatchStats? = null,
-    val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
-    val refreshing: Boolean = false,
-    val message: UiMessage? = null,
-    val eventSink: (ShowDetailsUiEvent) -> Unit,
+  val isFollowed: Boolean = false,
+  val show: TiviShow = TiviShow.EMPTY_SHOW,
+  val relatedShows: List<RelatedShowEntryWithShow> = emptyList(),
+  val nextEpisodeToWatch: EpisodeWithSeason? = null,
+  val watchStats: ShowsWatchStats? = null,
+  val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
+  val refreshing: Boolean = false,
+  val message: UiMessage? = null,
+  val eventSink: (ShowDetailsUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface ShowDetailsUiEvent : CircuitUiEvent {
-    data class ClearMessage(val id: Long) : ShowDetailsUiEvent
-    data class Refresh(val fromUser: Boolean = true) : ShowDetailsUiEvent
-    object ToggleShowFollowed : ShowDetailsUiEvent
-    data class MarkSeasonWatched(
-        val seasonId: Long,
-        val onlyAired: Boolean = false,
-        val date: ActionDate = ActionDate.NOW,
-    ) : ShowDetailsUiEvent
+  data class ClearMessage(val id: Long) : ShowDetailsUiEvent
+  data class Refresh(val fromUser: Boolean = true) : ShowDetailsUiEvent
+  object ToggleShowFollowed : ShowDetailsUiEvent
+  data class MarkSeasonWatched(
+    val seasonId: Long,
+    val onlyAired: Boolean = false,
+    val date: ActionDate = ActionDate.NOW,
+  ) : ShowDetailsUiEvent
 
-    data class MarkSeasonUnwatched(val seasonId: Long) : ShowDetailsUiEvent
+  data class MarkSeasonUnwatched(val seasonId: Long) : ShowDetailsUiEvent
 
-    data class UnfollowSeason(val seasonId: Long) : ShowDetailsUiEvent
+  data class UnfollowSeason(val seasonId: Long) : ShowDetailsUiEvent
 
-    data class FollowSeason(val seasonId: Long) : ShowDetailsUiEvent
-    data class UnfollowPreviousSeasons(val seasonId: Long) : ShowDetailsUiEvent
+  data class FollowSeason(val seasonId: Long) : ShowDetailsUiEvent
+  data class UnfollowPreviousSeasons(val seasonId: Long) : ShowDetailsUiEvent
 
-    data class OpenSeason(val seasonId: Long) : ShowDetailsUiEvent
-    data class OpenShowDetails(val showId: Long) : ShowDetailsUiEvent
-    data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsUiEvent
-    object NavigateBack : ShowDetailsUiEvent
+  data class OpenSeason(val seasonId: Long) : ShowDetailsUiEvent
+  data class OpenShowDetails(val showId: Long) : ShowDetailsUiEvent
+  data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsUiEvent
+  object NavigateBack : ShowDetailsUiEvent
 }

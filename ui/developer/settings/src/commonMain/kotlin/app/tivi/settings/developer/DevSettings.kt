@@ -32,63 +32,63 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DevSettingsUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is DevSettingsScreen -> {
-            ui<DevSettingsUiState> { state, modifier ->
-                DevSettings(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is DevSettingsScreen -> {
+      ui<DevSettingsUiState> { state, modifier ->
+        DevSettings(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun DevSettings(
-    state: DevSettingsUiState,
-    modifier: Modifier = Modifier,
+  state: DevSettingsUiState,
+  modifier: Modifier = Modifier,
 ) {
-    val eventSink = state.eventSink
+  val eventSink = state.eventSink
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(LocalStrings.current.developerSettingsTitle) },
-                navigationIcon = {
-                    IconButton(onClick = { eventSink(DevSettingsUiEvent.NavigateUp) }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = LocalStrings.current.cdNavigateUp,
-                        )
-                    }
-                },
-                windowInsets = TopAppBarDefaults.windowInsets
-                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
+  Scaffold(
+    topBar = {
+      TopAppBar(
+        title = { Text(LocalStrings.current.developerSettingsTitle) },
+        navigationIcon = {
+          IconButton(onClick = { eventSink(DevSettingsUiEvent.NavigateUp) }) {
+            Icon(
+              imageVector = Icons.Default.ArrowBack,
+              contentDescription = LocalStrings.current.cdNavigateUp,
             )
+          }
         },
-        modifier = modifier,
-    ) { contentPadding ->
-        LazyColumn(
-            contentPadding = contentPadding,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            item {
-                CheckboxPreference(
-                    checked = state.hideArtwork,
-                    title = "Hide artwork",
-                    onCheckClicked = { state.eventSink(DevSettingsUiEvent.ToggleHideArtwork) },
-                )
-            }
+        windowInsets = TopAppBarDefaults.windowInsets
+          .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
+      )
+    },
+    modifier = modifier,
+  ) { contentPadding ->
+    LazyColumn(
+      contentPadding = contentPadding,
+      modifier = Modifier.fillMaxWidth(),
+    ) {
+      item {
+        CheckboxPreference(
+          checked = state.hideArtwork,
+          title = "Hide artwork",
+          onCheckClicked = { state.eventSink(DevSettingsUiEvent.ToggleHideArtwork) },
+        )
+      }
 
-            item {
-                Preference(
-                    title = "Open log",
-                    modifier = Modifier.clickable {
-                        state.eventSink(DevSettingsUiEvent.NavigateLog)
-                    },
-                )
-            }
-        }
+      item {
+        Preference(
+          title = "Open log",
+          modifier = Modifier.clickable {
+            state.eventSink(DevSettingsUiEvent.NavigateLog)
+          },
+        )
+      }
     }
+  }
 }

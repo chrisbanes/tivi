@@ -10,7 +10,7 @@ import me.tatarka.inject.annotations.Provides
 expect interface AnalyticsPlatformComponent
 
 interface AnalyticsComponent : AnalyticsPlatformComponent {
-    @Provides
-    @IntoSet
-    fun provideAnalyticsInitializer(impl: AnalyticsInitializer): AppInitializer = impl
+  @Provides
+  @IntoSet
+  fun provideAnalyticsInitializer(impl: AnalyticsInitializer): AppInitializer = impl
 }

@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface SearchComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindSearchPresenterFactory(factory: SearchUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindSearchPresenterFactory(factory: SearchUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindSearchUiFactoryFactory(factory: SearchUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindSearchUiFactoryFactory(factory: SearchUiFactory): Ui.Factory = factory
 }

@@ -27,35 +27,35 @@ import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.Provides
 
 interface SharedUiComponent :
-    AccountComponent,
-    DiscoverComponent,
-    EpisodeDetailsComponent,
-    EpisodeTrackComponent,
-    LibraryComponent,
-    PopularShowsComponent,
-    RecommendedShowsComponent,
-    SearchComponent,
-    SettingsComponent,
-    LicensesComponent,
-    ShowDetailsComponent,
-    ShowSeasonsComponent,
-    TrendingShowsComponent,
-    UpNextComponent {
+  AccountComponent,
+  DiscoverComponent,
+  EpisodeDetailsComponent,
+  EpisodeTrackComponent,
+  LibraryComponent,
+  PopularShowsComponent,
+  RecommendedShowsComponent,
+  SearchComponent,
+  SettingsComponent,
+  LicensesComponent,
+  ShowDetailsComponent,
+  ShowSeasonsComponent,
+  TrendingShowsComponent,
+  UpNextComponent {
 
-    @Provides
-    @ActivityScope
-    fun provideLyricist(): TiviStrings = Lyricist(
-        defaultLanguageTag = Locales.EN,
-        translations = Strings,
-    ).strings
+  @Provides
+  @ActivityScope
+  fun provideLyricist(): TiviStrings = Lyricist(
+    defaultLanguageTag = Locales.EN,
+    translations = Strings,
+  ).strings
 
-    @Provides
-    @ActivityScope
-    fun provideCircuit(
-        uiFactories: Set<Ui.Factory>,
-        presenterFactories: Set<Presenter.Factory>,
-    ): Circuit = Circuit.Builder()
-        .addUiFactories(uiFactories)
-        .addPresenterFactories(presenterFactories)
-        .build()
+  @Provides
+  @ActivityScope
+  fun provideCircuit(
+    uiFactories: Set<Ui.Factory>,
+    presenterFactories: Set<Presenter.Factory>,
+  ): Circuit = Circuit.Builder()
+    .addUiFactories(uiFactories)
+    .addPresenterFactories(presenterFactories)
+    .build()
 }

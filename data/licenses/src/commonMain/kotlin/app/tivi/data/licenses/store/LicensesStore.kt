@@ -6,5 +6,5 @@ package app.tivi.data.licenses.store
 import app.tivi.data.licenses.LicenseItem
 
 interface LicensesStore {
-    suspend fun getLicenses(): List<LicenseItem>
+  suspend fun getLicenses(): List<LicenseItem>
 }

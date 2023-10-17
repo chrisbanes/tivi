@@ -19,35 +19,35 @@ import app.tivi.data.models.TraktUser
 
 @Composable
 fun UserProfileButton(
-    loggedIn: Boolean,
-    user: TraktUser?,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+  loggedIn: Boolean,
+  user: TraktUser?,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        when {
-            loggedIn && user?.avatarUrl != null -> {
-                AsyncImage(
-                    model = user.avatarUrl!!,
-                    contentDescription = LocalStrings.current
-                        .cdProfilePic(user.name ?: user.username),
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(MaterialTheme.shapes.small),
-                )
-            }
-            else -> {
-                Icon(
-                    imageVector = when {
-                        loggedIn -> Icons.Default.Person
-                        else -> Icons.Outlined.Person
-                    },
-                    contentDescription = LocalStrings.current.cdUserProfile,
-                )
-            }
-        }
+  IconButton(
+    onClick = onClick,
+    modifier = modifier,
+  ) {
+    when {
+      loggedIn && user?.avatarUrl != null -> {
+        AsyncImage(
+          model = user.avatarUrl!!,
+          contentDescription = LocalStrings.current
+            .cdProfilePic(user.name ?: user.username),
+          modifier = Modifier
+            .size(32.dp)
+            .clip(MaterialTheme.shapes.small),
+        )
+      }
+      else -> {
+        Icon(
+          imageVector = when {
+            loggedIn -> Icons.Default.Person
+            else -> Icons.Outlined.Person
+          },
+          contentDescription = LocalStrings.current.cdUserProfile,
+        )
+      }
     }
+  }
 }

@@ -7,9 +7,9 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface WatchedShowsBinds {
-    @Provides
-    @ApplicationScope
-    fun provideTraktWatchedShowsDataSource(
-        bind: TraktWatchedShowsDataSource,
-    ): WatchedShowsDataSource = bind
+  @Provides
+  @ApplicationScope
+  fun provideTraktWatchedShowsDataSource(
+    bind: TraktWatchedShowsDataSource,
+  ): WatchedShowsDataSource = bind
 }

@@ -13,8 +13,8 @@ import androidx.compose.ui.unit.LayoutDirection
 val WindowInsets.Companion.none: WindowInsets get() = EmptyWindowInsets
 
 private object EmptyWindowInsets : WindowInsets {
-    override fun getBottom(density: Density): Int = 0
-    override fun getLeft(density: Density, layoutDirection: LayoutDirection): Int = 0
-    override fun getRight(density: Density, layoutDirection: LayoutDirection): Int = 0
-    override fun getTop(density: Density): Int = 0
+  override fun getBottom(density: Density): Int = 0
+  override fun getLeft(density: Density, layoutDirection: LayoutDirection): Int = 0
+  override fun getRight(density: Density, layoutDirection: LayoutDirection): Int = 0
+  override fun getTop(density: Density): Int = 0
 }

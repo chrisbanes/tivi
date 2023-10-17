@@ -25,64 +25,64 @@ import org.mobilenativefoundation.store.store5.Validator
 @ApplicationScope
 @Inject
 class RelatedShowsStore(
-    traktDataSource: TraktRelatedShowsDataSource,
-    tmdbDataSource: TmdbRelatedShowsDataSource,
-    relatedShowsDao: RelatedShowsDao,
-    showDao: TiviShowDao,
-    lastRequestStore: RelatedShowsLastRequestStore,
-    transactionRunner: DatabaseTransactionRunner,
-    dispatchers: AppCoroutineDispatchers,
+  traktDataSource: TraktRelatedShowsDataSource,
+  tmdbDataSource: TmdbRelatedShowsDataSource,
+  relatedShowsDao: RelatedShowsDao,
+  showDao: TiviShowDao,
+  lastRequestStore: RelatedShowsLastRequestStore,
+  transactionRunner: DatabaseTransactionRunner,
+  dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, RelatedShows> by storeBuilder(
-    fetcher = Fetcher.of { showId: Long ->
-        runCatching { tmdbDataSource(showId) }
-            .let { tmdbResult ->
-                when {
-                    tmdbResult.isSuccess -> tmdbResult
-                    else -> runCatching { traktDataSource(showId) }
-                }
-            }
-            .getOrThrow()
-            .let { result ->
-                withContext(dispatchers.databaseWrite) {
-                    transactionRunner {
-                        lastRequestStore.updateLastRequest(showId)
-
-                        result.map { (show, entry) ->
-                            entry.copy(
-                                showId = showId,
-                                otherShowId = showDao.getIdOrSavePlaceholder(show),
-                            )
-                        }
-                    }
-                }
-            }
-            .let { RelatedShows(showId, it) }
-    },
-    sourceOfTruth = SourceOfTruth.of<Long, RelatedShows, RelatedShows>(
-        reader = { showId ->
-            relatedShowsDao.entriesObservable(showId)
-                .map { RelatedShows(showId, it) }
-        },
-        writer = { showId, response ->
-            transactionRunner {
-                relatedShowsDao.deleteWithShowId(showId)
-                relatedShowsDao.upsert(response.related)
-            }
-        },
-        delete = relatedShowsDao::deleteWithShowId,
-        deleteAll = { transactionRunner(relatedShowsDao::deleteAll) },
-    ).usingDispatchers(
-        readDispatcher = dispatchers.databaseRead,
-        writeDispatcher = dispatchers.databaseWrite,
-    ),
-).validator(
-    Validator.by { result ->
-        if (result.related.isNotEmpty()) {
-            lastRequestStore.isRequestValid(result.showId, 28.days)
-        } else {
-            lastRequestStore.isRequestValid(result.showId, 1.hours)
+  fetcher = Fetcher.of { showId: Long ->
+    runCatching { tmdbDataSource(showId) }
+      .let { tmdbResult ->
+        when {
+          tmdbResult.isSuccess -> tmdbResult
+          else -> runCatching { traktDataSource(showId) }
         }
+      }
+      .getOrThrow()
+      .let { result ->
+        withContext(dispatchers.databaseWrite) {
+          transactionRunner {
+            lastRequestStore.updateLastRequest(showId)
+
+            result.map { (show, entry) ->
+              entry.copy(
+                showId = showId,
+                otherShowId = showDao.getIdOrSavePlaceholder(show),
+              )
+            }
+          }
+        }
+      }
+      .let { RelatedShows(showId, it) }
+  },
+  sourceOfTruth = SourceOfTruth.of<Long, RelatedShows, RelatedShows>(
+    reader = { showId ->
+      relatedShowsDao.entriesObservable(showId)
+        .map { RelatedShows(showId, it) }
     },
+    writer = { showId, response ->
+      transactionRunner {
+        relatedShowsDao.deleteWithShowId(showId)
+        relatedShowsDao.upsert(response.related)
+      }
+    },
+    delete = relatedShowsDao::deleteWithShowId,
+    deleteAll = { transactionRunner(relatedShowsDao::deleteAll) },
+  ).usingDispatchers(
+    readDispatcher = dispatchers.databaseRead,
+    writeDispatcher = dispatchers.databaseWrite,
+  ),
+).validator(
+  Validator.by { result ->
+    if (result.related.isNotEmpty()) {
+      lastRequestStore.isRequestValid(result.showId, 28.days)
+    } else {
+      lastRequestStore.isRequestValid(result.showId, 1.hours)
+    }
+  },
 ).build()
 
 data class RelatedShows(val showId: Long, val related: List<RelatedShowEntry>)

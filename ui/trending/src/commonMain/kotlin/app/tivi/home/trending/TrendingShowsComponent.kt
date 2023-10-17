@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface TrendingShowsComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindTrendingShowsPresenterFactory(factory: TrendingShowsUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindTrendingShowsPresenterFactory(factory: TrendingShowsUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindTrendingShowsUiFactoryFactory(factory: TrendingShowsUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindTrendingShowsUiFactoryFactory(factory: TrendingShowsUiFactory): Ui.Factory = factory
 }

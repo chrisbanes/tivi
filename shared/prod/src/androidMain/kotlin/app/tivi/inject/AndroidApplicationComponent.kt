@@ -13,17 +13,17 @@ import okhttp3.Interceptor
 @Component
 @ApplicationScope
 abstract class AndroidApplicationComponent(
-    @get:Provides val application: Application,
+  @get:Provides val application: Application,
 ) : SharedApplicationComponent, ProdApplicationComponent {
 
-    abstract val initializers: AppInitializers
-    abstract val workerFactory: TiviWorkerFactory
+  abstract val initializers: AppInitializers
+  abstract val workerFactory: TiviWorkerFactory
 
-    /**
-     * We have no interceptors in the standard release currently
-     */
-    @Provides
-    fun provideInterceptors(): Set<Interceptor> = emptySet()
+  /**
+   * We have no interceptors in the standard release currently
+   */
+  @Provides
+  fun provideInterceptors(): Set<Interceptor> = emptySet()
 
-    companion object
+  companion object
 }

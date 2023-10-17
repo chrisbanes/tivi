@@ -17,45 +17,45 @@ import com.slack.circuit.runtime.screen.Screen
 import kotlinx.coroutines.launch
 
 class DialogOverlay<Model : Any, Result : Any>(
-    private val model: Model,
-    private val onDismiss: () -> Result,
-    private val content: @Composable (Model, OverlayNavigator<Result>) -> Unit,
+  private val model: Model,
+  private val onDismiss: () -> Result,
+  private val content: @Composable (Model, OverlayNavigator<Result>) -> Unit,
 ) : Overlay<Result> {
-    @Composable
-    override fun Content(navigator: OverlayNavigator<Result>) {
-        val coroutineScope = rememberCoroutineScope()
-        Dialog(
-            onDismissRequest = { navigator.finish(onDismiss()) },
-        ) {
-            Surface(
-                shape = AlertDialogDefaults.shape,
-                color = AlertDialogDefaults.containerColor,
-                tonalElevation = AlertDialogDefaults.TonalElevation,
-            ) {
-                // Delay setting the result until we've finished dismissing
-                content(model) { result ->
-                    // This is the OverlayNavigator.finish() callback
-                    coroutineScope.launch {
-                        navigator.finish(result)
-                    }
-                }
-            }
+  @Composable
+  override fun Content(navigator: OverlayNavigator<Result>) {
+    val coroutineScope = rememberCoroutineScope()
+    Dialog(
+      onDismissRequest = { navigator.finish(onDismiss()) },
+    ) {
+      Surface(
+        shape = AlertDialogDefaults.shape,
+        color = AlertDialogDefaults.containerColor,
+        tonalElevation = AlertDialogDefaults.TonalElevation,
+      ) {
+        // Delay setting the result until we've finished dismissing
+        content(model) { result ->
+          // This is the OverlayNavigator.finish() callback
+          coroutineScope.launch {
+            navigator.finish(result)
+          }
         }
+      }
     }
+  }
 }
 
 suspend fun OverlayHost.showInDialog(
-    screen: Screen,
+  screen: Screen,
 ): Unit = show(
-    DialogOverlay(model = Unit, onDismiss = {}) { _, navigator ->
-        CircuitContent(
-            screen = screen,
-            onNavEvent = { event ->
-                when (event) {
-                    NavEvent.Pop -> navigator.finish(Unit)
-                    else -> Unit
-                }
-            },
-        )
-    },
+  DialogOverlay(model = Unit, onDismiss = {}) { _, navigator ->
+    CircuitContent(
+      screen = screen,
+      onNavEvent = { event ->
+        when (event) {
+          NavEvent.Pop -> navigator.finish(Unit)
+          else -> Unit
+        }
+      },
+    )
+  },
 )

@@ -15,23 +15,23 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @ActivityScope
 actual class TiviTextCreator(
-    override val dateFormatter: TiviDateFormatter,
-    override val strings: TiviStrings,
+  override val dateFormatter: TiviDateFormatter,
+  override val strings: TiviStrings,
 ) : CommonTiviTextCreator {
 
-    override fun airsText(show: TiviShow): CharSequence? {
-        val airTime = show.airsTime ?: return null
-        val airTz = show.airsTimeZone ?: return null
-        val airDay = show.airsDay ?: return null
+  override fun airsText(show: TiviShow): CharSequence? {
+    val airTime = show.airsTime ?: return null
+    val airTz = show.airsTimeZone ?: return null
+    val airDay = show.airsDay ?: return null
 
-        val localDateTime = java.time.ZonedDateTime.now(airTz.toJavaZoneId())
-            .with(airDay)
-            .with(airTime.toJavaLocalTime())
-            .withZoneSameInstant(dateFormatter.timeZone.toJavaZoneId())
+    val localDateTime = java.time.ZonedDateTime.now(airTz.toJavaZoneId())
+      .with(airDay)
+      .with(airTime.toJavaLocalTime())
+      .withZoneSameInstant(dateFormatter.timeZone.toJavaZoneId())
 
-        return strings.airsText(
-            localDateTime.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault()),
-            dateFormatter.formatShortTime(localDateTime.toLocalTime().toKotlinLocalTime()),
-        )
-    }
+    return strings.airsText(
+      localDateTime.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault()),
+      dateFormatter.formatShortTime(localDateTime.toLocalTime().toKotlinLocalTime()),
+    )
+  }
 }

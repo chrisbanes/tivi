@@ -20,53 +20,53 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class PopularShowsUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> PopularShowsPresenter,
+  private val presenterFactory: (Navigator) -> PopularShowsPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is PopularShowsScreen -> presenterFactory(navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is PopularShowsScreen -> presenterFactory(navigator)
+    else -> null
+  }
 }
 
 @Inject
 class PopularShowsPresenter(
-    @Assisted private val navigator: Navigator,
-    private val pagingInteractor: ObservePagedPopularShows,
+  @Assisted private val navigator: Navigator,
+  private val pagingInteractor: ObservePagedPopularShows,
 ) : Presenter<PopularShowsUiState> {
 
-    @Composable
-    override fun present(): PopularShowsUiState {
-        val items = pagingInteractor.flow
-            .rememberCachedPagingFlow()
-            .collectAsLazyPagingItems()
+  @Composable
+  override fun present(): PopularShowsUiState {
+    val items = pagingInteractor.flow
+      .rememberCachedPagingFlow()
+      .collectAsLazyPagingItems()
 
-        LaunchedEffect(Unit) {
-            pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))
-        }
-
-        fun eventSink(event: PopularShowsUiEvent) {
-            when (event) {
-                PopularShowsUiEvent.NavigateUp -> navigator.pop()
-                is PopularShowsUiEvent.OpenShowDetails -> {
-                    navigator.goTo(ShowDetailsScreen(event.showId))
-                }
-            }
-        }
-
-        return PopularShowsUiState(
-            items = items,
-            eventSink = ::eventSink,
-        )
+    LaunchedEffect(Unit) {
+      pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))
     }
 
-    companion object {
-        val PAGING_CONFIG = PagingConfig(
-            pageSize = 60,
-            initialLoadSize = 60,
-        )
+    fun eventSink(event: PopularShowsUiEvent) {
+      when (event) {
+        PopularShowsUiEvent.NavigateUp -> navigator.pop()
+        is PopularShowsUiEvent.OpenShowDetails -> {
+          navigator.goTo(ShowDetailsScreen(event.showId))
+        }
+      }
     }
+
+    return PopularShowsUiState(
+      items = items,
+      eventSink = ::eventSink,
+    )
+  }
+
+  companion object {
+    val PAGING_CONFIG = PagingConfig(
+      pageSize = 60,
+      initialLoadSize = 60,
+    )
+  }
 }

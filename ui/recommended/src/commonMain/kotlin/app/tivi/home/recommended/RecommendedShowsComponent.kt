@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface RecommendedShowsComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindRecommendedShowsPresenterFactory(factory: RecommendedShowsUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindRecommendedShowsPresenterFactory(factory: RecommendedShowsUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindRecommendedShowsUiFactoryFactory(factory: RecommendedShowsUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindRecommendedShowsUiFactoryFactory(factory: RecommendedShowsUiFactory): Ui.Factory = factory
 }

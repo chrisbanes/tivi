@@ -6,8 +6,8 @@ package app.tivi.data.traktauth.store
 import app.tivi.data.traktauth.AuthState
 
 interface AuthStore {
-    suspend fun get(): AuthState?
-    suspend fun save(state: AuthState)
-    suspend fun clear()
-    suspend fun isAvailable(): Boolean = true
+  suspend fun get(): AuthState?
+  suspend fun save(state: AuthState)
+  suspend fun clear()
+  suspend fun isAvailable(): Boolean = true
 }

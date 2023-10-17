@@ -31,103 +31,103 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class EpisodeDetailsUiPresenterFactory(
-    private val presenterFactory: (EpisodeDetailsScreen, Navigator) -> EpisodeDetailsPresenter,
+  private val presenterFactory: (EpisodeDetailsScreen, Navigator) -> EpisodeDetailsPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is EpisodeDetailsScreen -> presenterFactory(screen, navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is EpisodeDetailsScreen -> presenterFactory(screen, navigator)
+    else -> null
+  }
 }
 
 @Inject
 class EpisodeDetailsPresenter(
-    @Assisted private val screen: EpisodeDetailsScreen,
-    @Assisted private val navigator: Navigator,
-    private val updateEpisodeDetails: UpdateEpisodeDetails,
-    private val observeEpisodeDetails: ObserveEpisodeDetails,
-    private val observeEpisodeWatches: ObserveEpisodeWatches,
-    private val removeEpisodeWatches: RemoveEpisodeWatches,
-    private val removeEpisodeWatch: RemoveEpisodeWatch,
-    private val logger: Logger,
+  @Assisted private val screen: EpisodeDetailsScreen,
+  @Assisted private val navigator: Navigator,
+  private val updateEpisodeDetails: UpdateEpisodeDetails,
+  private val observeEpisodeDetails: ObserveEpisodeDetails,
+  private val observeEpisodeWatches: ObserveEpisodeWatches,
+  private val removeEpisodeWatches: RemoveEpisodeWatches,
+  private val removeEpisodeWatch: RemoveEpisodeWatch,
+  private val logger: Logger,
 ) : Presenter<EpisodeDetailsUiState> {
-    @Composable
-    override fun present(): EpisodeDetailsUiState {
-        val scope = rememberCoroutineScope()
-        val uiMessageManager = remember { UiMessageManager() }
+  @Composable
+  override fun present(): EpisodeDetailsUiState {
+    val scope = rememberCoroutineScope()
+    val uiMessageManager = remember { UiMessageManager() }
 
-        val refreshing by updateEpisodeDetails.inProgress.collectAsState(false)
-        val message by uiMessageManager.message.collectAsState(null)
+    val refreshing by updateEpisodeDetails.inProgress.collectAsState(false)
+    val message by uiMessageManager.message.collectAsState(null)
 
-        val episodeDetails by observeEpisodeDetails.flow.collectAsRetainedState(null)
-        val episodeWatches by observeEpisodeWatches.flow.collectAsRetainedState(emptyList())
+    val episodeDetails by observeEpisodeDetails.flow.collectAsRetainedState(null)
+    val episodeWatches by observeEpisodeWatches.flow.collectAsRetainedState(emptyList())
 
-        fun eventSink(event: EpisodeDetailsUiEvent) {
-            when (event) {
-                is EpisodeDetailsUiEvent.Refresh -> {
-                    scope.launch {
-                        updateEpisodeDetails(
-                            UpdateEpisodeDetails.Params(screen.id, event.fromUser),
-                        ).onException { e ->
-                            logger.i(e)
-                            uiMessageManager.emitMessage(UiMessage(e))
-                        }
-                    }
-                }
-
-                is EpisodeDetailsUiEvent.ClearMessage -> {
-                    scope.launch {
-                        uiMessageManager.clearMessage(event.id)
-                    }
-                }
-
-                EpisodeDetailsUiEvent.RemoveAllWatches -> {
-                    scope.launch {
-                        removeEpisodeWatches(
-                            RemoveEpisodeWatches.Params(screen.id),
-                        ).onException { e ->
-                            logger.i(e)
-                            uiMessageManager.emitMessage(UiMessage(e))
-                        }
-                    }
-                }
-
-                is EpisodeDetailsUiEvent.RemoveWatchEntry -> {
-                    scope.launch {
-                        removeEpisodeWatch(
-                            RemoveEpisodeWatch.Params(event.id),
-                        ).onException { e ->
-                            logger.i(e)
-                            uiMessageManager.emitMessage(UiMessage(e))
-                        }
-                    }
-                }
-
-                EpisodeDetailsUiEvent.NavigateUp -> navigator.pop()
-                EpisodeDetailsUiEvent.OpenTrackEpisode -> {
-                    navigator.goTo(EpisodeTrackScreen(screen.id))
-                }
+    fun eventSink(event: EpisodeDetailsUiEvent) {
+      when (event) {
+        is EpisodeDetailsUiEvent.Refresh -> {
+          scope.launch {
+            updateEpisodeDetails(
+              UpdateEpisodeDetails.Params(screen.id, event.fromUser),
+            ).onException { e ->
+              logger.i(e)
+              uiMessageManager.emitMessage(UiMessage(e))
             }
+          }
         }
 
-        LaunchedEffect(Unit) {
-            observeEpisodeDetails(ObserveEpisodeDetails.Params(screen.id))
-            observeEpisodeWatches(ObserveEpisodeWatches.Params(screen.id))
-
-            eventSink(EpisodeDetailsUiEvent.Refresh(fromUser = false))
+        is EpisodeDetailsUiEvent.ClearMessage -> {
+          scope.launch {
+            uiMessageManager.clearMessage(event.id)
+          }
         }
 
-        return EpisodeDetailsUiState(
-            episode = episodeDetails?.episode,
-            season = episodeDetails?.season,
-            watches = episodeWatches,
-            canAddEpisodeWatch = episodeDetails?.episode?.hasAired ?: false,
-            refreshing = refreshing,
-            message = message,
-            eventSink = ::eventSink,
-        )
+        EpisodeDetailsUiEvent.RemoveAllWatches -> {
+          scope.launch {
+            removeEpisodeWatches(
+              RemoveEpisodeWatches.Params(screen.id),
+            ).onException { e ->
+              logger.i(e)
+              uiMessageManager.emitMessage(UiMessage(e))
+            }
+          }
+        }
+
+        is EpisodeDetailsUiEvent.RemoveWatchEntry -> {
+          scope.launch {
+            removeEpisodeWatch(
+              RemoveEpisodeWatch.Params(event.id),
+            ).onException { e ->
+              logger.i(e)
+              uiMessageManager.emitMessage(UiMessage(e))
+            }
+          }
+        }
+
+        EpisodeDetailsUiEvent.NavigateUp -> navigator.pop()
+        EpisodeDetailsUiEvent.OpenTrackEpisode -> {
+          navigator.goTo(EpisodeTrackScreen(screen.id))
+        }
+      }
     }
+
+    LaunchedEffect(Unit) {
+      observeEpisodeDetails(ObserveEpisodeDetails.Params(screen.id))
+      observeEpisodeWatches(ObserveEpisodeWatches.Params(screen.id))
+
+      eventSink(EpisodeDetailsUiEvent.Refresh(fromUser = false))
+    }
+
+    return EpisodeDetailsUiState(
+      episode = episodeDetails?.episode,
+      season = episodeDetails?.season,
+      watches = episodeWatches,
+      canAddEpisodeWatch = episodeDetails?.episode?.hasAired ?: false,
+      refreshing = refreshing,
+      message = message,
+      eventSink = ::eventSink,
+    )
+  }
 }

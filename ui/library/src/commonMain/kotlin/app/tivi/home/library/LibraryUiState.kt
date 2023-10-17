@@ -15,27 +15,27 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Stable // 'only' stable due to LazyPagingItems
 data class LibraryUiState(
-    val items: LazyPagingItems<LibraryShow>,
-    val user: TraktUser? = null,
-    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
-    val isLoading: Boolean = false,
-    val filterActive: Boolean = false,
-    val filter: String? = null,
-    val availableSorts: List<SortOption> = emptyList(),
-    val sort: SortOption = SortOption.LAST_WATCHED,
-    val message: UiMessage? = null,
-    val followedShowsIncluded: Boolean = false,
-    val watchedShowsIncluded: Boolean = false,
-    val eventSink: (LibraryUiEvent) -> Unit,
+  val items: LazyPagingItems<LibraryShow>,
+  val user: TraktUser? = null,
+  val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
+  val isLoading: Boolean = false,
+  val filterActive: Boolean = false,
+  val filter: String? = null,
+  val availableSorts: List<SortOption> = emptyList(),
+  val sort: SortOption = SortOption.LAST_WATCHED,
+  val message: UiMessage? = null,
+  val followedShowsIncluded: Boolean = false,
+  val watchedShowsIncluded: Boolean = false,
+  val eventSink: (LibraryUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface LibraryUiEvent : CircuitUiEvent {
-    data class ClearMessage(val id: Long) : LibraryUiEvent
-    data class Refresh(val fromUser: Boolean = false) : LibraryUiEvent
-    data class ChangeFilter(val filter: String?) : LibraryUiEvent
-    data class ChangeSort(val sort: SortOption) : LibraryUiEvent
-    object ToggleFollowedShowsIncluded : LibraryUiEvent
-    object ToggleWatchedShowsIncluded : LibraryUiEvent
-    object OpenAccount : LibraryUiEvent
-    data class OpenShowDetails(val showId: Long) : LibraryUiEvent
+  data class ClearMessage(val id: Long) : LibraryUiEvent
+  data class Refresh(val fromUser: Boolean = false) : LibraryUiEvent
+  data class ChangeFilter(val filter: String?) : LibraryUiEvent
+  data class ChangeSort(val sort: SortOption) : LibraryUiEvent
+  object ToggleFollowedShowsIncluded : LibraryUiEvent
+  object ToggleWatchedShowsIncluded : LibraryUiEvent
+  object OpenAccount : LibraryUiEvent
+  data class OpenShowDetails(val showId: Long) : LibraryUiEvent
 }

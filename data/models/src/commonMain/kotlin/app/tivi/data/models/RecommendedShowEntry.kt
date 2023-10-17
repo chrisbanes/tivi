@@ -4,7 +4,7 @@
 package app.tivi.data.models
 
 data class RecommendedShowEntry(
-    override val id: Long = 0,
-    override val showId: Long,
-    override val page: Int,
+  override val id: Long = 0,
+  override val showId: Long,
+  override val page: Int,
 ) : PaginatedEntry

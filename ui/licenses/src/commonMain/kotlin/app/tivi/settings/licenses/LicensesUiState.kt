@@ -10,16 +10,16 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class LicensesUiState(
-    val licenses: List<LicenseGroup> = emptyList(),
-    val eventSink: (LicensesUiEvent) -> Unit,
+  val licenses: List<LicenseGroup> = emptyList(),
+  val eventSink: (LicensesUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface LicensesUiEvent : CircuitUiEvent {
-    data object NavigateUp : LicensesUiEvent
-    data class NavigateRepository(val artifact: LicenseItem) : LicensesUiEvent
+  data object NavigateUp : LicensesUiEvent
+  data class NavigateRepository(val artifact: LicenseItem) : LicensesUiEvent
 }
 
 data class LicenseGroup(
-    val id: String,
-    val artifacts: List<LicenseItem>,
+  val id: String,
+  val artifacts: List<LicenseItem>,
 )

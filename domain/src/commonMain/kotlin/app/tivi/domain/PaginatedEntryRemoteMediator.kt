@@ -20,32 +20,32 @@ import kotlinx.coroutines.CancellationException
 @Suppress("CAST_NEVER_SUCCEEDS", "USELESS_CAST", "KotlinRedundantDiagnosticSuppress")
 @OptIn(app.cash.paging.ExperimentalPagingApi::class)
 internal class PaginatedEntryRemoteMediator<LI, ET>(
-    private val fetch: suspend (page: Int) -> Unit,
+  private val fetch: suspend (page: Int) -> Unit,
 ) : RemoteMediator<Int, LI>() where ET : PaginatedEntry, LI : EntryWithShow<ET> {
-    override suspend fun load(
-        loadType: LoadType,
-        state: PagingState<Int, LI>,
-    ): RemoteMediatorMediatorResult {
-        val nextPage = when (loadType) {
-            LoadType.REFRESH -> 0
-            LoadType.PREPEND -> return RemoteMediatorMediatorResultSuccess(endOfPaginationReached = true)
-                as RemoteMediatorMediatorResult
-            LoadType.APPEND -> {
-                val lastItem = state.lastItemOrNull()
-                    ?: return RemoteMediatorMediatorResultSuccess(endOfPaginationReached = true)
-                        as RemoteMediatorMediatorResult
-                lastItem.entry.page + 1
-            }
-            else -> error("Unknown LoadType: $loadType")
-        }
-        return try {
-            fetch(nextPage)
-            RemoteMediatorMediatorResultSuccess(endOfPaginationReached = false)
-                as RemoteMediatorMediatorResult
-        } catch (ce: CancellationException) {
-            throw ce
-        } catch (t: Throwable) {
-            RemoteMediatorMediatorResultError(t) as RemoteMediatorMediatorResult
-        }
+  override suspend fun load(
+    loadType: LoadType,
+    state: PagingState<Int, LI>,
+  ): RemoteMediatorMediatorResult {
+    val nextPage = when (loadType) {
+      LoadType.REFRESH -> 0
+      LoadType.PREPEND -> return RemoteMediatorMediatorResultSuccess(endOfPaginationReached = true)
+        as RemoteMediatorMediatorResult
+      LoadType.APPEND -> {
+        val lastItem = state.lastItemOrNull()
+          ?: return RemoteMediatorMediatorResultSuccess(endOfPaginationReached = true)
+            as RemoteMediatorMediatorResult
+        lastItem.entry.page + 1
+      }
+      else -> error("Unknown LoadType: $loadType")
     }
+    return try {
+      fetch(nextPage)
+      RemoteMediatorMediatorResultSuccess(endOfPaginationReached = false)
+        as RemoteMediatorMediatorResult
+    } catch (ce: CancellationException) {
+      throw ce
+    } catch (t: Throwable) {
+      RemoteMediatorMediatorResultError(t) as RemoteMediatorMediatorResult
+    }
+  }
 }

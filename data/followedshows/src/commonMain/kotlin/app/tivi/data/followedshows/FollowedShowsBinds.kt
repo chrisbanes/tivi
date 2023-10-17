@@ -6,8 +6,8 @@ package app.tivi.data.followedshows
 import me.tatarka.inject.annotations.Provides
 
 interface FollowedShowsBinds {
-    @Provides
-    fun provideTraktFollowedShowsDataSource(
-        bind: TraktFollowedShowsDataSource,
-    ): FollowedShowsDataSource = bind
+  @Provides
+  fun provideTraktFollowedShowsDataSource(
+    bind: TraktFollowedShowsDataSource,
+  ): FollowedShowsDataSource = bind
 }

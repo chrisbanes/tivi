@@ -8,17 +8,17 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserDao : EntityDao<TraktUser> {
 
-    fun observeMe(): Flow<TraktUser?>
+  fun observeMe(): Flow<TraktUser?>
 
-    fun observeTraktUser(username: String): Flow<TraktUser?>
+  fun observeTraktUser(username: String): Flow<TraktUser?>
 
-    fun getUser(username: String): TraktUser?
+  fun getUser(username: String): TraktUser?
 
-    fun getId(username: String): Long?
+  fun getId(username: String): Long?
 
-    fun deleteWithUsername(username: String)
+  fun deleteWithUsername(username: String)
 
-    fun deleteMe()
+  fun deleteMe()
 
-    fun deleteAll()
+  fun deleteAll()
 }

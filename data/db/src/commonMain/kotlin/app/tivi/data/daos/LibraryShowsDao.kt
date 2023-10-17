@@ -8,10 +8,10 @@ import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 
 interface LibraryShowsDao {
-    fun pagedListLastWatched(
-        sort: SortOption,
-        filter: String?,
-        includeWatched: Boolean,
-        includeFollowed: Boolean,
-    ): PagingSource<Int, LibraryShow>
+  fun pagedListLastWatched(
+    sort: SortOption,
+    filter: String?,
+    includeWatched: Boolean,
+    includeFollowed: Boolean,
+  ): PagingSource<Int, LibraryShow>
 }

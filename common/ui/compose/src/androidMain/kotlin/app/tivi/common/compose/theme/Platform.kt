@@ -12,15 +12,15 @@ import androidx.compose.ui.platform.LocalContext
 
 @Composable
 internal actual fun colorScheme(
-    useDarkColors: Boolean,
-    useDynamicColors: Boolean,
+  useDarkColors: Boolean,
+  useDynamicColors: Boolean,
 ): ColorScheme = when {
-    Build.VERSION.SDK_INT >= 31 && useDynamicColors && useDarkColors -> {
-        dynamicDarkColorScheme(LocalContext.current)
-    }
-    Build.VERSION.SDK_INT >= 31 && useDynamicColors && !useDarkColors -> {
-        dynamicLightColorScheme(LocalContext.current)
-    }
-    useDarkColors -> TiviDarkColors
-    else -> TiviLightColors
+  Build.VERSION.SDK_INT >= 31 && useDynamicColors && useDarkColors -> {
+    dynamicDarkColorScheme(LocalContext.current)
+  }
+  Build.VERSION.SDK_INT >= 31 && useDynamicColors && !useDarkColors -> {
+    dynamicLightColorScheme(LocalContext.current)
+  }
+  useDarkColors -> TiviDarkColors
+  else -> TiviLightColors
 }

@@ -5,53 +5,53 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
-    id("app.tivi.android.test")
-    id("app.tivi.kotlin.android")
+  id("app.tivi.android.test")
+  id("app.tivi.kotlin.android")
 }
 
 android {
-    namespace = "app.tivi.benchmark"
+  namespace = "app.tivi.benchmark"
 
-    defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+  defaultConfig {
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+  }
+
+  buildTypes {
+    create("benchmark") {
+      isDebuggable = true
+      signingConfig = signingConfigs["debug"]
+      matchingFallbacks += "release"
     }
+  }
 
-    buildTypes {
-        create("benchmark") {
-            isDebuggable = true
-            signingConfig = signingConfigs["debug"]
-            matchingFallbacks += "release"
+  testOptions {
+    managedDevices {
+      devices {
+        create<ManagedVirtualDevice>("api31") {
+          device = "Pixel 6"
+          apiLevel = 31
+          systemImageSource = "aosp"
         }
+      }
     }
+  }
 
-    testOptions {
-        managedDevices {
-            devices {
-                create<ManagedVirtualDevice>("api31") {
-                    device = "Pixel 6"
-                    apiLevel = 31
-                    systemImageSource = "aosp"
-                }
-            }
-        }
-    }
-
-    targetProjectPath = ":android-app:app"
-    experimentalProperties["android.experimental.self-instrumenting"] = true
+  targetProjectPath = ":android-app:app"
+  experimentalProperties["android.experimental.self-instrumenting"] = true
 }
 
 dependencies {
-    implementation(libs.androidx.test.junit)
-    implementation(libs.androidx.benchmark.macro)
-    implementation(libs.androidx.uiautomator)
-    implementation(libs.androidx.test.junit)
-    implementation(libs.kotlin.coroutines.android)
+  implementation(libs.androidx.test.junit)
+  implementation(libs.androidx.benchmark.macro)
+  implementation(libs.androidx.uiautomator)
+  implementation(libs.androidx.test.junit)
+  implementation(libs.kotlin.coroutines.android)
 
-    implementation(projects.androidApp.commonTest)
+  implementation(projects.androidApp.commonTest)
 }
 
 androidComponents {
-    beforeVariants(selector().all()) {
-        it.enable = it.buildType == "benchmark"
-    }
+  beforeVariants(selector().all()) {
+    it.enable = it.buildType == "benchmark"
+  }
 }

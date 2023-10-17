@@ -8,7 +8,7 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
 
 data class UpNextEntry(
-    val show: TiviShow,
-    val season: Season,
-    val episode: Episode,
+  val show: TiviShow,
+  val season: Season,
+  val episode: Episode,
 )

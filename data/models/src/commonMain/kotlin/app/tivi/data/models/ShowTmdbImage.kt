@@ -4,11 +4,11 @@
 package app.tivi.data.models
 
 data class ShowTmdbImage(
-    override val id: Long = 0,
-    val showId: Long,
-    override val path: String,
-    override val type: ImageType,
-    override val language: String? = null,
-    override val rating: Float = 0f,
-    override val isPrimary: Boolean = false,
+  override val id: Long = 0,
+  val showId: Long,
+  override val path: String,
+  override val type: ImageType,
+  override val language: String? = null,
+  override val rating: Float = 0f,
+  override val isPrimary: Boolean = false,
 ) : TiviEntity, TmdbImageEntity

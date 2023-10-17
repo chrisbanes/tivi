@@ -6,11 +6,11 @@ package app.tivi.util
 import kotlinx.coroutines.CancellationException
 
 inline fun Result<*>.onException(
-    block: (Throwable) -> Unit,
+  block: (Throwable) -> Unit,
 ) {
-    val e = exceptionOrNull()
-    when {
-        e is CancellationException -> throw e
-        e != null -> block(e)
-    }
+  val e = exceptionOrNull()
+  when {
+    e is CancellationException -> throw e
+    e != null -> block(e)
+  }
 }

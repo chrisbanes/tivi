@@ -122,901 +122,901 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowDetailsUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is ShowDetailsScreen -> {
-            ui<ShowDetailsUiState> { state, modifier ->
-                ShowDetails(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is ShowDetailsScreen -> {
+      ui<ShowDetailsUiState> { state, modifier ->
+        ShowDetails(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @Composable
 internal fun ShowDetails(
-    state: ShowDetailsUiState,
-    modifier: Modifier = Modifier,
+  state: ShowDetailsUiState,
+  modifier: Modifier = Modifier,
 ) {
-    // Need to extract the eventSink out to a local val, so that the Compose Compiler
-    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
-    val eventSink = state.eventSink
+  // Need to extract the eventSink out to a local val, so that the Compose Compiler
+  // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+  val eventSink = state.eventSink
 
-    ShowDetails(
-        viewState = state,
-        navigateUp = { eventSink(ShowDetailsUiEvent.NavigateBack) },
-        openShowDetails = { eventSink(ShowDetailsUiEvent.OpenShowDetails(it)) },
-        openEpisodeDetails = { eventSink(ShowDetailsUiEvent.OpenEpisodeDetails(it)) },
-        refresh = { eventSink(ShowDetailsUiEvent.Refresh(true)) },
-        onMessageShown = { eventSink(ShowDetailsUiEvent.ClearMessage(it)) },
-        openSeason = { eventSink(ShowDetailsUiEvent.OpenSeason(it)) },
-        onSeasonFollowed = { eventSink(ShowDetailsUiEvent.FollowSeason(it)) },
-        onSeasonUnfollowed = { eventSink(ShowDetailsUiEvent.UnfollowSeason(it)) },
-        unfollowPreviousSeasons = { eventSink(ShowDetailsUiEvent.UnfollowPreviousSeasons(it)) },
-        onMarkSeasonWatched = { eventSink(ShowDetailsUiEvent.MarkSeasonWatched(it, onlyAired = true)) },
-        onMarkSeasonUnwatched = { eventSink(ShowDetailsUiEvent.MarkSeasonUnwatched(it)) },
-        onToggleShowFollowed = { eventSink(ShowDetailsUiEvent.ToggleShowFollowed) },
-        modifier = modifier,
-    )
+  ShowDetails(
+    viewState = state,
+    navigateUp = { eventSink(ShowDetailsUiEvent.NavigateBack) },
+    openShowDetails = { eventSink(ShowDetailsUiEvent.OpenShowDetails(it)) },
+    openEpisodeDetails = { eventSink(ShowDetailsUiEvent.OpenEpisodeDetails(it)) },
+    refresh = { eventSink(ShowDetailsUiEvent.Refresh(true)) },
+    onMessageShown = { eventSink(ShowDetailsUiEvent.ClearMessage(it)) },
+    openSeason = { eventSink(ShowDetailsUiEvent.OpenSeason(it)) },
+    onSeasonFollowed = { eventSink(ShowDetailsUiEvent.FollowSeason(it)) },
+    onSeasonUnfollowed = { eventSink(ShowDetailsUiEvent.UnfollowSeason(it)) },
+    unfollowPreviousSeasons = { eventSink(ShowDetailsUiEvent.UnfollowPreviousSeasons(it)) },
+    onMarkSeasonWatched = { eventSink(ShowDetailsUiEvent.MarkSeasonWatched(it, onlyAired = true)) },
+    onMarkSeasonUnwatched = { eventSink(ShowDetailsUiEvent.MarkSeasonUnwatched(it)) },
+    onToggleShowFollowed = { eventSink(ShowDetailsUiEvent.ToggleShowFollowed) },
+    modifier = modifier,
+  )
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun ShowDetails(
-    viewState: ShowDetailsUiState,
-    navigateUp: () -> Unit,
-    openShowDetails: (showId: Long) -> Unit,
-    openEpisodeDetails: (episodeId: Long) -> Unit,
-    refresh: () -> Unit,
-    onMessageShown: (id: Long) -> Unit,
-    openSeason: (seasonId: Long) -> Unit,
-    onSeasonFollowed: (seasonId: Long) -> Unit,
-    onSeasonUnfollowed: (seasonId: Long) -> Unit,
-    unfollowPreviousSeasons: (seasonId: Long) -> Unit,
-    onMarkSeasonWatched: (seasonId: Long) -> Unit,
-    onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
-    onToggleShowFollowed: () -> Unit,
-    modifier: Modifier = Modifier,
+  viewState: ShowDetailsUiState,
+  navigateUp: () -> Unit,
+  openShowDetails: (showId: Long) -> Unit,
+  openEpisodeDetails: (episodeId: Long) -> Unit,
+  refresh: () -> Unit,
+  onMessageShown: (id: Long) -> Unit,
+  openSeason: (seasonId: Long) -> Unit,
+  onSeasonFollowed: (seasonId: Long) -> Unit,
+  onSeasonUnfollowed: (seasonId: Long) -> Unit,
+  unfollowPreviousSeasons: (seasonId: Long) -> Unit,
+  onMarkSeasonWatched: (seasonId: Long) -> Unit,
+  onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
+  onToggleShowFollowed: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val listState = rememberLazyListState()
+  val snackbarHostState = remember { SnackbarHostState() }
+  val listState = rememberLazyListState()
 
-    val dismissSnackbarState = rememberDismissState { value ->
-        if (value != DismissValue.Default) {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            true
-        } else {
-            false
-        }
+  val dismissSnackbarState = rememberDismissState { value ->
+    if (value != DismissValue.Default) {
+      snackbarHostState.currentSnackbarData?.dismiss()
+      true
+    } else {
+      false
     }
+  }
 
-    viewState.message?.let { message ->
-        LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(message.message)
-            // Notify the view model that the message has been dismissed
-            onMessageShown(message.id)
-        }
+  viewState.message?.let { message ->
+    LaunchedEffect(message) {
+      snackbarHostState.showSnackbar(message.message)
+      // Notify the view model that the message has been dismissed
+      onMessageShown(message.id)
     }
+  }
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    Scaffold(
-        topBar = {
-            ShowDetailsAppBar(
-                title = viewState.show.title ?: "",
-                isRefreshing = viewState.refreshing,
-                onNavigateUp = navigateUp,
-                onRefresh = refresh,
-                scrollBehavior = scrollBehavior,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        },
-        floatingActionButton = {
-            val expanded by remember {
-                derivedStateOf { listState.firstVisibleItemIndex > 0 }
-            }
+  Scaffold(
+    topBar = {
+      ShowDetailsAppBar(
+        title = viewState.show.title ?: "",
+        isRefreshing = viewState.refreshing,
+        onNavigateUp = navigateUp,
+        onRefresh = refresh,
+        scrollBehavior = scrollBehavior,
+        modifier = Modifier.fillMaxWidth(),
+      )
+    },
+    floatingActionButton = {
+      val expanded by remember {
+        derivedStateOf { listState.firstVisibleItemIndex > 0 }
+      }
 
-            ToggleShowFollowFloatingActionButton(
-                isFollowed = viewState.isFollowed,
-                expanded = expanded,
-                onClick = onToggleShowFollowed,
-                modifier = Modifier
-                    .testTag("show_details_follow_button"),
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                SwipeToDismiss(
-                    state = dismissSnackbarState,
-                    background = {},
-                    dismissContent = { Snackbar(snackbarData = data) },
-                    modifier = Modifier
-                        .padding(horizontal = Layout.bodyMargin)
-                        .fillMaxWidth(),
-                )
-            }
-        },
-        // The nav bar is handled by the root Scaffold
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets
-            .exclude(WindowInsets.navigationBars),
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-    ) { contentPadding ->
-        Surface(modifier = Modifier.bodyWidth()) {
-            ShowDetailsScrollingContent(
-                show = viewState.show,
-                relatedShows = viewState.relatedShows,
-                nextEpisodeToWatch = viewState.nextEpisodeToWatch,
-                seasons = viewState.seasons,
-                watchStats = viewState.watchStats,
-                listState = listState,
-                openShowDetails = openShowDetails,
-                openEpisodeDetails = openEpisodeDetails,
-                contentPadding = contentPadding,
-                openSeason = openSeason,
-                onSeasonFollowed = onSeasonFollowed,
-                onSeasonUnfollowed = onSeasonUnfollowed,
-                unfollowPreviousSeasons = unfollowPreviousSeasons,
-                onMarkSeasonWatched = onMarkSeasonWatched,
-                onMarkSeasonUnwatched = onMarkSeasonUnwatched,
-                modifier = Modifier
-                    .testTag("show_details_lazycolumn")
-                    .fillMaxSize(),
-            )
-        }
+      ToggleShowFollowFloatingActionButton(
+        isFollowed = viewState.isFollowed,
+        expanded = expanded,
+        onClick = onToggleShowFollowed,
+        modifier = Modifier
+          .testTag("show_details_follow_button"),
+      )
+    },
+    snackbarHost = {
+      SnackbarHost(hostState = snackbarHostState) { data ->
+        SwipeToDismiss(
+          state = dismissSnackbarState,
+          background = {},
+          dismissContent = { Snackbar(snackbarData = data) },
+          modifier = Modifier
+            .padding(horizontal = Layout.bodyMargin)
+            .fillMaxWidth(),
+        )
+      }
+    },
+    // The nav bar is handled by the root Scaffold
+    contentWindowInsets = ScaffoldDefaults.contentWindowInsets
+      .exclude(WindowInsets.navigationBars),
+    modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+  ) { contentPadding ->
+    Surface(modifier = Modifier.bodyWidth()) {
+      ShowDetailsScrollingContent(
+        show = viewState.show,
+        relatedShows = viewState.relatedShows,
+        nextEpisodeToWatch = viewState.nextEpisodeToWatch,
+        seasons = viewState.seasons,
+        watchStats = viewState.watchStats,
+        listState = listState,
+        openShowDetails = openShowDetails,
+        openEpisodeDetails = openEpisodeDetails,
+        contentPadding = contentPadding,
+        openSeason = openSeason,
+        onSeasonFollowed = onSeasonFollowed,
+        onSeasonUnfollowed = onSeasonUnfollowed,
+        unfollowPreviousSeasons = unfollowPreviousSeasons,
+        onMarkSeasonWatched = onMarkSeasonWatched,
+        onMarkSeasonUnwatched = onMarkSeasonUnwatched,
+        modifier = Modifier
+          .testTag("show_details_lazycolumn")
+          .fillMaxSize(),
+      )
     }
+  }
 }
 
 @Composable
 private fun ShowDetailsScrollingContent(
-    show: TiviShow,
-    relatedShows: List<RelatedShowEntryWithShow>,
-    nextEpisodeToWatch: EpisodeWithSeason?,
-    seasons: List<SeasonWithEpisodesAndWatches>,
-    watchStats: ShowsWatchStats?,
-    listState: LazyListState,
-    openShowDetails: (showId: Long) -> Unit,
-    openEpisodeDetails: (episodeId: Long) -> Unit,
-    openSeason: (seasonId: Long) -> Unit,
-    onSeasonFollowed: (seasonId: Long) -> Unit,
-    onSeasonUnfollowed: (seasonId: Long) -> Unit,
-    unfollowPreviousSeasons: (seasonId: Long) -> Unit,
-    onMarkSeasonWatched: (seasonId: Long) -> Unit,
-    onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
-    contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
+  show: TiviShow,
+  relatedShows: List<RelatedShowEntryWithShow>,
+  nextEpisodeToWatch: EpisodeWithSeason?,
+  seasons: List<SeasonWithEpisodesAndWatches>,
+  watchStats: ShowsWatchStats?,
+  listState: LazyListState,
+  openShowDetails: (showId: Long) -> Unit,
+  openEpisodeDetails: (episodeId: Long) -> Unit,
+  openSeason: (seasonId: Long) -> Unit,
+  onSeasonFollowed: (seasonId: Long) -> Unit,
+  onSeasonUnfollowed: (seasonId: Long) -> Unit,
+  unfollowPreviousSeasons: (seasonId: Long) -> Unit,
+  onMarkSeasonWatched: (seasonId: Long) -> Unit,
+  onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
+  contentPadding: PaddingValues,
+  modifier: Modifier = Modifier,
 ) {
-    val gutter = Layout.gutter
-    val bodyMargin = Layout.bodyMargin
+  val gutter = Layout.gutter
+  val bodyMargin = Layout.bodyMargin
 
-    LazyColumn(
-        state = listState,
-        contentPadding = contentPadding,
-        modifier = modifier,
-        flingBehavior = rememberTiviFlingBehavior(),
-    ) {
-        item(key = "backdrop") {
-            Backdrop(
-                imageModel = show.asImageModel(ImageType.BACKDROP),
-                modifier = Modifier
-                    .padding(horizontal = bodyMargin, vertical = gutter)
-                    .fillMaxWidth()
-                    .aspectRatio(16f / 10),
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(max(gutter, bodyMargin)))
-        }
-
-        item(key = "poster_info") {
-            PosterInfoRow(
-                show = show,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-
-        gutterSpacer()
-
-        item(key = "header_summary") {
-            Header(LocalStrings.current.detailsAbout)
-        }
-
-        if (show.summary != null) {
-            item(key = "summary") {
-                ExpandingText(
-                    text = show.summary!!,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
-                )
-            }
-        }
-
-        if (show.genres.isNotEmpty()) {
-            item(key = "genres") {
-                Genres(show.genres)
-            }
-        }
-
-        if (nextEpisodeToWatch?.episode != null) {
-            gutterSpacer()
-
-            item(key = "header_next_episode_watch") {
-                Header(LocalStrings.current.detailsNextEpisodeToWatch)
-            }
-            item(key = "next_episode_watch") {
-                NextEpisodeToWatch(
-                    season = nextEpisodeToWatch.season,
-                    episode = nextEpisodeToWatch.episode,
-                    onClick = { openEpisodeDetails(nextEpisodeToWatch.episode.id) },
-                )
-            }
-        }
-
-        if (relatedShows.isNotEmpty()) {
-            gutterSpacer()
-
-            item(key = "header_related_shows") {
-                Header(LocalStrings.current.detailsRelated)
-            }
-            item(key = "related_shows") {
-                RelatedShows(
-                    related = relatedShows,
-                    openShowDetails = openShowDetails,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        }
-
-        if (watchStats != null) {
-            gutterSpacer()
-
-            item(key = "header_watch_stats") {
-                Header(LocalStrings.current.detailsViewStats)
-            }
-            item(key = "watch_stats") {
-                WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
-            }
-        }
-
-        if (seasons.isNotEmpty()) {
-            gutterSpacer()
-
-            item(key = "header_seasons") {
-                Header(LocalStrings.current.showDetailsSeasons)
-            }
-
-            items(
-                items = seasons,
-                key = { "season_${it.season.id}" },
-            ) { season ->
-                SeasonRow(
-                    season = season.season,
-                    episodesAired = season.numberAired,
-                    episodesWatched = season.numberWatched,
-                    episodesToWatch = season.numberAiredToWatch,
-                    episodesToAir = season.numberToAir,
-                    nextToAirDate = season.nextToAir?.firstAired,
-                    contentPadding = PaddingValues(horizontal = bodyMargin, vertical = gutter),
-                    openSeason = openSeason,
-                    onSeasonFollowed = onSeasonFollowed,
-                    onSeasonUnfollowed = onSeasonUnfollowed,
-                    unfollowPreviousSeasons = unfollowPreviousSeasons,
-                    onMarkSeasonWatched = onMarkSeasonWatched,
-                    onMarkSeasonUnwatched = onMarkSeasonUnwatched,
-                    modifier = Modifier
-                        .testTag("show_details_season_item")
-                        .fillParentMaxWidth(),
-                )
-            }
-        }
-
-        // Spacer to push up content from under the FloatingActionButton
-        itemSpacer(56.dp + 32.dp)
+  LazyColumn(
+    state = listState,
+    contentPadding = contentPadding,
+    modifier = modifier,
+    flingBehavior = rememberTiviFlingBehavior(),
+  ) {
+    item(key = "backdrop") {
+      Backdrop(
+        imageModel = show.asImageModel(ImageType.BACKDROP),
+        modifier = Modifier
+          .padding(horizontal = bodyMargin, vertical = gutter)
+          .fillMaxWidth()
+          .aspectRatio(16f / 10),
+      )
     }
+
+    item {
+      Spacer(modifier = Modifier.height(max(gutter, bodyMargin)))
+    }
+
+    item(key = "poster_info") {
+      PosterInfoRow(
+        show = show,
+        modifier = Modifier.fillMaxWidth(),
+      )
+    }
+
+    gutterSpacer()
+
+    item(key = "header_summary") {
+      Header(LocalStrings.current.detailsAbout)
+    }
+
+    if (show.summary != null) {
+      item(key = "summary") {
+        ExpandingText(
+          text = show.summary!!,
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
+        )
+      }
+    }
+
+    if (show.genres.isNotEmpty()) {
+      item(key = "genres") {
+        Genres(show.genres)
+      }
+    }
+
+    if (nextEpisodeToWatch?.episode != null) {
+      gutterSpacer()
+
+      item(key = "header_next_episode_watch") {
+        Header(LocalStrings.current.detailsNextEpisodeToWatch)
+      }
+      item(key = "next_episode_watch") {
+        NextEpisodeToWatch(
+          season = nextEpisodeToWatch.season,
+          episode = nextEpisodeToWatch.episode,
+          onClick = { openEpisodeDetails(nextEpisodeToWatch.episode.id) },
+        )
+      }
+    }
+
+    if (relatedShows.isNotEmpty()) {
+      gutterSpacer()
+
+      item(key = "header_related_shows") {
+        Header(LocalStrings.current.detailsRelated)
+      }
+      item(key = "related_shows") {
+        RelatedShows(
+          related = relatedShows,
+          openShowDetails = openShowDetails,
+          modifier = Modifier.fillMaxWidth(),
+        )
+      }
+    }
+
+    if (watchStats != null) {
+      gutterSpacer()
+
+      item(key = "header_watch_stats") {
+        Header(LocalStrings.current.detailsViewStats)
+      }
+      item(key = "watch_stats") {
+        WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
+      }
+    }
+
+    if (seasons.isNotEmpty()) {
+      gutterSpacer()
+
+      item(key = "header_seasons") {
+        Header(LocalStrings.current.showDetailsSeasons)
+      }
+
+      items(
+        items = seasons,
+        key = { "season_${it.season.id}" },
+      ) { season ->
+        SeasonRow(
+          season = season.season,
+          episodesAired = season.numberAired,
+          episodesWatched = season.numberWatched,
+          episodesToWatch = season.numberAiredToWatch,
+          episodesToAir = season.numberToAir,
+          nextToAirDate = season.nextToAir?.firstAired,
+          contentPadding = PaddingValues(horizontal = bodyMargin, vertical = gutter),
+          openSeason = openSeason,
+          onSeasonFollowed = onSeasonFollowed,
+          onSeasonUnfollowed = onSeasonUnfollowed,
+          unfollowPreviousSeasons = unfollowPreviousSeasons,
+          onMarkSeasonWatched = onMarkSeasonWatched,
+          onMarkSeasonUnwatched = onMarkSeasonUnwatched,
+          modifier = Modifier
+            .testTag("show_details_season_item")
+            .fillParentMaxWidth(),
+        )
+      }
+    }
+
+    // Spacer to push up content from under the FloatingActionButton
+    itemSpacer(56.dp + 32.dp)
+  }
 }
 
 @Composable
 private fun PosterInfoRow(
-    show: TiviShow,
-    modifier: Modifier = Modifier,
+  show: TiviShow,
+  modifier: Modifier = Modifier,
 ) {
-    Row(modifier.padding(horizontal = Layout.bodyMargin)) {
-        AsyncImage(
-            model = show.asImageModel(ImageType.POSTER),
-            contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: ""),
-            modifier = Modifier
-                .weight(1f)
-                .aspectRatio(2 / 3f)
-                .clip(MaterialTheme.shapes.medium),
-            alignment = Alignment.TopStart,
-        )
+  Row(modifier.padding(horizontal = Layout.bodyMargin)) {
+    AsyncImage(
+      model = show.asImageModel(ImageType.POSTER),
+      contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: ""),
+      modifier = Modifier
+        .weight(1f)
+        .aspectRatio(2 / 3f)
+        .clip(MaterialTheme.shapes.medium),
+      alignment = Alignment.TopStart,
+    )
 
-        Spacer(modifier = Modifier.width(Layout.gutter * 2))
+    Spacer(modifier = Modifier.width(Layout.gutter * 2))
 
-        InfoPanels(
-            show = show,
-            modifier = Modifier.weight(1f),
-        )
-    }
+    InfoPanels(
+      show = show,
+      modifier = Modifier.weight(1f),
+    )
+  }
 }
 
 @Composable
 private fun NetworkInfoPanel(
-    networkName: String,
-    modifier: Modifier = Modifier,
+  networkName: String,
+  modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
-        Text(
-            text = LocalStrings.current.networkTitle,
-            style = MaterialTheme.typography.titleSmall,
-        )
+  Column(modifier) {
+    Text(
+      text = LocalStrings.current.networkTitle,
+      style = MaterialTheme.typography.titleSmall,
+    )
 
-        Spacer(Modifier.height(4.dp))
+    Spacer(Modifier.height(4.dp))
 
-        Text(
-            text = networkName,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+    Text(
+      text = networkName,
+      style = MaterialTheme.typography.bodyMedium,
+    )
+  }
 }
 
 @Composable
 private fun RuntimeInfoPanel(
-    runtime: Int,
-    modifier: Modifier = Modifier,
+  runtime: Int,
+  modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
-        Text(
-            text = LocalStrings.current.runtimeTitle,
-            style = MaterialTheme.typography.titleSmall,
-        )
+  Column(modifier) {
+    Text(
+      text = LocalStrings.current.runtimeTitle,
+      style = MaterialTheme.typography.titleSmall,
+    )
 
-        Spacer(Modifier.height(4.dp))
+    Spacer(Modifier.height(4.dp))
 
-        Text(
-            text = LocalStrings.current.minutesFormat(runtime),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+    Text(
+      text = LocalStrings.current.minutesFormat(runtime),
+      style = MaterialTheme.typography.bodyMedium,
+    )
+  }
 }
 
 @Composable
 private fun ShowStatusPanel(
-    showStatus: ShowStatus,
-    modifier: Modifier = Modifier,
+  showStatus: ShowStatus,
+  modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
-        Text(
-            text = LocalStrings.current.statusTitle,
-            style = MaterialTheme.typography.titleSmall,
-        )
+  Column(modifier) {
+    Text(
+      text = LocalStrings.current.statusTitle,
+      style = MaterialTheme.typography.titleSmall,
+    )
 
-        Spacer(Modifier.height(4.dp))
+    Spacer(Modifier.height(4.dp))
 
-        val textCreator = LocalTiviTextCreator.current
-        Text(
-            text = textCreator.showStatusText(showStatus).toString(),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+    val textCreator = LocalTiviTextCreator.current
+    Text(
+      text = textCreator.showStatusText(showStatus).toString(),
+      style = MaterialTheme.typography.bodyMedium,
+    )
+  }
 }
 
 @Composable
 private fun AirsInfoPanel(
-    show: TiviShow,
-    modifier: Modifier = Modifier,
+  show: TiviShow,
+  modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
-        Text(
-            text = LocalStrings.current.airsTitle,
-            style = MaterialTheme.typography.titleSmall,
-        )
+  Column(modifier) {
+    Text(
+      text = LocalStrings.current.airsTitle,
+      style = MaterialTheme.typography.titleSmall,
+    )
 
-        Spacer(Modifier.height(4.dp))
+    Spacer(Modifier.height(4.dp))
 
-        val textCreator = LocalTiviTextCreator.current
-        Text(
-            text = textCreator.airsText(show).toString(),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+    val textCreator = LocalTiviTextCreator.current
+    Text(
+      text = textCreator.airsText(show).toString(),
+      style = MaterialTheme.typography.bodyMedium,
+    )
+  }
 }
 
 @Composable
 private fun CertificateInfoPanel(
-    certification: String,
-    modifier: Modifier = Modifier,
+  certification: String,
+  modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
-        Text(
-            text = LocalStrings.current.certificateTitle,
-            style = MaterialTheme.typography.titleSmall,
-        )
+  Column(modifier) {
+    Text(
+      text = LocalStrings.current.certificateTitle,
+      style = MaterialTheme.typography.titleSmall,
+    )
 
-        Spacer(Modifier.height(4.dp))
+    Spacer(Modifier.height(4.dp))
 
-        Text(
-            text = certification,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    shape = RoundedCornerShape(2.dp),
-                )
-                .padding(horizontal = 4.dp, vertical = 2.dp),
+    Text(
+      text = certification,
+      style = MaterialTheme.typography.bodyMedium,
+      modifier = Modifier
+        .border(
+          width = 1.dp,
+          color = MaterialTheme.colorScheme.onSurface,
+          shape = RoundedCornerShape(2.dp),
         )
-    }
+        .padding(horizontal = 4.dp, vertical = 2.dp),
+    )
+  }
 }
 
 @Composable
 private fun TraktRatingInfoPanel(
-    rating: Float,
-    votes: Int,
-    modifier: Modifier = Modifier,
+  rating: Float,
+  votes: Int,
+  modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
+  Column(modifier) {
+    Text(
+      text = LocalStrings.current.traktRatingTitle,
+      style = MaterialTheme.typography.titleSmall,
+    )
+
+    Spacer(Modifier.height(4.dp))
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+      Image(
+        imageVector = Icons.Default.Star,
+        contentDescription = null,
+        contentScale = ContentScale.Fit,
+        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary),
+        modifier = Modifier.size(32.dp),
+      )
+
+      Spacer(Modifier.width(4.dp))
+
+      Column {
         Text(
-            text = LocalStrings.current.traktRatingTitle,
-            style = MaterialTheme.typography.titleSmall,
+          text = LocalStrings.current.traktRatingText(rating * 10f),
+          style = MaterialTheme.typography.bodyMedium,
         )
 
-        Spacer(Modifier.height(4.dp))
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                imageVector = Icons.Default.Star,
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary),
-                modifier = Modifier.size(32.dp),
-            )
-
-            Spacer(Modifier.width(4.dp))
-
-            Column {
-                Text(
-                    text = LocalStrings.current.traktRatingText(rating * 10f),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-
-                Text(
-                    text = LocalStrings.current.traktRatingVotes(votes / 1000f),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
+        Text(
+          text = LocalStrings.current.traktRatingVotes(votes / 1000f),
+          style = MaterialTheme.typography.bodySmall,
+        )
+      }
     }
+  }
 }
 
 @Composable
 private fun Header(title: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-        )
-    }
+  Box(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
+  ) {
+    Text(
+      text = title,
+      style = MaterialTheme.typography.titleMedium,
+    )
+  }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Genres(genres: List<Genre>) {
-    val textCreator = LocalTiviTextCreator.current
+  val textCreator = LocalTiviTextCreator.current
 
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
-            .semantics {
-                contentDescription = textCreator
-                    .genreContentDescription(genres)
-                    .toString()
-            },
+  Box(
+    Modifier
+      .fillMaxWidth()
+      .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+      .semantics {
+        contentDescription = textCreator
+          .genreContentDescription(genres)
+          .toString()
+      },
+  ) {
+    FlowRow(
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+      verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            genres.forEach { genre ->
-                Card {
-                    Text(
-                        text = textCreator.genreLabel(genre),
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    )
-                }
-            }
+      genres.forEach { genre ->
+        Card {
+          Text(
+            text = textCreator.genreLabel(genre),
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+          )
         }
+      }
     }
+  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun RelatedShows(
-    related: List<RelatedShowEntryWithShow>,
-    openShowDetails: (showId: Long) -> Unit,
-    modifier: Modifier = Modifier,
+  related: List<RelatedShowEntryWithShow>,
+  openShowDetails: (showId: Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val lazyListState = rememberLazyListState()
-    val contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
+  val lazyListState = rememberLazyListState()
+  val contentPadding = PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
 
-    LazyRow(
-        state = lazyListState,
-        modifier = modifier,
-        flingBehavior = rememberTiviSnapFlingBehavior(
-            snapLayoutInfoProvider = remember(lazyListState) {
-                SnapLayoutInfoProvider(
-                    lazyListState = lazyListState,
-                    positionInLayout = { _, _, _ -> 0 }, // start
-                )
-            },
-        ),
-        contentPadding = contentPadding,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        items(
-            items = related,
-            key = { it.show.id },
-        ) { item ->
-            PosterCard(
-                show = item.show,
-                onClick = { openShowDetails(item.show.id) },
-                modifier = Modifier
-                    .animateItemPlacement()
-                    .fillParentMaxWidth(0.21f) // 21% of the available width
-                    .aspectRatio(2 / 3f),
-            )
-        }
+  LazyRow(
+    state = lazyListState,
+    modifier = modifier,
+    flingBehavior = rememberTiviSnapFlingBehavior(
+      snapLayoutInfoProvider = remember(lazyListState) {
+        SnapLayoutInfoProvider(
+          lazyListState = lazyListState,
+          positionInLayout = { _, _, _ -> 0 }, // start
+        )
+      },
+    ),
+    contentPadding = contentPadding,
+    horizontalArrangement = Arrangement.spacedBy(4.dp),
+  ) {
+    items(
+      items = related,
+      key = { it.show.id },
+    ) { item ->
+      PosterCard(
+        show = item.show,
+        onClick = { openShowDetails(item.show.id) },
+        modifier = Modifier
+          .animateItemPlacement()
+          .fillParentMaxWidth(0.21f) // 21% of the available width
+          .aspectRatio(2 / 3f),
+      )
     }
+  }
 }
 
 @Composable
 private fun NextEpisodeToWatch(
-    season: Season,
-    episode: Episode,
-    onClick: () -> Unit,
+  season: Season,
+  episode: Episode,
+  onClick: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 48.dp)
-            .wrapContentHeight()
-            .clickable(onClick = onClick)
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
-    ) {
-        val textCreator = LocalTiviTextCreator.current
+  Column(
+    modifier = Modifier
+      .fillMaxWidth()
+      .heightIn(min = 48.dp)
+      .wrapContentHeight()
+      .clickable(onClick = onClick)
+      .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
+  ) {
+    val textCreator = LocalTiviTextCreator.current
 
-        Text(
-            textCreator.seasonEpisodeTitleText(season, episode),
-            style = MaterialTheme.typography.bodySmall,
-        )
+    Text(
+      textCreator.seasonEpisodeTitleText(season, episode),
+      style = MaterialTheme.typography.bodySmall,
+    )
 
-        Spacer(Modifier.height(4.dp))
+    Spacer(Modifier.height(4.dp))
 
-        Text(
-            text = episode.title ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
-            style = MaterialTheme.typography.bodyLarge,
-        )
-    }
+    Text(
+      text = episode.title ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
+      style = MaterialTheme.typography.bodyLarge,
+    )
+  }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun InfoPanels(
-    show: TiviShow,
-    modifier: Modifier = Modifier,
+  show: TiviShow,
+  modifier: Modifier = Modifier,
 ) {
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(Layout.gutter * 2),
-        modifier = modifier,
-    ) {
-        val itemMod = Modifier.padding(bottom = Layout.gutter * 2)
+  FlowRow(
+    horizontalArrangement = Arrangement.spacedBy(Layout.gutter * 2),
+    modifier = modifier,
+  ) {
+    val itemMod = Modifier.padding(bottom = Layout.gutter * 2)
 
-        if (show.traktRating != null) {
-            TraktRatingInfoPanel(
-                rating = show.traktRating!!,
-                votes = show.traktVotes ?: 0,
-                modifier = itemMod,
-            )
-        }
-        if (show.network != null) {
-            NetworkInfoPanel(
-                networkName = show.network!!,
-                modifier = itemMod,
-            )
-        }
-        if (show.status != null) {
-            ShowStatusPanel(showStatus = show.status!!, modifier = itemMod)
-        }
-        if (show.certification != null) {
-            CertificateInfoPanel(certification = show.certification!!, modifier = itemMod)
-        }
-        if (show.runtime != null) {
-            RuntimeInfoPanel(runtime = show.runtime!!, modifier = itemMod)
-        }
-        if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null &&
-            (show.status == ShowStatus.IN_PRODUCTION || show.status == ShowStatus.RETURNING)
-        ) {
-            AirsInfoPanel(show = show, modifier = itemMod)
-        }
+    if (show.traktRating != null) {
+      TraktRatingInfoPanel(
+        rating = show.traktRating!!,
+        votes = show.traktVotes ?: 0,
+        modifier = itemMod,
+      )
     }
+    if (show.network != null) {
+      NetworkInfoPanel(
+        networkName = show.network!!,
+        modifier = itemMod,
+      )
+    }
+    if (show.status != null) {
+      ShowStatusPanel(showStatus = show.status!!, modifier = itemMod)
+    }
+    if (show.certification != null) {
+      CertificateInfoPanel(certification = show.certification!!, modifier = itemMod)
+    }
+    if (show.runtime != null) {
+      RuntimeInfoPanel(runtime = show.runtime!!, modifier = itemMod)
+    }
+    if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null &&
+      (show.status == ShowStatus.IN_PRODUCTION || show.status == ShowStatus.RETURNING)
+    ) {
+      AirsInfoPanel(show = show, modifier = itemMod)
+    }
+  }
 }
 
 @Composable
 private fun WatchStats(
-    watchedEpisodeCount: Int,
-    episodeCount: Int,
+  watchedEpisodeCount: Int,
+  episodeCount: Int,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
-    ) {
-        LinearProgressIndicator(
-            progress = when {
-                episodeCount > 0 -> watchedEpisodeCount / episodeCount.toFloat()
-                else -> 0f
-            },
-            modifier = Modifier.fillMaxWidth(),
-        )
+  Column(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
+  ) {
+    LinearProgressIndicator(
+      progress = when {
+        episodeCount > 0 -> watchedEpisodeCount / episodeCount.toFloat()
+        else -> 0f
+      },
+      modifier = Modifier.fillMaxWidth(),
+    )
 
-        Spacer(modifier = Modifier.height(Layout.gutter))
+    Spacer(modifier = Modifier.height(Layout.gutter))
 
-        val textCreator = LocalTiviTextCreator.current
+    val textCreator = LocalTiviTextCreator.current
 
-        // TODO: Do something better with CharSequences containing markup/spans
-        Text(
-            text = "${textCreator.followedShowEpisodeWatchStatus(watchedEpisodeCount, episodeCount)}",
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+    // TODO: Do something better with CharSequences containing markup/spans
+    Text(
+      text = "${textCreator.followedShowEpisodeWatchStatus(watchedEpisodeCount, episodeCount)}",
+      style = MaterialTheme.typography.bodyMedium,
+    )
+  }
 }
 
 @Composable
 private fun SeasonRow(
-    season: Season,
-    episodesAired: Int,
-    episodesWatched: Int,
-    episodesToWatch: Int,
-    episodesToAir: Int,
-    openSeason: (seasonId: Long) -> Unit,
-    onSeasonFollowed: (seasonId: Long) -> Unit,
-    onSeasonUnfollowed: (seasonId: Long) -> Unit,
-    unfollowPreviousSeasons: (seasonId: Long) -> Unit,
-    onMarkSeasonWatched: (seasonId: Long) -> Unit,
-    onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
-    contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
-    nextToAirDate: Instant? = null,
+  season: Season,
+  episodesAired: Int,
+  episodesWatched: Int,
+  episodesToWatch: Int,
+  episodesToAir: Int,
+  openSeason: (seasonId: Long) -> Unit,
+  onSeasonFollowed: (seasonId: Long) -> Unit,
+  onSeasonUnfollowed: (seasonId: Long) -> Unit,
+  unfollowPreviousSeasons: (seasonId: Long) -> Unit,
+  onMarkSeasonWatched: (seasonId: Long) -> Unit,
+  onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
+  contentPadding: PaddingValues,
+  modifier: Modifier = Modifier,
+  nextToAirDate: Instant? = null,
 ) {
-    val contentColor = when {
-        season.ignored -> LocalContentColor.current.copy(alpha = 0.4f)
-        else -> LocalContentColor.current
-    }
+  val contentColor = when {
+    season.ignored -> LocalContentColor.current.copy(alpha = 0.4f)
+    else -> LocalContentColor.current
+  }
 
-    CompositionLocalProvider(LocalContentColor provides contentColor) {
-        Row(
-            modifier = modifier
-                .clip(MaterialTheme.shapes.medium)
-                .clickable(enabled = !season.ignored) {
-                    openSeason(season.id)
-                }
-                .heightIn(min = 48.dp)
-                .wrapContentHeight(Alignment.CenterVertically)
-                .padding(contentPadding),
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically),
-            ) {
-                val textCreator = LocalTiviTextCreator.current
-
-                Text(
-                    text = season.title
-                        ?: LocalStrings.current.seasonTitleFallback(season.number!!),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-
-                Spacer(Modifier.height(4.dp))
-
-                Text(
-                    text = textCreator.seasonSummaryText(
-                        watched = episodesWatched,
-                        toWatch = episodesToWatch,
-                        toAir = episodesToAir,
-                        nextToAirDate = nextToAirDate,
-                    ).toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-
-                if (!season.ignored && episodesAired > 0) {
-                    LinearProgressIndicator(
-                        progress = episodesWatched / episodesAired.toFloat(),
-                        modifier = Modifier
-                            .padding(top = 4.dp)
-                            .fillMaxWidth(),
-                    )
-                }
-            }
-
-            Box(modifier = Modifier.align(Alignment.CenterVertically)) {
-                var showMenu by remember { mutableStateOf(false) }
-
-                IconButton(onClick = { showMenu = true }) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = LocalStrings.current.cdOpenOverflow,
-                    )
-                }
-
-                SeasonDropdownMenu(
-                    expanded = showMenu,
-                    onDismissRequest = { showMenu = false },
-                    season = season,
-                    episodesAired = episodesAired,
-                    episodesWatched = episodesWatched,
-                    episodesToAir = episodesToAir,
-                    onSeasonFollowed = onSeasonFollowed,
-                    onSeasonUnfollowed = onSeasonUnfollowed,
-                    unfollowPreviousSeasons = unfollowPreviousSeasons,
-                    onMarkSeasonWatched = onMarkSeasonWatched,
-                    onMarkSeasonUnwatched = onMarkSeasonUnwatched,
-                )
-            }
+  CompositionLocalProvider(LocalContentColor provides contentColor) {
+    Row(
+      modifier = modifier
+        .clip(MaterialTheme.shapes.medium)
+        .clickable(enabled = !season.ignored) {
+          openSeason(season.id)
         }
+        .heightIn(min = 48.dp)
+        .wrapContentHeight(Alignment.CenterVertically)
+        .padding(contentPadding),
+    ) {
+      Column(
+        modifier = Modifier
+          .weight(1f)
+          .align(Alignment.CenterVertically),
+      ) {
+        val textCreator = LocalTiviTextCreator.current
+
+        Text(
+          text = season.title
+            ?: LocalStrings.current.seasonTitleFallback(season.number!!),
+          style = MaterialTheme.typography.bodyLarge,
+        )
+
+        Spacer(Modifier.height(4.dp))
+
+        Text(
+          text = textCreator.seasonSummaryText(
+            watched = episodesWatched,
+            toWatch = episodesToWatch,
+            toAir = episodesToAir,
+            nextToAirDate = nextToAirDate,
+          ).toString(),
+          style = MaterialTheme.typography.bodySmall,
+        )
+
+        if (!season.ignored && episodesAired > 0) {
+          LinearProgressIndicator(
+            progress = episodesWatched / episodesAired.toFloat(),
+            modifier = Modifier
+              .padding(top = 4.dp)
+              .fillMaxWidth(),
+          )
+        }
+      }
+
+      Box(modifier = Modifier.align(Alignment.CenterVertically)) {
+        var showMenu by remember { mutableStateOf(false) }
+
+        IconButton(onClick = { showMenu = true }) {
+          Icon(
+            imageVector = Icons.Default.MoreVert,
+            contentDescription = LocalStrings.current.cdOpenOverflow,
+          )
+        }
+
+        SeasonDropdownMenu(
+          expanded = showMenu,
+          onDismissRequest = { showMenu = false },
+          season = season,
+          episodesAired = episodesAired,
+          episodesWatched = episodesWatched,
+          episodesToAir = episodesToAir,
+          onSeasonFollowed = onSeasonFollowed,
+          onSeasonUnfollowed = onSeasonUnfollowed,
+          unfollowPreviousSeasons = unfollowPreviousSeasons,
+          onMarkSeasonWatched = onMarkSeasonWatched,
+          onMarkSeasonUnwatched = onMarkSeasonUnwatched,
+        )
+      }
     }
+  }
 }
 
 @Composable
 private fun SeasonDropdownMenu(
-    expanded: Boolean,
-    onDismissRequest: () -> Unit,
-    season: Season,
-    episodesAired: Int,
-    episodesWatched: Int,
-    episodesToAir: Int,
-    onSeasonFollowed: (seasonId: Long) -> Unit,
-    onSeasonUnfollowed: (seasonId: Long) -> Unit,
-    unfollowPreviousSeasons: (seasonId: Long) -> Unit,
-    onMarkSeasonWatched: (seasonId: Long) -> Unit,
-    onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
+  expanded: Boolean,
+  onDismissRequest: () -> Unit,
+  season: Season,
+  episodesAired: Int,
+  episodesWatched: Int,
+  episodesToAir: Int,
+  onSeasonFollowed: (seasonId: Long) -> Unit,
+  onSeasonUnfollowed: (seasonId: Long) -> Unit,
+  unfollowPreviousSeasons: (seasonId: Long) -> Unit,
+  onMarkSeasonWatched: (seasonId: Long) -> Unit,
+  onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
 ) {
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = onDismissRequest,
-    ) {
-        if (season.ignored) {
-            DropdownMenuItem(
-                text = { Text(text = LocalStrings.current.popupSeasonFollow) },
-                onClick = {
-                    onSeasonFollowed(season.id)
-                    onDismissRequest()
-                },
-            )
-        } else {
-            DropdownMenuItem(
-                text = { Text(text = LocalStrings.current.popupSeasonIgnore) },
-                onClick = {
-                    onSeasonUnfollowed(season.id)
-                    onDismissRequest()
-                },
-            )
-        }
-
-        // Season number starts from 1, rather than 0
-        if ((season.number ?: -100) >= 2) {
-            DropdownMenuItem(
-                text = { Text(text = LocalStrings.current.popupSeasonIgnorePrevious) },
-                onClick = {
-                    unfollowPreviousSeasons(season.id)
-                    onDismissRequest()
-                },
-            )
-        }
-
-        if (episodesWatched > 0) {
-            DropdownMenuItem(
-                text = { Text(text = LocalStrings.current.popupSeasonMarkWatchedAll) },
-                onClick = {
-                    onMarkSeasonUnwatched(season.id)
-                    onDismissRequest()
-                },
-            )
-        }
-
-        if (episodesWatched < episodesAired) {
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        text = if (episodesToAir == 0) {
-                            LocalStrings.current.popupSeasonMarkWatchedAll
-                        } else {
-                            LocalStrings.current.popupSeasonMarkWatchedAired
-                        },
-                    )
-                },
-                onClick = {
-                    onMarkSeasonWatched(season.id)
-                    onDismissRequest()
-                },
-            )
-        }
+  DropdownMenu(
+    expanded = expanded,
+    onDismissRequest = onDismissRequest,
+  ) {
+    if (season.ignored) {
+      DropdownMenuItem(
+        text = { Text(text = LocalStrings.current.popupSeasonFollow) },
+        onClick = {
+          onSeasonFollowed(season.id)
+          onDismissRequest()
+        },
+      )
+    } else {
+      DropdownMenuItem(
+        text = { Text(text = LocalStrings.current.popupSeasonIgnore) },
+        onClick = {
+          onSeasonUnfollowed(season.id)
+          onDismissRequest()
+        },
+      )
     }
+
+    // Season number starts from 1, rather than 0
+    if ((season.number ?: -100) >= 2) {
+      DropdownMenuItem(
+        text = { Text(text = LocalStrings.current.popupSeasonIgnorePrevious) },
+        onClick = {
+          unfollowPreviousSeasons(season.id)
+          onDismissRequest()
+        },
+      )
+    }
+
+    if (episodesWatched > 0) {
+      DropdownMenuItem(
+        text = { Text(text = LocalStrings.current.popupSeasonMarkWatchedAll) },
+        onClick = {
+          onMarkSeasonUnwatched(season.id)
+          onDismissRequest()
+        },
+      )
+    }
+
+    if (episodesWatched < episodesAired) {
+      DropdownMenuItem(
+        text = {
+          Text(
+            text = if (episodesToAir == 0) {
+              LocalStrings.current.popupSeasonMarkWatchedAll
+            } else {
+              LocalStrings.current.popupSeasonMarkWatchedAired
+            },
+          )
+        },
+        onClick = {
+          onMarkSeasonWatched(season.id)
+          onDismissRequest()
+        },
+      )
+    }
+  }
 }
 
 @Composable
 private fun ShowDetailsAppBar(
-    title: String,
-    isRefreshing: Boolean,
-    onNavigateUp: () -> Unit,
-    onRefresh: () -> Unit,
-    modifier: Modifier = Modifier,
-    scrollBehavior: TopAppBarScrollBehavior? = null,
+  title: String,
+  isRefreshing: Boolean,
+  onNavigateUp: () -> Unit,
+  onRefresh: () -> Unit,
+  modifier: Modifier = Modifier,
+  scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
-    TopAppBar(
-        title = { Text(text = title) },
-        navigationIcon = {
-            IconButton(onClick = onNavigateUp) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = LocalStrings.current.cdNavigateUp,
-                )
-            }
-        },
-        actions = {
-            RefreshButton(
-                onClick = onRefresh,
-                refreshing = !isRefreshing,
-            )
-        },
-        scrollBehavior = scrollBehavior,
-        windowInsets = TopAppBarDefaults.windowInsets
-            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
-        modifier = modifier,
-    )
+  TopAppBar(
+    title = { Text(text = title) },
+    navigationIcon = {
+      IconButton(onClick = onNavigateUp) {
+        Icon(
+          imageVector = Icons.Default.ArrowBack,
+          contentDescription = LocalStrings.current.cdNavigateUp,
+        )
+      }
+    },
+    actions = {
+      RefreshButton(
+        onClick = onRefresh,
+        refreshing = !isRefreshing,
+      )
+    },
+    scrollBehavior = scrollBehavior,
+    windowInsets = TopAppBarDefaults.windowInsets
+      .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
+    modifier = modifier,
+  )
 }
 
 @Composable
 private fun ToggleShowFollowFloatingActionButton(
-    isFollowed: Boolean,
-    onClick: () -> Unit,
-    expanded: Boolean,
-    modifier: Modifier = Modifier,
+  isFollowed: Boolean,
+  onClick: () -> Unit,
+  expanded: Boolean,
+  modifier: Modifier = Modifier,
 ) {
-    ExtendedFloatingActionButton(
-        onClick = onClick,
-        icon = {
-            Icon(
-                imageVector = when {
-                    isFollowed -> Icons.Default.Favorite
-                    else -> Icons.Default.FavoriteBorder
-                },
-                contentDescription = when {
-                    isFollowed -> LocalStrings.current.cdFollowShowRemove
-                    else -> LocalStrings.current.cdFollowShowAdd
-                },
-            )
+  ExtendedFloatingActionButton(
+    onClick = onClick,
+    icon = {
+      Icon(
+        imageVector = when {
+          isFollowed -> Icons.Default.Favorite
+          else -> Icons.Default.FavoriteBorder
         },
-        text = {
-            Text(
-                when {
-                    isFollowed -> LocalStrings.current.followShowRemove
-                    else -> LocalStrings.current.followShowAdd
-                },
-            )
+        contentDescription = when {
+          isFollowed -> LocalStrings.current.cdFollowShowRemove
+          else -> LocalStrings.current.cdFollowShowAdd
         },
-        containerColor = when {
-            isFollowed -> FloatingActionButtonDefaults.containerColor
-            else -> MaterialTheme.colorScheme.surface
+      )
+    },
+    text = {
+      Text(
+        when {
+          isFollowed -> LocalStrings.current.followShowRemove
+          else -> LocalStrings.current.followShowAdd
         },
-        expanded = expanded,
-        modifier = modifier,
-    )
+      )
+    },
+    containerColor = when {
+      isFollowed -> FloatingActionButtonDefaults.containerColor
+      else -> MaterialTheme.colorScheme.surface
+    },
+    expanded = expanded,
+    modifier = modifier,
+  )
 }

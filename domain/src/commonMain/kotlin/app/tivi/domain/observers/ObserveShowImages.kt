@@ -16,16 +16,16 @@ import org.mobilenativefoundation.store.store5.StoreReadRequest
 
 @Inject
 class ObserveShowImages(
-    private val store: ShowImagesStore,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val store: ShowImagesStore,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<ObserveShowImages.Params, ShowImages>() {
 
-    override fun createObservable(params: Params): Flow<ShowImages> {
-        return store.stream(StoreReadRequest.cached(params.showId, refresh = false))
-            .filterForResult()
-            .map { it.requireData() }
-            .flowOn(dispatchers.computation)
-    }
+  override fun createObservable(params: Params): Flow<ShowImages> {
+    return store.stream(StoreReadRequest.cached(params.showId, refresh = false))
+      .filterForResult()
+      .map { it.requireData() }
+      .flowOn(dispatchers.computation)
+  }
 
-    data class Params(val showId: Long)
+  data class Params(val showId: Long)
 }

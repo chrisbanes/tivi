@@ -32,71 +32,71 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SearchUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> SearchPresenter,
+  private val presenterFactory: (Navigator) -> SearchPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is SearchScreen -> presenterFactory(navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is SearchScreen -> presenterFactory(navigator)
+    else -> null
+  }
 }
 
 @Inject
 class SearchPresenter(
-    @Assisted private val navigator: Navigator,
-    private val searchShows: SearchShows,
-    private val logger: Logger,
+  @Assisted private val navigator: Navigator,
+  private val searchShows: SearchShows,
+  private val logger: Logger,
 ) : Presenter<SearchUiState> {
 
-    @Composable
-    override fun present(): SearchUiState {
-        val scope = rememberCoroutineScope()
+  @Composable
+  override fun present(): SearchUiState {
+    val scope = rememberCoroutineScope()
 
-        var query by rememberRetained { mutableStateOf("") }
-        var results by rememberRetained { mutableStateOf(emptyList<TiviShow>()) }
+    var query by rememberRetained { mutableStateOf("") }
+    var results by rememberRetained { mutableStateOf(emptyList<TiviShow>()) }
 
-        val uiMessageManager = remember { UiMessageManager() }
+    val uiMessageManager = remember { UiMessageManager() }
 
-        val loading by searchShows.inProgress.collectAsState(false)
-        val message by uiMessageManager.message.collectAsState(null)
+    val loading by searchShows.inProgress.collectAsState(false)
+    val message by uiMessageManager.message.collectAsState(null)
 
-        LaunchedEffect(query) {
-            // delay for 300 milliseconds. This has the same effect as debounce
-            delay(300.milliseconds)
+    LaunchedEffect(query) {
+      // delay for 300 milliseconds. This has the same effect as debounce
+      delay(300.milliseconds)
 
-            val result = searchShows(SearchShows.Params(query))
-            results = result.getOrDefault(emptyList())
+      val result = searchShows(SearchShows.Params(query))
+      results = result.getOrDefault(emptyList())
 
-            result.onException { e ->
-                logger.i(e)
-                uiMessageManager.emitMessage(UiMessage(e))
-            }
-        }
-
-        fun eventSink(event: SearchUiEvent) {
-            when (event) {
-                is SearchUiEvent.ClearMessage -> {
-                    scope.launch {
-                        uiMessageManager.clearMessage(event.id)
-                    }
-                }
-
-                is SearchUiEvent.UpdateQuery -> query = event.query
-                is SearchUiEvent.OpenShowDetails -> {
-                    navigator.goTo(ShowDetailsScreen(event.showId))
-                }
-            }
-        }
-
-        return SearchUiState(
-            query = query,
-            searchResults = results,
-            refreshing = loading,
-            message = message,
-            eventSink = ::eventSink,
-        )
+      result.onException { e ->
+        logger.i(e)
+        uiMessageManager.emitMessage(UiMessage(e))
+      }
     }
+
+    fun eventSink(event: SearchUiEvent) {
+      when (event) {
+        is SearchUiEvent.ClearMessage -> {
+          scope.launch {
+            uiMessageManager.clearMessage(event.id)
+          }
+        }
+
+        is SearchUiEvent.UpdateQuery -> query = event.query
+        is SearchUiEvent.OpenShowDetails -> {
+          navigator.goTo(ShowDetailsScreen(event.showId))
+        }
+      }
+    }
+
+    return SearchUiState(
+      query = query,
+      searchResults = results,
+      refreshing = loading,
+      message = message,
+      eventSink = ::eventSink,
+    )
+  }
 }

@@ -22,27 +22,27 @@ import kotlin.math.pow
  * the higher visual quality at the cost of draw performance. Defaults to `16`.
  */
 fun Modifier.drawForegroundGradientScrim(
-    color: Color,
-    decay: Float = 3.0f,
-    numStops: Int = 16,
-    startY: Float = 0f,
-    endY: Float = 1f,
+  color: Color,
+  decay: Float = 3.0f,
+  numStops: Int = 16,
+  startY: Float = 0f,
+  endY: Float = 1f,
 ): Modifier = composed {
-    val colors = remember(color, numStops) {
-        val baseAlpha = color.alpha
-        List(numStops) { i ->
-            val x = i * 1f / (numStops - 1)
-            val opacity = x.pow(decay)
-            color.copy(alpha = baseAlpha * opacity)
-        }
+  val colors = remember(color, numStops) {
+    val baseAlpha = color.alpha
+    List(numStops) { i ->
+      val x = i * 1f / (numStops - 1)
+      val opacity = x.pow(decay)
+      color.copy(alpha = baseAlpha * opacity)
     }
+  }
 
-    drawWithContent {
-        drawContent()
-        drawRect(
-            topLeft = Offset(x = 0f, y = startY * size.height),
-            size = size.copy(height = (endY - startY) * size.height),
-            brush = Brush.verticalGradient(colors = colors),
-        )
-    }
+  drawWithContent {
+    drawContent()
+    drawRect(
+      topLeft = Offset(x = 0f, y = startY * size.height),
+      size = size.copy(height = (endY - startY) * size.height),
+      brush = Brush.verticalGradient(colors = colors),
+    )
+  }
 }

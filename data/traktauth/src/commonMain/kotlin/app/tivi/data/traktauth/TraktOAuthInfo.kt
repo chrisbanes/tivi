@@ -4,7 +4,7 @@
 package app.tivi.data.traktauth
 
 data class TraktOAuthInfo(
-    val clientId: String,
-    val clientSecret: String,
-    val redirectUri: String,
+  val clientId: String,
+  val clientSecret: String,
+  val redirectUri: String,
 )

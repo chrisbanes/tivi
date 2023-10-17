@@ -2,7 +2,7 @@ root = true
 
 [*]
 charset = utf-8
-indent_size = 4
+indent_size = 2
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
@@ -12,6 +12,3 @@ ij_kotlin_imports_layout = *
 ktlint_code_style = intellij_idea
 ktlint_standard_discouraged-comment-location = disabled
 ktlint_function_naming_ignore_when_annotated_with = Composable
-
-[*.{yml,yaml}]
-indent_size = 2

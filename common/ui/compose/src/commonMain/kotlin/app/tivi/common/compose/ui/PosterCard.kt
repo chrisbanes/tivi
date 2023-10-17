@@ -22,52 +22,52 @@ import app.tivi.data.models.TiviShow
 
 @Composable
 fun PosterCard(
-    show: TiviShow,
-    modifier: Modifier = Modifier,
+  show: TiviShow,
+  modifier: Modifier = Modifier,
 ) {
-    Card(modifier = modifier) {
-        PosterCardContent(show = show)
-    }
+  Card(modifier = modifier) {
+    PosterCardContent(show = show)
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PosterCard(
-    show: TiviShow,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+  show: TiviShow,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    Card(onClick = onClick, modifier = modifier) {
-        PosterCardContent(show = show)
-    }
+  Card(onClick = onClick, modifier = modifier) {
+    PosterCardContent(show = show)
+  }
 }
 
 @Composable
 private fun PosterCardContent(show: TiviShow) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = show.title ?: "No title",
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier
-                .padding(4.dp)
-                .align(Alignment.CenterStart),
-        )
-        AsyncImage(
-            model = show.asImageModel(ImageType.POSTER),
-            contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: "show"),
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
-    }
+  Box(modifier = Modifier.fillMaxSize()) {
+    Text(
+      text = show.title ?: "No title",
+      style = MaterialTheme.typography.bodySmall,
+      modifier = Modifier
+        .padding(4.dp)
+        .align(Alignment.CenterStart),
+    )
+    AsyncImage(
+      model = show.asImageModel(ImageType.POSTER),
+      contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: "show"),
+      modifier = Modifier.fillMaxSize(),
+      contentScale = ContentScale.Crop,
+    )
+  }
 }
 
 @Composable
 fun PlaceholderPosterCard(
-    modifier: Modifier = Modifier,
+  modifier: Modifier = Modifier,
 ) {
-    Card(modifier = modifier) {
-        Box {
-            // TODO: display something better
-        }
+  Card(modifier = modifier) {
+    Box {
+      // TODO: display something better
     }
+  }
 }

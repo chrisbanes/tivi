@@ -26,45 +26,45 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AccountUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> AccountPresenter,
+  private val presenterFactory: (Navigator) -> AccountPresenter,
 ) : Presenter.Factory {
-    override fun create(screen: Screen, navigator: Navigator, context: CircuitContext): Presenter<*>? {
-        return when (screen) {
-            is AccountScreen -> presenterFactory(navigator)
-            else -> null
-        }
+  override fun create(screen: Screen, navigator: Navigator, context: CircuitContext): Presenter<*>? {
+    return when (screen) {
+      is AccountScreen -> presenterFactory(navigator)
+      else -> null
     }
+  }
 }
 
 @Inject
 class AccountPresenter(
-    @Assisted private val navigator: Navigator,
-    private val loginTrakt: LoginTrakt,
-    private val logoutTrakt: LogoutTrakt,
-    private val observeTraktAuthState: ObserveTraktAuthState,
-    private val observeUserDetails: ObserveUserDetails,
+  @Assisted private val navigator: Navigator,
+  private val loginTrakt: LoginTrakt,
+  private val logoutTrakt: LogoutTrakt,
+  private val observeTraktAuthState: ObserveTraktAuthState,
+  private val observeUserDetails: ObserveUserDetails,
 ) : Presenter<AccountUiState> {
 
-    @Composable
-    override fun present(): AccountUiState {
-        val user by observeUserDetails.flow.collectAsRetainedState(null)
-        val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
-        val scope = rememberCoroutineScope()
+  @Composable
+  override fun present(): AccountUiState {
+    val user by observeUserDetails.flow.collectAsRetainedState(null)
+    val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
+    val scope = rememberCoroutineScope()
 
-        LaunchedEffect(Unit) {
-            observeTraktAuthState(Unit)
-            observeUserDetails(ObserveUserDetails.Params("me"))
-        }
-
-        return AccountUiState(
-            user = user,
-            authState = authState,
-        ) { event ->
-            when (event) {
-                AccountUiEvent.NavigateToSettings -> navigator.goTo(SettingsScreen)
-                AccountUiEvent.Login -> scope.launch { loginTrakt() }
-                AccountUiEvent.Logout -> scope.launch { logoutTrakt() }
-            }
-        }
+    LaunchedEffect(Unit) {
+      observeTraktAuthState(Unit)
+      observeUserDetails(ObserveUserDetails.Params("me"))
     }
+
+    return AccountUiState(
+      user = user,
+      authState = authState,
+    ) { event ->
+      when (event) {
+        AccountUiEvent.NavigateToSettings -> navigator.goTo(SettingsScreen)
+        AccountUiEvent.Login -> scope.launch { loginTrakt() }
+        AccountUiEvent.Logout -> scope.launch { logoutTrakt() }
+      }
+    }
+  }
 }

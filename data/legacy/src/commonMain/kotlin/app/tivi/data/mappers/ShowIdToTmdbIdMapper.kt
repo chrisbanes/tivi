@@ -8,7 +8,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowIdToTmdbIdMapper(
-    private val showDao: TiviShowDao,
+  private val showDao: TiviShowDao,
 ) : Mapper<Long, Int?> {
-    override fun map(from: Long) = showDao.getTmdbIdForShowId(from)
+  override fun map(from: Long) = showDao.getTmdbIdForShowId(from)
 }

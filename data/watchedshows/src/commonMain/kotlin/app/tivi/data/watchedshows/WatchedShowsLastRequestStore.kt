@@ -10,5 +10,5 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class WatchedShowsLastRequestStore(
-    dao: LastRequestDao,
+  dao: LastRequestDao,
 ) : GroupLastRequestStore(Request.WATCHED_SHOWS, dao)

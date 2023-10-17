@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktListItemToTiviShow(
-    private val showMapper: TraktShowToTiviShow,
+  private val showMapper: TraktShowToTiviShow,
 ) : Mapper<TraktUserListItem, TiviShow> {
-    override fun map(from: TraktUserListItem) = showMapper.map(from.show!!)
+  override fun map(from: TraktUserListItem) = showMapper.map(from.show!!)
 }

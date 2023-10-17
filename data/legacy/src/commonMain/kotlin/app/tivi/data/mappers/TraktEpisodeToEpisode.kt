@@ -10,15 +10,15 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TraktEpisodeToEpisode : Mapper<TraktEpisode, Episode> {
 
-    override fun map(from: TraktEpisode) = Episode(
-        seasonId = 0,
-        traktId = from.ids?.trakt,
-        tmdbId = from.ids?.tmdb,
-        title = from.title,
-        number = from.number,
-        summary = from.overview,
-        firstAired = from.firstAired,
-        traktRating = from.rating?.toFloat() ?: 0f,
-        traktRatingVotes = from.votes,
-    )
+  override fun map(from: TraktEpisode) = Episode(
+    seasonId = 0,
+    traktId = from.ids?.trakt,
+    tmdbId = from.ids?.tmdb,
+    title = from.title,
+    number = from.number,
+    summary = from.overview,
+    firstAired = from.firstAired,
+    traktRating = from.rating?.toFloat() ?: 0f,
+    traktRatingVotes = from.votes,
+  )
 }

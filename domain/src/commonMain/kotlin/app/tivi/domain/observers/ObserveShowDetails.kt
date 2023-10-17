@@ -17,16 +17,16 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 @Inject
 class ObserveShowDetails(
-    private val showStore: ShowStore,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val showStore: ShowStore,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<ObserveShowDetails.Params, TiviShow>() {
 
-    override fun createObservable(params: Params): Flow<TiviShow> {
-        return showStore.stream(StoreReadRequest.cached(params.showId, refresh = false))
-            .filter { it is StoreReadResponse.Data }
-            .map { it.requireData() }
-            .flowOn(dispatchers.computation)
-    }
+  override fun createObservable(params: Params): Flow<TiviShow> {
+    return showStore.stream(StoreReadRequest.cached(params.showId, refresh = false))
+      .filter { it is StoreReadResponse.Data }
+      .map { it.requireData() }
+      .flowOn(dispatchers.computation)
+  }
 
-    data class Params(val showId: Long)
+  data class Params(val showId: Long)
 }

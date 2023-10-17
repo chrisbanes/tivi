@@ -20,29 +20,29 @@ import platform.posix.memcpy
 @OptIn(ExperimentalSerializationApi::class)
 @Inject
 class IosLicensesFetcherImpl(
-    private val dispatchers: AppCoroutineDispatchers,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : LicensesFetcher {
-    override suspend fun invoke(): List<LicenseItem> = withContext(dispatchers.io) {
-        val json = Json {
-            ignoreUnknownKeys = true
-            explicitNulls = false
-        }
-        json.decodeFromString(readBundleFile("licenses.json").decodeToString())
+  override suspend fun invoke(): List<LicenseItem> = withContext(dispatchers.io) {
+    val json = Json {
+      ignoreUnknownKeys = true
+      explicitNulls = false
     }
+    json.decodeFromString(readBundleFile("licenses.json").decodeToString())
+  }
 }
 
 @OptIn(ExperimentalForeignApi::class)
 private fun readBundleFile(path: String): ByteArray {
-    val fileManager = NSFileManager.defaultManager()
-    val composeResourcesPath = NSBundle.mainBundle.resourcePath + "/" + path
-    val contentsAtPath: NSData? = fileManager.contentsAtPath(composeResourcesPath)
-    if (contentsAtPath != null) {
-        val byteArray = ByteArray(contentsAtPath.length.toInt())
-        byteArray.usePinned {
-            memcpy(it.addressOf(0), contentsAtPath.bytes, contentsAtPath.length)
-        }
-        return byteArray
-    } else {
-        error("File $path not found in Bundle")
+  val fileManager = NSFileManager.defaultManager()
+  val composeResourcesPath = NSBundle.mainBundle.resourcePath + "/" + path
+  val contentsAtPath: NSData? = fileManager.contentsAtPath(composeResourcesPath)
+  if (contentsAtPath != null) {
+    val byteArray = ByteArray(contentsAtPath.length.toInt())
+    byteArray.usePinned {
+      memcpy(it.addressOf(0), contentsAtPath.bytes, contentsAtPath.length)
     }
+    return byteArray
+  } else {
+    error("File $path not found in Bundle")
+  }
 }

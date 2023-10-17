@@ -14,58 +14,58 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class EpisodeWatchStore(
-    private val transactionRunner: DatabaseTransactionRunner,
-    private val episodeWatchEntryDao: EpisodeWatchEntryDao,
-    logger: Logger,
+  private val transactionRunner: DatabaseTransactionRunner,
+  private val episodeWatchEntryDao: EpisodeWatchEntryDao,
+  logger: Logger,
 ) {
-    private val episodeWatchSyncer = syncerForEntity(
-        entityDao = episodeWatchEntryDao,
-        entityToKey = { it.traktId },
-        mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
-        logger = logger,
-    )
+  private val episodeWatchSyncer = syncerForEntity(
+    entityDao = episodeWatchEntryDao,
+    entityToKey = { it.traktId },
+    mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
+    logger = logger,
+  )
 
-    fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {
-        return episodeWatchEntryDao.watchesForEpisodeObservable(episodeId)
-    }
+  fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {
+    return episodeWatchEntryDao.watchesForEpisodeObservable(episodeId)
+  }
 
-    fun save(watch: EpisodeWatchEntry): Long = episodeWatchEntryDao.upsert(watch)
+  fun save(watch: EpisodeWatchEntry): Long = episodeWatchEntryDao.upsert(watch)
 
-    fun save(watches: List<EpisodeWatchEntry>): Unit = episodeWatchEntryDao.upsert(watches)
+  fun save(watches: List<EpisodeWatchEntry>): Unit = episodeWatchEntryDao.upsert(watches)
 
-    fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
+  fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
 
-    fun getWatchesForEpisode(episodeId: Long) = episodeWatchEntryDao.watchesForEpisode(episodeId)
+  fun getWatchesForEpisode(episodeId: Long) = episodeWatchEntryDao.watchesForEpisode(episodeId)
 
-    fun getEpisodeWatch(watchId: Long) = episodeWatchEntryDao.entryWithId(watchId)
+  fun getEpisodeWatch(watchId: Long) = episodeWatchEntryDao.entryWithId(watchId)
 
-    fun hasEpisodeBeenWatched(episodeId: Long) = episodeWatchEntryDao.watchCountForEpisode(episodeId) > 0
+  fun hasEpisodeBeenWatched(episodeId: Long) = episodeWatchEntryDao.watchCountForEpisode(episodeId) > 0
 
-    fun getEntriesWithAddAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
+  fun getEntriesWithAddAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
 
-    fun getEntriesWithDeleteAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
+  fun getEntriesWithDeleteAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
 
-    fun deleteEntriesWithIds(ids: List<Long>) = transactionRunner {
-        episodeWatchEntryDao.deleteWithIds(ids)
-    }
+  fun deleteEntriesWithIds(ids: List<Long>) = transactionRunner {
+    episodeWatchEntryDao.deleteWithIds(ids)
+  }
 
-    fun updateEntriesWithAction(ids: List<Long>, action: PendingAction) = transactionRunner {
-        episodeWatchEntryDao.updateEntriesToPendingAction(ids, action)
-    }
+  fun updateEntriesWithAction(ids: List<Long>, action: PendingAction) = transactionRunner {
+    episodeWatchEntryDao.updateEntriesToPendingAction(ids, action)
+  }
 
-    fun syncShowWatchEntries(
-        showId: Long,
-        watches: List<EpisodeWatchEntry>,
-    ) = transactionRunner {
-        val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
-        episodeWatchSyncer.sync(currentWatches, watches)
-    }
+  fun syncShowWatchEntries(
+    showId: Long,
+    watches: List<EpisodeWatchEntry>,
+  ) = transactionRunner {
+    val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
+    episodeWatchSyncer.sync(currentWatches, watches)
+  }
 
-    fun syncEpisodeWatchEntries(
-        episodeId: Long,
-        watches: List<EpisodeWatchEntry>,
-    ) = transactionRunner {
-        val currentWatches = episodeWatchEntryDao.watchesForEpisode(episodeId)
-        episodeWatchSyncer.sync(currentWatches, watches)
-    }
+  fun syncEpisodeWatchEntries(
+    episodeId: Long,
+    watches: List<EpisodeWatchEntry>,
+  ) = transactionRunner {
+    val currentWatches = episodeWatchEntryDao.watchesForEpisode(episodeId)
+    episodeWatchSyncer.sync(currentWatches, watches)
+  }
 }

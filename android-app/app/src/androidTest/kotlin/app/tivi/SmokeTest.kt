@@ -15,34 +15,34 @@ import org.junit.Test
 
 class SmokeTest {
 
-    @Test
-    fun openApp() {
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+  @Test
+  fun openApp() {
+    val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        startAppAndWait(device)
+    startAppAndWait(device)
 
-        // Run through the main navigation items
-        AppScenarios.mainNavigationItems(device)
-    }
+    // Run through the main navigation items
+    AppScenarios.mainNavigationItems(device)
+  }
 }
 
 private fun startAppAndWait(device: UiDevice) {
-    device.pressHome()
+  device.pressHome()
 
-    // Wait for launcher
-    val launcherPackage = device.launcherPackageName
-    assertNotNull(launcherPackage)
-    device.wait(Until.hasObject(By.pkg(launcherPackage).depth(0)), 5_000)
+  // Wait for launcher
+  val launcherPackage = device.launcherPackageName
+  assertNotNull(launcherPackage)
+  device.wait(Until.hasObject(By.pkg(launcherPackage).depth(0)), 5_000)
 
-    // Launch the app
-    val context = ApplicationProvider.getApplicationContext<TiviApplication>()
-    val packageName = context.packageName
-    val intent = context.packageManager.getLaunchIntentForPackage(packageName)!!.apply {
-        // Clear out any previous instances
-        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-    }
-    context.startActivity(intent)
+  // Launch the app
+  val context = ApplicationProvider.getApplicationContext<TiviApplication>()
+  val packageName = context.packageName
+  val intent = context.packageManager.getLaunchIntentForPackage(packageName)!!.apply {
+    // Clear out any previous instances
+    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+  }
+  context.startActivity(intent)
 
-    // Wait for the app to appear
-    device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5_000)
+  // Wait for the app to appear
+  device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5_000)
 }

@@ -8,16 +8,16 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DesktopAuthStore : AuthStore {
-    override suspend fun get(): AuthState? {
-        // TODO no-op for now
-        return null
-    }
+  override suspend fun get(): AuthState? {
+    // TODO no-op for now
+    return null
+  }
 
-    override suspend fun save(state: AuthState) {
-        // TODO no-op for now
-    }
+  override suspend fun save(state: AuthState) {
+    // TODO no-op for now
+  }
 
-    override suspend fun clear() {
-        // TODO no-op for now
-    }
+  override suspend fun clear() {
+    // TODO no-op for now
+  }
 }

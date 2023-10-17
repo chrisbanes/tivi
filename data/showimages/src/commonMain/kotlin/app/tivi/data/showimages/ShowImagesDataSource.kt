@@ -7,5 +7,5 @@ import app.tivi.data.models.ShowTmdbImage
 import app.tivi.data.models.TiviShow
 
 interface ShowImagesDataSource {
-    suspend fun getShowImages(show: TiviShow): List<ShowTmdbImage>
+  suspend fun getShowImages(show: TiviShow): List<ShowTmdbImage>
 }

@@ -8,4 +8,4 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 inline val Duration.inPast: Instant
-    get() = Clock.System.now() - this
+  get() = Clock.System.now() - this

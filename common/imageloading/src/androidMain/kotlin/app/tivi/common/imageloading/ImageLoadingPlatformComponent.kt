@@ -14,22 +14,22 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface ImageLoadingPlatformComponent {
-    @Provides
-    fun provideImageLoader(
-        application: Application,
-        interceptors: Set<Interceptor>,
-        logger: Logger,
-    ): ImageLoader = AndroidImageLoaderFactory(application).create {
-        this.logger = logger.asImageLoaderLogger()
+  @Provides
+  fun provideImageLoader(
+    application: Application,
+    interceptors: Set<Interceptor>,
+    logger: Logger,
+  ): ImageLoader = AndroidImageLoaderFactory(application).create {
+    this.logger = logger.asImageLoaderLogger()
 
-        interceptor {
-            addInterceptors(interceptors)
-        }
+    interceptor {
+      addInterceptors(interceptors)
     }
+  }
 
-    @Provides
-    @IntoSet
-    fun bindCoilCleanupInitializer(
-        initializer: CoilCleanupInitializer,
-    ): AppInitializer = initializer
+  @Provides
+  @IntoSet
+  fun bindCoilCleanupInitializer(
+    initializer: CoilCleanupInitializer,
+  ): AppInitializer = initializer
 }

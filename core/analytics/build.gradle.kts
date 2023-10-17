@@ -3,28 +3,28 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.multiplatform")
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.core.base)
-                api(projects.core.preferences)
-            }
-        }
-
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.google.firebase.analytics)
-                implementation(libs.kotlininject.runtime)
-            }
-        }
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(projects.core.base)
+        api(projects.core.preferences)
+      }
     }
+
+    val androidMain by getting {
+      dependencies {
+        implementation(libs.google.firebase.analytics)
+        implementation(libs.kotlininject.runtime)
+      }
+    }
+  }
 }
 
 android {
-    namespace = "app.tivi.core.analytics"
+  namespace = "app.tivi.core.analytics"
 }

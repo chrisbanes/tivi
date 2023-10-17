@@ -25,36 +25,36 @@ import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 
 class MainActivity : TiviActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+  override fun onCreate(savedInstanceState: Bundle?) {
+    installSplashScreen()
 
-        super.onCreate(savedInstanceState)
-        val component = AndroidActivityComponent.create(this, AndroidApplicationComponent.from(this))
+    super.onCreate(savedInstanceState)
+    val component = AndroidActivityComponent.create(this, AndroidApplicationComponent.from(this))
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+    WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        setContent {
-            val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
-            val navigator = rememberCircuitNavigator(backstack)
+    setContent {
+      val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+      val navigator = rememberCircuitNavigator(backstack)
 
-            component.tiviContent(
-                backstack,
-                navigator,
-                { url ->
-                    val intent = CustomTabsIntent.Builder().build()
-                    intent.launchUrl(this@MainActivity, Uri.parse(url))
-                },
-                Modifier.semantics {
-                    // Enables testTag -> UiAutomator resource id
-                    // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
-                    @OptIn(ExperimentalComposeUiApi::class)
-                    testTagsAsResourceId = BuildConfig.DEBUG
-                },
-            )
-        }
+      component.tiviContent(
+        backstack,
+        navigator,
+        { url ->
+          val intent = CustomTabsIntent.Builder().build()
+          intent.launchUrl(this@MainActivity, Uri.parse(url))
+        },
+        Modifier.semantics {
+          // Enables testTag -> UiAutomator resource id
+          // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
+          @OptIn(ExperimentalComposeUiApi::class)
+          testTagsAsResourceId = BuildConfig.DEBUG
+        },
+      )
     }
+  }
 }
 
 private fun AndroidApplicationComponent.Companion.from(context: Context): AndroidApplicationComponent {
-    return (context.applicationContext as TiviApplication).component
+  return (context.applicationContext as TiviApplication).component
 }

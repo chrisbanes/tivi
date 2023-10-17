@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 
 @Composable
 internal actual fun colorScheme(
-    useDarkColors: Boolean,
-    useDynamicColors: Boolean,
+  useDarkColors: Boolean,
+  useDynamicColors: Boolean,
 ): ColorScheme = when {
-    useDarkColors -> TiviDarkColors
-    else -> TiviLightColors
+  useDarkColors -> TiviDarkColors
+  else -> TiviLightColors
 }

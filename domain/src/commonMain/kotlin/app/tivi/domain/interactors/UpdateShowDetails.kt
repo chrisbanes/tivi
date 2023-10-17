@@ -15,19 +15,19 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateShowDetails(
-    private val showStore: ShowStore,
-    private val lastRequestStore: ShowLastRequestStore,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val showStore: ShowStore,
+  private val lastRequestStore: ShowLastRequestStore,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params, Unit>() {
-    override suspend fun doWork(params: Params) {
-        withContext(dispatchers.io) {
-            showStore.fetch(
-                key = params.showId,
-                forceFresh = params.forceLoad ||
-                    lastRequestStore.isRequestExpired(params.showId, 28.days),
-            )
-        }
+  override suspend fun doWork(params: Params) {
+    withContext(dispatchers.io) {
+      showStore.fetch(
+        key = params.showId,
+        forceFresh = params.forceLoad ||
+          lastRequestStore.isRequestExpired(params.showId, 28.days),
+      )
     }
+  }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+  data class Params(val showId: Long, val forceLoad: Boolean)
 }

@@ -4,6 +4,6 @@
 package app.tivi.data.models
 
 enum class ActionDate {
-    NOW,
-    AIR_DATE,
+  NOW,
+  AIR_DATE,
 }

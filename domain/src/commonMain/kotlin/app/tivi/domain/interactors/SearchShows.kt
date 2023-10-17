@@ -13,26 +13,26 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SearchShows(
-    private val searchRepository: SearchRepository,
-    private val showDao: TiviShowDao,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val searchRepository: SearchRepository,
+  private val showDao: TiviShowDao,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<SearchShows.Params, List<TiviShow>>() {
-    override suspend fun doWork(params: Params): List<TiviShow> = withContext(dispatchers.io) {
-        val remoteResults = searchRepository.search(params.query)
-        when {
-            remoteResults.isNotEmpty() -> remoteResults
-            params.query.isNotBlank() -> {
-                try {
-                    showDao.search("%${params.query}%")
-                } catch (e: Exception) {
-                    // Re-throw wrapped exception with the query
-                    throw Exception("Error while searching database with query: ${params.query}", e)
-                }
-            }
-
-            else -> emptyList()
+  override suspend fun doWork(params: Params): List<TiviShow> = withContext(dispatchers.io) {
+    val remoteResults = searchRepository.search(params.query)
+    when {
+      remoteResults.isNotEmpty() -> remoteResults
+      params.query.isNotBlank() -> {
+        try {
+          showDao.search("%${params.query}%")
+        } catch (e: Exception) {
+          // Re-throw wrapped exception with the query
+          throw Exception("Error while searching database with query: ${params.query}", e)
         }
-    }
+      }
 
-    data class Params(val query: String)
+      else -> emptyList()
+    }
+  }
+
+  data class Params(val query: String)
 }

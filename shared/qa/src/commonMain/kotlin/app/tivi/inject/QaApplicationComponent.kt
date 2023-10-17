@@ -7,6 +7,6 @@ import app.tivi.app.Flavor
 import me.tatarka.inject.annotations.Provides
 
 interface QaApplicationComponent {
-    @Provides
-    fun provideFlavor(): Flavor = Flavor.Qa
+  @Provides
+  fun provideFlavor(): Flavor = Flavor.Qa
 }

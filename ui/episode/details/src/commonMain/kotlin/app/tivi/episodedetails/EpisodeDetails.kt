@@ -94,506 +94,506 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class EpisodeDetailsUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is EpisodeDetailsScreen -> {
-            ui<EpisodeDetailsUiState> { state, modifier ->
-                EpisodeDetails(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is EpisodeDetailsScreen -> {
+      ui<EpisodeDetailsUiState> { state, modifier ->
+        EpisodeDetails(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @Composable
 internal fun EpisodeDetails(
-    viewState: EpisodeDetailsUiState,
-    modifier: Modifier = Modifier,
+  viewState: EpisodeDetailsUiState,
+  modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    val overlayHost = LocalOverlayHost.current
+  val scope = rememberCoroutineScope()
+  val overlayHost = LocalOverlayHost.current
 
-    EpisodeDetails(
-        viewState = viewState,
-        navigateUp = { viewState.eventSink(EpisodeDetailsUiEvent.NavigateUp) },
-        refresh = { viewState.eventSink(EpisodeDetailsUiEvent.Refresh(true)) },
-        onRemoveAllWatches = { viewState.eventSink(EpisodeDetailsUiEvent.RemoveAllWatches) },
-        onRemoveWatch = { id -> viewState.eventSink(EpisodeDetailsUiEvent.RemoveWatchEntry(id)) },
-        onAddWatch = {
-            scope.launch {
-                overlayHost.showInBottomSheet(EpisodeTrackScreen(viewState.episode!!.id))
-            }
-        },
-        onMessageShown = { id -> viewState.eventSink(EpisodeDetailsUiEvent.ClearMessage(id)) },
-        modifier = modifier,
-    )
+  EpisodeDetails(
+    viewState = viewState,
+    navigateUp = { viewState.eventSink(EpisodeDetailsUiEvent.NavigateUp) },
+    refresh = { viewState.eventSink(EpisodeDetailsUiEvent.Refresh(true)) },
+    onRemoveAllWatches = { viewState.eventSink(EpisodeDetailsUiEvent.RemoveAllWatches) },
+    onRemoveWatch = { id -> viewState.eventSink(EpisodeDetailsUiEvent.RemoveWatchEntry(id)) },
+    onAddWatch = {
+      scope.launch {
+        overlayHost.showInBottomSheet(EpisodeTrackScreen(viewState.episode!!.id))
+      }
+    },
+    onMessageShown = { id -> viewState.eventSink(EpisodeDetailsUiEvent.ClearMessage(id)) },
+    modifier = modifier,
+  )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun EpisodeDetails(
-    viewState: EpisodeDetailsUiState,
-    navigateUp: () -> Unit,
-    refresh: () -> Unit,
-    onRemoveAllWatches: () -> Unit,
-    onRemoveWatch: (id: Long) -> Unit,
-    onAddWatch: () -> Unit,
-    onMessageShown: (id: Long) -> Unit,
-    modifier: Modifier = Modifier,
+  viewState: EpisodeDetailsUiState,
+  navigateUp: () -> Unit,
+  refresh: () -> Unit,
+  onRemoveAllWatches: () -> Unit,
+  onRemoveWatch: (id: Long) -> Unit,
+  onAddWatch: () -> Unit,
+  onMessageShown: (id: Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+  val snackbarHostState = remember { SnackbarHostState() }
 
-    val dismissSnackbarState = rememberDismissState { value ->
-        if (value != DismissValue.Default) {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            true
-        } else {
-            false
-        }
+  val dismissSnackbarState = rememberDismissState { value ->
+    if (value != DismissValue.Default) {
+      snackbarHostState.currentSnackbarData?.dismiss()
+      true
+    } else {
+      false
     }
+  }
 
-    viewState.message?.let { message ->
-        LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(message.message)
-            // Notify the view model that the message has been dismissed
-            onMessageShown(message.id)
-        }
+  viewState.message?.let { message ->
+    LaunchedEffect(message) {
+      snackbarHostState.showSnackbar(message.message)
+      // Notify the view model that the message has been dismissed
+      onMessageShown(message.id)
     }
+  }
 
-    Surface(
-        modifier = modifier
-            .fillMaxSize()
-            .testTag("episode_details"),
-    ) {
+  Surface(
+    modifier = modifier
+      .fillMaxSize()
+      .testTag("episode_details"),
+  ) {
+    Column {
+      Surface {
+        if (viewState.episode != null && viewState.season != null) {
+          EpisodeDetailsBackdrop(
+            season = viewState.season,
+            episode = viewState.episode,
+            modifier = Modifier
+              .fillMaxWidth()
+              .aspectRatio(16 / 11f),
+          )
+        }
+
         Column {
-            Surface {
-                if (viewState.episode != null && viewState.season != null) {
-                    EpisodeDetailsBackdrop(
-                        season = viewState.season,
-                        episode = viewState.episode,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(16 / 11f),
-                    )
-                }
+          Spacer(
+            Modifier
+              .background(MaterialTheme.colorScheme.background.copy(alpha = 0.35f))
+              .windowInsetsTopHeight(WindowInsets.statusBars)
+              .fillMaxWidth(),
+          )
 
-                Column {
-                    Spacer(
-                        Modifier
-                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.35f))
-                            .windowInsetsTopHeight(WindowInsets.statusBars)
-                            .fillMaxWidth(),
-                    )
+          EpisodeDetailsAppBar(
+            isRefreshing = viewState.refreshing,
+            navigateUp = navigateUp,
+            refresh = refresh,
+            modifier = Modifier.fillMaxWidth(),
+          )
+        }
+      }
 
-                    EpisodeDetailsAppBar(
-                        isRefreshing = viewState.refreshing,
-                        navigateUp = navigateUp,
-                        refresh = refresh,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-            }
+      Column(
+        modifier = Modifier
+          .verticalScroll(rememberScrollState()),
+      ) {
+        val episode = viewState.episode
+        if (episode != null) {
+          InfoPanes(episode)
 
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState()),
-            ) {
-                val episode = viewState.episode
-                if (episode != null) {
-                    InfoPanes(episode)
-
-                    ExpandingText(
-                        text = episode.summary ?: "No summary",
-                        modifier = Modifier.padding(16.dp),
-                    )
-                }
-
-                if (viewState.canAddEpisodeWatch) {
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    if (viewState.watches.isEmpty()) {
-                        MarkWatchedButton(
-                            onClick = onAddWatch,
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                        )
-                    } else {
-                        AddWatchButton(
-                            onClick = onAddWatch,
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                if (viewState.watches.isNotEmpty()) {
-                    var openDialog by remember { mutableStateOf(false) }
-
-                    EpisodeWatchesHeader(
-                        onSweepWatchesClick = { openDialog = true },
-                    )
-
-                    if (openDialog) {
-                        RemoveAllWatchesDialog(
-                            onConfirm = {
-                                onRemoveAllWatches()
-                                openDialog = false
-                            },
-                            onDismissRequest = { openDialog = false },
-                        )
-                    }
-                }
-
-                viewState.watches.forEach { watch ->
-                    key(watch.id) {
-                        val dismissState = rememberDismissState { value ->
-                            if (value != DismissValue.Default) {
-                                onRemoveWatch(watch.id)
-                                true
-                            } else {
-                                false
-                            }
-                        }
-
-                        SwipeToDismiss(
-                            state = dismissState,
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            directions = setOf(DismissDirection.EndToStart),
-                            background = {
-                                EpisodeWatchSwipeBackground(
-                                    targetValue = dismissState.targetValue,
-                                    modifier = Modifier.fillMaxSize(),
-                                )
-                            },
-                            dismissContent = {
-                                EpisodeWatch(episodeWatchEntry = watch)
-                            },
-                        )
-                    }
-                }
-
-                Spacer(Modifier.height(8.dp))
-            }
+          ExpandingText(
+            text = episode.summary ?: "No summary",
+            modifier = Modifier.padding(16.dp),
+          )
         }
 
-        SnackbarHost(hostState = snackbarHostState) { data ->
-            SwipeToDismiss(
-                state = dismissSnackbarState,
-                background = {},
-                dismissContent = { Snackbar(snackbarData = data) },
-                modifier = Modifier
-                    .padding(horizontal = Layout.bodyMargin)
-                    .fillMaxWidth(),
+        if (viewState.canAddEpisodeWatch) {
+          Spacer(modifier = Modifier.height(8.dp))
+
+          if (viewState.watches.isEmpty()) {
+            MarkWatchedButton(
+              onClick = onAddWatch,
+              modifier = Modifier.align(Alignment.CenterHorizontally),
             )
+          } else {
+            AddWatchButton(
+              onClick = onAddWatch,
+              modifier = Modifier.align(Alignment.CenterHorizontally),
+            )
+          }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (viewState.watches.isNotEmpty()) {
+          var openDialog by remember { mutableStateOf(false) }
+
+          EpisodeWatchesHeader(
+            onSweepWatchesClick = { openDialog = true },
+          )
+
+          if (openDialog) {
+            RemoveAllWatchesDialog(
+              onConfirm = {
+                onRemoveAllWatches()
+                openDialog = false
+              },
+              onDismissRequest = { openDialog = false },
+            )
+          }
+        }
+
+        viewState.watches.forEach { watch ->
+          key(watch.id) {
+            val dismissState = rememberDismissState { value ->
+              if (value != DismissValue.Default) {
+                onRemoveWatch(watch.id)
+                true
+              } else {
+                false
+              }
+            }
+
+            SwipeToDismiss(
+              state = dismissState,
+              modifier = Modifier.padding(vertical = 4.dp),
+              directions = setOf(DismissDirection.EndToStart),
+              background = {
+                EpisodeWatchSwipeBackground(
+                  targetValue = dismissState.targetValue,
+                  modifier = Modifier.fillMaxSize(),
+                )
+              },
+              dismissContent = {
+                EpisodeWatch(episodeWatchEntry = watch)
+              },
+            )
+          }
+        }
+
+        Spacer(Modifier.height(8.dp))
+      }
     }
+
+    SnackbarHost(hostState = snackbarHostState) { data ->
+      SwipeToDismiss(
+        state = dismissSnackbarState,
+        background = {},
+        dismissContent = { Snackbar(snackbarData = data) },
+        modifier = Modifier
+          .padding(horizontal = Layout.bodyMargin)
+          .fillMaxWidth(),
+      )
+    }
+  }
 }
 
 @Composable
 private fun EpisodeDetailsBackdrop(
-    season: Season,
-    episode: Episode,
-    modifier: Modifier = Modifier,
+  season: Season,
+  episode: Episode,
+  modifier: Modifier = Modifier,
 ) {
-    TiviTheme(useDarkColors = true) {
-        Backdrop(
-            imageModel = episode.asImageModel(),
-            shape = RectangleShape,
-            overline = {
-                val epNumber = episode.number
-                val seasonNumber = season.number
-                if (seasonNumber != null && epNumber != null) {
-                    Text(
-                        text = LocalStrings.current.seasonEpisodeNumber(seasonNumber, epNumber),
-                    )
-                }
-            },
-            title = { Text(text = episode.title ?: "No title") },
-            modifier = modifier,
-        )
-    }
+  TiviTheme(useDarkColors = true) {
+    Backdrop(
+      imageModel = episode.asImageModel(),
+      shape = RectangleShape,
+      overline = {
+        val epNumber = episode.number
+        val seasonNumber = season.number
+        if (seasonNumber != null && epNumber != null) {
+          Text(
+            text = LocalStrings.current.seasonEpisodeNumber(seasonNumber, epNumber),
+          )
+        }
+      },
+      title = { Text(text = episode.title ?: "No title") },
+      modifier = modifier,
+    )
+  }
 }
 
 @Composable
 private fun InfoPanes(episode: Episode) {
-    Row {
-        val strings = LocalStrings.current
+  Row {
+    val strings = LocalStrings.current
 
-        episode.traktRating?.let { rating ->
-            InfoPane(
-                imageVector = Icons.Default.Star,
-                label = strings.traktRatingText(rating * 10f),
-                contentDescription = strings.cdTraktRating(rating * 10f),
-                modifier = Modifier.weight(1f),
-            )
-        }
-
-        episode.firstAired?.let { firstAired ->
-            val formatter = LocalTiviDateFormatter.current
-            val formattedDate = formatter.formatShortRelativeTime(firstAired)
-            InfoPane(
-                imageVector = Icons.Default.CalendarToday,
-                label = formattedDate,
-                contentDescription = strings.cdEpisodeFirstAired(formattedDate),
-                modifier = Modifier.weight(1f),
-            )
-        }
+    episode.traktRating?.let { rating ->
+      InfoPane(
+        imageVector = Icons.Default.Star,
+        label = strings.traktRatingText(rating * 10f),
+        contentDescription = strings.cdTraktRating(rating * 10f),
+        modifier = Modifier.weight(1f),
+      )
     }
+
+    episode.firstAired?.let { firstAired ->
+      val formatter = LocalTiviDateFormatter.current
+      val formattedDate = formatter.formatShortRelativeTime(firstAired)
+      InfoPane(
+        imageVector = Icons.Default.CalendarToday,
+        label = formattedDate,
+        contentDescription = strings.cdEpisodeFirstAired(formattedDate),
+        modifier = Modifier.weight(1f),
+      )
+    }
+  }
 }
 
 @Composable
 private fun InfoPane(
-    imageVector: ImageVector,
-    contentDescription: String?,
-    label: String,
-    modifier: Modifier = Modifier,
+  imageVector: ImageVector,
+  contentDescription: String?,
+  label: String,
+  modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.padding(16.dp)) {
-        Icon(
-            imageVector = imageVector,
-            contentDescription = contentDescription,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-        )
+  Column(modifier = modifier.padding(16.dp)) {
+    Icon(
+      imageVector = imageVector,
+      contentDescription = contentDescription,
+      modifier = Modifier.align(Alignment.CenterHorizontally),
+    )
 
-        Spacer(modifier = Modifier.height(4.dp))
+    Spacer(modifier = Modifier.height(4.dp))
 
-        Text(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-        )
-    }
+    Text(
+      modifier = Modifier.align(Alignment.CenterHorizontally),
+      text = label,
+      style = MaterialTheme.typography.bodyLarge,
+    )
+  }
 }
 
 @Composable
 private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
-    Row {
-        val strings = LocalStrings.current
+  Row {
+    val strings = LocalStrings.current
 
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .align(Alignment.CenterVertically),
-            text = strings.episodeWatches,
-            style = MaterialTheme.typography.titleMedium,
-        )
+    Text(
+      modifier = Modifier
+        .padding(horizontal = 16.dp, vertical = 8.dp)
+        .align(Alignment.CenterVertically),
+      text = strings.episodeWatches,
+      style = MaterialTheme.typography.titleMedium,
+    )
 
-        Spacer(Modifier.weight(1f))
-        IconButton(
-            modifier = Modifier.padding(end = 4.dp),
-            onClick = { onSweepWatchesClick() },
-        ) {
-            Icon(
-                imageVector = Icons.Default.DeleteSweep,
-                contentDescription = strings.cdDelete,
-            )
-        }
+    Spacer(Modifier.weight(1f))
+    IconButton(
+      modifier = Modifier.padding(end = 4.dp),
+      onClick = { onSweepWatchesClick() },
+    ) {
+      Icon(
+        imageVector = Icons.Default.DeleteSweep,
+        contentDescription = strings.cdDelete,
+      )
     }
+  }
 }
 
 @Composable
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
-    Surface {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .sizeIn(minWidth = 40.dp, minHeight = 40.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val formatter = LocalTiviDateFormatter.current
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                style = MaterialTheme.typography.bodyMedium,
-            )
+  Surface {
+    Row(
+      modifier = Modifier
+        .padding(horizontal = 16.dp, vertical = 8.dp)
+        .sizeIn(minWidth = 40.dp, minHeight = 40.dp),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      val formatter = LocalTiviDateFormatter.current
+      Text(
+        modifier = Modifier.align(Alignment.CenterVertically),
+        text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
+        style = MaterialTheme.typography.bodyMedium,
+      )
 
-            Spacer(Modifier.weight(1f))
+      Spacer(Modifier.weight(1f))
 
-            AnimatedVisibility(episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
-                Icon(
-                    imageVector = Icons.Default.Publish,
-                    contentDescription = LocalStrings.current.cdEpisodeSyncing,
-                    modifier = Modifier.padding(start = 8.dp),
-                )
-            }
+      AnimatedVisibility(episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
+        Icon(
+          imageVector = Icons.Default.Publish,
+          contentDescription = LocalStrings.current.cdEpisodeSyncing,
+          modifier = Modifier.padding(start = 8.dp),
+        )
+      }
 
-            AnimatedVisibility(episodeWatchEntry.pendingAction == PendingAction.DELETE) {
-                Icon(
-                    imageVector = Icons.Default.VisibilityOff,
-                    contentDescription = LocalStrings.current.cdEpisodeDeleted,
-                    modifier = Modifier.padding(start = 8.dp),
-                )
-            }
-        }
+      AnimatedVisibility(episodeWatchEntry.pendingAction == PendingAction.DELETE) {
+        Icon(
+          imageVector = Icons.Default.VisibilityOff,
+          contentDescription = LocalStrings.current.cdEpisodeDeleted,
+          modifier = Modifier.padding(start = 8.dp),
+        )
+      }
     }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EpisodeWatchSwipeBackground(
-    targetValue: DismissValue,
-    modifier: Modifier = Modifier,
+  targetValue: DismissValue,
+  modifier: Modifier = Modifier,
 ) {
-    val error = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
-    val circleOverlayColor by animateColorAsState(
-        targetValue = when (targetValue != DismissValue.Default) {
-            true -> error
-            false -> Color.Transparent
-        },
-    )
+  val error = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
+  val circleOverlayColor by animateColorAsState(
+    targetValue = when (targetValue != DismissValue.Default) {
+      true -> error
+      false -> Color.Transparent
+    },
+  )
 
-    Surface(
-        tonalElevation = 4.dp,
-        modifier = modifier,
-    ) {
-        Box(Modifier.fillMaxSize()) {
-            Spacer(
-                modifier = Modifier
-                    .background(circleOverlayColor)
-                    .matchParentSize(),
-            )
+  Surface(
+    tonalElevation = 4.dp,
+    modifier = modifier,
+  ) {
+    Box(Modifier.fillMaxSize()) {
+      Spacer(
+        modifier = Modifier
+          .background(circleOverlayColor)
+          .matchParentSize(),
+      )
 
-            Icon(
-                imageVector = Icons.Outlined.Delete,
-                contentDescription = LocalStrings.current.cdDelete,
-                modifier = Modifier
-                    .padding(12.dp)
-                    .padding(end = 8.dp)
-                    .align(Alignment.CenterEnd),
-            )
-        }
+      Icon(
+        imageVector = Icons.Outlined.Delete,
+        contentDescription = LocalStrings.current.cdDelete,
+        modifier = Modifier
+          .padding(12.dp)
+          .padding(end = 8.dp)
+          .align(Alignment.CenterEnd),
+      )
     }
+  }
 }
 
 @Composable
 private fun MarkWatchedButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        Text(text = LocalStrings.current.episodeMarkWatched)
-    }
+  Button(
+    onClick = onClick,
+    modifier = modifier,
+  ) {
+    Text(text = LocalStrings.current.episodeMarkWatched)
+  }
 }
 
 @Composable
 private fun AddWatchButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        Text(text = LocalStrings.current.episodeAddWatch)
-    }
+  OutlinedButton(
+    onClick = onClick,
+    modifier = modifier,
+  ) {
+    Text(text = LocalStrings.current.episodeAddWatch)
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RemoveAllWatchesDialog(
-    onConfirm: () -> Unit,
-    onDismissRequest: () -> Unit,
+  onConfirm: () -> Unit,
+  onDismissRequest: () -> Unit,
 ) {
-    val strings = LocalStrings.current
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = {
-            Text(text = strings.episodeRemoveWatchesDialogTitle)
-        },
-        text = {
-            Text(text = strings.episodeRemoveWatchesDialogMessage)
-        },
-        dismissButton = {
-            Button(onClick = onDismissRequest) {
-                Text(text = strings.dialogDismiss)
-            }
-        },
-        confirmButton = {
-            Button(onClick = onConfirm) {
-                Text(text = strings.episodeRemoveWatchesDialogConfirm)
-            }
-        },
-    )
+  val strings = LocalStrings.current
+  AlertDialog(
+    onDismissRequest = onDismissRequest,
+    title = {
+      Text(text = strings.episodeRemoveWatchesDialogTitle)
+    },
+    text = {
+      Text(text = strings.episodeRemoveWatchesDialogMessage)
+    },
+    dismissButton = {
+      Button(onClick = onDismissRequest) {
+        Text(text = strings.dialogDismiss)
+      }
+    },
+    confirmButton = {
+      Button(onClick = onConfirm) {
+        Text(text = strings.episodeRemoveWatchesDialogConfirm)
+      }
+    },
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EpisodeDetailsAppBar(
-    isRefreshing: Boolean,
-    navigateUp: () -> Unit,
-    refresh: () -> Unit,
-    modifier: Modifier = Modifier,
+  isRefreshing: Boolean,
+  navigateUp: () -> Unit,
+  refresh: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent,
-            actionIconContentColor = LocalContentColor.current,
-        ),
-        title = {},
-        navigationIcon = {
-            ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = LocalStrings.current.cdNavigateUp,
-                )
-            }
-        },
-        actions = {
-            if (isRefreshing) {
-                AutoSizedCircularProgressIndicator(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .fillMaxHeight()
-                        .padding(14.dp),
-                )
-            } else {
-                ScrimmedIconButton(showScrim = true, onClick = refresh) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = LocalStrings.current.cdRefresh,
-                    )
-                }
-            }
-        },
-        windowInsets = WindowInsets.none,
-        modifier = modifier,
-    )
+  TopAppBar(
+    colors = TopAppBarDefaults.topAppBarColors(
+      containerColor = Color.Transparent,
+      actionIconContentColor = LocalContentColor.current,
+    ),
+    title = {},
+    navigationIcon = {
+      ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
+        Icon(
+          imageVector = Icons.Default.ArrowBack,
+          contentDescription = LocalStrings.current.cdNavigateUp,
+        )
+      }
+    },
+    actions = {
+      if (isRefreshing) {
+        AutoSizedCircularProgressIndicator(
+          modifier = Modifier
+            .aspectRatio(1f)
+            .fillMaxHeight()
+            .padding(14.dp),
+        )
+      } else {
+        ScrimmedIconButton(showScrim = true, onClick = refresh) {
+          Icon(
+            imageVector = Icons.Default.Refresh,
+            contentDescription = LocalStrings.current.cdRefresh,
+          )
+        }
+      }
+    },
+    windowInsets = WindowInsets.none,
+    modifier = modifier,
+  )
 }
 
 // @Preview
 @Composable
 fun PreviewEpisodeDetails() {
-    EpisodeDetails(
-        viewState = EpisodeDetailsUiState(
-            episode = Episode(
-                seasonId = 100,
-                title = "A show too far",
-                summary = "A long description of a episode",
-                traktRating = 0.5f,
-                traktRatingVotes = 84,
-                firstAired = Clock.System.now(),
-            ),
-            season = Season(
-                id = 100,
-                showId = 0,
-            ),
-            watches = listOf(
-                EpisodeWatchEntry(
-                    id = 10,
-                    episodeId = 100,
-                    watchedAt = Clock.System.now(),
-                ),
-            ),
-            eventSink = {},
+  EpisodeDetails(
+    viewState = EpisodeDetailsUiState(
+      episode = Episode(
+        seasonId = 100,
+        title = "A show too far",
+        summary = "A long description of a episode",
+        traktRating = 0.5f,
+        traktRatingVotes = 84,
+        firstAired = Clock.System.now(),
+      ),
+      season = Season(
+        id = 100,
+        showId = 0,
+      ),
+      watches = listOf(
+        EpisodeWatchEntry(
+          id = 10,
+          episodeId = 100,
+          watchedAt = Clock.System.now(),
         ),
-        navigateUp = {},
-        refresh = {},
-        onRemoveAllWatches = {},
-        onRemoveWatch = {},
-        onAddWatch = {},
-        onMessageShown = {},
-    )
+      ),
+      eventSink = {},
+    ),
+    navigateUp = {},
+    refresh = {},
+    onRemoveAllWatches = {},
+    onRemoveWatch = {},
+    onAddWatch = {},
+    onMessageShown = {},
+  )
 }

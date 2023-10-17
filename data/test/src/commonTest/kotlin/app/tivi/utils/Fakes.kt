@@ -8,9 +8,9 @@ import app.tivi.data.traktauth.TraktLoginAction
 import app.tivi.data.traktauth.TraktRefreshTokenAction
 
 object SuccessTraktLoginAction : TraktLoginAction {
-    override suspend fun invoke(): AuthState = AuthorizedAuthState
+  override suspend fun invoke(): AuthState = AuthorizedAuthState
 }
 
 object SuccessRefreshTokenAction : TraktRefreshTokenAction {
-    override suspend fun invoke(state: AuthState): AuthState = AuthorizedAuthState
+  override suspend fun invoke(state: AuthState): AuthState = AuthorizedAuthState
 }

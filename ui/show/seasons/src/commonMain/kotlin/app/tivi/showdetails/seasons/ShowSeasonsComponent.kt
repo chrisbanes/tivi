@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface ShowSeasonsComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindShowSeasonsPresenterFactory(factory: ShowSeasonsUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindShowSeasonsPresenterFactory(factory: ShowSeasonsUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindShowSeasonsUiFactoryFactory(factory: ShowSeasonsUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindShowSeasonsUiFactoryFactory(factory: ShowSeasonsUiFactory): Ui.Factory = factory
 }

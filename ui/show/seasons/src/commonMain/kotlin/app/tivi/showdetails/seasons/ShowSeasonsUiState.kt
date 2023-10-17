@@ -12,17 +12,17 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class ShowSeasonsUiState(
-    val show: TiviShow = TiviShow.EMPTY_SHOW,
-    val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
-    val refreshing: Boolean = false,
-    val message: UiMessage? = null,
-    val initialSeasonId: Long? = null,
-    val eventSink: (ShowSeasonsUiEvent) -> Unit,
+  val show: TiviShow = TiviShow.EMPTY_SHOW,
+  val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
+  val refreshing: Boolean = false,
+  val message: UiMessage? = null,
+  val initialSeasonId: Long? = null,
+  val eventSink: (ShowSeasonsUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface ShowSeasonsUiEvent : CircuitUiEvent {
-    data class ClearMessage(val id: Long) : ShowSeasonsUiEvent
-    data class Refresh(val fromUser: Boolean = true) : ShowSeasonsUiEvent
-    data class OpenEpisodeDetails(val episodeId: Long) : ShowSeasonsUiEvent
-    object NavigateBack : ShowSeasonsUiEvent
+  data class ClearMessage(val id: Long) : ShowSeasonsUiEvent
+  data class Refresh(val fromUser: Boolean = true) : ShowSeasonsUiEvent
+  data class OpenEpisodeDetails(val episodeId: Long) : ShowSeasonsUiEvent
+  object NavigateBack : ShowSeasonsUiEvent
 }

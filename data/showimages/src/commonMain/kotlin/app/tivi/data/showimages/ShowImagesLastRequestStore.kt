@@ -12,5 +12,5 @@ import me.tatarka.inject.annotations.Inject
 @ApplicationScope
 @Inject
 class ShowImagesLastRequestStore(
-    dao: LastRequestDao,
+  dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.SHOW_IMAGES, dao)

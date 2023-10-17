@@ -4,8 +4,8 @@
 package app.tivi.data.models
 
 data class RelatedShowEntry(
-    override val id: Long = 0,
-    override val showId: Long,
-    override val otherShowId: Long,
-    val orderIndex: Int,
+  override val id: Long = 0,
+  override val showId: Long,
+  override val otherShowId: Long,
+  val orderIndex: Int,
 ) : MultipleEntry

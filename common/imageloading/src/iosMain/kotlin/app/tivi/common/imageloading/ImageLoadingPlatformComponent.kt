@@ -11,14 +11,14 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface ImageLoadingPlatformComponent {
-    @Provides
-    fun provideImageLoader(
-        interceptors: Set<Interceptor>,
-        logger: Logger,
-    ): ImageLoader = IosImageLoaderFactory.create {
-        this.logger = logger.asImageLoaderLogger()
-        interceptor {
-            addInterceptors(interceptors)
-        }
+  @Provides
+  fun provideImageLoader(
+    interceptors: Set<Interceptor>,
+    logger: Logger,
+  ): ImageLoader = IosImageLoaderFactory.create {
+    this.logger = logger.asImageLoaderLogger()
+    interceptor {
+      addInterceptors(interceptors)
     }
+  }
 }

@@ -13,17 +13,17 @@ import me.tatarka.inject.annotations.Provides
 expect interface LoggerPlatformComponent
 
 interface LoggerComponent : LoggerPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun bindRecordingLogger(
-        applicationInfo: ApplicationInfo,
-    ): RecordingLogger = when {
-        applicationInfo.debugBuild -> RecordingLoggerImpl()
-        applicationInfo.flavor == Flavor.Qa -> RecordingLoggerImpl()
-        else -> NoopRecordingLogger
-    }
+  @ApplicationScope
+  @Provides
+  fun bindRecordingLogger(
+    applicationInfo: ApplicationInfo,
+  ): RecordingLogger = when {
+    applicationInfo.debugBuild -> RecordingLoggerImpl()
+    applicationInfo.flavor == Flavor.Qa -> RecordingLoggerImpl()
+    else -> NoopRecordingLogger
+  }
 
-    @Provides
-    @IntoSet
-    fun provideCrashReportingInitializer(impl: CrashReportingInitializer): AppInitializer = impl
+  @Provides
+  @IntoSet
+  fun provideCrashReportingInitializer(impl: CrashReportingInitializer): AppInitializer = impl
 }

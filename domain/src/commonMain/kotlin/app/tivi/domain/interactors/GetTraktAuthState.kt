@@ -10,9 +10,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class GetTraktAuthState(
-    private val traktAuthRepository: TraktAuthRepository,
+  private val traktAuthRepository: TraktAuthRepository,
 ) : Interactor<Unit, TraktAuthState>() {
-    override suspend fun doWork(params: Unit): TraktAuthState {
-        return traktAuthRepository.state.value
-    }
+  override suspend fun doWork(params: Unit): TraktAuthState {
+    return traktAuthRepository.state.value
+  }
 }

@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface DevSettingsComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindDevSettingsPresenterFactory(factory: DevSettingsUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindDevSettingsPresenterFactory(factory: DevSettingsUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindDevSettingsUiFactoryFactory(factory: DevSettingsUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindDevSettingsUiFactoryFactory(factory: DevSettingsUiFactory): Ui.Factory = factory
 }

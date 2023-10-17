@@ -13,22 +13,22 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class HideArtworkInterceptor(
-    private val preferences: TiviPreferences,
+  private val preferences: TiviPreferences,
 ) : Interceptor {
-    override suspend fun intercept(chain: Interceptor.Chain): ImageResult = when {
-        preferences.developerHideArtwork && isArtwork(chain.request.data) -> {
-            ImageResult.Error(
-                Exception("Developer setting: hide artwork enabled"),
-            )
-        }
-        else -> chain.proceed(chain.request)
+  override suspend fun intercept(chain: Interceptor.Chain): ImageResult = when {
+    preferences.developerHideArtwork && isArtwork(chain.request.data) -> {
+      ImageResult.Error(
+        Exception("Developer setting: hide artwork enabled"),
+      )
     }
+    else -> chain.proceed(chain.request)
+  }
 
-    private fun isArtwork(data: Any): Boolean = when (data) {
-        is String -> data.contains("tmdb.org")
-        is EpisodeImageModel -> true
-        is ShowImageModel -> true
-        is TmdbImageEntity -> true
-        else -> false
-    }
+  private fun isArtwork(data: Any): Boolean = when (data) {
+    is String -> data.contains("tmdb.org")
+    is EpisodeImageModel -> true
+    is ShowImageModel -> true
+    is TmdbImageEntity -> true
+    else -> false
+  }
 }

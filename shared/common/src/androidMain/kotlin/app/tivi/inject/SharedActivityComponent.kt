@@ -9,12 +9,12 @@ import java.util.Locale
 import me.tatarka.inject.annotations.Provides
 
 interface SharedActivityComponent {
-    @get:Provides
-    val activity: Activity
+  @get:Provides
+  val activity: Activity
 
-    @Provides
-    fun provideActivityLocale(activity: Activity): Locale {
-        return ConfigurationCompat.getLocales(activity.resources.configuration)
-            .get(0) ?: Locale.getDefault()
-    }
+  @Provides
+  fun provideActivityLocale(activity: Activity): Locale {
+    return ConfigurationCompat.getLocales(activity.resources.configuration)
+      .get(0) ?: Locale.getDefault()
+  }
 }

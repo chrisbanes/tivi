@@ -11,15 +11,15 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class CrashReportingInitializer(
-    private val preferences: TiviPreferences,
-    private val scope: ApplicationCoroutineScope,
-    private val action: SetCrashReportingEnabledAction,
+  private val preferences: TiviPreferences,
+  private val scope: ApplicationCoroutineScope,
+  private val action: SetCrashReportingEnabledAction,
 ) : AppInitializer {
-    override fun initialize() {
-        scope.launch {
-            preferences.observeReportAppCrashes().collect { enabled ->
-                action(enabled)
-            }
-        }
+  override fun initialize() {
+    scope.launch {
+      preferences.observeReportAppCrashes().collect { enabled ->
+        action(enabled)
+      }
     }
+  }
 }

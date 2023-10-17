@@ -94,373 +94,373 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LibraryUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is LibraryScreen -> {
-            ui<LibraryUiState> { state, modifier ->
-                Library(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is LibraryScreen -> {
+      ui<LibraryUiState> { state, modifier ->
+        Library(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @Composable
 internal fun Library(
-    state: LibraryUiState,
-    modifier: Modifier = Modifier,
+  state: LibraryUiState,
+  modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    val overlayHost = LocalOverlayHost.current
+  val scope = rememberCoroutineScope()
+  val overlayHost = LocalOverlayHost.current
 
-    // Need to extract the eventSink out to a local val, so that the Compose Compiler
-    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
-    val eventSink = state.eventSink
+  // Need to extract the eventSink out to a local val, so that the Compose Compiler
+  // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+  val eventSink = state.eventSink
 
-    Library(
-        state = state,
-        openShowDetails = { eventSink(LibraryUiEvent.OpenShowDetails(it)) },
-        onMessageShown = { eventSink(LibraryUiEvent.ClearMessage(it)) },
-        onToggleIncludeFollowedShows = { eventSink(LibraryUiEvent.ToggleFollowedShowsIncluded) },
-        onToggleIncludeWatchedShows = { eventSink(LibraryUiEvent.ToggleWatchedShowsIncluded) },
-        openUser = {
-            scope.launch {
-                overlayHost.showInDialog(AccountScreen)
-            }
-        },
-        refresh = { eventSink(LibraryUiEvent.Refresh(true)) },
-        onFilterChanged = { eventSink(LibraryUiEvent.ChangeFilter(it)) },
-        onSortSelected = { eventSink(LibraryUiEvent.ChangeSort(it)) },
-        modifier = modifier,
-    )
+  Library(
+    state = state,
+    openShowDetails = { eventSink(LibraryUiEvent.OpenShowDetails(it)) },
+    onMessageShown = { eventSink(LibraryUiEvent.ClearMessage(it)) },
+    onToggleIncludeFollowedShows = { eventSink(LibraryUiEvent.ToggleFollowedShowsIncluded) },
+    onToggleIncludeWatchedShows = { eventSink(LibraryUiEvent.ToggleWatchedShowsIncluded) },
+    openUser = {
+      scope.launch {
+        overlayHost.showInDialog(AccountScreen)
+      }
+    },
+    refresh = { eventSink(LibraryUiEvent.Refresh(true)) },
+    onFilterChanged = { eventSink(LibraryUiEvent.ChangeFilter(it)) },
+    onSortSelected = { eventSink(LibraryUiEvent.ChangeSort(it)) },
+    modifier = modifier,
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 internal fun Library(
-    state: LibraryUiState,
-    openShowDetails: (showId: Long) -> Unit,
-    onMessageShown: (id: Long) -> Unit,
-    onToggleIncludeFollowedShows: () -> Unit,
-    onToggleIncludeWatchedShows: () -> Unit,
-    refresh: () -> Unit,
-    openUser: () -> Unit,
-    onFilterChanged: (String) -> Unit,
-    onSortSelected: (SortOption) -> Unit,
-    modifier: Modifier = Modifier,
+  state: LibraryUiState,
+  openShowDetails: (showId: Long) -> Unit,
+  onMessageShown: (id: Long) -> Unit,
+  onToggleIncludeFollowedShows: () -> Unit,
+  onToggleIncludeWatchedShows: () -> Unit,
+  refresh: () -> Unit,
+  openUser: () -> Unit,
+  onFilterChanged: (String) -> Unit,
+  onSortSelected: (SortOption) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+  val snackbarHostState = remember { SnackbarHostState() }
 
-    val dismissSnackbarState = rememberDismissState { value ->
-        if (value != DismissValue.Default) {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            true
-        } else {
-            false
-        }
+  val dismissSnackbarState = rememberDismissState { value ->
+    if (value != DismissValue.Default) {
+      snackbarHostState.currentSnackbarData?.dismiss()
+      true
+    } else {
+      false
     }
+  }
 
-    state.message?.let { message ->
-        LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(message.message)
-            // Notify the view model that the message has been dismissed
-            onMessageShown(message.id)
-        }
+  state.message?.let { message ->
+    LaunchedEffect(message) {
+      snackbarHostState.showSnackbar(message.message)
+      // Notify the view model that the message has been dismissed
+      onMessageShown(message.id)
     }
+  }
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    Scaffold(
-        topBar = {
-            TiviRootScreenAppBar(
-                title = LocalStrings.current.libraryTitle,
-                loggedIn = state.authState == TraktAuthState.LOGGED_IN,
-                user = state.user,
-                scrollBehavior = scrollBehavior,
-                refreshing = state.isLoading,
-                onRefreshActionClick = refresh,
-                onUserActionClick = openUser,
-                modifier = Modifier
-                    .fillMaxWidth(),
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                SwipeToDismiss(
-                    state = dismissSnackbarState,
-                    background = {},
-                    dismissContent = { Snackbar(snackbarData = data) },
-                    modifier = Modifier
-                        .padding(horizontal = Layout.bodyMargin)
-                        .fillMaxWidth(),
-                )
-            }
-        },
-        modifier = modifier.fillMaxSize(),
-    ) { paddingValues ->
-        val refreshState = rememberPullRefreshState(
-            refreshing = state.isLoading,
-            onRefresh = refresh,
+  Scaffold(
+    topBar = {
+      TiviRootScreenAppBar(
+        title = LocalStrings.current.libraryTitle,
+        loggedIn = state.authState == TraktAuthState.LOGGED_IN,
+        user = state.user,
+        scrollBehavior = scrollBehavior,
+        refreshing = state.isLoading,
+        onRefreshActionClick = refresh,
+        onUserActionClick = openUser,
+        modifier = Modifier
+          .fillMaxWidth(),
+      )
+    },
+    snackbarHost = {
+      SnackbarHost(hostState = snackbarHostState) { data ->
+        SwipeToDismiss(
+          state = dismissSnackbarState,
+          background = {},
+          dismissContent = { Snackbar(snackbarData = data) },
+          modifier = Modifier
+            .padding(horizontal = Layout.bodyMargin)
+            .fillMaxWidth(),
         )
-        Box(modifier = Modifier.pullRefresh(state = refreshState)) {
-            LibraryGrid(
-                state = state,
-                lazyPagingItems = state.items,
-                paddingValues = paddingValues,
-                onFilterChanged = onFilterChanged,
-                onToggleIncludeFollowedShows = onToggleIncludeFollowedShows,
-                onToggleIncludeWatchedShows = onToggleIncludeWatchedShows,
-                onSortSelected = onSortSelected,
-                openShowDetails = openShowDetails,
-                modifier = Modifier
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-                    .bodyWidth()
-                    .fillMaxHeight(),
-            )
+      }
+    },
+    modifier = modifier.fillMaxSize(),
+  ) { paddingValues ->
+    val refreshState = rememberPullRefreshState(
+      refreshing = state.isLoading,
+      onRefresh = refresh,
+    )
+    Box(modifier = Modifier.pullRefresh(state = refreshState)) {
+      LibraryGrid(
+        state = state,
+        lazyPagingItems = state.items,
+        paddingValues = paddingValues,
+        onFilterChanged = onFilterChanged,
+        onToggleIncludeFollowedShows = onToggleIncludeFollowedShows,
+        onToggleIncludeWatchedShows = onToggleIncludeWatchedShows,
+        onSortSelected = onSortSelected,
+        openShowDetails = openShowDetails,
+        modifier = Modifier
+          .nestedScroll(scrollBehavior.nestedScrollConnection)
+          .bodyWidth()
+          .fillMaxHeight(),
+      )
 
-            PullRefreshIndicator(
-                refreshing = state.isLoading,
-                state = refreshState,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(paddingValues),
-                scale = true,
-            )
-        }
+      PullRefreshIndicator(
+        refreshing = state.isLoading,
+        state = refreshState,
+        modifier = Modifier
+          .align(Alignment.TopCenter)
+          .padding(paddingValues),
+        scale = true,
+      )
     }
+  }
 }
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 private fun LibraryGrid(
-    state: LibraryUiState,
-    lazyPagingItems: LazyPagingItems<LibraryShow>,
-    paddingValues: PaddingValues,
-    onFilterChanged: (String) -> Unit,
-    onToggleIncludeFollowedShows: () -> Unit,
-    onToggleIncludeWatchedShows: () -> Unit,
-    onSortSelected: (SortOption) -> Unit,
-    openShowDetails: (showId: Long) -> Unit,
-    modifier: Modifier = Modifier,
+  state: LibraryUiState,
+  lazyPagingItems: LazyPagingItems<LibraryShow>,
+  paddingValues: PaddingValues,
+  onFilterChanged: (String) -> Unit,
+  onToggleIncludeFollowedShows: () -> Unit,
+  onToggleIncludeWatchedShows: () -> Unit,
+  onSortSelected: (SortOption) -> Unit,
+  openShowDetails: (showId: Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val columns = Layout.columns
-    val bodyMargin = Layout.bodyMargin
-    val gutter = Layout.gutter
+  val columns = Layout.columns
+  val bodyMargin = Layout.bodyMargin
+  val gutter = Layout.gutter
 
-    var filterExpanded by remember { mutableStateOf(false) }
+  var filterExpanded by remember { mutableStateOf(false) }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(columns / 4),
-        flingBehavior = rememberTiviFlingBehavior(),
-        contentPadding = paddingValues + PaddingValues(
-            horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-            vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
-        ),
-        // We minus 8.dp off the grid padding, as we use content padding on the items below
-        horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
-        verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
-        modifier = modifier,
-    ) {
-        fullSpanItem {
-            var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-                mutableStateOf(TextFieldValue(state.filter ?: ""))
+  LazyVerticalGrid(
+    columns = GridCells.Fixed(columns / 4),
+    flingBehavior = rememberTiviFlingBehavior(),
+    contentPadding = paddingValues + PaddingValues(
+      horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
+      vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+    ),
+    // We minus 8.dp off the grid padding, as we use content padding on the items below
+    horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
+    verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
+    modifier = modifier,
+  ) {
+    fullSpanItem {
+      var filter by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(state.filter ?: ""))
+      }
+
+      FilterSortPanel(
+        filterIcon = {
+          IconButton(onClick = { filterExpanded = true }) {
+            Icon(
+              imageVector = Icons.Default.Search,
+              contentDescription = null, // FIXME
+            )
+          }
+        },
+        filterTextField = {
+          SearchTextField(
+            value = filter,
+            onValueChange = { value ->
+              filter = value
+              onFilterChanged(value.text)
+            },
+            hint = LocalStrings.current.filterShows(lazyPagingItems.itemCount),
+            modifier = Modifier.fillMaxWidth(),
+            onCleared = {
+              filter = TextFieldValue()
+              onFilterChanged("")
+              filterExpanded = false
+            },
+          )
+        },
+        filterExpanded = filterExpanded,
+        modifier = Modifier.padding(vertical = 8.dp),
+      ) {
+        FilterChip(
+          selected = state.followedShowsIncluded,
+          leadingIcon = {
+            AnimatedVisibility(visible = state.followedShowsIncluded) {
+              Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = null,
+              )
             }
+          },
+          onClick = onToggleIncludeFollowedShows,
+          label = {
+            Text(text = LocalStrings.current.followingShowsTitle)
+          },
+        )
 
-            FilterSortPanel(
-                filterIcon = {
-                    IconButton(onClick = { filterExpanded = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null, // FIXME
-                        )
-                    }
-                },
-                filterTextField = {
-                    SearchTextField(
-                        value = filter,
-                        onValueChange = { value ->
-                            filter = value
-                            onFilterChanged(value.text)
-                        },
-                        hint = LocalStrings.current.filterShows(lazyPagingItems.itemCount),
-                        modifier = Modifier.fillMaxWidth(),
-                        onCleared = {
-                            filter = TextFieldValue()
-                            onFilterChanged("")
-                            filterExpanded = false
-                        },
-                    )
-                },
-                filterExpanded = filterExpanded,
-                modifier = Modifier.padding(vertical = 8.dp),
-            ) {
-                FilterChip(
-                    selected = state.followedShowsIncluded,
-                    leadingIcon = {
-                        AnimatedVisibility(visible = state.followedShowsIncluded) {
-                            Icon(
-                                imageVector = Icons.Default.Done,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    onClick = onToggleIncludeFollowedShows,
-                    label = {
-                        Text(text = LocalStrings.current.followingShowsTitle)
-                    },
-                )
-
-                FilterChip(
-                    selected = state.watchedShowsIncluded,
-                    leadingIcon = {
-                        AnimatedVisibility(visible = state.watchedShowsIncluded) {
-                            Icon(
-                                imageVector = Icons.Default.Done,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    onClick = onToggleIncludeWatchedShows,
-                    label = {
-                        Text(text = LocalStrings.current.watchedShowsTitle)
-                    },
-                )
-
-                SortChip(
-                    sortOptions = state.availableSorts,
-                    currentSortOption = state.sort,
-                    onSortSelected = onSortSelected,
-                )
+        FilterChip(
+          selected = state.watchedShowsIncluded,
+          leadingIcon = {
+            AnimatedVisibility(visible = state.watchedShowsIncluded) {
+              Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = null,
+              )
             }
-        }
+          },
+          onClick = onToggleIncludeWatchedShows,
+          label = {
+            Text(text = LocalStrings.current.watchedShowsTitle)
+          },
+        )
 
-        fullSpanItem {
-            if (lazyPagingItems.itemCount == 0 &&
-                lazyPagingItems.loadState.refresh != LoadStateLoading
-            ) {
-                EmptyContent(
-                    title = { Text(text = LocalStrings.current.libraryEmptyTitle) },
-                    prompt = { Text(text = LocalStrings.current.libraryEmptyPrompt) },
-                    graphic = { Text(text = "\uD83D\uDCFC") },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = 64.dp),
-                )
-            }
-        }
-
-        items(
-            count = state.items.itemCount,
-            key = state.items.itemKey { it.show.id },
-        ) { index ->
-            val entry = state.items[index]
-            if (entry != null) {
-                LibraryItem(
-                    show = entry.show,
-                    watchedEpisodeCount = entry.stats?.watchedEpisodeCount,
-                    totalEpisodeCount = entry.stats?.episodeCount,
-                    lastWatchedDate = entry.watchedEntry?.lastWatched,
-                    onClick = { openShowDetails(entry.show.id) },
-                    contentPadding = PaddingValues(8.dp),
-                    modifier = Modifier
-                        .animateItemPlacement()
-                        .fillMaxWidth(),
-                )
-            }
-        }
+        SortChip(
+          sortOptions = state.availableSorts,
+          currentSortOption = state.sort,
+          onSortSelected = onSortSelected,
+        )
+      }
     }
+
+    fullSpanItem {
+      if (lazyPagingItems.itemCount == 0 &&
+        lazyPagingItems.loadState.refresh != LoadStateLoading
+      ) {
+        EmptyContent(
+          title = { Text(text = LocalStrings.current.libraryEmptyTitle) },
+          prompt = { Text(text = LocalStrings.current.libraryEmptyPrompt) },
+          graphic = { Text(text = "\uD83D\uDCFC") },
+          modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 64.dp),
+        )
+      }
+    }
+
+    items(
+      count = state.items.itemCount,
+      key = state.items.itemKey { it.show.id },
+    ) { index ->
+      val entry = state.items[index]
+      if (entry != null) {
+        LibraryItem(
+          show = entry.show,
+          watchedEpisodeCount = entry.stats?.watchedEpisodeCount,
+          totalEpisodeCount = entry.stats?.episodeCount,
+          lastWatchedDate = entry.watchedEntry?.lastWatched,
+          onClick = { openShowDetails(entry.show.id) },
+          contentPadding = PaddingValues(8.dp),
+          modifier = Modifier
+            .animateItemPlacement()
+            .fillMaxWidth(),
+        )
+      }
+    }
+  }
 }
 
 @Composable
 private fun FilterSortPanel(
-    filterExpanded: Boolean,
-    filterIcon: @Composable () -> Unit,
-    filterTextField: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit,
+  filterExpanded: Boolean,
+  filterIcon: @Composable () -> Unit,
+  filterTextField: @Composable () -> Unit,
+  modifier: Modifier = Modifier,
+  content: @Composable RowScope.() -> Unit,
 ) {
-    Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            AnimatedVisibility(!filterExpanded) {
-                filterIcon()
-            }
+  Column(modifier = modifier) {
+    Row(
+      modifier = Modifier
+        .horizontalScroll(rememberScrollState()),
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+      AnimatedVisibility(!filterExpanded) {
+        filterIcon()
+      }
 
-            content()
-        }
-
-        AnimatedVisibility(visible = filterExpanded) {
-            filterTextField()
-        }
+      content()
     }
+
+    AnimatedVisibility(visible = filterExpanded) {
+      filterTextField()
+    }
+  }
 }
 
 @Composable
 private fun LibraryItem(
-    show: TiviShow,
-    watchedEpisodeCount: Int?,
-    totalEpisodeCount: Int?,
-    lastWatchedDate: Instant?,
-    onClick: () -> Unit,
-    contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
+  show: TiviShow,
+  watchedEpisodeCount: Int?,
+  totalEpisodeCount: Int?,
+  lastWatchedDate: Instant?,
+  onClick: () -> Unit,
+  contentPadding: PaddingValues,
+  modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier
-            .clip(MaterialTheme.shapes.medium)
-            .clickable(onClick = onClick)
-            .padding(contentPadding),
-    ) {
-        PosterCard(
-            show = show,
-            modifier = Modifier
-                .fillMaxWidth(0.2f) // 20% of the width
-                .aspectRatio(2 / 3f),
+  Row(
+    modifier
+      .clip(MaterialTheme.shapes.medium)
+      .clickable(onClick = onClick)
+      .padding(contentPadding),
+  ) {
+    PosterCard(
+      show = show,
+      modifier = Modifier
+        .fillMaxWidth(0.2f) // 20% of the width
+        .aspectRatio(2 / 3f),
+    )
+
+    Spacer(Modifier.width(16.dp))
+
+    Column {
+      val textCreator = LocalTiviTextCreator.current
+
+      Text(
+        text = textCreator.showTitle(show = show).toString(),
+        style = MaterialTheme.typography.titleMedium,
+      )
+
+      Spacer(Modifier.height(4.dp))
+
+      if (watchedEpisodeCount != null && totalEpisodeCount != null) {
+        LinearProgressIndicator(
+          progress = when {
+            totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
+            else -> 0f
+          },
+          modifier = Modifier.fillMaxWidth(),
         )
 
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.height(4.dp))
 
-        Column {
-            val textCreator = LocalTiviTextCreator.current
+        Text(
+          text = textCreator.followedShowEpisodeWatchStatus(
+            episodeCount = totalEpisodeCount,
+            watchedEpisodeCount = watchedEpisodeCount,
+          ).toString(),
+          style = MaterialTheme.typography.bodySmall,
+        )
+      } else if (lastWatchedDate != null) {
+        Text(
+          text = LocalStrings.current.libraryLastWatched(
+            LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatchedDate),
+          ),
+          style = MaterialTheme.typography.bodySmall,
+        )
+      }
 
-            Text(
-                text = textCreator.showTitle(show = show).toString(),
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            Spacer(Modifier.height(4.dp))
-
-            if (watchedEpisodeCount != null && totalEpisodeCount != null) {
-                LinearProgressIndicator(
-                    progress = when {
-                        totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
-                        else -> 0f
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                Spacer(Modifier.height(4.dp))
-
-                Text(
-                    text = textCreator.followedShowEpisodeWatchStatus(
-                        episodeCount = totalEpisodeCount,
-                        watchedEpisodeCount = watchedEpisodeCount,
-                    ).toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            } else if (lastWatchedDate != null) {
-                Text(
-                    text = LocalStrings.current.libraryLastWatched(
-                        LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatchedDate),
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-
-            Spacer(Modifier.height(8.dp))
-        }
+      Spacer(Modifier.height(8.dp))
     }
+  }
 }

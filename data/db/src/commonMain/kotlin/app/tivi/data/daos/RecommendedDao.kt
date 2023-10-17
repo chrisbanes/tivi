@@ -10,15 +10,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface RecommendedDao : PaginatedEntryDao<RecommendedShowEntry, RecommendedEntryWithShow> {
 
-    fun entriesForPage(page: Int): Flow<List<RecommendedShowEntry>>
+  fun entriesForPage(page: Int): Flow<List<RecommendedShowEntry>>
 
-    fun entriesObservable(count: Int, offset: Int): Flow<List<RecommendedEntryWithShow>>
+  fun entriesObservable(count: Int, offset: Int): Flow<List<RecommendedEntryWithShow>>
 
-    fun entriesPagingSource(): PagingSource<Int, RecommendedEntryWithShow>
+  fun entriesPagingSource(): PagingSource<Int, RecommendedEntryWithShow>
 
-    override fun deletePage(page: Int)
+  override fun deletePage(page: Int)
 
-    override fun deleteAll()
+  override fun deleteAll()
 
-    override fun getLastPage(): Int?
+  override fun getLastPage(): Int?
 }

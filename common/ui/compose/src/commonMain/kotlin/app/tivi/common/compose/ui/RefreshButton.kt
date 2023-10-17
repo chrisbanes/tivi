@@ -17,44 +17,44 @@ import app.tivi.common.compose.LocalStrings
 
 @Composable
 fun RefreshButton(
-    refreshing: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+  refreshing: Boolean,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        onClick = onClick,
-        enabled = !refreshing,
-        modifier = modifier,
-    ) {
-        Crossfade(refreshing) { targetRefreshing ->
-            if (targetRefreshing) {
-                AutoSizedCircularProgressIndicator(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .padding(2.dp),
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = LocalStrings.current.cdRefresh,
-                )
-            }
-        }
+  IconButton(
+    onClick = onClick,
+    enabled = !refreshing,
+    modifier = modifier,
+  ) {
+    Crossfade(refreshing) { targetRefreshing ->
+      if (targetRefreshing) {
+        AutoSizedCircularProgressIndicator(
+          modifier = Modifier
+            .size(20.dp)
+            .padding(2.dp),
+        )
+      } else {
+        Icon(
+          imageVector = Icons.Default.Refresh,
+          contentDescription = LocalStrings.current.cdRefresh,
+        )
+      }
     }
+  }
 }
 
 @Composable
 fun RefreshButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        Icon(
-            imageVector = Icons.Default.Refresh,
-            contentDescription = LocalStrings.current.cdRefresh,
-        )
-    }
+  IconButton(
+    onClick = onClick,
+    modifier = modifier,
+  ) {
+    Icon(
+      imageVector = Icons.Default.Refresh,
+      contentDescription = LocalStrings.current.cdRefresh,
+    )
+  }
 }

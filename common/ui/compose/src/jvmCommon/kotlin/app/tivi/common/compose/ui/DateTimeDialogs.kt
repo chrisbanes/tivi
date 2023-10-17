@@ -31,76 +31,76 @@ import kotlinx.datetime.toLocalDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 actual fun TimePickerDialog(
-    onDismissRequest: () -> Unit,
-    onTimeChanged: (LocalTime) -> Unit,
-    selectedTime: LocalTime,
-    confirmLabel: String,
-    title: String,
+  onDismissRequest: () -> Unit,
+  onTimeChanged: (LocalTime) -> Unit,
+  selectedTime: LocalTime,
+  confirmLabel: String,
+  title: String,
 ) {
-    val timePickerState = rememberTimePickerState(selectedTime.hour, selectedTime.minute)
+  val timePickerState = rememberTimePickerState(selectedTime.hour, selectedTime.minute)
 
-    LaunchedEffect(timePickerState) {
-        snapshotFlow { LocalTime(timePickerState.hour, timePickerState.minute, 0, 0) }
-            .collect { onTimeChanged(it) }
-    }
+  LaunchedEffect(timePickerState) {
+    snapshotFlow { LocalTime(timePickerState.hour, timePickerState.minute, 0, 0) }
+      .collect { onTimeChanged(it) }
+  }
 
-    androidx.compose.material3.DatePickerDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            Button(onClick = onDismissRequest) {
-                Text(text = confirmLabel)
-            }
-        },
-    ) {
-        TimePicker(
-            state = timePickerState,
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .align(Alignment.CenterHorizontally),
-        )
-    }
+  androidx.compose.material3.DatePickerDialog(
+    onDismissRequest = onDismissRequest,
+    confirmButton = {
+      Button(onClick = onDismissRequest) {
+        Text(text = confirmLabel)
+      }
+    },
+  ) {
+    TimePicker(
+      state = timePickerState,
+      modifier = Modifier
+        .padding(top = 32.dp)
+        .align(Alignment.CenterHorizontally),
+    )
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 actual fun DatePickerDialog(
-    onDismissRequest: () -> Unit,
-    onDateChanged: (LocalDate) -> Unit,
-    selectedDate: LocalDate,
-    confirmLabel: String,
-    minimumDate: LocalDate?,
-    maximumDate: LocalDate?,
-    title: String,
+  onDismissRequest: () -> Unit,
+  onDateChanged: (LocalDate) -> Unit,
+  selectedDate: LocalDate,
+  confirmLabel: String,
+  minimumDate: LocalDate?,
+  maximumDate: LocalDate?,
+  title: String,
 ) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = selectedDate
-            .atTime(hour = 12, minute = 0)
-            .toInstant(TimeZone.currentSystemDefault())
-            .toEpochMilliseconds(),
-        yearRange = 1900..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.year,
-    )
+  val datePickerState = rememberDatePickerState(
+    initialSelectedDateMillis = selectedDate
+      .atTime(hour = 12, minute = 0)
+      .toInstant(TimeZone.currentSystemDefault())
+      .toEpochMilliseconds(),
+    yearRange = 1900..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.year,
+  )
 
-    androidx.compose.material3.DatePickerDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            Button(onClick = onDismissRequest) {
-                Text(text = confirmLabel)
-            }
-        },
-    ) {
-        DatePicker(
-            state = datePickerState,
-            dateValidator = { epoch ->
-                val date = Instant.fromEpochMilliseconds(epoch)
-                    .toLocalDateTime(TimeZone.currentSystemDefault())
-                    .date
-                when {
-                    minimumDate != null && date < minimumDate -> false
-                    maximumDate != null && date > maximumDate -> false
-                    else -> true
-                }
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-        )
-    }
+  androidx.compose.material3.DatePickerDialog(
+    onDismissRequest = onDismissRequest,
+    confirmButton = {
+      Button(onClick = onDismissRequest) {
+        Text(text = confirmLabel)
+      }
+    },
+  ) {
+    DatePicker(
+      state = datePickerState,
+      dateValidator = { epoch ->
+        val date = Instant.fromEpochMilliseconds(epoch)
+          .toLocalDateTime(TimeZone.currentSystemDefault())
+          .date
+        when {
+          minimumDate != null && date < minimumDate -> false
+          maximumDate != null && date > maximumDate -> false
+          else -> true
+        }
+      },
+      modifier = Modifier.align(Alignment.CenterHorizontally),
+    )
+  }
 }

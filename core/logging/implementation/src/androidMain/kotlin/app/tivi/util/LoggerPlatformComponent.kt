@@ -11,19 +11,19 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface LoggerPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideLogger(
-        timberLogger: TimberLogger,
-        recordingLogger: RecordingLogger,
-    ): Logger = CompositeLogger(timberLogger, recordingLogger)
+  @ApplicationScope
+  @Provides
+  fun provideLogger(
+    timberLogger: TimberLogger,
+    recordingLogger: RecordingLogger,
+  ): Logger = CompositeLogger(timberLogger, recordingLogger)
 
-    @Provides
-    @IntoSet
-    fun provideCrashKiOSInitializer(): AppInitializer = AndroidCrashKiOSInitializer
+  @Provides
+  @IntoSet
+  fun provideCrashKiOSInitializer(): AppInitializer = AndroidCrashKiOSInitializer
 
-    @Provides
-    fun bindSetCrashReportingEnabledAction(): SetCrashReportingEnabledAction {
-        return AndroidSetCrashReportingEnabledAction
-    }
+  @Provides
+  fun bindSetCrashReportingEnabledAction(): SetCrashReportingEnabledAction {
+    return AndroidSetCrashReportingEnabledAction
+  }
 }

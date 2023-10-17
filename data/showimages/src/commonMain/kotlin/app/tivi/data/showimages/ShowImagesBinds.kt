@@ -7,7 +7,7 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface ShowImagesBinds {
-    @ApplicationScope
-    @Provides
-    fun bindShowImagesDataSource(bind: TmdbShowImagesDataSource): ShowImagesDataSource = bind
+  @ApplicationScope
+  @Provides
+  fun bindShowImagesDataSource(bind: TmdbShowImagesDataSource): ShowImagesDataSource = bind
 }

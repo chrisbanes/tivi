@@ -37,75 +37,75 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LicensesUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is LicensesScreen -> {
-            ui<LicensesUiState> { state, modifier ->
-                Licenses(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is LicensesScreen -> {
+      ui<LicensesUiState> { state, modifier ->
+        Licenses(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun Licenses(
-    state: LicensesUiState,
-    modifier: Modifier = Modifier,
+  state: LicensesUiState,
+  modifier: Modifier = Modifier,
 ) {
-    val eventSink = state.eventSink
+  val eventSink = state.eventSink
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(LocalStrings.current.settingsOpenSource) },
-                navigationIcon = {
-                    IconButton(onClick = { eventSink(LicensesUiEvent.NavigateUp) }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = LocalStrings.current.cdNavigateUp,
-                        )
-                    }
-                },
-                windowInsets = TopAppBarDefaults.windowInsets
-                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
+  Scaffold(
+    topBar = {
+      TopAppBar(
+        title = { Text(LocalStrings.current.settingsOpenSource) },
+        navigationIcon = {
+          IconButton(onClick = { eventSink(LicensesUiEvent.NavigateUp) }) {
+            Icon(
+              imageVector = Icons.Default.ArrowBack,
+              contentDescription = LocalStrings.current.cdNavigateUp,
             )
+          }
         },
-        modifier = modifier,
-    ) { contentPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxWidth(),
-        ) {
-            state.licenses.forEach { group ->
-                stickyHeader {
-                    PreferenceHeader(
-                        title = group.id,
-                        modifier = Modifier.fillMaxSize(),
-                        tonalElevation = 1.dp,
-                    )
-                }
-
-                items(group.artifacts) { artifact ->
-                    Preference(
-                        title = (artifact.name ?: artifact.artifactId),
-                        summary = {
-                            Column {
-                                Text("${artifact.artifactId} v${artifact.version}")
-
-                                artifact.spdxLicenses?.forEach { license ->
-                                    Text(license.name)
-                                }
-                            }
-                        },
-                        modifier = Modifier.clickable {
-                            eventSink(LicensesUiEvent.NavigateRepository(artifact))
-                        },
-                    )
-                }
-            }
+        windowInsets = TopAppBarDefaults.windowInsets
+          .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
+      )
+    },
+    modifier = modifier,
+  ) { contentPadding ->
+    LazyColumn(
+      modifier = Modifier
+        .padding(contentPadding)
+        .fillMaxWidth(),
+    ) {
+      state.licenses.forEach { group ->
+        stickyHeader {
+          PreferenceHeader(
+            title = group.id,
+            modifier = Modifier.fillMaxSize(),
+            tonalElevation = 1.dp,
+          )
         }
+
+        items(group.artifacts) { artifact ->
+          Preference(
+            title = (artifact.name ?: artifact.artifactId),
+            summary = {
+              Column {
+                Text("${artifact.artifactId} v${artifact.version}")
+
+                artifact.spdxLicenses?.forEach { license ->
+                  Text(license.name)
+                }
+              }
+            },
+            modifier = Modifier.clickable {
+              eventSink(LicensesUiEvent.NavigateRepository(artifact))
+            },
+          )
+        }
+      }
     }
+  }
 }

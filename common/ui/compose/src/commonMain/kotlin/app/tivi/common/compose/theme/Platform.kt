@@ -8,6 +8,6 @@ import androidx.compose.runtime.Composable
 
 @Composable
 internal expect fun colorScheme(
-    useDarkColors: Boolean,
-    useDynamicColors: Boolean,
+  useDarkColors: Boolean,
+  useDynamicColors: Boolean,
 ): ColorScheme

@@ -23,36 +23,36 @@ import app.tivi.common.compose.Layout
 
 @Composable
 fun LoadingButton(
-    showProgressIndicator: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = !showProgressIndicator,
-    shape: Shape = ButtonDefaults.shape,
-    colors: ButtonColors = ButtonDefaults.buttonColors(),
-    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
-    border: BorderStroke? = null,
-    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable RowScope.() -> Unit,
+  showProgressIndicator: Boolean,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  enabled: Boolean = !showProgressIndicator,
+  shape: Shape = ButtonDefaults.shape,
+  colors: ButtonColors = ButtonDefaults.buttonColors(),
+  elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
+  border: BorderStroke? = null,
+  contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+  interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+  content: @Composable RowScope.() -> Unit,
 ) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        shape = shape,
-        colors = colors,
-        elevation = elevation,
-        border = border,
-        contentPadding = contentPadding,
-        interactionSource = interactionSource,
-    ) {
-        AnimatedVisibility(visible = showProgressIndicator) {
-            AutoSizedCircularProgressIndicator(
-                modifier = Modifier
-                    .padding(end = Layout.gutter)
-                    .size(16.dp),
-            )
-        }
-        content()
+  Button(
+    onClick = onClick,
+    modifier = modifier,
+    enabled = enabled,
+    shape = shape,
+    colors = colors,
+    elevation = elevation,
+    border = border,
+    contentPadding = contentPadding,
+    interactionSource = interactionSource,
+  ) {
+    AnimatedVisibility(visible = showProgressIndicator) {
+      AutoSizedCircularProgressIndicator(
+        modifier = Modifier
+          .padding(end = Layout.gutter)
+          .size(16.dp),
+      )
     }
+    content()
+  }
 }

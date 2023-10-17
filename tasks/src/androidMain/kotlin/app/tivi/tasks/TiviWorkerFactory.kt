@@ -11,16 +11,16 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TiviWorkerFactory(
-    private val syncLibraryShows: (Context, WorkerParameters) -> SyncLibraryShows,
+  private val syncLibraryShows: (Context, WorkerParameters) -> SyncLibraryShows,
 ) : WorkerFactory() {
-    override fun createWorker(
-        appContext: Context,
-        workerClassName: String,
-        workerParameters: WorkerParameters,
-    ): ListenableWorker? = when (workerClassName) {
-        name<SyncLibraryShows>() -> syncLibraryShows(appContext, workerParameters)
-        else -> null
-    }
+  override fun createWorker(
+    appContext: Context,
+    workerClassName: String,
+    workerParameters: WorkerParameters,
+  ): ListenableWorker? = when (workerClassName) {
+    name<SyncLibraryShows>() -> syncLibraryShows(appContext, workerParameters)
+    else -> null
+  }
 
-    private inline fun <reified C> name() = C::class.qualifiedName
+  private inline fun <reified C> name() = C::class.qualifiedName
 }

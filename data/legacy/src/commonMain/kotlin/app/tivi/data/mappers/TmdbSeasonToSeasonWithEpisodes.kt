@@ -10,11 +10,11 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbSeasonToSeasonWithEpisodes(
-    private val seasonMapper: TmdbSeasonToSeason,
-    private val episoderMapper: TmdbEpisodeToEpisode,
+  private val seasonMapper: TmdbSeasonToSeason,
+  private val episoderMapper: TmdbEpisodeToEpisode,
 ) : Mapper<TmdbSeason, Pair<Season, List<Episode>>> {
-    override fun map(from: TmdbSeason): Pair<Season, List<Episode>> = Pair(
-        seasonMapper.map(from),
-        from.episodes?.map { episoderMapper.map(it) } ?: emptyList(),
-    )
+  override fun map(from: TmdbSeason): Pair<Season, List<Episode>> = Pair(
+    seasonMapper.map(from),
+    from.episodes?.map { episoderMapper.map(it) } ?: emptyList(),
+  )
 }

@@ -16,28 +16,28 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class DiscoverUiState(
-    val user: TraktUser? = null,
-    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
-    val trendingItems: List<TrendingEntryWithShow> = emptyList(),
-    val trendingRefreshing: Boolean = false,
-    val popularItems: List<PopularEntryWithShow> = emptyList(),
-    val popularRefreshing: Boolean = false,
-    val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
-    val recommendedRefreshing: Boolean = false,
-    val nextEpisodeWithShowToWatch: UpNextEntry? = null,
-    val message: UiMessage? = null,
-    val eventSink: (DiscoverUiEvent) -> Unit,
+  val user: TraktUser? = null,
+  val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
+  val trendingItems: List<TrendingEntryWithShow> = emptyList(),
+  val trendingRefreshing: Boolean = false,
+  val popularItems: List<PopularEntryWithShow> = emptyList(),
+  val popularRefreshing: Boolean = false,
+  val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
+  val recommendedRefreshing: Boolean = false,
+  val nextEpisodeWithShowToWatch: UpNextEntry? = null,
+  val message: UiMessage? = null,
+  val eventSink: (DiscoverUiEvent) -> Unit,
 ) : CircuitUiState {
-    val refreshing: Boolean
-        get() = trendingRefreshing || popularRefreshing || recommendedRefreshing
+  val refreshing: Boolean
+    get() = trendingRefreshing || popularRefreshing || recommendedRefreshing
 }
 
 sealed interface DiscoverUiEvent : CircuitUiEvent {
-    data class Refresh(val fromUser: Boolean = false) : DiscoverUiEvent
-    data class ClearMessage(val id: Long) : DiscoverUiEvent
-    object OpenAccount : DiscoverUiEvent
-    object OpenPopularShows : DiscoverUiEvent
-    object OpenRecommendedShows : DiscoverUiEvent
-    object OpenTrendingShows : DiscoverUiEvent
-    data class OpenShowDetails(val showId: Long, val seasonId: Long? = null, val episodeId: Long? = null) : DiscoverUiEvent
+  data class Refresh(val fromUser: Boolean = false) : DiscoverUiEvent
+  data class ClearMessage(val id: Long) : DiscoverUiEvent
+  object OpenAccount : DiscoverUiEvent
+  object OpenPopularShows : DiscoverUiEvent
+  object OpenRecommendedShows : DiscoverUiEvent
+  object OpenTrendingShows : DiscoverUiEvent
+  data class OpenShowDetails(val showId: Long, val seasonId: Long? = null, val episodeId: Long? = null) : DiscoverUiEvent
 }

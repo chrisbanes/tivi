@@ -43,146 +43,146 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DiscoverUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> DiscoverPresenter,
+  private val presenterFactory: (Navigator) -> DiscoverPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? {
-        return when (screen) {
-            is DiscoverScreen -> presenterFactory(navigator)
-            else -> null
-        }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? {
+    return when (screen) {
+      is DiscoverScreen -> presenterFactory(navigator)
+      else -> null
     }
+  }
 }
 
 @Inject
 class DiscoverPresenter(
-    @Assisted private val navigator: Navigator,
-    private val updatePopularShows: UpdatePopularShows,
-    private val observePopularShows: ObservePopularShows,
-    private val updateTrendingShows: UpdateTrendingShows,
-    private val observeTrendingShows: ObserveTrendingShows,
-    private val updateRecommendedShows: UpdateRecommendedShows,
-    private val observeRecommendedShows: ObserveRecommendedShows,
-    private val observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
-    private val observeTraktAuthState: ObserveTraktAuthState,
-    private val observeUserDetails: ObserveUserDetails,
-    private val logger: Logger,
+  @Assisted private val navigator: Navigator,
+  private val updatePopularShows: UpdatePopularShows,
+  private val observePopularShows: ObservePopularShows,
+  private val updateTrendingShows: UpdateTrendingShows,
+  private val observeTrendingShows: ObserveTrendingShows,
+  private val updateRecommendedShows: UpdateRecommendedShows,
+  private val observeRecommendedShows: ObserveRecommendedShows,
+  private val observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
+  private val observeTraktAuthState: ObserveTraktAuthState,
+  private val observeUserDetails: ObserveUserDetails,
+  private val logger: Logger,
 ) : Presenter<DiscoverUiState> {
 
-    @Composable
-    override fun present(): DiscoverUiState {
-        val scope = rememberCoroutineScope()
-        val uiMessageManager = remember { UiMessageManager() }
+  @Composable
+  override fun present(): DiscoverUiState {
+    val scope = rememberCoroutineScope()
+    val uiMessageManager = remember { UiMessageManager() }
 
-        val trendingItems by observeTrendingShows.flow.collectAsRetainedState(emptyList())
-        val trendingLoading by updateTrendingShows.inProgress.collectAsState(false)
+    val trendingItems by observeTrendingShows.flow.collectAsRetainedState(emptyList())
+    val trendingLoading by updateTrendingShows.inProgress.collectAsState(false)
 
-        val popularItems by observePopularShows.flow.collectAsRetainedState(emptyList())
-        val popularLoading by updatePopularShows.inProgress.collectAsState(false)
+    val popularItems by observePopularShows.flow.collectAsRetainedState(emptyList())
+    val popularLoading by updatePopularShows.inProgress.collectAsState(false)
 
-        val recommendedItems by observeRecommendedShows.flow.collectAsRetainedState(emptyList())
-        val recommendedLoading by updateRecommendedShows.inProgress.collectAsState(false)
+    val recommendedItems by observeRecommendedShows.flow.collectAsRetainedState(emptyList())
+    val recommendedLoading by updateRecommendedShows.inProgress.collectAsState(false)
 
-        val nextShow by observeNextShowEpisodeToWatch.flow.collectAsRetainedState(null)
-        val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
-        val user by observeUserDetails.flow.collectAsRetainedState(null)
+    val nextShow by observeNextShowEpisodeToWatch.flow.collectAsRetainedState(null)
+    val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
+    val user by observeUserDetails.flow.collectAsRetainedState(null)
 
-        val message by uiMessageManager.message.collectAsState(null)
+    val message by uiMessageManager.message.collectAsState(null)
 
-        fun eventSink(event: DiscoverUiEvent) {
-            when (event) {
-                is DiscoverUiEvent.ClearMessage -> {
-                    scope.launch {
-                        uiMessageManager.clearMessage(event.id)
-                    }
-                }
+    fun eventSink(event: DiscoverUiEvent) {
+      when (event) {
+        is DiscoverUiEvent.ClearMessage -> {
+          scope.launch {
+            uiMessageManager.clearMessage(event.id)
+          }
+        }
 
-                is DiscoverUiEvent.Refresh -> {
-                    scope.launch {
-                        updatePopularShows(
-                            UpdatePopularShows.Params(
-                                page = UpdatePopularShows.Page.REFRESH,
-                                forceRefresh = event.fromUser,
-                            ),
-                        ).onException { e ->
-                            logger.i(e)
-                            uiMessageManager.emitMessage(UiMessage(e))
-                        }
-                    }
-                    scope.launch {
-                        updateTrendingShows(
-                            UpdateTrendingShows.Params(
-                                page = UpdateTrendingShows.Page.REFRESH,
-                                forceRefresh = event.fromUser,
-                            ),
-                        ).onException { e ->
-                            logger.i(e)
-                            uiMessageManager.emitMessage(UiMessage(e))
-                        }
-                    }
-                    if (authState == TraktAuthState.LOGGED_IN) {
-                        scope.launch {
-                            updateRecommendedShows(
-                                UpdateRecommendedShows.Params(forceRefresh = event.fromUser),
-                            ).also { result ->
-                                result.onException { e ->
-                                    logger.i(e)
-                                    uiMessageManager.emitMessage(UiMessage(e))
-                                }
-                            }
-                        }
-                    }
-                }
-
-                DiscoverUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
-                DiscoverUiEvent.OpenPopularShows -> navigator.goTo(PopularShowsScreen)
-                DiscoverUiEvent.OpenRecommendedShows -> navigator.goTo(RecommendedShowsScreen)
-                is DiscoverUiEvent.OpenShowDetails -> {
-                    // As we pushing a number of different screens onto the back stack,
-                    // we run it in a single snapshot to avoid unnecessary work
-                    Snapshot.withMutableSnapshot {
-                        navigator.goTo(ShowDetailsScreen(event.showId))
-                        if (event.seasonId != null) {
-                            navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
-                            if (event.episodeId != null) {
-                                navigator.goTo(EpisodeDetailsScreen(event.episodeId))
-                            }
-                        }
-                    }
-                }
-
-                DiscoverUiEvent.OpenTrendingShows -> navigator.goTo(TrendingShowsScreen)
+        is DiscoverUiEvent.Refresh -> {
+          scope.launch {
+            updatePopularShows(
+              UpdatePopularShows.Params(
+                page = UpdatePopularShows.Page.REFRESH,
+                forceRefresh = event.fromUser,
+              ),
+            ).onException { e ->
+              logger.i(e)
+              uiMessageManager.emitMessage(UiMessage(e))
             }
+          }
+          scope.launch {
+            updateTrendingShows(
+              UpdateTrendingShows.Params(
+                page = UpdateTrendingShows.Page.REFRESH,
+                forceRefresh = event.fromUser,
+              ),
+            ).onException { e ->
+              logger.i(e)
+              uiMessageManager.emitMessage(UiMessage(e))
+            }
+          }
+          if (authState == TraktAuthState.LOGGED_IN) {
+            scope.launch {
+              updateRecommendedShows(
+                UpdateRecommendedShows.Params(forceRefresh = event.fromUser),
+              ).also { result ->
+                result.onException { e ->
+                  logger.i(e)
+                  uiMessageManager.emitMessage(UiMessage(e))
+                }
+              }
+            }
+          }
         }
 
-        LaunchedEffect(Unit) {
-            observeTrendingShows(ObserveTrendingShows.Params(10))
-            observePopularShows(ObservePopularShows.Params(10))
-            observeRecommendedShows(ObserveRecommendedShows.Params(10))
-            observeNextShowEpisodeToWatch(Unit)
-            observeTraktAuthState(Unit)
-            observeUserDetails(ObserveUserDetails.Params("me"))
+        DiscoverUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
+        DiscoverUiEvent.OpenPopularShows -> navigator.goTo(PopularShowsScreen)
+        DiscoverUiEvent.OpenRecommendedShows -> navigator.goTo(RecommendedShowsScreen)
+        is DiscoverUiEvent.OpenShowDetails -> {
+          // As we pushing a number of different screens onto the back stack,
+          // we run it in a single snapshot to avoid unnecessary work
+          Snapshot.withMutableSnapshot {
+            navigator.goTo(ShowDetailsScreen(event.showId))
+            if (event.seasonId != null) {
+              navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
+              if (event.episodeId != null) {
+                navigator.goTo(EpisodeDetailsScreen(event.episodeId))
+              }
+            }
+          }
         }
 
-        LaunchedEffect(authState) {
-            eventSink(DiscoverUiEvent.Refresh(false))
-        }
-
-        return DiscoverUiState(
-            user = user,
-            authState = authState,
-            trendingItems = trendingItems,
-            trendingRefreshing = trendingLoading,
-            popularItems = popularItems,
-            popularRefreshing = popularLoading,
-            recommendedItems = recommendedItems,
-            recommendedRefreshing = recommendedLoading,
-            nextEpisodeWithShowToWatch = nextShow,
-            message = message,
-            eventSink = ::eventSink,
-        )
+        DiscoverUiEvent.OpenTrendingShows -> navigator.goTo(TrendingShowsScreen)
+      }
     }
+
+    LaunchedEffect(Unit) {
+      observeTrendingShows(ObserveTrendingShows.Params(10))
+      observePopularShows(ObservePopularShows.Params(10))
+      observeRecommendedShows(ObserveRecommendedShows.Params(10))
+      observeNextShowEpisodeToWatch(Unit)
+      observeTraktAuthState(Unit)
+      observeUserDetails(ObserveUserDetails.Params("me"))
+    }
+
+    LaunchedEffect(authState) {
+      eventSink(DiscoverUiEvent.Refresh(false))
+    }
+
+    return DiscoverUiState(
+      user = user,
+      authState = authState,
+      trendingItems = trendingItems,
+      trendingRefreshing = trendingLoading,
+      popularItems = popularItems,
+      popularRefreshing = popularLoading,
+      recommendedItems = recommendedItems,
+      recommendedRefreshing = recommendedLoading,
+      nextEpisodeWithShowToWatch = nextShow,
+      message = message,
+      eventSink = ::eventSink,
+    )
+  }
 }

@@ -4,7 +4,7 @@
 package app.tivi.animations
 
 fun lerp(
-    startValue: Float,
-    endValue: Float,
-    fraction: Float,
+  startValue: Float,
+  endValue: Float,
+  fraction: Float,
 ) = startValue + fraction * (endValue - startValue)

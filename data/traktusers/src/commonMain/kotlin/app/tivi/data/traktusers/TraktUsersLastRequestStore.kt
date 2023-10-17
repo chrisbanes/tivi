@@ -10,5 +10,5 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktUsersLastRequestStore(
-    dao: LastRequestDao,
+  dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.USER_PROFILE, dao)

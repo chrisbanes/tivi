@@ -23,45 +23,45 @@ import app.tivi.common.compose.LocalStrings
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    hint: String,
-    modifier: Modifier = Modifier,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions(),
-    onCleared: (() -> Unit) = { onValueChange(TextFieldValue()) },
+  value: TextFieldValue,
+  onValueChange: (TextFieldValue) -> Unit,
+  hint: String,
+  modifier: Modifier = Modifier,
+  keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+  keyboardActions: KeyboardActions = KeyboardActions(),
+  onCleared: (() -> Unit) = { onValueChange(TextFieldValue()) },
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+  val keyboardController = LocalSoftwareKeyboardController.current
 
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null, // decorative
-            )
+  OutlinedTextField(
+    value = value,
+    onValueChange = onValueChange,
+    leadingIcon = {
+      Icon(
+        imageVector = Icons.Default.Search,
+        contentDescription = null, // decorative
+      )
+    },
+    trailingIcon = {
+      IconButton(
+        onClick = {
+          onCleared()
+          // This is mostly for iOS, otherwise there is no way to dismiss the iOS
+          // keyboard once opened.
+          keyboardController?.hide()
         },
-        trailingIcon = {
-            IconButton(
-                onClick = {
-                    onCleared()
-                    // This is mostly for iOS, otherwise there is no way to dismiss the iOS
-                    // keyboard once opened.
-                    keyboardController?.hide()
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Clear,
-                    contentDescription = LocalStrings.current.cdClearText,
-                )
-            }
-        },
-        placeholder = { Text(text = hint) },
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        maxLines = 1,
-        singleLine = true,
-        modifier = modifier,
-    )
+      ) {
+        Icon(
+          imageVector = Icons.Default.Clear,
+          contentDescription = LocalStrings.current.cdClearText,
+        )
+      }
+    },
+    placeholder = { Text(text = hint) },
+    keyboardOptions = keyboardOptions,
+    keyboardActions = keyboardActions,
+    maxLines = 1,
+    singleLine = true,
+    modifier = modifier,
+  )
 }

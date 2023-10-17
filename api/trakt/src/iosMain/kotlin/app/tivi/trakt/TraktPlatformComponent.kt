@@ -21,63 +21,63 @@ import me.tatarka.inject.annotations.Provides
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface TraktPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideTrakt(
-        oauthInfo: TraktOAuthInfo,
-        applicationInfo: ApplicationInfo,
-        tiviLogger: Logger,
-        traktAuthRepository: Lazy<TraktAuthRepository>,
-    ): Trakt = Trakt {
-        traktApiKey = oauthInfo.clientId
-        maxRetries = 3
+  @ApplicationScope
+  @Provides
+  fun provideTrakt(
+    oauthInfo: TraktOAuthInfo,
+    applicationInfo: ApplicationInfo,
+    tiviLogger: Logger,
+    traktAuthRepository: Lazy<TraktAuthRepository>,
+  ): Trakt = Trakt {
+    traktApiKey = oauthInfo.clientId
+    maxRetries = 3
 
-        logging {
-            logger = object : io.ktor.client.plugins.logging.Logger {
-                override fun log(message: String) {
-                    tiviLogger.d { message }
-                }
-            }
-            level = when {
-                applicationInfo.debugBuild -> LogLevel.HEADERS
-                else -> LogLevel.NONE
-            }
+    logging {
+      logger = object : io.ktor.client.plugins.logging.Logger {
+        override fun log(message: String) {
+          tiviLogger.d { message }
         }
-
-        httpClient(Darwin) {
-            engine {
-                configureRequest {
-                    setAllowsCellularAccess(true)
-                }
-            }
-
-            install(HttpRequestRetry) {
-                retryIf(5) { _, httpResponse ->
-                    when {
-                        httpResponse.status.value in 500..599 -> true
-                        httpResponse.status == HttpStatusCode.TooManyRequests -> true
-                        else -> false
-                    }
-                }
-            }
-
-            install(Auth) {
-                bearer {
-                    loadTokens {
-                        traktAuthRepository.value.getAuthState()
-                            ?.let { BearerTokens(it.accessToken, it.refreshToken) }
-                    }
-
-                    refreshTokens {
-                        traktAuthRepository.value.refreshTokens()
-                            ?.let { BearerTokens(it.accessToken, it.refreshToken) }
-                    }
-
-                    sendWithoutRequest { request ->
-                        request.url.host == "api.trakt.tv"
-                    }
-                }
-            }
-        }
+      }
+      level = when {
+        applicationInfo.debugBuild -> LogLevel.HEADERS
+        else -> LogLevel.NONE
+      }
     }
+
+    httpClient(Darwin) {
+      engine {
+        configureRequest {
+          setAllowsCellularAccess(true)
+        }
+      }
+
+      install(HttpRequestRetry) {
+        retryIf(5) { _, httpResponse ->
+          when {
+            httpResponse.status.value in 500..599 -> true
+            httpResponse.status == HttpStatusCode.TooManyRequests -> true
+            else -> false
+          }
+        }
+      }
+
+      install(Auth) {
+        bearer {
+          loadTokens {
+            traktAuthRepository.value.getAuthState()
+              ?.let { BearerTokens(it.accessToken, it.refreshToken) }
+          }
+
+          refreshTokens {
+            traktAuthRepository.value.refreshTokens()
+              ?.let { BearerTokens(it.accessToken, it.refreshToken) }
+          }
+
+          sendWithoutRequest { request ->
+            request.url.host == "api.trakt.tv"
+          }
+        }
+      }
+    }
+  }
 }

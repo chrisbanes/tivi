@@ -14,27 +14,27 @@ interface TmdbComponent : TmdbCommonComponent, TmdbPlatformComponent
 expect interface TmdbPlatformComponent
 
 interface TmdbCommonComponent {
-    @ApplicationScope
-    @Provides
-    fun provideTmdbApiKey(
-        appInfo: ApplicationInfo,
-    ): TmdbOAuthInfo = TmdbOAuthInfo(
-        apiKey = when {
-            appInfo.debugBuild -> {
-                BuildConfig.TMDB_DEBUG_API_KEY.ifEmpty { BuildConfig.TMDB_API_KEY }
-            }
+  @ApplicationScope
+  @Provides
+  fun provideTmdbApiKey(
+    appInfo: ApplicationInfo,
+  ): TmdbOAuthInfo = TmdbOAuthInfo(
+    apiKey = when {
+      appInfo.debugBuild -> {
+        BuildConfig.TMDB_DEBUG_API_KEY.ifEmpty { BuildConfig.TMDB_API_KEY }
+      }
 
-            else -> BuildConfig.TMDB_API_KEY
-        },
-    )
+      else -> BuildConfig.TMDB_API_KEY
+    },
+  )
 
-    @ApplicationScope
-    @Provides
-    fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
-        return tmdbManager.getLatestImageProvider()
-    }
+  @ApplicationScope
+  @Provides
+  fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
+    return tmdbManager.getLatestImageProvider()
+  }
 
-    @Provides
-    @IntoSet
-    fun provideTmdbInitializer(bind: TmdbInitializer): AppInitializer = bind
+  @Provides
+  @IntoSet
+  fun provideTmdbInitializer(bind: TmdbInitializer): AppInitializer = bind
 }

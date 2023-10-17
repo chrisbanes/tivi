@@ -13,12 +13,12 @@ object DiscoverScreen : TiviScreen(name = "Discover()")
 
 @CommonParcelize
 data class EpisodeDetailsScreen(val id: Long) : TiviScreen(name = "EpisodeDetails()") {
-    override val arguments get() = mapOf("id" to id)
+  override val arguments get() = mapOf("id" to id)
 }
 
 @CommonParcelize
 data class EpisodeTrackScreen(val id: Long) : TiviScreen(name = "EpisodeTrack()") {
-    override val arguments get() = mapOf("id" to id)
+  override val arguments get() = mapOf("id" to id)
 }
 
 @CommonParcelize
@@ -47,23 +47,23 @@ object DevLogScreen : TiviScreen(name = "DevelopmentLog()")
 
 @CommonParcelize
 data class UrlScreen(val url: String) : TiviScreen(name = "UrlScreen()") {
-    override val arguments get() = mapOf("url" to url)
+  override val arguments get() = mapOf("url" to url)
 }
 
 @CommonParcelize
 data class ShowDetailsScreen(val id: Long) : TiviScreen(name = "ShowDetails()") {
-    override val arguments get() = mapOf("id" to id)
+  override val arguments get() = mapOf("id" to id)
 }
 
 @CommonParcelize
 data class ShowSeasonsScreen(
-    val id: Long,
-    val selectedSeasonId: Long? = null,
+  val id: Long,
+  val selectedSeasonId: Long? = null,
 ) : TiviScreen(name = "ShowSeasons()") {
-    override val arguments get() = mapOf(
-        "id" to id,
-        "selectedSeasonId" to selectedSeasonId,
-    )
+  override val arguments get() = mapOf(
+    "id" to id,
+    "selectedSeasonId" to selectedSeasonId,
+  )
 }
 
 @CommonParcelize
@@ -73,5 +73,5 @@ object TrendingShowsScreen : TiviScreen(name = "TrendingShows()")
 object UpNextScreen : TiviScreen(name = "UpNext()")
 
 abstract class TiviScreen(val name: String) : Screen {
-    open val arguments: Map<String, *>? = null
+  open val arguments: Map<String, *>? = null
 }

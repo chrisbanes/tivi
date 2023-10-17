@@ -20,57 +20,57 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LicensesUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> LicensesPresenter,
+  private val presenterFactory: (Navigator) -> LicensesPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is LicensesScreen -> presenterFactory(navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is LicensesScreen -> presenterFactory(navigator)
+    else -> null
+  }
 }
 
 @Inject
 class LicensesPresenter(
-    @Assisted private val navigator: Navigator,
-    private val fetchLicensesList: FetchLicensesList,
-    private val dispatchers: AppCoroutineDispatchers,
+  @Assisted private val navigator: Navigator,
+  private val fetchLicensesList: FetchLicensesList,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Presenter<LicensesUiState> {
 
-    @Composable
-    override fun present(): LicensesUiState {
-        val licenseItemList by produceState(emptyList()) {
-            val list = fetchLicensesList(Unit).getOrDefault(emptyList())
+  @Composable
+  override fun present(): LicensesUiState {
+    val licenseItemList by produceState(emptyList()) {
+      val list = fetchLicensesList(Unit).getOrDefault(emptyList())
 
-            value = withContext(dispatchers.computation) {
-                list.groupBy { it.groupId }
-                    .map { (groupId, artifacts) ->
-                        LicenseGroup(
-                            id = groupId,
-                            artifacts = artifacts.sortedBy { it.artifactId },
-                        )
-                    }
-                    .sortedBy { it.id }
-            }
-        }
-
-        fun eventSink(event: LicensesUiEvent) {
-            when (event) {
-                LicensesUiEvent.NavigateUp -> navigator.pop()
-                is LicensesUiEvent.NavigateRepository -> {
-                    val url = event.artifact.scm?.url
-                    if (!url.isNullOrEmpty()) {
-                        navigator.goTo(UrlScreen(url))
-                    }
-                }
-            }
-        }
-
-        return LicensesUiState(
-            licenses = licenseItemList,
-            eventSink = ::eventSink,
-        )
+      value = withContext(dispatchers.computation) {
+        list.groupBy { it.groupId }
+          .map { (groupId, artifacts) ->
+            LicenseGroup(
+              id = groupId,
+              artifacts = artifacts.sortedBy { it.artifactId },
+            )
+          }
+          .sortedBy { it.id }
+      }
     }
+
+    fun eventSink(event: LicensesUiEvent) {
+      when (event) {
+        LicensesUiEvent.NavigateUp -> navigator.pop()
+        is LicensesUiEvent.NavigateRepository -> {
+          val url = event.artifact.scm?.url
+          if (!url.isNullOrEmpty()) {
+            navigator.goTo(UrlScreen(url))
+          }
+        }
+      }
+    }
+
+    return LicensesUiState(
+      licenses = licenseItemList,
+      eventSink = ::eventSink,
+    )
+  }
 }

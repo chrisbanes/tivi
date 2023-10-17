@@ -7,7 +7,7 @@ import app.tivi.appinitializers.AppInitializer
 import co.touchlab.crashkios.crashlytics.enableCrashlytics
 
 internal object AndroidCrashKiOSInitializer : AppInitializer {
-    override fun initialize() {
-        enableCrashlytics()
-    }
+  override fun initialize() {
+    enableCrashlytics()
+  }
 }

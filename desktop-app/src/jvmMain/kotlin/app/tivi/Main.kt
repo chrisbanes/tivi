@@ -16,30 +16,30 @@ import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 
 fun main() = application {
-    val applicationComponent = remember {
-        DesktopApplicationComponent.create()
+  val applicationComponent = remember {
+    DesktopApplicationComponent.create()
+  }
+
+  LaunchedEffect(applicationComponent) {
+    applicationComponent.initializers.initialize()
+  }
+
+  Window(
+    title = "Tivi",
+    onCloseRequest = ::exitApplication,
+  ) {
+    val component = remember(applicationComponent) {
+      WindowComponent.create(applicationComponent)
     }
 
-    LaunchedEffect(applicationComponent) {
-        applicationComponent.initializers.initialize()
-    }
+    val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+    val navigator = rememberCircuitNavigator(backstack) { /* no-op */ }
 
-    Window(
-        title = "Tivi",
-        onCloseRequest = ::exitApplication,
-    ) {
-        val component = remember(applicationComponent) {
-            WindowComponent.create(applicationComponent)
-        }
-
-        val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
-        val navigator = rememberCircuitNavigator(backstack) { /* no-op */ }
-
-        component.tiviContent(
-            backstack,
-            navigator,
-            { /* no-op for now */ },
-            Modifier,
-        )
-    }
+    component.tiviContent(
+      backstack,
+      navigator,
+      { /* no-op for now */ },
+      Modifier,
+    )
+  }
 }

@@ -14,30 +14,30 @@ import okhttp3.OkHttpClient
 @OptIn(ExperimentalMultiplatform::class)
 @AllowDifferentMembersInActual
 actual interface TmdbPlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideTmdb(
-        client: OkHttpClient,
-        tmdbOAuthInfo: TmdbOAuthInfo,
-    ): Tmdb3 = Tmdb3 {
-        tmdbApiKey = tmdbOAuthInfo.apiKey
-        maxRetriesOnException = 3
+  @ApplicationScope
+  @Provides
+  fun provideTmdb(
+    client: OkHttpClient,
+    tmdbOAuthInfo: TmdbOAuthInfo,
+  ): Tmdb3 = Tmdb3 {
+    tmdbApiKey = tmdbOAuthInfo.apiKey
+    maxRetriesOnException = 3
 
-        httpClient(OkHttp) {
-            // Probably want to move to using Ktor's caching, timeouts, etc eventually
-            engine {
-                preconfigured = client
-            }
+    httpClient(OkHttp) {
+      // Probably want to move to using Ktor's caching, timeouts, etc eventually
+      engine {
+        preconfigured = client
+      }
 
-            install(HttpRequestRetry) {
-                retryIf(5) { _, httpResponse ->
-                    when {
-                        httpResponse.status.value in 500..599 -> true
-                        httpResponse.status == HttpStatusCode.TooManyRequests -> true
-                        else -> false
-                    }
-                }
-            }
+      install(HttpRequestRetry) {
+        retryIf(5) { _, httpResponse ->
+          when {
+            httpResponse.status.value in 500..599 -> true
+            httpResponse.status == HttpStatusCode.TooManyRequests -> true
+            else -> false
+          }
         }
+      }
     }
+  }
 }

@@ -8,9 +8,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SqlDelightTransactionRunner(private val db: Database) : DatabaseTransactionRunner {
-    override fun <T> invoke(block: () -> T): T {
-        return db.transactionWithResult {
-            block()
-        }
+  override fun <T> invoke(block: () -> T): T {
+    return db.transactionWithResult {
+      block()
     }
+  }
 }

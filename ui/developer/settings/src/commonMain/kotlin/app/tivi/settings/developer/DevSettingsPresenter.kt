@@ -20,40 +20,40 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DevSettingsUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> DevSettingsPresenter,
+  private val presenterFactory: (Navigator) -> DevSettingsPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is DevSettingsScreen -> presenterFactory(navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is DevSettingsScreen -> presenterFactory(navigator)
+    else -> null
+  }
 }
 
 @Inject
 class DevSettingsPresenter(
-    @Assisted private val navigator: Navigator,
-    private val preferences: TiviPreferences,
+  @Assisted private val navigator: Navigator,
+  private val preferences: TiviPreferences,
 ) : Presenter<DevSettingsUiState> {
 
-    @Composable
-    override fun present(): DevSettingsUiState {
-        val hideArtwork by remember { preferences.observeDeveloperHideArtwork() }
-            .collectAsRetainedState(false)
+  @Composable
+  override fun present(): DevSettingsUiState {
+    val hideArtwork by remember { preferences.observeDeveloperHideArtwork() }
+      .collectAsRetainedState(false)
 
-        fun eventSink(event: DevSettingsUiEvent) {
-            when (event) {
-                DevSettingsUiEvent.NavigateUp -> navigator.pop()
-                DevSettingsUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
-                DevSettingsUiEvent.ToggleHideArtwork -> preferences::developerHideArtwork.toggle()
-            }
-        }
-
-        return DevSettingsUiState(
-            hideArtwork = hideArtwork,
-            eventSink = ::eventSink,
-        )
+    fun eventSink(event: DevSettingsUiEvent) {
+      when (event) {
+        DevSettingsUiEvent.NavigateUp -> navigator.pop()
+        DevSettingsUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
+        DevSettingsUiEvent.ToggleHideArtwork -> preferences::developerHideArtwork.toggle()
+      }
     }
+
+    return DevSettingsUiState(
+      hideArtwork = hideArtwork,
+      eventSink = ::eventSink,
+    )
+  }
 }

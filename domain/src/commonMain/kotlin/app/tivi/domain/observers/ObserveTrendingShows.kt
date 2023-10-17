@@ -11,12 +11,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObserveTrendingShows(
-    private val trendingShowsDao: TrendingDao,
+  private val trendingShowsDao: TrendingDao,
 ) : SubjectInteractor<ObserveTrendingShows.Params, List<TrendingEntryWithShow>>() {
 
-    override fun createObservable(params: Params): Flow<List<TrendingEntryWithShow>> {
-        return trendingShowsDao.entriesObservable(params.count, 0)
-    }
+  override fun createObservable(params: Params): Flow<List<TrendingEntryWithShow>> {
+    return trendingShowsDao.entriesObservable(params.count, 0)
+  }
 
-    data class Params(val count: Int = 20)
+  data class Params(val count: Int = 20)
 }

@@ -10,5 +10,5 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SeasonLastRequestStore(
-    dao: LastRequestDao,
+  dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.SEASON_DETAILS, dao)

@@ -13,20 +13,20 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class EpisodeDetailsUiState(
-    val season: Season? = null,
-    val episode: Episode? = null,
-    val watches: List<EpisodeWatchEntry> = emptyList(),
-    val canAddEpisodeWatch: Boolean = false,
-    val refreshing: Boolean = false,
-    val message: UiMessage? = null,
-    val eventSink: (EpisodeDetailsUiEvent) -> Unit,
+  val season: Season? = null,
+  val episode: Episode? = null,
+  val watches: List<EpisodeWatchEntry> = emptyList(),
+  val canAddEpisodeWatch: Boolean = false,
+  val refreshing: Boolean = false,
+  val message: UiMessage? = null,
+  val eventSink: (EpisodeDetailsUiEvent) -> Unit,
 ) : CircuitUiState
 
 sealed interface EpisodeDetailsUiEvent : CircuitUiEvent {
-    data class Refresh(val fromUser: Boolean = false) : EpisodeDetailsUiEvent
-    data class RemoveWatchEntry(val id: Long) : EpisodeDetailsUiEvent
-    data class ClearMessage(val id: Long) : EpisodeDetailsUiEvent
-    object RemoveAllWatches : EpisodeDetailsUiEvent
-    object OpenTrackEpisode : EpisodeDetailsUiEvent
-    object NavigateUp : EpisodeDetailsUiEvent
+  data class Refresh(val fromUser: Boolean = false) : EpisodeDetailsUiEvent
+  data class RemoveWatchEntry(val id: Long) : EpisodeDetailsUiEvent
+  data class ClearMessage(val id: Long) : EpisodeDetailsUiEvent
+  object RemoveAllWatches : EpisodeDetailsUiEvent
+  object OpenTrackEpisode : EpisodeDetailsUiEvent
+  object NavigateUp : EpisodeDetailsUiEvent
 }

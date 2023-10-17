@@ -22,83 +22,83 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SettingsUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> SettingsPresenter,
+  private val presenterFactory: (Navigator) -> SettingsPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is SettingsScreen -> presenterFactory(navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is SettingsScreen -> presenterFactory(navigator)
+    else -> null
+  }
 }
 
 @Inject
 class SettingsPresenter(
-    @Assisted private val navigator: Navigator,
-    private val preferences: TiviPreferences,
-    private val applicationInfo: ApplicationInfo,
+  @Assisted private val navigator: Navigator,
+  private val preferences: TiviPreferences,
+  private val applicationInfo: ApplicationInfo,
 ) : Presenter<SettingsUiState> {
 
-    @Composable
-    override fun present(): SettingsUiState {
-        val theme by remember { preferences.observeTheme() }
-            .collectAsRetainedState(TiviPreferences.Theme.SYSTEM)
+  @Composable
+  override fun present(): SettingsUiState {
+    val theme by remember { preferences.observeTheme() }
+      .collectAsRetainedState(TiviPreferences.Theme.SYSTEM)
 
-        val useDynamicColors by remember { preferences.observeUseDynamicColors() }
-            .collectAsRetainedState(false)
+    val useDynamicColors by remember { preferences.observeUseDynamicColors() }
+      .collectAsRetainedState(false)
 
-        val useLessData by remember { preferences.observeUseLessData() }
-            .collectAsRetainedState(false)
+    val useLessData by remember { preferences.observeUseLessData() }
+      .collectAsRetainedState(false)
 
-        val ignoreSpecials by remember { preferences.observeIgnoreSpecials() }
-            .collectAsRetainedState(true)
+    val ignoreSpecials by remember { preferences.observeIgnoreSpecials() }
+      .collectAsRetainedState(true)
 
-        val crashDataReportingEnabled by remember { preferences.observeReportAppCrashes() }
-            .collectAsRetainedState(true)
+    val crashDataReportingEnabled by remember { preferences.observeReportAppCrashes() }
+      .collectAsRetainedState(true)
 
-        val analyticsDataReportingEnabled by remember { preferences.observeReportAnalytics() }
-            .collectAsRetainedState(true)
+    val analyticsDataReportingEnabled by remember { preferences.observeReportAnalytics() }
+      .collectAsRetainedState(true)
 
-        fun eventSink(event: SettingsUiEvent) {
-            when (event) {
-                SettingsUiEvent.NavigateUp -> navigator.pop()
-                is SettingsUiEvent.SetTheme -> {
-                    preferences.theme = event.theme
-                }
-
-                SettingsUiEvent.ToggleUseDynamicColors -> preferences::useDynamicColors.toggle()
-                SettingsUiEvent.ToggleUseLessData -> preferences::useLessData.toggle()
-                SettingsUiEvent.ToggleIgnoreSpecials -> preferences::ignoreSpecials.toggle()
-                SettingsUiEvent.ToggleCrashDataReporting -> preferences::reportAppCrashes.toggle()
-                SettingsUiEvent.ToggleAnalyticsDataReporting -> preferences::reportAnalytics.toggle()
-                SettingsUiEvent.NavigatePrivacyPolicy -> {
-                    navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))
-                }
-
-                SettingsUiEvent.NavigateOpenSource -> {
-                    navigator.goTo(LicensesScreen)
-                }
-
-                SettingsUiEvent.NavigateDeveloperSettings -> {
-                    navigator.goTo(DevSettingsScreen)
-                }
-            }
+    fun eventSink(event: SettingsUiEvent) {
+      when (event) {
+        SettingsUiEvent.NavigateUp -> navigator.pop()
+        is SettingsUiEvent.SetTheme -> {
+          preferences.theme = event.theme
         }
 
-        return SettingsUiState(
-            theme = theme,
-            useDynamicColors = useDynamicColors,
-            dynamicColorsAvailable = DynamicColorsAvailable,
-            openSourceLicenseAvailable = OpenSourceLicenseAvailable,
-            useLessData = useLessData,
-            ignoreSpecials = ignoreSpecials,
-            crashDataReportingEnabled = crashDataReportingEnabled,
-            analyticsDataReportingEnabled = analyticsDataReportingEnabled,
-            applicationInfo = applicationInfo,
-            showDeveloperSettings = applicationInfo.flavor == Flavor.Qa,
-            eventSink = ::eventSink,
-        )
+        SettingsUiEvent.ToggleUseDynamicColors -> preferences::useDynamicColors.toggle()
+        SettingsUiEvent.ToggleUseLessData -> preferences::useLessData.toggle()
+        SettingsUiEvent.ToggleIgnoreSpecials -> preferences::ignoreSpecials.toggle()
+        SettingsUiEvent.ToggleCrashDataReporting -> preferences::reportAppCrashes.toggle()
+        SettingsUiEvent.ToggleAnalyticsDataReporting -> preferences::reportAnalytics.toggle()
+        SettingsUiEvent.NavigatePrivacyPolicy -> {
+          navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))
+        }
+
+        SettingsUiEvent.NavigateOpenSource -> {
+          navigator.goTo(LicensesScreen)
+        }
+
+        SettingsUiEvent.NavigateDeveloperSettings -> {
+          navigator.goTo(DevSettingsScreen)
+        }
+      }
     }
+
+    return SettingsUiState(
+      theme = theme,
+      useDynamicColors = useDynamicColors,
+      dynamicColorsAvailable = DynamicColorsAvailable,
+      openSourceLicenseAvailable = OpenSourceLicenseAvailable,
+      useLessData = useLessData,
+      ignoreSpecials = ignoreSpecials,
+      crashDataReportingEnabled = crashDataReportingEnabled,
+      analyticsDataReportingEnabled = analyticsDataReportingEnabled,
+      applicationInfo = applicationInfo,
+      showDeveloperSettings = applicationInfo.flavor == Flavor.Qa,
+      eventSink = ::eventSink,
+    )
+  }
 }

@@ -15,29 +15,29 @@ import app.tivi.data.models.SortOption
 
 @Composable
 internal fun ColumnScope.SortDropdownMenuContent(
-    sortOptions: List<SortOption>,
-    onItemClick: (SortOption) -> Unit,
-    modifier: Modifier = Modifier,
-    currentSortOption: SortOption? = null,
+  sortOptions: List<SortOption>,
+  onItemClick: (SortOption) -> Unit,
+  modifier: Modifier = Modifier,
+  currentSortOption: SortOption? = null,
 ) {
-    for (sort in sortOptions) {
-        val strings = LocalStrings.current
-        DropdownMenuItem(
-            text = {
-                Text(
-                    text = sort.label(strings),
-                    fontWeight = if (sort == currentSortOption) FontWeight.Bold else null,
-                )
-            },
-            onClick = { onItemClick(sort) },
-            modifier = modifier,
+  for (sort in sortOptions) {
+    val strings = LocalStrings.current
+    DropdownMenuItem(
+      text = {
+        Text(
+          text = sort.label(strings),
+          fontWeight = if (sort == currentSortOption) FontWeight.Bold else null,
         )
-    }
+      },
+      onClick = { onItemClick(sort) },
+      modifier = modifier,
+    )
+  }
 }
 
 internal fun SortOption.label(strings: TiviStrings): String = when (this) {
-    SortOption.ALPHABETICAL -> strings.popupSortAlpha
-    SortOption.LAST_WATCHED -> strings.popupSortLastWatched
-    SortOption.DATE_ADDED -> strings.popupSortDateFollowed
-    SortOption.AIR_DATE -> strings.popupSortAirDate
+  SortOption.ALPHABETICAL -> strings.popupSortAlpha
+  SortOption.LAST_WATCHED -> strings.popupSortLastWatched
+  SortOption.DATE_ADDED -> strings.popupSortDateFollowed
+  SortOption.AIR_DATE -> strings.popupSortAirDate
 }

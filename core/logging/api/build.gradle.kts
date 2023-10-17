@@ -3,15 +3,15 @@
 
 
 plugins {
-    id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.kotlin.multiplatform")
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(libs.kotlin.coroutines.core)
-            }
-        }
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        api(libs.kotlin.coroutines.core)
+      }
     }
+  }
 }

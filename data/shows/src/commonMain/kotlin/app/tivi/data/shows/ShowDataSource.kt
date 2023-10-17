@@ -6,5 +6,5 @@ package app.tivi.data.shows
 import app.tivi.data.models.TiviShow
 
 interface ShowDataSource {
-    suspend fun getShow(show: TiviShow): TiviShow
+  suspend fun getShow(show: TiviShow): TiviShow
 }

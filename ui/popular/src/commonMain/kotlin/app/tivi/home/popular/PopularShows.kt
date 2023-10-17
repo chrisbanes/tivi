@@ -16,31 +16,31 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class PopularShowsUiFactory : Ui.Factory {
-    override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
-        is PopularShowsScreen -> {
-            ui<PopularShowsUiState> { state, modifier ->
-                PopularShows(state, modifier)
-            }
-        }
-
-        else -> null
+  override fun create(screen: Screen, context: CircuitContext): Ui<*>? = when (screen) {
+    is PopularShowsScreen -> {
+      ui<PopularShowsUiState> { state, modifier ->
+        PopularShows(state, modifier)
+      }
     }
+
+    else -> null
+  }
 }
 
 @Composable
 internal fun PopularShows(
-    state: PopularShowsUiState,
-    modifier: Modifier = Modifier,
+  state: PopularShowsUiState,
+  modifier: Modifier = Modifier,
 ) {
-    // Need to extract the eventSink out to a local val, so that the Compose Compiler
-    // treats it as stable. See: https://issuetracker.google.com/issues/256100927
-    val eventSink = state.eventSink
+  // Need to extract the eventSink out to a local val, so that the Compose Compiler
+  // treats it as stable. See: https://issuetracker.google.com/issues/256100927
+  val eventSink = state.eventSink
 
-    EntryGrid(
-        lazyPagingItems = state.items,
-        title = LocalStrings.current.discoverPopularTitle,
-        onOpenShowDetails = { eventSink(PopularShowsUiEvent.OpenShowDetails(it)) },
-        onNavigateUp = { eventSink(PopularShowsUiEvent.NavigateUp) },
-        modifier = modifier,
-    )
+  EntryGrid(
+    lazyPagingItems = state.items,
+    title = LocalStrings.current.discoverPopularTitle,
+    onOpenShowDetails = { eventSink(PopularShowsUiEvent.OpenShowDetails(it)) },
+    onNavigateUp = { eventSink(PopularShowsUiEvent.NavigateUp) },
+    modifier = modifier,
+  )
 }

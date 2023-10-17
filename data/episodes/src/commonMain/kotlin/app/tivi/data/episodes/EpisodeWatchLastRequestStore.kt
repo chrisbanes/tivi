@@ -10,5 +10,5 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class EpisodeWatchLastRequestStore(
-    dao: LastRequestDao,
+  dao: LastRequestDao,
 ) : EntityLastRequestStore(Request.SHOW_EPISODE_WATCHES, dao)

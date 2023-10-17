@@ -15,21 +15,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
 fun CombinedLoadStates.appendErrorOrNull(): UiMessage? {
-    return (append.takeIf { it is LoadStateError } as? LoadStateError)
-        ?.let { UiMessage(it.error) }
+  return (append.takeIf { it is LoadStateError } as? LoadStateError)
+    ?.let { UiMessage(it.error) }
 }
 
 fun CombinedLoadStates.prependErrorOrNull(): UiMessage? {
-    return (prepend.takeIf { it is LoadStateError } as? LoadStateError)
-        ?.let { UiMessage(it.error) }
+  return (prepend.takeIf { it is LoadStateError } as? LoadStateError)
+    ?.let { UiMessage(it.error) }
 }
 
 fun CombinedLoadStates.refreshErrorOrNull(): UiMessage? {
-    return (refresh.takeIf { it is LoadStateError } as? LoadStateError)
-        ?.let { UiMessage(it.error) }
+  return (refresh.takeIf { it is LoadStateError } as? LoadStateError)
+    ?.let { UiMessage(it.error) }
 }
 
 @Composable
 inline fun <T : Any> Flow<PagingData<T>>.rememberCachedPagingFlow(
-    scope: CoroutineScope = rememberCoroutineScope(),
+  scope: CoroutineScope = rememberCoroutineScope(),
 ): Flow<PagingData<T>> = remember(this, scope) { cachedIn(scope) }

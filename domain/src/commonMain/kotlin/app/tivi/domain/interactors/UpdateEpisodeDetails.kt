@@ -11,17 +11,17 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateEpisodeDetails(
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateEpisodeDetails.Params, Unit>() {
 
-    override suspend fun doWork(params: Params) {
-        withContext(dispatchers.io) {
-            if (params.forceLoad || seasonsEpisodesRepository.needEpisodeUpdate(params.episodeId)) {
-                seasonsEpisodesRepository.updateEpisode(params.episodeId)
-            }
-        }
+  override suspend fun doWork(params: Params) {
+    withContext(dispatchers.io) {
+      if (params.forceLoad || seasonsEpisodesRepository.needEpisodeUpdate(params.episodeId)) {
+        seasonsEpisodesRepository.updateEpisode(params.episodeId)
+      }
     }
+  }
 
-    data class Params(val episodeId: Long, val forceLoad: Boolean)
+  data class Params(val episodeId: Long, val forceLoad: Boolean)
 }

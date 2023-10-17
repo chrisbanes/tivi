@@ -17,22 +17,22 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateRelatedShows(
-    private val relatedShowsStore: RelatedShowsStore,
-    private val showsStore: ShowStore,
-    private val dispatchers: AppCoroutineDispatchers,
-    private val logger: Logger,
+  private val relatedShowsStore: RelatedShowsStore,
+  private val showsStore: ShowStore,
+  private val dispatchers: AppCoroutineDispatchers,
+  private val logger: Logger,
 ) : Interactor<Params, Unit>() {
-    override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
-        relatedShowsStore.fetch(params.showId, params.forceLoad).related.parallelForEach {
-            try {
-                showsStore.fetch(it.otherShowId)
-            } catch (ce: CancellationException) {
-                throw ce
-            } catch (t: Throwable) {
-                logger.e { "Error while show info: ${it.otherShowId}" }
-            }
-        }
+  override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
+    relatedShowsStore.fetch(params.showId, params.forceLoad).related.parallelForEach {
+      try {
+        showsStore.fetch(it.otherShowId)
+      } catch (ce: CancellationException) {
+        throw ce
+      } catch (t: Throwable) {
+        logger.e { "Error while show info: ${it.otherShowId}" }
+      }
     }
+  }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+  data class Params(val showId: Long, val forceLoad: Boolean)
 }

@@ -3,28 +3,28 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.multiplatform")
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(projects.data.models)
-                api(libs.lyricist.core)
-            }
-        }
-
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.assertk)
-            }
-        }
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        api(projects.data.models)
+        api(libs.lyricist.core)
+      }
     }
+
+    val commonTest by getting {
+      dependencies {
+        implementation(kotlin("test"))
+        implementation(libs.assertk)
+      }
+    }
+  }
 }
 
 android {
-    namespace = "app.tivi.common.ui.resources.strings"
+  namespace = "app.tivi.common.ui.resources.strings"
 }

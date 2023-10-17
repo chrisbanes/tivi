@@ -3,34 +3,34 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.multiplatform")
-    id("app.tivi.compose")
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.compose")
 }
 
 android {
-    namespace = "app.tivi.home.discover"
+  namespace = "app.tivi.home.discover"
 }
 
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(projects.core.base)
-                implementation(projects.domain)
-                implementation(projects.common.ui.compose)
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(projects.core.base)
+        implementation(projects.domain)
+        implementation(projects.common.ui.compose)
 
-                api(projects.common.ui.screens)
-                api(projects.common.ui.circuitOverlay)
-                api(libs.circuit.foundation)
-                implementation(libs.circuit.retained)
+        api(projects.common.ui.screens)
+        api(projects.common.ui.circuitOverlay)
+        api(libs.circuit.foundation)
+        implementation(libs.circuit.retained)
 
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.material3)
-                implementation(libs.compose.material3.windowsizeclass)
-                implementation(compose.animation)
-            }
-        }
+        implementation(compose.foundation)
+        implementation(compose.material)
+        implementation(compose.material3)
+        implementation(libs.compose.material3.windowsizeclass)
+        implementation(compose.animation)
+      }
     }
+  }
 }

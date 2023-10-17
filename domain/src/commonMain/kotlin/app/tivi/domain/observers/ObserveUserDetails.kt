@@ -11,12 +11,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObserveUserDetails(
-    private val repository: TraktUsersRepository,
+  private val repository: TraktUsersRepository,
 ) : SubjectInteractor<ObserveUserDetails.Params, TraktUser?>() {
 
-    override fun createObservable(params: Params): Flow<TraktUser?> {
-        return repository.observeUser(params.username)
-    }
+  override fun createObservable(params: Params): Flow<TraktUser?> {
+    return repository.observeUser(params.username)
+  }
 
-    data class Params(val username: String)
+  data class Params(val username: String)
 }

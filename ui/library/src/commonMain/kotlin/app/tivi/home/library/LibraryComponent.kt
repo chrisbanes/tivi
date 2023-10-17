@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface LibraryComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindLibraryPresenterFactory(factory: LibraryUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindLibraryPresenterFactory(factory: LibraryUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindLibraryUiFactoryFactory(factory: LibraryUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindLibraryUiFactoryFactory(factory: LibraryUiFactory): Ui.Factory = factory
 }

@@ -14,34 +14,34 @@ import me.tatarka.inject.annotations.Inject
 @ApplicationScope
 @Inject
 class TmdbManager(
-    private val tmdbClient: Tmdb3,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val tmdbClient: Tmdb3,
+  private val dispatchers: AppCoroutineDispatchers,
 ) {
-    private val imageProvider = MutableStateFlow(TmdbImageUrlProvider())
+  private val imageProvider = MutableStateFlow(TmdbImageUrlProvider())
 
-    fun getLatestImageProvider() = imageProvider.value
+  fun getLatestImageProvider() = imageProvider.value
 
-    suspend fun refreshConfiguration() {
-        val response = withContext(dispatchers.io) {
-            runCatching {
-                tmdbClient.configuration.getApiConfiguration()
-            }
-        }
-
-        if (response.isSuccess) {
-            onConfigurationLoaded(response.getOrThrow())
-        }
+  suspend fun refreshConfiguration() {
+    val response = withContext(dispatchers.io) {
+      runCatching {
+        tmdbClient.configuration.getApiConfiguration()
+      }
     }
 
-    private fun onConfigurationLoaded(configuration: TmdbConfiguration) {
-        configuration.images.also { images ->
-            val newProvider = TmdbImageUrlProvider(
-                baseImageUrl = images.secureBaseUrl,
-                posterSizes = images.posterSizes,
-                backdropSizes = images.backdropSizes,
-                logoSizes = images.logoSizes,
-            )
-            imageProvider.value = newProvider
-        }
+    if (response.isSuccess) {
+      onConfigurationLoaded(response.getOrThrow())
     }
+  }
+
+  private fun onConfigurationLoaded(configuration: TmdbConfiguration) {
+    configuration.images.also { images ->
+      val newProvider = TmdbImageUrlProvider(
+        baseImageUrl = images.secureBaseUrl,
+        posterSizes = images.posterSizes,
+        backdropSizes = images.backdropSizes,
+        logoSizes = images.logoSizes,
+      )
+      imageProvider.value = newProvider
+    }
+  }
 }

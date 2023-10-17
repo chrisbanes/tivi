@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface UpNextComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindUpNextPresenterFactory(factory: UpNextUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindUpNextPresenterFactory(factory: UpNextUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindUpNextUiFactoryFactory(factory: UpNextUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindUpNextUiFactoryFactory(factory: UpNextUiFactory): Ui.Factory = factory
 }

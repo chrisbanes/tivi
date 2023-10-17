@@ -18,31 +18,31 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObservePagedPopularShows(
-    private val popularDao: PopularDao,
-    private val updatePopularShows: UpdatePopularShows,
-    private val logger: Logger,
+  private val popularDao: PopularDao,
+  private val updatePopularShows: UpdatePopularShows,
+  private val logger: Logger,
 ) : PagingInteractor<ObservePagedPopularShows.Params, PopularEntryWithShow>() {
-    @OptIn(app.cash.paging.ExperimentalPagingApi::class)
-    override fun createObservable(
-        params: Params,
-    ): Flow<PagingData<PopularEntryWithShow>> {
-        return Pager(
-            config = params.pagingConfig,
-            remoteMediator = PaginatedEntryRemoteMediator { page ->
-                try {
-                    updatePopularShows(UpdatePopularShows.Params(page = page, forceRefresh = true))
-                } catch (ce: CancellationException) {
-                    throw ce
-                } catch (t: Throwable) {
-                    logger.e(t) { "Error while fetching from RemoteMediator" }
-                    throw t
-                }
-            },
-            pagingSourceFactory = popularDao::entriesPagingSource,
-        ).flow
-    }
+  @OptIn(app.cash.paging.ExperimentalPagingApi::class)
+  override fun createObservable(
+    params: Params,
+  ): Flow<PagingData<PopularEntryWithShow>> {
+    return Pager(
+      config = params.pagingConfig,
+      remoteMediator = PaginatedEntryRemoteMediator { page ->
+        try {
+          updatePopularShows(UpdatePopularShows.Params(page = page, forceRefresh = true))
+        } catch (ce: CancellationException) {
+          throw ce
+        } catch (t: Throwable) {
+          logger.e(t) { "Error while fetching from RemoteMediator" }
+          throw t
+        }
+      },
+      pagingSourceFactory = popularDao::entriesPagingSource,
+    ).flow
+  }
 
-    data class Params(
-        override val pagingConfig: PagingConfig,
-    ) : Parameters<PopularEntryWithShow>
+  data class Params(
+    override val pagingConfig: PagingConfig,
+  ) : Parameters<PopularEntryWithShow>
 }

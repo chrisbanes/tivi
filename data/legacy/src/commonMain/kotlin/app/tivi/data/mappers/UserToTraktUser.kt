@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class UserToTraktUser : Mapper<ApiTraktUser, TraktUser> {
 
-    override fun map(from: ApiTraktUser) = TraktUser(
-        username = from.userName!!,
-        name = from.name,
-        location = from.location,
-        about = from.about,
-        avatarUrl = from.images?.avatar?.full,
-        joined = from.joinedAt,
-        vip = from.vip,
-    )
+  override fun map(from: ApiTraktUser) = TraktUser(
+    username = from.userName!!,
+    name = from.name,
+    location = from.location,
+    about = from.about,
+    avatarUrl = from.images?.avatar?.full,
+    joined = from.joinedAt,
+    vip = from.vip,
+  )
 }

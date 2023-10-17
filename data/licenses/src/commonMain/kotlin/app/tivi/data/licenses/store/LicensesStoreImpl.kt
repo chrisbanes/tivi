@@ -10,17 +10,17 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LicensesStoreImpl(
-    private val fetcher: LicensesFetcher,
-    private val logger: Logger,
+  private val fetcher: LicensesFetcher,
+  private val logger: Logger,
 ) : LicensesStore {
-    private var licenses: List<LicenseItem>? = null
+  private var licenses: List<LicenseItem>? = null
 
-    override suspend fun getLicenses(): List<LicenseItem> {
-        return licenses ?: try {
-            fetcher().also { licenses = it }
-        } catch (e: Exception) {
-            logger.e(e) { "Exception whilst fetching licenses" }
-            emptyList()
-        }
+  override suspend fun getLicenses(): List<LicenseItem> {
+    return licenses ?: try {
+      fetcher().also { licenses = it }
+    } catch (e: Exception) {
+      logger.e(e) { "Exception whilst fetching licenses" }
+      emptyList()
     }
+  }
 }

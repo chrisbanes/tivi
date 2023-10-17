@@ -42,80 +42,80 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import me.tatarka.inject.annotations.Provides
 
 abstract class TestDataSourceComponent :
-    FollowedShowsBinds,
-    EpisodeBinds,
-    ShowsBinds,
-    ShowImagesBinds {
+  FollowedShowsBinds,
+  EpisodeBinds,
+  ShowsBinds,
+  ShowImagesBinds {
 
-    @ApplicationScope
-    @Provides
-    override fun provideTraktFollowedShowsDataSource(
-        bind: TraktFollowedShowsDataSource,
-    ): FollowedShowsDataSource = FakeFollowedShowsDataSource()
+  @ApplicationScope
+  @Provides
+  override fun provideTraktFollowedShowsDataSource(
+    bind: TraktFollowedShowsDataSource,
+  ): FollowedShowsDataSource = FakeFollowedShowsDataSource()
 
-    @ApplicationScope
-    @Provides
-    override fun provideTraktEpisodeDataSource(
-        bind: TraktEpisodeDataSourceImpl,
-    ): TraktEpisodeDataSource = FakeEpisodeDataSource()
+  @ApplicationScope
+  @Provides
+  override fun provideTraktEpisodeDataSource(
+    bind: TraktEpisodeDataSourceImpl,
+  ): TraktEpisodeDataSource = FakeEpisodeDataSource()
 
-    @ApplicationScope
-    @Provides
-    override fun provideTmdbEpisodeDataSource(
-        bind: TmdbEpisodeDataSourceImpl,
-    ): TmdbEpisodeDataSource = FakeEpisodeDataSource()
+  @ApplicationScope
+  @Provides
+  override fun provideTmdbEpisodeDataSource(
+    bind: TmdbEpisodeDataSourceImpl,
+  ): TmdbEpisodeDataSource = FakeEpisodeDataSource()
 
-    @ApplicationScope
-    @Provides
-    override fun provideTraktSeasonsEpisodesDataSource(
-        bind: TraktSeasonsEpisodesDataSourceImpl,
-    ): TraktSeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource()
+  @ApplicationScope
+  @Provides
+  override fun provideTraktSeasonsEpisodesDataSource(
+    bind: TraktSeasonsEpisodesDataSourceImpl,
+  ): TraktSeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource()
 
-    @ApplicationScope
-    @Provides
-    override fun provideTmdbSeasonsEpisodesDataSource(
-        bind: TmdbSeasonsEpisodesDataSourceImpl,
-    ): TmdbSeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource()
+  @ApplicationScope
+  @Provides
+  override fun provideTmdbSeasonsEpisodesDataSource(
+    bind: TmdbSeasonsEpisodesDataSourceImpl,
+  ): TmdbSeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource()
 
-    @ApplicationScope
-    @Provides
-    override fun provideEpisodeWatchesDataSource(
-        bind: TraktEpisodeWatchesDataSource,
-    ): EpisodeWatchesDataSource = FakeEpisodeWatchesDataSource()
+  @ApplicationScope
+  @Provides
+  override fun provideEpisodeWatchesDataSource(
+    bind: TraktEpisodeWatchesDataSource,
+  ): EpisodeWatchesDataSource = FakeEpisodeWatchesDataSource()
 
-    @ApplicationScope
-    @Provides
-    override fun bindTraktShowDataSource(
-        bind: TraktShowDataSourceImpl,
-    ): TraktShowDataSource = SuccessFakeShowDataSource
+  @ApplicationScope
+  @Provides
+  override fun bindTraktShowDataSource(
+    bind: TraktShowDataSourceImpl,
+  ): TraktShowDataSource = SuccessFakeShowDataSource
 
-    @ApplicationScope
-    @Provides
-    override fun bindTmdbShowDataSource(
-        bind: TmdbShowDataSourceImpl,
-    ): TmdbShowDataSource = SuccessFakeShowDataSource
+  @ApplicationScope
+  @Provides
+  override fun bindTmdbShowDataSource(
+    bind: TmdbShowDataSourceImpl,
+  ): TmdbShowDataSource = SuccessFakeShowDataSource
 
-    @ApplicationScope
-    @Provides
-    override fun bindShowImagesDataSource(
-        bind: TmdbShowImagesDataSource,
-    ): ShowImagesDataSource = SuccessFakeShowImagesDataSource
+  @ApplicationScope
+  @Provides
+  override fun bindShowImagesDataSource(
+    bind: TmdbShowImagesDataSource,
+  ): ShowImagesDataSource = SuccessFakeShowImagesDataSource
 
-    @ApplicationScope
-    @Provides
-    fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers {
-        val testDispatcher = UnconfinedTestDispatcher()
-        return AppCoroutineDispatchers(
-            io = testDispatcher,
-            databaseRead = testDispatcher,
-            databaseWrite = testDispatcher,
-            computation = testDispatcher,
-            main = testDispatcher,
-        )
-    }
+  @ApplicationScope
+  @Provides
+  fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers {
+    val testDispatcher = UnconfinedTestDispatcher()
+    return AppCoroutineDispatchers(
+      io = testDispatcher,
+      databaseRead = testDispatcher,
+      databaseWrite = testDispatcher,
+      computation = testDispatcher,
+      main = testDispatcher,
+    )
+  }
 
-    @Provides
-    fun provideAuthStore(): AuthStore = AuthorizedAuthStore
+  @Provides
+  fun provideAuthStore(): AuthStore = AuthorizedAuthStore
 }
 
 interface TestDatabaseComponent : SqlDelightDatabaseComponent

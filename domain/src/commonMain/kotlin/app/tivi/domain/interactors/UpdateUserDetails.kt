@@ -12,16 +12,16 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateUserDetails(
-    private val repository: TraktUsersRepository,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val repository: TraktUsersRepository,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params, Unit>() {
-    override suspend fun doWork(params: Params) {
-        withContext(dispatchers.io) {
-            if (params.forceLoad || repository.needUpdate(params.username)) {
-                repository.updateUser(params.username)
-            }
-        }
+  override suspend fun doWork(params: Params) {
+    withContext(dispatchers.io) {
+      if (params.forceLoad || repository.needUpdate(params.username)) {
+        repository.updateUser(params.username)
+      }
     }
+  }
 
-    data class Params(val username: String, val forceLoad: Boolean)
+  data class Params(val username: String, val forceLoad: Boolean)
 }

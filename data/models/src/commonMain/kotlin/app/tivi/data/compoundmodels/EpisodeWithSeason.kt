@@ -7,6 +7,6 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 
 data class EpisodeWithSeason(
-    val episode: Episode,
-    val season: Season,
+  val episode: Episode,
+  val season: Season,
 )

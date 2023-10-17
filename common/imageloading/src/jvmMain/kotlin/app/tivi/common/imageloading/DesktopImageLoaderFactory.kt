@@ -11,48 +11,48 @@ import java.io.File
 import okio.Path.Companion.toOkioPath
 
 internal object DesktopImageLoaderFactory : ImageLoaderFactory {
-    private fun getCacheDir(): File = when (currentOperatingSystem) {
-        OperatingSystem.Windows -> File(System.getenv("AppData"), "tivi/cache")
-        OperatingSystem.Linux -> File(System.getProperty("user.home"), ".cache/tivi")
-        OperatingSystem.MacOS -> File(System.getProperty("user.home"), "Library/Caches/tivi")
-        else -> throw IllegalStateException("Unsupported operating system")
+  private fun getCacheDir(): File = when (currentOperatingSystem) {
+    OperatingSystem.Windows -> File(System.getenv("AppData"), "tivi/cache")
+    OperatingSystem.Linux -> File(System.getProperty("user.home"), ".cache/tivi")
+    OperatingSystem.MacOS -> File(System.getProperty("user.home"), "Library/Caches/tivi")
+    else -> throw IllegalStateException("Unsupported operating system")
+  }
+
+  override fun create(
+    block: ImageLoaderConfigBuilder.() -> Unit,
+  ): ImageLoader = ImageLoader {
+    components {
+      setupDefaultComponents()
+    }
+    interceptor {
+      memoryCacheConfig { maxSizePercent() }
+      diskCacheConfig {
+        directory(getCacheDir().resolve("image_cache").toOkioPath())
+        maxSizeBytes(512L * 1024 * 1024) // 512MB
+      }
     }
 
-    override fun create(
-        block: ImageLoaderConfigBuilder.() -> Unit,
-    ): ImageLoader = ImageLoader {
-        components {
-            setupDefaultComponents()
-        }
-        interceptor {
-            memoryCacheConfig { maxSizePercent() }
-            diskCacheConfig {
-                directory(getCacheDir().resolve("image_cache").toOkioPath())
-                maxSizeBytes(512L * 1024 * 1024) // 512MB
-            }
-        }
-
-        block()
-    }
+    block()
+  }
 }
 
 internal enum class OperatingSystem {
-    Windows,
-    Linux,
-    MacOS,
-    Unknown,
+  Windows,
+  Linux,
+  MacOS,
+  Unknown,
 }
 
 private val currentOperatingSystem: OperatingSystem
-    get() {
-        val os = System.getProperty("os.name").lowercase()
-        return when {
-            os.contains("win") -> OperatingSystem.Windows
-            os.contains("nix") || os.contains("nux") || os.contains("aix") -> {
-                OperatingSystem.Linux
-            }
+  get() {
+    val os = System.getProperty("os.name").lowercase()
+    return when {
+      os.contains("win") -> OperatingSystem.Windows
+      os.contains("nix") || os.contains("nux") || os.contains("aix") -> {
+        OperatingSystem.Linux
+      }
 
-            os.contains("mac") -> OperatingSystem.MacOS
-            else -> OperatingSystem.Unknown
-        }
+      os.contains("mac") -> OperatingSystem.MacOS
+      else -> OperatingSystem.Unknown
     }
+  }

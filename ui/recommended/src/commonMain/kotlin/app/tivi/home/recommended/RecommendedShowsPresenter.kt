@@ -20,53 +20,53 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class RecommendedShowsUiPresenterFactory(
-    private val presenterFactory: (Navigator) -> RecommendedShowsPresenter,
+  private val presenterFactory: (Navigator) -> RecommendedShowsPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is RecommendedShowsScreen -> presenterFactory(navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is RecommendedShowsScreen -> presenterFactory(navigator)
+    else -> null
+  }
 }
 
 @Inject
 class RecommendedShowsPresenter(
-    @Assisted private val navigator: Navigator,
-    private val pagingInteractor: ObservePagedRecommendedShows,
+  @Assisted private val navigator: Navigator,
+  private val pagingInteractor: ObservePagedRecommendedShows,
 ) : Presenter<RecommendedShowsUiState> {
 
-    @Composable
-    override fun present(): RecommendedShowsUiState {
-        val items = pagingInteractor.flow
-            .rememberCachedPagingFlow()
-            .collectAsLazyPagingItems()
+  @Composable
+  override fun present(): RecommendedShowsUiState {
+    val items = pagingInteractor.flow
+      .rememberCachedPagingFlow()
+      .collectAsLazyPagingItems()
 
-        LaunchedEffect(Unit) {
-            pagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
-        }
-
-        fun eventSink(event: RecommendedShowsUiEvent) {
-            when (event) {
-                RecommendedShowsUiEvent.NavigateUp -> navigator.pop()
-                is RecommendedShowsUiEvent.OpenShowDetails -> {
-                    navigator.goTo(ShowDetailsScreen(event.showId))
-                }
-            }
-        }
-
-        return RecommendedShowsUiState(
-            items = items,
-            eventSink = ::eventSink,
-        )
+    LaunchedEffect(Unit) {
+      pagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
     }
 
-    companion object {
-        val PAGING_CONFIG = PagingConfig(
-            pageSize = 60,
-            initialLoadSize = 60,
-        )
+    fun eventSink(event: RecommendedShowsUiEvent) {
+      when (event) {
+        RecommendedShowsUiEvent.NavigateUp -> navigator.pop()
+        is RecommendedShowsUiEvent.OpenShowDetails -> {
+          navigator.goTo(ShowDetailsScreen(event.showId))
+        }
+      }
     }
+
+    return RecommendedShowsUiState(
+      items = items,
+      eventSink = ::eventSink,
+    )
+  }
+
+  companion object {
+    val PAGING_CONFIG = PagingConfig(
+      pageSize = 60,
+      initialLoadSize = 60,
+    )
+  }
 }

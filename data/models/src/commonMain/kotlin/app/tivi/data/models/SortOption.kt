@@ -4,8 +4,8 @@
 package app.tivi.data.models
 
 enum class SortOption(val sqlValue: String) {
-    LAST_WATCHED("last_watched"),
-    AIR_DATE("recently_aired"),
-    ALPHABETICAL("alpha"),
-    DATE_ADDED("added"),
+  LAST_WATCHED("last_watched"),
+  AIR_DATE("recently_aired"),
+  ALPHABETICAL("alpha"),
+  DATE_ADDED("added"),
 }

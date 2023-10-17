@@ -7,28 +7,28 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 
 data class SeasonWithEpisodesAndWatches(
-    val season: Season,
-    val episodes: List<EpisodeWithWatches> = emptyList(),
+  val season: Season,
+  val episodes: List<EpisodeWithWatches> = emptyList(),
 ) {
-    val numberAiredToWatch: Int by lazy {
-        episodes.count { !it.isWatched && it.episode.hasAired }
-    }
+  val numberAiredToWatch: Int by lazy {
+    episodes.count { !it.isWatched && it.episode.hasAired }
+  }
 
-    val numberWatched: Int by lazy {
-        episodes.count { it.isWatched }
-    }
+  val numberWatched: Int by lazy {
+    episodes.count { it.isWatched }
+  }
 
-    val numberToAir: Int by lazy {
-        episodes.size - numberAired
-    }
+  val numberToAir: Int by lazy {
+    episodes.size - numberAired
+  }
 
-    val numberAired: Int by lazy {
-        episodes.count { it.episode.hasAired }
-    }
+  val numberAired: Int by lazy {
+    episodes.count { it.episode.hasAired }
+  }
 
-    val nextToAir: Episode? by lazy {
-        episodes.firstOrNull {
-            it.episode.let { ep -> !ep.hasAired && ep.firstAired != null }
-        }?.episode
-    }
+  val nextToAir: Episode? by lazy {
+    episodes.firstOrNull {
+      it.episode.let { ep -> !ep.hasAired && ep.firstAired != null }
+    }?.episode
+  }
 }

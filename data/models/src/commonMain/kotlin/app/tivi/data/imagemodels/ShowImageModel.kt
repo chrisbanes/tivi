@@ -7,10 +7,10 @@ import app.tivi.data.models.ImageType
 import app.tivi.data.models.TiviShow
 
 data class ShowImageModel(
-    val id: Long,
-    val imageType: ImageType = ImageType.BACKDROP,
+  val id: Long,
+  val imageType: ImageType = ImageType.BACKDROP,
 )
 
 fun TiviShow.asImageModel(
-    imageType: ImageType,
+  imageType: ImageType,
 ): ShowImageModel = ShowImageModel(id = id, imageType = imageType)

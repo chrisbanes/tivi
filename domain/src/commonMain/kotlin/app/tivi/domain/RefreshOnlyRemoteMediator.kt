@@ -20,25 +20,25 @@ import kotlinx.coroutines.CancellationException
 @Suppress("CAST_NEVER_SUCCEEDS", "USELESS_CAST", "KotlinRedundantDiagnosticSuppress")
 @OptIn(app.cash.paging.ExperimentalPagingApi::class)
 internal class RefreshOnlyRemoteMediator<LI, ET>(
-    private val fetch: suspend () -> Unit,
+  private val fetch: suspend () -> Unit,
 ) : RemoteMediator<Int, LI>() where ET : PaginatedEntry, LI : EntryWithShow<ET> {
 
-    override suspend fun load(
-        loadType: LoadType,
-        state: PagingState<Int, LI>,
-    ): RemoteMediatorMediatorResult {
-        if (loadType == LoadType.PREPEND || loadType == LoadType.APPEND) {
-            return RemoteMediatorMediatorResultSuccess(endOfPaginationReached = true)
-                as RemoteMediatorMediatorResult
-        }
-        return try {
-            fetch()
-            RemoteMediatorMediatorResultSuccess(endOfPaginationReached = true)
-                as RemoteMediatorMediatorResult
-        } catch (ce: CancellationException) {
-            throw ce
-        } catch (t: Throwable) {
-            RemoteMediatorMediatorResultError(t) as RemoteMediatorMediatorResult
-        }
+  override suspend fun load(
+    loadType: LoadType,
+    state: PagingState<Int, LI>,
+  ): RemoteMediatorMediatorResult {
+    if (loadType == LoadType.PREPEND || loadType == LoadType.APPEND) {
+      return RemoteMediatorMediatorResultSuccess(endOfPaginationReached = true)
+        as RemoteMediatorMediatorResult
     }
+    return try {
+      fetch()
+      RemoteMediatorMediatorResultSuccess(endOfPaginationReached = true)
+        as RemoteMediatorMediatorResult
+    } catch (ce: CancellationException) {
+      throw ce
+    } catch (t: Throwable) {
+      RemoteMediatorMediatorResultError(t) as RemoteMediatorMediatorResult
+    }
+  }
 }

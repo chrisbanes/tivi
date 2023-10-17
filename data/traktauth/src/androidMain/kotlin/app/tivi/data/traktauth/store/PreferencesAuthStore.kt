@@ -13,27 +13,27 @@ typealias AuthSharedPreferences = SharedPreferences
 
 @Inject
 class PreferencesAuthStore(
-    private val authPrefs: Lazy<AuthSharedPreferences>,
+  private val authPrefs: Lazy<AuthSharedPreferences>,
 ) : AuthStore {
-    override suspend fun get(): AuthState? {
-        return authPrefs.value
-            .getString(KEY, null)
-            ?.let(::AppAuthAuthStateWrapper)
-    }
+  override suspend fun get(): AuthState? {
+    return authPrefs.value
+      .getString(KEY, null)
+      ?.let(::AppAuthAuthStateWrapper)
+  }
 
-    override suspend fun save(state: AuthState) {
-        authPrefs.value.edit(commit = true) {
-            putString(KEY, state.serializeToJson())
-        }
+  override suspend fun save(state: AuthState) {
+    authPrefs.value.edit(commit = true) {
+      putString(KEY, state.serializeToJson())
     }
+  }
 
-    override suspend fun clear() {
-        authPrefs.value.edit(commit = true) {
-            remove(KEY)
-        }
+  override suspend fun clear() {
+    authPrefs.value.edit(commit = true) {
+      remove(KEY)
     }
+  }
 
-    private companion object {
-        private const val KEY = "stateJson"
-    }
+  private companion object {
+    private const val KEY = "stateJson"
+  }
 }

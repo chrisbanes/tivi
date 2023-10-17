@@ -9,23 +9,23 @@ import kotlinx.coroutines.flow.Flow
 
 interface SeasonsDao : EntityDao<Season> {
 
-    fun seasonsWithEpisodesForShowId(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>>
+  fun seasonsWithEpisodesForShowId(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>>
 
-    fun observeSeasonWithId(id: Long): Flow<Season>
+  fun observeSeasonWithId(id: Long): Flow<Season>
 
-    fun seasonsForShowId(showId: Long): List<Season>
+  fun seasonsForShowId(showId: Long): List<Season>
 
-    fun deleteWithShowId(showId: Long)
+  fun deleteWithShowId(showId: Long)
 
-    fun seasonWithId(id: Long): Season?
+  fun seasonWithId(id: Long): Season?
 
-    fun traktIdForId(id: Long): Int?
+  fun traktIdForId(id: Long): Int?
 
-    fun seasonWithTraktId(traktId: Int): Season?
+  fun seasonWithTraktId(traktId: Int): Season?
 
-    fun showPreviousSeasonIds(seasonId: Long): List<Long>
+  fun showPreviousSeasonIds(seasonId: Long): List<Long>
 
-    fun updateSeasonIgnoreFlag(seasonId: Long, ignored: Boolean)
+  fun updateSeasonIgnoreFlag(seasonId: Long, ignored: Boolean)
 
-    fun seasonWithShowIdAndNumber(showId: Long, number: Int): Season?
+  fun seasonWithShowIdAndNumber(showId: Long, number: Int): Season?
 }

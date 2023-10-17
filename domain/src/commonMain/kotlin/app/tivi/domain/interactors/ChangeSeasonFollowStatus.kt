@@ -11,31 +11,31 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ChangeSeasonFollowStatus(
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ChangeSeasonFollowStatus.Params, Unit>() {
-    override suspend fun doWork(params: Params) {
-        withContext(dispatchers.io) {
-            when (params.action) {
-                Action.FOLLOW -> {
-                    seasonsEpisodesRepository.markSeasonFollowed(params.seasonId)
-                }
-
-                Action.IGNORE -> {
-                    seasonsEpisodesRepository.markSeasonIgnored(params.seasonId)
-                }
-
-                Action.IGNORE_PREVIOUS -> {
-                    seasonsEpisodesRepository.markPreviousSeasonsIgnored(params.seasonId)
-                }
-            }
+  override suspend fun doWork(params: Params) {
+    withContext(dispatchers.io) {
+      when (params.action) {
+        Action.FOLLOW -> {
+          seasonsEpisodesRepository.markSeasonFollowed(params.seasonId)
         }
+
+        Action.IGNORE -> {
+          seasonsEpisodesRepository.markSeasonIgnored(params.seasonId)
+        }
+
+        Action.IGNORE_PREVIOUS -> {
+          seasonsEpisodesRepository.markPreviousSeasonsIgnored(params.seasonId)
+        }
+      }
     }
+  }
 
-    data class Params(
-        val seasonId: Long,
-        val action: Action,
-    )
+  data class Params(
+    val seasonId: Long,
+    val action: Action,
+  )
 
-    enum class Action { FOLLOW, IGNORE, IGNORE_PREVIOUS }
+  enum class Action { FOLLOW, IGNORE, IGNORE_PREVIOUS }
 }

@@ -3,15 +3,15 @@
 
 
 plugins {
-    id("app.tivi.android.library")
-    id("app.tivi.kotlin.android")
+  id("app.tivi.android.library")
+  id("app.tivi.kotlin.android")
 }
 
 android {
-    namespace = "app.tivi.app.test"
+  namespace = "app.tivi.app.test"
 }
 
 dependencies {
-    implementation(projects.core.base)
-    api(libs.androidx.uiautomator)
+  implementation(projects.core.base)
+  api(libs.androidx.uiautomator)
 }

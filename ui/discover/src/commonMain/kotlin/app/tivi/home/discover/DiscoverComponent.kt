@@ -10,13 +10,13 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface DiscoverComponent {
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindDiscoverPresenterFactory(factory: DiscoverUiPresenterFactory): Presenter.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindDiscoverPresenterFactory(factory: DiscoverUiPresenterFactory): Presenter.Factory = factory
 
-    @IntoSet
-    @Provides
-    @ActivityScope
-    fun bindDiscoverUiFactoryFactory(factory: DiscoverUiFactory): Ui.Factory = factory
+  @IntoSet
+  @Provides
+  @ActivityScope
+  fun bindDiscoverUiFactoryFactory(factory: DiscoverUiFactory): Ui.Factory = factory
 }

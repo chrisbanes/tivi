@@ -36,129 +36,129 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class EpisodeTrackUiPresenterFactory(
-    private val presenterFactory: (EpisodeTrackScreen, Navigator) -> EpisodeTrackPresenter,
+  private val presenterFactory: (EpisodeTrackScreen, Navigator) -> EpisodeTrackPresenter,
 ) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? = when (screen) {
-        is EpisodeTrackScreen -> presenterFactory(screen, navigator)
-        else -> null
-    }
+  override fun create(
+    screen: Screen,
+    navigator: Navigator,
+    context: CircuitContext,
+  ): Presenter<*>? = when (screen) {
+    is EpisodeTrackScreen -> presenterFactory(screen, navigator)
+    else -> null
+  }
 }
 
 @Inject
 class EpisodeTrackPresenter(
-    @Assisted private val screen: EpisodeTrackScreen,
-    @Assisted private val navigator: Navigator,
-    private val updateEpisodeDetails: UpdateEpisodeDetails,
-    private val observeEpisodeDetails: ObserveEpisodeDetails,
-    private val addEpisodeWatch: AddEpisodeWatch,
-    private val logger: Logger,
+  @Assisted private val screen: EpisodeTrackScreen,
+  @Assisted private val navigator: Navigator,
+  private val updateEpisodeDetails: UpdateEpisodeDetails,
+  private val observeEpisodeDetails: ObserveEpisodeDetails,
+  private val addEpisodeWatch: AddEpisodeWatch,
+  private val logger: Logger,
 ) : Presenter<EpisodeTrackUiState> {
-    @Composable
-    override fun present(): EpisodeTrackUiState {
-        val scope = rememberCoroutineScope()
-        val uiMessageManager = remember { UiMessageManager() }
+  @Composable
+  override fun present(): EpisodeTrackUiState {
+    val scope = rememberCoroutineScope()
+    val uiMessageManager = remember { UiMessageManager() }
 
-        val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
-        var selectedDate by remember { mutableStateOf(now.date) }
-        var selectedTime by remember { mutableStateOf(now.time) }
+    val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
+    var selectedDate by remember { mutableStateOf(now.date) }
+    var selectedTime by remember { mutableStateOf(now.time) }
 
-        val episodeDetails by observeEpisodeDetails.flow.collectAsRetainedState(initial = null)
+    val episodeDetails by observeEpisodeDetails.flow.collectAsRetainedState(initial = null)
 
-        val refreshing by updateEpisodeDetails.inProgress.collectAsState(initial = false)
-        val submitting by addEpisodeWatch.inProgress.collectAsState(initial = false)
-        val message by uiMessageManager.message.collectAsState(initial = null)
+    val refreshing by updateEpisodeDetails.inProgress.collectAsState(initial = false)
+    val submitting by addEpisodeWatch.inProgress.collectAsState(initial = false)
+    val message by uiMessageManager.message.collectAsState(initial = null)
 
-        val selectedDateTime by remember {
-            derivedStateOf {
-                LocalDateTime(selectedDate, selectedTime)
-            }
-        }
-
-        fun eventSink(event: EpisodeTrackUiEvent) {
-            when (event) {
-                is EpisodeTrackUiEvent.ClearMessage -> {
-                    scope.launch {
-                        uiMessageManager.clearMessage(event.id)
-                    }
-                }
-
-                is EpisodeTrackUiEvent.Refresh -> {
-                    scope.launch {
-                        updateEpisodeDetails(
-                            UpdateEpisodeDetails.Params(screen.id, event.fromUser),
-                        ).onException { e ->
-                            logger.i(e)
-                            uiMessageManager.emitMessage(UiMessage(e))
-                        }
-                    }
-                }
-
-                is EpisodeTrackUiEvent.SelectDate -> {
-                    selectedDate = event.date
-                }
-
-                EpisodeTrackUiEvent.SelectFirstAired -> {
-                    episodeDetails?.episode?.firstAired
-                        ?.toLocalDateTime(TimeZone.currentSystemDefault())
-                        ?.also { dateTime ->
-                            selectedDate = dateTime.date
-                            selectedTime = dateTime.time
-                        }
-                }
-
-                EpisodeTrackUiEvent.SelectNow -> {
-                    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                        .also { dateTime ->
-                            selectedDate = dateTime.date
-                            selectedTime = dateTime.time
-                        }
-                }
-
-                is EpisodeTrackUiEvent.SelectTime -> {
-                    selectedTime = event.time
-                }
-
-                EpisodeTrackUiEvent.Submit -> {
-                    scope.launch {
-                        addEpisodeWatch(
-                            AddEpisodeWatch.Params(
-                                episodeId = screen.id,
-                                timestamp = selectedDateTime.toInstant(TimeZone.currentSystemDefault()),
-                            ),
-                        ).also { result ->
-                            if (result.isSuccess) {
-                                navigator.pop()
-                            }
-                            result.onException { e ->
-                                logger.i(e)
-                                uiMessageManager.emitMessage(UiMessage(e))
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        LaunchedEffect(Unit) {
-            observeEpisodeDetails(ObserveEpisodeDetails.Params(screen.id))
-            eventSink(EpisodeTrackUiEvent.Refresh(false))
-        }
-
-        return EpisodeTrackUiState(
-            episode = episodeDetails?.episode,
-            season = episodeDetails?.season,
-            showSetFirstAired = episodeDetails?.episode?.firstAired != null,
-            selectedDate = selectedDate,
-            selectedTime = selectedTime,
-            refreshing = refreshing,
-            message = message,
-            submitInProgress = submitting,
-            canSubmit = !submitting,
-            eventSink = ::eventSink,
-        )
+    val selectedDateTime by remember {
+      derivedStateOf {
+        LocalDateTime(selectedDate, selectedTime)
+      }
     }
+
+    fun eventSink(event: EpisodeTrackUiEvent) {
+      when (event) {
+        is EpisodeTrackUiEvent.ClearMessage -> {
+          scope.launch {
+            uiMessageManager.clearMessage(event.id)
+          }
+        }
+
+        is EpisodeTrackUiEvent.Refresh -> {
+          scope.launch {
+            updateEpisodeDetails(
+              UpdateEpisodeDetails.Params(screen.id, event.fromUser),
+            ).onException { e ->
+              logger.i(e)
+              uiMessageManager.emitMessage(UiMessage(e))
+            }
+          }
+        }
+
+        is EpisodeTrackUiEvent.SelectDate -> {
+          selectedDate = event.date
+        }
+
+        EpisodeTrackUiEvent.SelectFirstAired -> {
+          episodeDetails?.episode?.firstAired
+            ?.toLocalDateTime(TimeZone.currentSystemDefault())
+            ?.also { dateTime ->
+              selectedDate = dateTime.date
+              selectedTime = dateTime.time
+            }
+        }
+
+        EpisodeTrackUiEvent.SelectNow -> {
+          Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            .also { dateTime ->
+              selectedDate = dateTime.date
+              selectedTime = dateTime.time
+            }
+        }
+
+        is EpisodeTrackUiEvent.SelectTime -> {
+          selectedTime = event.time
+        }
+
+        EpisodeTrackUiEvent.Submit -> {
+          scope.launch {
+            addEpisodeWatch(
+              AddEpisodeWatch.Params(
+                episodeId = screen.id,
+                timestamp = selectedDateTime.toInstant(TimeZone.currentSystemDefault()),
+              ),
+            ).also { result ->
+              if (result.isSuccess) {
+                navigator.pop()
+              }
+              result.onException { e ->
+                logger.i(e)
+                uiMessageManager.emitMessage(UiMessage(e))
+              }
+            }
+          }
+        }
+      }
+    }
+
+    LaunchedEffect(Unit) {
+      observeEpisodeDetails(ObserveEpisodeDetails.Params(screen.id))
+      eventSink(EpisodeTrackUiEvent.Refresh(false))
+    }
+
+    return EpisodeTrackUiState(
+      episode = episodeDetails?.episode,
+      season = episodeDetails?.season,
+      showSetFirstAired = episodeDetails?.episode?.firstAired != null,
+      selectedDate = selectedDate,
+      selectedTime = selectedTime,
+      refreshing = refreshing,
+      message = message,
+      submitInProgress = submitting,
+      canSubmit = !submitting,
+      eventSink = ::eventSink,
+    )
+  }
 }

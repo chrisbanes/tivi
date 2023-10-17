@@ -7,7 +7,7 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface SearchBinds {
-    val TmdbSearchDataSource.bind: SearchDataSource
-        @ApplicationScope @Provides
-        get() = this
+  val TmdbSearchDataSource.bind: SearchDataSource
+    @ApplicationScope @Provides
+    get() = this
 }
