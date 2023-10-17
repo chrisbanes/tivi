@@ -339,7 +339,7 @@ private fun SeasonInfoRow(
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.25f)
-                    .aspectRatio(3 / 5f),
+                    .aspectRatio(2 / 3f),
             ) {
                 AsyncImage(
                     model = season.asImageModel(),

@@ -475,7 +475,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
                             else -> 240.dp
                         },
                     )
-                    .aspectRatio(4 / 3f),
+                    .aspectRatio(16 / 11f),
             )
         }
     }

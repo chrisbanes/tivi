@@ -173,7 +173,7 @@ internal fun EpisodeDetails(
                         episode = viewState.episode,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(16 / 10f),
+                            .aspectRatio(16 / 11f),
                     )
                 }
 
