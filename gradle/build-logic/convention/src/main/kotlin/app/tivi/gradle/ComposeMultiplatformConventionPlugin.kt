@@ -5,8 +5,6 @@ package app.tivi.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.getByType
-import org.jetbrains.compose.ComposeExtension
 
 class ComposeMultiplatformConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
@@ -16,6 +14,14 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
 }
 
 fun Project.configureCompose() {
-    with(extensions.getByType<ComposeExtension>()) {
+    val composeVersion = libs.findVersion("compose-multiplatform").get().requiredVersion
+
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            val group = requested.group
+            if (group.startsWith("org.jetbrains.compose") && !group.endsWith("compiler")) {
+                useVersion(composeVersion)
+            }
+        }
     }
 }

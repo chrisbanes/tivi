@@ -148,7 +148,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					833349332A4CCCEE00F464FE = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -230,7 +230,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/../..\"\n\nMODULE=\"qa\"\nif [ \"$CONFIGURATION\" = \"Prod\" ]; then\n  MODULE=\"prod\"\nfi\n\necho \"Building :shared:$MODULE for $CONFIGURATION\"\n./gradlew :shared:$MODULE:embedAndSignAppleFrameworkForXcode --no-configuration-cache\n";
+			shellScript = "cd \"$SRCROOT/../..\"\n\nMODULE=\"qa\"\nif [ \"$CONFIGURATION\" = \"Prod\" ]; then\n  MODULE=\"prod\"\nfi\n\necho \"Building :shared:$MODULE for $CONFIGURATION\"\n./gradlew :shared:$MODULE:embedAndSignAppleFrameworkForXcode --stacktrace\n";
 		};
 		83AB60022A51F473007FC216 /* Upload Crashlytics symbols */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -273,6 +273,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-QA";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -334,6 +335,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -479,6 +481,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-QA";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

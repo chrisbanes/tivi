@@ -3,9 +3,9 @@
 
 package app.tivi.gradle
 
-import app.tivi.gradle.task.AssetCopyTask
 import java.io.File
 import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -16,7 +16,7 @@ fun Project.configureIosLicensesTasks() {
         .map { arch -> arch.split(",", " ").filter { it.isNotBlank() } }
         .orElse(emptyList())
 
-    tasks.register<AssetCopyTask>("copyLicenseeOutputToIosBundle") {
+    tasks.register<Copy>("copyLicenseeOutputToIosBundle") {
         val targetName = xcodeTargetPlatform.zip(xcodeTargetArchs, ::Pair)
             .map { (targetPlatform, targetArchs) ->
                 determineIosKonanTargetsFromEnv(targetPlatform, targetArchs)
@@ -31,19 +31,16 @@ fun Project.configureIosLicensesTasks() {
             return@register
         }
 
-        inputFile.set(
-            layout.buildDirectory.file("reports/licensee/$targetName/artifacts.json"),
-        )
+        from(layout.buildDirectory.file("reports/licensee/$targetName/artifacts.json"))
 
-        outputFilename.set("licenses.json")
-        outputDirectory.set(
+        into(
             providers.environmentVariable("BUILT_PRODUCTS_DIR")
                 .zip(providers.environmentVariable("CONTENTS_FOLDER_PATH")) { builtProductsDir, contentsFolderPath ->
                     File(builtProductsDir)
                         .resolve(contentsFolderPath)
-                        .canonicalPath
+                        .resolve("licenses.json")
                 }.flatMap {
-                    objects.directoryProperty().apply { set(File(it)) }
+                    objects.fileProperty().apply { set(it) }
                 },
         )
 
@@ -77,6 +74,7 @@ internal fun determineIosKonanTargetsFromEnv(
                 },
             )
         }
+
         platform.startsWith("iphonesimulator") -> {
             targets.addAll(
                 archs.map { arch ->
@@ -88,6 +86,7 @@ internal fun determineIosKonanTargetsFromEnv(
                 },
             )
         }
+
         else -> error("Unknown iOS platform: '$platform'")
     }
 
