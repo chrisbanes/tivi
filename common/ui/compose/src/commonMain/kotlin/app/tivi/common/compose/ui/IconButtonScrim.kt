@@ -21,11 +21,13 @@ fun ScrimmedIconButton(
   showScrim: Boolean,
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
+  enabled: Boolean = true,
   invertThemeOnScrim: Boolean = true,
   icon: @Composable () -> Unit,
 ) {
   IconButton(
     onClick = onClick,
+    enabled = enabled,
     modifier = modifier,
   ) {
     if (invertThemeOnScrim) {
@@ -46,7 +48,7 @@ fun ScrimmedIconButton(
 private fun ScrimSurface(
   modifier: Modifier = Modifier,
   showScrim: Boolean = true,
-  alpha: Float = 0.3f,
+  alpha: Float = 0.5f,
   icon: @Composable () -> Unit,
 ) {
   Surface(

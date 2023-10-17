@@ -3,6 +3,7 @@
 
 package app.tivi.common.compose.theme
 
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Shapes
 
-val TiviShapes = Shapes()
+val TiviShapes = Shapes(small = CircleShape)
