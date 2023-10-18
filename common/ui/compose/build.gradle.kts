@@ -36,12 +36,17 @@ kotlin {
       }
     }
 
+    val skikoMain by creating {
+      dependsOn(commonMain)
+    }
+
     val jvmCommon by creating {
       dependsOn(commonMain)
     }
 
     val jvmMain by getting {
       dependsOn(jvmCommon)
+      dependsOn(skikoMain)
     }
 
     val androidMain by getting {
@@ -50,6 +55,10 @@ kotlin {
       dependencies {
         implementation(libs.androidx.activity.compose)
       }
+    }
+
+    val iosMain by getting {
+      dependsOn(skikoMain)
     }
   }
 }
