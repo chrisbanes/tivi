@@ -4,21 +4,18 @@
 package app.tivi.home
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -30,12 +27,11 @@ import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -45,6 +41,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -81,32 +78,10 @@ internal fun Home(
   val strings = LocalStrings.current
   val navigationItems = remember(strings) { buildNavigationItems(strings) }
 
-  Scaffold(
-    bottomBar = {
-      if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
-        HomeNavigationBar(
-          selectedNavigation = rootScreen,
-          navigationItems = navigationItems,
-          onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
-          modifier = Modifier.fillMaxWidth(),
-        )
-      } else {
-        Spacer(
-          Modifier
-            .windowInsetsBottomHeight(WindowInsets.navigationBars)
-            .fillMaxWidth(),
-        )
-      }
-    },
-    // We let content handle the status bar
-    contentWindowInsets = ScaffoldDefaults.contentWindowInsets
-      .exclude(WindowInsets.statusBars),
-    modifier = modifier,
-  ) { paddingValues ->
+  Box(modifier = modifier) {
     Row(
       modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingValues),
+        .fillMaxSize(),
     ) {
       if (navigationType == NavigationType.RAIL) {
         HomeNavigationRail(
@@ -130,7 +105,11 @@ internal fun Home(
         )
       }
 
-      ContentWithOverlays {
+      ContentWithOverlays(
+        modifier = Modifier
+          .weight(1f)
+          .fillMaxHeight()
+      ) {
         NavigableCircuitContent(
           navigator = navigator,
           backstack = backstack,
@@ -138,10 +117,20 @@ internal fun Home(
             GestureNavigationDecoration(onBackInvoked = navigator::pop)
           },
           modifier = Modifier
-            .weight(1f)
-            .fillMaxHeight(),
+            .fillMaxSize(),
         )
       }
+    }
+
+    if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
+      HomeNavigationBar(
+        selectedNavigation = rootScreen,
+        navigationItems = navigationItems,
+        onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
+        modifier = Modifier
+          .align(Alignment.BottomCenter)
+          .fillMaxWidth(),
+      )
     }
   }
 }
@@ -155,6 +144,7 @@ private fun HomeNavigationBar(
 ) {
   NavigationBar(
     modifier = modifier,
+    containerColor = NavigationBarDefaults.containerColor.copy(alpha = 0.95f),
     windowInsets = WindowInsets.navigationBars,
   ) {
     for (item in navigationItems) {
