@@ -10,6 +10,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
@@ -60,7 +62,12 @@ private const val SHADER_SKSL = """
 actual fun Modifier.glassBlur(
   area: Rect,
   color: Color,
+  blurRadius: Dp,
 ): Modifier = composed {
+  val blurRadiusPx = with(LocalDensity.current) {
+    blurRadius.toPx()
+  }
+
   graphicsLayer(
     renderEffect = remember(area, color) {
       val compositeRuntimeEffect = RuntimeEffect.makeForShader(SHADER_SKSL)
@@ -85,8 +92,8 @@ actual fun Modifier.glassBlur(
         inputs = arrayOf(
           null,
           ImageFilter.makeBlur(
-            sigmaX = 32.0f,
-            sigmaY = 32.0f,
+            sigmaX = blurRadiusPx,
+            sigmaY = blurRadiusPx,
             mode = FilterTileMode.DECAL,
           ),
         ),

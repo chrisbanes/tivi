@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 actual fun Modifier.glassBlur(
   area: Rect,
   color: Color,
+  blurRadius: Dp,
 ): Modifier {
   // We disable this everywhere right now as we can't use the draw() function on DrawScope.
   // Waiting for Compose 1.6.0 APIs to land in CMP
@@ -37,8 +38,6 @@ actual fun Modifier.glassBlur(
       drawRect(color = color, topLeft = area.topLeft, size = area.size, alpha = 0.85f)
     }
   }
-
-  val blurRadius: Dp = 20.dp
 
   return drawWithCache {
     val blurRadiusPx = blurRadius.toPx()
