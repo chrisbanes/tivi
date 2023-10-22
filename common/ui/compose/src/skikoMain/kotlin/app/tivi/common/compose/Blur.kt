@@ -62,35 +62,35 @@ actual fun Modifier.glassBlur(
   color: Color,
   blurRadius: Float,
 ): Modifier = composed {
+  val shader = remember { RuntimeEffect.makeForShader(SHADER_SKSL) }
+  val noise = remember {
+    Shader.makeFractalNoise(
+      baseFrequencyX = 0.45f,
+      baseFrequencyY = 0.45f,
+      numOctaves = 4,
+      seed = 2.0f,
+    )
+  }
+  val blur = remember(blurRadius) {
+    ImageFilter.makeBlur(
+      sigmaX = blurRadius,
+      sigmaY = blurRadius,
+      mode = FilterTileMode.DECAL,
+    )
+  }
+
   graphicsLayer(
-    renderEffect = remember(area, color) {
-      val compositeRuntimeEffect = RuntimeEffect.makeForShader(SHADER_SKSL)
-      val compositeShaderBuilder = RuntimeShaderBuilder(compositeRuntimeEffect).apply {
+    renderEffect = remember(area, color, shader, noise) {
+      val compositeShaderBuilder = RuntimeShaderBuilder(shader).apply {
         uniform("rectangle", area.left, area.top, area.right, area.bottom)
         uniform("color", color.red, color.green, color.blue, color.alpha)
-
-        child(
-          "noise",
-          Shader.makeFractalNoise(
-            baseFrequencyX = 0.45f,
-            baseFrequencyY = 0.45f,
-            numOctaves = 4,
-            seed = 2.0f,
-          ),
-        )
+        child("noise", noise)
       }
 
       ImageFilter.makeRuntimeShader(
         runtimeShaderBuilder = compositeShaderBuilder,
         shaderNames = arrayOf("content", "blur"),
-        inputs = arrayOf(
-          null,
-          ImageFilter.makeBlur(
-            sigmaX = blurRadius,
-            sigmaY = blurRadius,
-            mode = FilterTileMode.DECAL,
-          ),
-        ),
+        inputs = arrayOf(null, blur),
       ).asComposeRenderEffect()
     },
   )
