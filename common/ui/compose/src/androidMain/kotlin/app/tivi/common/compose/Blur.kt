@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 actual fun Modifier.glassBlur(
   area: Rect,
@@ -71,7 +70,7 @@ actual fun Modifier.glassBlur(
       Canvas(contentNode.beginRecording()).also { // canvas ->
         // This isn't available until Compose 1.6.0
         // draw(this, layoutDirection, canvas, size) {
-          this@onDrawWithContent.drawContent()
+        this@onDrawWithContent.drawContent()
         // }
         contentNode.endRecording()
       }
