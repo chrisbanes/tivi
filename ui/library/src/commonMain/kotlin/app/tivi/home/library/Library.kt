@@ -40,7 +40,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -66,6 +65,7 @@ import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.NestableScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.rememberCoroutineScope
@@ -170,7 +170,7 @@ internal fun Library(
 
   val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-  Scaffold(
+  NestableScaffold(
     topBar = {
       TiviRootScreenAppBar(
         title = LocalStrings.current.libraryTitle,

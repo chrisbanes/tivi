@@ -38,7 +38,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -63,6 +62,7 @@ import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
+import app.tivi.common.compose.NestableScaffold
 import app.tivi.common.compose.ReportDrawnWhen
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
@@ -178,7 +178,7 @@ internal fun Discover(
       state.trendingItems.isNotEmpty()
   }
 
-  Scaffold(
+  NestableScaffold(
     topBar = {
       TiviRootScreenAppBar(
         title = LocalStrings.current.discoverTitle,

@@ -59,7 +59,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -95,6 +94,7 @@ import androidx.compose.ui.unit.sp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.NestableScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
@@ -207,7 +207,7 @@ internal fun ShowDetails(
 
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-  Scaffold(
+  NestableScaffold(
     topBar = {
       ShowDetailsAppBar(
         title = null,

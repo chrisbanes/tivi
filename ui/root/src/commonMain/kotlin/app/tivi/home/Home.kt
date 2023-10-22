@@ -32,7 +32,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -50,6 +49,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalWindowSizeClass
+import app.tivi.common.compose.NestableScaffold
 import app.tivi.common.compose.glassBlur
 import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.screens.DiscoverScreen
@@ -82,7 +82,7 @@ internal fun Home(
   val strings = LocalStrings.current
   val navigationItems = remember(strings) { buildNavigationItems(strings) }
 
-  Scaffold(
+  NestableScaffold(
     bottomBar = {
       if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
         HomeNavigationBar(

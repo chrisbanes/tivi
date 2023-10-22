@@ -38,7 +38,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -67,6 +66,7 @@ import androidx.compose.ui.unit.lerp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.NestableScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.rememberTiviDecayAnimationSpec
@@ -166,7 +166,7 @@ internal fun ShowSeasons(
     }
   }
 
-  Scaffold(
+  NestableScaffold(
     topBar = {
       TopAppBarWithBottomContent(
         title = { Text(text = state.show.title ?: "") },

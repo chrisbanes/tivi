@@ -32,10 +32,22 @@ fun PaddingValues.copy(
 }
 
 operator fun PaddingValues.plus(plus: PaddingValues): PaddingValues = PaddingValues(
-  start = this.calculateStartPadding(LayoutDirection.Ltr) +
+  start = calculateStartPadding(LayoutDirection.Ltr) +
     plus.calculateStartPadding(LayoutDirection.Ltr),
-  top = this.calculateTopPadding() + plus.calculateTopPadding(),
-  end = this.calculateEndPadding(LayoutDirection.Ltr) +
-    plus.calculateEndPadding(LayoutDirection.Ltr),
-  bottom = this.calculateBottomPadding() + plus.calculateBottomPadding(),
+  top = calculateTopPadding() + plus.calculateTopPadding(),
+  end = calculateEndPadding(LayoutDirection.Ltr) + plus.calculateEndPadding(LayoutDirection.Ltr),
+  bottom = calculateBottomPadding() + plus.calculateBottomPadding(),
+)
+
+operator fun PaddingValues.minus(other: PaddingValues): PaddingValues = PaddingValues(
+  start = (
+    calculateStartPadding(LayoutDirection.Ltr) -
+      other.calculateStartPadding(LayoutDirection.Ltr)
+    ).coerceAtLeast(0.dp),
+  top = (calculateTopPadding() - other.calculateTopPadding()).coerceAtLeast(0.dp),
+  end = (
+    calculateEndPadding(LayoutDirection.Ltr) -
+      other.calculateEndPadding(LayoutDirection.Ltr)
+    ).coerceAtLeast(0.dp),
+  bottom = (calculateBottomPadding() - other.calculateBottomPadding()).coerceAtLeast(0.dp),
 )
