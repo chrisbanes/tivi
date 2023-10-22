@@ -20,12 +20,11 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.Dp
 
 actual fun Modifier.glassBlur(
   area: Rect,
   color: Color,
-  blurRadius: Dp,
+  blurRadius: Float,
 ): Modifier {
   // We disable this everywhere right now as we can't use the draw() function on DrawScope.
   // Waiting for Compose 1.6.0 APIs to land in CMP
@@ -39,16 +38,14 @@ actual fun Modifier.glassBlur(
   }
 
   return drawWithCache {
-    val blurRadiusPx = blurRadius.toPx()
-
     val effect = RenderEffect.createColorFilterEffect(
       BlendModeColorFilter(
         color.copy(alpha = 0.7f).toArgb(),
         BlendMode.SRC_OVER,
       ),
       RenderEffect.createBlurEffect(
-        blurRadius.toPx(),
-        blurRadius.toPx(),
+        blurRadius,
+        blurRadius,
         Shader.TileMode.DECAL,
       ),
     )
@@ -57,7 +54,7 @@ actual fun Modifier.glassBlur(
       setPosition(0, 0, size.width.toInt(), size.height.toInt())
     }
 
-    val expandedRect = area.inflate(blurRadiusPx).intersect(size.toRect())
+    val expandedRect = area.inflate(blurRadius).intersect(size.toRect())
 
     val blurNode = RenderNode("blur").apply {
       setRenderEffect(effect)
