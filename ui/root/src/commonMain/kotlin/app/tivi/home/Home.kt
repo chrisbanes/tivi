@@ -4,7 +4,6 @@
 package app.tivi.home
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -26,7 +25,6 @@ import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
@@ -42,15 +40,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.compose.NestableScaffold
-import app.tivi.common.compose.glassBlur
 import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
@@ -93,8 +88,9 @@ internal fun Home(
         )
       }
     },
+    blurBottomBar = true,
     modifier = modifier,
-  ) { contentPadding ->
+  ) {
     Row(modifier = Modifier.fillMaxSize()) {
       if (navigationType == NavigationType.RAIL) {
         HomeNavigationRail(
@@ -118,33 +114,19 @@ internal fun Home(
         )
       }
 
-      BoxWithConstraints(
+      ContentWithOverlays(
         modifier = Modifier
           .weight(1f)
           .fillMaxHeight(),
       ) {
-        ContentWithOverlays(modifier = Modifier.fillMaxSize()) {
-          NavigableCircuitContent(
-            navigator = navigator,
-            backstack = backstack,
-            decoration = remember(navigator) {
-              GestureNavigationDecoration(onBackInvoked = navigator::pop)
-            },
-            modifier = Modifier
-              .fillMaxSize()
-              .glassBlur(
-                area = Rect(
-                  left = 0f,
-                  top = with(LocalDensity.current) {
-                    constraints.maxHeight - contentPadding.calculateBottomPadding().toPx()
-                  },
-                  right = constraints.maxWidth.toFloat(),
-                  bottom = constraints.maxHeight.toFloat(),
-                ),
-                color = MaterialTheme.colorScheme.surface,
-              ),
-          )
-        }
+        NavigableCircuitContent(
+          navigator = navigator,
+          backstack = backstack,
+          decoration = remember(navigator) {
+            GestureNavigationDecoration(onBackInvoked = navigator::pop)
+          },
+          modifier = Modifier.fillMaxSize(),
+        )
       }
     }
   }
