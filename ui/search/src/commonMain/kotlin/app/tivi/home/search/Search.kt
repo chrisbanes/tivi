@@ -92,7 +92,7 @@ internal fun Search(
   )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun Search(
   state: SearchUiState,
@@ -121,30 +121,24 @@ internal fun Search(
 
   NestableScaffold(
     topBar = {
-      Surface(
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.fillMaxWidth(),
+      Box(
+        Modifier
+          .padding(horizontal = Layout.bodyMargin, vertical = 16.dp)
+          .windowInsetsPadding(WindowInsets.statusBars),
       ) {
-        Box(
-          Modifier
-            .padding(horizontal = Layout.bodyMargin, vertical = 8.dp)
-            .windowInsetsPadding(WindowInsets.statusBars)
-            .bodyWidth(),
-        ) {
-          var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
-          SearchTextField(
-            value = searchQuery,
-            onValueChange = { value ->
-              searchQuery = value
-              onSearchQueryChanged(value.text)
-            },
-            hint = LocalStrings.current.searchHint,
-            modifier = Modifier.fillMaxWidth(),
-          )
-        }
+        var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
+        SearchTextField(
+          value = searchQuery,
+          onValueChange = { value ->
+            searchQuery = value
+            onSearchQueryChanged(value.text)
+          },
+          hint = LocalStrings.current.searchHint,
+          modifier = Modifier.bodyWidth(),
+        )
       }
     },
+    blurTopBar = true,
     snackbarHost = {
       SnackbarHost(hostState = snackbarHostState) { data ->
         SwipeToDismiss(

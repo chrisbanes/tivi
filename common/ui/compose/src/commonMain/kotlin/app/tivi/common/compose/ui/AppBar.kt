@@ -80,6 +80,7 @@ fun TiviRootScreenAppBar(
 ) {
   TopAppBar(
     modifier = modifier,
+    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
     windowInsets = TopAppBarDefaults.windowInsets
       .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
     scrollBehavior = scrollBehavior,

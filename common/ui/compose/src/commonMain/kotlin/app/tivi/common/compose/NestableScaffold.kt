@@ -30,7 +30,6 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
-import app.tivi.common.compose.ui.minus
 import app.tivi.common.compose.ui.plus
 
 private val LocalScaffoldContentPadding = staticCompositionLocalOf { PaddingValues(0.dp) }
@@ -78,7 +77,6 @@ fun NestableScaffold(
  * @param bottomBar the content to place at the bottom of the [Scaffold], on top of the
  * [content], typically a [NavigationBar].
  */
-@Suppress("UNUSED_PARAMETER")
 @Composable
 private fun NestedScaffoldLayout(
   fabPosition: FabPosition,
@@ -187,33 +185,32 @@ private fun NestedScaffoldLayout(
           end = contentInsets.calculateEndPadding((this@SubcomposeLayout).layoutDirection),
         )
 
+        val blurAreas = listOfNotNull(
+          if (blurTopBar) {
+            Rect(
+              left = 0f,
+              top = 0f,
+              right = layoutWidth.toFloat(),
+              bottom = innerPadding.calculateTopPadding().toPx(),
+            ).takeUnless { it.isEmpty }
+          } else {
+            null
+          },
+          if (blurBottomBar) {
+            Rect(
+              left = 0f,
+              top = layoutHeight.toFloat() - innerPadding.calculateBottomPadding().toPx(),
+              right = layoutWidth.toFloat(),
+              bottom = layoutHeight.toFloat(),
+            ).takeUnless { it.isEmpty }
+          } else {
+            null
+          },
+        )
+
         Box(
-          modifier = Modifier.thenIf(blurTopBar || blurBottomBar) {
-            glassBlur(
-              areas = listOfNotNull(
-                if (blurTopBar) {
-                  Rect(
-                    left = 0f,
-                    top = 0f,
-                    right = layoutWidth.toFloat(),
-                    bottom = innerPadding.calculateTopPadding().toPx(),
-                  )
-                } else {
-                  null
-                },
-                if (blurBottomBar) {
-                  Rect(
-                    left = 0f,
-                    top = layoutHeight.toFloat() - innerPadding.calculateBottomPadding().toPx(),
-                    right = layoutWidth.toFloat(),
-                    bottom = layoutHeight.toFloat(),
-                  )
-                } else {
-                  null
-                },
-              ),
-              color = MaterialTheme.colorScheme.surface,
-            )
+          modifier = Modifier.thenIf(blurAreas.isNotEmpty()) {
+            glassBlur(areas = blurAreas, color = MaterialTheme.colorScheme.surface)
           },
         ) {
           // Scaffold always applies the insets, so we only want to pass down the content padding

@@ -190,6 +190,7 @@ internal fun Discover(
         modifier = Modifier.fillMaxWidth(),
       )
     },
+    blurTopBar = true,
     snackbarHost = {
       SnackbarHost(hostState = snackbarHostState) { data ->
         SwipeToDismiss(

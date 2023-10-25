@@ -184,6 +184,7 @@ internal fun Library(
           .fillMaxWidth(),
       )
     },
+    blurTopBar = true,
     snackbarHost = {
       SnackbarHost(hostState = snackbarHostState) { data ->
         SwipeToDismiss(
