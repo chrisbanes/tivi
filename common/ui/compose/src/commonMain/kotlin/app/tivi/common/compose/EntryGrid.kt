@@ -41,6 +41,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateLoading
@@ -102,6 +103,7 @@ fun <E : Entry> EntryGrid(
         scrollBehavior = scrollBehavior,
       )
     },
+    blurTopBar = true,
     snackbarHost = {
       SnackbarHost(hostState = snackbarHostState) { data ->
         SwipeToDismiss(
@@ -190,8 +192,8 @@ private fun EntryGridAppBar(
   refreshing: Boolean,
   onNavigateUp: () -> Unit,
   onRefreshActionClick: () -> Unit,
-  scrollBehavior: TopAppBarScrollBehavior,
   modifier: Modifier = Modifier,
+  scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
   TopAppBar(
     navigationIcon = {
@@ -205,6 +207,7 @@ private fun EntryGridAppBar(
     windowInsets = TopAppBarDefaults.windowInsets
       .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
     modifier = modifier,
+    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
     scrollBehavior = scrollBehavior,
     title = { Text(text = title) },
     actions = {

@@ -89,7 +89,7 @@ private fun NestedScaffoldLayout(
   contentWindowInsets: WindowInsets,
   incomingContentPadding: PaddingValues,
   bottomBar: @Composable () -> Unit,
-  @Suppress("UNUSED_PARAMETER") blurTopBar: Boolean,
+  blurTopBar: Boolean,
   blurBottomBar: Boolean,
 ) {
   SubcomposeLayout { constraints ->
@@ -188,13 +188,29 @@ private fun NestedScaffoldLayout(
         )
 
         Box(
-          modifier = Modifier.thenIf(blurBottomBar) {
+          modifier = Modifier.thenIf(blurTopBar || blurBottomBar) {
             glassBlur(
-              area = Rect(
-                left = 0f,
-                top = layoutHeight.toFloat() - innerPadding.calculateBottomPadding().toPx(),
-                right = layoutWidth.toFloat(),
-                bottom = layoutHeight.toFloat(),
+              areas = listOfNotNull(
+                if (blurTopBar) {
+                  Rect(
+                    left = 0f,
+                    top = 0f,
+                    right = layoutWidth.toFloat(),
+                    bottom = innerPadding.calculateTopPadding().toPx(),
+                  )
+                } else {
+                  null
+                },
+                if (blurBottomBar) {
+                  Rect(
+                    left = 0f,
+                    top = layoutHeight.toFloat() - innerPadding.calculateBottomPadding().toPx(),
+                    right = layoutWidth.toFloat(),
+                    bottom = layoutHeight.toFloat(),
+                  )
+                } else {
+                  null
+                },
               ),
               color = MaterialTheme.colorScheme.surface,
             )

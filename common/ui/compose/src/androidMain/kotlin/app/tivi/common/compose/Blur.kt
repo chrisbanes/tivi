@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 
 actual fun Modifier.glassBlur(
-  area: Rect,
+  areas: List<Rect>,
   color: Color,
   blurRadius: Float,
 ): Modifier {
@@ -33,7 +33,10 @@ actual fun Modifier.glassBlur(
     // On older platforms we just display a translucent scrim
     return drawWithContent {
       drawContent()
-      drawRect(color = color, topLeft = area.topLeft, size = area.size, alpha = 0.85f)
+
+      for (area in areas) {
+        drawRect(color = color, topLeft = area.topLeft, size = area.size, alpha = 0.85f)
+      }
     }
   }
 
@@ -54,7 +57,7 @@ actual fun Modifier.glassBlur(
       setPosition(0, 0, size.width.toInt(), size.height.toInt())
     }
 
-    val expandedRect = area.inflate(blurRadius).intersect(size.toRect())
+    val expandedRect = areas[0].inflate(blurRadius).intersect(size.toRect())
 
     val blurNode = RenderNode("blur").apply {
       setRenderEffect(effect)
@@ -81,6 +84,8 @@ actual fun Modifier.glassBlur(
         canvas.drawRenderNode(contentNode)
         blurNode.endRecording()
       }
+
+      val area = areas.first()
 
       drawIntoCanvas { canvas ->
         clipRect(area.left, area.top, area.right, area.bottom) {

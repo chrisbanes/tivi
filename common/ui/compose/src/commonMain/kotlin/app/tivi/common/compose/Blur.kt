@@ -8,7 +8,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 
 expect fun Modifier.glassBlur(
-  area: Rect,
+  areas: List<Rect>,
   color: Color,
-  blurRadius: Float = 28f,
+  blurRadius: Float = 48f,
 ): Modifier

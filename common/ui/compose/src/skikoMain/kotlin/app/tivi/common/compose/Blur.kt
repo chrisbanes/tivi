@@ -7,9 +7,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
+import app.tivi.extensions.unsafeLazy
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
@@ -57,40 +59,50 @@ private const val SHADER_SKSL = """
   }
 """
 
+private val RUNTIME_SHADER by unsafeLazy { RuntimeEffect.makeForShader(SHADER_SKSL) }
+
+private val NOISE_SHADER by unsafeLazy {
+  Shader.makeFractalNoise(
+    baseFrequencyX = 0.45f,
+    baseFrequencyY = 0.45f,
+    numOctaves = 4,
+    seed = 2.0f,
+  )
+}
+
 actual fun Modifier.glassBlur(
-  area: Rect,
+  areas: List<Rect>,
   color: Color,
   blurRadius: Float,
 ): Modifier = composed {
-  val shader = remember { RuntimeEffect.makeForShader(SHADER_SKSL) }
-  val noise = remember {
-    Shader.makeFractalNoise(
-      baseFrequencyX = 0.45f,
-      baseFrequencyY = 0.45f,
-      numOctaves = 4,
-      seed = 2.0f,
-    )
-  }
   val blur = remember(blurRadius) {
+    val sigma = BlurEffect.convertRadiusToSigma(blurRadius)
     ImageFilter.makeBlur(
-      sigmaX = blurRadius,
-      sigmaY = blurRadius,
+      sigmaX = sigma,
+      sigmaY = sigma,
       mode = FilterTileMode.DECAL,
     )
   }
 
   graphicsLayer(
-    renderEffect = remember(area, color, shader, noise) {
-      val compositeShaderBuilder = RuntimeShaderBuilder(shader).apply {
-        uniform("rectangle", area.left, area.top, area.right, area.bottom)
-        uniform("color", color.red, color.green, color.blue, color.alpha)
-        child("noise", noise)
-      }
+    renderEffect = remember(areas, color, blur) {
+      val filters = areas.asSequence().filterNot { it.isEmpty }.map { area ->
+        val compositeShaderBuilder = RuntimeShaderBuilder(RUNTIME_SHADER).apply {
+          uniform("rectangle", area.left, area.top, area.right, area.bottom)
+          uniform("color", color.red, color.green, color.blue, color.alpha)
+          child("noise", NOISE_SHADER)
+        }
 
-      ImageFilter.makeRuntimeShader(
-        runtimeShaderBuilder = compositeShaderBuilder,
-        shaderNames = arrayOf("content", "blur"),
-        inputs = arrayOf(null, blur),
+        ImageFilter.makeRuntimeShader(
+          runtimeShaderBuilder = compositeShaderBuilder,
+          shaderNames = arrayOf("content", "blur"),
+          inputs = arrayOf(null, blur),
+        )
+      }.toList()
+
+      ImageFilter.makeMerge(
+        filters = filters.toTypedArray(),
+        crop = null,
       ).asComposeRenderEffect()
     },
   )
