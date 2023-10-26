@@ -11,8 +11,6 @@ import io.ktor.http.HttpStatusCode
 import me.tatarka.inject.annotations.Provides
 import okhttp3.OkHttpClient
 
-@OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
 actual interface TmdbPlatformComponent {
   @ApplicationScope
   @Provides

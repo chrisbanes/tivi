@@ -13,8 +13,6 @@ import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 
-@OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
 actual interface SharedPlatformApplicationComponent {
   @ApplicationScope
   @Provides

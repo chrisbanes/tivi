@@ -13,8 +13,6 @@ import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.SharedPreferencesSettings
 import me.tatarka.inject.annotations.Provides
 
-@OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
 actual interface PreferencesPlatformComponent {
   @ApplicationScope
   @Provides
