@@ -9,8 +9,6 @@ import app.cash.sqldelight.driver.native.inMemoryDriver
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-@OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
 actual interface SqlDelightDatabasePlatformComponent {
   @Provides
   @ApplicationScope

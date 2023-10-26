@@ -9,8 +9,6 @@ import app.tivi.inject.ApplicationScope
 import java.io.File
 import me.tatarka.inject.annotations.Provides
 
-@OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
 actual interface SqlDelightDatabasePlatformComponent {
   @Provides
   @ApplicationScope
