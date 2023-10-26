@@ -3,7 +3,7 @@
 
 package app.tivi.core.perf
 
-import com.google.firebase.perf.ktx.trace as firebaseTrace
+import com.google.firebase.perf.trace as firebaseTrace
 import me.tatarka.inject.annotations.Inject
 
 @Inject
