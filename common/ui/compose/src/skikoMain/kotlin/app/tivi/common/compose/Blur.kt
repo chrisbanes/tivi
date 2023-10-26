@@ -54,8 +54,8 @@ private const val SHADER_SKSL = """
     // We apply the noise, toned down to 10%
     float noiseFactor = min(1.0, noiseLuminance) * 0.1;
 
-    // Apply the noise, and shift towards `color` by 50%
-    return b + noiseFactor + ((color - b) * 0.5);
+    // Apply the noise, and shift towards `color` by 70%
+    return b + noiseFactor + ((color - b) * 0.7);
   }
 """
 
