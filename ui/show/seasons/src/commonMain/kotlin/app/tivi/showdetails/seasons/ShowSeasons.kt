@@ -6,6 +6,7 @@ package app.tivi.showdetails.seasons
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -34,11 +35,11 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -48,6 +49,8 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,6 +70,7 @@ import androidx.compose.ui.unit.lerp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.rememberTiviDecayAnimationSpec
@@ -74,7 +78,6 @@ import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.RefreshButton
-import app.tivi.common.compose.ui.TopAppBarWithBottomContent
 import app.tivi.data.compoundmodels.EpisodeWithWatches
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.imagemodels.asImageModel
@@ -120,7 +123,7 @@ internal fun ShowSeasons(
   )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun ShowSeasons(
   state: ShowSeasonsUiState,
@@ -166,37 +169,40 @@ internal fun ShowSeasons(
     }
   }
 
-  Scaffold(
+  TiviScaffold(
     topBar = {
-      TopAppBarWithBottomContent(
-        title = { Text(text = state.show.title ?: "") },
-        navigationIcon = {
-          IconButton(onClick = navigateUp) {
-            Icon(
-              Icons.Default.ArrowBack,
-              contentDescription = LocalStrings.current.cdNavigateUp,
+      Column {
+        TopAppBar(
+          title = { Text(text = state.show.title.orEmpty()) },
+          navigationIcon = {
+            IconButton(onClick = navigateUp) {
+              Icon(
+                Icons.Default.ArrowBack,
+                contentDescription = LocalStrings.current.cdNavigateUp,
+              )
+            }
+          },
+          actions = {
+            RefreshButton(
+              refreshing = state.refreshing,
+              onClick = refresh,
             )
-          }
-        },
-        actions = {
-          RefreshButton(
-            refreshing = state.refreshing,
-            onClick = refresh,
-          )
-        },
-        bottomContent = {
-          SeasonPagerTabs(
-            pagerState = pagerState,
-            seasons = state.seasons.map { it.season },
-            modifier = Modifier.fillMaxWidth(),
-            containerColor = Color.Transparent,
-            contentColor = LocalContentColor.current,
-          )
+          },
+          colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+        )
 
-          Divider(Modifier.fillMaxWidth())
-        },
-      )
+        SeasonPagerTabs(
+          pagerState = pagerState,
+          seasons = state.seasons.map { it.season },
+          modifier = Modifier.fillMaxWidth(),
+          containerColor = Color.Transparent,
+          contentColor = LocalContentColor.current,
+        )
+
+        Divider(Modifier.fillMaxWidth())
+      }
     },
+    blurTopBar = true,
     snackbarHost = {
       SnackbarHost(hostState = snackbarHostState) { data ->
         SwipeToDismiss(
@@ -217,8 +223,8 @@ internal fun ShowSeasons(
       seasons = state.seasons,
       pagerState = pagerState,
       openEpisodeDetails = openEpisodeDetails,
+      contentPadding = contentPadding,
       modifier = Modifier
-        .padding(contentPadding)
         .fillMaxHeight()
         .bodyWidth(),
     )
@@ -273,6 +279,7 @@ private fun SeasonsPager(
   seasons: List<SeasonWithEpisodesAndWatches>,
   pagerState: PagerState,
   openEpisodeDetails: (episodeId: Long) -> Unit,
+  contentPadding: PaddingValues,
   modifier: Modifier = Modifier,
 ) {
   HorizontalPager(
@@ -288,6 +295,7 @@ private fun SeasonsPager(
       season = seasonWithEps.season,
       episodes = seasonWithEps.episodes,
       onEpisodeClick = openEpisodeDetails,
+      contentPadding = contentPadding,
       modifier = Modifier.fillMaxSize(),
     )
   }
@@ -298,10 +306,12 @@ private fun SeasonPage(
   season: Season,
   episodes: List<EpisodeWithWatches>,
   onEpisodeClick: (episodeId: Long) -> Unit,
+  contentPadding: PaddingValues,
   modifier: Modifier = Modifier,
 ) {
   LazyColumn(
     modifier = modifier,
+    contentPadding = contentPadding,
     flingBehavior = rememberTiviFlingBehavior(),
   ) {
     item {

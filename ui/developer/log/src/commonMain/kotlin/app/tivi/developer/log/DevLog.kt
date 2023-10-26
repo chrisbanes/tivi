@@ -4,9 +4,7 @@
 package app.tivi.developer.log
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,10 +14,8 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +26,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.tivi.common.compose.LocalStrings
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.screens.DevLogScreen
 import app.tivi.util.Severity
 import com.slack.circuit.runtime.CircuitContext
@@ -59,7 +56,7 @@ internal fun DevLog(
 ) {
   val eventSink = state.eventSink
 
-  Scaffold(
+  TiviScaffold(
     topBar = {
       TopAppBar(
         title = { Text("Log") },
@@ -71,8 +68,6 @@ internal fun DevLog(
             )
           }
         },
-        windowInsets = TopAppBarDefaults.windowInsets
-          .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
       )
     },
     modifier = modifier,

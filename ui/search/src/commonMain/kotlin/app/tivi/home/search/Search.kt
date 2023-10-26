@@ -26,13 +26,10 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.EmptyContent
@@ -92,7 +90,7 @@ internal fun Search(
   )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun Search(
   state: SearchUiState,
@@ -119,32 +117,26 @@ internal fun Search(
     }
   }
 
-  Scaffold(
+  TiviScaffold(
     topBar = {
-      Surface(
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.fillMaxWidth(),
+      Box(
+        Modifier
+          .padding(horizontal = Layout.bodyMargin, vertical = 16.dp)
+          .windowInsetsPadding(WindowInsets.statusBars),
       ) {
-        Box(
-          Modifier
-            .padding(horizontal = Layout.bodyMargin, vertical = 8.dp)
-            .windowInsetsPadding(WindowInsets.statusBars)
-            .bodyWidth(),
-        ) {
-          var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
-          SearchTextField(
-            value = searchQuery,
-            onValueChange = { value ->
-              searchQuery = value
-              onSearchQueryChanged(value.text)
-            },
-            hint = LocalStrings.current.searchHint,
-            modifier = Modifier.fillMaxWidth(),
-          )
-        }
+        var searchQuery by remember { mutableStateOf(TextFieldValue(state.query)) }
+        SearchTextField(
+          value = searchQuery,
+          onValueChange = { value ->
+            searchQuery = value
+            onSearchQueryChanged(value.text)
+          },
+          hint = LocalStrings.current.searchHint,
+          modifier = Modifier.bodyWidth(),
+        )
       }
     },
+    blurTopBar = true,
     snackbarHost = {
       SnackbarHost(hostState = snackbarHostState) { data ->
         SwipeToDismiss(

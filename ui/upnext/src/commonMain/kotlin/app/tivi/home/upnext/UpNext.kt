@@ -37,7 +37,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -61,6 +60,7 @@ import app.cash.paging.compose.itemKey
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.rememberCoroutineScope
@@ -176,7 +176,7 @@ internal fun UpNext(
 
   val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-  Scaffold(
+  TiviScaffold(
     topBar = {
       TiviRootScreenAppBar(
         title = LocalStrings.current.upnextTitle,
@@ -190,6 +190,7 @@ internal fun UpNext(
           .fillMaxWidth(),
       )
     },
+    blurTopBar = true,
     snackbarHost = {
       SnackbarHost(hostState = snackbarHostState) { data ->
         SwipeToDismiss(

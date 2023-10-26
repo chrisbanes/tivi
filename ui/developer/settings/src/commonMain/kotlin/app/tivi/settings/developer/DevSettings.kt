@@ -3,24 +3,20 @@
 
 package app.tivi.settings.developer
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.LocalStrings
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.common.compose.ui.Preference
 import app.tivi.screens.DevSettingsScreen
@@ -43,7 +39,7 @@ class DevSettingsUiFactory : Ui.Factory {
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DevSettings(
   state: DevSettingsUiState,
@@ -51,7 +47,7 @@ internal fun DevSettings(
 ) {
   val eventSink = state.eventSink
 
-  Scaffold(
+  TiviScaffold(
     topBar = {
       TopAppBar(
         title = { Text(LocalStrings.current.developerSettingsTitle) },
@@ -63,8 +59,6 @@ internal fun DevSettings(
             )
           }
         },
-        windowInsets = TopAppBarDefaults.windowInsets
-          .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
       )
     },
     modifier = modifier,

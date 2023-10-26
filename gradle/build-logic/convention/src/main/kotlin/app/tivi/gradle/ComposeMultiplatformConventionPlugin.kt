@@ -19,8 +19,13 @@ fun Project.configureCompose() {
   configurations.configureEach {
     resolutionStrategy.eachDependency {
       val group = requested.group
-      if (group.startsWith("org.jetbrains.compose") && !group.endsWith("compiler")) {
-        useVersion(composeVersion)
+
+      when {
+        group.startsWith("org.jetbrains.compose") && !group.endsWith("compiler") -> {
+          useVersion(composeVersion)
+        }
+        // We need to force AndroidX Compose UI 1.6.0-alpha08 to be able to use new draw APIs
+        group == "androidx.compose.ui" -> useVersion("1.6.0-alpha08")
       }
     }
   }

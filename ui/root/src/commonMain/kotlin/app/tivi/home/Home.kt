@@ -6,19 +6,15 @@ package app.tivi.home
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -34,8 +30,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -46,10 +40,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalWindowSizeClass
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
@@ -81,7 +77,7 @@ internal fun Home(
   val strings = LocalStrings.current
   val navigationItems = remember(strings) { buildNavigationItems(strings) }
 
-  Scaffold(
+  TiviScaffold(
     bottomBar = {
       if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
         HomeNavigationBar(
@@ -90,24 +86,12 @@ internal fun Home(
           onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
           modifier = Modifier.fillMaxWidth(),
         )
-      } else {
-        Spacer(
-          Modifier
-            .windowInsetsBottomHeight(WindowInsets.navigationBars)
-            .fillMaxWidth(),
-        )
       }
     },
-    // We let content handle the status bar
-    contentWindowInsets = ScaffoldDefaults.contentWindowInsets
-      .exclude(WindowInsets.statusBars),
+    blurBottomBar = true,
     modifier = modifier,
-  ) { paddingValues ->
-    Row(
-      modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingValues),
-    ) {
+  ) {
+    Row(modifier = Modifier.fillMaxSize()) {
       if (navigationType == NavigationType.RAIL) {
         HomeNavigationRail(
           selectedNavigation = rootScreen,
@@ -130,16 +114,18 @@ internal fun Home(
         )
       }
 
-      ContentWithOverlays {
+      ContentWithOverlays(
+        modifier = Modifier
+          .weight(1f)
+          .fillMaxHeight(),
+      ) {
         NavigableCircuitContent(
           navigator = navigator,
           backstack = backstack,
           decoration = remember(navigator) {
             GestureNavigationDecoration(onBackInvoked = navigator::pop)
           },
-          modifier = Modifier
-            .weight(1f)
-            .fillMaxHeight(),
+          modifier = Modifier.fillMaxSize(),
         )
       }
     }
@@ -155,6 +141,7 @@ private fun HomeNavigationBar(
 ) {
   NavigationBar(
     modifier = modifier,
+    containerColor = Color.Transparent,
     windowInsets = WindowInsets.navigationBars,
   ) {
     for (item in navigationItems) {
