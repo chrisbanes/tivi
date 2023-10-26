@@ -70,7 +70,7 @@ import androidx.compose.ui.unit.lerp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.NestableScaffold
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.rememberTiviDecayAnimationSpec
@@ -169,7 +169,7 @@ internal fun ShowSeasons(
     }
   }
 
-  NestableScaffold(
+  TiviScaffold(
     topBar = {
       Column {
         TopAppBar(

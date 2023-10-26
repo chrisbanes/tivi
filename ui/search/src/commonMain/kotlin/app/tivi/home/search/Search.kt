@@ -26,12 +26,10 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
-import app.tivi.common.compose.NestableScaffold
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.EmptyContent
@@ -119,7 +117,7 @@ internal fun Search(
     }
   }
 
-  NestableScaffold(
+  TiviScaffold(
     topBar = {
       Box(
         Modifier

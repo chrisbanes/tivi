@@ -22,7 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalStrings
-import app.tivi.common.compose.NestableScaffold
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.ui.Preference
 import app.tivi.common.compose.ui.PreferenceHeader
 import app.tivi.screens.LicensesScreen
@@ -53,7 +53,7 @@ internal fun Licenses(
 ) {
   val eventSink = state.eventSink
 
-  NestableScaffold(
+  TiviScaffold(
     topBar = {
       TopAppBar(
         title = { Text(LocalStrings.current.settingsOpenSource) },

@@ -62,8 +62,8 @@ import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
-import app.tivi.common.compose.NestableScaffold
 import app.tivi.common.compose.ReportDrawnWhen
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.rememberTiviFlingBehavior
@@ -178,7 +178,7 @@ internal fun Discover(
       state.trendingItems.isNotEmpty()
   }
 
-  NestableScaffold(
+  TiviScaffold(
     topBar = {
       TiviRootScreenAppBar(
         title = LocalStrings.current.discoverTitle,

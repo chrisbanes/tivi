@@ -34,8 +34,15 @@ import app.tivi.common.compose.ui.plus
 
 private val LocalScaffoldContentPadding = staticCompositionLocalOf { PaddingValues(0.dp) }
 
+/**
+ * A copy of Material 3's [Scaffold] composable, but with a few tweaks:
+ *
+ * - Supports being used nested. The `contentPadding` is compounded on each level.
+ * - Supports automatic blurring of content over [topBar] and [bottomBar], via
+ * [blurTopBar] and [blurBottomBar].
+ */
 @Composable
-fun NestableScaffold(
+fun TiviScaffold(
   modifier: Modifier = Modifier,
   topBar: @Composable () -> Unit = {},
   bottomBar: @Composable () -> Unit = {},

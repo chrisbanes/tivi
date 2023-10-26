@@ -65,7 +65,7 @@ import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.NestableScaffold
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.rememberCoroutineScope
@@ -170,7 +170,7 @@ internal fun Library(
 
   val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-  NestableScaffold(
+  TiviScaffold(
     topBar = {
       TiviRootScreenAppBar(
         title = LocalStrings.current.libraryTitle,

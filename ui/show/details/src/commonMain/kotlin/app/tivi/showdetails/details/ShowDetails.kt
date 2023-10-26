@@ -92,7 +92,7 @@ import androidx.compose.ui.unit.sp
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.NestableScaffold
+import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
@@ -204,7 +204,7 @@ internal fun ShowDetails(
 
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-  NestableScaffold(
+  TiviScaffold(
     topBar = {
       ShowDetailsAppBar(
         title = null,
