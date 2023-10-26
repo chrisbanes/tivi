@@ -76,7 +76,7 @@ tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.0.3"
 
 google-firebase-analytics = "com.google.firebase:firebase-analytics-ktx:21.3.0"
 google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:18.5.0"
-google-firebase-perf = "com.google.firebase:firebase-perf-ktx:20.5.0"
+google-firebase-perf = "com.google.firebase:firebase-perf:20.5.0"
 
 imageloader = "io.github.qdsfdhvh:image-loader:1.6.8"
 
