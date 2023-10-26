@@ -5,9 +5,9 @@ package app.tivi.core.analytics
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.os.Bundle
 import app.tivi.extensions.unsafeLazy
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -25,14 +25,16 @@ class TiviFirebaseAnalytics(
     arguments: Map<String, *>?,
   ) {
     try {
-      firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-        param(FirebaseAnalytics.Param.SCREEN_NAME, name)
+      val bundle = Bundle().apply {
+        putString(FirebaseAnalytics.Param.SCREEN_NAME, name)
         arguments?.let {
           for (entry in arguments) {
-            param("screen_arg_${entry.key}", entry.value.toString())
+            putString("screen_arg_${entry.key}", entry.value.toString())
           }
         }
       }
+
+      firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
     } catch (t: Throwable) {
       // Ignore, Firebase might not be setup for this project
     }
