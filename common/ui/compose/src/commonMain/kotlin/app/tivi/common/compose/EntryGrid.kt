@@ -204,8 +204,6 @@ private fun EntryGridAppBar(
         )
       }
     },
-    windowInsets = TopAppBarDefaults.windowInsets
-      .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
     modifier = modifier,
     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
     scrollBehavior = scrollBehavior,
