@@ -64,7 +64,6 @@ import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.rememberCoroutineScope
-import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.SortChip
@@ -223,7 +222,6 @@ internal fun UpNext(
         // We minus 8.dp off the grid padding, as we use content padding on the items below
         horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
         verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
-        flingBehavior = rememberTiviFlingBehavior(),
         modifier = Modifier
           .nestedScroll(scrollBehavior.nestedScrollConnection)
           .bodyWidth()

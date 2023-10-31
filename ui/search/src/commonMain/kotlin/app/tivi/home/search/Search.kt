@@ -46,7 +46,6 @@ import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
@@ -194,7 +193,6 @@ private fun SearchList(
     contentPadding = contentPadding,
     verticalArrangement = arrangement,
     horizontalArrangement = arrangement,
-    flingBehavior = rememberTiviFlingBehavior(),
     modifier = modifier,
   ) {
     items(

@@ -9,6 +9,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,8 +67,6 @@ import app.tivi.common.compose.ReportDrawnWhen
 import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
-import app.tivi.common.compose.rememberTiviFlingBehavior
-import app.tivi.common.compose.rememberTiviSnapFlingBehavior
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
@@ -209,7 +208,6 @@ internal fun Discover(
     Box(modifier = Modifier.pullRefresh(state = refreshState)) {
       LazyColumn(
         contentPadding = paddingValues,
-        flingBehavior = rememberTiviFlingBehavior(),
         modifier = Modifier.bodyWidth(),
       ) {
         item {
@@ -437,7 +435,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
     modifier = modifier
       .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
       .clip(MaterialTheme.shapes.extraLarge),
-    flingBehavior = rememberTiviSnapFlingBehavior(
+    flingBehavior = rememberSnapFlingBehavior(
       snapLayoutInfoProvider = remember(lazyListState) {
         SnapLayoutInfoProvider(
           lazyListState = lazyListState,

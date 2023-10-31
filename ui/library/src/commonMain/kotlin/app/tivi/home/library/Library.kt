@@ -69,7 +69,6 @@ import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
 import app.tivi.common.compose.rememberCoroutineScope
-import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
@@ -252,7 +251,6 @@ private fun LibraryGrid(
 
   LazyVerticalGrid(
     columns = GridCells.Fixed(columns / 4),
-    flingBehavior = rememberTiviFlingBehavior(),
     contentPadding = paddingValues + PaddingValues(
       horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
       vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
