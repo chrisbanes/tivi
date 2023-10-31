@@ -23,6 +23,8 @@ kotlin {
         api(projects.common.ui.resources.strings)
         api(libs.lyricist.library)
 
+        api(libs.haze)
+
         implementation(compose.foundation)
         implementation(compose.material)
         implementation(compose.materialIconsExtended)
@@ -36,17 +38,12 @@ kotlin {
       }
     }
 
-    val skikoMain by creating {
-      dependsOn(commonMain)
-    }
-
     val jvmCommon by creating {
       dependsOn(commonMain)
     }
 
     val jvmMain by getting {
       dependsOn(jvmCommon)
-      dependsOn(skikoMain)
     }
 
     val androidMain by getting {
@@ -55,10 +52,6 @@ kotlin {
       dependencies {
         implementation(libs.androidx.activity.compose)
       }
-    }
-
-    val iosMain by getting {
-      dependsOn(skikoMain)
     }
   }
 }
