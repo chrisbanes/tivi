@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
-import com.android.build.api.dsl.ManagedVirtualDevice
-
 plugins {
   id("app.tivi.android.test")
   id("app.tivi.kotlin.android")
@@ -27,8 +25,8 @@ android {
   testOptions {
     managedDevices {
       devices {
-        create<ManagedVirtualDevice>("api31") {
-          device = "Pixel 6"
+        create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel5Api31") {
+          device = "Pixel 5"
           apiLevel = 31
           systemImageSource = "aosp"
         }

@@ -90,15 +90,12 @@ jobs:
             -x :android-app:app:assembleStandardBenchmark \
             -x :android-app:app:bundleStandardBenchmark
 
-#      - name: Run smoke tests on Gradle Managed Device
-#        # --info used to add a repro to https://issuetracker.google.com/issues/193118030
-#        # config cache is disabled due to https://issuetracker.google.com/issues/262270582
-#        run: |
-#          ./gradlew api31QaDebugAndroidTest \
-#            -Dorg.gradle.workers.max=1 \
-#            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect" \
-#            --info \
-#            --no-configuration-cache
+      - name: Run smoke tests on Gradle Managed Device
+        run: |
+          ./gradlew pixel5Api31QaDebugAndroidTest \
+            --no-configuration-cache \
+            -Dorg.gradle.workers.max=1 \
+            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
 
       - name: Clean secrets
         if: always()

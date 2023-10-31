@@ -115,8 +115,8 @@ android {
   testOptions {
     managedDevices {
       devices {
-        create<com.android.build.api.dsl.ManagedVirtualDevice>("api31") {
-          device = "Pixel 6"
+        create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel5Api31") {
+          device = "Pixel 5"
           apiLevel = 31
           systemImageSource = "aosp"
         }
