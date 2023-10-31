@@ -132,7 +132,6 @@ fun <E : Entry> EntryGrid(
           PaddingValues(horizontal = bodyMargin, vertical = gutter),
         horizontalArrangement = Arrangement.spacedBy(gutter),
         verticalArrangement = Arrangement.spacedBy(gutter),
-        flingBehavior = rememberTiviFlingBehavior(),
         modifier = Modifier
           .nestedScroll(scrollBehavior.nestedScrollConnection)
           .bodyWidth()

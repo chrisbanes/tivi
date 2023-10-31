@@ -73,8 +73,6 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
-import app.tivi.common.compose.rememberTiviDecayAnimationSpec
-import app.tivi.common.compose.rememberTiviFlingBehavior
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.RefreshButton
@@ -284,10 +282,7 @@ private fun SeasonsPager(
 ) {
   HorizontalPager(
     state = pagerState,
-    flingBehavior = PagerDefaults.flingBehavior(
-      state = pagerState,
-      highVelocityAnimationSpec = rememberTiviDecayAnimationSpec(),
-    ),
+    flingBehavior = PagerDefaults.flingBehavior(state = pagerState),
     modifier = modifier,
   ) { page ->
     val seasonWithEps = seasons.getOrNull(page) ?: return@HorizontalPager
@@ -312,7 +307,6 @@ private fun SeasonPage(
   LazyColumn(
     modifier = modifier,
     contentPadding = contentPadding,
-    flingBehavior = rememberTiviFlingBehavior(),
   ) {
     item {
       SeasonInfoRow(
