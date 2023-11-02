@@ -5,7 +5,6 @@ package app.tivi.gradle
 
 import java.io.File
 import org.gradle.api.Project
-import org.gradle.api.tasks.Copy
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -16,35 +15,27 @@ fun Project.configureIosLicensesTasks() {
     .map { arch -> arch.split(",", " ").filter { it.isNotBlank() } }
     .orElse(emptyList())
 
-  tasks.register<Copy>("copyLicenseeOutputToIosBundle") {
+  tasks.register<AssetCopyTask>("copyLicenseeOutputToIosBundle") {
     val targetName = xcodeTargetPlatform.zip(xcodeTargetArchs, ::Pair)
       .map { (targetPlatform, targetArchs) ->
         determineIosKonanTargetsFromEnv(targetPlatform, targetArchs)
           .mapTo(HashSet()) { it.presetName }
       }
       .map { it.firstOrNull().orEmpty() }
-      .get()
 
-    if (targetName.isEmpty()) {
-      // If we don't have a target, disable the test and skip the rest of setup
-      enabled = false
-      return@register
-    }
-
-    from(layout.buildDirectory.file("reports/licensee/$targetName/artifacts.json"))
-
-    into(
-      providers.environmentVariable("BUILT_PRODUCTS_DIR")
-        .zip(providers.environmentVariable("CONTENTS_FOLDER_PATH")) { builtProductsDir, contentsFolderPath ->
-          File(builtProductsDir)
-            .resolve(contentsFolderPath)
-            .resolve("licenses.json")
-        }.flatMap {
-          objects.fileProperty().apply { set(it) }
-        },
+    inputFile.set(
+      layout.buildDirectory.zip(targetName) { buildDir, target ->
+        buildDir.file("reports/licensee/$target/artifacts.json")
+      },
     )
 
-    dependsOn("licensee${targetName.capitalized()}")
+    outputDirectory.set(
+      File(System.getenv("BUILT_PRODUCTS_DIR"))
+        .resolve(System.getenv("CONTENTS_FOLDER_PATH")),
+    )
+    outputFilename.set("licenses.json")
+
+    dependsOn("licensee${targetName.get().capitalized()}")
   }
 
   tasks.named("embedAndSignAppleFrameworkForXcode") {

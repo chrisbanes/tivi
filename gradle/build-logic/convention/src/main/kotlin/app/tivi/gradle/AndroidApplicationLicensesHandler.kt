@@ -5,7 +5,6 @@ package app.tivi.gradle
 
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import org.gradle.api.Project
-import org.gradle.api.tasks.Copy
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.register
@@ -15,21 +14,20 @@ fun Project.configureAndroidLicensesTasks() {
     onVariants { variant ->
       val capitalizedVariantName = variant.name.capitalized()
 
-      val outputDir = objects.directoryProperty()
-
-      val copyArtifactsTask = tasks.register<Copy>(
+      val copyArtifactsTask = tasks.register<AssetCopyTask>(
         "copy${capitalizedVariantName}LicenseeOutputToAndroidAssets",
       ) {
-        from(
+        inputFile.set(
           layout.buildDirectory
             .file("reports/licensee/android$capitalizedVariantName/artifacts.json"),
         )
-        into(outputDir.file("licenses.json"))
+        outputFilename.set("licenses.json")
 
         dependsOn("licenseeAndroid$capitalizedVariantName")
       }
 
-      variant.sources.assets?.addGeneratedSourceDirectory(copyArtifactsTask) { outputDir }
+      variant.sources.assets
+        ?.addGeneratedSourceDirectory(copyArtifactsTask, AssetCopyTask::outputDirectory)
     }
   }
 }
