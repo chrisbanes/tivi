@@ -61,7 +61,7 @@ jobs:
     steps:
       - name: Generate build number
         shell: bash
-        run: echo "ORG_GRADLE_PROJECT_TIVI_VERSIONCODE=$(( $GITHUB_RUN_NUMBER + 10000 ))" >> $GITHUB_ENV
+        run: echo "ORG_GRADLE_PROJECT_TIVI_VERSIONCODE=$(( (GITHUB_RUN_NUMBER * 2) + 10000 ))" >> $GITHUB_ENV
 
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
