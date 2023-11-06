@@ -315,7 +315,7 @@ private fun NextEpisodeToWatch(
         AsyncImage(
           model = model,
           onAction = { state ->
-            if (state is ImageResult.Error && model is EpisodeImageModel) {
+            if (state is ImageResult.OfError && model is EpisodeImageModel) {
               // If the episode backdrop request failed, fallback to the show backdrop
               model = show.asImageModel(ImageType.BACKDROP)
             }

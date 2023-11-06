@@ -3,21 +3,16 @@
 
 package app.tivi.inject
 
-import androidx.compose.ui.unit.Density
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import kotlin.experimental.ExperimentalNativeApi
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
 import platform.Foundation.NSUserDefaults
-import platform.UIKit.UIScreen
 
 actual interface SharedPlatformApplicationComponent {
   @Provides
   fun provideNsUserDefaults(): NSUserDefaults = NSUserDefaults.standardUserDefaults
-
-  @Provides
-  fun provideDensity(): Density = Density(density = UIScreen.mainScreen.scale.toFloat())
 
   @OptIn(ExperimentalNativeApi::class)
   @ApplicationScope

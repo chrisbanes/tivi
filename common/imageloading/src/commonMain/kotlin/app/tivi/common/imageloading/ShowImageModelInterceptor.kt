@@ -3,7 +3,6 @@
 
 package app.tivi.common.imageloading
 
-import androidx.compose.ui.unit.Density
 import app.tivi.data.imagemodels.ShowImageModel
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.TmdbImageEntity
@@ -23,7 +22,6 @@ class ShowImageModelInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
   private val showImagesStore: ShowImagesStore,
   private val powerController: PowerController,
-  private val density: () -> Density,
 ) : Interceptor {
   override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
     val request = when (val data = chain.request.data) {
@@ -42,12 +40,11 @@ class ShowImageModelInterceptor(
     }.getOrNull()
 
     return if (entity != null) {
-      val size = chain.options.sizeResolver.run { density().size() }
-
+      val size = chain.options.size
       val width = when (powerController.shouldSaveData()) {
         is SaveData.Disabled -> size.width.roundToInt()
         // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
-        is SaveData.Enabled -> size.width.roundToInt() / 2
+        is SaveData.Enabled -> chain.options.size.width.roundToInt() / 2
       }
 
       ImageRequest(chain.request) {
