@@ -4,7 +4,6 @@
 package app.tivi.common.imageloading
 
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.unit.Density
 import app.tivi.data.models.TmdbImageEntity
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.PowerController
@@ -19,15 +18,12 @@ import me.tatarka.inject.annotations.Inject
 class TmdbImageEntityCoilInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
   private val powerController: PowerController,
-  private val density: () -> Density,
 ) : Interceptor {
   override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
-    val size = chain.options.sizeResolver.run { density().size() }
-
     val request = when (val data = chain.request.data) {
       is TmdbImageEntity -> {
         ImageRequest(chain.request) {
-          data(map(data, size))
+          data(map(data, chain.options.size))
         }
       }
 

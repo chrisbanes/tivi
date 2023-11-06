@@ -5,7 +5,6 @@ package app.tivi.inject
 
 import android.app.Application
 import android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE
-import androidx.compose.ui.unit.Density
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import java.io.File
@@ -61,7 +60,4 @@ actual interface SharedPlatformApplicationComponent {
     .readTimeout(20, TimeUnit.SECONDS)
     .writeTimeout(20, TimeUnit.SECONDS)
     .build()
-
-  @Provides
-  fun provideDensity(application: Application): Density = Density(application)
 }

@@ -3,7 +3,6 @@
 
 package app.tivi.inject
 
-import androidx.compose.ui.unit.Density
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import java.util.concurrent.TimeUnit
@@ -30,15 +29,9 @@ actual interface SharedPlatformApplicationComponent {
   @Provides
   fun providePreferences(): Preferences = Preferences.userRoot().node("app.tivi")
 
-  @Provides
-  fun provideDensity(): Density = Density(density = 1f) // FIXME
-
   @ApplicationScope
   @Provides
-  fun provideOkHttpClient(
-    // interceptors: Set<Interceptor>,
-  ): OkHttpClient = OkHttpClient.Builder()
-    // .apply { interceptors.forEach(::addInterceptor) }
+  fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
     // Adjust the Connection pool to account for historical use of 3 separate clients
     // but reduce the keepAlive to 2 minutes to avoid keeping radio open.
     .connectionPool(ConnectionPool(10, 2, TimeUnit.MINUTES))

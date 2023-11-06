@@ -32,7 +32,6 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
@@ -153,15 +152,15 @@ private fun ResultImage(
   Image(
     painter = remember(result) {
       when (result) {
-        is ImageResult.Bitmap -> {
+        is ImageResult.OfBitmap -> {
           BitmapPainter(
             image = result.bitmap.asImageBitmap(),
             filterQuality = filterQuality,
           )
         }
 
-        is ImageResult.Image -> result.image.toPainter()
-        is ImageResult.Painter -> result.painter
+        is ImageResult.OfImage -> result.image.toPainter()
+        is ImageResult.OfPainter -> result.painter
         else -> EmptyPainter
       }
     },
@@ -184,7 +183,7 @@ internal class ConstraintsSizeResolver : SizeResolver, LayoutModifier {
 
   private val constraints = MutableStateFlow(Constraints())
 
-  override suspend fun Density.size(): Size {
+  override suspend fun size(): Size {
     return constraints.mapNotNull(Constraints::toSizeOrNull).first()
   }
 

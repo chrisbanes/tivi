@@ -3,7 +3,6 @@
 
 package app.tivi.common.imageloading
 
-import androidx.compose.ui.unit.Density
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.imagemodels.SeasonImageModel
 import app.tivi.data.util.inPast
@@ -19,7 +18,6 @@ import me.tatarka.inject.annotations.Inject
 class SeasonImageModelInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
   private val repository: SeasonsEpisodesRepository,
-  private val density: () -> Density,
 ) : Interceptor {
   override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
     val request = when (val data = chain.request.data) {
@@ -36,10 +34,9 @@ class SeasonImageModelInterceptor(
 
     val season = repository.getSeason(model.id)
     return season?.tmdbPosterPath?.let { posterPath ->
-      val size = chain.options.sizeResolver.run { density().size() }
       val url = tmdbImageUrlProvider.value.getPosterUrl(
         path = posterPath,
-        imageWidth = size.width.roundToInt(),
+        imageWidth = chain.options.size.width.roundToInt(),
       )
 
       ImageRequest(chain.request) {

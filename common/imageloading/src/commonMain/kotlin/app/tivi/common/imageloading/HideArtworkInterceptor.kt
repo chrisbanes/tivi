@@ -17,9 +17,7 @@ class HideArtworkInterceptor(
 ) : Interceptor {
   override suspend fun intercept(chain: Interceptor.Chain): ImageResult = when {
     preferences.developerHideArtwork && isArtwork(chain.request.data) -> {
-      ImageResult.Error(
-        Exception("Developer setting: hide artwork enabled"),
-      )
+      ImageResult.OfError(Exception("Developer setting: hide artwork enabled"))
     }
     else -> chain.proceed(chain.request)
   }
