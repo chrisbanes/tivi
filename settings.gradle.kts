@@ -6,8 +6,13 @@ pluginManagement {
   includeBuild("gradle/build-logic")
 
   repositories {
+    google {
+      content {
+        includeGroupByRegex(".*google.*")
+        includeGroupByRegex(".*android.*")
+      }
+    }
     mavenCentral()
-    google()
     gradlePluginPortal()
 
     // Prerelease versions of Compose Multiplatform
@@ -21,8 +26,13 @@ pluginManagement {
 
 dependencyResolutionManagement {
   repositories {
+    google {
+      content {
+        includeGroupByRegex(".*google.*")
+        includeGroupByRegex(".*android.*")
+      }
+    }
     mavenCentral()
-    google()
     mavenLocal()
 
     // Prerelease versions of Compose Multiplatform

@@ -4,8 +4,13 @@
 
 dependencyResolutionManagement {
     repositories {
+        google {
+            content {
+                includeGroupByRegex(".*google.*")
+                includeGroupByRegex(".*android.*")
+            }
+        }
         mavenCentral()
-        google()
         gradlePluginPortal()
     }
 
