@@ -23,16 +23,21 @@ fun Project.configureIosLicensesTasks() {
       }
       .map { it.firstOrNull().orEmpty() }
 
+    val output = buildOutputFile()
+
+    if (!targetName.isPresent || output == null) {
+      // If we don't have a target or output dir, disable the task and skip the rest of setup
+      enabled = false
+      return@register
+    }
+
     inputFile.set(
       layout.buildDirectory.zip(targetName) { buildDir, target ->
         buildDir.file("reports/licensee/$target/artifacts.json")
       },
     )
 
-    outputDirectory.set(
-      File(System.getenv("BUILT_PRODUCTS_DIR"))
-        .resolve(System.getenv("CONTENTS_FOLDER_PATH")),
-    )
+    outputDirectory.set(output)
     outputFilename.set("licenses.json")
 
     dependsOn("licensee${targetName.get().capitalized()}")
@@ -41,6 +46,13 @@ fun Project.configureIosLicensesTasks() {
   tasks.named("embedAndSignAppleFrameworkForXcode") {
     dependsOn("copyLicenseeOutputToIosBundle")
   }
+}
+
+private fun buildOutputFile(): File? {
+  return runCatching {
+    File(System.getenv("BUILT_PRODUCTS_DIR"))
+      .resolve(System.getenv("CONTENTS_FOLDER_PATH"))
+  }.getOrNull()
 }
 
 internal fun determineIosKonanTargetsFromEnv(
