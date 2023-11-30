@@ -25,9 +25,8 @@ class TiviApplication : Application(), Configuration.Provider {
     component.initializers.initialize()
   }
 
-  override fun getWorkManagerConfiguration(): Configuration {
-    return Configuration.Builder()
+  override val workManagerConfiguration: Configuration
+    get() = Configuration.Builder()
       .setWorkerFactory(workerFactory)
       .build()
-  }
 }
