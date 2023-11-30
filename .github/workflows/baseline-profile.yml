@@ -33,7 +33,7 @@ jobs:
 
       # Android sdkmanager requires JRE 8 🤷‍
       - name: Setup JDK for sdkmanager
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 8
@@ -42,7 +42,7 @@ jobs:
         run: yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 
       - name: Setup JDK for build
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 17
