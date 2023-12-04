@@ -38,37 +38,38 @@ class SqlDelightLibraryShowsDao(
       ),
       transacter = db.library_showsQueries,
       context = dispatchers.io,
-    ) { limit: Long, offset: Long ->
-      db.library_showsQueries.entries(
-        includeWatched = includeWatched.sqlValue,
-        includeFollowed = includeFollowed.sqlValue,
-        filter = searchQuery,
-        sort = sort.sqlValue,
-        limit = limit,
-        offset = offset,
-      ) {
-          id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
-          trakt_rating, trakt_votes, certification, first_aired, country, network,
-          network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
-          // watched show
-          id_, show_id, last_watched, last_updated,
-          // show stats
-          show_id_, episode_count, watched_episode_count,
-        ->
-        LibraryShow(
-          show = TiviShow(
+      queryProvider = { limit: Long, offset: Long ->
+        db.library_showsQueries.entries(
+          includeWatched = includeWatched.sqlValue,
+          includeFollowed = includeFollowed.sqlValue,
+          filter = searchQuery,
+          sort = sort.sqlValue,
+          limit = limit,
+          offset = offset,
+        ) {
             id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
             trakt_rating, trakt_votes, certification, first_aired, country, network,
             network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
-          ),
-          stats = show_id_?.let {
-            ShowsWatchStats(show_id_, episode_count!!, watched_episode_count!!)
-          },
-          watchedEntry = id_?.let {
-            WatchedShowEntry(id_, show_id!!, last_watched!!, last_updated!!)
-          },
-        )
-      }
-    }
+            // watched show
+            id_, show_id, last_watched, last_updated,
+            // show stats
+            show_id_, episode_count, watched_episode_count,
+          ->
+          LibraryShow(
+            show = TiviShow(
+              id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage,
+              trakt_rating, trakt_votes, certification, first_aired, country, network,
+              network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
+            ),
+            stats = show_id_?.let {
+              ShowsWatchStats(show_id_, episode_count!!, watched_episode_count!!)
+            },
+            watchedEntry = id_?.let {
+              WatchedShowEntry(id_, show_id!!, last_watched!!, last_updated!!)
+            },
+          )
+        }
+      },
+    )
   }
 }

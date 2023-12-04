@@ -16,11 +16,11 @@ pluginManagement {
     gradlePluginPortal()
 
     // Prerelease versions of Compose Multiplatform
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    // maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 
     // Used for snapshots if needed
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    // maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    // maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
   }
 }
 
@@ -36,11 +36,11 @@ dependencyResolutionManagement {
     mavenLocal()
 
     // Prerelease versions of Compose Multiplatform
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    // maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 
     // Used for snapshots if needed
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    // maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    // maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
   }
 }
 
