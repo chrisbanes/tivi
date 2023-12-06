@@ -129,7 +129,7 @@ timber = "com.jakewharton.timber:timber:5.0.1"
 tmdb-api = "app.moviebase:tmdb-api:1.2.0"
 trakt-api = "app.moviebase:trakt-api:0.6.0"
 
-assertk = "com.willowtreeapps.assertk:assertk:0.27.0"
+assertk = "com.willowtreeapps.assertk:assertk:0.28.0"
 
 turbine = "app.cash.turbine:turbine:1.0.0"
 
