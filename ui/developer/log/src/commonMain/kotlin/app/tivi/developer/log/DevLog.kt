@@ -25,8 +25,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.LocalStrings
-import app.tivi.common.compose.TiviScaffold
 import app.tivi.screens.DevLogScreen
 import app.tivi.util.Severity
 import com.slack.circuit.runtime.CircuitContext
@@ -56,7 +56,7 @@ internal fun DevLog(
 ) {
   val eventSink = state.eventSink
 
-  TiviScaffold(
+  HazeScaffold(
     topBar = {
       TopAppBar(
         title = { Text("Log") },

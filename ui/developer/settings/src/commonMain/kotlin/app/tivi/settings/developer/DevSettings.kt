@@ -15,8 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.LocalStrings
-import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.common.compose.ui.Preference
 import app.tivi.screens.DevSettingsScreen
@@ -47,7 +47,7 @@ internal fun DevSettings(
 ) {
   val eventSink = state.eventSink
 
-  TiviScaffold(
+  HazeScaffold(
     topBar = {
       TopAppBar(
         title = { Text(LocalStrings.current.developerSettingsTitle) },

@@ -90,10 +90,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
@@ -203,7 +203,7 @@ internal fun ShowDetails(
 
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-  TiviScaffold(
+  HazeScaffold(
     topBar = {
       ShowDetailsAppBar(
         title = null,

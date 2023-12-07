@@ -43,9 +43,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalWindowSizeClass
-import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
@@ -77,7 +77,7 @@ internal fun Home(
   val strings = LocalStrings.current
   val navigationItems = remember(strings) { buildNavigationItems(strings) }
 
-  TiviScaffold(
+  HazeScaffold(
     bottomBar = {
       if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
         HomeNavigationBar(
