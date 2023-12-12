@@ -24,8 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.LocalStrings
-import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.common.compose.ui.Preference
@@ -63,7 +63,7 @@ internal fun Settings(
 
   val strings = LocalStrings.current
 
-  TiviScaffold(
+  HazeScaffold(
     topBar = {
       TopAppBar(
         title = { Text(strings.settingsTitle) },

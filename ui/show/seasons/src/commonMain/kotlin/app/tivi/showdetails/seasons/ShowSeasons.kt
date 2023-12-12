@@ -67,10 +67,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
+import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.ui.AsyncImage
@@ -167,7 +167,7 @@ internal fun ShowSeasons(
     }
   }
 
-  TiviScaffold(
+  HazeScaffold(
     topBar = {
       Column {
         TopAppBar(

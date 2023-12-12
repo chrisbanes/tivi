@@ -90,7 +90,7 @@ fun <E : Entry> EntryGrid(
     }
   }
 
-  TiviScaffold(
+  HazeScaffold(
     topBar = {
       EntryGridAppBar(
         title = title,

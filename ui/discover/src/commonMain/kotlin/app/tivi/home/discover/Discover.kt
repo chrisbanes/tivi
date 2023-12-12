@@ -59,12 +59,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.compose.ReportDrawnWhen
-import app.tivi.common.compose.TiviScaffold
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.theme.TiviTheme
@@ -177,7 +177,7 @@ internal fun Discover(
       state.trendingItems.isNotEmpty()
   }
 
-  TiviScaffold(
+  HazeScaffold(
     topBar = {
       TiviRootScreenAppBar(
         title = LocalStrings.current.discoverTitle,
