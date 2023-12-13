@@ -1,7 +1,7 @@
 [versions]
 agp = "8.2.0"
 androidxlifecycle = "2.6.2"
-androidxactivity = "1.8.1"
+androidxactivity = "1.8.2"
 chucker = "4.0.0"
 circuit = "0.17.0"
 compose-multiplatform = "1.5.11"
