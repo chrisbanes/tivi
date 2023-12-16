@@ -19,6 +19,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -41,7 +43,7 @@ actual fun TimePickerDialog(
 
   LaunchedEffect(timePickerState) {
     snapshotFlow { LocalTime(timePickerState.hour, timePickerState.minute, 0, 0) }
-      .collect { onTimeChanged(it) }
+      .collect(onTimeChanged)
   }
 
   androidx.compose.material3.DatePickerDialog(
@@ -79,6 +81,17 @@ actual fun DatePickerDialog(
       .toEpochMilliseconds(),
     yearRange = 1900..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.year,
   )
+
+  LaunchedEffect(datePickerState) {
+    snapshotFlow { datePickerState.selectedDateMillis }
+      .filterNotNull()
+      .map {
+        Instant.fromEpochMilliseconds(it)
+          .toLocalDateTime(TimeZone.currentSystemDefault())
+          .date
+      }
+      .collect(onDateChanged)
+  }
 
   androidx.compose.material3.DatePickerDialog(
     onDismissRequest = onDismissRequest,
