@@ -96,14 +96,14 @@ jobs:
 
       # Upload the entire output folder and attach it to the CI run
       - name: Upload baseline profile
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: baseline-profile-output
           path: android-app/benchmark/build/outputs/managed_device_android_test_additional_output
 
       - name: Upload reports
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: reports
           path: |
