@@ -6,48 +6,49 @@ package app.tivi.common.compose.ui
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 
-@Composable
 fun PaddingValues.copy(
   copyStart: Boolean = true,
   copyTop: Boolean = true,
   copyEnd: Boolean = true,
   copyBottom: Boolean = true,
-): PaddingValues {
-  return remember(this) {
-    derivedStateOf {
-      PaddingValues(
-        start = if (copyStart) calculateStartPadding(LayoutDirection.Ltr) else 0.dp,
-        top = if (copyTop) calculateTopPadding() else 0.dp,
-        end = if (copyEnd) calculateEndPadding(LayoutDirection.Ltr) else 0.dp,
-        bottom = if (copyBottom) calculateBottomPadding() else 0.dp,
-      )
-    }
-  }.value
-}
+  layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+): PaddingValues = PaddingValues(
+  start = if (copyStart) calculateStartPadding(layoutDirection) else 0.dp,
+  top = if (copyTop) calculateTopPadding() else 0.dp,
+  end = if (copyEnd) calculateEndPadding(layoutDirection) else 0.dp,
+  bottom = if (copyBottom) calculateBottomPadding() else 0.dp,
+)
 
-operator fun PaddingValues.plus(plus: PaddingValues): PaddingValues = PaddingValues(
-  start = calculateStartPadding(LayoutDirection.Ltr) +
-    plus.calculateStartPadding(LayoutDirection.Ltr),
+fun PaddingValues.plus(
+  plus: PaddingValues,
+  layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+): PaddingValues = PaddingValues(
+  start = calculateStartPadding(layoutDirection) + plus.calculateStartPadding(layoutDirection),
   top = calculateTopPadding() + plus.calculateTopPadding(),
-  end = calculateEndPadding(LayoutDirection.Ltr) + plus.calculateEndPadding(LayoutDirection.Ltr),
+  end = calculateEndPadding(layoutDirection) + plus.calculateEndPadding(layoutDirection),
   bottom = calculateBottomPadding() + plus.calculateBottomPadding(),
 )
 
-operator fun PaddingValues.minus(other: PaddingValues): PaddingValues = PaddingValues(
-  start = (
-    calculateStartPadding(LayoutDirection.Ltr) -
-      other.calculateStartPadding(LayoutDirection.Ltr)
-    ).coerceAtLeast(0.dp),
+fun PaddingValues.minus(
+  other: PaddingValues,
+  layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+): PaddingValues = PaddingValues(
+  start = (calculateStartPadding(layoutDirection) - other.calculateStartPadding(layoutDirection)).coerceAtLeast(0.dp),
   top = (calculateTopPadding() - other.calculateTopPadding()).coerceAtLeast(0.dp),
-  end = (
-    calculateEndPadding(LayoutDirection.Ltr) -
-      other.calculateEndPadding(LayoutDirection.Ltr)
-    ).coerceAtLeast(0.dp),
+  end = (calculateEndPadding(layoutDirection) - other.calculateEndPadding(layoutDirection)).coerceAtLeast(0.dp),
   bottom = (calculateBottomPadding() - other.calculateBottomPadding()).coerceAtLeast(0.dp),
+)
+
+fun PaddingValues.coerceAtMost(
+  paddingValues: PaddingValues,
+  layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+): PaddingValues = PaddingValues(
+  start = calculateStartPadding(layoutDirection).coerceAtMost(paddingValues.calculateStartPadding(layoutDirection)),
+  top = calculateTopPadding().coerceAtMost(paddingValues.calculateTopPadding()),
+  end = calculateEndPadding(layoutDirection).coerceAtMost(paddingValues.calculateEndPadding(layoutDirection)),
+  bottom = calculateBottomPadding().coerceAtMost(paddingValues.calculateBottomPadding()),
 )

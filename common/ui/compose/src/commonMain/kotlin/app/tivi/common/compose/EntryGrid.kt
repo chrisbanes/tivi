@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateLoading
 import app.cash.paging.compose.LazyPagingItems
@@ -128,8 +129,10 @@ fun <E : Entry> EntryGrid(
 
       LazyVerticalGrid(
         columns = GridCells.Fixed((columns / 1.5).roundToInt()),
-        contentPadding = paddingValues +
+        contentPadding = paddingValues.plus(
           PaddingValues(horizontal = bodyMargin, vertical = gutter),
+          LocalLayoutDirection.current,
+        ),
         horizontalArrangement = Arrangement.spacedBy(gutter),
         verticalArrangement = Arrangement.spacedBy(gutter),
         modifier = Modifier

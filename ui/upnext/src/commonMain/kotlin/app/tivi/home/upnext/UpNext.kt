@@ -54,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateLoading
 import app.cash.paging.compose.itemKey
@@ -203,7 +204,7 @@ internal fun UpNext(
       }
     },
     modifier = modifier.fillMaxSize(),
-  ) { paddingValues ->
+  ) { contentPadding ->
     val refreshState = rememberPullRefreshState(
       refreshing = state.isLoading,
       onRefresh = refresh,
@@ -215,9 +216,12 @@ internal fun UpNext(
 
       LazyVerticalGrid(
         columns = GridCells.Fixed(columns / 4),
-        contentPadding = paddingValues + PaddingValues(
-          horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-          vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+        contentPadding = contentPadding.plus(
+          PaddingValues(
+            horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
+            vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+          ),
+          LocalLayoutDirection.current,
         ),
         // We minus 8.dp off the grid padding, as we use content padding on the items below
         horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
@@ -284,7 +288,7 @@ internal fun UpNext(
         state = refreshState,
         modifier = Modifier
           .align(Alignment.TopCenter)
-          .padding(paddingValues),
+          .padding(contentPadding),
         scale = true,
       )
     }
