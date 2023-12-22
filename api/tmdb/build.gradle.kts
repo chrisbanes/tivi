@@ -11,14 +11,14 @@ buildConfig {
   packageName("app.tivi.tmdb")
 
   buildConfigField(
-    type = "String",
+    type = String::class.java,
     name = "TMDB_DEBUG_API_KEY",
-    value = "\"${properties["TIVI_DEBUG_TMDB_API_KEY"]?.toString() ?: ""}\"",
+    value = provider { properties["TIVI_DEBUG_TMDB_API_KEY"]?.toString() ?: "" },
   )
   buildConfigField(
-    type = "String",
+    type = String::class.java,
     name = "TMDB_API_KEY",
-    value = "\"${properties["TIVI_TMDB_API_KEY"]?.toString() ?: ""}\"",
+    value = provider { properties["TIVI_TMDB_API_KEY"]?.toString() ?: "" },
   )
 }
 

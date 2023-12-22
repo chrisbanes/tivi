@@ -11,24 +11,24 @@ buildConfig {
   packageName("app.tivi.trakt")
 
   buildConfigField(
-    type = "String",
+    type = String::class.java,
     name = "TRAKT_DEBUG_CLIENT_SECRET",
-    value = "\"${properties["TIVI_DEBUG_TRAKT_CLIENT_SECRET"]?.toString() ?: ""}\"",
+    value = provider { properties["TIVI_DEBUG_TRAKT_CLIENT_SECRET"]?.toString() ?: "" },
   )
   buildConfigField(
-    type = "String",
+    type = String::class.java,
     name = "TRAKT_DEBUG_CLIENT_ID",
-    value = "\"${properties["TIVI_DEBUG_TRAKT_CLIENT_ID"]?.toString() ?: ""}\"",
+    value = provider { properties["TIVI_DEBUG_TRAKT_CLIENT_ID"]?.toString() ?: "" },
   )
   buildConfigField(
-    type = "String",
+    type = String::class.java,
     name = "TRAKT_CLIENT_SECRET",
-    value = "\"${properties["TIVI_TRAKT_CLIENT_SECRET"]?.toString() ?: ""}\"",
+    value = provider { properties["TIVI_TRAKT_CLIENT_SECRET"]?.toString() ?: "" },
   )
   buildConfigField(
-    type = "String",
+    type = String::class.java,
     name = "TRAKT_CLIENT_ID",
-    value = "\"${properties["TIVI_TRAKT_CLIENT_ID"]?.toString() ?: ""}\"",
+    value = provider { properties["TIVI_TRAKT_CLIENT_ID"]?.toString() ?: "" },
   )
 }
 
