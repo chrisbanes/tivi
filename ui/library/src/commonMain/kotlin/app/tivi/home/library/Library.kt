@@ -56,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateLoading
@@ -251,9 +252,12 @@ private fun LibraryGrid(
 
   LazyVerticalGrid(
     columns = GridCells.Fixed(columns / 4),
-    contentPadding = paddingValues + PaddingValues(
-      horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
-      vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+    contentPadding = paddingValues.plus(
+      PaddingValues(
+        horizontal = (bodyMargin - 8.dp).coerceAtLeast(0.dp),
+        vertical = (gutter - 8.dp).coerceAtLeast(0.dp),
+      ),
+      LocalLayoutDirection.current,
     ),
     // We minus 8.dp off the grid padding, as we use content padding on the items below
     horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),

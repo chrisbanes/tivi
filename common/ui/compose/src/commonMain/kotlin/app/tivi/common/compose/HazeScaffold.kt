@@ -38,16 +38,26 @@ fun HazeScaffold(
   NestedScaffold(
     modifier = modifier,
     topBar = {
-      Box(
-        modifier = Modifier.thenIf(blurTopBar) { hazeChild(hazeState) },
-        content = { topBar() },
-      )
+      if (blurTopBar) {
+        // We explicitly only want to add a Box if we are blurring.
+        // Scaffold has logic which changes based on whether `bottomBar` contains a layout node.
+        Box(Modifier.hazeChild(hazeState)) {
+          topBar()
+        }
+      } else {
+        topBar()
+      }
     },
     bottomBar = {
-      Box(
-        modifier = Modifier.thenIf(blurBottomBar) { hazeChild(hazeState) },
-        content = { bottomBar() },
-      )
+      if (blurBottomBar) {
+        // We explicitly only want to add a Box if we are blurring.
+        // Scaffold has logic which changes based on whether `bottomBar` contains a layout node.
+        Box(Modifier.hazeChild(hazeState)) {
+          bottomBar()
+        }
+      } else {
+        bottomBar()
+      }
     },
     snackbarHost = snackbarHost,
     floatingActionButton = floatingActionButton,
@@ -61,7 +71,8 @@ fun HazeScaffold(
         state = hazeState,
         backgroundColor = containerColor,
       ),
-      content = { content(contentPadding) },
-    )
+    ) {
+      content(contentPadding)
+    }
   }
 }

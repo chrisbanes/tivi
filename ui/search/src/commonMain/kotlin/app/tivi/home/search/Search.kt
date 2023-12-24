@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -170,7 +171,7 @@ internal fun Search(
     } else {
       SearchList(
         results = state.searchResults,
-        contentPadding = padding + PaddingValues(horizontal = Layout.bodyMargin),
+        contentPadding = padding.plus(PaddingValues(horizontal = Layout.bodyMargin), LocalLayoutDirection.current),
         onShowClicked = { openShowDetails(it.id) },
         modifier = Modifier.bodyWidth(),
       )
