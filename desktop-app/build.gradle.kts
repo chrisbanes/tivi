@@ -30,6 +30,7 @@ compose.desktop {
     mainClass = "app.tivi.MainKt"
 
     nativeDistributions {
+      modules("java.sql")
       targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
       packageName = "app.tivi"
       packageVersion = "1.0.0"
