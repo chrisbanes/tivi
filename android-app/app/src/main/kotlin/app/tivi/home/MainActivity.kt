@@ -7,13 +7,13 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
 import app.tivi.BuildConfig
 import app.tivi.TiviActivity
 import app.tivi.TiviApplication
@@ -27,11 +27,9 @@ import com.slack.circuit.foundation.rememberCircuitNavigator
 class MainActivity : TiviActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
-
+    enableEdgeToEdge()
     super.onCreate(savedInstanceState)
     val component = AndroidActivityComponent.create(this, AndroidApplicationComponent.from(this))
-
-    WindowCompat.setDecorFitsSystemWindows(window, false)
 
     setContent {
       val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
