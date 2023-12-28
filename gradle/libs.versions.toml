@@ -25,7 +25,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
-buildConfig = "com.github.gmazzo.buildconfig:5.1.0"
+buildConfig = "com.github.gmazzo.buildconfig:5.2.0"
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
