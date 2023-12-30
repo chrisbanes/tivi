@@ -41,10 +41,13 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
       }
 
       targets.withType<KotlinNativeTarget>().configureEach {
-        binaries.all {
+        binaries.configureEach {
           // Add linker flag for SQLite. See:
           // https://github.com/touchlab/SQLiter/issues/77
           linkerOpts("-lsqlite3")
+
+          // Workaround for https://youtrack.jetbrains.com/issue/KT-64508
+          freeCompilerArgs += "-Xdisable-phases=RemoveRedundantCallsToStaticInitializersPhase"
         }
 
         compilations.configureEach {
