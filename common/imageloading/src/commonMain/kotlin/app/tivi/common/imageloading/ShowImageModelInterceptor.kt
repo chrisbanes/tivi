@@ -10,10 +10,9 @@ import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.PowerController
 import app.tivi.util.SaveData
-import com.seiko.imageloader.intercept.Interceptor
-import com.seiko.imageloader.model.ImageRequest
-import com.seiko.imageloader.model.ImageResult
-import kotlin.math.roundToInt
+import coil3.intercept.Interceptor
+import coil3.request.ImageResult
+import coil3.size.pxOrElse
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.get
 
@@ -23,36 +22,34 @@ class ShowImageModelInterceptor(
   private val showImagesStore: ShowImagesStore,
   private val powerController: PowerController,
 ) : Interceptor {
-  override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
-    val request = when (val data = chain.request.data) {
-      is ShowImageModel -> handle(chain, data)
-      else -> chain.request
-    }
-    return chain.proceed(request)
+  override suspend fun intercept(
+    chain: Interceptor.Chain,
+  ): ImageResult = when (val data = chain.request.data) {
+    is ShowImageModel -> handle(chain, data).proceed()
+    else -> chain.proceed()
   }
 
   private suspend fun handle(
     chain: Interceptor.Chain,
     model: ShowImageModel,
-  ): ImageRequest {
+  ): Interceptor.Chain {
     val entity = runCatching {
       findHighestRatedForType(showImagesStore.get(model.id).images, model.imageType)
-    }.getOrNull()
+    }.getOrNull() ?: return chain
 
-    return if (entity != null) {
-      val size = chain.options.size
-      val width = when (powerController.shouldSaveData()) {
-        is SaveData.Disabled -> size.width.roundToInt()
-        // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
-        is SaveData.Enabled -> chain.options.size.width.roundToInt() / 2
-      }
+    val requestWidth = chain.request.sizeResolver.size().width.pxOrElse { 0 }
 
-      ImageRequest(chain.request) {
-        data(tmdbImageUrlProvider.value.buildUrl(entity, model.imageType, width))
-      }
-    } else {
-      chain.request
+    val width = when (powerController.shouldSaveData()) {
+      is SaveData.Disabled -> requestWidth
+      // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
+      is SaveData.Enabled -> requestWidth / 2
     }
+
+    val request = chain.request.newBuilder()
+      .data(tmdbImageUrlProvider.value.buildUrl(entity, model.imageType, width))
+      .build()
+
+    return chain.withRequest(request)
   }
 }
 

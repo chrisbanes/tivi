@@ -7,10 +7,9 @@ import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.util.inPast
 import app.tivi.tmdb.TmdbImageUrlProvider
-import com.seiko.imageloader.intercept.Interceptor
-import com.seiko.imageloader.model.ImageRequest
-import com.seiko.imageloader.model.ImageResult
-import kotlin.math.roundToInt
+import coil3.intercept.Interceptor
+import coil3.request.ImageResult
+import coil3.size.pxOrElse
 import kotlin.time.Duration.Companion.days
 import me.tatarka.inject.annotations.Inject
 
@@ -19,15 +18,17 @@ class EpisodeImageModelInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
   private val repository: SeasonsEpisodesRepository,
 ) : Interceptor {
-  override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
-    val request = when (val data = chain.request.data) {
-      is EpisodeImageModel -> handle(chain, data)
-      else -> chain.request
-    }
-    return chain.proceed(request)
+  override suspend fun intercept(
+    chain: Interceptor.Chain,
+  ): ImageResult = when (val data = chain.request.data) {
+    is EpisodeImageModel -> handle(chain, data).proceed()
+    else -> chain.proceed()
   }
 
-  private suspend fun handle(chain: Interceptor.Chain, model: EpisodeImageModel): ImageRequest {
+  private suspend fun handle(
+    chain: Interceptor.Chain,
+    model: EpisodeImageModel,
+  ): Interceptor.Chain {
     if (repository.needEpisodeUpdate(model.id, expiry = 180.days.inPast)) {
       runCatching { repository.updateEpisode(model.id) }
     }
@@ -35,12 +36,14 @@ class EpisodeImageModelInterceptor(
     return repository.getEpisode(model.id)?.tmdbBackdropPath?.let { backdropPath ->
       val url = tmdbImageUrlProvider.value.getBackdropUrl(
         path = backdropPath,
-        imageWidth = chain.options.size.width.roundToInt(),
+        imageWidth = chain.request.sizeResolver.size().width.pxOrElse { 0 },
       )
 
-      ImageRequest(chain.request) {
-        data(url)
-      }
-    } ?: chain.request
+      val request = chain.request.newBuilder()
+        .data(url)
+        .build()
+
+      chain.withRequest(request)
+    } ?: chain
   }
 }

@@ -13,10 +13,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ColorMatrix
-import app.tivi.data.util.inPast
+import app.tivi.data.util.durationSinceNow
+import coil3.compose.AsyncImagePainter
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.datetime.Instant
 
 @Stable
 internal class ImageLoadingTransition(
@@ -29,51 +31,64 @@ internal class ImageLoadingTransition(
   val saturation by saturation
 }
 
+private fun useTransition(
+  state: AsyncImagePainter.State,
+  startTime: Instant,
+  cutOff: Duration,
+): Boolean = when {
+  state.isFinalState() -> startTime.durationSinceNow() > cutOff
+  else -> false
+}
+
 @Composable
 internal fun updateImageLoadingTransition(
-  result: ImageResultExtra?,
+  state: AsyncImagePainter.State,
+  startTime: Instant,
   transitionLoadTimeCutoff: Duration = 80.milliseconds,
   transitionDuration: Duration = 1.seconds,
 ): ImageLoadingTransition {
-  val transition = updateTransition(result, label = "image fade")
+  val transition = updateTransition(state to startTime, label = "image fade")
 
   val alpha = transition.animateFloat(
     transitionSpec = {
-      val t = targetState
-      if (t == null || t.startTime > transitionLoadTimeCutoff.inPast) {
-        // If the image was loaded from memory, snap to the end state
-        snap()
-      } else {
+      val (s, time) = targetState
+      if (useTransition(s, time, transitionLoadTimeCutoff)) {
         tween(transitionDuration.inWholeMilliseconds.toInt() / 2)
+      } else {
+        snap()
       }
     },
-    targetValueByState = { if (it == null) 0f else 1f },
+    targetValueByState = { (state, _) ->
+      if (state.isFinalState()) 1f else 0f
+    },
   )
 
   val brightness = transition.animateFloat(
     transitionSpec = {
-      val t = targetState
-      if (t == null || t.startTime > transitionLoadTimeCutoff.inPast) {
-        // If the image was loaded from memory, snap to the end state
-        snap()
-      } else {
+      val (s, time) = targetState
+      if (useTransition(s, time, transitionLoadTimeCutoff)) {
         tween(transitionDuration.inWholeMilliseconds.toInt() * 3 / 4)
+      } else {
+        snap()
       }
     },
-    targetValueByState = { if (it == null) -0.2f else 0f },
+    targetValueByState = { (state, _) ->
+      if (state.isFinalState()) 0f else -0.2f
+    },
   )
 
   val saturation = transition.animateFloat(
     transitionSpec = {
-      val t = targetState
-      if (t == null || t.startTime > transitionLoadTimeCutoff.inPast) {
-        // If the image was loaded from memory, snap to the end state
-        snap()
-      } else {
+      val (s, time) = targetState
+      if (useTransition(s, time, transitionLoadTimeCutoff)) {
         tween(transitionDuration.inWholeMilliseconds.toInt())
+      } else {
+        snap()
       }
     },
-    targetValueByState = { if (it == null) 0f else 1f },
+    targetValueByState = { (state, _) ->
+      if (state.isFinalState()) 1f else 0f
+    },
   )
 
   return remember { ImageLoadingTransition(alpha, brightness, saturation) }
@@ -95,6 +110,10 @@ fun ColorMatrix.setSaturation(sat: Float): ColorMatrix {
   this[2, 2] = blue + sat
 
   return this
+}
+
+private fun AsyncImagePainter.State.isFinalState(): Boolean {
+  return this is AsyncImagePainter.State.Success || this is AsyncImagePainter.State.Error
 }
 
 fun ColorMatrix.setBrightness(value: Float): ColorMatrix {

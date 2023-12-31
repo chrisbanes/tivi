@@ -6,9 +6,13 @@ package app.tivi.inject
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import kotlin.experimental.ExperimentalNativeApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
+import platform.Foundation.NSCachesDirectory
+import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDefaults
+import platform.Foundation.NSUserDomainMask
 
 actual interface SharedPlatformApplicationComponent {
   @Provides
@@ -29,5 +33,16 @@ actual interface SharedPlatformApplicationComponent {
     versionCode = (NSBundle.mainBundle.infoDictionary?.get("CFBundleVersion") as? String)
       ?.toIntOrNull()
       ?: 0,
+    cachePath = NSFileManager.defaultManager.cacheDir,
   )
 }
+
+@OptIn(ExperimentalForeignApi::class)
+private val NSFileManager.cacheDir: String
+  get() = URLForDirectory(
+    directory = NSCachesDirectory,
+    inDomain = NSUserDomainMask,
+    appropriateForURL = null,
+    create = true,
+    error = null,
+  )?.path.orEmpty()

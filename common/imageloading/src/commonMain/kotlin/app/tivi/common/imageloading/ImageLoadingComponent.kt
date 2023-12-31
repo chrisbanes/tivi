@@ -3,8 +3,12 @@
 
 package app.tivi.common.imageloading
 
-import com.seiko.imageloader.ImageLoader
-import com.seiko.imageloader.intercept.Interceptor
+import app.tivi.app.ApplicationInfo
+import app.tivi.appinitializers.AppInitializer
+import app.tivi.util.Logger
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.intercept.Interceptor
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
@@ -13,6 +17,24 @@ expect interface ImageLoadingPlatformComponent
 interface ImageLoadingComponent : ImageLoadingPlatformComponent {
 
   val imageLoader: ImageLoader
+
+  @Provides
+  fun provideImageLoader(
+    context: PlatformContext,
+    interceptors: Set<Interceptor>,
+    info: ApplicationInfo,
+    logger: Logger,
+  ): ImageLoader = newImageLoader(
+    context = context,
+    interceptors = interceptors,
+    logger = logger,
+    debug = info.debugBuild,
+    applicationInfo = info,
+  )
+
+  @Provides
+  @IntoSet
+  fun bindImageLoaderCleanupInitializer(initializer: ImageLoaderCleanupInitializer): AppInitializer = initializer
 
   @Provides
   @IntoSet

@@ -34,6 +34,7 @@ actual interface SharedPlatformApplicationComponent {
       flavor = flavor,
       versionName = packageInfo.versionName,
       versionCode = @Suppress("DEPRECATION") packageInfo.versionCode,
+      cachePath = application.cacheDir.absolutePath,
     )
   }
 

@@ -83,7 +83,7 @@ import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.screens.UpNextScreen
-import com.seiko.imageloader.model.ImageResult
+import coil3.compose.AsyncImagePainter
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
@@ -388,8 +388,8 @@ private fun UpNextItem(
 
       AsyncImage(
         model = model,
-        onAction = { state ->
-          if (state is ImageResult.OfError && model is EpisodeImageModel) {
+        onState = { state ->
+          if (state is AsyncImagePainter.State.Error && model is EpisodeImageModel) {
             // If the episode backdrop request failed, fallback to the show backdrop
             model = show.asImageModel(ImageType.BACKDROP)
           }
