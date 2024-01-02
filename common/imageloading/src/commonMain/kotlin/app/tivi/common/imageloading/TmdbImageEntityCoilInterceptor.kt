@@ -3,15 +3,13 @@
 
 package app.tivi.common.imageloading
 
-import androidx.compose.ui.geometry.Size
 import app.tivi.data.models.TmdbImageEntity
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.PowerController
 import app.tivi.util.SaveData
-import com.seiko.imageloader.intercept.Interceptor
-import com.seiko.imageloader.model.ImageRequest
-import com.seiko.imageloader.model.ImageResult
-import kotlin.math.roundToInt
+import coil3.intercept.Interceptor
+import coil3.request.ImageResult
+import coil3.size.pxOrElse
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -19,25 +17,28 @@ class TmdbImageEntityCoilInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
   private val powerController: PowerController,
 ) : Interceptor {
-  override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
-    val request = when (val data = chain.request.data) {
-      is TmdbImageEntity -> {
-        ImageRequest(chain.request) {
-          data(map(data, chain.options.size))
-        }
-      }
-
-      else -> chain.request
+  override suspend fun intercept(
+    chain: Interceptor.Chain,
+  ): ImageResult = when (val data = chain.request.data) {
+    is TmdbImageEntity -> {
+      val sizedUrl = map(
+        data = data,
+        requestWidth = chain.request.sizeResolver.size().width.pxOrElse { 0 },
+      )
+      val request = chain.request.newBuilder()
+        .data(sizedUrl)
+        .build()
+      chain.withRequest(request).proceed()
     }
 
-    return chain.proceed(request)
+    else -> chain.proceed()
   }
 
-  private fun map(data: TmdbImageEntity, size: Size): String {
+  private fun map(data: TmdbImageEntity, requestWidth: Int): String {
     val width = when (powerController.shouldSaveData()) {
-      is SaveData.Disabled -> size.width.roundToInt()
+      is SaveData.Disabled -> requestWidth
       // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
-      is SaveData.Enabled -> size.width.roundToInt() / 2
+      is SaveData.Enabled -> requestWidth / 2
     }
     return tmdbImageUrlProvider.value.buildUrl(data, data.type, width)
   }

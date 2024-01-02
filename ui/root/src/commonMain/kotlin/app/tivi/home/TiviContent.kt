@@ -26,8 +26,9 @@ import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
-import com.seiko.imageloader.ImageLoader
-import com.seiko.imageloader.LocalImageLoader
+import coil3.ImageLoader
+import coil3.annotation.ExperimentalCoilApi
+import coil3.compose.setSingletonImageLoaderFactory
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -47,7 +48,7 @@ typealias TiviContent = @Composable (
 ) -> Unit
 
 @Inject
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalCoilApi::class)
 @Composable
 fun TiviContent(
   @Assisted backstack: SaveableBackStack,
@@ -80,10 +81,11 @@ fun TiviContent(
     )
   }
 
+  setSingletonImageLoaderFactory { imageLoader }
+
   ProvideStrings {
     CompositionLocalProvider(
       LocalNavigator provides tiviNavigator,
-      LocalImageLoader provides imageLoader,
       LocalTiviDateFormatter provides tiviDateFormatter,
       LocalTiviTextCreator provides tiviTextCreator,
       LocalWindowSizeClass provides calculateWindowSizeClass(),

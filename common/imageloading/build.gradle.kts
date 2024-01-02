@@ -5,7 +5,6 @@
 plugins {
   id("app.tivi.android.library")
   id("app.tivi.kotlin.multiplatform")
-  id("app.tivi.compose")
 }
 
 kotlin {
@@ -24,7 +23,8 @@ kotlin {
 
         implementation(libs.kotlininject.runtime)
 
-        api(libs.imageloader)
+        api(libs.coil.core)
+        api(libs.coil.network)
       }
     }
   }
