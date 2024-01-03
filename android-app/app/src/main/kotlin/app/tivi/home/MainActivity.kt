@@ -46,9 +46,12 @@ class MainActivity : TiviActivity() {
         },
         Modifier.semantics {
           // Enables testTag -> UiAutomator resource id
-          // See https://developer.android.com/jetpack/compose/testing#uiautomator-interop
           @OptIn(ExperimentalComposeUiApi::class)
-          testTagsAsResourceId = BuildConfig.DEBUG
+          testTagsAsResourceId = when (BuildConfig.BUILD_TYPE) {
+            "qa" -> true // always enabled for qa builds
+            "benchmark" -> true // always enabled for benchmark builds
+            else -> BuildConfig.DEBUG // for anything else, only for debug builds
+          }
         },
       )
     }
