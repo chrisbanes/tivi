@@ -48,11 +48,11 @@ private fun UiDevice.testDiscover(): Boolean {
   waitForObject(By.res("discover_carousel"), 30.seconds)
 
   runAction(By.res("discover_carousel")) {
-    setGestureMargin(visibleBounds.width() / 6)
+    setGestureMargins(this)
     scroll(Direction.LEFT, 1f)
   }
   runAction(By.res("discover_carousel")) {
-    setGestureMargin(visibleBounds.width() / 6)
+    setGestureMargins(this)
     scroll(Direction.RIGHT, 1f)
   }
   return true
@@ -65,10 +65,6 @@ private fun UiDevice.navigateFromDiscoverToShowDetails() {
 }
 
 private fun UiDevice.testShowDetails(): Boolean {
-  waitForObject(By.res("show_details_follow_button"))
-  // Follow the show
-  runAction(By.res("show_details_follow_button")) { click() }
-
   // Keep scrolling to the end of the LazyColumn, waiting for a season item
   repeat(20) {
     if (hasObject(By.res("show_details_season_item"))) {
@@ -79,6 +75,7 @@ private fun UiDevice.testShowDetails(): Boolean {
 
     // Scroll to the end to show the seasons
     runAction(By.res("show_details_lazycolumn")) {
+      setGestureMargins(this)
       scroll(Direction.DOWN, 0.8f)
     }
   }
@@ -104,15 +101,14 @@ private fun UiDevice.navigateFromSeasonsToEpisodeDetails() {
 private fun UiDevice.testEpisodeDetails(): Boolean {
   waitForObject(By.res("episode_details"))
 
+  // Swipe the bottom sheet 'up', then 'down'
   runAction(By.res("episode_details")) {
-    // Need to 'inset' the gesture so that we don't swipe
-    // the notification tray down
-    setGestureMargin(displayWidth / 10)
-    // Swipe the bottom sheet 'up', then 'down'
+    setGestureMargins(this)
     scroll(Direction.DOWN, 0.8f)
   }
 
   runAction(By.res("episode_details")) {
+    setGestureMargins(this)
     scroll(Direction.UP, 0.8f)
   }
 
@@ -156,4 +152,13 @@ private fun retry(maxRetries: Int, delay: Duration, block: () -> Unit) {
       SystemClock.sleep(delay.inWholeMilliseconds)
     }
   }
+}
+
+private fun UiDevice.setGestureMargins(uiObject: UiObject2) {
+  uiObject.setGestureMargins(
+    (displayWidth * 0.1f).toInt(), // left
+    (displayHeight * 0.2f).toInt(), // top
+    (displayWidth * 0.1f).toInt(), // right
+    (displayHeight * 0.2f).toInt(), // bottom
+  )
 }
