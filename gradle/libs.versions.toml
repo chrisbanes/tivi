@@ -103,7 +103,7 @@ kotlinx-coroutines-playservices = { module = "org.jetbrains.kotlinx:kotlinx-coro
 kotlininject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
 kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
 
-leakCanary = "com.squareup.leakcanary:leakcanary-android:2.12"
+leakCanary = "com.squareup.leakcanary:leakcanary-android:2.13"
 
 lyricist-core = { module = "cafe.adriel.lyricist:lyricist-core", version.ref = "lyricist" }
 lyricist-library = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" }
