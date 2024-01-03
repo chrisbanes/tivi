@@ -51,10 +51,14 @@ private fun UiDevice.testDiscover(): Boolean {
     setGestureMargins(this)
     scroll(Direction.LEFT, 1f)
   }
+  waitForIdle()
+
   runAction(By.res("discover_carousel")) {
     setGestureMargins(this)
     scroll(Direction.RIGHT, 1f)
   }
+  waitForIdle()
+
   return true
 }
 
@@ -78,6 +82,7 @@ private fun UiDevice.testShowDetails(): Boolean {
       setGestureMargins(this)
       scroll(Direction.DOWN, 0.8f)
     }
+    waitForIdle()
   }
 
   return false
@@ -90,7 +95,9 @@ private fun UiDevice.navigateFromShowDetailsToSeasons() {
 
 private fun UiDevice.testSeasons(): Boolean {
   // Not much to test here at the moment
-  return wait(Until.hasObject(By.res("show_seasons_episode_item")), 5.seconds)
+  waitForObject(By.res("show_seasons_episode_item"), 5.seconds)
+  waitForIdle()
+  return true
 }
 
 private fun UiDevice.navigateFromSeasonsToEpisodeDetails() {
@@ -106,11 +113,13 @@ private fun UiDevice.testEpisodeDetails(): Boolean {
     setGestureMargins(this)
     scroll(Direction.DOWN, 0.8f)
   }
+  waitForIdle()
 
   runAction(By.res("episode_details")) {
     setGestureMargins(this)
     scroll(Direction.UP, 0.8f)
   }
+  waitForIdle()
 
   return true
 }
@@ -136,6 +145,7 @@ private fun UiDevice.runAction(
   retry(maxRetries = maxRetries, delay = 1.seconds) {
     // Wait for idle, to avoid recompositions causing StaleObjectExceptions
     waitForIdle()
+
     requireNotNull(findObject(selector)).action()
   }
 }
