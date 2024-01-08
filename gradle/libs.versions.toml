@@ -78,7 +78,7 @@ compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-s
 
 crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.5"
 
-haze = "dev.chrisbanes.haze:haze:0.4.3"
+haze = "dev.chrisbanes.haze:haze:0.4.4"
 
 tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.0.4"
 
