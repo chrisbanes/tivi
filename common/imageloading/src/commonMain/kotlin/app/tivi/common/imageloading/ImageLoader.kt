@@ -7,15 +7,12 @@ import app.tivi.app.ApplicationInfo
 import app.tivi.util.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
-import coil3.annotation.ExperimentalCoilApi
 import coil3.disk.DiskCache
-import coil3.fetch.NetworkFetcher
 import coil3.intercept.Interceptor
 import coil3.memory.MemoryCache
 import coil3.util.Logger.Level
 import okio.Path.Companion.toPath
 
-@OptIn(ExperimentalCoilApi::class)
 internal fun newImageLoader(
   context: PlatformContext,
   interceptors: Set<Interceptor>,
@@ -25,7 +22,6 @@ internal fun newImageLoader(
 ): ImageLoader {
   return ImageLoader.Builder(context)
     .components {
-      add(NetworkFetcher.Factory())
       interceptors.forEach(::add)
     }
     .memoryCache {
