@@ -32,7 +32,7 @@ kotlin {
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {
-      binaries.withType<Framework> {
+      binaries.framework {
         isStatic = true
         baseName = "TiviKt"
 
