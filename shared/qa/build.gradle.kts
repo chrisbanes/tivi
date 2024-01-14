@@ -3,7 +3,6 @@
 
 
 import app.tivi.gradle.addKspDependencyForAllTargets
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
