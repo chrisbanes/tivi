@@ -14,13 +14,14 @@ class BaselineProfileGenerator {
   val rule = BaselineProfileRule()
 
   @Test
-  fun generateBaselineProfile() = rule.collect(
-    packageName = "app.tivi",
-    stableIterations = 2,
-    maxIterations = 8,
-  ) {
-    startActivityAndWait()
-    // Run through the main navigation items
-    AppScenarios.mainNavigationItems(device)
+  fun generateBaselineProfile() {
+    rule.collect(
+      packageName = "app.tivi",
+      includeInStartupProfile = true,
+    ) {
+      startActivityAndWait()
+      // Run through the main navigation items
+      AppScenarios.mainNavigationItems(device)
+    }
   }
 }

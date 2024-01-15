@@ -385,10 +385,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
   onMoreClick: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  Column(
-    modifier = modifier
-      .testTag("discover_carousel"),
-  ) {
+  Column(modifier = modifier) {
     if (refreshing || items.isNotEmpty()) {
       Spacer(Modifier.height(Layout.gutter))
 
@@ -414,7 +411,9 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
       EntryShowCarousel(
         items = items,
         onItemClick = onItemClick,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+          .testTag("discover_carousel")
+          .fillMaxWidth(),
       )
     }
     // TODO empty state

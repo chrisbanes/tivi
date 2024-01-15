@@ -46,26 +46,29 @@ object AppScenarios {
 private fun UiDevice.testDiscover(): Boolean {
   // Scroll one of the Discover Carousels. Might need to wait a while for the app to load
   waitForObject(By.res("discover_carousel"), 30.seconds)
-    .apply { setGestureMargin(visibleBounds.width() / 6) }
-    .scroll(Direction.RIGHT, 1f)
 
-  waitForObject(By.res("discover_carousel"))
-    .apply { setGestureMargin(visibleBounds.width() / 6) }
-    .scroll(Direction.LEFT, 1f)
+  runAction(By.res("discover_carousel")) {
+    setGestureMargins(this)
+    scroll(Direction.RIGHT, 1f)
+  }
+  waitForIdle()
+
+  runAction(By.res("discover_carousel")) {
+    setGestureMargins(this)
+    scroll(Direction.LEFT, 1f)
+  }
+  waitForIdle()
 
   return true
 }
 
 private fun UiDevice.navigateFromDiscoverToShowDetails() {
   // Open a show from one of the carousels
-  waitForObject(By.res("discover_carousel_item")).click()
+  runAction(By.res("discover_carousel_item")) { click() }
   waitForIdle()
 }
 
 private fun UiDevice.testShowDetails(): Boolean {
-  // Follow the show
-  waitForObject(By.res("show_details_follow_button")).click()
-
   // Keep scrolling to the end of the LazyColumn, waiting for a season item
   repeat(20) {
     if (hasObject(By.res("show_details_season_item"))) {
@@ -75,38 +78,49 @@ private fun UiDevice.testShowDetails(): Boolean {
     SystemClock.sleep(1.seconds.inWholeMilliseconds)
 
     // Scroll to the end to show the seasons
-    waitForObject(By.res("show_details_lazycolumn"))
-      .scroll(Direction.DOWN, 0.8f)
+    runAction(By.res("show_details_lazycolumn")) {
+      setGestureMargins(this)
+      scroll(Direction.DOWN, 0.8f)
+    }
+    waitForIdle()
   }
 
   return false
 }
 
 private fun UiDevice.navigateFromShowDetailsToSeasons() {
-  waitForObject(By.res("show_details_season_item")).click()
+  runAction(By.res("show_details_season_item")) { click() }
   waitForIdle()
 }
 
 private fun UiDevice.testSeasons(): Boolean {
   // Not much to test here at the moment
-  return wait(Until.hasObject(By.res("show_seasons_episode_item")), 5.seconds)
+  waitForObject(By.res("show_seasons_episode_item"), 5.seconds)
+  waitForIdle()
+  return true
 }
 
 private fun UiDevice.navigateFromSeasonsToEpisodeDetails() {
-  waitForObject(By.res("show_seasons_episode_item")).click()
+  runAction(By.res("show_seasons_episode_item")) { click() }
   waitForIdle()
 }
 
 private fun UiDevice.testEpisodeDetails(): Boolean {
-  waitForObject(By.res("episode_details")).run {
-    // Need to 'inset' the gesture so that we don't swipe
-    // the notification tray down
-    setGestureMargin(displayWidth / 10)
+  waitForObject(By.res("episode_details"))
 
-    // Swipe the bottom sheet 'up', then 'down'
+  // Swipe the bottom sheet 'up', then 'down'
+  runAction(By.res("episode_details")) {
+    setGestureMargins(this)
     scroll(Direction.DOWN, 0.8f)
+  }
+  waitForIdle()
+
+  runAction(By.res("episode_details")) {
+    setGestureMargins(this)
     scroll(Direction.UP, 0.8f)
   }
+  waitForIdle()
+
   return true
 }
 
@@ -119,4 +133,42 @@ fun UiDevice.waitForObject(selector: BySelector, timeout: Duration = 5.seconds):
 
 fun <R> UiDevice.wait(condition: SearchCondition<R>, timeout: Duration): R {
   return wait(condition, timeout.inWholeMilliseconds)
+}
+
+private fun UiDevice.runAction(
+  selector: BySelector,
+  maxRetries: Int = 6,
+  action: UiObject2.() -> Unit,
+) {
+  waitForObject(selector)
+
+  retry(maxRetries = maxRetries, delay = 1.seconds) {
+    // Wait for idle, to avoid recompositions causing StaleObjectExceptions
+    waitForIdle()
+
+    requireNotNull(findObject(selector)).action()
+  }
+}
+
+private fun retry(maxRetries: Int, delay: Duration, block: () -> Unit) {
+  repeat(maxRetries) { run ->
+    val result = runCatching { block() }
+    if (result.isSuccess) {
+      return
+    }
+    if (run == maxRetries - 1) {
+      result.getOrThrow()
+    } else {
+      SystemClock.sleep(delay.inWholeMilliseconds)
+    }
+  }
+}
+
+private fun UiDevice.setGestureMargins(uiObject: UiObject2) {
+  uiObject.setGestureMargins(
+    (displayWidth * 0.1f).toInt(), // left
+    (displayHeight * 0.2f).toInt(), // top
+    (displayWidth * 0.1f).toInt(), // right
+    (displayHeight * 0.2f).toInt(), // bottom
+  )
 }

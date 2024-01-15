@@ -7,37 +7,36 @@ import com.android.build.api.dsl.ManagedVirtualDevice
 plugins {
   id("app.tivi.android.test")
   id("app.tivi.kotlin.android")
+  id("androidx.baselineprofile")
 }
 
 android {
   namespace = "app.tivi.benchmark"
 
   defaultConfig {
-    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    minSdk = 28
   }
 
-  buildTypes {
-    create("benchmark") {
-      isDebuggable = true
-      signingConfig = signingConfigs["debug"]
-      matchingFallbacks += "release"
-    }
-  }
-
+  @Suppress("UnstableApiUsage")
   testOptions {
     managedDevices {
       devices {
-        create<ManagedVirtualDevice>("api31") {
+        create<ManagedVirtualDevice>("api34") {
           device = "Pixel 6"
-          apiLevel = 31
+          apiLevel = 34
           systemImageSource = "aosp"
         }
       }
     }
   }
 
+  flavorDimensions += "mode"
+  productFlavors {
+    create("qa") { dimension = "mode" }
+    create("standard") { dimension = "mode" }
+  }
+
   targetProjectPath = ":android-app:app"
-  experimentalProperties["android.experimental.self-instrumenting"] = true
 }
 
 dependencies {
@@ -50,8 +49,11 @@ dependencies {
   implementation(projects.androidApp.commonTest)
 }
 
-androidComponents {
-  beforeVariants(selector().all()) {
-    it.enable = it.buildType == "benchmark"
-  }
+@Suppress("UnstableApiUsage")
+baselineProfile {
+  managedDevices += "api34"
+  useConnectedDevices = false
+
+  // Set this to true for debugging
+  enableEmulatorDisplay = false
 }

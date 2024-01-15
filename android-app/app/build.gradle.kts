@@ -1,24 +1,21 @@
 // Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
   id("app.tivi.android.application")
   id("app.tivi.kotlin.android")
   id("app.tivi.compose")
+  id("androidx.baselineprofile")
 }
-
-val appVersionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 1000
-println("APK version code: $appVersionCode")
-
-val useReleaseKeystore = rootProject.file("release/app-release.jks").exists()
 
 android {
   namespace = "app.tivi"
 
   defaultConfig {
     applicationId = "app.tivi"
-    versionCode = appVersionCode
+    versionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 1000
     versionName = "1.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -33,7 +30,7 @@ android {
     }
 
     create("release") {
-      if (useReleaseKeystore) {
+      if (rootProject.file("release/app-release.jks").exists()) {
         storeFile = rootProject.file("release/app-release.jks")
         storePassword = properties["TIVI_RELEASE_KEYSTORE_PWD"]?.toString() ?: ""
         keyAlias = "tivi"
@@ -81,17 +78,10 @@ android {
     }
 
     release {
-      signingConfig = signingConfigs[if (useReleaseKeystore) "release" else "debug"]
+      signingConfig = signingConfigs.findByName("release") ?: signingConfigs["debug"]
       isShrinkResources = true
       isMinifyEnabled = true
       proguardFiles("proguard-rules.pro")
-    }
-
-    create("benchmark") {
-      initWith(buildTypes["release"])
-      signingConfig = signingConfigs["debug"]
-      matchingFallbacks += "release"
-      proguardFiles("benchmark-rules.pro")
     }
   }
 
@@ -112,33 +102,30 @@ android {
     }
   }
 
+  @Suppress("UnstableApiUsage")
   testOptions {
     managedDevices {
       devices {
-        create<com.android.build.api.dsl.ManagedVirtualDevice>("api31") {
+        create<ManagedVirtualDevice>("api34") {
           device = "Pixel 6"
-          apiLevel = 31
+          apiLevel = 34
           systemImageSource = "aosp"
         }
       }
     }
   }
+
+  @Suppress("UnstableApiUsage")
+  experimentalProperties["android.experimental.r8.dex-startup-optimization"] = true
 }
 
 androidComponents {
-  // Ignore the QA Benchmark variant
-  val qaBenchmark = selector()
-    .withBuildType("benchmark")
-    .withFlavor("mode" to "qa")
-  beforeVariants(qaBenchmark) { variant ->
-    variant.enable = false
-  }
-
   // Ignore the standardDebug variant
-  val standard = selector()
-    .withBuildType("debug")
-    .withFlavor("mode" to "standard")
-  beforeVariants(standard) { variant ->
+  beforeVariants(
+    selector()
+      .withBuildType("debug")
+      .withFlavor("mode" to "standard")
+  ) { variant ->
     variant.enable = false
   }
 }
@@ -159,6 +146,8 @@ dependencies {
 
   implementation(libs.google.firebase.crashlytics)
 
+  "baselineProfile"(projects.androidApp.benchmark)
+
   androidTestImplementation(projects.androidApp.commonTest)
   androidTestImplementation(libs.androidx.uiautomator)
   androidTestImplementation(libs.junit)
@@ -166,16 +155,14 @@ dependencies {
   androidTestImplementation(libs.androidx.test.rules)
 }
 
+baselineProfile {
+  mergeIntoMain = true
+  saveInSrc = true
+}
+
 if (file("google-services.json").exists()) {
   apply(plugin = libs.plugins.gms.googleServices.get().pluginId)
   apply(plugin = libs.plugins.firebase.crashlytics.get().pluginId)
-
-  // Disable uploading mapping files for the benchmark build type
-  android.buildTypes.getByName("benchmark") {
-    configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
-      mappingFileUploadEnabled = false
-    }
-  }
 }
 
 fun DependencyHandler.qaImplementation(dependencyNotation: Any) =

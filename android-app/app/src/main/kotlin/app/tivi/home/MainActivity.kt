@@ -64,11 +64,7 @@ class MainActivity : TiviActivity() {
         Modifier.semantics {
           // Enables testTag -> UiAutomator resource id
           @OptIn(ExperimentalComposeUiApi::class)
-          testTagsAsResourceId = when (BuildConfig.BUILD_TYPE) {
-            "qa" -> true // always enabled for qa builds
-            "benchmark" -> true // always enabled for benchmark builds
-            else -> BuildConfig.DEBUG // for anything else, only for debug builds
-          }
+          testTagsAsResourceId = true
         },
       )
     }
