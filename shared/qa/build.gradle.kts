@@ -3,7 +3,6 @@
 
 
 import app.tivi.gradle.addKspDependencyForAllTargets
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -32,7 +31,7 @@ kotlin {
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {
-      binaries.withType<Framework> {
+      binaries.framework {
         isStatic = true
         baseName = "TiviKt"
 

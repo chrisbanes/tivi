@@ -87,8 +87,8 @@ jobs:
             :android-app:app:bundle \
             :android-app:app:build \
             lint \
-            -x :android-app:app:assembleStandardBenchmark \
-            -x :android-app:app:bundleStandardBenchmark
+            -x assembleStandardBenchmark \
+            -x bundleStandardBenchmark
 
 #      - name: Run smoke tests on Gradle Managed Device
 #        # --info used to add a repro to https://issuetracker.google.com/issues/193118030

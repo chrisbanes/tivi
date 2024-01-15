@@ -43,9 +43,9 @@ fun Project.configureIosLicensesTasks() {
     dependsOn("licensee${targetName.get().capitalized()}")
   }
 
-  tasks.named("embedAndSignAppleFrameworkForXcode") {
-    dependsOn("copyLicenseeOutputToIosBundle")
-  }
+  tasks
+    .matching { it.name == "embedAndSignAppleFrameworkForXcode" }
+    .configureEach { dependsOn("copyLicenseeOutputToIosBundle") }
 }
 
 private fun buildOutputFile(): File? {

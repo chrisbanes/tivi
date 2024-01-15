@@ -6,6 +6,7 @@ package app.tivi.tasks
 import app.tivi.domain.interactors.UpdateLibraryShows
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -56,6 +57,7 @@ class IosShowTasks(
     else -> Unit
   }
 
+  @OptIn(ExperimentalForeignApi::class)
   private fun scheduleTask(
     id: String,
     earliest: NSDate,
