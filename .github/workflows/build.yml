@@ -319,7 +319,6 @@ jobs:
     needs: [code-style]
     runs-on: macos-13
     timeout-minutes: 60
-    if: ${{ false }}  # Disable for now
     env:
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
       ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
@@ -367,7 +366,7 @@ jobs:
 
   publish-testflight:
     if: github.ref == 'refs/heads/main'
-    needs: [ios-qa-app, ios-prod-app]
+    needs: [ios-qa-app, ios-prod-app, ios-test]
     runs-on: macos-latest
     timeout-minutes: 20
     env:
