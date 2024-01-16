@@ -20,7 +20,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.repeatOnLifecycle
-import app.tivi.BuildConfig
 import app.tivi.TiviActivity
 import app.tivi.TiviApplication
 import app.tivi.inject.AndroidActivityComponent
