@@ -46,7 +46,7 @@ jobs:
 
   android:
     needs: [code-style]
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
@@ -239,7 +239,7 @@ jobs:
             **/fastlane-buildlog
 
   ios-prod-app:
-    needs: [code-style]
+    needs: [ios-test, ios-qa-app]
     runs-on: macos-13
     timeout-minutes: 60
     env:
@@ -356,7 +356,7 @@ jobs:
 
   publish-testflight:
     if: github.ref == 'refs/heads/main'
-    needs: [ios-qa-app, ios-prod-app, ios-test]
+    needs: [ios-prod-app]
     runs-on: macos-latest
     timeout-minutes: 20
     env:
