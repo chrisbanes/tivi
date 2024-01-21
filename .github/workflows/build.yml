@@ -82,13 +82,11 @@ jobs:
 
       - name: Build Android App (skipping benchmark variant)
         run: |
-          ./gradlew \
-            testDebugUnitTest \
+          ./gradlew check \
+            :android-app:app:assemble \
             :android-app:app:bundle \
-            :android-app:app:build \
-            lint \
-            -x assembleStandardBenchmark \
-            -x bundleStandardBenchmark
+            -x assembleNonMinifiedRelease \
+            -x bundleNonMinifiedRelease
 
       - name: Clean secrets
         if: always()

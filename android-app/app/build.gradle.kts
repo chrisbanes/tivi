@@ -115,9 +115,6 @@ android {
       }
     }
   }
-
-  @Suppress("UnstableApiUsage")
-  experimentalProperties["android.experimental.r8.dex-startup-optimization"] = true
 }
 
 androidComponents {
