@@ -332,9 +332,9 @@ jobs:
         with:
           cache-disabled: true
 
-      - name: iosX64Test
+      - name: iOS tests
         # Disable CC due to https://github.com/google/ksp/issues/1463
-        run: ./gradlew iosX64Test --no-configuration-cache
+        run: ./gradlew iosSimulatorArm64Test --no-configuration-cache
 
       - name: Upload reports
         if: always()
