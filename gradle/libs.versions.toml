@@ -8,6 +8,7 @@ circuit = "0.20.0"
 compose-multiplatform = "1.6.2"
 coroutines = "1.8.0"
 haze = "0.7.0"
+cupertino = "0.1.0-alpha04"
 kotlin = "1.9.23"
 kotlininject = "0.6.3"
 ksp = "1.9.23-1.0.20"
@@ -48,6 +49,9 @@ androidx-browser = "androidx.browser:browser:1.8.0"
 androidx-collection = "androidx.collection:collection:1.4.0"
 androidx-core = "androidx.core:core-ktx:1.13.0"
 androidx-splashscreen = "androidx.core:core-splashscreen:1.0.1"
+
+cupertino-adaptive = { module = "io.github.alexzhirkevich:cupertino-adaptive", version.ref = "cupertino" }
+cupertino-native = { module = "io.github.alexzhirkevich:cupertino-native", version.ref = "cupertino" }
 
 paging-common = { module = "app.cash.paging:paging-common", version.ref = "paging-multiplatform" }
 paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "paging-multiplatform" }

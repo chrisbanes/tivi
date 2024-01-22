@@ -30,11 +30,16 @@ kotlin {
         api(libs.coil.compose)
 
         implementation(compose.foundation)
-        implementation(compose.material)
         implementation(compose.materialIconsExtended)
+        implementation(compose.animation)
+
+        // Only used for Pull-to-refresh
+        implementation(compose.material)
+
         api(compose.material3)
         api(libs.compose.material3.windowsizeclass)
-        implementation(compose.animation)
+
+        api(libs.cupertino.adaptive)
 
         implementation(libs.uuid)
 
