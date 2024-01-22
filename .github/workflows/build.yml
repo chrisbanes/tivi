@@ -237,7 +237,7 @@ jobs:
             **/fastlane-buildlog
 
   ios-prod-app:
-    needs: [ios-test, ios-qa-app]
+    needs: [code-style]
     runs-on: macos-13
     timeout-minutes: 60
     env:
@@ -354,7 +354,7 @@ jobs:
 
   publish-testflight:
     if: github.ref == 'refs/heads/main'
-    needs: [ios-prod-app]
+    needs: [ios-qa-app, ios-prod-app, ios-test]
     runs-on: macos-latest
     timeout-minutes: 20
     env:
