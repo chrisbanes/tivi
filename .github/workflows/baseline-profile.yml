@@ -35,7 +35,7 @@ jobs:
       - name: Setup JDK for sdkmanager
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: 8
 
       - name: Accept Android SDK licenses
@@ -44,8 +44,8 @@ jobs:
       - name: Setup JDK for build
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 17
+          distribution: 'temurin'
+          java-version: 21
 
       - uses: gradle/gradle-build-action@v2
         with:

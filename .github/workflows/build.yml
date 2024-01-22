@@ -24,8 +24,8 @@ jobs:
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 17
+          distribution: 'temurin'
+          java-version: 21
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -46,7 +46,7 @@ jobs:
 
   android:
     needs: [code-style]
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
@@ -68,8 +68,8 @@ jobs:
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 17
+          distribution: 'temurin'
+          java-version: 21
 
       - uses: gradle/gradle-build-action@v2
         with:
@@ -82,23 +82,11 @@ jobs:
 
       - name: Build Android App (skipping benchmark variant)
         run: |
-          ./gradlew \
-            testDebugUnitTest \
+          ./gradlew check \
+            :android-app:app:assemble \
             :android-app:app:bundle \
-            :android-app:app:build \
-            lint \
-            -x assembleStandardBenchmark \
-            -x bundleStandardBenchmark
-
-#      - name: Run smoke tests on Gradle Managed Device
-#        # --info used to add a repro to https://issuetracker.google.com/issues/193118030
-#        # config cache is disabled due to https://issuetracker.google.com/issues/262270582
-#        run: |
-#          ./gradlew api31QaDebugAndroidTest \
-#            -Dorg.gradle.workers.max=1 \
-#            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect" \
-#            --info \
-#            --no-configuration-cache
+            -x assembleNonMinifiedRelease \
+            -x bundleNonMinifiedRelease
 
       - name: Clean secrets
         if: always()
@@ -148,8 +136,8 @@ jobs:
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 17
+          distribution: 'temurin'
+          java-version: 21
 
       - uses: gradle/gradle-build-action@v2
         with:
@@ -204,8 +192,8 @@ jobs:
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 17
+          distribution: 'temurin'
+          java-version: 21
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -271,8 +259,8 @@ jobs:
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 17
+          distribution: 'temurin'
+          java-version: 21
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -337,16 +325,16 @@ jobs:
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 17
+          distribution: 'temurin'
+          java-version: 21
 
       - uses: gradle/gradle-build-action@v2
         with:
           cache-disabled: true
 
-      - name: iosX64Test
+      - name: iOS tests
         # Disable CC due to https://github.com/google/ksp/issues/1463
-        run: ./gradlew iosX64Test --no-configuration-cache
+        run: ./gradlew iosSimulatorArm64Test --no-configuration-cache
 
       - name: Upload reports
         if: always()
