@@ -7,26 +7,37 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -40,21 +51,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import app.cash.paging.LoadStateLoading
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.itemKey
-import app.tivi.common.compose.ui.PlaceholderPosterCard
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
+import app.tivi.data.models.TiviShow
+import app.tivi.data.models.TrendingShowEntry
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun <E : Entry> EntryGrid(
   lazyPagingItems: LazyPagingItems<EntryWithShow<E>>,
@@ -127,14 +142,14 @@ fun <E : Entry> EntryGrid(
       val bodyMargin = Layout.bodyMargin
       val gutter = Layout.gutter
 
-      LazyVerticalGrid(
-        columns = GridCells.Fixed((columns / 1.5).roundToInt()),
+      LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed((columns / 2f).roundToInt()),
         contentPadding = paddingValues.plus(
           PaddingValues(horizontal = bodyMargin, vertical = gutter),
           LocalLayoutDirection.current,
         ),
         horizontalArrangement = Arrangement.spacedBy(gutter),
-        verticalArrangement = Arrangement.spacedBy(gutter),
+        verticalItemSpacing = gutter,
         modifier = Modifier
           .nestedScroll(scrollBehavior.nestedScrollConnection)
           .bodyWidth()
@@ -145,23 +160,21 @@ fun <E : Entry> EntryGrid(
           key = lazyPagingItems.itemKey { it.show.id },
         ) { index ->
           val entry = lazyPagingItems[index]
-          val mod = Modifier
-            .animateItemPlacement()
-            .aspectRatio(2 / 3f)
-            .fillMaxWidth()
+
           if (entry != null) {
-            PosterCard(
+            GridItem(
               show = entry.show,
+              entry = entry.entry,
               onClick = { onOpenShowDetails(entry.show.id) },
-              modifier = mod,
+              modifier = Modifier
+                .animateItemPlacement()
+                .fillMaxWidth(),
             )
-          } else {
-            PlaceholderPosterCard(mod)
           }
         }
 
         if (lazyPagingItems.loadState.append == LoadStateLoading) {
-          fullSpanItem {
+          item(span = StaggeredGridItemSpan.FullLine) {
             Box(
               Modifier
                 .fillMaxWidth()
@@ -181,6 +194,68 @@ fun <E : Entry> EntryGrid(
           .padding(paddingValues),
         scale = true,
       )
+    }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+private fun <ET : Entry> GridItem(
+  show: TiviShow,
+  entry: ET,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  Card(
+    modifier = modifier,
+    onClick = onClick,
+  ) {
+    Box(
+      modifier = Modifier
+        .aspectRatio(2 / 3f)
+        .fillMaxWidth(),
+    ) {
+      PosterCard(
+        show = show,
+        modifier = Modifier.matchParentSize(),
+      )
+    }
+
+    Column(
+      modifier = Modifier.padding(8.dp),
+      verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+      Text(
+        text = show.title ?: "",
+        style = MaterialTheme.typography.titleMedium,
+        lineHeight = 18.sp,
+        fontWeight = FontWeight.SemiBold,
+      )
+
+      FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
+      ) {
+        ProvideTextStyle(MaterialTheme.typography.labelMedium) {
+          show.network?.let { network ->
+            Text(text = network)
+          }
+
+          show.traktRating?.let { rating ->
+            TextWithIcon(
+              text = LocalStrings.current.traktRatingText(rating * 10),
+              icon = Icons.Default.Star,
+            )
+          }
+
+          if (entry is TrendingShowEntry) {
+            TextWithIcon(
+              text = entry.watchers.toString(),
+              icon = Icons.Default.Visibility,
+            )
+          }
+        }
+      }
     }
   }
 }
@@ -223,4 +298,27 @@ private fun EntryGridAppBar(
       }
     },
   )
+}
+
+@Composable
+private fun TextWithIcon(
+  text: String,
+  icon: ImageVector? = null,
+  modifier: Modifier = Modifier,
+) {
+  Row(
+    horizontalArrangement = Arrangement.spacedBy(2.dp),
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = modifier,
+  ) {
+    if (icon != null) {
+      Icon(
+        imageVector = icon,
+        contentDescription = null,
+        modifier = Modifier.size(14.dp),
+      )
+    }
+
+    Text(text = text)
+  }
 }

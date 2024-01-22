@@ -12,6 +12,9 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridItemScope
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -64,6 +67,19 @@ inline fun LazyGridScope.fullSpanItem(
   item(
     key = key,
     span = { GridItemSpan(maxLineSpan) },
+    contentType = contentType,
+    content = content,
+  )
+}
+
+inline fun LazyStaggeredGridScope.fullSpanItem(
+  key: Any? = null,
+  contentType: Any? = null,
+  noinline content: @Composable LazyStaggeredGridItemScope.() -> Unit,
+) {
+  item(
+    key = key,
+    span = StaggeredGridItemSpan.FullLine,
     contentType = contentType,
     content = content,
   )
