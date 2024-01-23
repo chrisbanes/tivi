@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveTheme
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 import io.github.alexzhirkevich.cupertino.adaptive.Theme
+import io.github.alexzhirkevich.cupertino.theme.CupertinoTheme
 
 @OptIn(ExperimentalAdaptiveApi::class)
 @Composable
@@ -22,8 +23,14 @@ fun TiviTheme(
     material = {
       MaterialTheme(
         colorScheme = colorScheme(useDarkColors, useDynamicColors),
-        typography = TiviTypography,
+        typography = TiviMaterialTypography,
         shapes = TiviShapes,
+        content = it,
+      )
+    },
+    cupertino = {
+      CupertinoTheme(
+        typography = TiviCupertinoTypography,
         content = it,
       )
     },

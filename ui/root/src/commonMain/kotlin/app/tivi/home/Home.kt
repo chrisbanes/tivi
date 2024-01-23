@@ -23,8 +23,6 @@ import androidx.compose.material.icons.filled.Weekend
 import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
@@ -56,6 +54,9 @@ import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuitx.gesturenavigation.GestureNavigationDecoration
+import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBar
+import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBarItem
+import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 
 @Composable
 internal fun Home(
@@ -130,6 +131,7 @@ internal fun Home(
   }
 }
 
+@OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 private fun HomeNavigationBar(
   selectedNavigation: Screen,
@@ -137,13 +139,20 @@ private fun HomeNavigationBar(
   onNavigationSelected: (Screen) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  NavigationBar(
+  AdaptiveNavigationBar(
     modifier = modifier,
-    containerColor = Color.Transparent,
+    adaptation = {
+      material {
+        containerColor = Color.Transparent
+      }
+      cupertino {
+        isTransparent = true
+      }
+    },
     windowInsets = WindowInsets.navigationBars,
   ) {
     for (item in navigationItems) {
-      NavigationBarItem(
+      AdaptiveNavigationBarItem(
         icon = {
           HomeNavigationItemIcon(
             item = item,
