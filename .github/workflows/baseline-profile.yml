@@ -38,21 +38,14 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      # Android sdkmanager requires JRE 8 🤷‍
-      - name: Setup JDK for sdkmanager
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: 8
-
-      - name: Accept Android SDK licenses
-        run: yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
-
       - name: Setup JDK for build
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 21
+
+      - name: Accept Android SDK licenses
+        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
 
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
