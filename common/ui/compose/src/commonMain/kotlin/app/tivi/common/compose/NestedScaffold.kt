@@ -3,18 +3,13 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.MutableWindowInsets
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -28,28 +23,32 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.ui.minus
-import app.tivi.common.compose.ui.plus
+import io.github.alexzhirkevich.cupertino.CupertinoScaffoldDefaults
+import io.github.alexzhirkevich.cupertino.FabPosition
+import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveScaffold
+import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
+import io.github.alexzhirkevich.cupertino.theme.CupertinoTheme
 
 private val LocalScaffoldContentPadding = staticCompositionLocalOf { PaddingValues(0.dp) }
 
 /**
- * A copy of Material 3's [Scaffold] composable, but with a few tweaks:
+ * A wrapper around [Scaffold] composable, but with a few tweaks:
  *
  * - Supports being used nested. The `contentPadding` is compounded on each level.
  */
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalAdaptiveApi::class)
 @Composable
-internal fun NestedScaffold(
+fun NestedScaffold(
   modifier: Modifier = Modifier,
   topBar: @Composable () -> Unit = {},
   bottomBar: @Composable () -> Unit = {},
   snackbarHost: @Composable () -> Unit = {},
   floatingActionButton: @Composable () -> Unit = {},
   floatingActionButtonPosition: FabPosition = FabPosition.End,
-  containerColor: Color = MaterialTheme.colorScheme.background,
-  contentColor: Color = contentColorFor(containerColor),
-  contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
-  content: @Composable (PaddingValues) -> Unit,
+  containerColor: Color = CupertinoTheme.colorScheme.systemBackground,
+  contentColor: Color = CupertinoTheme.colorScheme.label,
+  contentWindowInsets: WindowInsets = CupertinoScaffoldDefaults.contentWindowInsets,
+  content: @Composable (PaddingValues) -> Unit
 ) {
   val upstreamContentPadding = LocalScaffoldContentPadding.current
   val layoutDirection = LocalLayoutDirection.current
@@ -64,7 +63,7 @@ internal fun NestedScaffold(
     insets.insets = contentWindowInsets.add(PaddingValuesInsets(upstreamContentPadding))
   }
 
-  Scaffold(
+  AdaptiveScaffold(
     modifier = modifier,
     topBar = topBar,
     bottomBar = bottomBar,

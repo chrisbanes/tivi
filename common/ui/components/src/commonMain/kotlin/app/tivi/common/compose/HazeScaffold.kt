@@ -6,10 +6,6 @@ package app.tivi.common.compose
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScaffoldDefaults
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -20,6 +16,9 @@ import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
+import io.github.alexzhirkevich.cupertino.CupertinoScaffoldDefaults
+import io.github.alexzhirkevich.cupertino.FabPosition
+import io.github.alexzhirkevich.cupertino.theme.CupertinoTheme
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
@@ -30,9 +29,9 @@ fun HazeScaffold(
   snackbarHost: @Composable () -> Unit = {},
   floatingActionButton: @Composable () -> Unit = {},
   floatingActionButtonPosition: FabPosition = FabPosition.End,
-  containerColor: Color = MaterialTheme.colorScheme.background,
-  contentColor: Color = contentColorFor(containerColor),
-  contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
+  containerColor: Color = CupertinoTheme.colorScheme.systemBackground,
+  contentColor: Color = CupertinoTheme.colorScheme.label,
+  contentWindowInsets: WindowInsets = CupertinoScaffoldDefaults.contentWindowInsets,
   blurTopBar: Boolean = false,
   blurBottomBar: Boolean = false,
   content: @Composable (PaddingValues) -> Unit,
