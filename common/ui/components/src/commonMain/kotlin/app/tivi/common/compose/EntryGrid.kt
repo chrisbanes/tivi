@@ -41,18 +41,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -62,6 +57,7 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.itemKey
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.TopAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
@@ -79,7 +75,6 @@ fun <E : Entry> EntryGrid(
   modifier: Modifier = Modifier,
 ) {
   val snackbarHostState = remember { SnackbarHostState() }
-  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
   val dismissSnackbarState = rememberDismissState(
     confirmValueChange = { value ->
@@ -116,7 +111,6 @@ fun <E : Entry> EntryGrid(
         refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading,
         onRefreshActionClick = { lazyPagingItems.refresh() },
         modifier = Modifier.fillMaxWidth(),
-        scrollBehavior = scrollBehavior,
       )
     },
     blurTopBar = true,
@@ -153,7 +147,6 @@ fun <E : Entry> EntryGrid(
         horizontalArrangement = Arrangement.spacedBy(gutter),
         verticalItemSpacing = gutter,
         modifier = Modifier
-          .nestedScroll(scrollBehavior.nestedScrollConnection)
           .bodyWidth()
           .fillMaxHeight(),
       ) {
@@ -270,7 +263,6 @@ private fun EntryGridAppBar(
   onNavigateUp: () -> Unit,
   onRefreshActionClick: () -> Unit,
   modifier: Modifier = Modifier,
-  scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
   TopAppBar(
     navigationIcon = {
@@ -282,8 +274,7 @@ private fun EntryGridAppBar(
       }
     },
     modifier = modifier,
-    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-    scrollBehavior = scrollBehavior,
+    transparent = true,
     title = { Text(text = title) },
     actions = {
       // This button refresh allows screen-readers, etc to trigger a refresh.

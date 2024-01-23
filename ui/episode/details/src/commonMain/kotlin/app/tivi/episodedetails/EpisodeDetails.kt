@@ -42,7 +42,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Snackbar
@@ -50,8 +49,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -75,6 +72,7 @@ import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.ScrimmedIconButton
+import app.tivi.common.compose.ui.TopAppBar
 import app.tivi.common.compose.ui.none
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
@@ -534,10 +532,7 @@ private fun EpisodeDetailsAppBar(
   modifier: Modifier = Modifier,
 ) {
   TopAppBar(
-    colors = TopAppBarDefaults.topAppBarColors(
-      containerColor = Color.Transparent,
-      actionIconContentColor = LocalContentColor.current,
-    ),
+    transparent = true,
     title = {},
     navigationIcon = {
       ScrimmedIconButton(showScrim = true, onClick = navigateUp) {

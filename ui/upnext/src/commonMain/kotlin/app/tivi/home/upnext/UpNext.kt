@@ -41,7 +41,6 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,7 +51,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
@@ -183,15 +181,12 @@ internal fun UpNext(
     }
   }
 
-  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
   HazeScaffold(
     topBar = {
       TiviRootScreenAppBar(
         title = LocalStrings.current.upnextTitle,
         loggedIn = state.authState == TraktAuthState.LOGGED_IN,
         user = state.user,
-        scrollBehavior = scrollBehavior,
         refreshing = state.isLoading,
         onRefreshActionClick = refresh,
         onUserActionClick = openUser,
@@ -236,7 +231,6 @@ internal fun UpNext(
         horizontalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
         verticalArrangement = Arrangement.spacedBy((gutter - 8.dp).coerceAtLeast(0.dp)),
         modifier = Modifier
-          .nestedScroll(scrollBehavior.nestedScrollConnection)
           .bodyWidth()
           .fillMaxHeight(),
       ) {

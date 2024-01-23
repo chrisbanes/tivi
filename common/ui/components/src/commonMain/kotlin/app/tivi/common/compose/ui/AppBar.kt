@@ -4,16 +4,19 @@
 package app.tivi.common.compose.ui
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import app.tivi.data.models.TraktUser
+import io.github.alexzhirkevich.cupertino.CupertinoTopAppBarDefaults
+import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveTopAppBar
+import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
 
 @ExperimentalMaterial3Api
 @Composable
@@ -25,12 +28,10 @@ fun TiviRootScreenAppBar(
   onRefreshActionClick: () -> Unit,
   onUserActionClick: () -> Unit,
   modifier: Modifier = Modifier,
-  scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
   TopAppBar(
     modifier = modifier,
-    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-    scrollBehavior = scrollBehavior,
+    transparent = true,
     title = { Text(text = title) },
     actions = {
       // This button refresh allows screen-readers, etc to trigger a refresh.
@@ -53,5 +54,35 @@ fun TiviRootScreenAppBar(
         modifier = Modifier.align(Alignment.CenterVertically),
       )
     },
+  )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAdaptiveApi::class)
+@Composable
+fun TopAppBar(
+  title: @Composable () -> Unit,
+  modifier: Modifier = Modifier,
+  navigationIcon: @Composable () -> Unit = {},
+  actions: @Composable (RowScope.() -> Unit) = {},
+  windowInsets: WindowInsets = CupertinoTopAppBarDefaults.windowInsets,
+  transparent: Boolean = false,
+) {
+  AdaptiveTopAppBar(
+    title = title,
+    modifier = modifier,
+    navigationIcon = navigationIcon,
+    actions = actions,
+    windowInsets = windowInsets,
+    adaptation = {
+      material {
+        if (transparent) {
+          colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+        }
+      }
+      cupertino {
+        isTransparent = transparent
+      }
+    }
   )
 }
