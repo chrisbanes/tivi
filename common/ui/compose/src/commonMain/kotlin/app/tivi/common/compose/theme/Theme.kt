@@ -31,6 +31,10 @@ fun TiviTheme(
     cupertino = {
       CupertinoTheme(
         typography = TiviCupertinoTypography,
+        colorScheme = when {
+            useDarkColors -> io.github.alexzhirkevich.cupertino.theme.darkColorScheme()
+            else -> io.github.alexzhirkevich.cupertino.theme.lightColorScheme()
+        },
         content = it,
       )
     },
