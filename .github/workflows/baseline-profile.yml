@@ -49,21 +49,24 @@ jobs:
         env:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
+      - uses: gradle/gradle-build-action@v2
+        with:
+          cache-disabled: true
+
       # This allows us to build most of what we need without the emulator running
       # and using resources
       - name: Build app and benchmark
         run: ./gradlew assembleNonMinifiedRelease
 
-      - name: Clear unused Gradle Managed Devices
-        run: ./gradlew cleanManagedDevices --unused-only
+      - name: Clear Gradle Managed Devices
+        run: ./gradlew cleanManagedDevices
 
       - name: Run benchmark on Gradle Managed Device
         run: |
           ./gradlew generateBaselineProfile \
-            -Dorg.gradle.workers.max=1 \
             -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect" \
             -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile \
-            -Pandroid.experimental.testOptions.managedDevices.setupTimeoutMinutes=20 \
+            -Pandroid.experimental.testOptions.managedDevices.setupTimeoutMinutes=10 \
             --no-configuration-cache
 
       # If we're on main branch, copy over the baseline profile and
