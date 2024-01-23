@@ -19,7 +19,7 @@ kermit = "1.2.3" # Pinned back as Store uses Kermit 1.x
 ktlint = "1.0.1"
 ktor = "2.3.7"
 paging-multiplatform = "3.3.0-alpha02-0.4.0"
-spotless = "6.24.0"
+spotless = "6.25.0"
 sqldelight = "2.0.1"
 licensee = "1.8.0"
 
