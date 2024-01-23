@@ -20,6 +20,7 @@ class BaselineProfileGenerator {
       includeInStartupProfile = true,
     ) {
       startActivityAndWait()
+      device.allowNotifications(packageName)
       // Run through the main navigation items
       AppScenarios.mainNavigationItems(device)
     }
