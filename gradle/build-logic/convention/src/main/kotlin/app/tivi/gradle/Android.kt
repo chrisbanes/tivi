@@ -6,6 +6,7 @@ package app.tivi.gradle
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.HasUnitTestBuilder
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
@@ -24,6 +25,18 @@ fun Project.configureAndroid() {
     compileOptions {
       // https://developer.android.com/studio/write/java8-support
       isCoreLibraryDesugaringEnabled = true
+    }
+
+    testOptions {
+      if (this@android is LibraryExtension) {
+        // We only want to configure this for library modules
+        targetSdk = Versions.TARGET_SDK
+      }
+
+      unitTests {
+        isIncludeAndroidResources = true
+        isReturnDefaultValues = true
+      }
     }
   }
 
