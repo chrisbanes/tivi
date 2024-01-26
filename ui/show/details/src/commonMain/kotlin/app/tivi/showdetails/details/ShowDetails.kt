@@ -93,6 +93,7 @@ import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
@@ -111,11 +112,17 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.TiviShow
 import app.tivi.data.views.ShowsWatchStats
+import app.tivi.overlays.LocalNavigator
+import app.tivi.overlays.showInBottomSheet
+import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowDetailsScreen
+import com.slack.circuit.overlay.ContentWithOverlays
+import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 
@@ -141,22 +148,36 @@ internal fun ShowDetails(
   // treats it as stable. See: https://issuetracker.google.com/issues/256100927
   val eventSink = state.eventSink
 
-  ShowDetails(
-    viewState = state,
-    navigateUp = { eventSink(ShowDetailsUiEvent.NavigateBack) },
-    openShowDetails = { eventSink(ShowDetailsUiEvent.OpenShowDetails(it)) },
-    openEpisodeDetails = { eventSink(ShowDetailsUiEvent.OpenEpisodeDetails(it)) },
-    refresh = { eventSink(ShowDetailsUiEvent.Refresh(true)) },
-    onMessageShown = { eventSink(ShowDetailsUiEvent.ClearMessage(it)) },
-    openSeason = { eventSink(ShowDetailsUiEvent.OpenSeason(it)) },
-    onSeasonFollowed = { eventSink(ShowDetailsUiEvent.FollowSeason(it)) },
-    onSeasonUnfollowed = { eventSink(ShowDetailsUiEvent.UnfollowSeason(it)) },
-    unfollowPreviousSeasons = { eventSink(ShowDetailsUiEvent.UnfollowPreviousSeasons(it)) },
-    onMarkSeasonWatched = { eventSink(ShowDetailsUiEvent.MarkSeasonWatched(it, onlyAired = true)) },
-    onMarkSeasonUnwatched = { eventSink(ShowDetailsUiEvent.MarkSeasonUnwatched(it)) },
-    onToggleShowFollowed = { eventSink(ShowDetailsUiEvent.ToggleShowFollowed) },
-    modifier = modifier,
-  )
+  ContentWithOverlays(modifier) {
+    val overlayHost = LocalOverlayHost.current
+    val navigator = LocalNavigator.current
+    val coroutineScope = rememberCoroutineScope()
+
+    ShowDetails(
+      viewState = state,
+      navigateUp = { eventSink(ShowDetailsUiEvent.NavigateBack) },
+      openShowDetails = { eventSink(ShowDetailsUiEvent.OpenShowDetails(it)) },
+      openEpisodeDetails = { episodeId ->
+        coroutineScope.launch {
+          overlayHost.showInBottomSheet(
+            screen = EpisodeDetailsScreen(id = episodeId),
+            dragHandle = null,
+            hostNavigator = navigator,
+          )
+        }
+      },
+      refresh = { eventSink(ShowDetailsUiEvent.Refresh(true)) },
+      onMessageShown = { eventSink(ShowDetailsUiEvent.ClearMessage(it)) },
+      openSeason = { eventSink(ShowDetailsUiEvent.OpenSeason(it)) },
+      onSeasonFollowed = { eventSink(ShowDetailsUiEvent.FollowSeason(it)) },
+      onSeasonUnfollowed = { eventSink(ShowDetailsUiEvent.UnfollowSeason(it)) },
+      unfollowPreviousSeasons = { eventSink(ShowDetailsUiEvent.UnfollowPreviousSeasons(it)) },
+      onMarkSeasonWatched = { eventSink(ShowDetailsUiEvent.MarkSeasonWatched(it, onlyAired = true)) },
+      onMarkSeasonUnwatched = { eventSink(ShowDetailsUiEvent.MarkSeasonUnwatched(it)) },
+      onToggleShowFollowed = { eventSink(ShowDetailsUiEvent.ToggleShowFollowed) },
+      modifier = modifier,
+    )
+  }
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)

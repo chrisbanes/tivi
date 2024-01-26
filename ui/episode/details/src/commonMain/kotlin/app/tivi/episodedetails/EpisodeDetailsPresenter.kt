@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.Snapshot
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
@@ -16,8 +17,11 @@ import app.tivi.domain.interactors.RemoveEpisodeWatches
 import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
+import app.tivi.domain.observers.ObserveShowDetailsForEpisodeId
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
+import app.tivi.screens.ShowDetailsScreen
+import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
 import app.tivi.util.onException
 import com.slack.circuit.retained.collectAsRetainedState
@@ -48,6 +52,7 @@ class EpisodeDetailsPresenter(
   @Assisted private val screen: EpisodeDetailsScreen,
   @Assisted private val navigator: Navigator,
   private val updateEpisodeDetails: UpdateEpisodeDetails,
+  private val observeShowDetailsForEpisodeId: ObserveShowDetailsForEpisodeId,
   private val observeEpisodeDetails: ObserveEpisodeDetails,
   private val observeEpisodeWatches: ObserveEpisodeWatches,
   private val removeEpisodeWatches: RemoveEpisodeWatches,
@@ -61,6 +66,8 @@ class EpisodeDetailsPresenter(
 
     val refreshing by updateEpisodeDetails.inProgress.collectAsState(false)
     val message by uiMessageManager.message.collectAsState(null)
+
+    val showDetails by observeShowDetailsForEpisodeId.flow.collectAsRetainedState(null)
 
     val episodeDetails by observeEpisodeDetails.flow.collectAsRetainedState(null)
     val episodeWatches by observeEpisodeWatches.flow.collectAsRetainedState(emptyList())
@@ -110,12 +117,31 @@ class EpisodeDetailsPresenter(
         EpisodeDetailsUiEvent.OpenTrackEpisode -> {
           navigator.goTo(EpisodeTrackScreen(screen.id))
         }
+
+        EpisodeDetailsUiEvent.ExpandToShowDetails -> {
+          navigator.pop()
+
+          val showId = showDetails?.id ?: return
+          // As we pushing a number of different screens onto the back stack,
+          // we run it in a single snapshot to avoid unnecessary work
+          Snapshot.withMutableSnapshot {
+            navigator.goTo(ShowDetailsScreen(showId))
+            navigator.goTo(
+              ShowSeasonsScreen(
+                id = showId,
+                selectedSeasonId = episodeDetails?.season?.id,
+                openEpisodeId = episodeDetails?.episode?.id,
+              ),
+            )
+          }
+        }
       }
     }
 
     LaunchedEffect(Unit) {
       observeEpisodeDetails(ObserveEpisodeDetails.Params(screen.id))
       observeEpisodeWatches(ObserveEpisodeWatches.Params(screen.id))
+      observeShowDetailsForEpisodeId(ObserveShowDetailsForEpisodeId.Params(screen.id))
 
       eventSink(EpisodeDetailsUiEvent.Refresh(fromUser = false))
     }

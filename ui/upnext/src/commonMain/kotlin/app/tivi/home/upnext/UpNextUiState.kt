@@ -30,7 +30,6 @@ sealed interface UpNextUiEvent : CircuitUiEvent {
   data class ClearMessage(val id: Long) : UpNextUiEvent
   data class Refresh(val fromUser: Boolean = false) : UpNextUiEvent
   data class ChangeSort(val sort: SortOption) : UpNextUiEvent
-  object ToggleFollowedShowsOnly : UpNextUiEvent
-  object OpenAccount : UpNextUiEvent
-  data class OpenShowDetails(val showId: Long, val seasonId: Long, val episodeId: Long) : UpNextUiEvent
+  data object ToggleFollowedShowsOnly : UpNextUiEvent
+  data object OpenAccount : UpNextUiEvent
 }

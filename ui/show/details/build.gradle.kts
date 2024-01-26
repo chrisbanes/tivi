@@ -23,6 +23,7 @@ kotlin {
         api(projects.common.ui.screens)
         api(libs.circuit.foundation)
         implementation(libs.circuit.retained)
+        implementation(projects.common.ui.circuitOverlay)
 
         implementation(compose.foundation)
         implementation(compose.material)

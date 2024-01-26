@@ -78,9 +78,11 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.overlays.LocalNavigator
 import app.tivi.overlays.showInBottomSheet
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
+import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.screens.UpNextScreen
 import coil3.compose.AsyncImagePainter
@@ -114,6 +116,7 @@ internal fun UpNext(
 ) {
   val scope = rememberCoroutineScope()
   val overlayHost = LocalOverlayHost.current
+  val navigator = LocalNavigator.current
 
   // Need to extract the eventSink out to a local val, so that the Compose Compiler
   // treats it as stable. See: https://issuetracker.google.com/issues/256100927
@@ -121,8 +124,14 @@ internal fun UpNext(
 
   UpNext(
     state = state,
-    openShowDetails = { showId, seasonId, episodeId ->
-      eventSink(UpNextUiEvent.OpenShowDetails(showId, seasonId, episodeId))
+    openEpisodeDetails = { episodeId ->
+      scope.launch {
+        overlayHost.showInBottomSheet(
+          screen = EpisodeDetailsScreen(id = episodeId),
+          dragHandle = null,
+          hostNavigator = navigator,
+        )
+      }
     },
     openTrackEpisode = {
       scope.launch {
@@ -146,7 +155,7 @@ internal fun UpNext(
 @Composable
 internal fun UpNext(
   state: UpNextUiState,
-  openShowDetails: (showId: Long, seasonId: Long, episodeId: Long) -> Unit,
+  openEpisodeDetails: (episodeId: Long) -> Unit,
   openTrackEpisode: (episodeId: Long) -> Unit,
   onMessageShown: (id: Long) -> Unit,
   refresh: () -> Unit,
@@ -272,9 +281,7 @@ internal fun UpNext(
                 show = entry.show,
                 season = entry.season,
                 episode = entry.episode,
-                onClick = {
-                  openShowDetails(entry.show.id, entry.season.id, entry.episode.id)
-                },
+                onClick = { openEpisodeDetails(entry.episode.id) },
                 contentPadding = PaddingValues(8.dp),
                 modifier = Modifier.fillMaxWidth(),
               )

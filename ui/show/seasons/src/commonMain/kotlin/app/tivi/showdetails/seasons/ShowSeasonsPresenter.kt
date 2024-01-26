@@ -7,7 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope
@@ -15,11 +17,11 @@ import app.tivi.data.models.TiviShow
 import app.tivi.domain.interactors.UpdateShowSeasons
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
-import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
 import app.tivi.util.onException
 import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -60,6 +62,8 @@ class ShowSeasonsPresenter(
     val seasons by observeShowSeasons.flow.collectAsRetainedState(emptyList())
     val show by observeShowDetails.flow.collectAsRetainedState(TiviShow.EMPTY_SHOW)
 
+    var openedEpisodeId by rememberRetained { mutableStateOf(screen.openEpisodeId) }
+
     val refreshing by updateShowSeasons.inProgress.collectAsState(false)
     val message by uiMessageManager.message.collectAsState(null)
 
@@ -69,6 +73,10 @@ class ShowSeasonsPresenter(
           scope.launch {
             uiMessageManager.clearMessage(event.id)
           }
+        }
+
+        is ShowSeasonsUiEvent.OpenEpisodeDetails -> {
+          openedEpisodeId = event.id
         }
 
         is ShowSeasonsUiEvent.Refresh -> {
@@ -83,9 +91,6 @@ class ShowSeasonsPresenter(
         }
 
         ShowSeasonsUiEvent.NavigateBack -> navigator.pop()
-        is ShowSeasonsUiEvent.OpenEpisodeDetails -> {
-          navigator.goTo(EpisodeDetailsScreen(event.episodeId))
-        }
       }
     }
 
@@ -100,6 +105,7 @@ class ShowSeasonsPresenter(
       show = show,
       seasons = seasons,
       refreshing = refreshing,
+      openedEpisodeId = openedEpisodeId,
       message = message,
       initialSeasonId = screen.selectedSeasonId,
       eventSink = ::eventSink,

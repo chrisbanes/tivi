@@ -39,5 +39,5 @@ sealed interface DiscoverUiEvent : CircuitUiEvent {
   object OpenPopularShows : DiscoverUiEvent
   object OpenRecommendedShows : DiscoverUiEvent
   object OpenTrendingShows : DiscoverUiEvent
-  data class OpenShowDetails(val showId: Long, val seasonId: Long? = null, val episodeId: Long? = null) : DiscoverUiEvent
+  data class OpenShowDetails(val showId: Long) : DiscoverUiEvent
 }

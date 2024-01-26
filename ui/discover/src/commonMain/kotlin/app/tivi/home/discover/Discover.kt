@@ -82,9 +82,12 @@ import app.tivi.data.models.ImageType
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.overlays.LocalNavigator
+import app.tivi.overlays.showInBottomSheet
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.DiscoverScreen
+import app.tivi.screens.EpisodeDetailsScreen
 import coil3.compose.AsyncImagePainter
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
@@ -119,6 +122,8 @@ internal fun Discover(
   // treats it as stable. See: https://issuetracker.google.com/issues/256100927
   val eventSink = state.eventSink
 
+  val navigator = LocalNavigator.current
+
   Discover(
     state = state,
     refresh = { eventSink(DiscoverUiEvent.Refresh(true)) },
@@ -127,8 +132,17 @@ internal fun Discover(
         overlayHost.showInDialog(AccountScreen)
       }
     },
-    openShowDetails = { showId, seasonId, episodeId ->
-      eventSink(DiscoverUiEvent.OpenShowDetails(showId, seasonId, episodeId))
+    openEpisodeDetails = { episodeId ->
+      scope.launch {
+        overlayHost.showInBottomSheet(
+          screen = EpisodeDetailsScreen(id = episodeId),
+          dragHandle = null,
+          hostNavigator = navigator,
+        )
+      }
+    },
+    openShowDetails = { showId ->
+      eventSink(DiscoverUiEvent.OpenShowDetails(showId))
     },
     openTrendingShows = { eventSink(DiscoverUiEvent.OpenTrendingShows) },
     openRecommendedShows = { eventSink(DiscoverUiEvent.OpenRecommendedShows) },
@@ -144,7 +158,8 @@ internal fun Discover(
   state: DiscoverUiState,
   refresh: () -> Unit,
   openUser: () -> Unit,
-  openShowDetails: (showId: Long, seasonId: Long?, episodeId: Long?) -> Unit,
+  openEpisodeDetails: (episodeId: Long) -> Unit,
+  openShowDetails: (showId: Long) -> Unit,
   openTrendingShows: () -> Unit,
   openRecommendedShows: () -> Unit,
   openPopularShows: () -> Unit,
@@ -220,13 +235,7 @@ internal fun Discover(
               show = nextEpisodeToWatch.show,
               season = nextEpisodeToWatch.season,
               episode = nextEpisodeToWatch.episode,
-              onClick = {
-                openShowDetails(
-                  nextEpisodeToWatch.show.id,
-                  nextEpisodeToWatch.episode.seasonId,
-                  nextEpisodeToWatch.episode.id,
-                )
-              },
+              onClick = { openEpisodeDetails(nextEpisodeToWatch.episode.id) },
               modifier = Modifier
                 .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
                 .animateItemPlacement()
@@ -245,9 +254,7 @@ internal fun Discover(
             items = state.trendingItems,
             title = LocalStrings.current.discoverTrendingTitle,
             refreshing = state.trendingRefreshing,
-            onItemClick = {
-              openShowDetails(it.id, null, null)
-            },
+            onItemClick = { openShowDetails(it.id) },
             onMoreClick = openTrendingShows,
             modifier = Modifier.animateItemPlacement(),
           )
@@ -258,9 +265,7 @@ internal fun Discover(
             items = state.recommendedItems,
             title = LocalStrings.current.discoverRecommendedTitle,
             refreshing = state.recommendedRefreshing,
-            onItemClick = {
-              openShowDetails(it.id, null, null)
-            },
+            onItemClick = { openShowDetails(it.id) },
             onMoreClick = openRecommendedShows,
             modifier = Modifier.animateItemPlacement(),
           )
@@ -271,7 +276,7 @@ internal fun Discover(
             items = state.popularItems,
             title = LocalStrings.current.discoverPopularTitle,
             refreshing = state.popularRefreshing,
-            onItemClick = { openShowDetails(it.id, null, null) },
+            onItemClick = { openShowDetails(it.id) },
             onMoreClick = openPopularShows,
             modifier = Modifier.animateItemPlacement(),
           )
