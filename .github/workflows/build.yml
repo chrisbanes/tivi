@@ -36,7 +36,7 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v3
         with:
           cache-disabled: true
 
@@ -103,7 +103,7 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v3
         with:
           cache-disabled: true
 
@@ -162,7 +162,7 @@ jobs:
         with:
           bundler-cache: true
 
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v3
         with:
           cache-disabled: true
 
@@ -231,7 +231,7 @@ jobs:
         with:
           bundler-cache: true
 
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v3
         with:
           cache-disabled: true
 
@@ -292,7 +292,7 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v3
         with:
           cache-disabled: true
 
