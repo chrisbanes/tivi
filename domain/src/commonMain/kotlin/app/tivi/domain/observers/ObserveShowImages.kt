@@ -24,7 +24,7 @@ class ObserveShowImages(
     return store.stream(StoreReadRequest.cached(params.showId, refresh = false))
       .filterForResult()
       .map { it.requireData() }
-      .flowOn(dispatchers.computation)
+      .flowOn(dispatchers.io)
   }
 
   data class Params(val showId: Long)

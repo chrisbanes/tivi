@@ -42,10 +42,10 @@ class LicensesPresenter(
   @Composable
   override fun present(): LicensesUiState {
     val licenseItemList by produceState(emptyList()) {
-      val list = fetchLicensesList(Unit).getOrDefault(emptyList())
-
-      value = withContext(dispatchers.computation) {
-        list.groupBy { it.groupId }
+      value = withContext(dispatchers.io) {
+        fetchLicensesList(Unit)
+          .getOrDefault(emptyList())
+          .groupBy { it.groupId }
           .map { (groupId, artifacts) ->
             LicenseGroup(
               id = groupId,
