@@ -20,6 +20,8 @@ fun Project.configureAndroid() {
       targetSdk = Versions.TARGET_SDK
 
       testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+      manifestPlaceholders += mapOf("appAuthRedirectScheme" to "empty")
     }
 
     compileOptions {

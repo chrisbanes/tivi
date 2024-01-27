@@ -42,8 +42,4 @@ kotlin {
 
 android {
   namespace = "app.tivi.data.traktauth"
-
-  defaultConfig {
-    manifestPlaceholders += mapOf("appAuthRedirectScheme" to "empty")
-  }
 }
