@@ -1,5 +1,5 @@
 [versions]
-agp = "8.2.1"
+agp = "8.2.2"
 androidxlifecycle = "2.6.2"
 androidxactivity = "1.8.2"
 baselineprofile = "1.2.2"
