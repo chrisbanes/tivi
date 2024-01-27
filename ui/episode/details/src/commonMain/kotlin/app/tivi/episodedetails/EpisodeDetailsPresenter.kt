@@ -51,12 +51,12 @@ class EpisodeDetailsUiPresenterFactory(
 class EpisodeDetailsPresenter(
   @Assisted private val screen: EpisodeDetailsScreen,
   @Assisted private val navigator: Navigator,
-  private val updateEpisodeDetails: UpdateEpisodeDetails,
-  private val observeShowDetailsForEpisodeId: ObserveShowDetailsForEpisodeId,
-  private val observeEpisodeDetails: ObserveEpisodeDetails,
-  private val observeEpisodeWatches: ObserveEpisodeWatches,
-  private val removeEpisodeWatches: RemoveEpisodeWatches,
-  private val removeEpisodeWatch: RemoveEpisodeWatch,
+  private val updateEpisodeDetails: Lazy<UpdateEpisodeDetails>,
+  private val observeShowDetailsForEpisodeId: Lazy<ObserveShowDetailsForEpisodeId>,
+  private val observeEpisodeDetails: Lazy<ObserveEpisodeDetails>,
+  private val observeEpisodeWatches: Lazy<ObserveEpisodeWatches>,
+  private val removeEpisodeWatches: Lazy<RemoveEpisodeWatches>,
+  private val removeEpisodeWatch: Lazy<RemoveEpisodeWatch>,
   private val logger: Logger,
 ) : Presenter<EpisodeDetailsUiState> {
   @Composable
@@ -64,19 +64,19 @@ class EpisodeDetailsPresenter(
     val scope = rememberCoroutineScope()
     val uiMessageManager = remember { UiMessageManager() }
 
-    val refreshing by updateEpisodeDetails.inProgress.collectAsState(false)
+    val refreshing by updateEpisodeDetails.value.inProgress.collectAsState(false)
     val message by uiMessageManager.message.collectAsState(null)
 
-    val showDetails by observeShowDetailsForEpisodeId.flow.collectAsRetainedState(null)
+    val showDetails by observeShowDetailsForEpisodeId.value.flow.collectAsRetainedState(null)
 
-    val episodeDetails by observeEpisodeDetails.flow.collectAsRetainedState(null)
-    val episodeWatches by observeEpisodeWatches.flow.collectAsRetainedState(emptyList())
+    val episodeDetails by observeEpisodeDetails.value.flow.collectAsRetainedState(null)
+    val episodeWatches by observeEpisodeWatches.value.flow.collectAsRetainedState(emptyList())
 
     fun eventSink(event: EpisodeDetailsUiEvent) {
       when (event) {
         is EpisodeDetailsUiEvent.Refresh -> {
           scope.launch {
-            updateEpisodeDetails(
+            updateEpisodeDetails.value.invoke(
               UpdateEpisodeDetails.Params(screen.id, event.fromUser),
             ).onException { e ->
               logger.i(e)
@@ -93,7 +93,7 @@ class EpisodeDetailsPresenter(
 
         EpisodeDetailsUiEvent.RemoveAllWatches -> {
           scope.launch {
-            removeEpisodeWatches(
+            removeEpisodeWatches.value.invoke(
               RemoveEpisodeWatches.Params(screen.id),
             ).onException { e ->
               logger.i(e)
@@ -104,7 +104,7 @@ class EpisodeDetailsPresenter(
 
         is EpisodeDetailsUiEvent.RemoveWatchEntry -> {
           scope.launch {
-            removeEpisodeWatch(
+            removeEpisodeWatch.value.invoke(
               RemoveEpisodeWatch.Params(event.id),
             ).onException { e ->
               logger.i(e)
@@ -139,9 +139,9 @@ class EpisodeDetailsPresenter(
     }
 
     LaunchedEffect(Unit) {
-      observeEpisodeDetails(ObserveEpisodeDetails.Params(screen.id))
-      observeEpisodeWatches(ObserveEpisodeWatches.Params(screen.id))
-      observeShowDetailsForEpisodeId(ObserveShowDetailsForEpisodeId.Params(screen.id))
+      observeEpisodeDetails.value.invoke(ObserveEpisodeDetails.Params(screen.id))
+      observeEpisodeWatches.value.invoke(ObserveEpisodeWatches.Params(screen.id))
+      observeShowDetailsForEpisodeId.value.invoke(ObserveShowDetailsForEpisodeId.Params(screen.id))
 
       eventSink(EpisodeDetailsUiEvent.Refresh(fromUser = false))
     }

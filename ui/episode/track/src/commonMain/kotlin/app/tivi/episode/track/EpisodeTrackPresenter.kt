@@ -52,9 +52,9 @@ class EpisodeTrackUiPresenterFactory(
 class EpisodeTrackPresenter(
   @Assisted private val screen: EpisodeTrackScreen,
   @Assisted private val navigator: Navigator,
-  private val updateEpisodeDetails: UpdateEpisodeDetails,
-  private val observeEpisodeDetails: ObserveEpisodeDetails,
-  private val addEpisodeWatch: AddEpisodeWatch,
+  private val updateEpisodeDetails: Lazy<UpdateEpisodeDetails>,
+  private val observeEpisodeDetails: Lazy<ObserveEpisodeDetails>,
+  private val addEpisodeWatch: Lazy<AddEpisodeWatch>,
   private val logger: Logger,
 ) : Presenter<EpisodeTrackUiState> {
   @Composable
@@ -66,10 +66,10 @@ class EpisodeTrackPresenter(
     var selectedDate by remember { mutableStateOf(now.date) }
     var selectedTime by remember { mutableStateOf(now.time) }
 
-    val episodeDetails by observeEpisodeDetails.flow.collectAsRetainedState(initial = null)
+    val episodeDetails by observeEpisodeDetails.value.flow.collectAsRetainedState(initial = null)
 
-    val refreshing by updateEpisodeDetails.inProgress.collectAsState(initial = false)
-    val submitting by addEpisodeWatch.inProgress.collectAsState(initial = false)
+    val refreshing by updateEpisodeDetails.value.inProgress.collectAsState(initial = false)
+    val submitting by addEpisodeWatch.value.inProgress.collectAsState(initial = false)
     val message by uiMessageManager.message.collectAsState(initial = null)
 
     val selectedDateTime by remember {
@@ -88,7 +88,7 @@ class EpisodeTrackPresenter(
 
         is EpisodeTrackUiEvent.Refresh -> {
           scope.launch {
-            updateEpisodeDetails(
+            updateEpisodeDetails.value.invoke(
               UpdateEpisodeDetails.Params(screen.id, event.fromUser),
             ).onException { e ->
               logger.i(e)
@@ -124,7 +124,7 @@ class EpisodeTrackPresenter(
 
         EpisodeTrackUiEvent.Submit -> {
           scope.launch {
-            addEpisodeWatch(
+            addEpisodeWatch.value.invoke(
               AddEpisodeWatch.Params(
                 episodeId = screen.id,
                 timestamp = selectedDateTime.toInstant(TimeZone.currentSystemDefault()),
@@ -144,7 +144,7 @@ class EpisodeTrackPresenter(
     }
 
     LaunchedEffect(Unit) {
-      observeEpisodeDetails(ObserveEpisodeDetails.Params(screen.id))
+      observeEpisodeDetails.value.invoke(ObserveEpisodeDetails.Params(screen.id))
       eventSink(EpisodeTrackUiEvent.Refresh(false))
     }
 

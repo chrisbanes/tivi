@@ -35,17 +35,17 @@ class TrendingShowsUiPresenterFactory(
 @Inject
 class TrendingShowsPresenter(
   @Assisted private val navigator: Navigator,
-  private val pagingInteractor: ObservePagedTrendingShows,
+  private val pagingInteractor: Lazy<ObservePagedTrendingShows>,
 ) : Presenter<TrendingShowsUiState> {
 
   @Composable
   override fun present(): TrendingShowsUiState {
-    val items = pagingInteractor.flow
+    val items = pagingInteractor.value.flow
       .rememberCachedPagingFlow()
       .collectAsLazyPagingItems()
 
     LaunchedEffect(Unit) {
-      pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
+      pagingInteractor.value.invoke(ObservePagedTrendingShows.Params(PAGING_CONFIG))
     }
 
     fun eventSink(event: TrendingShowsUiEvent) {

@@ -57,15 +57,15 @@ class DiscoverUiPresenterFactory(
 @Inject
 class DiscoverPresenter(
   @Assisted private val navigator: Navigator,
-  private val updatePopularShows: UpdatePopularShows,
-  private val observePopularShows: ObservePopularShows,
-  private val updateTrendingShows: UpdateTrendingShows,
-  private val observeTrendingShows: ObserveTrendingShows,
-  private val updateRecommendedShows: UpdateRecommendedShows,
-  private val observeRecommendedShows: ObserveRecommendedShows,
-  private val observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
-  private val observeTraktAuthState: ObserveTraktAuthState,
-  private val observeUserDetails: ObserveUserDetails,
+  private val updatePopularShows: Lazy<UpdatePopularShows>,
+  private val observePopularShows: Lazy<ObservePopularShows>,
+  private val updateTrendingShows: Lazy<UpdateTrendingShows>,
+  private val observeTrendingShows: Lazy<ObserveTrendingShows>,
+  private val updateRecommendedShows: Lazy<UpdateRecommendedShows>,
+  private val observeRecommendedShows: Lazy<ObserveRecommendedShows>,
+  private val observeNextShowEpisodeToWatch: Lazy<ObserveNextShowEpisodeToWatch>,
+  private val observeTraktAuthState: Lazy<ObserveTraktAuthState>,
+  private val observeUserDetails: Lazy<ObserveUserDetails>,
   private val logger: Logger,
 ) : Presenter<DiscoverUiState> {
 
@@ -74,18 +74,18 @@ class DiscoverPresenter(
     val scope = rememberCoroutineScope()
     val uiMessageManager = remember { UiMessageManager() }
 
-    val trendingItems by observeTrendingShows.flow.collectAsRetainedState(emptyList())
-    val trendingLoading by updateTrendingShows.inProgress.collectAsState(false)
+    val trendingItems by observeTrendingShows.value.flow.collectAsRetainedState(emptyList())
+    val trendingLoading by updateTrendingShows.value.inProgress.collectAsState(false)
 
-    val popularItems by observePopularShows.flow.collectAsRetainedState(emptyList())
-    val popularLoading by updatePopularShows.inProgress.collectAsState(false)
+    val popularItems by observePopularShows.value.flow.collectAsRetainedState(emptyList())
+    val popularLoading by updatePopularShows.value.inProgress.collectAsState(false)
 
-    val recommendedItems by observeRecommendedShows.flow.collectAsRetainedState(emptyList())
-    val recommendedLoading by updateRecommendedShows.inProgress.collectAsState(false)
+    val recommendedItems by observeRecommendedShows.value.flow.collectAsRetainedState(emptyList())
+    val recommendedLoading by updateRecommendedShows.value.inProgress.collectAsState(false)
 
-    val nextShow by observeNextShowEpisodeToWatch.flow.collectAsRetainedState(null)
-    val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
-    val user by observeUserDetails.flow.collectAsRetainedState(null)
+    val nextShow by observeNextShowEpisodeToWatch.value.flow.collectAsRetainedState(null)
+    val authState by observeTraktAuthState.value.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
+    val user by observeUserDetails.value.flow.collectAsRetainedState(null)
 
     val message by uiMessageManager.message.collectAsState(null)
 
@@ -99,7 +99,7 @@ class DiscoverPresenter(
 
         is DiscoverUiEvent.Refresh -> {
           scope.launch {
-            updatePopularShows(
+            updatePopularShows.value.invoke(
               UpdatePopularShows.Params(
                 page = UpdatePopularShows.Page.REFRESH,
                 forceRefresh = event.fromUser,
@@ -110,7 +110,7 @@ class DiscoverPresenter(
             }
           }
           scope.launch {
-            updateTrendingShows(
+            updateTrendingShows.value.invoke(
               UpdateTrendingShows.Params(
                 page = UpdateTrendingShows.Page.REFRESH,
                 forceRefresh = event.fromUser,
@@ -122,7 +122,7 @@ class DiscoverPresenter(
           }
           if (authState == TraktAuthState.LOGGED_IN) {
             scope.launch {
-              updateRecommendedShows(
+              updateRecommendedShows.value.invoke(
                 UpdateRecommendedShows.Params(forceRefresh = event.fromUser),
               ).also { result ->
                 result.onException { e ->
@@ -143,12 +143,12 @@ class DiscoverPresenter(
     }
 
     LaunchedEffect(Unit) {
-      observeTrendingShows(ObserveTrendingShows.Params(10))
-      observePopularShows(ObservePopularShows.Params(10))
-      observeRecommendedShows(ObserveRecommendedShows.Params(10))
-      observeNextShowEpisodeToWatch(Unit)
-      observeTraktAuthState(Unit)
-      observeUserDetails(ObserveUserDetails.Params("me"))
+      observeTrendingShows.value.invoke(ObserveTrendingShows.Params(10))
+      observePopularShows.value.invoke(ObservePopularShows.Params(10))
+      observeRecommendedShows.value.invoke(ObserveRecommendedShows.Params(10))
+      observeNextShowEpisodeToWatch.value.invoke(Unit)
+      observeTraktAuthState.value.invoke(Unit)
+      observeUserDetails.value.invoke(ObserveUserDetails.Params("me"))
     }
 
     LaunchedEffect(authState) {

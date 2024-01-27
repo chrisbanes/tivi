@@ -47,7 +47,7 @@ class SearchUiPresenterFactory(
 @Inject
 class SearchPresenter(
   @Assisted private val navigator: Navigator,
-  private val searchShows: SearchShows,
+  private val searchShows: Lazy<SearchShows>,
   private val logger: Logger,
 ) : Presenter<SearchUiState> {
 
@@ -60,14 +60,14 @@ class SearchPresenter(
 
     val uiMessageManager = remember { UiMessageManager() }
 
-    val loading by searchShows.inProgress.collectAsState(false)
+    val loading by searchShows.value.inProgress.collectAsState(false)
     val message by uiMessageManager.message.collectAsState(null)
 
     LaunchedEffect(query) {
       // delay for 300 milliseconds. This has the same effect as debounce
       delay(300.milliseconds)
 
-      val result = searchShows(SearchShows.Params(query))
+      val result = searchShows.value.invoke(SearchShows.Params(query))
       results = result.getOrDefault(emptyList())
 
       result.onException { e ->

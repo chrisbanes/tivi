@@ -35,7 +35,7 @@ class LicensesUiPresenterFactory(
 @Inject
 class LicensesPresenter(
   @Assisted private val navigator: Navigator,
-  private val fetchLicensesList: FetchLicensesList,
+  private val fetchLicensesList: Lazy<FetchLicensesList>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Presenter<LicensesUiState> {
 
@@ -43,7 +43,7 @@ class LicensesPresenter(
   override fun present(): LicensesUiState {
     val licenseItemList by produceState(emptyList()) {
       value = withContext(dispatchers.io) {
-        fetchLicensesList(Unit)
+        fetchLicensesList.value.invoke(Unit)
           .getOrDefault(emptyList())
           .groupBy { it.groupId }
           .map { (groupId, artifacts) ->

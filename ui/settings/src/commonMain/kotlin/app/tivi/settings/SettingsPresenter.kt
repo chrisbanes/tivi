@@ -37,9 +37,10 @@ class SettingsUiPresenterFactory(
 @Inject
 class SettingsPresenter(
   @Assisted private val navigator: Navigator,
-  private val preferences: TiviPreferences,
+  preferences: Lazy<TiviPreferences>,
   private val applicationInfo: ApplicationInfo,
 ) : Presenter<SettingsUiState> {
+  private val preferences by preferences
 
   @Composable
   override fun present(): SettingsUiState {

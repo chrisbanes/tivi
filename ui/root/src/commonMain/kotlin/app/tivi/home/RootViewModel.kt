@@ -22,37 +22,37 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class RootViewModel(
   @Assisted private val coroutineScope: CoroutineScope,
-  observeTraktAuthState: ObserveTraktAuthState,
-  private val updateUserDetails: UpdateUserDetails,
-  observeUserDetails: ObserveUserDetails,
-  private val logoutTrakt: LogoutTrakt,
+  observeTraktAuthState: Lazy<ObserveTraktAuthState>,
+  private val updateUserDetails: Lazy<UpdateUserDetails>,
+  observeUserDetails: Lazy<ObserveUserDetails>,
+  private val logoutTrakt: Lazy<LogoutTrakt>,
   private val logger: Logger,
 ) {
 
   init {
     coroutineScope.launch {
-      observeUserDetails.flow.collect { user ->
+      observeUserDetails.value.flow.collect { user ->
         logger.setUserId(user?.username ?: "")
       }
     }
-    observeUserDetails(ObserveUserDetails.Params("me"))
+    observeUserDetails.value.invoke(ObserveUserDetails.Params("me"))
 
     coroutineScope.launch {
-      observeTraktAuthState.flow.collect { state ->
+      observeTraktAuthState.value.flow.collect { state ->
         if (state == TraktAuthState.LOGGED_IN) refreshMe()
       }
     }
-    observeTraktAuthState(Unit)
+    observeTraktAuthState.value.invoke(Unit)
   }
 
   private fun refreshMe() {
     coroutineScope.launch {
       try {
-        updateUserDetails(UpdateUserDetails.Params("me", false))
+        updateUserDetails.value.invoke(UpdateUserDetails.Params("me", false))
       } catch (e: ResponseException) {
         if (e.response.status == HttpStatusCode.Unauthorized) {
           // If we got a 401 back from Trakt, we should clear out the auth state
-          logoutTrakt()
+          logoutTrakt.value.invoke()
         }
       } catch (ce: CancellationException) {
         throw ce
