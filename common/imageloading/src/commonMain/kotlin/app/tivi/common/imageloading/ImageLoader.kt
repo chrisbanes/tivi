@@ -31,7 +31,7 @@ internal fun newImageLoader(
     }
     .diskCache {
       DiskCache.Builder()
-        .directory(applicationInfo.cachePath.toPath().resolve("coil_cache"))
+        .directory(applicationInfo.cachePath().toPath().resolve("coil_cache"))
         .build()
     }
     .apply {

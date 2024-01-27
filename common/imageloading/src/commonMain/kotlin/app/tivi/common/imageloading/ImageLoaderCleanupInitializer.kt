@@ -17,18 +17,19 @@ class ImageLoaderCleanupInitializer(
   private val scope: ApplicationCoroutineScope,
   private val dispatchers: AppCoroutineDispatchers,
   private val applicationInfo: ApplicationInfo,
-  private val fileSystem: FileSystem,
+  private val fileSystem: Lazy<FileSystem>,
 ) : AppInitializer {
 
   override fun initialize() {
     scope.launch(dispatchers.io) {
       // We delete ImageLoader's disk cache folder to claim back space for the user
-      val cachePath = applicationInfo.cachePath.toPath()
+      val cachePath = applicationInfo.cachePath().toPath()
+      val fs = fileSystem.value
 
       for (folder in FOLDERS) {
         val path = cachePath.resolve(folder)
-        if (fileSystem.exists(path)) {
-          fileSystem.deleteRecursively(path)
+        if (fs.exists(path)) {
+          fs.deleteRecursively(path)
         }
       }
     }

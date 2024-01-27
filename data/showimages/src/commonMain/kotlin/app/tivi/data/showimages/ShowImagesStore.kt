@@ -15,6 +15,7 @@ import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -59,10 +60,11 @@ class ShowImagesStore(
   ),
 ).validator(
   Validator.by { result ->
-    if (result.images.isNotEmpty()) {
-      lastRequestStore.isRequestValid(result.showId, 180.days)
-    } else {
-      lastRequestStore.isRequestValid(result.showId, 1.hours)
+    withContext(dispatchers.io) {
+      lastRequestStore.isRequestValid(
+        entityId = result.showId,
+        threshold = if (result.images.isNotEmpty()) 180.days else 1.hours,
+      )
     }
   },
 ).build()

@@ -7,16 +7,19 @@ import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.imagemodels.SeasonImageModel
 import app.tivi.data.util.inPast
 import app.tivi.tmdb.TmdbImageUrlProvider
+import app.tivi.util.AppCoroutineDispatchers
 import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import coil3.size.pxOrElse
 import kotlin.time.Duration.Companion.days
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SeasonImageModelInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
   private val repository: SeasonsEpisodesRepository,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interceptor {
   override suspend fun intercept(
     chain: Interceptor.Chain,
@@ -29,11 +32,12 @@ class SeasonImageModelInterceptor(
     chain: Interceptor.Chain,
     model: SeasonImageModel,
   ): Interceptor.Chain {
-    if (repository.needSeasonUpdate(model.id, expiry = 180.days.inPast)) {
-      runCatching { repository.updateSeason(model.id) }
+    val season = withContext(dispatchers.io) {
+      if (repository.needSeasonUpdate(model.id, expiry = 180.days.inPast)) {
+        runCatching { repository.updateSeason(model.id) }
+      }
+      repository.getSeason(model.id)
     }
-
-    val season = repository.getSeason(model.id)
     return season?.tmdbPosterPath?.let { posterPath ->
       val url = tmdbImageUrlProvider.value.getPosterUrl(
         path = posterPath,

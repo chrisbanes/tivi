@@ -77,10 +77,11 @@ class RelatedShowsStore(
   ),
 ).validator(
   Validator.by { result ->
-    if (result.related.isNotEmpty()) {
-      lastRequestStore.isRequestValid(result.showId, 28.days)
-    } else {
-      lastRequestStore.isRequestValid(result.showId, 1.hours)
+    withContext(dispatchers.io) {
+      lastRequestStore.isRequestValid(
+        entityId = result.showId,
+        threshold = if (result.related.isNotEmpty()) 28.days else 1.hours,
+      )
     }
   },
 ).build()

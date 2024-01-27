@@ -33,7 +33,7 @@ actual interface SharedPlatformApplicationComponent {
     versionCode = (NSBundle.mainBundle.infoDictionary?.get("CFBundleVersion") as? String)
       ?.toIntOrNull()
       ?: 0,
-    cachePath = NSFileManager.defaultManager.cacheDir,
+    cachePath = { NSFileManager.defaultManager.cacheDir },
   )
 }
 

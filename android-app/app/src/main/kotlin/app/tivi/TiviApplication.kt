@@ -25,14 +25,13 @@ class TiviApplication : Application(), Configuration.Provider {
       ThreadPolicy.Builder()
         .detectAll()
         .penaltyLog()
-        .build()
+        .build(),
     )
     StrictMode.setVmPolicy(
       VmPolicy.Builder()
         .detectAll()
         .penaltyLog()
-        .penaltyDeath()
-        .build()
+        .build(),
     )
 
     super.onCreate()

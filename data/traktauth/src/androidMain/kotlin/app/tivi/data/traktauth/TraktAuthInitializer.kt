@@ -8,9 +8,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktAuthInitializer(
-  private val traktLoginAction: AndroidTraktLoginAction,
+  private val traktLoginAction: Lazy<AndroidTraktLoginAction>,
 ) : AppInitializer {
   override fun initialize() {
-    traktLoginAction.registerActivityWatcher()
+    traktLoginAction.value.registerActivityWatcher()
   }
 }

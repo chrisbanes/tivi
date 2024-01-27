@@ -8,11 +8,13 @@ import app.tivi.data.models.ImageType
 import app.tivi.data.models.TmdbImageEntity
 import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.tmdb.TmdbImageUrlProvider
+import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.PowerController
 import app.tivi.util.SaveData
 import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import coil3.size.pxOrElse
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.get
 
@@ -21,6 +23,7 @@ class ShowImageModelInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
   private val showImagesStore: ShowImagesStore,
   private val powerController: PowerController,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interceptor {
   override suspend fun intercept(
     chain: Interceptor.Chain,
@@ -33,9 +36,11 @@ class ShowImageModelInterceptor(
     chain: Interceptor.Chain,
     model: ShowImageModel,
   ): Interceptor.Chain {
-    val entity = runCatching {
-      findHighestRatedForType(showImagesStore.get(model.id).images, model.imageType)
-    }.getOrNull() ?: return chain
+    val entity = withContext(dispatchers.io) {
+      runCatching {
+        findHighestRatedForType(showImagesStore.get(model.id).images, model.imageType)
+      }.getOrNull()
+    } ?: return chain
 
     val requestWidth = chain.request.sizeResolver.size().width.pxOrElse { 0 }
 
