@@ -15,16 +15,16 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateShowDetails(
-  private val showStore: ShowStore,
-  private val lastRequestStore: ShowLastRequestStore,
+  private val showStore: Lazy<ShowStore>,
+  private val lastRequestStore: Lazy<ShowLastRequestStore>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params, Unit>() {
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
-      showStore.fetch(
+      showStore.value.fetch(
         key = params.showId,
         forceFresh = params.forceLoad ||
-          lastRequestStore.isRequestExpired(params.showId, 28.days),
+          lastRequestStore.value.isRequestExpired(params.showId, 28.days),
       )
     }
   }

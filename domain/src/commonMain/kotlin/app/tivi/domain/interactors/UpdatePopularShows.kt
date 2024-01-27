@@ -16,9 +16,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdatePopularShows(
-  private val popularShowStore: PopularShowsStore,
-  private val popularDao: PopularDao,
-  private val showStore: ShowStore,
+  private val popularShowStore: Lazy<PopularShowsStore>,
+  private val popularDao: Lazy<PopularDao>,
+  private val showStore: Lazy<ShowStore>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params, Unit>() {
   override suspend fun doWork(params: Params) {
@@ -26,14 +26,14 @@ class UpdatePopularShows(
       val page = when {
         params.page >= 0 -> params.page
         params.page == UpdateTrendingShows.Page.NEXT_PAGE -> {
-          val lastPage = popularDao.getLastPage()
+          val lastPage = popularDao.value.getLastPage()
           if (lastPage != null) lastPage + 1 else 0
         }
         else -> 0
       }
 
-      popularShowStore.fetch(page, forceFresh = params.forceRefresh).parallelForEach {
-        showStore.fetch(it.showId)
+      popularShowStore.value.fetch(page, forceFresh = params.forceRefresh).parallelForEach {
+        showStore.value.fetch(it.showId)
       }
     }
   }

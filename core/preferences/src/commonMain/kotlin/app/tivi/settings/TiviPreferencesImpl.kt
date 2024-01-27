@@ -18,10 +18,11 @@ import me.tatarka.inject.annotations.Inject
 @OptIn(ExperimentalSettingsApi::class)
 @Inject
 class TiviPreferencesImpl(
-  private val settings: ObservableSettings,
+  settings: Lazy<ObservableSettings>,
   dispatchers: AppCoroutineDispatchers,
 ) : TiviPreferences {
-  private val flowSettings by lazy { settings.toFlowSettings(dispatchers.io) }
+  private val settings: ObservableSettings by settings
+  private val flowSettings by lazy { settings.value.toFlowSettings(dispatchers.io) }
 
   override var theme: Theme
     get() = getThemeForStorageValue(settings.getString(KEY_THEME, THEME_SYSTEM_VALUE))

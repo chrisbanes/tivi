@@ -9,11 +9,11 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LogoutTrakt(
-  private val traktAuthRepository: TraktAuthRepository,
-  private val clearUserDetails: ClearUserDetails,
+  private val traktAuthRepository: Lazy<TraktAuthRepository>,
+  private val clearUserDetails: Lazy<ClearUserDetails>,
 ) : Interactor<Unit, Unit>() {
   override suspend fun doWork(params: Unit) {
-    traktAuthRepository.logout()
-    clearUserDetails(ClearUserDetails.Params("me"))
+    traktAuthRepository.value.logout()
+    clearUserDetails.value.invoke(ClearUserDetails.Params("me"))
   }
 }

@@ -13,9 +13,11 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateShowSeasons(
-  private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+  seasonsEpisodesRepository: Lazy<SeasonsEpisodesRepository>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Params, Unit>() {
+  private val seasonsEpisodesRepository by seasonsEpisodesRepository
+
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
       // Then update the seasons/episodes

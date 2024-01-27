@@ -18,7 +18,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class EpisodeImageModelInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
-  private val repository: SeasonsEpisodesRepository,
+  private val repository: Lazy<SeasonsEpisodesRepository>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interceptor {
   override suspend fun intercept(
@@ -33,10 +33,10 @@ class EpisodeImageModelInterceptor(
     model: EpisodeImageModel,
   ): Interceptor.Chain {
     val episode = withContext(dispatchers.io) {
-      if (repository.needEpisodeUpdate(model.id, expiry = 180.days.inPast)) {
-        runCatching { repository.updateEpisode(model.id) }
+      if (repository.value.needEpisodeUpdate(model.id, expiry = 180.days.inPast)) {
+        runCatching { repository.value.updateEpisode(model.id) }
       }
-      repository.getEpisode(model.id)
+      repository.value.getEpisode(model.id)
     }
 
     return episode?.tmdbBackdropPath?.let { backdropPath ->

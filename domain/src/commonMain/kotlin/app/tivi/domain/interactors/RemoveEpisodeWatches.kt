@@ -11,12 +11,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class RemoveEpisodeWatches(
-  private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+  private val seasonsEpisodesRepository: Lazy<SeasonsEpisodesRepository>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<RemoveEpisodeWatches.Params, Unit>() {
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
-      seasonsEpisodesRepository.removeAllEpisodeWatches(params.episodeId)
+      seasonsEpisodesRepository.value.removeAllEpisodeWatches(params.episodeId)
     }
   }
 

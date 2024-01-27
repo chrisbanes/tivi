@@ -17,15 +17,15 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateRelatedShows(
-  private val relatedShowsStore: RelatedShowsStore,
-  private val showsStore: ShowStore,
+  private val relatedShowsStore: Lazy<RelatedShowsStore>,
+  private val showsStore: Lazy<ShowStore>,
   private val dispatchers: AppCoroutineDispatchers,
   private val logger: Logger,
 ) : Interactor<Params, Unit>() {
   override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
-    relatedShowsStore.fetch(params.showId, params.forceLoad).related.parallelForEach {
+    relatedShowsStore.value.fetch(params.showId, params.forceLoad).related.parallelForEach {
       try {
-        showsStore.fetch(it.otherShowId)
+        showsStore.value.fetch(it.otherShowId)
       } catch (ce: CancellationException) {
         throw ce
       } catch (t: Throwable) {

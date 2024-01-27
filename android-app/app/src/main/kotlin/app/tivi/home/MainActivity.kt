@@ -30,6 +30,7 @@ import app.tivi.settings.TiviPreferences
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : TiviActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,9 +44,10 @@ class MainActivity : TiviActivity() {
 
     lifecycle.coroutineScope.launch {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
-        applicationComponent.preferences.observeTheme().collect { theme ->
-          enableEdgeToEdgeForTheme(theme)
+        val prefs = withContext(applicationComponent.dispatchers.io) {
+          applicationComponent.preferences.observeTheme()
         }
+        prefs.collect(::enableEdgeToEdgeForTheme)
       }
     }
 

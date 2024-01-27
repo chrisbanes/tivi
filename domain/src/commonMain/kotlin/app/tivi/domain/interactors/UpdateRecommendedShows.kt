@@ -19,20 +19,20 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateRecommendedShows(
-  private val recommendedShowsStore: RecommendedShowsStore,
-  private val showStore: ShowStore,
+  private val recommendedShowsStore: Lazy<RecommendedShowsStore>,
+  private val showStore: Lazy<ShowStore>,
+  private val traktAuthRepository: Lazy<TraktAuthRepository>,
   private val dispatchers: AppCoroutineDispatchers,
-  private val traktAuthRepository: TraktAuthRepository,
   private val logger: Logger,
 ) : Interactor<Params, Unit>() {
   override suspend fun doWork(params: Params) {
     // If we're not logged in, we can't load the recommended shows
-    if (traktAuthRepository.state.value != TraktAuthState.LOGGED_IN) return
+    if (traktAuthRepository.value.state.value != TraktAuthState.LOGGED_IN) return
 
     withContext(dispatchers.io) {
-      recommendedShowsStore.fetch(0, forceFresh = params.forceRefresh).parallelForEach {
+      recommendedShowsStore.value.fetch(0, forceFresh = params.forceRefresh).parallelForEach {
         try {
-          showStore.fetch(it.showId)
+          showStore.value.fetch(it.showId)
         } catch (ce: CancellationException) {
           throw ce
         } catch (t: Throwable) {

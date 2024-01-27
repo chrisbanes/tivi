@@ -18,7 +18,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class SeasonImageModelInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
-  private val repository: SeasonsEpisodesRepository,
+  private val repository: Lazy<SeasonsEpisodesRepository>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interceptor {
   override suspend fun intercept(
@@ -33,10 +33,10 @@ class SeasonImageModelInterceptor(
     model: SeasonImageModel,
   ): Interceptor.Chain {
     val season = withContext(dispatchers.io) {
-      if (repository.needSeasonUpdate(model.id, expiry = 180.days.inPast)) {
-        runCatching { repository.updateSeason(model.id) }
+      if (repository.value.needSeasonUpdate(model.id, expiry = 180.days.inPast)) {
+        runCatching { repository.value.updateSeason(model.id) }
       }
-      repository.getSeason(model.id)
+      repository.value.getSeason(model.id)
     }
     return season?.tmdbPosterPath?.let { posterPath ->
       val url = tmdbImageUrlProvider.value.getPosterUrl(

@@ -21,8 +21,8 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 @Inject
 class ShowImageModelInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
-  private val showImagesStore: ShowImagesStore,
-  private val powerController: PowerController,
+  private val showImagesStore: Lazy<ShowImagesStore>,
+  private val powerController: Lazy<PowerController>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interceptor {
   override suspend fun intercept(
@@ -38,13 +38,13 @@ class ShowImageModelInterceptor(
   ): Interceptor.Chain {
     val entity = withContext(dispatchers.io) {
       runCatching {
-        findHighestRatedForType(showImagesStore.get(model.id).images, model.imageType)
+        findHighestRatedForType(showImagesStore.value.get(model.id).images, model.imageType)
       }.getOrNull()
     } ?: return chain
 
     val requestWidth = chain.request.sizeResolver.size().width.pxOrElse { 0 }
 
-    val width = when (powerController.shouldSaveData()) {
+    val width = when (powerController.value.shouldSaveData()) {
       is SaveData.Disabled -> requestWidth
       // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
       is SaveData.Enabled -> requestWidth / 2
