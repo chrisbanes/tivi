@@ -10,8 +10,9 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class FetchLicensesList(
-  private val licensesStore: LicensesStore,
+  licensesStore: Lazy<LicensesStore>,
 ) : Interactor<Unit, List<LicenseItem>>() {
+  private val licensesStore by licensesStore
 
   override suspend fun doWork(params: Unit): List<LicenseItem> {
     return licensesStore.getLicenses()

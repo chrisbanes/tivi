@@ -67,10 +67,10 @@ class TrendingShowsStore(
   ),
 ).validator(
   Validator.by { result ->
-    if (result.isNotEmpty()) {
-      lastRequestStore.isRequestValid(3.hours)
-    } else {
-      lastRequestStore.isRequestValid(30.minutes)
+    withContext(dispatchers.io) {
+      lastRequestStore.isRequestValid(
+        threshold = if (result.isNotEmpty()) 3.hours else 30.minutes,
+      )
     }
   },
 ).build()

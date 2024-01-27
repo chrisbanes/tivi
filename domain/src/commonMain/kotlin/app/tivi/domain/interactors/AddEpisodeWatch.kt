@@ -12,12 +12,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AddEpisodeWatch(
-  private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+  private val seasonsEpisodesRepository: Lazy<SeasonsEpisodesRepository>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<AddEpisodeWatch.Params, Unit>() {
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
-      seasonsEpisodesRepository.addEpisodeWatch(params.episodeId, params.timestamp)
+      seasonsEpisodesRepository.value.addEpisodeWatch(params.episodeId, params.timestamp)
     }
   }
 

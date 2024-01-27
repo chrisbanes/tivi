@@ -6,6 +6,7 @@ package app.tivi.inject
 import android.app.Application
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.tasks.TiviWorkerFactory
+import app.tivi.util.AppCoroutineDispatchers
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import okhttp3.Interceptor
@@ -18,6 +19,7 @@ abstract class AndroidApplicationComponent(
 
   abstract val initializers: AppInitializers
   abstract val workerFactory: TiviWorkerFactory
+  abstract val dispatchers: AppCoroutineDispatchers
 
   /**
    * We have no interceptors in the standard release currently

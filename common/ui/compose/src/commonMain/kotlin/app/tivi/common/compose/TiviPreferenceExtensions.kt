@@ -11,7 +11,9 @@ import app.tivi.settings.TiviPreferences
 
 @Composable
 fun TiviPreferences.shouldUseDarkColors(): Boolean {
-  val themePreference = remember { observeTheme() }.collectAsState(initial = theme)
+  val themePreference = remember { observeTheme() }
+    .collectAsState(initial = TiviPreferences.Theme.SYSTEM)
+
   return when (themePreference.value) {
     TiviPreferences.Theme.LIGHT -> false
     TiviPreferences.Theme.DARK -> true
@@ -22,6 +24,6 @@ fun TiviPreferences.shouldUseDarkColors(): Boolean {
 @Composable
 fun TiviPreferences.shouldUseDynamicColors(): Boolean {
   return remember { observeUseDynamicColors() }
-    .collectAsState(initial = useDynamicColors)
+    .collectAsState(initial = true)
     .value
 }

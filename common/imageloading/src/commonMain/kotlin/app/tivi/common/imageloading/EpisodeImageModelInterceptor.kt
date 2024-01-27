@@ -7,16 +7,19 @@ import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.util.inPast
 import app.tivi.tmdb.TmdbImageUrlProvider
+import app.tivi.util.AppCoroutineDispatchers
 import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import coil3.size.pxOrElse
 import kotlin.time.Duration.Companion.days
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class EpisodeImageModelInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
-  private val repository: SeasonsEpisodesRepository,
+  private val repository: Lazy<SeasonsEpisodesRepository>,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : Interceptor {
   override suspend fun intercept(
     chain: Interceptor.Chain,
@@ -29,11 +32,14 @@ class EpisodeImageModelInterceptor(
     chain: Interceptor.Chain,
     model: EpisodeImageModel,
   ): Interceptor.Chain {
-    if (repository.needEpisodeUpdate(model.id, expiry = 180.days.inPast)) {
-      runCatching { repository.updateEpisode(model.id) }
+    val episode = withContext(dispatchers.io) {
+      if (repository.value.needEpisodeUpdate(model.id, expiry = 180.days.inPast)) {
+        runCatching { repository.value.updateEpisode(model.id) }
+      }
+      repository.value.getEpisode(model.id)
     }
 
-    return repository.getEpisode(model.id)?.tmdbBackdropPath?.let { backdropPath ->
+    return episode?.tmdbBackdropPath?.let { backdropPath ->
       val url = tmdbImageUrlProvider.value.getBackdropUrl(
         path = backdropPath,
         imageWidth = chain.request.sizeResolver.size().width.pxOrElse { 0 },

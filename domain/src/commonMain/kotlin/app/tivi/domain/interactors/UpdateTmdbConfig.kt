@@ -11,12 +11,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class UpdateTmdbConfig(
-  private val tmdbManager: TmdbManager,
+  private val tmdbManager: Lazy<TmdbManager>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Unit, Unit>() {
   override suspend fun doWork(params: Unit) {
     withContext(dispatchers.io) {
-      tmdbManager.refreshConfiguration()
+      tmdbManager.value.refreshConfiguration()
     }
   }
 }

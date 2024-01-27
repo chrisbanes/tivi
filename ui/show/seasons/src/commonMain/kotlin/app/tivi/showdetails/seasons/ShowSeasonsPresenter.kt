@@ -48,9 +48,9 @@ class ShowSeasonsUiPresenterFactory(
 class ShowSeasonsPresenter(
   @Assisted private val screen: ShowSeasonsScreen,
   @Assisted private val navigator: Navigator,
-  private val observeShowDetails: ObserveShowDetails,
-  private val observeShowSeasons: ObserveShowSeasonsEpisodesWatches,
-  private val updateShowSeasons: UpdateShowSeasons,
+  private val observeShowDetails: Lazy<ObserveShowDetails>,
+  private val observeShowSeasons: Lazy<ObserveShowSeasonsEpisodesWatches>,
+  private val updateShowSeasons: Lazy<UpdateShowSeasons>,
   private val logger: Logger,
 ) : Presenter<ShowSeasonsUiState> {
   @Composable
@@ -59,12 +59,12 @@ class ShowSeasonsPresenter(
 
     val uiMessageManager = remember { UiMessageManager() }
 
-    val seasons by observeShowSeasons.flow.collectAsRetainedState(emptyList())
-    val show by observeShowDetails.flow.collectAsRetainedState(TiviShow.EMPTY_SHOW)
+    val seasons by observeShowSeasons.value.flow.collectAsRetainedState(emptyList())
+    val show by observeShowDetails.value.flow.collectAsRetainedState(TiviShow.EMPTY_SHOW)
 
     var openedEpisodeId by rememberRetained { mutableStateOf(screen.openEpisodeId) }
 
-    val refreshing by updateShowSeasons.inProgress.collectAsState(false)
+    val refreshing by updateShowSeasons.value.inProgress.collectAsState(false)
     val message by uiMessageManager.message.collectAsState(null)
 
     fun eventSink(event: ShowSeasonsUiEvent) {
@@ -81,7 +81,7 @@ class ShowSeasonsPresenter(
 
         is ShowSeasonsUiEvent.Refresh -> {
           scope.launch {
-            updateShowSeasons(
+            updateShowSeasons.value.invoke(
               UpdateShowSeasons.Params(screen.id, event.fromUser),
             ).onException { e ->
               logger.i(e)
@@ -95,8 +95,8 @@ class ShowSeasonsPresenter(
     }
 
     LaunchedEffect(Unit) {
-      observeShowDetails(ObserveShowDetails.Params(screen.id))
-      observeShowSeasons(ObserveShowSeasonsEpisodesWatches.Params(screen.id))
+      observeShowDetails.value.invoke(ObserveShowDetails.Params(screen.id))
+      observeShowSeasons.value.invoke(ObserveShowSeasonsEpisodesWatches.Params(screen.id))
 
       eventSink(ShowSeasonsUiEvent.Refresh(false))
     }

@@ -9,98 +9,122 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.getStringFlow
 import com.russhwolf.settings.coroutines.toFlowSettings
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
+import com.russhwolf.settings.get
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(ExperimentalSettingsApi::class)
 @Inject
 class TiviPreferencesImpl(
-  private val settings: ObservableSettings,
-  dispatchers: AppCoroutineDispatchers,
+  settings: Lazy<ObservableSettings>,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : TiviPreferences {
-  private val flowSettings by lazy { settings.toFlowSettings(dispatchers.io) }
+  private val settings: ObservableSettings by settings
+  private val flowSettings by lazy { settings.value.toFlowSettings(dispatchers.io) }
 
-  override var theme: Theme
-    get() = getThemeForStorageValue(settings.getString(KEY_THEME, THEME_SYSTEM_VALUE))
-    set(value) = settings.putString(KEY_THEME, value.storageKey)
+  override suspend fun setTheme(theme: Theme) = withContext(dispatchers.io) {
+    settings.putString(KEY_THEME, theme.storageKey)
+  }
 
   override fun observeTheme(): Flow<Theme> {
     return settings.getStringFlow(KEY_THEME, THEME_SYSTEM_VALUE)
       .map(::getThemeForStorageValue)
   }
 
-  override var useDynamicColors: Boolean by BooleanDelegate(KEY_USE_DYNAMIC_COLORS, true)
+  override suspend fun toggleUseDynamicColors() = withContext(dispatchers.io) {
+    settings.toggleBoolean(KEY_USE_DYNAMIC_COLORS, true)
+  }
 
   override fun observeUseDynamicColors(): Flow<Boolean> {
     return flowSettings.getBooleanFlow(KEY_USE_DYNAMIC_COLORS, true)
   }
 
-  override var useLessData: Boolean by BooleanDelegate(KEY_DATA_SAVER, false)
+  override suspend fun getUseLessData(): Boolean = withContext(dispatchers.io) {
+    settings[KEY_DATA_SAVER, false]
+  }
+
+  override suspend fun toggleUseLessData() = withContext(dispatchers.io) {
+    settings.toggleBoolean(KEY_DATA_SAVER)
+  }
 
   override fun observeUseLessData(): Flow<Boolean> {
     return flowSettings.getBooleanFlow(KEY_DATA_SAVER, false)
   }
 
-  override var libraryFollowedActive: Boolean by BooleanDelegate(KEY_LIBRARY_FOLLOWED_ACTIVE, true)
+  override suspend fun toggleLibraryFollowedActive() {
+    withContext(dispatchers.io) {
+      settings.toggleBoolean(KEY_LIBRARY_FOLLOWED_ACTIVE, true)
+    }
+  }
 
   override fun observeLibraryFollowedActive(): Flow<Boolean> {
     return flowSettings.getBooleanFlow(KEY_LIBRARY_FOLLOWED_ACTIVE, true)
   }
 
-  override var libraryWatchedActive: Boolean by BooleanDelegate(KEY_LIBRARY_WATCHED_ACTIVE, true)
+  override suspend fun toggleLibraryWatchedActive() {
+    withContext(dispatchers.io) {
+      settings.toggleBoolean(KEY_LIBRARY_WATCHED_ACTIVE, true)
+    }
+  }
 
   override fun observeLibraryWatchedActive(): Flow<Boolean> {
     return flowSettings.getBooleanFlow(KEY_LIBRARY_WATCHED_ACTIVE, true)
   }
 
-  override var upNextFollowedOnly: Boolean by BooleanDelegate(KEY_UPNEXT_FOLLOWED_ONLY, false)
+  override suspend fun toggleUpNextFollowedOnly() {
+    withContext(dispatchers.io) {
+      settings.toggleBoolean(KEY_UPNEXT_FOLLOWED_ONLY, false)
+    }
+  }
 
   override fun observeUpNextFollowedOnly(): Flow<Boolean> {
     return flowSettings.getBooleanFlow(KEY_UPNEXT_FOLLOWED_ONLY, false)
   }
 
-  override var ignoreSpecials: Boolean by BooleanDelegate(KEY_IGNORE_SPECIALS, true)
+  override suspend fun toggleIgnoreSpecials() {
+    withContext(dispatchers.io) {
+      settings.toggleBoolean(KEY_IGNORE_SPECIALS, true)
+    }
+  }
 
   override fun observeIgnoreSpecials(): Flow<Boolean> {
     return flowSettings.getBooleanFlow(KEY_IGNORE_SPECIALS, true)
   }
 
-  override var reportAppCrashes: Boolean by BooleanDelegate(KEY_OPT_IN_CRASH_REPORTING, true)
+  override suspend fun toggleReportAppCrashes() {
+    withContext(dispatchers.io) {
+      settings.toggleBoolean(KEY_OPT_IN_CRASH_REPORTING, true)
+    }
+  }
 
   override fun observeReportAppCrashes(): Flow<Boolean> {
     return flowSettings.getBooleanFlow(KEY_OPT_IN_CRASH_REPORTING, true)
   }
 
-  override var reportAnalytics: Boolean by BooleanDelegate(KEY_OPT_IN_ANALYTICS_REPORTING, true)
+  override suspend fun toggleReportAnalytics() {
+    withContext(dispatchers.io) {
+      settings.toggleBoolean(KEY_OPT_IN_ANALYTICS_REPORTING, true)
+    }
+  }
 
   override fun observeReportAnalytics(): Flow<Boolean> {
     return flowSettings.getBooleanFlow(KEY_OPT_IN_ANALYTICS_REPORTING, true)
   }
 
-  override var developerHideArtwork: Boolean by BooleanDelegate(KEY_DEV_HIDE_ARTWORK, false)
+  override suspend fun toggleDeveloperHideArtwork() {
+    withContext(dispatchers.io) {
+      settings.toggleBoolean(KEY_DEV_HIDE_ARTWORK)
+    }
+  }
+
+  override suspend fun getDeveloperHideArtwork(): Boolean = withContext(dispatchers.io) {
+    settings.getBoolean(KEY_DEV_HIDE_ARTWORK, false)
+  }
 
   override fun observeDeveloperHideArtwork(): Flow<Boolean> {
     return flowSettings.getBooleanFlow(KEY_DEV_HIDE_ARTWORK, false)
-  }
-
-  private class BooleanDelegate(
-    private val key: String,
-    private val defaultValue: Boolean,
-  ) : ReadWriteProperty<TiviPreferencesImpl, Boolean> {
-    override fun getValue(thisRef: TiviPreferencesImpl, property: KProperty<*>): Boolean {
-      return thisRef.settings.getBoolean(key, defaultValue)
-    }
-
-    override fun setValue(
-      thisRef: TiviPreferencesImpl,
-      property: KProperty<*>,
-      value: Boolean,
-    ) {
-      thisRef.settings.putBoolean(key, value)
-    }
   }
 }
 
@@ -133,3 +157,7 @@ internal const val KEY_DEV_HIDE_ARTWORK = "pref_dev_hide_artwork"
 internal const val THEME_LIGHT_VALUE = "light"
 internal const val THEME_DARK_VALUE = "dark"
 internal const val THEME_SYSTEM_VALUE = "system"
+
+private fun ObservableSettings.toggleBoolean(key: String, defaultValue: Boolean = false) {
+  putBoolean(key, !getBoolean(key, defaultValue))
+}

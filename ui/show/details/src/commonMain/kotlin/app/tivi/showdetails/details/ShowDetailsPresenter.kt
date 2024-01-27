@@ -60,21 +60,34 @@ class ShowDetailsUiPresenterFactory(
 class ShowDetailsPresenter(
   @Assisted private val screen: ShowDetailsScreen,
   @Assisted private val navigator: Navigator,
-  private val updateShowDetails: UpdateShowDetails,
-  private val observeShowDetails: ObserveShowDetails,
-  private val updateRelatedShows: UpdateRelatedShows,
-  private val observeRelatedShows: ObserveRelatedShows,
-  private val updateShowSeasons: UpdateShowSeasons,
-  private val observeShowSeasons: ObserveShowSeasonsEpisodesWatches,
-  private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
-  private val observeShowFollowStatus: ObserveShowFollowStatus,
-  private val observeNextEpisodeToWatch: ObserveShowNextEpisodeToWatch,
-  private val observeShowViewStats: ObserveShowViewStats,
-  private val changeShowFollowStatus: ChangeShowFollowStatus,
-  private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
+  updateShowDetails: Lazy<UpdateShowDetails>,
+  observeShowDetails: Lazy<ObserveShowDetails>,
+  updateRelatedShows: Lazy<UpdateRelatedShows>,
+  observeRelatedShows: Lazy<ObserveRelatedShows>,
+  updateShowSeasons: Lazy<UpdateShowSeasons>,
+  observeShowSeasons: Lazy<ObserveShowSeasonsEpisodesWatches>,
+  changeSeasonWatchedStatus: Lazy<ChangeSeasonWatchedStatus>,
+  observeShowFollowStatus: Lazy<ObserveShowFollowStatus>,
+  observeNextEpisodeToWatch: Lazy<ObserveShowNextEpisodeToWatch>,
+  observeShowViewStats: Lazy<ObserveShowViewStats>,
+  changeShowFollowStatus: Lazy<ChangeShowFollowStatus>,
+  changeSeasonFollowStatus: Lazy<ChangeSeasonFollowStatus>,
   private val logger: Logger,
 ) : Presenter<ShowDetailsUiState> {
   private val showId: Long get() = screen.id
+
+  private val updateShowDetails by updateShowDetails
+  private val observeShowDetails by observeShowDetails
+  private val updateRelatedShows by updateRelatedShows
+  private val observeRelatedShows by observeRelatedShows
+  private val updateShowSeasons by updateShowSeasons
+  private val observeShowSeasons by observeShowSeasons
+  private val changeSeasonWatchedStatus by changeSeasonWatchedStatus
+  private val observeShowFollowStatus by observeShowFollowStatus
+  private val observeNextEpisodeToWatch by observeNextEpisodeToWatch
+  private val observeShowViewStats by observeShowViewStats
+  private val changeShowFollowStatus by changeShowFollowStatus
+  private val changeSeasonFollowStatus by changeSeasonFollowStatus
 
   @Composable
   override fun present(): ShowDetailsUiState {

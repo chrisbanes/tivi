@@ -14,10 +14,13 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ChangeShowFollowStatus(
-  private val followedShowsRepository: FollowedShowsRepository,
-  private val showStore: ShowStore,
+  followedShowsRepository: Lazy<FollowedShowsRepository>,
+  showStore: Lazy<ShowStore>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ChangeShowFollowStatus.Params, Unit>() {
+  private val followedShowsRepository by followedShowsRepository
+  private val showStore by showStore
+
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
       params.showIds.forEach { showId ->

@@ -6,6 +6,7 @@ package app.tivi.inject
 import android.app.Application
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.tasks.TiviWorkerFactory
+import app.tivi.util.AppCoroutineDispatchers
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.IntoSet
@@ -22,6 +23,7 @@ abstract class AndroidApplicationComponent(
 
   abstract val initializers: AppInitializers
   abstract val workerFactory: TiviWorkerFactory
+  abstract val dispatchers: AppCoroutineDispatchers
 
   @ApplicationScope
   @IntoSet

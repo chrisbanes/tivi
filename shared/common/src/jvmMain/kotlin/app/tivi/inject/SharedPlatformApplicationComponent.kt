@@ -24,7 +24,7 @@ actual interface SharedPlatformApplicationComponent {
     flavor = flavor,
     versionName = "1.0.0",
     versionCode = 1,
-    cachePath = getCacheDir().absolutePath,
+    cachePath = { getCacheDir().absolutePath },
   )
 
   @ApplicationScope

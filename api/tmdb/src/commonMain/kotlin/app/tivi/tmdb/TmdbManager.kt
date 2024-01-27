@@ -14,7 +14,7 @@ import me.tatarka.inject.annotations.Inject
 @ApplicationScope
 @Inject
 class TmdbManager(
-  private val tmdbClient: Tmdb3,
+  private val tmdbClient: Lazy<Tmdb3>,
   private val dispatchers: AppCoroutineDispatchers,
 ) {
   private val imageProvider = MutableStateFlow(TmdbImageUrlProvider())
@@ -24,7 +24,7 @@ class TmdbManager(
   suspend fun refreshConfiguration() {
     val response = withContext(dispatchers.io) {
       runCatching {
-        tmdbClient.configuration.getApiConfiguration()
+        tmdbClient.value.configuration.getApiConfiguration()
       }
     }
 

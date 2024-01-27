@@ -56,12 +56,12 @@ class UpNextUiPresenterFactory(
 @Inject
 class UpNextPresenter(
   @Assisted private val navigator: Navigator,
-  private val observePagedUpNextShows: ObservePagedUpNextShows,
-  private val updateUpNextEpisodes: UpdateUpNextEpisodes,
-  private val observeTraktAuthState: ObserveTraktAuthState,
-  private val observeUserDetails: ObserveUserDetails,
-  private val getTraktAuthState: GetTraktAuthState,
-  private val preferences: TiviPreferences,
+  private val observePagedUpNextShows: Lazy<ObservePagedUpNextShows>,
+  private val updateUpNextEpisodes: Lazy<UpdateUpNextEpisodes>,
+  private val observeTraktAuthState: Lazy<ObserveTraktAuthState>,
+  private val observeUserDetails: Lazy<ObserveUserDetails>,
+  private val getTraktAuthState: Lazy<GetTraktAuthState>,
+  private val preferences: Lazy<TiviPreferences>,
   private val logger: Logger,
 ) : Presenter<UpNextUiState> {
 
@@ -71,19 +71,19 @@ class UpNextPresenter(
 
     val uiMessageManager = remember { UiMessageManager() }
 
-    val items = observePagedUpNextShows.flow
+    val items = observePagedUpNextShows.value.flow
       .rememberCachedPagingFlow(scope)
       .collectAsLazyPagingItems()
 
     var sort by remember { mutableStateOf(SortOption.LAST_WATCHED) }
 
-    val loading by updateUpNextEpisodes.inProgress.collectAsState(false)
+    val loading by updateUpNextEpisodes.value.inProgress.collectAsState(false)
     val message by uiMessageManager.message.collectAsState(null)
 
-    val user by observeUserDetails.flow.collectAsRetainedState(null)
-    val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
+    val user by observeUserDetails.value.flow.collectAsRetainedState(null)
+    val authState by observeTraktAuthState.value.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
 
-    val followedShowsOnly by remember { preferences.observeUpNextFollowedOnly() }
+    val followedShowsOnly by remember { preferences.value.observeUpNextFollowedOnly() }
       .collectAsRetainedState(false)
 
     fun eventSink(event: UpNextUiEvent) {
@@ -97,8 +97,8 @@ class UpNextPresenter(
 
         is UpNextUiEvent.Refresh -> {
           scope.launch {
-            if (getTraktAuthState.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
-              updateUpNextEpisodes(
+            if (getTraktAuthState.value.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
+              updateUpNextEpisodes.value.invoke(
                 UpdateUpNextEpisodes.Params(event.fromUser),
               ).onException { e ->
                 logger.i(e)
@@ -109,7 +109,7 @@ class UpNextPresenter(
         }
 
         UpNextUiEvent.ToggleFollowedShowsOnly -> {
-          preferences.upNextFollowedOnly = !preferences.upNextFollowedOnly
+          scope.launch { preferences.value.toggleUpNextFollowedOnly() }
         }
 
         UpNextUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
@@ -117,12 +117,12 @@ class UpNextPresenter(
     }
 
     LaunchedEffect(Unit) {
-      observeTraktAuthState(Unit)
-      observeUserDetails(ObserveUserDetails.Params("me"))
+      observeTraktAuthState.value.invoke(Unit)
+      observeUserDetails.value.invoke(ObserveUserDetails.Params("me"))
     }
 
     LaunchedEffect(observeTraktAuthState) {
-      observeTraktAuthState.flow
+      observeTraktAuthState.value.flow
         .filter { it == TraktAuthState.LOGGED_IN }
         .collect {
           eventSink(UpNextUiEvent.Refresh(false))
@@ -131,7 +131,7 @@ class UpNextPresenter(
 
     LaunchedEffect(sort, followedShowsOnly) {
       // When the filter and sort options change, update the data source
-      observePagedUpNextShows(
+      observePagedUpNextShows.value.invoke(
         ObservePagedUpNextShows.Parameters(
           sort = sort,
           followedOnly = followedShowsOnly,

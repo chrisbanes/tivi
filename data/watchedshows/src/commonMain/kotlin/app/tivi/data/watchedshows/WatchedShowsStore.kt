@@ -16,6 +16,7 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -73,10 +74,10 @@ class WatchedShowsStore(
   ),
 ).validator(
   Validator.by { result ->
-    if (result.isNotEmpty()) {
-      lastRequestStore.isRequestValid(6.hours)
-    } else {
-      lastRequestStore.isRequestValid(30.minutes)
+    withContext(dispatchers.io) {
+      lastRequestStore.isRequestValid(
+        threshold = if (result.isNotEmpty()) 6.hours else 30.minutes,
+      )
     }
   },
 ).build()

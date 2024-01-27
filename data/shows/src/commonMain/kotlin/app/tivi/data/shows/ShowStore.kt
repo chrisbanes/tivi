@@ -66,5 +66,9 @@ class ShowStore(
     writeDispatcher = dispatchers.databaseWrite,
   ),
 ).validator(
-  Validator.by { lastRequestStore.isRequestValid(it.id, 14.days) },
+  Validator.by {
+    withContext(dispatchers.io) {
+      lastRequestStore.isRequestValid(it.id, 14.days)
+    }
+  },
 ).build()

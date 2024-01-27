@@ -35,17 +35,17 @@ class RecommendedShowsUiPresenterFactory(
 @Inject
 class RecommendedShowsPresenter(
   @Assisted private val navigator: Navigator,
-  private val pagingInteractor: ObservePagedRecommendedShows,
+  private val pagingInteractor: Lazy<ObservePagedRecommendedShows>,
 ) : Presenter<RecommendedShowsUiState> {
 
   @Composable
   override fun present(): RecommendedShowsUiState {
-    val items = pagingInteractor.flow
+    val items = pagingInteractor.value.flow
       .rememberCachedPagingFlow()
       .collectAsLazyPagingItems()
 
     LaunchedEffect(Unit) {
-      pagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
+      pagingInteractor.value.invoke(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
     }
 
     fun eventSink(event: RecommendedShowsUiEvent) {

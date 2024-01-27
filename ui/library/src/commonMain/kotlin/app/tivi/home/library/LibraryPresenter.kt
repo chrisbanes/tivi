@@ -57,12 +57,12 @@ class LibraryUiPresenterFactory(
 @Inject
 class LibraryPresenter(
   @Assisted private val navigator: Navigator,
-  private val updateLibraryShows: UpdateLibraryShows,
-  private val observePagedLibraryShows: ObservePagedLibraryShows,
-  private val observeTraktAuthState: ObserveTraktAuthState,
-  private val observeUserDetails: ObserveUserDetails,
-  private val getTraktAuthState: GetTraktAuthState,
-  private val preferences: TiviPreferences,
+  private val updateLibraryShows: Lazy<UpdateLibraryShows>,
+  private val observePagedLibraryShows: Lazy<ObservePagedLibraryShows>,
+  private val observeTraktAuthState: Lazy<ObserveTraktAuthState>,
+  private val observeUserDetails: Lazy<ObserveUserDetails>,
+  private val getTraktAuthState: Lazy<GetTraktAuthState>,
+  private val preferences: Lazy<TiviPreferences>,
   private val logger: Logger,
 ) : Presenter<LibraryUiState> {
 
@@ -71,23 +71,25 @@ class LibraryPresenter(
     val scope = rememberCoroutineScope()
     val uiMessageManager = remember { UiMessageManager() }
 
-    val items = observePagedLibraryShows.flow
+    val items = observePagedLibraryShows.value.flow
       .rememberCachedPagingFlow(scope)
       .collectAsLazyPagingItems()
 
     var filter by remember { mutableStateOf<String?>(null) }
     var sort by remember { mutableStateOf(SortOption.LAST_WATCHED) }
 
-    val loading by updateLibraryShows.inProgress.collectAsState(false)
+    val loading by updateLibraryShows.value.inProgress.collectAsState(false)
     val message by uiMessageManager.message.collectAsState(null)
 
-    val user by observeUserDetails.flow.collectAsRetainedState(null)
-    val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
+    val user by observeUserDetails.value.flow.collectAsRetainedState(null)
+    val authState by observeTraktAuthState.value.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
 
-    val includeWatchedShows by remember { preferences.observeLibraryWatchedActive() }
+    val includeWatchedShows by remember { preferences.value.observeLibraryWatchedActive() }
       .collectAsRetainedState(false)
-    val includeFollowedShows by remember { preferences.observeLibraryFollowedActive() }
+    val includeFollowedShows by remember { preferences.value.observeLibraryFollowedActive() }
       .collectAsRetainedState(false)
+
+    val coroutineScope = rememberCoroutineScope()
 
     fun eventSink(event: LibraryUiEvent) {
       when (event) {
@@ -100,8 +102,8 @@ class LibraryPresenter(
         }
         is LibraryUiEvent.Refresh -> {
           scope.launch {
-            if (getTraktAuthState.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
-              updateLibraryShows(
+            if (getTraktAuthState.value.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
+              updateLibraryShows.value.invoke(
                 UpdateLibraryShows.Params(event.fromUser),
               ).onException { e ->
                 logger.i(e)
@@ -111,10 +113,14 @@ class LibraryPresenter(
           }
         }
         LibraryUiEvent.ToggleFollowedShowsIncluded -> {
-          preferences.libraryFollowedActive = !preferences.libraryFollowedActive
+          coroutineScope.launch {
+            preferences.value.toggleLibraryFollowedActive()
+          }
         }
         LibraryUiEvent.ToggleWatchedShowsIncluded -> {
-          preferences.libraryWatchedActive = !preferences.libraryWatchedActive
+          coroutineScope.launch {
+            preferences.value.toggleLibraryWatchedActive()
+          }
         }
         LibraryUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
         is LibraryUiEvent.OpenShowDetails -> {
@@ -124,12 +130,12 @@ class LibraryPresenter(
     }
 
     LaunchedEffect(Unit) {
-      observeTraktAuthState(Unit)
-      observeUserDetails(ObserveUserDetails.Params("me"))
+      observeTraktAuthState.value.invoke(Unit)
+      observeUserDetails.value.invoke(ObserveUserDetails.Params("me"))
     }
 
     LaunchedEffect(observeTraktAuthState) {
-      observeTraktAuthState.flow
+      observeTraktAuthState.value.flow
         .filter { it == TraktAuthState.LOGGED_IN }
         .collect {
           eventSink(LibraryUiEvent.Refresh(false))
@@ -138,12 +144,12 @@ class LibraryPresenter(
 
     LaunchedEffect(filter, sort, includeFollowedShows, includeWatchedShows) {
       // When the filter and sort options change, update the data source
-      observePagedLibraryShows(
+      observePagedLibraryShows.value.invoke(
         ObservePagedLibraryShows.Parameters(
           sort = sort,
           filter = filter,
-          includeFollowed = preferences.libraryFollowedActive,
-          includeWatched = preferences.libraryWatchedActive,
+          includeFollowed = includeFollowedShows,
+          includeWatched = includeWatchedShows,
           pagingConfig = PAGING_CONFIG,
         ),
       )

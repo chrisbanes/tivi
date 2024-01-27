@@ -4,6 +4,10 @@
 package app.tivi
 
 import android.app.Application
+import android.os.Build
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
+import android.os.StrictMode.VmPolicy
 import androidx.work.Configuration
 import androidx.work.WorkerFactory
 import app.tivi.extensions.unsafeLazy
@@ -19,9 +23,8 @@ class TiviApplication : Application(), Configuration.Provider {
 
   override fun onCreate() {
     super.onCreate()
-
+    setupStrictMode()
     workerFactory = component.workerFactory
-
     component.initializers.initialize()
   }
 
@@ -29,4 +32,36 @@ class TiviApplication : Application(), Configuration.Provider {
     get() = Configuration.Builder()
       .setWorkerFactory(workerFactory)
       .build()
+}
+
+private fun setupStrictMode() {
+  StrictMode.setThreadPolicy(
+    ThreadPolicy.Builder()
+      .detectAll()
+      .penaltyLog()
+      .build(),
+  )
+  StrictMode.setVmPolicy(
+    VmPolicy.Builder()
+      .detectLeakedSqlLiteObjects()
+      .detectActivityLeaks()
+      .detectLeakedClosableObjects()
+      .detectLeakedRegistrationObjects()
+      .detectFileUriExposure()
+      .detectCleartextNetwork()
+      .apply {
+        if (Build.VERSION.SDK_INT >= 26) {
+          detectContentUriWithoutPermission()
+        }
+        if (Build.VERSION.SDK_INT >= 29) {
+          detectCredentialProtectedWhileLocked()
+        }
+        if (Build.VERSION.SDK_INT >= 31) {
+          detectIncorrectContextUse()
+          detectUnsafeIntentLaunch()
+        }
+      }
+      .penaltyLog()
+      .build(),
+  )
 }

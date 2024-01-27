@@ -3,39 +3,45 @@
 
 package app.tivi.settings
 
-import kotlin.reflect.KMutableProperty0
 import kotlinx.coroutines.flow.Flow
 
 interface TiviPreferences {
-
-  var theme: Theme
+  suspend fun setTheme(theme: Theme)
   fun observeTheme(): Flow<Theme>
 
-  var useDynamicColors: Boolean
+  suspend fun toggleUseDynamicColors()
+
   fun observeUseDynamicColors(): Flow<Boolean>
 
-  var useLessData: Boolean
+  suspend fun getUseLessData(): Boolean
+
+  suspend fun toggleUseLessData()
+
   fun observeUseLessData(): Flow<Boolean>
 
-  var libraryFollowedActive: Boolean
+  suspend fun toggleLibraryFollowedActive()
+
   fun observeLibraryFollowedActive(): Flow<Boolean>
 
-  var libraryWatchedActive: Boolean
+  suspend fun toggleLibraryWatchedActive()
+
   fun observeLibraryWatchedActive(): Flow<Boolean>
 
-  var upNextFollowedOnly: Boolean
+  suspend fun toggleUpNextFollowedOnly()
+
   fun observeUpNextFollowedOnly(): Flow<Boolean>
 
-  var ignoreSpecials: Boolean
+  suspend fun toggleIgnoreSpecials()
   fun observeIgnoreSpecials(): Flow<Boolean>
 
-  var reportAppCrashes: Boolean
+  suspend fun toggleReportAppCrashes()
   fun observeReportAppCrashes(): Flow<Boolean>
 
-  var reportAnalytics: Boolean
+  suspend fun toggleReportAnalytics()
   fun observeReportAnalytics(): Flow<Boolean>
 
-  var developerHideArtwork: Boolean
+  suspend fun toggleDeveloperHideArtwork()
+  suspend fun getDeveloperHideArtwork(): Boolean
   fun observeDeveloperHideArtwork(): Flow<Boolean>
 
   enum class Theme {
@@ -43,8 +49,4 @@ interface TiviPreferences {
     DARK,
     SYSTEM,
   }
-}
-
-fun KMutableProperty0<Boolean>.toggle() {
-  set(!get())
 }

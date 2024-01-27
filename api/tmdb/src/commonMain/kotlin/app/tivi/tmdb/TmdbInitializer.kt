@@ -10,12 +10,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbInitializer(
-  private val tmdbManager: TmdbManager,
+  private val tmdbManager: Lazy<TmdbManager>,
   private val scope: ApplicationCoroutineScope,
 ) : AppInitializer {
   override fun initialize() {
     scope.launch {
-      tmdbManager.refreshConfiguration()
+      tmdbManager.value.refreshConfiguration()
     }
   }
 }

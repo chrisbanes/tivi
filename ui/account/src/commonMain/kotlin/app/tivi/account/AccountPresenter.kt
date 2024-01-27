@@ -39,21 +39,22 @@ class AccountUiPresenterFactory(
 @Inject
 class AccountPresenter(
   @Assisted private val navigator: Navigator,
-  private val loginTrakt: LoginTrakt,
-  private val logoutTrakt: LogoutTrakt,
-  private val observeTraktAuthState: ObserveTraktAuthState,
-  private val observeUserDetails: ObserveUserDetails,
+  private val loginTrakt: Lazy<LoginTrakt>,
+  private val logoutTrakt: Lazy<LogoutTrakt>,
+  private val observeTraktAuthState: Lazy<ObserveTraktAuthState>,
+  private val observeUserDetails: Lazy<ObserveUserDetails>,
 ) : Presenter<AccountUiState> {
 
   @Composable
   override fun present(): AccountUiState {
-    val user by observeUserDetails.flow.collectAsRetainedState(null)
-    val authState by observeTraktAuthState.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
+    val user by observeUserDetails.value.flow.collectAsRetainedState(null)
+    val authState by observeTraktAuthState.value.flow
+      .collectAsRetainedState(TraktAuthState.LOGGED_OUT)
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-      observeTraktAuthState(Unit)
-      observeUserDetails(ObserveUserDetails.Params("me"))
+      observeTraktAuthState.value.invoke(Unit)
+      observeUserDetails.value.invoke(ObserveUserDetails.Params("me"))
     }
 
     return AccountUiState(
@@ -62,8 +63,8 @@ class AccountPresenter(
     ) { event ->
       when (event) {
         AccountUiEvent.NavigateToSettings -> navigator.goTo(SettingsScreen)
-        AccountUiEvent.Login -> scope.launch { loginTrakt() }
-        AccountUiEvent.Logout -> scope.launch { logoutTrakt() }
+        AccountUiEvent.Login -> scope.launch { loginTrakt.value.invoke() }
+        AccountUiEvent.Logout -> scope.launch { logoutTrakt.value.invoke() }
       }
     }
   }

@@ -15,6 +15,7 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -64,10 +65,10 @@ class PopularShowsStore(
   ),
 ).validator(
   Validator.by { result ->
-    if (result.isNotEmpty()) {
-      lastRequestStore.isRequestValid(3.hours)
-    } else {
-      lastRequestStore.isRequestValid(30.minutes)
+    withContext(dispatchers.io) {
+      lastRequestStore.isRequestValid(
+        threshold = if (result.isNotEmpty()) 3.hours else 30.minutes,
+      )
     }
   },
 ).build()

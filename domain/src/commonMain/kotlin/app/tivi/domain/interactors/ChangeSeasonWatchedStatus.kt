@@ -12,9 +12,10 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ChangeSeasonWatchedStatus(
-  private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+  seasonsEpisodesRepository: Lazy<SeasonsEpisodesRepository>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ChangeSeasonWatchedStatus.Params, Unit>() {
+  private val seasonsEpisodesRepository by seasonsEpisodesRepository
 
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
