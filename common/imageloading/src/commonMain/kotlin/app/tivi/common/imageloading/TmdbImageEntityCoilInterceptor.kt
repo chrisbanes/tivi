@@ -15,7 +15,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TmdbImageEntityCoilInterceptor(
   private val tmdbImageUrlProvider: Lazy<TmdbImageUrlProvider>,
-  private val powerController: PowerController,
+  private val powerController: Lazy<PowerController>,
 ) : Interceptor {
   override suspend fun intercept(
     chain: Interceptor.Chain,
@@ -35,7 +35,7 @@ class TmdbImageEntityCoilInterceptor(
   }
 
   private fun map(data: TmdbImageEntity, requestWidth: Int): String {
-    val width = when (powerController.shouldSaveData()) {
+    val width = when (powerController.value.shouldSaveData()) {
       is SaveData.Disabled -> requestWidth
       // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
       is SaveData.Enabled -> requestWidth / 2

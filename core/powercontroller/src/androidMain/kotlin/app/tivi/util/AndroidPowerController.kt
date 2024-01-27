@@ -14,13 +14,13 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class AndroidPowerController(
   private val context: Application,
-  private val preferences: TiviPreferences,
+  private val preferences: Lazy<TiviPreferences>,
 ) : PowerController {
   private val powerManager: PowerManager by lazy { context.getSystemService()!! }
   private val connectivityManager: ConnectivityManager by lazy { context.getSystemService()!! }
 
-  override fun shouldSaveData(): SaveData = when {
-    preferences.useLessData -> {
+  override suspend fun shouldSaveData(): SaveData = when {
+    preferences.value.useLessData -> {
       SaveData.Enabled(SaveDataReason.PREFERENCE)
     }
 

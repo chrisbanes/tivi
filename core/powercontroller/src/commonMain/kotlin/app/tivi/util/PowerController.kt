@@ -7,7 +7,7 @@ import app.tivi.settings.TiviPreferences
 import me.tatarka.inject.annotations.Inject
 
 interface PowerController {
-  fun shouldSaveData(): SaveData
+  suspend fun shouldSaveData(): SaveData
 }
 
 sealed class SaveData {
@@ -23,10 +23,10 @@ enum class SaveDataReason {
 
 @Inject
 class DefaultPowerController(
-  private val preferences: TiviPreferences,
+  private val preferences: Lazy<TiviPreferences>,
 ) : PowerController {
-  override fun shouldSaveData(): SaveData = when {
-    preferences.useLessData -> SaveData.Enabled(SaveDataReason.PREFERENCE)
+  override suspend fun shouldSaveData(): SaveData = when {
+    preferences.value.useLessData -> SaveData.Enabled(SaveDataReason.PREFERENCE)
     else -> SaveData.Disabled
   }
 }

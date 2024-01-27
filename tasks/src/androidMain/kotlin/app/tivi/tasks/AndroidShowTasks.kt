@@ -13,7 +13,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AndroidShowTasks(
-  private val workManager: WorkManager,
+  private val workManager: Lazy<WorkManager>,
 ) : ShowTasks {
   override fun register() {
     val nightlyConstraints = Constraints.Builder()
@@ -21,7 +21,7 @@ class AndroidShowTasks(
       .setRequiresCharging(true)
       .build()
 
-    workManager.enqueueUniquePeriodicWork(
+    workManager.value.enqueueUniquePeriodicWork(
       SyncLibraryShows.NIGHTLY_SYNC_TAG,
       ExistingPeriodicWorkPolicy.KEEP,
       PeriodicWorkRequestBuilder<SyncLibraryShows>(24, TimeUnit.HOURS)

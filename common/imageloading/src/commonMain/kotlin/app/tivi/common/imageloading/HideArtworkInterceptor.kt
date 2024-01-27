@@ -17,13 +17,13 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class HideArtworkInterceptor(
-  private val preferences: TiviPreferences,
+  private val preferences: Lazy<TiviPreferences>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interceptor {
   @OptIn(ExperimentalCoilApi::class)
   override suspend fun intercept(chain: Interceptor.Chain): ImageResult = withContext(dispatchers.io) {
     when {
-      preferences.developerHideArtwork && isArtwork(chain.request.data) -> {
+      preferences.value.developerHideArtwork && isArtwork(chain.request.data) -> {
         ErrorResult(
           image = null,
           request = chain.request,
