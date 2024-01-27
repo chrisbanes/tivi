@@ -25,9 +25,6 @@ import app.tivi.domain.observers.ObservePagedUpNextShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.screens.AccountScreen
-import app.tivi.screens.EpisodeDetailsScreen
-import app.tivi.screens.ShowDetailsScreen
-import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.screens.UpNextScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
@@ -116,11 +113,6 @@ class UpNextPresenter(
         }
 
         UpNextUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
-        is UpNextUiEvent.OpenShowDetails -> {
-          navigator.goTo(ShowDetailsScreen(event.showId))
-          navigator.goTo(ShowSeasonsScreen(event.showId, event.seasonId))
-          navigator.goTo(EpisodeDetailsScreen(event.episodeId))
-        }
       }
     }
 

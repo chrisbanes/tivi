@@ -28,5 +28,7 @@ interface EpisodesDao : EntityDao<Episode> {
 
   fun showIdForEpisodeId(episodeId: Long): Long
 
+  fun observeShowIdForEpisodeId(episodeId: Long): Flow<Long>
+
   fun observeNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> = emptyFlow()
 }

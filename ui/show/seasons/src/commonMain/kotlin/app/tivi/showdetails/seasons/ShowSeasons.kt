@@ -81,7 +81,12 @@ import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
+import app.tivi.overlays.LocalNavigator
+import app.tivi.overlays.showInBottomSheet
+import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
+import com.slack.circuit.overlay.ContentWithOverlays
+import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -110,15 +115,34 @@ internal fun ShowSeasons(
   // Need to extract the eventSink out to a local val, so that the Compose Compiler
   // treats it as stable. See: https://issuetracker.google.com/issues/256100927
   val eventSink = state.eventSink
+  val navigator = LocalNavigator.current
 
-  ShowSeasons(
-    state = state,
-    navigateUp = { eventSink(ShowSeasonsUiEvent.NavigateBack) },
-    openEpisodeDetails = { eventSink(ShowSeasonsUiEvent.OpenEpisodeDetails(it)) },
-    refresh = { eventSink(ShowSeasonsUiEvent.Refresh()) },
-    onMessageShown = { eventSink(ShowSeasonsUiEvent.ClearMessage(it)) },
-    modifier = modifier,
-  )
+  ContentWithOverlays {
+    val overlayHost = LocalOverlayHost.current
+
+    LaunchedEffect(state.openedEpisodeId) {
+      val episodeId = state.openedEpisodeId
+
+      overlayHost.currentOverlayData?.finish(Unit)
+
+      if (episodeId != null) {
+        overlayHost.showInBottomSheet(
+          screen = EpisodeDetailsScreen(episodeId),
+          dragHandle = null,
+          hostNavigator = navigator,
+        )
+      }
+    }
+
+    ShowSeasons(
+      state = state,
+      navigateUp = { eventSink(ShowSeasonsUiEvent.NavigateBack) },
+      openEpisodeDetails = { eventSink(ShowSeasonsUiEvent.OpenEpisodeDetails(it)) },
+      refresh = { eventSink(ShowSeasonsUiEvent.Refresh()) },
+      onMessageShown = { eventSink(ShowSeasonsUiEvent.ClearMessage(it)) },
+      modifier = modifier,
+    )
+  }
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)

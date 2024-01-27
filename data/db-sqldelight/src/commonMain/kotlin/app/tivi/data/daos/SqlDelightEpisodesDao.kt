@@ -103,6 +103,12 @@ class SqlDelightEpisodesDao(
       .executeAsOne()
   }
 
+  override fun observeShowIdForEpisodeId(episodeId: Long): Flow<Long> {
+    return db.episodesQueries.showIdForEpisodeId(episodeId)
+      .asFlow()
+      .mapToOne(dispatchers.io)
+  }
+
   override fun observeNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> {
     return db.episodesQueries.nextWatchedEpisodeForShowId(
       showId = showId,

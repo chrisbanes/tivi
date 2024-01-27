@@ -28,7 +28,6 @@ import app.tivi.domain.observers.ObserveShowFollowStatus
 import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.domain.observers.ObserveShowViewStats
-import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
@@ -209,9 +208,6 @@ class ShowDetailsPresenter(
           }
         }
         ShowDetailsUiEvent.NavigateBack -> navigator.pop()
-        is ShowDetailsUiEvent.OpenEpisodeDetails -> {
-          navigator.goTo(EpisodeDetailsScreen(event.episodeId))
-        }
         is ShowDetailsUiEvent.OpenSeason -> {
           navigator.goTo(ShowSeasonsScreen(showId, event.seasonId))
         }

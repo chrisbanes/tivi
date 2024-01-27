@@ -46,6 +46,5 @@ sealed interface ShowDetailsUiEvent : CircuitUiEvent {
 
   data class OpenSeason(val seasonId: Long) : ShowDetailsUiEvent
   data class OpenShowDetails(val showId: Long) : ShowDetailsUiEvent
-  data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsUiEvent
   object NavigateBack : ShowDetailsUiEvent
 }

@@ -28,9 +28,10 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
@@ -83,6 +84,7 @@ import app.tivi.data.models.Season
 import app.tivi.overlays.showInBottomSheet
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
+import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
@@ -110,23 +112,26 @@ internal fun EpisodeDetails(
   viewState: EpisodeDetailsUiState,
   modifier: Modifier = Modifier,
 ) {
-  val scope = rememberCoroutineScope()
-  val overlayHost = LocalOverlayHost.current
+  ContentWithOverlays {
+    val scope = rememberCoroutineScope()
+    val overlayHost = LocalOverlayHost.current
 
-  EpisodeDetails(
-    viewState = viewState,
-    navigateUp = { viewState.eventSink(EpisodeDetailsUiEvent.NavigateUp) },
-    refresh = { viewState.eventSink(EpisodeDetailsUiEvent.Refresh(true)) },
-    onRemoveAllWatches = { viewState.eventSink(EpisodeDetailsUiEvent.RemoveAllWatches) },
-    onRemoveWatch = { id -> viewState.eventSink(EpisodeDetailsUiEvent.RemoveWatchEntry(id)) },
-    onAddWatch = {
-      scope.launch {
-        overlayHost.showInBottomSheet(EpisodeTrackScreen(viewState.episode!!.id))
-      }
-    },
-    onMessageShown = { id -> viewState.eventSink(EpisodeDetailsUiEvent.ClearMessage(id)) },
-    modifier = modifier,
-  )
+    EpisodeDetails(
+      viewState = viewState,
+      navigateUp = { viewState.eventSink(EpisodeDetailsUiEvent.NavigateUp) },
+      refresh = { viewState.eventSink(EpisodeDetailsUiEvent.Refresh(true)) },
+      expand = { viewState.eventSink(EpisodeDetailsUiEvent.ExpandToShowDetails) },
+      onRemoveAllWatches = { viewState.eventSink(EpisodeDetailsUiEvent.RemoveAllWatches) },
+      onRemoveWatch = { id -> viewState.eventSink(EpisodeDetailsUiEvent.RemoveWatchEntry(id)) },
+      onAddWatch = {
+        scope.launch {
+          overlayHost.showInBottomSheet(EpisodeTrackScreen(viewState.episode!!.id))
+        }
+      },
+      onMessageShown = { id -> viewState.eventSink(EpisodeDetailsUiEvent.ClearMessage(id)) },
+      modifier = modifier,
+    )
+  }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -135,6 +140,7 @@ internal fun EpisodeDetails(
   viewState: EpisodeDetailsUiState,
   navigateUp: () -> Unit,
   refresh: () -> Unit,
+  expand: () -> Unit,
   onRemoveAllWatches: () -> Unit,
   onRemoveWatch: (id: Long) -> Unit,
   onAddWatch: () -> Unit,
@@ -189,6 +195,7 @@ internal fun EpisodeDetails(
             isRefreshing = viewState.refreshing,
             navigateUp = navigateUp,
             refresh = refresh,
+            expand = expand,
             modifier = Modifier.fillMaxWidth(),
           )
         }
@@ -428,7 +435,6 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EpisodeWatchSwipeBackground(
   targetValue: DismissValue,
@@ -491,7 +497,6 @@ private fun AddWatchButton(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RemoveAllWatchesDialog(
   onConfirm: () -> Unit,
@@ -525,6 +530,7 @@ private fun EpisodeDetailsAppBar(
   isRefreshing: Boolean,
   navigateUp: () -> Unit,
   refresh: () -> Unit,
+  expand: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   TopAppBar(
@@ -536,12 +542,19 @@ private fun EpisodeDetailsAppBar(
     navigationIcon = {
       ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
         Icon(
-          imageVector = Icons.Default.ArrowBack,
+          imageVector = Icons.Default.Close,
           contentDescription = LocalStrings.current.cdNavigateUp,
         )
       }
     },
     actions = {
+      ScrimmedIconButton(showScrim = true, onClick = expand) {
+        Icon(
+          imageVector = Icons.Default.Expand,
+          contentDescription = "TODO",
+        )
+      }
+
       if (isRefreshing) {
         AutoSizedCircularProgressIndicator(
           modifier = Modifier
@@ -589,6 +602,7 @@ fun PreviewEpisodeDetails() {
       ),
       eventSink = {},
     ),
+    expand = {},
     navigateUp = {},
     refresh = {},
     onRemoveAllWatches = {},
