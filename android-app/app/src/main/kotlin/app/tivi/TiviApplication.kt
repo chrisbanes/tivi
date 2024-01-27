@@ -4,6 +4,9 @@
 package app.tivi
 
 import android.app.Application
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
+import android.os.StrictMode.VmPolicy
 import androidx.work.Configuration
 import androidx.work.WorkerFactory
 import app.tivi.extensions.unsafeLazy
@@ -18,6 +21,20 @@ class TiviApplication : Application(), Configuration.Provider {
   private lateinit var workerFactory: WorkerFactory
 
   override fun onCreate() {
+    StrictMode.setThreadPolicy(
+      ThreadPolicy.Builder()
+        .detectAll()
+        .penaltyLog()
+        .build()
+    )
+    StrictMode.setVmPolicy(
+      VmPolicy.Builder()
+        .detectAll()
+        .penaltyLog()
+        .penaltyDeath()
+        .build()
+    )
+
     super.onCreate()
 
     workerFactory = component.workerFactory
