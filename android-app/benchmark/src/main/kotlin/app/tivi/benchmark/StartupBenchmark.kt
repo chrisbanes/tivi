@@ -24,7 +24,7 @@ class StartupBenchmark {
     startupMode = StartupMode.COLD,
     setupBlock = {
       device.allowNotifications(packageName)
-    }
+    },
   ) {
     pressHome()
     startActivityAndWait()
