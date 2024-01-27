@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.screens.LicensesScreen
 import app.tivi.screens.SettingsScreen
@@ -17,6 +18,7 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -62,29 +64,38 @@ class SettingsPresenter(
     val analyticsDataReportingEnabled by remember { preferences.observeReportAnalytics() }
       .collectAsRetainedState(true)
 
+    val coroutineScope = rememberCoroutineScope()
+
     fun eventSink(event: SettingsUiEvent) {
       when (event) {
-        SettingsUiEvent.NavigateUp -> navigator.pop()
+        SettingsUiEvent.NavigateUp -> {
+          navigator.pop()
+        }
         is SettingsUiEvent.SetTheme -> {
-          preferences.theme = event.theme
+          coroutineScope.launch { preferences.setTheme(event.theme) }
         }
 
-        SettingsUiEvent.ToggleUseDynamicColors -> preferences::useDynamicColors.toggle()
-        SettingsUiEvent.ToggleUseLessData -> preferences::useLessData.toggle()
-        SettingsUiEvent.ToggleIgnoreSpecials -> preferences::ignoreSpecials.toggle()
-        SettingsUiEvent.ToggleCrashDataReporting -> preferences::reportAppCrashes.toggle()
-        SettingsUiEvent.ToggleAnalyticsDataReporting -> preferences::reportAnalytics.toggle()
+        SettingsUiEvent.ToggleUseDynamicColors -> {
+          coroutineScope.launch { preferences.toggleUseDynamicColors() }
+        }
+        SettingsUiEvent.ToggleUseLessData -> {
+          coroutineScope.launch { preferences.toggleUseLessData() }
+        }
+        SettingsUiEvent.ToggleIgnoreSpecials -> {
+          coroutineScope.launch { preferences.toggleIgnoreSpecials() }
+        }
+        SettingsUiEvent.ToggleCrashDataReporting -> {
+          coroutineScope.launch { preferences.toggleReportAppCrashes() }
+        }
+        SettingsUiEvent.ToggleAnalyticsDataReporting -> {
+          coroutineScope.launch { preferences.toggleReportAnalytics() }
+        }
         SettingsUiEvent.NavigatePrivacyPolicy -> {
           navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))
         }
 
-        SettingsUiEvent.NavigateOpenSource -> {
-          navigator.goTo(LicensesScreen)
-        }
-
-        SettingsUiEvent.NavigateDeveloperSettings -> {
-          navigator.goTo(DevSettingsScreen)
-        }
+        SettingsUiEvent.NavigateOpenSource -> navigator.goTo(LicensesScreen)
+        SettingsUiEvent.NavigateDeveloperSettings -> navigator.goTo(DevSettingsScreen)
       }
     }
 

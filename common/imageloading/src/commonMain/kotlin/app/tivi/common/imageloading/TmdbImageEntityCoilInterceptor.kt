@@ -34,7 +34,7 @@ class TmdbImageEntityCoilInterceptor(
     else -> chain.proceed()
   }
 
-  private fun map(data: TmdbImageEntity, requestWidth: Int): String {
+  private suspend fun map(data: TmdbImageEntity, requestWidth: Int): String {
     val width = when (powerController.value.shouldSaveData()) {
       is SaveData.Disabled -> requestWidth
       // If we can't download hi-res images, we load half-width images (so ~1/4 in size)

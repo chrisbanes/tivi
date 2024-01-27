@@ -109,7 +109,7 @@ class UpNextPresenter(
         }
 
         UpNextUiEvent.ToggleFollowedShowsOnly -> {
-          preferences.value.upNextFollowedOnly = !preferences.value.upNextFollowedOnly
+          scope.launch { preferences.value.toggleUpNextFollowedOnly() }
         }
 
         UpNextUiEvent.OpenAccount -> navigator.goTo(AccountScreen)

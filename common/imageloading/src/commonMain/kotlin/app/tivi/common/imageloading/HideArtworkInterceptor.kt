@@ -23,7 +23,7 @@ class HideArtworkInterceptor(
   @OptIn(ExperimentalCoilApi::class)
   override suspend fun intercept(chain: Interceptor.Chain): ImageResult = withContext(dispatchers.io) {
     when {
-      preferences.value.developerHideArtwork && isArtwork(chain.request.data) -> {
+      preferences.value.getDeveloperHideArtwork() && isArtwork(chain.request.data) -> {
         ErrorResult(
           image = null,
           request = chain.request,

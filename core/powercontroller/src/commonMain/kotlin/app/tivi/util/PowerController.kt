@@ -26,7 +26,7 @@ class DefaultPowerController(
   private val preferences: Lazy<TiviPreferences>,
 ) : PowerController {
   override suspend fun shouldSaveData(): SaveData = when {
-    preferences.value.useLessData -> SaveData.Enabled(SaveDataReason.PREFERENCE)
+    preferences.value.getUseLessData() -> SaveData.Enabled(SaveDataReason.PREFERENCE)
     else -> SaveData.Disabled
   }
 }

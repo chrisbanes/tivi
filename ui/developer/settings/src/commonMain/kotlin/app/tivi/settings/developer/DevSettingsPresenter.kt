@@ -6,15 +6,16 @@ package app.tivi.settings.developer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.screens.DevLogScreen
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.settings.TiviPreferences
-import app.tivi.settings.toggle
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -35,19 +36,23 @@ class DevSettingsUiPresenterFactory(
 @Inject
 class DevSettingsPresenter(
   @Assisted private val navigator: Navigator,
-  private val preferences: TiviPreferences,
+  private val preferences: Lazy<TiviPreferences>,
 ) : Presenter<DevSettingsUiState> {
 
   @Composable
   override fun present(): DevSettingsUiState {
-    val hideArtwork by remember { preferences.observeDeveloperHideArtwork() }
+    val hideArtwork by remember { preferences.value.observeDeveloperHideArtwork() }
       .collectAsRetainedState(false)
+
+    val coroutineScope = rememberCoroutineScope()
 
     fun eventSink(event: DevSettingsUiEvent) {
       when (event) {
         DevSettingsUiEvent.NavigateUp -> navigator.pop()
         DevSettingsUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
-        DevSettingsUiEvent.ToggleHideArtwork -> preferences::developerHideArtwork.toggle()
+        DevSettingsUiEvent.ToggleHideArtwork -> {
+          coroutineScope.launch { preferences.value.toggleDeveloperHideArtwork() }
+        }
       }
     }
 

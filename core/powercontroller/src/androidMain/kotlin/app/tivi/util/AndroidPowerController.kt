@@ -20,7 +20,7 @@ class AndroidPowerController(
   private val connectivityManager: ConnectivityManager by lazy { context.getSystemService()!! }
 
   override suspend fun shouldSaveData(): SaveData = when {
-    preferences.value.useLessData -> {
+    preferences.value.getUseLessData() -> {
       SaveData.Enabled(SaveDataReason.PREFERENCE)
     }
 

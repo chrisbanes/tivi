@@ -89,6 +89,8 @@ class LibraryPresenter(
     val includeFollowedShows by remember { preferences.value.observeLibraryFollowedActive() }
       .collectAsRetainedState(false)
 
+    val coroutineScope = rememberCoroutineScope()
+
     fun eventSink(event: LibraryUiEvent) {
       when (event) {
         is LibraryUiEvent.ChangeFilter -> filter = event.filter
@@ -111,10 +113,14 @@ class LibraryPresenter(
           }
         }
         LibraryUiEvent.ToggleFollowedShowsIncluded -> {
-          preferences.value.libraryFollowedActive = !preferences.value.libraryFollowedActive
+          coroutineScope.launch {
+            preferences.value.toggleLibraryFollowedActive()
+          }
         }
         LibraryUiEvent.ToggleWatchedShowsIncluded -> {
-          preferences.value.libraryWatchedActive = !preferences.value.libraryWatchedActive
+          coroutineScope.launch {
+            preferences.value.toggleLibraryWatchedActive()
+          }
         }
         LibraryUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
         is LibraryUiEvent.OpenShowDetails -> {
@@ -142,8 +148,8 @@ class LibraryPresenter(
         ObservePagedLibraryShows.Parameters(
           sort = sort,
           filter = filter,
-          includeFollowed = preferences.value.libraryFollowedActive,
-          includeWatched = preferences.value.libraryWatchedActive,
+          includeFollowed = includeFollowedShows,
+          includeWatched = includeWatchedShows,
           pagingConfig = PAGING_CONFIG,
         ),
       )
