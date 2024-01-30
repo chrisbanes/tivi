@@ -135,7 +135,7 @@ jobs:
             **/build/test-results/*
 
   ios-qa-app:
-    runs-on: macos-13
+    runs-on: macos-14
     timeout-minutes: 60
     env:
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
@@ -151,7 +151,7 @@ jobs:
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '15.0'
+          xcode-version: '15.2'
 
       - name: set up JDK
         uses: actions/setup-java@v4
@@ -204,7 +204,7 @@ jobs:
             **/fastlane-buildlog
 
   ios-prod-app:
-    runs-on: macos-13
+    runs-on: macos-14
     timeout-minutes: 60
     env:
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
@@ -220,7 +220,7 @@ jobs:
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '15.0'
+          xcode-version: '15.2'
 
       - name: set up JDK
         uses: actions/setup-java@v4
@@ -270,7 +270,7 @@ jobs:
             **/fastlane-buildlog
 
   ios-test:
-    runs-on: macos-13
+    runs-on: macos-14
     timeout-minutes: 60
     env:
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
@@ -285,7 +285,7 @@ jobs:
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '15.0'
+          xcode-version: '15.2'
 
       - name: set up JDK
         uses: actions/setup-java@v4
