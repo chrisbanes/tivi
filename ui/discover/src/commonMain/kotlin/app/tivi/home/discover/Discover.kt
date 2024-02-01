@@ -443,7 +443,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
       snapLayoutInfoProvider = remember(lazyListState) {
         SnapLayoutInfoProvider(
           lazyListState = lazyListState,
-          positionInLayout = { _, _, _ -> 0 }, // start
+          positionInLayout = { _, _, _, _, _ -> 0 }, // start
         )
       },
     ),

@@ -5,6 +5,8 @@
 
 package app.tivi.common.compose
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.snapping.SnapPositionInLayout
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -84,3 +86,7 @@ inline fun LazyStaggeredGridScope.fullSpanItem(
     content = content,
   )
 }
+
+@ExperimentalFoundationApi
+val SnapPositionInLayout.Companion.StartToStart: SnapPositionInLayout
+  get() = SnapPositionInLayout { _, _, _, _, _ -> 0 }

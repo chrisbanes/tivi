@@ -4,7 +4,6 @@
 package app.tivi.common.compose.ui
 
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,7 +17,7 @@ import kotlin.math.roundToInt
 @Composable
 fun AutoSizedCircularProgressIndicator(
   modifier: Modifier = Modifier,
-  color: Color = MaterialTheme.colorScheme.primary,
+  color: Color = MaterialTheme.colorScheme.onSurface,
 ) {
   BoxWithConstraints(modifier) {
     val diameter = with(LocalDensity.current) {
@@ -26,7 +25,9 @@ fun AutoSizedCircularProgressIndicator(
       min(constraints.maxWidth.toDp(), constraints.maxHeight.toDp()) - InternalPadding
     }
 
-    CircularProgressIndicator(
+    // We use Material2's CircularProgressIndicator due to
+    // https://github.com/JetBrains/compose-multiplatform/issues/4157
+    androidx.compose.material.CircularProgressIndicator(
       strokeWidth = (diameter.value * StrokeDiameterFraction)
         .roundToInt().dp
         .coerceAtLeast(2.dp),

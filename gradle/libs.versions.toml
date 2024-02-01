@@ -1,14 +1,13 @@
 [versions]
 agp = "8.2.2"
-androidxlifecycle = "2.6.2"
 androidxactivity = "1.8.2"
 baselineprofile = "1.2.3"
 coil = "3.0.0-alpha03"
 chucker = "4.0.0"
 circuit = "0.18.2"
-compose-multiplatform = "1.5.12"
-compose-compiler = "1.5.7"
+compose-multiplatform = "1.6.0-beta01"
 coroutines = "1.7.3"
+haze = "0.5.0"
 kotlin = "1.9.22"
 kotlininject = "0.6.3"
 ksp = "1.9.22-1.0.17"
@@ -36,6 +35,7 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+licensee = { id ="app.cash.licensee", version.ref = "licensee" }
 gms-googleServices = "com.google.gms.google-services:4.4.0"
 firebase-crashlytics = "com.google.firebase.crashlytics:2.9.9"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
@@ -80,7 +80,8 @@ compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-s
 
 crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.5"
 
-haze = "dev.chrisbanes.haze:haze:0.4.5"
+haze-haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
+haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
 
 tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.0.4"
 

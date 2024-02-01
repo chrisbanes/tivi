@@ -17,20 +17,7 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
 
 fun Project.configureCompose() {
   compose {
-    kotlinCompilerPlugin.set(libs.findVersion("compose-compiler").get().requiredVersion)
-  }
-
-  val composeVersion = libs.findVersion("compose-multiplatform").get().requiredVersion
-  configurations.configureEach {
-    resolutionStrategy.eachDependency {
-      val group = requested.group
-
-      when {
-        group.startsWith("org.jetbrains.compose") && !group.endsWith("compiler") -> {
-          useVersion(composeVersion)
-        }
-      }
-    }
+    // kotlinCompilerPlugin.set(libs.findVersion("compose-compiler").get().requiredVersion)
   }
 }
 
