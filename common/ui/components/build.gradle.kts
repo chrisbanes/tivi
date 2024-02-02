@@ -14,29 +14,41 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
-        api(projects.core.preferences)
+        api(projects.common.ui.compose)
 
-        implementation(projects.common.ui.resources.fonts)
-        api(projects.common.ui.resources.strings)
-        api(libs.lyricist.library)
+        api(projects.data.models)
+        api(projects.core.preferences)
+        api(projects.common.imageloading)
+
+        api(libs.circuit.foundation)
+
+        api(libs.haze)
+        api(libs.coil.compose)
 
         implementation(compose.foundation)
+        implementation(compose.materialIconsExtended)
+        implementation(compose.animation)
 
+        // Only used for Pull-to-refresh
+        implementation(compose.material)
         api(compose.material3)
-        api(libs.compose.material3.windowsizeclass)
 
         api(libs.cupertino.adaptive)
-
-        implementation(libs.uuid)
 
         implementation(libs.paging.compose)
       }
     }
 
+    val jvmCommon by creating {
+      dependsOn(commonMain)
+    }
+
+    val jvmMain by getting {
+      dependsOn(jvmCommon)
+    }
+
     val androidMain by getting {
-      dependencies {
-        implementation(libs.androidx.activity.compose)
-      }
+      dependsOn(jvmCommon)
     }
   }
 }
@@ -50,7 +62,7 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
 }
 
 android {
-  namespace = "app.tivi.common.compose"
+  namespace = "app.tivi.common.components"
 
   lint {
     baseline = file("lint-baseline.xml")

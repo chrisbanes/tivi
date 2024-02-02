@@ -60,10 +60,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -77,7 +73,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
@@ -100,6 +95,7 @@ import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.ScrimmedIconButton
+import app.tivi.common.compose.ui.TopAppBar
 import app.tivi.common.compose.ui.copy
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
@@ -218,8 +214,6 @@ internal fun ShowDetails(
     }
   }
 
-  val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
   HazeScaffold(
     topBar = {
       ShowDetailsAppBar(
@@ -227,7 +221,6 @@ internal fun ShowDetails(
         isRefreshing = viewState.refreshing,
         onNavigateUp = navigateUp,
         onRefresh = refresh,
-        scrollBehavior = scrollBehavior,
         modifier = Modifier.fillMaxWidth(),
       )
     },
@@ -256,8 +249,7 @@ internal fun ShowDetails(
         )
       }
     },
-    modifier = modifier
-      .nestedScroll(scrollBehavior.nestedScrollConnection),
+    modifier = modifier,
   ) { contentPadding ->
     Surface(modifier = Modifier.bodyWidth()) {
       ShowDetailsScrollingContent(
@@ -988,7 +980,6 @@ private fun ShowDetailsAppBar(
   onNavigateUp: () -> Unit,
   onRefresh: () -> Unit,
   modifier: Modifier = Modifier,
-  scrollBehavior: TopAppBarScrollBehavior,
 ) {
   TopAppBar(
     title = {
@@ -998,7 +989,7 @@ private fun ShowDetailsAppBar(
     },
     navigationIcon = {
       ScrimmedIconButton(
-        showScrim = scrollBehavior.state.contentOffset > -4,
+        showScrim = true,
         onClick = onNavigateUp,
       ) {
         Icon(
@@ -1009,16 +1000,12 @@ private fun ShowDetailsAppBar(
     },
     actions = {
       RefreshButton(
-        showScrim = scrollBehavior.state.contentOffset > -4,
+        showScrim = true,
         refreshing = !isRefreshing,
         onClick = onRefresh,
       )
     },
-    colors = TopAppBarDefaults.topAppBarColors(
-      containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0f),
-      scrolledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
-    ),
-    scrollBehavior = scrollBehavior,
+    transparent = true,
     modifier = modifier,
   )
 }

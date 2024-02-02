@@ -17,5 +17,6 @@ fun Project.configureLicensee() {
     allow("MIT")
     allow("BSD-3-Clause")
     allowUrl("https://developer.android.com/studio/terms.html")
+    allowUrl("https://github.com/jordond/materialkolor/blob/master/LICENSE")
   }
 }

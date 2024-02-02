@@ -98,6 +98,7 @@ include(
   ":common:ui:resources:fonts",
   ":common:ui:resources:strings",
   ":common:ui:compose",
+  ":common:ui:components",
   ":common:ui:screens",
   ":common:imageloading",
   ":data:db",
