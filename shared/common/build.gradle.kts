@@ -15,6 +15,9 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
+        // Need to force a version to fix linking issues
+        api(libs.androidx.collection)
+
         api(projects.core.base)
         api(projects.core.analytics)
         api(projects.core.logging.implementation)
