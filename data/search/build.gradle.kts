@@ -20,8 +20,6 @@ kotlin {
         api(libs.store)
         implementation(libs.kotlinx.atomicfu)
 
-        implementation(libs.androidx.collection) // LruCache
-
         implementation(libs.kotlininject.runtime)
       }
     }
