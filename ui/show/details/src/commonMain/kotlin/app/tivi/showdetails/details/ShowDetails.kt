@@ -10,6 +10,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.SnapPositionInLayout
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,7 +39,7 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
@@ -90,6 +91,7 @@ import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
+import app.tivi.common.compose.StartToStart
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
@@ -682,7 +684,7 @@ private fun RelatedShows(
       snapLayoutInfoProvider = remember(lazyListState) {
         SnapLayoutInfoProvider(
           lazyListState = lazyListState,
-          positionInLayout = { _, _, _ -> 0 }, // start
+          positionInLayout = SnapPositionInLayout.StartToStart,
         )
       },
     ),
@@ -1002,7 +1004,7 @@ private fun ShowDetailsAppBar(
         onClick = onNavigateUp,
       ) {
         Icon(
-          imageVector = Icons.Default.ArrowBack,
+          imageVector = Icons.AutoMirrored.Filled.ArrowBack,
           contentDescription = LocalStrings.current.cdNavigateUp,
         )
       }

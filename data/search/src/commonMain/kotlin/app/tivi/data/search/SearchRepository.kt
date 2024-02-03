@@ -3,7 +3,6 @@
 
 package app.tivi.data.search
 
-import androidx.collection.LruCache
 import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.getIdOrSavePlaceholder
@@ -24,7 +23,7 @@ class SearchRepository(
   private val transactionRunner: DatabaseTransactionRunner,
   private val dispatchers: AppCoroutineDispatchers,
 ) {
-  private val cache by lazy { LruCache<String, List<Long>>(20) }
+  private val cache by lazy { mutableMapOf<String, List<Long>>() }
 
   suspend fun search(query: String): List<TiviShow> {
     if (query.isBlank()) {
@@ -42,7 +41,7 @@ class SearchRepository(
       fetchFromTmdb(query)
         .also { results ->
           // We need to save the search results
-          cache.put(query, results)
+          cache[query] = results
         }
         .mapNotNull { showDao.getShowWithId(it) }
     }

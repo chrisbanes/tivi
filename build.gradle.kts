@@ -19,6 +19,16 @@ plugins {
   alias(libs.plugins.firebase.crashlytics) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.composeMultiplatform) apply false
+  alias(libs.plugins.licensee) apply false
+}
+
+buildscript {
+  dependencies {
+    // Yuck. Need to force kotlinpoet:1.16.0 as that is what buildconfig uses.
+    // CMP 1.6.0-x uses kotlinpoet:1.14.x. Gradle seems to force 1.14.x which then breaks
+    // buildconfig.
+    classpath("com.squareup:kotlinpoet:1.16.0")
+  }
 }
 
 allprojects {

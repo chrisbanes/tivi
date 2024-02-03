@@ -17,7 +17,10 @@ import androidx.compose.ui.graphics.Color
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
 
+@OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 fun HazeScaffold(
   modifier: Modifier = Modifier,
@@ -41,7 +44,10 @@ fun HazeScaffold(
       if (blurTopBar) {
         // We explicitly only want to add a Box if we are blurring.
         // Scaffold has logic which changes based on whether `bottomBar` contains a layout node.
-        Box(Modifier.hazeChild(hazeState)) {
+        Box(
+          modifier = Modifier
+            .hazeChild(state = hazeState, style = HazeMaterials.regular()),
+        ) {
           topBar()
         }
       } else {
@@ -52,7 +58,10 @@ fun HazeScaffold(
       if (blurBottomBar) {
         // We explicitly only want to add a Box if we are blurring.
         // Scaffold has logic which changes based on whether `bottomBar` contains a layout node.
-        Box(Modifier.hazeChild(hazeState)) {
+        Box(
+          modifier = Modifier
+            .hazeChild(state = hazeState, style = HazeMaterials.regular()),
+        ) {
           bottomBar()
         }
       } else {
@@ -66,12 +75,7 @@ fun HazeScaffold(
     contentColor = contentColor,
     contentWindowInsets = contentWindowInsets,
   ) { contentPadding ->
-    Box(
-      modifier = Modifier.haze(
-        state = hazeState,
-        backgroundColor = containerColor,
-      ),
-    ) {
+    Box(Modifier.haze(state = hazeState)) {
       content(contentPadding)
     }
   }

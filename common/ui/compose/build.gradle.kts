@@ -25,7 +25,8 @@ kotlin {
         api(projects.common.ui.resources.strings)
         api(libs.lyricist.library)
 
-        api(libs.haze)
+        implementation(libs.haze.haze)
+        implementation(libs.haze.materials)
         api(libs.coil.compose)
 
         implementation(compose.foundation)

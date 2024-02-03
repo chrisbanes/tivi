@@ -9,6 +9,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.SnapPositionInLayout
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,6 +66,7 @@ import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.compose.ReportDrawnWhen
+import app.tivi.common.compose.StartToStart
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.theme.TiviTheme
@@ -443,7 +445,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
       snapLayoutInfoProvider = remember(lazyListState) {
         SnapLayoutInfoProvider(
           lazyListState = lazyListState,
-          positionInLayout = { _, _, _ -> 0 }, // start
+          positionInLayout = SnapPositionInLayout.StartToStart,
         )
       },
     ),

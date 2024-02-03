@@ -32,7 +32,7 @@ dependencies {
   compileOnly(libs.kotlin.gradlePlugin)
   compileOnly(libs.spotless.gradlePlugin)
   compileOnly(libs.compose.gradlePlugin)
-  implementation(libs.licensee.gradlePlugin)
+  compileOnly(libs.licensee.gradlePlugin)
 }
 
 gradlePlugin {
