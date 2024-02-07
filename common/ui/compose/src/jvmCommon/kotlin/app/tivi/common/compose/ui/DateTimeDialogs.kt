@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,12 +76,34 @@ actual fun DatePickerDialog(
   maximumDate: LocalDate?,
   title: String,
 ) {
+  val selectableDates: SelectableDates = remember(minimumDate, maximumDate) {
+    object : SelectableDates {
+      override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+        val date = Instant.fromEpochMilliseconds(utcTimeMillis)
+          .toLocalDateTime(TimeZone.currentSystemDefault())
+          .date
+        return when {
+          minimumDate != null && date < minimumDate -> false
+          maximumDate != null && date > maximumDate -> false
+          else -> true
+        }
+      }
+
+      override fun isSelectableYear(year: Int): Boolean = when {
+        minimumDate != null && year < minimumDate.year -> false
+        maximumDate != null && year > maximumDate.year -> false
+        else -> true
+      }
+    }
+  }
+
   val datePickerState = rememberDatePickerState(
     initialSelectedDateMillis = selectedDate
       .atTime(hour = 12, minute = 0)
       .toInstant(TimeZone.currentSystemDefault())
       .toEpochMilliseconds(),
     yearRange = 1900..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.year,
+    selectableDates = selectableDates,
   )
 
   LaunchedEffect(datePickerState) {
@@ -103,17 +127,8 @@ actual fun DatePickerDialog(
   ) {
     DatePicker(
       state = datePickerState,
-      dateValidator = { epoch ->
-        val date = Instant.fromEpochMilliseconds(epoch)
-          .toLocalDateTime(TimeZone.currentSystemDefault())
-          .date
-        when {
-          minimumDate != null && date < minimumDate -> false
-          maximumDate != null && date > maximumDate -> false
-          else -> true
-        }
-      },
-      modifier = Modifier.align(Alignment.CenterHorizontally),
+      modifier = Modifier
+        .align(Alignment.CenterHorizontally),
     )
   }
 }

@@ -438,9 +438,11 @@ private fun LibraryItem(
 
       if (watchedEpisodeCount != null && totalEpisodeCount != null) {
         LinearProgressIndicator(
-          progress = when {
-            totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
-            else -> 0f
+          progress = {
+            when {
+              totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
+              else -> 0f
+            }
           },
           modifier = Modifier.fillMaxWidth(),
         )

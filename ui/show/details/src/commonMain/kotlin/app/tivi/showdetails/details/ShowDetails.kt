@@ -790,9 +790,11 @@ private fun WatchStats(
       .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter),
   ) {
     LinearProgressIndicator(
-      progress = when {
-        episodeCount > 0 -> watchedEpisodeCount / episodeCount.toFloat()
-        else -> 0f
+      progress = {
+        when {
+          episodeCount > 0 -> watchedEpisodeCount / episodeCount.toFloat()
+          else -> 0f
+        }
       },
       modifier = Modifier.fillMaxWidth(),
     )
@@ -869,7 +871,7 @@ private fun SeasonRow(
 
         if (!season.ignored && episodesAired > 0) {
           LinearProgressIndicator(
-            progress = episodesWatched / episodesAired.toFloat(),
+            progress = { episodesWatched / episodesAired.toFloat() },
             modifier = Modifier
               .padding(top = 4.dp)
               .fillMaxWidth(),
