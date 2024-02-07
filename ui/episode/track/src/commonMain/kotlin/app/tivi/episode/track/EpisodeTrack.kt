@@ -18,7 +18,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -130,7 +130,7 @@ internal fun EpisodeTrack(
           season = viewState.season,
         )
       }
-      Divider()
+      HorizontalDivider()
 
       EpisodeTrack(
         selectedDate = viewState.selectedDate,

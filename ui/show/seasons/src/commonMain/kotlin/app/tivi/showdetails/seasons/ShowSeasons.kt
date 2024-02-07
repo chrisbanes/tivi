@@ -34,8 +34,8 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -47,7 +47,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabPosition
-import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -221,7 +221,7 @@ internal fun ShowSeasons(
           contentColor = LocalContentColor.current,
         )
 
-        Divider(Modifier.fillMaxWidth())
+        HorizontalDivider(Modifier.fillMaxWidth())
       }
     },
     blurTopBar = true,
@@ -272,8 +272,9 @@ private fun SeasonPagerTabs(
     containerColor = containerColor,
     contentColor = contentColor,
     indicator = { tabPositions ->
-      TabRowDefaults.Indicator(
-        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
+      SecondaryIndicator(
+        modifier = Modifier
+          .pagerTabIndicatorOffset(pagerState, tabPositions),
       )
     },
     divider = {},
