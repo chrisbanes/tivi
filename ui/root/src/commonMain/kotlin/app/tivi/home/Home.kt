@@ -51,7 +51,6 @@ import app.tivi.screens.LibraryScreen
 import app.tivi.screens.SearchScreen
 import app.tivi.screens.UpNextScreen
 import com.slack.circuit.backstack.SaveableBackStack
-import com.slack.circuit.backstack.isAtRoot
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
@@ -60,7 +59,7 @@ import com.slack.circuitx.gesturenavigation.GestureNavigationDecoration
 
 @Composable
 internal fun Home(
-  backstack: SaveableBackStack,
+  backStack: SaveableBackStack,
   navigator: Navigator,
   modifier: Modifier = Modifier,
 ) {
@@ -69,8 +68,8 @@ internal fun Home(
     NavigationType.forWindowSizeSize(windowSizeClass)
   }
 
-  val rootScreen by remember(backstack) {
-    derivedStateOf { backstack.last().screen }
+  val rootScreen by remember(backStack) {
+    derivedStateOf { backStack.last().screen }
   }
 
   val strings = LocalStrings.current
@@ -82,7 +81,9 @@ internal fun Home(
         HomeNavigationBar(
           selectedNavigation = rootScreen,
           navigationItems = navigationItems,
-          onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
+          onNavigationSelected = {
+            navigator.resetRootIfDifferent(it, saveState = true, restoreState = true)
+          },
           modifier = Modifier.fillMaxWidth(),
         )
       }
@@ -95,7 +96,9 @@ internal fun Home(
         HomeNavigationRail(
           selectedNavigation = rootScreen,
           navigationItems = navigationItems,
-          onNavigationSelected = { navigator.resetRootIfDifferent(it, backstack) },
+          onNavigationSelected = {
+            navigator.resetRootIfDifferent(it, saveState = true, restoreState = true)
+          },
           modifier = Modifier.fillMaxHeight(),
         )
 
@@ -116,7 +119,7 @@ internal fun Home(
       ) {
         NavigableCircuitContent(
           navigator = navigator,
-          backstack = backstack,
+          backStack = backStack,
           decoration = remember(navigator) {
             GestureNavigationDecoration(onBackInvoked = navigator::pop)
           },
@@ -284,9 +287,11 @@ private fun buildNavigationItems(strings: TiviStrings): List<HomeNavigationItem>
 
 private fun Navigator.resetRootIfDifferent(
   screen: Screen,
-  backstack: SaveableBackStack,
+  saveState: Boolean = false,
+  restoreState: Boolean = false,
 ) {
-  if (!backstack.isAtRoot || backstack.topRecord?.screen != screen) {
-    resetRoot(screen)
+  val backStack = peekBackStack()
+  if (backStack.size > 1 || backStack.lastOrNull() != screen) {
+    resetRoot(screen, saveState, restoreState)
   }
 }
