@@ -98,7 +98,7 @@ suspend fun OverlayHost.showInBottomSheet(
       screen = screen,
       onNavEvent = { event ->
         when (event) {
-          NavEvent.Pop -> navigator.finish(Unit)
+          is NavEvent.Pop -> navigator.finish(Unit)
           else -> hostNavigator?.onNavEvent(event)
         }
       },

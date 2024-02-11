@@ -35,6 +35,7 @@ import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.retained.LocalRetainedStateRegistry
 import com.slack.circuit.retained.continuityRetainedStateRegistry
 import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.screen.PopResult
 import com.slack.circuit.runtime.screen.Screen
 import kotlinx.coroutines.CoroutineScope
 import me.tatarka.inject.annotations.Assisted
@@ -97,7 +98,7 @@ fun TiviContent(
           useDynamicColors = preferences.shouldUseDynamicColors(),
         ) {
           Home(
-            backstack = backstack,
+            backStack = backstack,
             navigator = tiviNavigator,
             modifier = modifier,
           )
@@ -122,13 +123,17 @@ private class TiviNavigator(
     }
   }
 
-  override fun pop(): Screen? {
+  override fun pop(result: PopResult?): Screen? {
     logger.d { "pop. Current stack: ${backStack.toList()}" }
-    return navigator.pop()
+    return navigator.pop(result)
   }
 
-  override fun resetRoot(newRoot: Screen): List<Screen> {
+  override fun resetRoot(newRoot: Screen, saveState: Boolean, restoreState: Boolean): List<Screen> {
     logger.d { "resetRoot: newRoot:$newRoot. Current stack: ${backStack.toList()}" }
-    return navigator.resetRoot(newRoot)
+    return navigator.resetRoot(newRoot, saveState, restoreState)
   }
+
+  override fun peek(): Screen? = navigator.peek()
+
+  override fun peekBackStack(): List<Screen> = navigator.peekBackStack()
 }

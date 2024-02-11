@@ -52,7 +52,7 @@ suspend fun OverlayHost.showInDialog(
       screen = screen,
       onNavEvent = { event ->
         when (event) {
-          NavEvent.Pop -> navigator.finish(Unit)
+          is NavEvent.Pop -> navigator.finish(Unit)
           else -> Unit
         }
       },
