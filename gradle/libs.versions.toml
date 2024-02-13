@@ -29,7 +29,7 @@ android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 buildConfig = "com.github.gmazzo.buildconfig:5.3.5"
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.1" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
