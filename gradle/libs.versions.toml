@@ -20,7 +20,7 @@ ktor = "2.3.8"
 paging-multiplatform = "3.3.0-alpha02-0.4.0"
 spotless = "6.25.0"
 sqldelight = "2.0.1"
-licensee = "1.9.0"
+licensee = "1.9.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
