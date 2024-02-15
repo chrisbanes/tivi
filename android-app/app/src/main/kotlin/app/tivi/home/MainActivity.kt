@@ -52,7 +52,7 @@ class MainActivity : TiviActivity() {
     }
 
     setContent {
-      val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+      val backstack = rememberSaveableBackStack(listOf(DiscoverScreen))
       val navigator = rememberCircuitNavigator(backstack)
 
       component.tiviContent(
