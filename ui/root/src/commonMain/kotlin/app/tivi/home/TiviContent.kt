@@ -37,6 +37,7 @@ import com.slack.circuit.retained.continuityRetainedStateRegistry
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.screen.PopResult
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -128,12 +129,16 @@ private class TiviNavigator(
     return navigator.pop(result)
   }
 
-  override fun resetRoot(newRoot: Screen, saveState: Boolean, restoreState: Boolean): List<Screen> {
+  override fun resetRoot(
+    newRoot: Screen,
+    saveState: Boolean,
+    restoreState: Boolean,
+  ): ImmutableList<Screen> {
     logger.d { "resetRoot: newRoot:$newRoot. Current stack: ${backStack.toList()}" }
     return navigator.resetRoot(newRoot, saveState, restoreState)
   }
 
   override fun peek(): Screen? = navigator.peek()
 
-  override fun peekBackStack(): List<Screen> = navigator.peekBackStack()
+  override fun peekBackStack(): ImmutableList<Screen> = navigator.peekBackStack()
 }

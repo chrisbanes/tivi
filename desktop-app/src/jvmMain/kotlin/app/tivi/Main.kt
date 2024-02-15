@@ -32,7 +32,7 @@ fun main() = application {
       WindowComponent.create(applicationComponent)
     }
 
-    val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+    val backstack = rememberSaveableBackStack(listOf(DiscoverScreen))
     val navigator = rememberCircuitNavigator(backstack) { /* no-op */ }
 
     component.tiviContent(

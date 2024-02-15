@@ -21,7 +21,7 @@ typealias TiviUiViewController = () -> UIViewController
 fun TiviUiViewController(
   tiviContent: TiviContent,
 ): UIViewController = ComposeUIViewController {
-  val backstack = rememberSaveableBackStack { push(DiscoverScreen) }
+  val backstack = rememberSaveableBackStack(listOf(DiscoverScreen))
   val navigator = rememberCircuitNavigator(backstack, onRootPop = { /* no-op */ })
   val uiViewController = LocalUIViewController.current
 
