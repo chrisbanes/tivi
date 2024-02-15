@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-  namespace = "app.tivi.settings"
+  namespace = "app.tivi.debug.settings"
 }
 
 kotlin {

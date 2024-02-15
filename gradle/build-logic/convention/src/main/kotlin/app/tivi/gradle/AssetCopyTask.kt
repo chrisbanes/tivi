@@ -35,7 +35,7 @@ abstract class AssetCopyTask : DefaultTask() {
       .file(outputFilename.get())
       .asFile
 
-    logger.log(LogLevel.WARN, "Copying ${input.canonicalPath} to ${output.canonicalPath}")
+    logger.log(LogLevel.INFO, "Copying ${input.canonicalPath} to ${output.canonicalPath}")
 
     input.copyTo(target = output, overwrite = true)
   }
