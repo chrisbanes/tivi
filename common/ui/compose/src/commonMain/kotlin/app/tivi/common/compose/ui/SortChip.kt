@@ -7,8 +7,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -46,8 +46,8 @@ fun SortChip(
       },
       leadingIcon = {
         Icon(
-          imageVector = Icons.Default.Sort,
-          contentDescription = "",
+          imageVector = Icons.AutoMirrored.Filled.Sort,
+          contentDescription = null, // decorative
           modifier = Modifier.size(16.dp),
         )
       },

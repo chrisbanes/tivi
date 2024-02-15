@@ -4,6 +4,7 @@
 package app.tivi.gradle
 
 import app.cash.licensee.LicenseeExtension
+import app.cash.licensee.UnusedAction
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
@@ -17,5 +18,6 @@ fun Project.configureLicensee() {
     allow("MIT")
     allow("BSD-3-Clause")
     allowUrl("https://developer.android.com/studio/terms.html")
+    unusedAction(UnusedAction.IGNORE)
   }
 }
