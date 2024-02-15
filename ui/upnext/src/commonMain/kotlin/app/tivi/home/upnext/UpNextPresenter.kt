@@ -14,8 +14,8 @@ import app.cash.paging.PagingConfig
 import app.cash.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
-import app.tivi.common.compose.rememberCachedPagingFlow
 import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.common.compose.rememberRetainedCachedPagingFlow
 import app.tivi.data.models.SortOption
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.interactors.GetTraktAuthState
@@ -30,6 +30,7 @@ import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
 import app.tivi.util.onException
 import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -71,8 +72,13 @@ class UpNextPresenter(
 
     val uiMessageManager = remember { UiMessageManager() }
 
-    val items = observePagedUpNextShows.value.flow
-      .rememberCachedPagingFlow(scope)
+    // Yes, this is gross. We need the same flow instance across Presenter instances. We could
+    // make the interactor have @ApplicationScope, but that has other consequences if we use the
+    // same interactor at the same time across UIs. Instead we just retain the instance
+    val retainedObservePagedUpNextShows = rememberRetained { observePagedUpNextShows.value }
+
+    val items = retainedObservePagedUpNextShows.flow
+      .rememberRetainedCachedPagingFlow()
       .collectAsLazyPagingItems()
 
     var sort by remember { mutableStateOf(SortOption.LAST_WATCHED) }
@@ -131,7 +137,7 @@ class UpNextPresenter(
 
     LaunchedEffect(sort, followedShowsOnly) {
       // When the filter and sort options change, update the data source
-      observePagedUpNextShows.value.invoke(
+      retainedObservePagedUpNextShows(
         ObservePagedUpNextShows.Parameters(
           sort = sort,
           followedOnly = followedShowsOnly,
