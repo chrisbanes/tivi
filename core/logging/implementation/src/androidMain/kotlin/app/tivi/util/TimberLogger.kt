@@ -86,14 +86,23 @@ private class TiviDebugTree : Timber.DebugTree() {
 }
 
 private class CrashlyticsTree : Timber.Tree() {
+  private var crashlyticsEnabled = true
+
   override fun isLoggable(tag: String?, priority: Int): Boolean {
     return priority >= Log.INFO
   }
 
   override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-    CrashlyticsKotlin.logMessage(message)
-    if (t != null) {
-      CrashlyticsKotlin.sendHandledException(t)
+    if (!crashlyticsEnabled) return
+
+    try {
+      CrashlyticsKotlin.logMessage(message)
+      if (t != null) {
+        CrashlyticsKotlin.sendHandledException(t)
+      }
+    } catch (e: IllegalStateException) {
+      // Firebase might not be setup. Set crashlyticsEnabled to false so that we don't try again
+      crashlyticsEnabled = false
     }
   }
 }
