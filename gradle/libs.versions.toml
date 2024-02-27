@@ -76,7 +76,7 @@ circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = 
 circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
 circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
 
-compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.3.2"
+compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.5.0"
 
 crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.6"
 
