@@ -18,6 +18,12 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
 fun Project.configureCompose() {
   compose {
     // kotlinCompilerPlugin.set(libs.findVersion("compose-compiler").get().requiredVersion)
+
+    kotlinCompilerPluginArgs.addAll(
+      // Enable 'strong skipping'
+      // https://medium.com/androiddevelopers/jetpack-compose-strong-skipping-mode-explained-cbdb2aa4b900
+      "experimentalStrongSkipping=true",
+    )
   }
 }
 
