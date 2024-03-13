@@ -17,9 +17,12 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
 
 fun Project.configureCompose() {
   compose {
-    // kotlinCompilerPlugin.set(libs.findVersion("compose-compiler").get().requiredVersion)
+    // The Compose Compiler for 1.9.22 works for 1.9.23
+    kotlinCompilerPlugin.set(dependencies.compiler.forKotlin("1.9.22"))
 
     kotlinCompilerPluginArgs.addAll(
+      // Ignore the 'incompatible' Compose Compiler for 1.9.23
+      "suppressKotlinVersionCompatibilityCheck=1.9.23",
       // Enable 'strong skipping'
       // https://medium.com/androiddevelopers/jetpack-compose-strong-skipping-mode-explained-cbdb2aa4b900
       "experimentalStrongSkipping=true",
