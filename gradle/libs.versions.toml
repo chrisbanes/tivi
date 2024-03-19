@@ -140,7 +140,7 @@ assertk = "com.willowtreeapps.assertk:assertk:0.28.0"
 
 turbine = "app.cash.turbine:turbine:1.1.0"
 
-uuid = "com.benasher44:uuid:0.8.2"
+uuid = "com.benasher44:uuid:0.8.4"
 
 # Build logic dependencies
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
