@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import app.cash.paging.PagingConfig
 import app.cash.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.rememberCachedPagingFlow
+import app.tivi.common.compose.rememberRetainedCoroutineScope
 import app.tivi.domain.observers.ObservePagedTrendingShows
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.TrendingShowsScreen

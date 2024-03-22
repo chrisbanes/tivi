@@ -6,11 +6,11 @@
 package app.tivi.common.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import app.cash.paging.CombinedLoadStates
 import app.cash.paging.LoadStateError
 import app.cash.paging.PagingData
 import app.cash.paging.cachedIn
+import com.slack.circuit.retained.rememberRetained
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
@@ -31,5 +31,5 @@ fun CombinedLoadStates.refreshErrorOrNull(): UiMessage? {
 
 @Composable
 inline fun <T : Any> Flow<PagingData<T>>.rememberCachedPagingFlow(
-  scope: CoroutineScope = rememberCoroutineScope(),
-): Flow<PagingData<T>> = remember(this, scope) { cachedIn(scope) }
+  scope: CoroutineScope = rememberRetainedCoroutineScope(),
+): Flow<PagingData<T>> = rememberRetained(scope) { cachedIn(scope) }

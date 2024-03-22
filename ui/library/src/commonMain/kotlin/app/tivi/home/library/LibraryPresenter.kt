@@ -72,7 +72,7 @@ class LibraryPresenter(
     val uiMessageManager = remember { UiMessageManager() }
 
     val items = observePagedLibraryShows.value.flow
-      .rememberCachedPagingFlow(scope)
+      .rememberCachedPagingFlow()
       .collectAsLazyPagingItems()
 
     var filter by remember { mutableStateOf<String?>(null) }
