@@ -18,6 +18,7 @@ fun Project.configureLicensee() {
     allow("MIT")
     allow("BSD-3-Clause")
     allowUrl("https://developer.android.com/studio/terms.html")
+    allowUrl("https://opensource.org/licenses/MIT") // MIT
     unusedAction(UnusedAction.IGNORE)
   }
 }
