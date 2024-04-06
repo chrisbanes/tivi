@@ -19,7 +19,7 @@ ktlint = "1.0.1"
 ktor = "2.3.9"
 paging-multiplatform = "3.3.0-alpha02-0.5.1"
 spotless = "6.25.0"
-sqldelight = "2.0.1"
+sqldelight = "2.0.2"
 licensee = "1.11.0"
 
 [plugins]
