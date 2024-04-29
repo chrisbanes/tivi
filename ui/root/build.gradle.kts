@@ -20,6 +20,8 @@ kotlin {
         implementation(projects.core.analytics)
         implementation(projects.common.ui.compose)
 
+        implementation(libs.haze.materials)
+
         implementation(projects.domain)
         implementation(projects.data.traktauth)
 

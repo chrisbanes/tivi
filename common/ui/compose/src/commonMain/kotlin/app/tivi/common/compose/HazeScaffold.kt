@@ -33,12 +33,11 @@ fun HazeScaffold(
   containerColor: Color = MaterialTheme.colorScheme.background,
   contentColor: Color = contentColorFor(containerColor),
   contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
+  hazeState: HazeState = remember { HazeState() },
   blurTopBar: Boolean = false,
   blurBottomBar: Boolean = false,
   content: @Composable (PaddingValues) -> Unit,
 ) {
-  val hazeState = remember { HazeState() }
-
   NestedScaffold(
     modifier = modifier,
     topBar = {
