@@ -17,7 +17,7 @@ actual interface SqlDelightDatabasePlatformComponent {
   ): SqlDriver = JdbcSqliteDriver(
     url = when {
       configuration.inMemory -> JdbcSqliteDriver.IN_MEMORY
-      else -> "jdbc:sqlite:${getDatabaseFile().absolutePath}"
+      else -> "jdbc:sqlite:${configuration.file.absolutePath}"
     },
   ).also { db ->
     Database.Schema.create(db)
@@ -25,12 +25,8 @@ actual interface SqlDelightDatabasePlatformComponent {
   }
 }
 
-private fun getDatabaseFile(): File {
-  return File(
-    appDir.also { if (!it.exists()) it.mkdirs() },
-    "tivi.db",
-  )
-}
+private val DatabaseConfiguration.file: File
+  get() = File(appDir.also { if (!it.exists()) it.mkdirs() }, "$name.db")
 
 private val appDir: File
   get() {

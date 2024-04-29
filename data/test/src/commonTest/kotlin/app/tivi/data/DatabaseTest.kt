@@ -16,6 +16,7 @@ import app.tivi.trakt.TraktCommonComponent
 import app.tivi.util.Logger
 import app.tivi.utils.SuccessRefreshTokenAction
 import app.tivi.utils.SuccessTraktLoginAction
+import com.benasher44.uuid.uuid4
 import kotlin.test.AfterTest
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -56,9 +57,7 @@ abstract class TestApplicationComponent :
 
   @Provides
   override fun provideDatabaseConfiguration(): DatabaseConfiguration {
-    return super.provideDatabaseConfiguration().copy(
-      inMemory = true,
-    )
+    return DatabaseConfiguration(name = uuid4().toString(), inMemory = true)
   }
 
   @Provides
