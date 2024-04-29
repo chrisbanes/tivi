@@ -36,6 +36,8 @@ kotlin {
         implementation(libs.kotlin.coroutines.test)
 
         implementation(libs.turbine)
+
+        implementation(libs.uuid)
       }
     }
   }

@@ -3,4 +3,7 @@
 
 package app.tivi.data
 
-data class DatabaseConfiguration(val inMemory: Boolean = false)
+data class DatabaseConfiguration(
+  val name: String = "tivi",
+  val inMemory: Boolean = false,
+)
