@@ -7,10 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import app.cash.paging.PagingConfig
 import app.cash.paging.compose.collectAsLazyPagingItems
-import app.tivi.common.compose.rememberCachedPagingFlow
+import app.tivi.common.compose.rememberRetainedCachedPagingFlow
 import app.tivi.domain.observers.ObservePagedRecommendedShows
 import app.tivi.screens.RecommendedShowsScreen
 import app.tivi.screens.ShowDetailsScreen
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -40,12 +41,17 @@ class RecommendedShowsPresenter(
 
   @Composable
   override fun present(): RecommendedShowsUiState {
-    val items = pagingInteractor.value.flow
-      .rememberCachedPagingFlow()
+    // Yes, this is gross. We need the same flow instance across Presenter instances. We could
+    // make the interactor have @ApplicationScope, but that has other consequences if we use the
+    // same interactor at the same time across UIs. Instead we just retain the instance
+    val retainedPagingInteractor = rememberRetained { pagingInteractor.value }
+
+    val items = retainedPagingInteractor.flow
+      .rememberRetainedCachedPagingFlow()
       .collectAsLazyPagingItems()
 
     LaunchedEffect(Unit) {
-      pagingInteractor.value.invoke(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
+      retainedPagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
     }
 
     fun eventSink(event: RecommendedShowsUiEvent) {
