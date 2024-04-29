@@ -17,6 +17,7 @@ captures
 .idea/compiler.xml
 .idea/jarRepositories.xml
 .idea/deploymentTargetDropDown.xml
+.idea/deploymentTargetSelector.xml
 .idea/androidTestResultsUserPreferences.xml
 .idea/appInsightsSettings.xml
 .idea/artifacts
