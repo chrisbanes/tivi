@@ -49,8 +49,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -76,6 +74,7 @@ import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.TopAppBar
 import app.tivi.data.compoundmodels.EpisodeWithWatches
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.imagemodels.asImageModel
@@ -210,7 +209,7 @@ internal fun ShowSeasons(
               onClick = refresh,
             )
           },
-          colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+          transparent = true,
         )
 
         SeasonPagerTabs(

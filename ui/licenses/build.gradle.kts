@@ -19,6 +19,8 @@ kotlin {
         implementation(projects.core.base)
         implementation(projects.domain)
         implementation(projects.common.ui.compose)
+        implementation(projects.common.ui.components)
+
         implementation(projects.data.licenses) // This should really be used through an interactor
         api(projects.common.ui.screens)
 

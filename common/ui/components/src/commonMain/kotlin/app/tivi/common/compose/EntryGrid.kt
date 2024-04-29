@@ -20,9 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
@@ -30,7 +28,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,18 +38,16 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -62,6 +57,7 @@ import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.itemKey
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.TopAppBar
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
@@ -69,7 +65,7 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TrendingShowEntry
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun <E : Entry> EntryGrid(
   lazyPagingItems: LazyPagingItems<EntryWithShow<E>>,
@@ -79,16 +75,17 @@ fun <E : Entry> EntryGrid(
   modifier: Modifier = Modifier,
 ) {
   val snackbarHostState = remember { SnackbarHostState() }
-  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-  val dismissSnackbarState = rememberDismissState { value ->
-    if (value != DismissValue.Default) {
-      snackbarHostState.currentSnackbarData?.dismiss()
-      true
-    } else {
-      false
-    }
-  }
+  val dismissSnackbarState = rememberSwipeToDismissBoxState(
+    confirmValueChange = { value ->
+      if (value != SwipeToDismissBoxValue.Settled) {
+        snackbarHostState.currentSnackbarData?.dismiss()
+        true
+      } else {
+        false
+      }
+    },
+  )
 
   lazyPagingItems.loadState.prependErrorOrNull()?.let { message ->
     LaunchedEffect(message) {
@@ -114,19 +111,18 @@ fun <E : Entry> EntryGrid(
         refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading,
         onRefreshActionClick = { lazyPagingItems.refresh() },
         modifier = Modifier.fillMaxWidth(),
-        scrollBehavior = scrollBehavior,
       )
     },
     blurTopBar = true,
     snackbarHost = {
       SnackbarHost(hostState = snackbarHostState) { data ->
-        SwipeToDismiss(
+        SwipeToDismissBox(
           state = dismissSnackbarState,
-          background = {},
-          dismissContent = { Snackbar(snackbarData = data) },
+          backgroundContent = {},
           modifier = Modifier
             .padding(horizontal = Layout.bodyMargin)
             .fillMaxWidth(),
+          content = { Snackbar(snackbarData = data) },
         )
       }
     },
@@ -151,7 +147,6 @@ fun <E : Entry> EntryGrid(
         horizontalArrangement = Arrangement.spacedBy(gutter),
         verticalItemSpacing = gutter,
         modifier = Modifier
-          .nestedScroll(scrollBehavior.nestedScrollConnection)
           .bodyWidth()
           .fillMaxHeight(),
       ) {
@@ -268,7 +263,6 @@ private fun EntryGridAppBar(
   onNavigateUp: () -> Unit,
   onRefreshActionClick: () -> Unit,
   modifier: Modifier = Modifier,
-  scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
   TopAppBar(
     navigationIcon = {
@@ -280,8 +274,7 @@ private fun EntryGridAppBar(
       }
     },
     modifier = modifier,
-    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-    scrollBehavior = scrollBehavior,
+    transparent = true,
     title = { Text(text = title) },
     actions = {
       // This button refresh allows screen-readers, etc to trigger a refresh.
