@@ -48,7 +48,7 @@ fun NestedScaffold(
   containerColor: Color = CupertinoTheme.colorScheme.systemBackground,
   contentColor: Color = CupertinoTheme.colorScheme.label,
   contentWindowInsets: WindowInsets = CupertinoScaffoldDefaults.contentWindowInsets,
-  content: @Composable (PaddingValues) -> Unit
+  content: @Composable (PaddingValues) -> Unit,
 ) {
   val upstreamContentPadding = LocalScaffoldContentPadding.current
   val layoutDirection = LocalLayoutDirection.current

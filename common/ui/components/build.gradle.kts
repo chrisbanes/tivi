@@ -22,7 +22,8 @@ kotlin {
 
         api(libs.circuit.foundation)
 
-        api(libs.haze)
+        implementation(libs.haze.haze)
+        implementation(libs.haze.materials)
         api(libs.coil.compose)
 
         implementation(compose.foundation)

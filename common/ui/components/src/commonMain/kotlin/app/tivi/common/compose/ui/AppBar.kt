@@ -57,7 +57,6 @@ fun TiviRootScreenAppBar(
   )
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAdaptiveApi::class)
 @Composable
 fun TopAppBar(
@@ -83,6 +82,6 @@ fun TopAppBar(
       cupertino {
         isTransparent = transparent
       }
-    }
+    },
   )
 }
