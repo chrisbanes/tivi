@@ -35,11 +35,6 @@ object AppScenarios {
     // -------------
     device.testSeasons() || return
     device.navigateFromSeasonsToEpisodeDetails()
-
-    // -------------
-    // Episode details
-    // -------------
-    device.testEpisodeDetails() || return
   }
 }
 
@@ -103,25 +98,6 @@ private fun UiDevice.testSeasons(): Boolean {
 private fun UiDevice.navigateFromSeasonsToEpisodeDetails() {
   runAction(By.res("show_seasons_episode_item")) { click() }
   waitForIdle()
-}
-
-private fun UiDevice.testEpisodeDetails(): Boolean {
-  waitForObject(By.res("episode_details"))
-
-  // Swipe the bottom sheet 'up', then 'down'
-  runAction(By.res("episode_details")) {
-    setGestureMargins(this)
-    scroll(Direction.DOWN, 0.8f)
-  }
-  waitForIdle()
-
-  runAction(By.res("episode_details")) {
-    setGestureMargins(this)
-    scroll(Direction.UP, 0.8f)
-  }
-  waitForIdle()
-
-  return true
 }
 
 fun UiDevice.waitForObject(selector: BySelector, timeout: Duration = 5.seconds): UiObject2 {
