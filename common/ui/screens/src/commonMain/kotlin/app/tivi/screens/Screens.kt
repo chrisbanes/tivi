@@ -5,57 +5,57 @@ package app.tivi.screens
 
 import com.slack.circuit.runtime.screen.Screen
 
-@CommonParcelize
+@Parcelize
 object AccountScreen : TiviScreen(name = "AccountUi()")
 
-@CommonParcelize
+@Parcelize
 object DiscoverScreen : TiviScreen(name = "Discover()")
 
-@CommonParcelize
+@Parcelize
 data class EpisodeDetailsScreen(val id: Long) : TiviScreen(name = "EpisodeDetails()") {
   override val arguments get() = mapOf("id" to id)
 }
 
-@CommonParcelize
+@Parcelize
 data class EpisodeTrackScreen(val id: Long) : TiviScreen(name = "EpisodeTrack()") {
   override val arguments get() = mapOf("id" to id)
 }
 
-@CommonParcelize
+@Parcelize
 object LibraryScreen : TiviScreen(name = "Library()")
 
-@CommonParcelize
+@Parcelize
 object PopularShowsScreen : TiviScreen(name = "PopularShows()")
 
-@CommonParcelize
+@Parcelize
 object RecommendedShowsScreen : TiviScreen(name = "RecommendedShows()")
 
-@CommonParcelize
+@Parcelize
 object SearchScreen : TiviScreen(name = "Search()")
 
-@CommonParcelize
+@Parcelize
 object SettingsScreen : TiviScreen(name = "Settings()")
 
-@CommonParcelize
+@Parcelize
 object LicensesScreen : TiviScreen(name = "LicensesScreen()")
 
-@CommonParcelize
+@Parcelize
 object DevSettingsScreen : TiviScreen(name = "DevelopmentSettings()")
 
-@CommonParcelize
+@Parcelize
 object DevLogScreen : TiviScreen(name = "DevelopmentLog()")
 
-@CommonParcelize
+@Parcelize
 data class UrlScreen(val url: String) : TiviScreen(name = "UrlScreen()") {
   override val arguments get() = mapOf("url" to url)
 }
 
-@CommonParcelize
+@Parcelize
 data class ShowDetailsScreen(val id: Long) : TiviScreen(name = "ShowDetails()") {
   override val arguments get() = mapOf("id" to id)
 }
 
-@CommonParcelize
+@Parcelize
 data class ShowSeasonsScreen(
   val id: Long,
   val selectedSeasonId: Long? = null,
@@ -67,10 +67,10 @@ data class ShowSeasonsScreen(
   )
 }
 
-@CommonParcelize
+@Parcelize
 object TrendingShowsScreen : TiviScreen(name = "TrendingShows()")
 
-@CommonParcelize
+@Parcelize
 object UpNextScreen : TiviScreen(name = "UpNext()")
 
 abstract class TiviScreen(val name: String) : Screen {
