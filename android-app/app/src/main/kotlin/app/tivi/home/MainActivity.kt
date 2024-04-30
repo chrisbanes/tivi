@@ -56,13 +56,13 @@ class MainActivity : TiviActivity() {
       val navigator = rememberCircuitNavigator(backstack)
 
       component.tiviContent.Content(
-        backstack,
-        navigator,
-        { url ->
+        backstack = backstack,
+        navigator = navigator,
+        onOpenUrl = { url ->
           val intent = CustomTabsIntent.Builder().build()
           intent.launchUrl(this@MainActivity, Uri.parse(url))
         },
-        Modifier.semantics {
+        modifier = Modifier.semantics {
           // Enables testTag -> UiAutomator resource id
           @OptIn(ExperimentalComposeUiApi::class)
           testTagsAsResourceId = true
