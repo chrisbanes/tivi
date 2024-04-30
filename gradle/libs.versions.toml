@@ -5,12 +5,12 @@ baselineprofile = "1.2.4"
 coil = "3.0.0-alpha06"
 chucker = "4.0.0"
 circuit = "0.20.0"
-compose-multiplatform = "1.6.2"
+compose-multiplatform = "1.6.10-beta03"
 coroutines = "1.8.0"
 haze = "0.7.0"
-kotlin = "1.9.23"
+kotlin = "2.0.0-RC2"
 kotlininject = "0.6.3"
-ksp = "1.9.23-1.0.20"
+ksp = "2.0.0-RC2-1.0.20"
 lyricist = "1.7.0"
 multiplatformsettings = "1.1.1"
 okhttp = "4.12.0"
@@ -30,7 +30,8 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 buildConfig = "com.github.gmazzo.buildconfig:5.3.5"
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.1" }
-composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
@@ -147,4 +148,5 @@ android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref 
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-multiplatform" }
+composeCompiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 licensee-gradlePlugin = { module = "app.cash.licensee:licensee-gradle-plugin", version.ref = "licensee" }

@@ -48,23 +48,25 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
         }
 
         compilations.configureEach {
-          compilerOptions.configure {
-            // Try out preview custom allocator in K/N 1.9
-            // https://kotlinlang.org/docs/whatsnew19.html#preview-of-custom-memory-allocator
-            freeCompilerArgs.add("-Xallocator=custom")
+          compileTaskProvider.configure {
+            compilerOptions {
+              // Try out preview custom allocator in K/N 1.9
+              // https://kotlinlang.org/docs/whatsnew19.html#preview-of-custom-memory-allocator
+              freeCompilerArgs.add("-Xallocator=custom")
 
-            // https://kotlinlang.org/docs/whatsnew19.html#compiler-option-for-c-interop-implicit-integer-conversions
-            freeCompilerArgs.add("-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion")
+              // https://kotlinlang.org/docs/whatsnew19.html#compiler-option-for-c-interop-implicit-integer-conversions
+              freeCompilerArgs.add("-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion")
 
-            // Enable debug symbols:
-            // https://kotlinlang.org/docs/native-ios-symbolication.html
-            freeCompilerArgs.add("-Xadd-light-debug=enable")
+              // Enable debug symbols:
+              // https://kotlinlang.org/docs/native-ios-symbolication.html
+              freeCompilerArgs.add("-Xadd-light-debug=enable")
 
-            // Various opt-ins
-            freeCompilerArgs.addAll(
-              "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-              "-opt-in=kotlinx.cinterop.BetaInteropApi",
-            )
+              // Various opt-ins
+              freeCompilerArgs.addAll(
+                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                "-opt-in=kotlinx.cinterop.BetaInteropApi",
+              )
+            }
           }
         }
       }

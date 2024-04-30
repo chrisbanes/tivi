@@ -81,6 +81,7 @@ playground.xcworkspace
 # .swiftpm
 
 .build/
+.kotlin/
 
 # fastlane
 #
