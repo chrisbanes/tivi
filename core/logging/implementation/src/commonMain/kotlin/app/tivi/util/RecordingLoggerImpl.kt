@@ -3,18 +3,18 @@
 
 package app.tivi.util
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 internal class RecordingLoggerImpl(
   private val bufferSize: Int = 100,
 ) : RecordingLogger {
+  private val _buffer = MutableStateFlow(ArrayDeque<LogMessage>(bufferSize))
 
-  private val logs = ArrayDeque<LogMessage>(bufferSize)
-  private val _buffer = MutableStateFlow<List<LogMessage>>(logs)
-
-  override val buffer get() = _buffer.asStateFlow()
+  override val buffer: Flow<List<LogMessage>> = _buffer.asStateFlow()
 
   override fun v(throwable: Throwable?, message: () -> String) {
     addLog(LogMessage(Severity.Verbose, message(), throwable))
@@ -37,11 +37,13 @@ internal class RecordingLoggerImpl(
   }
 
   private fun addLog(logMessage: LogMessage) {
-    while (logs.size >= bufferSize) {
-      logs.removeFirst()
+    _buffer.update { logs ->
+      while (logs.size > bufferSize - 1) {
+        logs.removeFirst()
+      }
+      logs += logMessage
+      logs
     }
-    logs.add(logMessage)
-    _buffer.value = logs.toList()
   }
 }
 

@@ -3,10 +3,12 @@
 
 package app.tivi.util
 
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 interface RecordingLogger : Logger {
-  val buffer: StateFlow<List<LogMessage>>
+  val buffer: Flow<List<LogMessage>>
 }
 
 enum class Severity {
@@ -22,4 +24,5 @@ data class LogMessage(
   val severity: Severity,
   val message: String,
   val throwable: Throwable?,
+  val timestamp: Instant = Clock.System.now(),
 )

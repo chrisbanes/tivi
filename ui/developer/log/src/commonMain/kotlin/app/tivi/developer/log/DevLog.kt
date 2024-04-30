@@ -75,6 +75,7 @@ internal fun DevLog(
     LazyColumn(
       contentPadding = contentPadding,
       verticalArrangement = Arrangement.spacedBy(2.dp),
+      reverseLayout = true,
       modifier = Modifier.fillMaxWidth(),
     ) {
       items(state.logs) { logMessage ->
@@ -107,7 +108,7 @@ internal fun DevLog(
             append(logMessage.message)
           },
           fontFamily = FontFamily.Monospace,
-          fontSize = 13.sp,
+          fontSize = 12.sp,
           modifier = modifier.padding(horizontal = 16.dp, vertical = 2.dp),
         )
 
@@ -115,7 +116,7 @@ internal fun DevLog(
           Text(
             text = logMessage.throwable.toString(),
             fontFamily = FontFamily.Monospace,
-            fontSize = 12.sp,
+            fontSize = 11.sp,
             modifier = modifier.padding(horizontal = 16.dp, vertical = 2.dp),
           )
         }
