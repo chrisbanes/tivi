@@ -61,7 +61,7 @@ class DefaultTiviContent(
   private val preferences: TiviPreferences,
   private val imageLoader: ImageLoader,
   private val logger: Logger,
-): TiviContent {
+) : TiviContent {
 
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalCoilApi::class)
   @Composable
@@ -69,9 +69,8 @@ class DefaultTiviContent(
     backstack: SaveableBackStack,
     navigator: Navigator,
     onOpenUrl: (String) -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
   ) {
-
     val coroutineScope = rememberCoroutineScope()
     remember { rootViewModel(coroutineScope) }
 
