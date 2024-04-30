@@ -21,6 +21,12 @@ fun Project.configureCompose() {
     // Enable 'strong skipping'
     // https://medium.com/androiddevelopers/jetpack-compose-strong-skipping-mode-explained-cbdb2aa4b900
     enableStrongSkippingMode.set(true)
+
+    if (project.providers.gradleProperty("tivi.enableComposeCompilerReports").isPresent) {
+      val composeReports = layout.buildDirectory.map { it.dir("reports").dir("compose") }
+      reportsDestination.set(composeReports)
+      metricsDestination.set(composeReports)
+    }
   }
 }
 

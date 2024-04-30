@@ -1,9 +1,6 @@
 // Copyright 2023, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 plugins {
   id("app.tivi.root")
 
@@ -29,27 +26,5 @@ buildscript {
     // CMP 1.6.0-x uses kotlinpoet:1.14.x. Gradle seems to force 1.14.x which then breaks
     // buildconfig.
     classpath("com.squareup:kotlinpoet:1.16.0")
-  }
-}
-
-allprojects {
-  tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions {
-      // Treat all Kotlin warnings as errors
-      allWarningsAsErrors = true
-
-      if (project.providers.gradleProperty("tivi.enableComposeCompilerReports").isPresent) {
-        freeCompilerArgs.addAll(
-          "-P",
-          "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
-            layout.buildDirectory.asFile.get().absolutePath + "/compose_metrics",
-        )
-        freeCompilerArgs.addAll(
-          "-P",
-          "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
-            layout.buildDirectory.asFile.get().absolutePath + "/compose_metrics",
-        )
-      }
-    }
   }
 }
