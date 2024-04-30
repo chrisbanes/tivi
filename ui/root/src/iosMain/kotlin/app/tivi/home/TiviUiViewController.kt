@@ -25,7 +25,7 @@ fun TiviUiViewController(
   val navigator = rememberCircuitNavigator(backstack, onRootPop = { /* no-op */ })
   val uiViewController = LocalUIViewController.current
 
-  tiviContent(
+  tiviContent.Content(
     backstack,
     navigator,
     { url ->

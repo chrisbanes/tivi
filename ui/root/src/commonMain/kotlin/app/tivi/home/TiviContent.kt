@@ -39,70 +39,77 @@ import com.slack.circuit.runtime.screen.PopResult
 import com.slack.circuit.runtime.screen.Screen
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias TiviContent = @Composable (
-  backstack: SaveableBackStack,
-  navigator: Navigator,
-  onOpenUrl: (String) -> Unit,
-  modifier: Modifier,
-) -> Unit
+interface TiviContent {
+  @Composable
+  fun Content(
+    backstack: SaveableBackStack,
+    navigator: Navigator,
+    onOpenUrl: (String) -> Unit,
+    modifier: Modifier,
+  )
+}
 
 @Inject
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalCoilApi::class)
-@Composable
-fun TiviContent(
-  @Assisted backstack: SaveableBackStack,
-  @Assisted navigator: Navigator,
-  @Assisted onOpenUrl: (String) -> Unit,
-  rootViewModel: (CoroutineScope) -> RootViewModel,
-  circuit: Circuit,
-  analytics: Analytics,
-  tiviDateFormatter: TiviDateFormatter,
-  tiviTextCreator: TiviTextCreator,
-  preferences: TiviPreferences,
-  imageLoader: ImageLoader,
-  logger: Logger,
-  @Assisted modifier: Modifier = Modifier,
-) {
-  val coroutineScope = rememberCoroutineScope()
-  remember { rootViewModel(coroutineScope) }
+class DefaultTiviContent(
+  private val rootViewModel: (CoroutineScope) -> RootViewModel,
+  private val circuit: Circuit,
+  private val analytics: Analytics,
+  private val tiviDateFormatter: TiviDateFormatter,
+  private val tiviTextCreator: TiviTextCreator,
+  private val preferences: TiviPreferences,
+  private val imageLoader: ImageLoader,
+  private val logger: Logger,
+): TiviContent {
 
-  val tiviNavigator: Navigator = remember(navigator) {
-    TiviNavigator(navigator, backstack, onOpenUrl, logger)
-  }
+  @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalCoilApi::class)
+  @Composable
+  override fun Content(
+    backstack: SaveableBackStack,
+    navigator: Navigator,
+    onOpenUrl: (String) -> Unit,
+    modifier: Modifier
+  ) {
 
-  // Launch an effect to track changes to the current back stack entry, and push them
-  // as a screen views to analytics
-  LaunchedEffect(backstack.topRecord) {
-    val topScreen = backstack.topRecord?.screen as? TiviScreen
-    analytics.trackScreenView(
-      name = topScreen?.name ?: "unknown screen",
-      arguments = topScreen?.arguments,
-    )
-  }
+    val coroutineScope = rememberCoroutineScope()
+    remember { rootViewModel(coroutineScope) }
 
-  setSingletonImageLoaderFactory { imageLoader }
+    val tiviNavigator: Navigator = remember(navigator) {
+      TiviNavigator(navigator, backstack, onOpenUrl, logger)
+    }
 
-  ProvideStrings {
-    CompositionLocalProvider(
-      LocalNavigator provides tiviNavigator,
-      LocalTiviDateFormatter provides tiviDateFormatter,
-      LocalTiviTextCreator provides tiviTextCreator,
-      LocalWindowSizeClass provides calculateWindowSizeClass(),
-      LocalRetainedStateRegistry provides continuityRetainedStateRegistry(),
-    ) {
-      CircuitCompositionLocals(circuit) {
-        TiviTheme(
-          useDarkColors = preferences.shouldUseDarkColors(),
-          useDynamicColors = preferences.shouldUseDynamicColors(),
-        ) {
-          Home(
-            backStack = backstack,
-            navigator = tiviNavigator,
-            modifier = modifier,
-          )
+    // Launch an effect to track changes to the current back stack entry, and push them
+    // as a screen views to analytics
+    LaunchedEffect(backstack.topRecord) {
+      val topScreen = backstack.topRecord?.screen as? TiviScreen
+      analytics.trackScreenView(
+        name = topScreen?.name ?: "unknown screen",
+        arguments = topScreen?.arguments,
+      )
+    }
+
+    setSingletonImageLoaderFactory { imageLoader }
+
+    ProvideStrings {
+      CompositionLocalProvider(
+        LocalNavigator provides tiviNavigator,
+        LocalTiviDateFormatter provides tiviDateFormatter,
+        LocalTiviTextCreator provides tiviTextCreator,
+        LocalWindowSizeClass provides calculateWindowSizeClass(),
+        LocalRetainedStateRegistry provides continuityRetainedStateRegistry(),
+      ) {
+        CircuitCompositionLocals(circuit) {
+          TiviTheme(
+            useDarkColors = preferences.shouldUseDarkColors(),
+            useDynamicColors = preferences.shouldUseDynamicColors(),
+          ) {
+            Home(
+              backStack = backstack,
+              navigator = tiviNavigator,
+              modifier = modifier,
+            )
+          }
         }
       }
     }

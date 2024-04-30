@@ -55,7 +55,7 @@ class MainActivity : TiviActivity() {
       val backstack = rememberSaveableBackStack(listOf(DiscoverScreen))
       val navigator = rememberCircuitNavigator(backstack)
 
-      component.tiviContent(
+      component.tiviContent.Content(
         backstack,
         navigator,
         { url ->
