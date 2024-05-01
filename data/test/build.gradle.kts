@@ -3,6 +3,7 @@
 
 
 plugins {
+  id("app.tivi.android.library")
   id("app.tivi.kotlin.multiplatform")
 }
 
@@ -27,5 +28,15 @@ kotlin {
         implementation(libs.uuid)
       }
     }
+
+    androidUnitTest {
+      dependencies {
+        implementation(libs.sqldelight.sqlite)
+      }
+    }
   }
+}
+
+android {
+  namespace = "app.tivi.data.test"
 }
