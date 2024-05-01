@@ -12,21 +12,16 @@ import me.tatarka.inject.annotations.Provides
 actual interface SqlDelightDatabasePlatformComponent {
   @Provides
   @ApplicationScope
-  fun provideDriverFactory(
-    configuration: DatabaseConfiguration,
-  ): SqlDriver = JdbcSqliteDriver(
-    url = when {
-      configuration.inMemory -> JdbcSqliteDriver.IN_MEMORY
-      else -> "jdbc:sqlite:${configuration.file.absolutePath}"
-    },
+  fun provideDriverFactory(): SqlDriver = JdbcSqliteDriver(
+    url = "jdbc:sqlite:${databaseFile.absolutePath}",
   ).also { db ->
     Database.Schema.create(db)
     db.execute(null, "PRAGMA foreign_keys=ON", 0)
   }
 }
 
-private val DatabaseConfiguration.file: File
-  get() = File(appDir.also { if (!it.exists()) it.mkdirs() }, "$name.db")
+private val databaseFile: File
+  get() = File(appDir.also { if (!it.exists()) it.mkdirs() }, "tivi.db")
 
 private val appDir: File
   get() {

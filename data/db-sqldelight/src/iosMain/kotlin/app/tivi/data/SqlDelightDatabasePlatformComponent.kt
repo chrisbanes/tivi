@@ -7,7 +7,6 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
-import app.cash.sqldelight.driver.native.inMemoryDriver
 import app.cash.sqldelight.driver.native.wrapConnection
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
@@ -15,19 +14,12 @@ import me.tatarka.inject.annotations.Provides
 actual interface SqlDelightDatabasePlatformComponent {
   @Provides
   @ApplicationScope
-  fun provideDriverFactory(configuration: DatabaseConfiguration): SqlDriver {
-    return when {
-      configuration.inMemory -> inMemoryDriver(Database.Schema, configuration.name)
-      else -> {
-        NativeSqliteDriver(
-          schema = Database.Schema,
-          name = configuration.name,
-          maxReaderConnections = 4,
-        )
-      }
-    }.also { driver ->
-      driver.execute(null, "PRAGMA foreign_keys=ON", 0)
-    }
+  fun provideDriverFactory(): SqlDriver = NativeSqliteDriver(
+    schema = Database.Schema,
+    name = "tivi.db",
+    maxReaderConnections = 4,
+  ).apply {
+    execute(null, "PRAGMA foreign_keys=ON", 0)
   }
 }
 
