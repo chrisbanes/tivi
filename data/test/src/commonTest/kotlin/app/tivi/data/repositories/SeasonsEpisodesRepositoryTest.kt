@@ -5,8 +5,6 @@ package app.tivi.data.repositories
 
 import app.cash.turbine.test
 import app.tivi.data.DatabaseTest
-import app.tivi.data.TestApplicationComponent
-import app.tivi.data.create
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
@@ -14,12 +12,9 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.insert
 import app.tivi.data.episodes.EpisodeWatchStore
 import app.tivi.data.episodes.SeasonsEpisodesRepository
-import app.tivi.data.episodes.TmdbSeasonsEpisodesDataSource
-import app.tivi.data.episodes.TraktSeasonsEpisodesDataSource
-import app.tivi.data.episodes.datasource.EpisodeWatchesDataSource
 import app.tivi.data.traktauth.TraktAuthRepository
-import app.tivi.utils.FakeEpisodeWatchesDataSource
-import app.tivi.utils.FakeSeasonsEpisodesDataSource
+import app.tivi.utils.ObjectGraph
+import app.tivi.utils.createSingleAppCoroutineDispatchers
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1_id
@@ -39,47 +34,47 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
-import me.tatarka.inject.annotations.Component
 
 class SeasonsEpisodesRepositoryTest : DatabaseTest() {
-  private lateinit var showsDao: TiviShowDao
-  private lateinit var episodeWatchDao: EpisodeWatchEntryDao
-  private lateinit var seasonsDao: SeasonsDao
-  private lateinit var episodesDao: EpisodesDao
-  private lateinit var watchStore: EpisodeWatchStore
-  private lateinit var repository: SeasonsEpisodesRepository
-  private lateinit var traktSeasonDataSource: FakeSeasonsEpisodesDataSource
-  private lateinit var tmdbSeasonDataSource: FakeSeasonsEpisodesDataSource
-  private lateinit var watchesDataSource: FakeEpisodeWatchesDataSource
-  private lateinit var traktAuthRepository: TraktAuthRepository
+  private val testScope = TestScope()
+
+  private val objectGraph by lazy {
+    ObjectGraph(
+      database = database,
+      backgroundScope = testScope.backgroundScope,
+      appCoroutineDispatchers = createSingleAppCoroutineDispatchers(StandardTestDispatcher(testScope.testScheduler)),
+    )
+  }
+
+  private val showsDao: TiviShowDao get() = objectGraph.tiviShowDao
+  private val episodesDao: EpisodesDao get() = objectGraph.episodesDao
+  private val seasonsDao: SeasonsDao get() = objectGraph.seasonsDao
+  private val episodeWatchDao: EpisodeWatchEntryDao get() = objectGraph.episodeWatchEntryDao
+
+  private val watchStore: EpisodeWatchStore get() = objectGraph.episodeWatchStore
+  private val repository: SeasonsEpisodesRepository get() = objectGraph.seasonsEpisodesRepository
+
+  private val traktAuthRepository: TraktAuthRepository get() = objectGraph.traktAuthRepository
+  private val traktSeasonsEpisodesDataSource get() = objectGraph.traktSeasonsEpisodesDataSource
+  private val episodeWatchesDataSource get() = objectGraph.episodeWatchesDataSource
 
   @BeforeTest
   fun setup() {
-    val component = SeasonsEpisodesRepositoryTestComponent::class.create(applicationComponent)
-    showsDao = component.showsDao
-    episodeWatchDao = component.episodeWatchDao
-    seasonsDao = component.seasonsDao
-    episodesDao = component.episodesDao
-    watchStore = component.watchStore
-    repository = component.repository
-    traktSeasonDataSource = component.traktSeasonsDataSource as FakeSeasonsEpisodesDataSource
-    tmdbSeasonDataSource = component.tmdbSeasonsDataSource as FakeSeasonsEpisodesDataSource
-    watchesDataSource = component.episodeWatchesDataSource as FakeEpisodeWatchesDataSource
-    traktAuthRepository = component.traktAuthRepository
-
     // We'll assume that there's a show in the db
     showsDao.insert(show)
   }
 
   @Test
-  fun testSyncEpisodeWatches() = runTest {
+  fun testSyncEpisodeWatches() = testScope.runTest {
     seasonsDao.insert(s1)
     episodesDao.insert(s1_episodes)
 
     // Return a response with 2 items
-    watchesDataSource.getShowEpisodeWatchesResult =
+    episodeWatchesDataSource.getShowEpisodeWatchesResult =
       Result.success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
     traktAuthRepository.login()
     // Sync
@@ -90,14 +85,14 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testEpisodeWatches_sameEntries() = runTest {
+  fun testEpisodeWatches_sameEntries() = testScope.runTest {
     seasonsDao.insert(s1)
     episodesDao.insert(s1_episodes)
 
     // Insert both the watches
     episodeWatchDao.insert(s1e1w, s1e1w2)
     // Return a response with the same items
-    watchesDataSource.getShowEpisodeWatchesResult =
+    episodeWatchesDataSource.getShowEpisodeWatchesResult =
       Result.success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
     // Now re-sync with the same response
     repository.syncEpisodeWatchesForShow(showId)
@@ -107,14 +102,14 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testEpisodeWatches_deletesMissing() = runTest {
+  fun testEpisodeWatches_deletesMissing() = testScope.runTest {
     seasonsDao.insert(s1)
     episodesDao.insert(s1_episodes)
 
     // Insert both the watches
     episodeWatchDao.insert(s1e1w, s1e1w2)
     // Return a response with just the second item
-    watchesDataSource.getShowEpisodeWatchesResult = Result.success(listOf(s1e1 to s1e1w2))
+    episodeWatchesDataSource.getShowEpisodeWatchesResult = Result.success(listOf(s1e1 to s1e1w2))
 
     traktAuthRepository.login()
     // Now re-sync
@@ -125,14 +120,14 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testEpisodeWatches_emptyResponse() = runTest {
+  fun testEpisodeWatches_emptyResponse() = testScope.runTest {
     seasonsDao.insert(s1)
     episodesDao.insert(s1_episodes)
 
     // Insert both the watches
     episodeWatchDao.insert(s1e1w, s1e1w2)
     // Return a empty response
-    watchesDataSource.getShowEpisodeWatchesResult = Result.success(emptyList())
+    episodeWatchesDataSource.getShowEpisodeWatchesResult = Result.success(emptyList())
     traktAuthRepository.login()
     // Now re-sync
     repository.syncEpisodeWatchesForShow(showId)
@@ -141,10 +136,10 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testSyncSeasonsEpisodes() = runTest {
+  fun testSyncSeasonsEpisodes() = testScope.runTest {
     // Return a response with 2 items
 
-    traktSeasonDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
+    traktSeasonsEpisodesDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
     repository.updateSeasonsEpisodes(showId)
 
     // Assert that both are in the db
@@ -153,12 +148,12 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testSyncSeasonsEpisodes_sameEntries() = runTest {
+  fun testSyncSeasonsEpisodes_sameEntries() = testScope.runTest {
     seasonsDao.insert(s1)
     episodesDao.insert(s1_episodes)
 
     // Return a response with the same items
-    traktSeasonDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
+    traktSeasonsEpisodesDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
     repository.updateSeasonsEpisodes(showId)
 
     // Assert that both are in the db
@@ -167,12 +162,12 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testSyncSeasonsEpisodes_emptyResponse() = runTest {
+  fun testSyncSeasonsEpisodes_emptyResponse() = testScope.runTest {
     seasonsDao.insert(s1)
     episodesDao.insert(s1_episodes)
 
     // Return an empty response
-    traktSeasonDataSource.getSeasonsEpisodesResult = Result.success(emptyList())
+    traktSeasonsEpisodesDataSource.getSeasonsEpisodesResult = Result.success(emptyList())
     repository.updateSeasonsEpisodes(showId)
 
     // Assert the database is empty
@@ -181,13 +176,13 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testSyncSeasonsEpisodes_deletesMissingSeasons() = runTest {
+  fun testSyncSeasonsEpisodes_deletesMissingSeasons() = testScope.runTest {
     seasonsDao.insert(s1, s2)
     episodesDao.insert(s1_episodes)
     episodesDao.insert(s2_episodes)
 
     // Return a response with just the first season
-    traktSeasonDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
+    traktSeasonsEpisodesDataSource.getSeasonsEpisodesResult = Result.success(listOf(s1 to s1_episodes))
     repository.updateSeasonsEpisodes(showId)
 
     // Assert that both are in the db
@@ -196,13 +191,13 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testSyncSeasonsEpisodes_deletesMissingEpisodes() = runTest {
+  fun testSyncSeasonsEpisodes_deletesMissingEpisodes() = testScope.runTest {
     seasonsDao.insert(s1, s2)
     episodesDao.insert(s1_episodes)
     episodesDao.insert(s2_episodes)
 
     // Return a response with both seasons, but just a single episodes in each
-    traktSeasonDataSource.getSeasonsEpisodesResult =
+    traktSeasonsEpisodesDataSource.getSeasonsEpisodesResult =
       Result.success(listOf(s1 to listOf(s1e1), s2 to listOf(s2e1)))
     repository.updateSeasonsEpisodes(showId)
 
@@ -213,7 +208,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testObserveNextEpisodeToWatch_singleFlow() = runTest {
+  fun testObserveNextEpisodeToWatch_singleFlow() = testScope.runTest {
     seasonsDao.insert(s1)
     episodesDao.insert(s1_episodes)
 
@@ -221,27 +216,11 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
       assertThat(awaitItem()?.episode).isEqualTo(s1e1)
 
       // Now mark s1e1 as watched
-      watchesDataSource.addEpisodeWatchesResult = Result.success(Unit)
-      watchesDataSource.getEpisodeWatchesResult = Result.success(listOf(s1e1w))
+      episodeWatchesDataSource.addEpisodeWatchesResult = Result.success(Unit)
+      episodeWatchesDataSource.getEpisodeWatchesResult = Result.success(listOf(s1e1w))
       repository.addEpisodeWatch(s1e1.id, Clock.System.now())
 
       assertThat(awaitItem()?.episode).isEqualTo(s1e2)
     }
   }
-}
-
-@Component
-abstract class SeasonsEpisodesRepositoryTestComponent(
-  @Component val applicationComponent: TestApplicationComponent,
-) {
-  abstract val showsDao: TiviShowDao
-  abstract val episodeWatchDao: EpisodeWatchEntryDao
-  abstract val seasonsDao: SeasonsDao
-  abstract val episodesDao: EpisodesDao
-  abstract val watchStore: EpisodeWatchStore
-  abstract val repository: SeasonsEpisodesRepository
-  abstract val traktSeasonsDataSource: TraktSeasonsEpisodesDataSource
-  abstract val tmdbSeasonsDataSource: TmdbSeasonsEpisodesDataSource
-  abstract val episodeWatchesDataSource: EpisodeWatchesDataSource
-  abstract val traktAuthRepository: TraktAuthRepository
 }

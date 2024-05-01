@@ -3,18 +3,14 @@
 
 package app.tivi.data.repositories
 
-import app.cash.sqldelight.db.SqlDriver
 import app.moviebase.trakt.model.TraktList
 import app.moviebase.trakt.model.TraktListIds
 import app.tivi.data.DatabaseTest
-import app.tivi.data.TestApplicationComponent
-import app.tivi.data.create
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.followedshows.FollowedShowsDataSource
-import app.tivi.data.followedshows.FollowedShowsRepository
-import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.utils.FakeFollowedShowsDataSource
+import app.tivi.utils.ObjectGraph
+import app.tivi.utils.createSingleAppCoroutineDispatchers
 import app.tivi.utils.followedShow1Local
 import app.tivi.utils.followedShow1Network
 import app.tivi.utils.followedShow1PendingDelete
@@ -28,32 +24,37 @@ import assertk.assertions.containsExactly
 import assertk.assertions.isEmpty
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import me.tatarka.inject.annotations.Component
 
 class FollowedShowRepositoryTest : DatabaseTest() {
-  private lateinit var showsDao: TiviShowDao
-  private lateinit var followShowsDao: FollowedShowsDao
-  private lateinit var followedShowsRepository: FollowedShowsRepository
-  private lateinit var followedShowsDataSource: FakeFollowedShowsDataSource
-  private lateinit var traktAuthRepository: TraktAuthRepository
+
+  private val testScope = TestScope()
+
+  private val objectGraph by lazy {
+    ObjectGraph(
+      database = database,
+      backgroundScope = testScope.backgroundScope,
+      appCoroutineDispatchers = createSingleAppCoroutineDispatchers(StandardTestDispatcher(testScope.testScheduler)),
+    )
+  }
+
+  private val showsDao: TiviShowDao get() = objectGraph.tiviShowDao
+  private val followShowsDao: FollowedShowsDao get() = objectGraph.followedShowsDao
+  private val followedShowsDataSource: FakeFollowedShowsDataSource get() = objectGraph.followedShowsDataSource
+  private val traktAuthRepository get() = objectGraph.traktAuthRepository
+  private val followedShowsRepository get() = objectGraph.followedShowsRepository
 
   @BeforeTest
   fun setup() {
-    val component = FollowedShowsRepositoryTestComponent::class.create(applicationComponent)
-    showsDao = component.showsDao
-    followShowsDao = component.followShowsDao
-    followedShowsRepository = component.followedShowsRepository
-    followedShowsDataSource = component.followedShowsDataSource as FakeFollowedShowsDataSource
-    traktAuthRepository = component.traktAuthRepository
-
     // We'll assume that there's a show in the db
     showsDao.insert(show)
     showsDao.insert(show2)
   }
 
   @Test
-  fun testSync() = runTest {
+  fun testSync() = testScope.runTest {
     followedShowsDataSource.getFollowedListIdResult =
       Result.success(TraktList(ids = TraktListIds(trakt = 0)))
     followedShowsDataSource.getListShowsResult =
@@ -68,7 +69,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testSync_emptyResponse() = runTest {
+  fun testSync_emptyResponse() = testScope.runTest {
     followShowsDao.insert(followedShow1Local)
 
     followedShowsDataSource.getFollowedListIdResult =
@@ -83,7 +84,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testSync_responseDifferentShow() = runTest {
+  fun testSync_responseDifferentShow() = testScope.runTest {
     followShowsDao.insert(followedShow1Local)
 
     followedShowsDataSource.getFollowedListIdResult =
@@ -100,7 +101,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testSync_pendingDelete() = runTest {
+  fun testSync_pendingDelete() = testScope.runTest {
     followShowsDao.insert(followedShow1PendingDelete)
 
     // Return error for the list ID so that we disable syncing
@@ -115,7 +116,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
   }
 
   @Test
-  fun testSync_pendingAdd() = runTest {
+  fun testSync_pendingAdd() = testScope.runTest {
     followShowsDao.insert(followedShow1PendingUpload)
 
     // Return an error for the list ID so that we disable syncing
@@ -128,17 +129,4 @@ class FollowedShowRepositoryTest : DatabaseTest() {
     assertThat(followedShowsRepository.getFollowedShows())
       .containsExactly(followedShow1Local)
   }
-}
-
-@Component
-abstract class FollowedShowsRepositoryTestComponent(
-  @Component val applicationComponent: TestApplicationComponent,
-) {
-  abstract val showsDao: TiviShowDao
-  abstract val followShowsDao: FollowedShowsDao
-  abstract val followedShowsRepository: FollowedShowsRepository
-  abstract val followedShowsDataSource: FollowedShowsDataSource
-  abstract val traktAuthRepository: TraktAuthRepository
-
-  abstract val sqlDriver: SqlDriver
 }

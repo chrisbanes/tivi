@@ -4,10 +4,9 @@
 package app.tivi.data.dao
 
 import app.tivi.data.DatabaseTest
-import app.tivi.data.TestApplicationComponent
-import app.tivi.data.create
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.TiviShowDao
+import app.tivi.utils.ObjectGraph
 import app.tivi.utils.s0
 import app.tivi.utils.s1
 import app.tivi.utils.s1_id
@@ -21,18 +20,15 @@ import assertk.assertions.isNull
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFails
-import me.tatarka.inject.annotations.Component
 
 class SeasonsTest : DatabaseTest() {
-  private lateinit var showsDao: TiviShowDao
-  private lateinit var seasonsDao: SeasonsDao
+  private val objectGraph by lazy { ObjectGraph(database) }
+
+  private val showsDao: TiviShowDao get() = objectGraph.tiviShowDao
+  private val seasonsDao: SeasonsDao get() = objectGraph.seasonsDao
 
   @BeforeTest
   fun setup() {
-    val component = SeasonsTestComponent::class.create(applicationComponent)
-    showsDao = component.showsDao
-    seasonsDao = component.seasonsDao
-
     // We'll assume that there's a show in the db
     showsDao.insert(show)
   }
@@ -81,12 +77,4 @@ class SeasonsTest : DatabaseTest() {
 
     assertThat(seasonsDao.seasonWithId(s1_id)).isNull()
   }
-}
-
-@Component
-abstract class SeasonsTestComponent(
-  @Component val applicationComponent: TestApplicationComponent,
-) {
-  abstract val showsDao: TiviShowDao
-  abstract val seasonsDao: SeasonsDao
 }

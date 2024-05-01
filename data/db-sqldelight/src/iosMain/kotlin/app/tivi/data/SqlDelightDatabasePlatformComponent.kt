@@ -31,7 +31,7 @@ actual interface SqlDelightDatabasePlatformComponent {
   }
 }
 
-private fun inMemoryDriver(
+fun inMemoryDriver(
   schema: SqlSchema<QueryResult.Value<Unit>>,
   name: String,
 ): NativeSqliteDriver = NativeSqliteDriver(

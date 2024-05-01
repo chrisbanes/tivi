@@ -4,13 +4,12 @@
 package app.tivi.data.dao
 
 import app.tivi.data.DatabaseTest
-import app.tivi.data.TestApplicationComponent
-import app.tivi.data.create
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.insert
+import app.tivi.utils.ObjectGraph
 import app.tivi.utils.episodeWatch2PendingDelete
 import app.tivi.utils.episodeWatch2PendingSend
 import app.tivi.utils.s1
@@ -27,22 +26,18 @@ import assertk.assertions.isNull
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFails
-import me.tatarka.inject.annotations.Component
 
 class EpisodeWatchEntryTest : DatabaseTest() {
-  private lateinit var showsDao: TiviShowDao
-  private lateinit var episodesDao: EpisodesDao
-  private lateinit var seasonsDao: SeasonsDao
-  private lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
+
+  private val objectGraph by lazy { ObjectGraph(database) }
+
+  private val showsDao: TiviShowDao get() = objectGraph.tiviShowDao
+  private val episodesDao: EpisodesDao get() = objectGraph.episodesDao
+  private val seasonsDao: SeasonsDao get() = objectGraph.seasonsDao
+  private val episodeWatchEntryDao: EpisodeWatchEntryDao get() = objectGraph.episodeWatchEntryDao
 
   @BeforeTest
   fun setup() {
-    val component = EpisodeWatchEntryTestComponent::class.create(applicationComponent)
-    showsDao = component.showsDao
-    seasonsDao = component.seasonsDao
-    episodesDao = component.episodesDao
-    episodeWatchEntryDao = component.episodeWatchEntryDao
-
     // We'll assume that there's a show, season and s1_episodes in the db
     showsDao.insert(show)
     seasonsDao.insert(s1)
@@ -94,14 +89,4 @@ class EpisodeWatchEntryTest : DatabaseTest() {
     episodesDao.deleteEntity(s1e1)
     assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id)).isNull()
   }
-}
-
-@Component
-abstract class EpisodeWatchEntryTestComponent(
-  @Component val applicationComponent: TestApplicationComponent,
-) {
-  abstract val showsDao: TiviShowDao
-  abstract val episodesDao: EpisodesDao
-  abstract val seasonsDao: SeasonsDao
-  abstract val episodeWatchEntryDao: EpisodeWatchEntryDao
 }
