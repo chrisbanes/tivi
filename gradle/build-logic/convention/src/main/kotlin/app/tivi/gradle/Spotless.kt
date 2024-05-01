@@ -9,11 +9,6 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
 fun Project.configureSpotless() {
-  if (path.startsWith(":thirdparty")) {
-    println("Skipping Spotless")
-    return
-  }
-
   with(pluginManager) {
     apply("com.diffplug.spotless")
   }

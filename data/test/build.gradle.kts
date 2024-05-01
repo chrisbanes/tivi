@@ -2,33 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
-import app.tivi.gradle.addKspTestDependencyForAllTargets
-
 plugins {
+  id("app.tivi.android.library")
   id("app.tivi.kotlin.multiplatform")
-  alias(libs.plugins.ksp)
 }
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonTest {
       dependencies {
-        implementation(projects.core.analytics)
-        implementation(projects.core.logging.api)
-
         implementation(projects.data.dbSqldelight)
 
         implementation(projects.data.followedshows)
         implementation(projects.data.episodes)
         implementation(projects.data.showimages)
         implementation(projects.data.shows)
-
-        implementation(libs.kotlininject.runtime)
-      }
-    }
-
-    val commonTest by getting {
-      dependencies {
         implementation(projects.data.legacy)
 
         implementation(kotlin("test"))
@@ -40,7 +28,15 @@ kotlin {
         implementation(libs.uuid)
       }
     }
+
+    androidUnitTest {
+      dependencies {
+        implementation(libs.sqldelight.sqlite)
+      }
+    }
   }
 }
 
-addKspTestDependencyForAllTargets(libs.kotlininject.compiler)
+android {
+  namespace = "app.tivi.data.test"
+}

@@ -13,16 +13,10 @@ import me.tatarka.inject.annotations.Provides
 actual interface SqlDelightDatabasePlatformComponent {
   @Provides
   @ApplicationScope
-  fun provideDriverFactory(
-    application: Application,
-    configuration: DatabaseConfiguration,
-  ): SqlDriver = AndroidSqliteDriver(
+  fun provideDriverFactory(application: Application): SqlDriver = AndroidSqliteDriver(
     schema = Database.Schema,
     context = application,
-    name = when {
-      configuration.inMemory -> null
-      else -> "shows.db"
-    },
+    name = "shows.db",
     callback = object : AndroidSqliteDriver.Callback(Database.Schema) {
       override fun onConfigure(db: SupportSQLiteDatabase) {
         db.enableWriteAheadLogging()

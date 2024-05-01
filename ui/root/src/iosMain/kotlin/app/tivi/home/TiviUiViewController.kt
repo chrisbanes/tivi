@@ -25,13 +25,13 @@ fun TiviUiViewController(
   val navigator = rememberCircuitNavigator(backstack, onRootPop = { /* no-op */ })
   val uiViewController = LocalUIViewController.current
 
-  tiviContent(
-    backstack,
-    navigator,
-    { url ->
+  tiviContent.Content(
+    backstack = backstack,
+    navigator = navigator,
+    onOpenUrl = { url ->
       val safari = SFSafariViewController(NSURL(string = url))
       uiViewController.presentViewController(safari, animated = true, completion = null)
     },
-    Modifier,
+    modifier = Modifier,
   )
 }

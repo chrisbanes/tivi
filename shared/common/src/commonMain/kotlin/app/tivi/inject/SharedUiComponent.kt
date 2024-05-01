@@ -9,6 +9,7 @@ import app.tivi.common.ui.resources.Strings
 import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.episode.track.EpisodeTrackComponent
 import app.tivi.episodedetails.EpisodeDetailsComponent
+import app.tivi.home.RootUiComponent
 import app.tivi.home.discover.DiscoverComponent
 import app.tivi.home.library.LibraryComponent
 import app.tivi.home.popular.PopularShowsComponent
@@ -39,6 +40,7 @@ interface SharedUiComponent :
   LicensesComponent,
   ShowDetailsComponent,
   ShowSeasonsComponent,
+  RootUiComponent,
   TrendingShowsComponent,
   UpNextComponent {
 

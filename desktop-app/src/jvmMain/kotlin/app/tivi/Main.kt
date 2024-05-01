@@ -35,11 +35,11 @@ fun main() = application {
     val backstack = rememberSaveableBackStack(listOf(DiscoverScreen))
     val navigator = rememberCircuitNavigator(backstack) { /* no-op */ }
 
-    component.tiviContent(
-      backstack,
-      navigator,
-      { /* no-op for now */ },
-      Modifier,
+    component.tiviContent.Content(
+      backstack = backstack,
+      navigator = navigator,
+      onOpenUrl = { /* no-op for now */ },
+      modifier = Modifier,
     )
   }
 }

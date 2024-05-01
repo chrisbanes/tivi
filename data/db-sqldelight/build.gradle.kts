@@ -32,19 +32,19 @@ kotlin {
 
     val androidMain by getting {
       dependencies {
-        implementation(libs.sqldelight.android)
+        api(libs.sqldelight.android)
       }
     }
 
     val jvmMain by getting {
       dependencies {
-        implementation(libs.sqldelight.sqlite)
+        api(libs.sqldelight.sqlite)
       }
     }
 
     val iosMain by getting {
       dependencies {
-        implementation(libs.sqldelight.native)
+        api(libs.sqldelight.native)
 
         // Need to explicitly depend on these, otherwise the build fails.
         implementation("co.touchlab:stately-common:2.0.7")
