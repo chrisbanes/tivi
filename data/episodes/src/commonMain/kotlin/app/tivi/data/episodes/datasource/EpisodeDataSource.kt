@@ -28,7 +28,9 @@ class TraktEpisodeDataSourceImpl(
     seasonNumber: Int,
     episodeNumber: Int,
   ): Episode {
-    val id = idMapper.map(showId) ?: error("No Trakt allowed ID for show with ID: $showId")
+    val id = requireNotNull(idMapper.map(showId)) {
+      "No Trakt ID for show with ID: $showId"
+    }
 
     return service.value
       .getSummary(id, seasonNumber, episodeNumber)

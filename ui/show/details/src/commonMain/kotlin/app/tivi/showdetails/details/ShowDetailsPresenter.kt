@@ -111,6 +111,13 @@ class ShowDetailsPresenter(
     val stats by observeShowViewStats.flow.collectAsRetainedState(null)
     val message by uiMessageManager.message.collectAsState(null)
 
+    suspend fun handleException(t: Throwable) {
+      logger.i(t)
+      if (t !is IllegalArgumentException) {
+        uiMessageManager.emitMessage(UiMessage(t))
+      }
+    }
+
     fun eventSink(event: ShowDetailsUiEvent) {
       when (event) {
         is ShowDetailsUiEvent.ClearMessage -> {
@@ -123,26 +130,17 @@ class ShowDetailsPresenter(
           scope.launch {
             updateShowDetails(
               UpdateShowDetails.Params(showId, event.fromUser),
-            ).onException { e ->
-              logger.i(e)
-              uiMessageManager.emitMessage(UiMessage(e))
-            }
+            ).onException { handleException(it) }
           }
           scope.launch {
             updateRelatedShows(
               UpdateRelatedShows.Params(showId, event.fromUser),
-            ).onException { e ->
-              logger.i(e)
-              uiMessageManager.emitMessage(UiMessage(e))
-            }
+            ).onException { handleException(it) }
           }
           scope.launch {
             updateShowSeasons(
               UpdateShowSeasons.Params(showId, event.fromUser),
-            ).onException { e ->
-              logger.i(e)
-              uiMessageManager.emitMessage(UiMessage(e))
-            }
+            ).onException { handleException(it) }
           }
         }
 
@@ -153,10 +151,7 @@ class ShowDetailsPresenter(
                 seasonId = event.seasonId,
                 action = ChangeSeasonFollowStatus.Action.FOLLOW,
               ),
-            ).onException { e ->
-              logger.i(e)
-              uiMessageManager.emitMessage(UiMessage(e))
-            }
+            ).onException { handleException(it) }
           }
         }
 
@@ -164,10 +159,7 @@ class ShowDetailsPresenter(
           scope.launch {
             changeSeasonWatchedStatus(
               Params(event.seasonId, Action.UNWATCH),
-            ).onException { e ->
-              logger.i(e)
-              uiMessageManager.emitMessage(UiMessage(e))
-            }
+            ).onException { handleException(it) }
           }
         }
 
@@ -175,10 +167,7 @@ class ShowDetailsPresenter(
           scope.launch {
             changeSeasonWatchedStatus(
               Params(event.seasonId, Action.WATCHED, event.onlyAired, event.date),
-            ).onException { e ->
-              logger.i(e)
-              uiMessageManager.emitMessage(UiMessage(e))
-            }
+            ).onException { handleException(it) }
           }
         }
 
@@ -186,10 +175,7 @@ class ShowDetailsPresenter(
           scope.launch {
             changeShowFollowStatus(
               ChangeShowFollowStatus.Params(showId, TOGGLE),
-            ).onException { e ->
-              logger.i(e)
-              uiMessageManager.emitMessage(UiMessage(e))
-            }
+            ).onException { handleException(it) }
           }
         }
 
@@ -214,16 +200,16 @@ class ShowDetailsPresenter(
                 seasonId = event.seasonId,
                 action = ChangeSeasonFollowStatus.Action.IGNORE,
               ),
-            ).onException { e ->
-              logger.i(e)
-              uiMessageManager.emitMessage(UiMessage(e))
-            }
+            ).onException { handleException(it) }
           }
         }
+
         ShowDetailsUiEvent.NavigateBack -> navigator.pop()
+
         is ShowDetailsUiEvent.OpenSeason -> {
           navigator.goTo(ShowSeasonsScreen(showId, event.seasonId))
         }
+
         is ShowDetailsUiEvent.OpenShowDetails -> {
           navigator.goTo(ShowDetailsScreen(event.showId))
         }

@@ -36,8 +36,9 @@ class TraktSeasonsEpisodesDataSourceImpl(
     showId: Long,
   ): List<Pair<Season, List<Episode>>> {
     return seasonsService.value.getSummary(
-      showId = showIdToAnyIdMapper.map(showId)
-        ?: error("No Trakt ID for show with ID: $showId"),
+      showId = requireNotNull(showIdToAnyIdMapper.map(showId)) {
+        "No Trakt ID for show with ID: $showId"
+      },
       extended = TraktExtended.FULL_EPISODES,
     ).let(seasonMapper::map)
   }
