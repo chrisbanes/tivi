@@ -61,8 +61,9 @@ class TraktEpisodeWatchesDataSource(
     since: Instant?,
   ): List<Pair<Episode, EpisodeWatchEntry>> {
     return usersService.value.getHistory(
-      itemId = showIdToTraktIdMapper.map(showId)
-        ?: error("No Trakt ID for show with ID: $showId"),
+      itemId = requireNotNull(showIdToTraktIdMapper.map(showId)) {
+        "No Trakt ID for show with ID: $showId"
+      },
       listType = TraktListMediaType.SHOWS,
       extended = TraktExtended.NO_SEASONS,
       startAt = since,

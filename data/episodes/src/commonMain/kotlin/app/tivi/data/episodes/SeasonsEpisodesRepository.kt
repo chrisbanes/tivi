@@ -90,7 +90,7 @@ class SeasonsEpisodesRepository(
       .distinctUntilChanged()
   }
 
-  suspend fun needShowSeasonsUpdate(
+  fun needShowSeasonsUpdate(
     showId: Long,
     expiry: Instant? = null,
   ): Boolean = showSeasonsLastRequestStore.isRequestBefore(

@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.flow.update
 
 data class UiMessage(
   val message: String,
@@ -25,8 +24,6 @@ fun UiMessage(
 )
 
 class UiMessageManager {
-  private val mutex = Mutex()
-
   private val _message = MutableStateFlow(emptyList<UiMessage>())
 
   /**
@@ -34,15 +31,13 @@ class UiMessageManager {
    */
   val message: Flow<UiMessage?> = _message.map { it.firstOrNull() }.distinctUntilChanged()
 
-  suspend fun emitMessage(message: UiMessage) {
-    mutex.withLock {
-      _message.value = _message.value + message
-    }
+  fun emitMessage(message: UiMessage) {
+    _message.update { it + message }
   }
 
-  suspend fun clearMessage(id: Long) {
-    mutex.withLock {
-      _message.value = _message.value.filterNot { it.id == id }
+  fun clearMessage(id: Long) {
+    _message.update { messages ->
+      messages.filterNot { it.id == id }
     }
   }
 }

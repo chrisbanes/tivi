@@ -31,7 +31,7 @@ class ShowStore(
   dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, TiviShow> by storeBuilder(
   fetcher = Fetcher.of { id: Long ->
-    val savedShow = withContext(dispatchers.databaseWrite) {
+    val savedShow = withContext(dispatchers.databaseRead) {
       showDao.getShowWithIdOrThrow(id)
     }
 

@@ -26,7 +26,9 @@ class TraktRelatedShowsDataSourceImpl(
   private val resultMapper = pairMapperOf(showMapper, entryMapper)
 
   override suspend operator fun invoke(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
-    val id = idMapper.map(showId) ?: error("No Trakt allowed ID for show with ID: $showId")
+    val id = requireNotNull(idMapper.map(showId)) {
+      "No Trakt ID for show with ID: $showId"
+    }
 
     return showService.value
       .getRelated(id, 0, 10, TraktExtended.NO_SEASONS)
