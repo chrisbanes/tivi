@@ -14,6 +14,13 @@
       ]
     },
     {
+      "groupName": "Firebase",
+      "groupSlug": "firebase",
+      "matchPackagePrefixes": [
+        "com.google.firebase"
+      ]
+    },
+    {
       "description": "Automatically merge minor and patch-level updates",
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true,
