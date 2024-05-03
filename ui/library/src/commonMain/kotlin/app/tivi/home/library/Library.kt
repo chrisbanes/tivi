@@ -80,6 +80,7 @@ import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.overlays.LocalNavigator
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.LibraryScreen
@@ -112,6 +113,7 @@ internal fun Library(
 ) {
   val scope = rememberCoroutineScope()
   val overlayHost = LocalOverlayHost.current
+  val navigator = LocalNavigator.current
 
   // Need to extract the eventSink out to a local val, so that the Compose Compiler
   // treats it as stable. See: https://issuetracker.google.com/issues/256100927
@@ -125,7 +127,7 @@ internal fun Library(
     onToggleIncludeWatchedShows = { eventSink(LibraryUiEvent.ToggleWatchedShowsIncluded) },
     openUser = {
       scope.launch {
-        overlayHost.showInDialog(AccountScreen)
+        overlayHost.showInDialog(AccountScreen, navigator::goTo)
       }
     },
     refresh = { eventSink(LibraryUiEvent.Refresh(true)) },

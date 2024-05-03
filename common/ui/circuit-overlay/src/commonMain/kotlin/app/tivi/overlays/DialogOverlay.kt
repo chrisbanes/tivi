@@ -46,6 +46,7 @@ class DialogOverlay<Model : Any, Result : Any>(
 
 suspend fun OverlayHost.showInDialog(
   screen: Screen,
+  onGoToScreen: (Screen) -> Unit,
 ): Unit = show(
   DialogOverlay(model = Unit, onDismiss = {}) { _, navigator ->
     CircuitContent(
@@ -53,6 +54,7 @@ suspend fun OverlayHost.showInDialog(
       onNavEvent = { event ->
         when (event) {
           is NavEvent.Pop -> navigator.finish(Unit)
+          is NavEvent.GoTo -> onGoToScreen(event.screen)
           else -> Unit
         }
       },

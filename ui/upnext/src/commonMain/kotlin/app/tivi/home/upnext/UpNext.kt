@@ -141,7 +141,7 @@ internal fun UpNext(
     onMessageShown = { eventSink(UpNextUiEvent.ClearMessage(it)) },
     openUser = {
       scope.launch {
-        overlayHost.showInDialog(AccountScreen)
+        overlayHost.showInDialog(AccountScreen, navigator::goTo)
       }
     },
     refresh = { eventSink(UpNextUiEvent.Refresh()) },

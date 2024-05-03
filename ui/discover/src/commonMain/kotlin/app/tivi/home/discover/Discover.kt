@@ -131,7 +131,7 @@ internal fun Discover(
     refresh = { eventSink(DiscoverUiEvent.Refresh(true)) },
     openUser = {
       scope.launch {
-        overlayHost.showInDialog(AccountScreen)
+        overlayHost.showInDialog(AccountScreen, navigator::goTo)
       }
     },
     openEpisodeDetails = { episodeId ->

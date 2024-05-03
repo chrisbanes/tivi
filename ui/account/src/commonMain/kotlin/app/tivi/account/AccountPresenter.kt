@@ -62,7 +62,10 @@ class AccountPresenter(
       authState = authState,
     ) { event ->
       when (event) {
-        AccountUiEvent.NavigateToSettings -> navigator.goTo(SettingsScreen)
+        AccountUiEvent.NavigateToSettings -> {
+          navigator.pop() // dismiss ourselves
+          navigator.goTo(SettingsScreen)
+        }
         AccountUiEvent.Login -> scope.launch { loginTrakt.value.invoke() }
         AccountUiEvent.Logout -> scope.launch { logoutTrakt.value.invoke() }
       }
