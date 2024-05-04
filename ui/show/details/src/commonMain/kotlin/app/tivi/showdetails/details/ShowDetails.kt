@@ -315,7 +315,7 @@ private fun ShowDetailsScrollingContent(
   ) {
     item(key = "backdrop") {
       Backdrop(
-        imageModel = show.asImageModel(ImageType.BACKDROP),
+        imageModel = remember(show) { show.asImageModel(ImageType.BACKDROP) },
         shape = RectangleShape,
         modifier = Modifier
           .fillMaxWidth()
@@ -454,7 +454,7 @@ private fun PosterInfoRow(
 ) {
   Row(modifier.padding(horizontal = Layout.bodyMargin)) {
     AsyncImage(
-      model = show.asImageModel(ImageType.POSTER),
+      model = remember(show) { show.asImageModel(ImageType.POSTER) },
       contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: ""),
       modifier = Modifier
         .weight(1f)

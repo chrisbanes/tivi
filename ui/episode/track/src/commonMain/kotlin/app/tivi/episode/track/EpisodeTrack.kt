@@ -40,8 +40,10 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.DateTextField
 import app.tivi.common.compose.ui.LoadingButton
 import app.tivi.common.compose.ui.TimeTextField
+import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
+import app.tivi.data.models.ImageType
 import app.tivi.data.models.Season
 import app.tivi.screens.EpisodeTrackScreen
 import com.slack.circuit.runtime.CircuitContext
@@ -176,7 +178,7 @@ private fun EpisodeHeader(
         .aspectRatio(16 / 11f),
     ) {
       AsyncImage(
-        model = episode.asImageModel(),
+        model = remember(episode, episode::asImageModel),
         contentDescription = null,
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.Crop,
