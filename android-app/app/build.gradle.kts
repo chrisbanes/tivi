@@ -1,7 +1,6 @@
 // Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
@@ -52,23 +51,6 @@ android {
 
   buildFeatures {
     buildConfig = true
-  }
-
-  packaging {
-    resources.excludes += setOf(
-      // Exclude AndroidX version files
-      "META-INF/*.version",
-      // Exclude consumer proguard files
-      "META-INF/proguard/*",
-      // Exclude the Firebase/Fabric/other random properties files
-      "/*.properties",
-      "fabric/*.properties",
-      "META-INF/*.properties",
-      // License files
-      "LICENSE*",
-      // Exclude Kotlin unused files
-      "META-INF/**/previous-compilation-data.bin",
-    )
   }
 
   buildTypes {
@@ -125,6 +107,16 @@ androidComponents {
       .withFlavor("mode" to "standard"),
   ) { variant ->
     variant.enable = false
+  }
+
+  onVariants(selector().withBuildType("release")) { variant ->
+    variant.packaging.resources.run {
+      // Exclude AndroidX version files. We only do this in the release build so that
+      // Layout Inspector continues to work for debug
+      excludes.add("META-INF/*.version")
+      // Exclude the Firebase/Fabric/other random properties files
+      excludes.addAll("/*.properties", "META-INF/*.properties")
+    }
   }
 }
 
