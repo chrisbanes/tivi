@@ -371,7 +371,7 @@ private fun SeasonInfoRow(
           .aspectRatio(2 / 3f),
       ) {
         AsyncImage(
-          model = season.asImageModel(),
+          model = remember(season, season::asImageModel),
           contentDescription = null,
           contentScale = ContentScale.Crop,
           modifier = Modifier.fillMaxSize(),

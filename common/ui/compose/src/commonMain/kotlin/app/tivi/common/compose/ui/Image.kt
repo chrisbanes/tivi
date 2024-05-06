@@ -5,7 +5,6 @@ package app.tivi.common.compose.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import app.tivi.common.compose.LogCompositions
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.compose.AsyncImagePainter
@@ -53,36 +53,40 @@ fun AsyncImage(
 
   val transition = updateImageLoadingTransition(currentState, loadStartTime)
 
-  val colorMatrix by remember(transition) {
-    derivedStateOf {
-      ColorMatrix().apply {
-        setAlpha(transition.alpha)
-        setBrightness(transition.brightness)
-        setSaturation(transition.saturation)
-      }
-    }
-  }
+  LogCompositions("AsyncImage", "Main composition: $model")
 
   coil3.compose.AsyncImage(
     model = model,
     contentDescription = contentDescription,
     imageLoader = imageLoader,
     modifier = modifier,
-    transform = transform,
-    onState = { state ->
-      currentState = state
-      if (state is AsyncImagePainter.State.Loading) {
+    transform = { state ->
+      var result = transform(state)
+
+      currentState = result
+      if (result is AsyncImagePainter.State.Loading) {
         loadStartTime = Clock.System.now()
+      } else if (result is AsyncImagePainter.State.Success) {
+        val newPainter = transformPainter(result.painter) {
+          val cm = ColorMatrix()
+          cm.apply {
+            setAlpha(transition.alpha)
+            setBrightness(transition.brightness)
+            setSaturation(transition.saturation)
+          }
+
+          ColorFilter.colorMatrix(cm)
+        }
+        result = AsyncImagePainter.State.Success(newPainter, result.result)
       }
-      onState?.invoke(state)
+
+      result
     },
+    onState = onState,
     alignment = alignment,
     contentScale = contentScale,
     alpha = alpha,
-    colorFilter = when {
-      colorMatrix != IDENTITY_MATRIX -> ColorFilter.colorMatrix(colorMatrix)
-      else -> colorFilter
-    },
+    colorFilter = colorFilter,
     filterQuality = filterQuality,
     modelEqualityDelegate = modelEqualityDelegate,
   )

@@ -176,7 +176,7 @@ private fun EpisodeHeader(
         .aspectRatio(16 / 11f),
     ) {
       AsyncImage(
-        model = episode.asImageModel(),
+        model = remember(episode, episode::asImageModel),
         contentDescription = null,
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.Crop,

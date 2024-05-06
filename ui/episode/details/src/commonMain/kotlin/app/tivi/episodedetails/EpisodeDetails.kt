@@ -304,7 +304,7 @@ private fun EpisodeDetailsBackdrop(
 ) {
   TiviTheme(useDarkColors = true) {
     Backdrop(
-      imageModel = episode.asImageModel(),
+      imageModel = remember(episode, episode::asImageModel),
       shape = RectangleShape,
       overline = {
         val epNumber = episode.number
