@@ -78,7 +78,6 @@ import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.data.compoundmodels.EpisodeWithWatches
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
-import app.tivi.data.imagemodels.SeasonImageModel
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
