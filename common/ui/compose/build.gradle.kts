@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 plugins {
   id("app.tivi.android.library")
   id("app.tivi.kotlin.multiplatform")
@@ -12,7 +10,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(projects.data.models)
         api(projects.core.preferences)
@@ -43,28 +41,20 @@ kotlin {
     }
 
     val jvmCommon by creating {
-      dependsOn(commonMain)
+      dependsOn(commonMain.get())
     }
 
-    val jvmMain by getting {
+    jvmMain {
       dependsOn(jvmCommon)
     }
 
-    val androidMain by getting {
+    androidMain {
       dependsOn(jvmCommon)
 
       dependencies {
         implementation(libs.androidx.activity.compose)
       }
     }
-  }
-}
-
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-  compilerOptions {
-    // Have to disable this due to 'duplicate library name'
-    // https://youtrack.jetbrains.com/issue/KT-51110
-    allWarningsAsErrors = false
   }
 }
 

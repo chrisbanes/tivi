@@ -12,7 +12,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         implementation(projects.core.base)
         api(projects.data.db)
@@ -30,19 +30,19 @@ kotlin {
       }
     }
 
-    val androidMain by getting {
+    androidMain {
       dependencies {
         api(libs.sqldelight.android)
       }
     }
 
-    val jvmMain by getting {
+    jvmMain {
       dependencies {
         api(libs.sqldelight.sqlite)
       }
     }
 
-    val iosMain by getting {
+    iosMain {
       dependencies {
         api(libs.sqldelight.native)
 

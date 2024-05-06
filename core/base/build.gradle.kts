@@ -8,13 +8,13 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(libs.kotlin.coroutines.core)
         api(libs.kotlininject.runtime)
       }
     }
 
-    val jvmMain by getting
+    jvmMain
   }
 }

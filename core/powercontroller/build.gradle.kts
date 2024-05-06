@@ -9,14 +9,14 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         implementation(projects.core.base)
         api(projects.core.preferences)
       }
     }
 
-    val androidMain by getting {
+    androidMain {
       dependencies {
         implementation(libs.androidx.core)
 

@@ -8,7 +8,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(projects.core.preferences)
         api(projects.data.models)

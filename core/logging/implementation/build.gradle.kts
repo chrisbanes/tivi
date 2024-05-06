@@ -9,7 +9,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(projects.core.base)
         api(projects.core.logging.api)
@@ -20,7 +20,7 @@ kotlin {
       }
     }
 
-    val androidMain by getting {
+    androidMain {
       dependencies {
         implementation(libs.crashkios.crashlytics)
         implementation(libs.google.firebase.crashlytics)
@@ -28,7 +28,7 @@ kotlin {
       }
     }
 
-    val iosMain by getting {
+    iosMain {
       dependencies {
         implementation(libs.crashkios.crashlytics)
       }
