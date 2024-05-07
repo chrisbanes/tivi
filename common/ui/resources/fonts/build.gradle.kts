@@ -10,13 +10,13 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(compose.ui)
       }
     }
 
-    val iosMain by getting {
+    iosMain {
       dependencies {
         @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
         implementation(compose.components.resources)

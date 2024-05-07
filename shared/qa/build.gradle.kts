@@ -14,7 +14,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(projects.shared.common)
 
@@ -23,7 +23,7 @@ kotlin {
       }
     }
 
-    val androidMain by getting {
+    androidMain {
       dependencies {
         implementation(libs.chucker.library)
         implementation(libs.okhttp.loggingInterceptor)

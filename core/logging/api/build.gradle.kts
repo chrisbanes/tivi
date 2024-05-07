@@ -8,7 +8,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(libs.kotlin.coroutines.core)
         api(libs.kotlinx.datetime)

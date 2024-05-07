@@ -9,14 +9,14 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         implementation(projects.core.base)
         implementation(libs.kotlininject.runtime)
       }
     }
 
-    val androidMain by getting {
+    androidMain {
       dependencies {
         implementation(libs.google.firebase.perf)
       }

@@ -14,7 +14,7 @@ android {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.analytics)
@@ -37,7 +37,7 @@ kotlin {
       }
     }
 
-    val androidMain by getting {
+    androidMain {
       dependencies {
         implementation(libs.androidx.activity.compose)
       }

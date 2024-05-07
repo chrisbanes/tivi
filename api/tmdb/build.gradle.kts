@@ -24,7 +24,7 @@ buildConfig {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.logging.api)
@@ -38,14 +38,14 @@ kotlin {
       }
     }
 
-    val jvmMain by getting {
+    jvmMain {
       dependencies {
         api(libs.okhttp.okhttp)
         implementation(libs.ktor.client.okhttp)
       }
     }
 
-    val iosMain by getting {
+    iosMain {
       dependencies {
         implementation(libs.ktor.client.darwin)
       }

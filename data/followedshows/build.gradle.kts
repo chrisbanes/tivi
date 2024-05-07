@@ -8,7 +8,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(projects.data.models)
         api(projects.data.traktauth)

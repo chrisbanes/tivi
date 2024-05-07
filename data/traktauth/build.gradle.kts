@@ -9,7 +9,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(projects.core.base)
         implementation(projects.core.logging.api)
@@ -17,7 +17,7 @@ kotlin {
       }
     }
 
-    val androidMain by getting {
+    androidMain {
       dependencies {
         api(libs.appauth)
 
@@ -32,7 +32,7 @@ kotlin {
       }
     }
 
-    val iosMain by getting {
+    iosMain {
       dependencies {
         implementation(libs.multiplatformsettings.core)
       }

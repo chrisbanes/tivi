@@ -12,7 +12,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(libs.circuit.runtime)
       }

@@ -13,7 +13,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         api(projects.core.base)
         api(projects.core.analytics)
@@ -49,7 +49,7 @@ kotlin {
       }
     }
 
-    val jvmMain by getting {
+    jvmMain {
       dependencies {
         api(libs.okhttp.okhttp)
       }

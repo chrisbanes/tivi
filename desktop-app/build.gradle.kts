@@ -16,7 +16,7 @@ plugins {
 
 kotlin {
   sourceSets {
-    val jvmMain by getting {
+    jvmMain {
       dependencies {
         implementation(projects.shared.qa)
         implementation(compose.desktop.currentOs)
