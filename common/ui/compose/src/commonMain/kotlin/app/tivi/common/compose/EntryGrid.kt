@@ -47,6 +47,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,11 +73,11 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun <E : Entry> EntryGrid(
+inline fun <E : Entry> EntryGrid(
   lazyPagingItems: LazyPagingItems<EntryWithShow<E>>,
   title: String,
-  onNavigateUp: () -> Unit,
-  onOpenShowDetails: (Long) -> Unit,
+  noinline onNavigateUp: () -> Unit,
+  crossinline onOpenShowDetails: (Long) -> Unit,
   modifier: Modifier = Modifier,
 ) {
   val snackbarHostState = remember { SnackbarHostState() }
@@ -106,13 +108,17 @@ fun <E : Entry> EntryGrid(
     }
   }
 
+  val refreshing by remember(lazyPagingItems) {
+    derivedStateOf { lazyPagingItems.loadState.refresh == LoadStateLoading }
+  }
+
   HazeScaffold(
     topBar = {
       EntryGridAppBar(
         title = title,
         onNavigateUp = onNavigateUp,
-        refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading,
-        onRefreshActionClick = { lazyPagingItems.refresh() },
+        refreshing = refreshing,
+        onRefreshActionClick = lazyPagingItems::refresh,
         modifier = Modifier.fillMaxWidth(),
         scrollBehavior = scrollBehavior,
       )
@@ -132,7 +138,6 @@ fun <E : Entry> EntryGrid(
     },
     modifier = modifier,
   ) { paddingValues ->
-    val refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading
     val refreshState = rememberPullRefreshState(
       refreshing = refreshing,
       onRefresh = lazyPagingItems::refresh,
@@ -173,7 +178,7 @@ fun <E : Entry> EntryGrid(
           }
         }
 
-        if (lazyPagingItems.loadState.append == LoadStateLoading) {
+        if (refreshing) {
           item(span = StaggeredGridItemSpan.FullLine) {
             Box(
               Modifier
@@ -198,9 +203,9 @@ fun <E : Entry> EntryGrid(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun <ET : Entry> GridItem(
+fun <ET : Entry> GridItem(
   show: TiviShow,
   entry: ET,
   onClick: () -> Unit,
@@ -262,7 +267,7 @@ private fun <ET : Entry> GridItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EntryGridAppBar(
+fun EntryGridAppBar(
   title: String,
   refreshing: Boolean,
   onNavigateUp: () -> Unit,
