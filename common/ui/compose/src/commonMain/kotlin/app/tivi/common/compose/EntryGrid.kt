@@ -78,11 +78,11 @@ import kotlin.math.roundToInt
   ExperimentalMaterial3Api::class,
 )
 @Composable
-inline fun <E : Entry> EntryGrid(
+fun <E : Entry> EntryGrid(
   lazyPagingItems: LazyPagingItems<EntryWithShow<E>>,
   title: String,
-  noinline onNavigateUp: () -> Unit,
-  crossinline onOpenShowDetails: (Long) -> Unit,
+  onNavigateUp: () -> Unit,
+  onOpenShowDetails: (Long) -> Unit,
   modifier: Modifier = Modifier,
 ) {
   val snackbarHostState = remember { SnackbarHostState() }
@@ -164,10 +164,18 @@ inline fun <E : Entry> EntryGrid(
           val entry = lazyPagingItems[index]
 
           if (entry != null) {
+            // Need to manually memoize this lambda. Strong skipping will memoize this
+            // against the `entry` AFAICT, which changes quite a lot, and therefore the memoization
+            // isn't very effective. We really want to memoize this against the show id,
+            // so need to do it manually.
+            val onClick = remember(entry.show.id) {
+              { onOpenShowDetails(entry.show.id) }
+            }
+
             GridItem(
               show = entry.show,
               entry = entry.entry,
-              onClick = { onOpenShowDetails(entry.show.id) },
+              onClick = onClick,
               modifier = Modifier
                 .animateItemPlacement()
                 .fillMaxWidth(),
