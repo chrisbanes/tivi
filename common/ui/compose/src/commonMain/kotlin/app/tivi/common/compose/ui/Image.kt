@@ -24,6 +24,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import app.tivi.common.compose.LogCompositions
+import app.tivi.data.imagemodels.ShowImageModel
+import app.tivi.data.imagemodels.asImageModel
+import app.tivi.data.models.ImageType
+import app.tivi.data.models.TiviShow
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.compose.AsyncImagePainter
@@ -130,4 +134,9 @@ class ParallaxAlignment(
     val y = centerY * (1 + verticalBias())
     return IntOffset(x.roundToInt(), y.roundToInt())
   }
+}
+
+@Composable
+fun rememberShowImageModel(show: TiviShow, imageType: ImageType): ShowImageModel {
+  return remember(show.id, imageType) { show.asImageModel(imageType) }
 }

@@ -103,10 +103,10 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.copy
+import app.tivi.common.compose.ui.rememberShowImageModel
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
-import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Genre
 import app.tivi.data.models.ImageType
@@ -315,7 +315,7 @@ private fun ShowDetailsScrollingContent(
   ) {
     item(key = "backdrop") {
       Backdrop(
-        imageModel = remember(show) { show.asImageModel(ImageType.BACKDROP) },
+        imageModel = rememberShowImageModel(show, ImageType.BACKDROP),
         shape = RectangleShape,
         modifier = Modifier
           .fillMaxWidth()
@@ -454,7 +454,7 @@ private fun PosterInfoRow(
 ) {
   Row(modifier.padding(horizontal = Layout.bodyMargin)) {
     AsyncImage(
-      model = remember(show) { show.asImageModel(ImageType.POSTER) },
+      model = rememberShowImageModel(show, ImageType.POSTER),
       contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: ""),
       modifier = Modifier
         .weight(1f)
