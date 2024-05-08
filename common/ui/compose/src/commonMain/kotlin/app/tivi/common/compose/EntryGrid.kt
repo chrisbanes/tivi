@@ -47,7 +47,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -69,7 +72,11 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TrendingShowEntry
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(
+  ExperimentalFoundationApi::class,
+  ExperimentalMaterialApi::class,
+  ExperimentalMaterial3Api::class,
+)
 @Composable
 fun <E : Entry> EntryGrid(
   lazyPagingItems: LazyPagingItems<EntryWithShow<E>>,
@@ -90,20 +97,16 @@ fun <E : Entry> EntryGrid(
     }
   }
 
-  lazyPagingItems.loadState.prependErrorOrNull()?.let { message ->
-    LaunchedEffect(message) {
-      snackbarHostState.showSnackbar(message.message)
+  LaunchedEffect(lazyPagingItems) {
+    snapshotFlow { lazyPagingItems.loadState }.collect { loadState ->
+      loadState.prependErrorOrNull()?.let { snackbarHostState.showSnackbar(it.message) }
+      loadState.appendErrorOrNull()?.let { snackbarHostState.showSnackbar(it.message) }
+      loadState.refreshErrorOrNull()?.let { snackbarHostState.showSnackbar(it.message) }
     }
   }
-  lazyPagingItems.loadState.appendErrorOrNull()?.let { message ->
-    LaunchedEffect(message) {
-      snackbarHostState.showSnackbar(message.message)
-    }
-  }
-  lazyPagingItems.loadState.refreshErrorOrNull()?.let { message ->
-    LaunchedEffect(message) {
-      snackbarHostState.showSnackbar(message.message)
-    }
+
+  val refreshing by remember(lazyPagingItems) {
+    derivedStateOf { lazyPagingItems.loadState.refresh == LoadStateLoading }
   }
 
   HazeScaffold(
@@ -111,8 +114,8 @@ fun <E : Entry> EntryGrid(
       EntryGridAppBar(
         title = title,
         onNavigateUp = onNavigateUp,
-        refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading,
-        onRefreshActionClick = { lazyPagingItems.refresh() },
+        refreshing = refreshing,
+        onRefreshActionClick = lazyPagingItems::refresh,
         modifier = Modifier.fillMaxWidth(),
         scrollBehavior = scrollBehavior,
       )
@@ -132,7 +135,6 @@ fun <E : Entry> EntryGrid(
     },
     modifier = modifier,
   ) { paddingValues ->
-    val refreshing = lazyPagingItems.loadState.refresh == LoadStateLoading
     val refreshState = rememberPullRefreshState(
       refreshing = refreshing,
       onRefresh = lazyPagingItems::refresh,
@@ -162,10 +164,18 @@ fun <E : Entry> EntryGrid(
           val entry = lazyPagingItems[index]
 
           if (entry != null) {
+            // Need to manually memoize this lambda. Strong skipping will memoize this
+            // against the `entry` AFAICT, which changes quite a lot, and therefore the memoization
+            // isn't very effective. We really want to memoize this against the show id,
+            // so need to do it manually.
+            val onClick = remember(entry.show.id) {
+              { onOpenShowDetails(entry.show.id) }
+            }
+
             GridItem(
               show = entry.show,
               entry = entry.entry,
-              onClick = { onOpenShowDetails(entry.show.id) },
+              onClick = onClick,
               modifier = Modifier
                 .animateItemPlacement()
                 .fillMaxWidth(),
@@ -173,7 +183,7 @@ fun <E : Entry> EntryGrid(
           }
         }
 
-        if (lazyPagingItems.loadState.append == LoadStateLoading) {
+        if (refreshing) {
           item(span = StaggeredGridItemSpan.FullLine) {
             Box(
               Modifier
@@ -198,9 +208,9 @@ fun <E : Entry> EntryGrid(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun <ET : Entry> GridItem(
+fun <ET : Entry> GridItem(
   show: TiviShow,
   entry: ET,
   onClick: () -> Unit,
@@ -262,7 +272,7 @@ private fun <ET : Entry> GridItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EntryGridAppBar(
+fun EntryGridAppBar(
   title: String,
   refreshing: Boolean,
   onNavigateUp: () -> Unit,

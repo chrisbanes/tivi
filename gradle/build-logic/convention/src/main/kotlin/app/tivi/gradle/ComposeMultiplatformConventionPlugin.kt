@@ -33,6 +33,8 @@ fun Project.configureCompose() {
       reportsDestination.set(composeReports)
       metricsDestination.set(composeReports)
     }
+
+    stabilityConfigurationFile.set(rootProject.file("compose-stability.conf"))
   }
 
   // Workaround for:
