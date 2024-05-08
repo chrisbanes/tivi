@@ -50,6 +50,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -71,7 +72,11 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TrendingShowEntry
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(
+  ExperimentalFoundationApi::class,
+  ExperimentalMaterialApi::class,
+  ExperimentalMaterial3Api::class,
+)
 @Composable
 inline fun <E : Entry> EntryGrid(
   lazyPagingItems: LazyPagingItems<EntryWithShow<E>>,
@@ -92,19 +97,11 @@ inline fun <E : Entry> EntryGrid(
     }
   }
 
-  lazyPagingItems.loadState.prependErrorOrNull()?.let { message ->
-    LaunchedEffect(message) {
-      snackbarHostState.showSnackbar(message.message)
-    }
-  }
-  lazyPagingItems.loadState.appendErrorOrNull()?.let { message ->
-    LaunchedEffect(message) {
-      snackbarHostState.showSnackbar(message.message)
-    }
-  }
-  lazyPagingItems.loadState.refreshErrorOrNull()?.let { message ->
-    LaunchedEffect(message) {
-      snackbarHostState.showSnackbar(message.message)
+  LaunchedEffect(lazyPagingItems) {
+    snapshotFlow { lazyPagingItems.loadState }.collect { loadState ->
+      loadState.prependErrorOrNull()?.let { snackbarHostState.showSnackbar(it.message) }
+      loadState.appendErrorOrNull()?.let { snackbarHostState.showSnackbar(it.message) }
+      loadState.refreshErrorOrNull()?.let { snackbarHostState.showSnackbar(it.message) }
     }
   }
 

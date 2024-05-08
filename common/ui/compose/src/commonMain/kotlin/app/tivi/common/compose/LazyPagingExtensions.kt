@@ -1,7 +1,7 @@
 // Copyright 2021, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@file:Suppress("USELESS_IS_CHECK", "CAST_NEVER_SUCCEEDS", "NOTHING_TO_INLINE")
+@file:Suppress("NOTHING_TO_INLINE")
 
 package app.tivi.common.compose
 
@@ -14,19 +14,16 @@ import com.slack.circuit.retained.rememberRetained
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
-fun CombinedLoadStates.appendErrorOrNull(): UiMessage? {
-  return (append.takeIf { it is LoadStateError } as? LoadStateError)
-    ?.let { UiMessage(it.error) }
+inline fun CombinedLoadStates.appendErrorOrNull(): UiMessage? {
+  return (append as? LoadStateError)?.let { UiMessage(it.error) }
 }
 
-fun CombinedLoadStates.prependErrorOrNull(): UiMessage? {
-  return (prepend.takeIf { it is LoadStateError } as? LoadStateError)
-    ?.let { UiMessage(it.error) }
+inline fun CombinedLoadStates.prependErrorOrNull(): UiMessage? {
+  return (prepend as? LoadStateError)?.let { UiMessage(it.error) }
 }
 
-fun CombinedLoadStates.refreshErrorOrNull(): UiMessage? {
-  return (refresh.takeIf { it is LoadStateError } as? LoadStateError)
-    ?.let { UiMessage(it.error) }
+inline fun CombinedLoadStates.refreshErrorOrNull(): UiMessage? {
+  return (refresh as? LoadStateError)?.let { UiMessage(it.error) }
 }
 
 @Composable
