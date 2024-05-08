@@ -3,6 +3,9 @@
 
 package app.tivi.common.compose.ui
 
+import androidx.compose.animation.core.ExperimentalTransitionApi
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.rememberTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -31,6 +34,7 @@ import kotlin.math.roundToInt
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
+@OptIn(ExperimentalTransitionApi::class)
 @Composable
 fun AsyncImage(
   model: Any?,
@@ -47,11 +51,14 @@ fun AsyncImage(
   modelEqualityDelegate: EqualityDelegate = DefaultModelEqualityDelegate,
 ) {
   var loadStartTime by remember { mutableStateOf(Instant.DISTANT_PAST) }
-  var currentState by remember {
-    mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty)
-  }
 
-  val transition = updateImageLoadingTransition(currentState, loadStartTime)
+  val transitionState = remember {
+    MutableTransitionState<Pair<AsyncImagePainter.State, Instant>>(
+      initialState = AsyncImagePainter.State.Empty to loadStartTime,
+    )
+  }
+  val transition = rememberTransition(transitionState, "image fade")
+  val imageTransition = transition.updateImageLoadingTransition()
 
   LogCompositions("AsyncImage", "Main composition: $model")
 
@@ -61,26 +68,33 @@ fun AsyncImage(
     imageLoader = imageLoader,
     modifier = modifier,
     transform = { state ->
-      var result = transform(state)
-
-      currentState = result
-      if (result is AsyncImagePainter.State.Loading) {
-        loadStartTime = Clock.System.now()
-      } else if (result is AsyncImagePainter.State.Success) {
-        val newPainter = transformPainter(result.painter) {
-          val cm = ColorMatrix()
-          cm.apply {
-            setAlpha(transition.alpha)
-            setBrightness(transition.brightness)
-            setSaturation(transition.saturation)
+      transform(state).let { transformed ->
+        when (transformed) {
+          is AsyncImagePainter.State.Loading -> {
+            loadStartTime = Clock.System.now()
+            transformed
           }
 
-          ColorFilter.colorMatrix(cm)
-        }
-        result = AsyncImagePainter.State.Success(newPainter, result.result)
-      }
+          is AsyncImagePainter.State.Success -> {
+            val newPainter = transformPainter(transformed.painter) {
+              val cm = ColorMatrix()
+              cm.apply {
+                setAlpha(imageTransition.alpha)
+                setBrightness(imageTransition.brightness)
+                setSaturation(imageTransition.saturation)
+              }
 
-      result
+              ColorFilter.colorMatrix(cm)
+            }
+            AsyncImagePainter.State.Success(newPainter, transformed.result)
+          }
+
+          else -> transformed
+        }
+      }.also {
+        // Finally update the transition state
+        transitionState.targetState = it to loadStartTime
+      }
     },
     onState = onState,
     alignment = alignment,
@@ -91,8 +105,6 @@ fun AsyncImage(
     modelEqualityDelegate = modelEqualityDelegate,
   )
 }
-
-private val IDENTITY_MATRIX by lazy { ColorMatrix() }
 
 @Stable
 class ParallaxAlignment(

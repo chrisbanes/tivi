@@ -3,10 +3,10 @@
 
 package app.tivi.common.compose.ui
 
+import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
@@ -41,15 +41,11 @@ private fun useTransition(
 }
 
 @Composable
-internal fun updateImageLoadingTransition(
-  state: AsyncImagePainter.State,
-  startTime: Instant,
+internal inline fun Transition<Pair<AsyncImagePainter.State, Instant>>.updateImageLoadingTransition(
   transitionLoadTimeCutoff: Duration = 80.milliseconds,
   transitionDuration: Duration = 1.seconds,
 ): ImageLoadingTransition {
-  val transition = updateTransition(state to startTime, label = "image fade")
-
-  val alpha = transition.animateFloat(
+  val alpha = animateFloat(
     transitionSpec = {
       val (s, time) = targetState
       if (useTransition(s, time, transitionLoadTimeCutoff)) {
@@ -63,7 +59,7 @@ internal fun updateImageLoadingTransition(
     },
   )
 
-  val brightness = transition.animateFloat(
+  val brightness = animateFloat(
     transitionSpec = {
       val (s, time) = targetState
       if (useTransition(s, time, transitionLoadTimeCutoff)) {
@@ -77,7 +73,7 @@ internal fun updateImageLoadingTransition(
     },
   )
 
-  val saturation = transition.animateFloat(
+  val saturation = animateFloat(
     transitionSpec = {
       val (s, time) = targetState
       if (useTransition(s, time, transitionLoadTimeCutoff)) {
