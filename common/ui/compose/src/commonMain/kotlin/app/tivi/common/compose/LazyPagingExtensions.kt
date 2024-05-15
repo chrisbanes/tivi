@@ -6,10 +6,10 @@
 package app.tivi.common.compose
 
 import androidx.compose.runtime.Composable
-import app.cash.paging.CombinedLoadStates
-import app.cash.paging.LoadStateError
-import app.cash.paging.PagingData
-import app.cash.paging.cachedIn
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadStateError
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.slack.circuit.retained.rememberRetained
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

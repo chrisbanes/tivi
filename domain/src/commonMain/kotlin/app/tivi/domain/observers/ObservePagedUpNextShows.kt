@@ -3,9 +3,9 @@
 
 package app.tivi.domain.observers
 
-import app.cash.paging.Pager
-import app.cash.paging.PagingConfig
-import app.cash.paging.PagingData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.models.SortOption
@@ -18,7 +18,7 @@ class ObservePagedUpNextShows(
   private val watchedShowsDao: WatchedShowDao,
 ) : PagingInteractor<ObservePagedUpNextShows.Parameters, UpNextEntry>() {
 
-  @OptIn(app.cash.paging.ExperimentalPagingApi::class)
+  @OptIn(androidx.paging.ExperimentalPagingApi::class)
   override fun createObservable(
     params: Parameters,
   ): Flow<PagingData<UpNextEntry>> = Pager(config = params.pagingConfig) {

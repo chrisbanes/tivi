@@ -36,7 +36,7 @@ kotlin {
 
         implementation(libs.uuid)
 
-        implementation(libs.paging.compose)
+        implementation(libs.paging.common)
       }
     }
 

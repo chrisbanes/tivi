@@ -3,7 +3,7 @@
 
 package app.tivi.data.daos
 
-import app.cash.paging.PagingSource
+import androidx.paging.PagingSource
 import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.data.models.PopularShowEntry
 import kotlinx.coroutines.flow.Flow

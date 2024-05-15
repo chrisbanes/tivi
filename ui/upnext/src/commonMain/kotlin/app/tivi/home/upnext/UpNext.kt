@@ -56,8 +56,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
-import app.cash.paging.LoadStateLoading
-import app.cash.paging.compose.itemKey
+import androidx.paging.LoadStateLoading
+import androidx.paging.compose.itemKey
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings

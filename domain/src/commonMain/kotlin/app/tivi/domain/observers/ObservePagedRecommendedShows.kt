@@ -3,9 +3,9 @@
 
 package app.tivi.domain.observers
 
-import app.cash.paging.Pager
-import app.cash.paging.PagingConfig
-import app.cash.paging.PagingData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import app.tivi.data.daos.RecommendedDao
 import app.tivi.domain.PagingInteractor
@@ -22,7 +22,7 @@ class ObservePagedRecommendedShows(
   private val updateRecommendedShows: UpdateRecommendedShows,
   private val logger: Logger,
 ) : PagingInteractor<ObservePagedRecommendedShows.Params, RecommendedEntryWithShow>() {
-  @OptIn(app.cash.paging.ExperimentalPagingApi::class)
+  @OptIn(androidx.paging.ExperimentalPagingApi::class)
   override fun createObservable(
     params: Params,
   ): Flow<PagingData<RecommendedEntryWithShow>> {
