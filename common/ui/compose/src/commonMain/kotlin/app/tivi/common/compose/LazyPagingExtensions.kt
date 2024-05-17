@@ -7,7 +7,7 @@ package app.tivi.common.compose
 
 import androidx.compose.runtime.Composable
 import androidx.paging.CombinedLoadStates
-import androidx.paging.LoadStateError
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.slack.circuit.retained.rememberRetained
@@ -15,15 +15,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
 inline fun CombinedLoadStates.appendErrorOrNull(): UiMessage? {
-  return (append as? LoadStateError)?.let { UiMessage(it.error) }
+  return (append as? LoadState.Error)?.let { UiMessage(it.error) }
 }
 
 inline fun CombinedLoadStates.prependErrorOrNull(): UiMessage? {
-  return (prepend as? LoadStateError)?.let { UiMessage(it.error) }
+  return (prepend as? LoadState.Error)?.let { UiMessage(it.error) }
 }
 
 inline fun CombinedLoadStates.refreshErrorOrNull(): UiMessage? {
-  return (refresh as? LoadStateError)?.let { UiMessage(it.error) }
+  return (refresh as? LoadState.Error)?.let { UiMessage(it.error) }
 }
 
 @Composable

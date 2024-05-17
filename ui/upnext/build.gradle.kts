@@ -25,7 +25,7 @@ kotlin {
         api(libs.circuit.foundation)
         implementation(libs.circuit.retained)
 
-        implementation(libs.paging.common)
+        implementation(projects.thirdparty.androidx.paging.compose)
 
         implementation(libs.swipe)
 
