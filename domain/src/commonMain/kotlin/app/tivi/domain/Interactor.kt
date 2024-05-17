@@ -3,8 +3,8 @@
 
 package app.tivi.domain
 
-import app.cash.paging.PagingConfig
-import app.cash.paging.PagingData
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.atomicfu.atomic

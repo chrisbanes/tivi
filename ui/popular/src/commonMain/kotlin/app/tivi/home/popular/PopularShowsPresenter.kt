@@ -5,8 +5,8 @@ package app.tivi.home.popular
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import app.cash.paging.PagingConfig
-import app.cash.paging.compose.collectAsLazyPagingItems
+import androidx.paging.PagingConfig
+import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.rememberRetainedCachedPagingFlow
 import app.tivi.domain.observers.ObservePagedPopularShows
 import app.tivi.screens.PopularShowsScreen

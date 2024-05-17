@@ -36,7 +36,8 @@ kotlin {
 
         implementation(libs.uuid)
 
-        implementation(libs.paging.compose)
+        api(libs.paging.common)
+        api(projects.thirdparty.androidx.paging.compose)
       }
     }
 

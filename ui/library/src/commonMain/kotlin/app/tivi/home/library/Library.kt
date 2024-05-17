@@ -59,9 +59,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import app.cash.paging.LoadStateLoading
-import app.cash.paging.compose.LazyPagingItems
-import app.cash.paging.compose.itemKey
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
@@ -340,9 +340,7 @@ private fun LibraryGrid(
     }
 
     fullSpanItem {
-      if (lazyPagingItems.itemCount == 0 &&
-        lazyPagingItems.loadState.refresh != LoadStateLoading
-      ) {
+      if (lazyPagingItems.itemCount == 0 && lazyPagingItems.loadState.refresh != LoadState.Loading) {
         EmptyContent(
           title = { Text(text = LocalStrings.current.libraryEmptyTitle) },
           prompt = { Text(text = LocalStrings.current.libraryEmptyPrompt) },

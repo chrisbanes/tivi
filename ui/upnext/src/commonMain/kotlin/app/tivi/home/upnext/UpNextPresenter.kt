@@ -10,8 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import app.cash.paging.PagingConfig
-import app.cash.paging.compose.collectAsLazyPagingItems
+import androidx.paging.PagingConfig
+import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
 import app.tivi.common.compose.rememberCoroutineScope

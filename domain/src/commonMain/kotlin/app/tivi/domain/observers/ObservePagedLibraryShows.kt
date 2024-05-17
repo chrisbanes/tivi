@@ -3,9 +3,9 @@
 
 package app.tivi.domain.observers
 
-import app.cash.paging.Pager
-import app.cash.paging.PagingConfig
-import app.cash.paging.PagingData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.daos.LibraryShowsDao
 import app.tivi.data.models.SortOption
@@ -17,7 +17,7 @@ import me.tatarka.inject.annotations.Inject
 class ObservePagedLibraryShows(
   private val libraryShowsDao: LibraryShowsDao,
 ) : PagingInteractor<ObservePagedLibraryShows.Parameters, LibraryShow>() {
-  @OptIn(app.cash.paging.ExperimentalPagingApi::class)
+  @OptIn(androidx.paging.ExperimentalPagingApi::class)
   override fun createObservable(
     params: Parameters,
   ): Flow<PagingData<LibraryShow>> = Pager(config = params.pagingConfig) {

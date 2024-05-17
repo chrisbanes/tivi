@@ -60,9 +60,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.cash.paging.LoadStateLoading
-import app.cash.paging.compose.LazyPagingItems
-import app.cash.paging.compose.itemKey
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.plus
@@ -106,7 +106,7 @@ fun <E : Entry> EntryGrid(
   }
 
   val refreshing by remember(lazyPagingItems) {
-    derivedStateOf { lazyPagingItems.loadState.refresh == LoadStateLoading }
+    derivedStateOf { lazyPagingItems.loadState.refresh == LoadState.Loading }
   }
 
   HazeScaffold(

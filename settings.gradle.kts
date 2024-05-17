@@ -136,4 +136,5 @@ include(
   ":android-app:benchmark",
   ":android-app:common-test",
   ":desktop-app",
+  ":thirdparty:androidx:paging:compose",
 )

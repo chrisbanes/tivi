@@ -3,7 +3,7 @@
 
 package app.tivi.data.daos
 
-import app.cash.paging.PagingSource
+import androidx.paging.PagingSource
 import app.cash.sqldelight.paging3.QueryPagingSource
 import app.tivi.data.Database
 import app.tivi.data.compoundmodels.LibraryShow
