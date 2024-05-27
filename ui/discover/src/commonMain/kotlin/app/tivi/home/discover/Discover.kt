@@ -462,9 +462,8 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
           ParallaxAlignment(
             horizontalBias = {
               val layoutInfo = lazyListState.layoutInfo
-              val itemInfo = layoutInfo.visibleItemsInfo.first {
-                it.key == item.show.id
-              }
+              val itemInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.key == item.show.id }
+                ?: return@ParallaxAlignment 0f
 
               val adjustedOffset = itemInfo.offset - layoutInfo.viewportStartOffset
               (adjustedOffset / itemInfo.size.toFloat()).coerceIn(-1f, 1f)
