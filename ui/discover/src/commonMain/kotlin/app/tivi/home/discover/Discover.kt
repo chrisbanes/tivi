@@ -301,7 +301,6 @@ internal fun Discover(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NextEpisodeToWatch(
   show: TiviShow,
@@ -317,7 +316,7 @@ private fun NextEpisodeToWatch(
       border = BorderStroke(3.dp, MaterialTheme.colorScheme.outline),
     ) {
       Box {
-        var model: Any by remember { mutableStateOf(episode.asImageModel()) }
+        var model: Any by remember(episode.id) { mutableStateOf(episode.asImageModel()) }
 
         AsyncImage(
           model = model,
