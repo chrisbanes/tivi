@@ -174,7 +174,9 @@ internal fun ShowDetails(
       onSeasonFollowed = { eventSink(ShowDetailsUiEvent.FollowSeason(it)) },
       onSeasonUnfollowed = { eventSink(ShowDetailsUiEvent.UnfollowSeason(it)) },
       unfollowPreviousSeasons = { eventSink(ShowDetailsUiEvent.UnfollowPreviousSeasons(it)) },
-      onMarkSeasonWatched = { eventSink(ShowDetailsUiEvent.MarkSeasonWatched(it, onlyAired = true)) },
+      onMarkSeasonWatched = { seasonId, airedOnly ->
+        eventSink(ShowDetailsUiEvent.MarkSeasonWatched(seasonId, onlyAired = airedOnly))
+      },
       onMarkSeasonUnwatched = { eventSink(ShowDetailsUiEvent.MarkSeasonUnwatched(it)) },
       onToggleShowFollowed = { eventSink(ShowDetailsUiEvent.ToggleShowFollowed) },
       modifier = modifier,
@@ -195,7 +197,7 @@ internal fun ShowDetails(
   onSeasonFollowed: (seasonId: Long) -> Unit,
   onSeasonUnfollowed: (seasonId: Long) -> Unit,
   unfollowPreviousSeasons: (seasonId: Long) -> Unit,
-  onMarkSeasonWatched: (seasonId: Long) -> Unit,
+  onMarkSeasonWatched: (seasonId: Long, airedOnly: Boolean) -> Unit,
   onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
   onToggleShowFollowed: () -> Unit,
   modifier: Modifier = Modifier,
@@ -300,7 +302,7 @@ private fun ShowDetailsScrollingContent(
   onSeasonFollowed: (seasonId: Long) -> Unit,
   onSeasonUnfollowed: (seasonId: Long) -> Unit,
   unfollowPreviousSeasons: (seasonId: Long) -> Unit,
-  onMarkSeasonWatched: (seasonId: Long) -> Unit,
+  onMarkSeasonWatched: (seasonId: Long, airedOnly: Boolean) -> Unit,
   onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
   contentPadding: PaddingValues,
   modifier: Modifier = Modifier,
@@ -822,7 +824,7 @@ private fun SeasonRow(
   onSeasonFollowed: (seasonId: Long) -> Unit,
   onSeasonUnfollowed: (seasonId: Long) -> Unit,
   unfollowPreviousSeasons: (seasonId: Long) -> Unit,
-  onMarkSeasonWatched: (seasonId: Long) -> Unit,
+  onMarkSeasonWatched: (seasonId: Long, airedOnly: Boolean) -> Unit,
   onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
   contentPadding: PaddingValues,
   modifier: Modifier = Modifier,
@@ -918,7 +920,7 @@ private fun SeasonDropdownMenu(
   onSeasonFollowed: (seasonId: Long) -> Unit,
   onSeasonUnfollowed: (seasonId: Long) -> Unit,
   unfollowPreviousSeasons: (seasonId: Long) -> Unit,
-  onMarkSeasonWatched: (seasonId: Long) -> Unit,
+  onMarkSeasonWatched: (seasonId: Long, airedOnly: Boolean) -> Unit,
   onMarkSeasonUnwatched: (seasonId: Long) -> Unit,
 ) {
   DropdownMenu(
@@ -956,7 +958,7 @@ private fun SeasonDropdownMenu(
 
     if (episodesWatched > 0) {
       DropdownMenuItem(
-        text = { Text(text = LocalStrings.current.popupSeasonMarkWatchedAll) },
+        text = { Text(text = LocalStrings.current.popupSeasonMarkAllUnwatched) },
         onClick = {
           onMarkSeasonUnwatched(season.id)
           onDismissRequest()
@@ -964,19 +966,23 @@ private fun SeasonDropdownMenu(
       )
     }
 
-    if (episodesWatched < episodesAired) {
+    if (episodesToAir > 0 && episodesWatched < episodesAired) {
       DropdownMenuItem(
-        text = {
-          Text(
-            text = if (episodesToAir == 0) {
-              LocalStrings.current.popupSeasonMarkWatchedAll
-            } else {
-              LocalStrings.current.popupSeasonMarkWatchedAired
-            },
-          )
-        },
+        text = { Text(LocalStrings.current.popupSeasonMarkWatchedAired) },
         onClick = {
-          onMarkSeasonWatched(season.id)
+          onMarkSeasonWatched(season.id, true)
+          onDismissRequest()
+        },
+      )
+    }
+
+    val episodeCount = episodesAired + episodesToAir
+
+    if (episodesWatched < episodeCount) {
+      DropdownMenuItem(
+        text = { Text(text = LocalStrings.current.popupSeasonMarkWatchedAll) },
+        onClick = {
+          onMarkSeasonWatched(season.id, false)
           onDismissRequest()
         },
       )
