@@ -31,6 +31,7 @@ fun TiviUiViewController(
     onOpenUrl = { url ->
       val safari = SFSafariViewController(NSURL(string = url))
       uiViewController.presentViewController(safari, animated = true, completion = null)
+      true
     },
     modifier = Modifier,
   )
