@@ -31,6 +31,7 @@ platform :ios do
 
   before_all do |lane|
     cleanup_ci_keychain if is_ci
+    xcodes(select_for_current_build_only: true)
   end
 
   after_all do |lane|
