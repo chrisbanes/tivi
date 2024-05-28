@@ -46,7 +46,7 @@ interface TiviContent {
   fun Content(
     backstack: SaveableBackStack,
     navigator: Navigator,
-    onOpenUrl: (String) -> Unit,
+    onOpenUrl: (String) -> Boolean,
     modifier: Modifier,
   )
 }
@@ -68,7 +68,7 @@ class DefaultTiviContent(
   override fun Content(
     backstack: SaveableBackStack,
     navigator: Navigator,
-    onOpenUrl: (String) -> Unit,
+    onOpenUrl: (String) -> Boolean,
     modifier: Modifier,
   ) {
     val coroutineScope = rememberCoroutineScope()
@@ -118,16 +118,16 @@ class DefaultTiviContent(
 private class TiviNavigator(
   private val navigator: Navigator,
   private val backStack: SaveableBackStack,
-  private val onOpenUrl: (String) -> Unit,
+  private val onOpenUrl: (String) -> Boolean,
   private val logger: Logger,
 ) : Navigator {
-  override fun goTo(screen: Screen) {
+  override fun goTo(screen: Screen): Boolean {
     logger.d { "goTo. Screen: $screen. Current stack: ${backStack.toList()}" }
 
-    when (screen) {
-      is UrlScreen -> onOpenUrl(screen.url)
-      else -> navigator.goTo(screen)
+    if (screen is UrlScreen && onOpenUrl(screen.url)) {
+      return true
     }
+    return navigator.goTo(screen)
   }
 
   override fun pop(result: PopResult?): Screen? {

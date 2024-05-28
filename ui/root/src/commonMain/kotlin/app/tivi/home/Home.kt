@@ -51,6 +51,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -71,6 +72,8 @@ import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.popUntil
+import com.slack.circuit.runtime.resetRoot
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuitx.gesturenavigation.GestureNavigationDecoration
 import dev.chrisbanes.haze.HazeState
@@ -383,7 +386,12 @@ private fun Navigator.resetRootIfDifferent(
   restoreState: Boolean = false,
 ) {
   val backStack = peekBackStack()
-  if (backStack.size > 1 || backStack.lastOrNull() != screen) {
+
+  if (backStack.lastOrNull() == screen) {
+    Snapshot.withMutableSnapshot {
+      popUntil { peekBackStack().size == 1 }
+    }
+  } else {
     resetRoot(screen, saveState, restoreState)
   }
 }
