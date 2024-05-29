@@ -15,7 +15,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
       }
 
       configureAndroid()
-      configureLauncherTasks()
       configureLicensee()
       configureAndroidLicensesTasks()
     }
