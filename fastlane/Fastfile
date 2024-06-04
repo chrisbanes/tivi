@@ -44,9 +44,18 @@ platform :ios do
       is_key_content_base64: true
     )
 
+    ios_bundle_ids = [
+      "app.tivi.client",
+      "app.tivi.qa",
+    ]
+
+    match_nuke(
+      app_identifier: ios_bundle_ids,
+      type: "appstore"
+    )
+
     match(
-      app_identifier: ["app.tivi.client", "app.tivi.qa"],
-      type: options[:type] || "development"
+      app_identifier: ios_bundle_ids,
     )
   end
 
