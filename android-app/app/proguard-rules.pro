@@ -45,17 +45,6 @@
 
 -renamesourcefileattribute SourceFile
 
-# Dagger
--dontwarn com.google.errorprone.annotations.*
-
-# Retain the generic signature of retrofit2.Call until added to Retrofit.
-# Issue: https://github.com/square/retrofit/issues/3580.
-# Pull request: https://github.com/square/retrofit/pull/3579.
--keep,allowobfuscation,allowshrinking class retrofit2.Call
-
-# See https://issuetracker.google.com/issues/265188224
--keep,allowshrinking class * extends androidx.compose.ui.node.ModifierNodeElement {}
-
 # Using ktor client in Android has missing proguard rule
 # See https://youtrack.jetbrains.com/issue/KTOR-5528
 -dontwarn org.slf4j.**
