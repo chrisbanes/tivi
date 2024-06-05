@@ -44,6 +44,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
+### ios recreate_certs
+
+```sh
+[bundle exec] fastlane ios recreate_certs
+```
+
+
+
 ### ios lint
 
 ```sh

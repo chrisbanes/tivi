@@ -24,6 +24,11 @@ end
 
 platform :ios do
 
+  ios_bundle_ids = [
+    "app.tivi.client",
+    "app.tivi.qa",
+  ]
+
   before_all do |lane|
     cleanup_ci_keychain if is_ci
   end
@@ -36,18 +41,29 @@ platform :ios do
     cleanup_ci_keychain if is_ci
   end
 
-  lane :certs do |options|
+  private_lane :asc do
     app_store_connect_api_key(
       key_id: ENV['API_KEY_ID'],
       issuer_id: ENV['ISSUER_KEY_ID'],
       key_content: ENV['API_KEY_CONTENTS'],
       is_key_content_base64: true
     )
+  end
 
-    match(
-      app_identifier: ["app.tivi.client", "app.tivi.qa"],
-      type: options[:type] || "development"
+  lane :certs do |options|
+    asc
+    match(app_identifier: ios_bundle_ids)
+  end
+
+  lane :recreate_certs do |options|
+    asc
+
+    match_nuke(
+      app_identifier: ios_bundle_ids,
+      type: "appstore"
     )
+
+    match(app_identifier: ios_bundle_ids)
   end
 
   lane :lint do
@@ -101,24 +117,12 @@ platform :ios do
   end
 
   lane :publish_qa do
-    app_store_connect_api_key(
-      key_id: ENV['API_KEY_ID'],
-      issuer_id: ENV['ISSUER_KEY_ID'],
-      key_content: ENV['API_KEY_CONTENTS'],
-      is_key_content_base64: true
-    )
-
+    asc
     upload_to_testflight(app_identifier: "app.tivi.qa")
   end
 
   lane :publish_prod do
-    app_store_connect_api_key(
-      key_id: ENV['API_KEY_ID'],
-      issuer_id: ENV['ISSUER_KEY_ID'],
-      key_content: ENV['API_KEY_CONTENTS'],
-      is_key_content_base64: true
-    )
-
+    asc
     upload_to_testflight(app_identifier: "app.tivi.client")
   end
 
