@@ -15,7 +15,6 @@ lyricist = "1.7.0"
 multiplatformsettings = "1.1.1"
 okhttp = "4.12.0"
 kermit = "2.0.3" # Pinned back as Store uses Kermit 1.x
-ktlint = "1.0.1"
 ktor = "2.3.11"
 paging = "3.3.0"
 spotless = "6.25.0"
@@ -143,6 +142,8 @@ assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
 turbine = "app.cash.turbine:turbine:1.1.0"
 
 uuid = "com.benasher44:uuid:0.8.4"
+
+ktlint = "com.pinterest.ktlint:ktlint-cli:1.3.0"
 
 # Build logic dependencies
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
