@@ -286,10 +286,6 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
       - uses: gradle/actions/setup-gradle@v3
         with:
           cache-disabled: true
