@@ -150,10 +150,6 @@ jobs:
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
 
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '15.2'
-
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
@@ -221,10 +217,6 @@ jobs:
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
 
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '15.2'
-
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
@@ -288,10 +280,6 @@ jobs:
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
 
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '15.2'
-
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
@@ -301,6 +289,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v3
         with:
           cache-disabled: true
+
+      # Set Xcode version
+      - run: sudo xcodes select
 
       - name: iOS tests
         # Disable CC due to https://github.com/google/ksp/issues/1463
