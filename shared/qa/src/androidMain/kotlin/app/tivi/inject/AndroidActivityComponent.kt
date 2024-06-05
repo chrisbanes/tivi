@@ -13,7 +13,8 @@ import me.tatarka.inject.annotations.Provides
 abstract class AndroidActivityComponent(
   @get:Provides override val activity: Activity,
   @Component val applicationComponent: AndroidApplicationComponent,
-) : SharedActivityComponent, QaUiComponent {
+) : SharedActivityComponent,
+  QaUiComponent {
   abstract val tiviContent: TiviContent
 
   companion object

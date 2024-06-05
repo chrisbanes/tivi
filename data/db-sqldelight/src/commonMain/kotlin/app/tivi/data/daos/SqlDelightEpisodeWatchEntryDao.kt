@@ -16,7 +16,8 @@ import me.tatarka.inject.annotations.Inject
 class SqlDelightEpisodeWatchEntryDao(
   override val db: Database,
   private val dispatchers: AppCoroutineDispatchers,
-) : EpisodeWatchEntryDao, SqlDelightEntityDao<EpisodeWatchEntry> {
+) : EpisodeWatchEntryDao,
+  SqlDelightEntityDao<EpisodeWatchEntry> {
 
   override fun insert(entity: EpisodeWatchEntry): Long {
     db.episode_watch_entriesQueries.insert(

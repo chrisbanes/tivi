@@ -11,4 +11,5 @@ trim_trailing_whitespace = true
 ij_kotlin_imports_layout = *
 ktlint_code_style = intellij_idea
 ktlint_standard_discouraged-comment-location = disabled
+ktlint_standard_function-expression-body = disabled
 ktlint_function_naming_ignore_when_annotated_with = Composable

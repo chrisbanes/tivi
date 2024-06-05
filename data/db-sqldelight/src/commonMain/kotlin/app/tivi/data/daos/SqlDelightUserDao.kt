@@ -15,7 +15,8 @@ import me.tatarka.inject.annotations.Inject
 class SqlDelightUserDao(
   override val db: Database,
   private val dispatchers: AppCoroutineDispatchers,
-) : UserDao, SqlDelightEntityDao<TraktUser> {
+) : UserDao,
+  SqlDelightEntityDao<TraktUser> {
 
   override fun insert(entity: TraktUser): Long {
     db.usersQueries.insert(

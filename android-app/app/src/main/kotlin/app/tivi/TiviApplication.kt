@@ -14,7 +14,9 @@ import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.create
 
-class TiviApplication : Application(), Configuration.Provider {
+class TiviApplication :
+  Application(),
+  Configuration.Provider {
   val component: AndroidApplicationComponent by unsafeLazy {
     AndroidApplicationComponent.create(this)
   }

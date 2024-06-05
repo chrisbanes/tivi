@@ -18,7 +18,9 @@ data class Episode(
   val traktRating: Float? = null,
   val traktRatingVotes: Int? = null,
   val tmdbBackdropPath: String? = null,
-) : TiviEntity, TraktIdEntity, TmdbIdEntity {
+) : TiviEntity,
+  TraktIdEntity,
+  TmdbIdEntity {
   companion object {
     val EMPTY = Episode(seasonId = 0)
   }

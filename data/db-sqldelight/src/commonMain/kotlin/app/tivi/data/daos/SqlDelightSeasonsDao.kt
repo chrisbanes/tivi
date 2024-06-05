@@ -23,7 +23,8 @@ import me.tatarka.inject.annotations.Inject
 class SqlDelightSeasonsDao(
   override val db: Database,
   private val dispatchers: AppCoroutineDispatchers,
-) : SeasonsDao, SqlDelightEntityDao<Season> {
+) : SeasonsDao,
+  SqlDelightEntityDao<Season> {
 
   override fun insert(entity: Season): Long {
     db.seasonsQueries.insert(

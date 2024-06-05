@@ -19,7 +19,8 @@ abstract class IosApplicationComponent(
   override val traktRefreshTokenActionProvider: (TraktOAuthInfo) -> TraktRefreshTokenAction,
   private val traktLoginActionProvider: (TraktOAuthInfo) -> TraktLoginAction,
   override val setCrashReportingEnabledAction: SetCrashReportingEnabledAction,
-) : SharedApplicationComponent, ProdApplicationComponent {
+) : SharedApplicationComponent,
+  ProdApplicationComponent {
 
   abstract val initializers: AppInitializers
 

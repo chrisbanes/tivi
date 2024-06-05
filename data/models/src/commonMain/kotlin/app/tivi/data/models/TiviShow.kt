@@ -31,7 +31,9 @@ data class TiviShow(
   val airsDay: DayOfWeek? = null,
   val airsTime: LocalTime? = null,
   val airsTimeZone: TimeZone? = null,
-) : TiviEntity, TraktIdEntity, TmdbIdEntity {
+) : TiviEntity,
+  TraktIdEntity,
+  TmdbIdEntity {
   constructor() : this(0)
 
   val genres by unsafeLazy {

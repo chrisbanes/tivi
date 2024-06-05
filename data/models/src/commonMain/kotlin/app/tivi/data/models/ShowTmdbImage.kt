@@ -11,4 +11,5 @@ data class ShowTmdbImage(
   override val language: String? = null,
   override val rating: Float = 0f,
   override val isPrimary: Boolean = false,
-) : TiviEntity, TmdbImageEntity
+) : TiviEntity,
+  TmdbImageEntity
