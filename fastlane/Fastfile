@@ -1,3 +1,5 @@
+skip_docs
+
 platform :android do
 
   lane :publish_qa do
