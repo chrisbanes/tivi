@@ -26,7 +26,8 @@ import me.tatarka.inject.annotations.Inject
 class SqlDelightWatchedShowsDao(
   override val db: Database,
   private val dispatchers: AppCoroutineDispatchers,
-) : WatchedShowDao, SqlDelightEntityDao<WatchedShowEntry> {
+) : WatchedShowDao,
+  SqlDelightEntityDao<WatchedShowEntry> {
   override fun entryWithShowId(showId: Long): WatchedShowEntry? {
     return db.watched_entriesQueries.entryWithShowId(showId, ::WatchedShowEntry)
       .executeAsOneOrNull()
@@ -129,15 +130,55 @@ class SqlDelightWatchedShowsDao(
     offset = offset,
   ) {
       // show
-      id, title, original_title, trakt_id, tmdb_id, imdb_id, overview, homepage, trakt_rating,
-      trakt_votes, certification, first_aired, country, network, network_logo_path, runtime,
-      genres, status, airs_day, airs_time, airs_tz,
+      id,
+      title,
+      original_title,
+      trakt_id,
+      tmdb_id,
+      imdb_id,
+      overview,
+      homepage,
+      trakt_rating,
+      trakt_votes,
+      certification,
+      first_aired,
+      country,
+      network,
+      network_logo_path,
+      runtime,
+      genres,
+      status,
+      airs_day,
+      airs_time,
+      airs_tz,
       // season
-      id_, show_id, trakt_id_, tmdb_id_, title_, overview_, number, network_, ep_count,
-      ep_aired, trakt_rating_, trakt_votes_, tmdb_poster_path, tmdb_backdrop_path, ignored,
+      id_,
+      show_id,
+      trakt_id_,
+      tmdb_id_,
+      title_,
+      overview_,
+      number,
+      network_,
+      ep_count,
+      ep_aired,
+      trakt_rating_,
+      trakt_votes_,
+      tmdb_poster_path,
+      tmdb_backdrop_path,
+      ignored,
       // episode
-      id__, season_id, trakt_id__, tmdb_id__, title__, overview__, number_, first_aired_,
-      trakt_rating__, trakt_rating_votes, tmdb_backdrop_path_,
+      id__,
+      season_id,
+      trakt_id__,
+      tmdb_id__,
+      title__,
+      overview__,
+      number_,
+      first_aired_,
+      trakt_rating__,
+      trakt_rating_votes,
+      tmdb_backdrop_path_,
     ->
 
     val show = TiviShow(

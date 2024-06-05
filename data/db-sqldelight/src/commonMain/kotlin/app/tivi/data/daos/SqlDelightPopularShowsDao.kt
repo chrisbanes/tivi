@@ -20,7 +20,8 @@ import me.tatarka.inject.annotations.Inject
 class SqlDelightPopularShowsDao(
   override val db: Database,
   private val dispatchers: AppCoroutineDispatchers,
-) : PopularDao, SqlDelightEntityDao<PopularShowEntry> {
+) : PopularDao,
+  SqlDelightEntityDao<PopularShowEntry> {
   override fun entriesObservable(page: Int): Flow<List<PopularShowEntry>> {
     return db.popular_showsQueries.entriesInPage(page, ::PopularShowEntry)
       .asFlow()
@@ -80,10 +81,31 @@ class SqlDelightPopularShowsDao(
       limit = limit,
       offset = offset,
       mapper = {
-          id, show_id, page, page_order, id_, title, original_title, trakt_id, tmdb_id,
-          imdb_id, overview, homepage, trakt_rating, trakt_votes, certification,
-          first_aired, country, network, network_logo_path, runtime, genres,
-          status, airs_day, airs_time, airs_tz,
+          id,
+          show_id,
+          page,
+          page_order,
+          id_,
+          title,
+          original_title,
+          trakt_id,
+          tmdb_id,
+          imdb_id,
+          overview,
+          homepage,
+          trakt_rating,
+          trakt_votes,
+          certification,
+          first_aired,
+          country,
+          network,
+          network_logo_path,
+          runtime,
+          genres,
+          status,
+          airs_day,
+          airs_time,
+          airs_tz,
         ->
         PopularEntryWithShow(
           entry = PopularShowEntry(

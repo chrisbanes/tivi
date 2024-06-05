@@ -19,7 +19,9 @@ data class Season(
   val tmdbPosterPath: String? = null,
   val tmdbBackdropPath: String? = null,
   val ignored: Boolean = false,
-) : TiviEntity, TmdbIdEntity, TraktIdEntity {
+) : TiviEntity,
+  TmdbIdEntity,
+  TraktIdEntity {
   companion object {
     const val NUMBER_SPECIALS = 0
     val EMPTY = Season(showId = 0)

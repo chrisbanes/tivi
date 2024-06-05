@@ -16,7 +16,9 @@ import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface TraktComponent : TraktCommonComponent, TraktPlatformComponent
+interface TraktComponent :
+  TraktCommonComponent,
+  TraktPlatformComponent
 
 expect interface TraktPlatformComponent
 

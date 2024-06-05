@@ -15,7 +15,8 @@ import me.tatarka.inject.annotations.Inject
 class SqlDelightShowImagesDao(
   override val db: Database,
   private val dispatchers: AppCoroutineDispatchers,
-) : ShowTmdbImagesDao, SqlDelightEntityDao<ShowTmdbImage> {
+) : ShowTmdbImagesDao,
+  SqlDelightEntityDao<ShowTmdbImage> {
   override fun deleteForShowId(showId: Long) {
     db.show_imagesQueries.deleteForShowId(showId)
   }

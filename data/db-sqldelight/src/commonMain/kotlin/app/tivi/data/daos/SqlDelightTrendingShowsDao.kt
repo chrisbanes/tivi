@@ -20,7 +20,8 @@ import me.tatarka.inject.annotations.Inject
 class SqlDelightTrendingShowsDao(
   override val db: Database,
   private val dispatchers: AppCoroutineDispatchers,
-) : TrendingDao, SqlDelightEntityDao<TrendingShowEntry> {
+) : TrendingDao,
+  SqlDelightEntityDao<TrendingShowEntry> {
   override fun entriesObservable(page: Int): Flow<List<TrendingShowEntry>> {
     return db.trending_showsQueries.entriesInPage(page, ::TrendingShowEntry)
       .asFlow()
@@ -80,10 +81,31 @@ class SqlDelightTrendingShowsDao(
       limit = limit,
       offset = offset,
       mapper = {
-          id, show_id, page, watchers, id_, title, original_title,
-          trakt_id, tmdb_id, imdb_id, overview, homepage, trakt_rating, trakt_votes,
-          certification, first_aired, country, network, network_logo_path, runtime, genres,
-          status, airs_day, airs_time, airs_tz,
+          id,
+          show_id,
+          page,
+          watchers,
+          id_,
+          title,
+          original_title,
+          trakt_id,
+          tmdb_id,
+          imdb_id,
+          overview,
+          homepage,
+          trakt_rating,
+          trakt_votes,
+          certification,
+          first_aired,
+          country,
+          network,
+          network_logo_path,
+          runtime,
+          genres,
+          status,
+          airs_day,
+          airs_time,
+          airs_tz,
         ->
         TrendingEntryWithShow(
           entry = TrendingShowEntry(

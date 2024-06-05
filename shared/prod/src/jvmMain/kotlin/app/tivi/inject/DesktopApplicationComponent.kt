@@ -8,7 +8,9 @@ import me.tatarka.inject.annotations.Component
 
 @Component
 @ApplicationScope
-abstract class DesktopApplicationComponent : SharedApplicationComponent, ProdApplicationComponent {
+abstract class DesktopApplicationComponent :
+  SharedApplicationComponent,
+  ProdApplicationComponent {
   abstract val initializers: AppInitializers
 
   companion object

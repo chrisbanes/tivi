@@ -11,7 +11,8 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class SqlDelightLastRequestDao(
   override val db: Database,
-) : LastRequestDao, SqlDelightEntityDao<LastRequest> {
+) : LastRequestDao,
+  SqlDelightEntityDao<LastRequest> {
   override fun insert(entity: LastRequest): Long {
     db.last_requestsQueries.insert(
       id = entity.id,

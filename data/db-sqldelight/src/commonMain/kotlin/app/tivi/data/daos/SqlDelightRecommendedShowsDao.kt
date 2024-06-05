@@ -20,7 +20,8 @@ import me.tatarka.inject.annotations.Inject
 class SqlDelightRecommendedShowsDao(
   override val db: Database,
   private val dispatchers: AppCoroutineDispatchers,
-) : RecommendedDao, SqlDelightEntityDao<RecommendedShowEntry> {
+) : RecommendedDao,
+  SqlDelightEntityDao<RecommendedShowEntry> {
   override fun entriesForPage(page: Int): Flow<List<RecommendedShowEntry>> {
     return db.recommended_entriesQueries.entriesInPage(page, ::RecommendedShowEntry)
       .asFlow()
@@ -78,10 +79,30 @@ class SqlDelightRecommendedShowsDao(
       limit = limit,
       offset = offset,
       mapper = {
-          id, show_id, page, id_, title, original_title,
-          trakt_id, tmdb_id, imdb_id, overview, homepage, trakt_rating, trakt_votes,
-          certification, first_aired, country, network, network_logo_path, runtime,
-          genres, status, airs_day, airs_time, airs_tz,
+          id,
+          show_id,
+          page,
+          id_,
+          title,
+          original_title,
+          trakt_id,
+          tmdb_id,
+          imdb_id,
+          overview,
+          homepage,
+          trakt_rating,
+          trakt_votes,
+          certification,
+          first_aired,
+          country,
+          network,
+          network_logo_path,
+          runtime,
+          genres,
+          status,
+          airs_day,
+          airs_time,
+          airs_tz,
         ->
         RecommendedEntryWithShow(
           entry = RecommendedShowEntry(

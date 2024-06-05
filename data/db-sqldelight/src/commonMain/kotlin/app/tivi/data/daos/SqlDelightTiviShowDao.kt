@@ -16,7 +16,8 @@ import me.tatarka.inject.annotations.Inject
 class SqlDelightTiviShowDao(
   override val db: Database,
   private val dispatchers: AppCoroutineDispatchers,
-) : TiviShowDao, SqlDelightEntityDao<TiviShow> {
+) : TiviShowDao,
+  SqlDelightEntityDao<TiviShow> {
 
   override fun getShowWithTraktId(id: Int): TiviShow? {
     return db.showQueries.getShowWithTraktId(id, ::TiviShow)

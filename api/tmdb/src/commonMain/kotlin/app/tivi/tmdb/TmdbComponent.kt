@@ -9,7 +9,9 @@ import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
-interface TmdbComponent : TmdbCommonComponent, TmdbPlatformComponent
+interface TmdbComponent :
+  TmdbCommonComponent,
+  TmdbPlatformComponent
 
 expect interface TmdbPlatformComponent
 
