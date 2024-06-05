@@ -295,7 +295,7 @@ jobs:
           cache-disabled: true
 
       # Set Xcode version
-      - run: bundle exec fastlane run xcodes
+      - run: sudo xcodes select
 
       - name: iOS tests
         # Disable CC due to https://github.com/google/ksp/issues/1463
