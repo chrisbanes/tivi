@@ -28,7 +28,7 @@ jobs:
         shell: bash
         run: echo "ORG_GRADLE_PROJECT_TIVI_VERSIONCODE=$(( (GITHUB_RUN_NUMBER * 2) + 10000 ))" >> $GITHUB_ENV
 
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
       - name: set up JDK
         uses: actions/setup-java@v4
@@ -94,7 +94,7 @@ jobs:
       ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD }}
 
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v3
@@ -148,7 +148,7 @@ jobs:
       FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
       - name: set up JDK
         uses: actions/setup-java@v4
@@ -215,7 +215,7 @@ jobs:
       FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
       - name: set up JDK
         uses: actions/setup-java@v4
@@ -278,7 +278,7 @@ jobs:
       ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_REMOTE_BUILD_CACHE_PASSWORD }}
 
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
       - name: set up JDK
         uses: actions/setup-java@v4
@@ -326,7 +326,7 @@ jobs:
       MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
 
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -363,7 +363,7 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
       - uses: ruby/setup-ruby@v1
         with:
