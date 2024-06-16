@@ -773,7 +773,9 @@ private fun InfoPanels(
     if (show.runtime != null) {
       RuntimeInfoPanel(runtime = show.runtime!!, modifier = itemMod)
     }
-    if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null &&
+    if (show.airsDay != null &&
+      show.airsTime != null &&
+      show.airsTimeZone != null &&
       (show.status == ShowStatus.IN_PRODUCTION || show.status == ShowStatus.RETURNING)
     ) {
       AirsInfoPanel(show = show, modifier = itemMod)
