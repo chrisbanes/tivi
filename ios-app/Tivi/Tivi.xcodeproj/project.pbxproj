@@ -606,7 +606,7 @@
 			repositoryURL = "https://github.com/openid/AppAuth-iOS.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.6.2;
+				version = 1.7.5;
 			};
 		};
 		83AB5FFC2A51F27B007FC216 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
@@ -614,7 +614,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 9.0.0;
+				minimumVersion = 10.27.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
