@@ -37,7 +37,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id ="app.cash.licensee", version.ref = "licensee" }
 gms-googleServices = "com.google.gms.google-services:4.4.2"
-firebase-crashlytics = "com.google.firebase.crashlytics:3.0.1"
+firebase-crashlytics = "com.google.firebase.crashlytics:3.0.2"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
