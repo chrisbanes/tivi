@@ -262,6 +262,17 @@ internal fun Discover(
           )
         }
 
+        item(key = "carousel_popular") {
+          CarouselWithHeader(
+            items = state.popularItems,
+            title = LocalStrings.current.discoverPopularTitle,
+            refreshing = state.popularRefreshing,
+            onItemClick = { openShowDetails(it.id) },
+            onMoreClick = openPopularShows,
+            modifier = Modifier.animateItemPlacement(),
+          )
+        }
+
         item(key = "carousel_recommended") {
           CarouselWithHeader(
             items = state.recommendedItems,
@@ -269,17 +280,6 @@ internal fun Discover(
             refreshing = state.recommendedRefreshing,
             onItemClick = { openShowDetails(it.id) },
             onMoreClick = openRecommendedShows,
-            modifier = Modifier.animateItemPlacement(),
-          )
-        }
-
-        item(key = "carousel_refreshing") {
-          CarouselWithHeader(
-            items = state.popularItems,
-            title = LocalStrings.current.discoverPopularTitle,
-            refreshing = state.popularRefreshing,
-            onItemClick = { openShowDetails(it.id) },
-            onMoreClick = openPopularShows,
             modifier = Modifier.animateItemPlacement(),
           )
         }

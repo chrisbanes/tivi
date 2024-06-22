@@ -38,7 +38,7 @@ object AppScenarios {
   }
 }
 
-private fun UiDevice.testDiscover(): Boolean {
+fun UiDevice.testDiscover(): Boolean {
   // Scroll one of the Discover Carousels. Might need to wait a while for the app to load
   waitForObject(By.res("discover_carousel"), 30.seconds)
 
@@ -57,13 +57,13 @@ private fun UiDevice.testDiscover(): Boolean {
   return true
 }
 
-private fun UiDevice.navigateFromDiscoverToShowDetails() {
+fun UiDevice.navigateFromDiscoverToShowDetails() {
   // Open a show from one of the carousels
   runAction(By.res("discover_carousel_item")) { click() }
   waitForIdle()
 }
 
-private fun UiDevice.testShowDetails(): Boolean {
+fun UiDevice.testShowDetails(): Boolean {
   // Keep scrolling to the end of the LazyColumn, waiting for a season item
   repeat(20) {
     if (hasObject(By.res("show_details_season_item"))) {
@@ -83,20 +83,35 @@ private fun UiDevice.testShowDetails(): Boolean {
   return false
 }
 
-private fun UiDevice.navigateFromShowDetailsToSeasons() {
+fun UiDevice.navigateFromShowDetailsToSeasons() {
   runAction(By.res("show_details_season_item")) { click() }
   waitForIdle()
 }
 
-private fun UiDevice.testSeasons(): Boolean {
+fun UiDevice.testSeasons(): Boolean {
   // Not much to test here at the moment
   waitForObject(By.res("show_seasons_episode_item"), 5.seconds)
   waitForIdle()
   return true
 }
 
-private fun UiDevice.navigateFromSeasonsToEpisodeDetails() {
+fun UiDevice.navigateFromSeasonsToEpisodeDetails() {
   runAction(By.res("show_seasons_episode_item")) { click() }
+  waitForIdle()
+}
+
+fun UiDevice.navigateToUpNext() {
+  runAction(By.res("home_nav_upnext")) { click() }
+  waitForIdle()
+}
+
+fun UiDevice.navigateToLibrary() {
+  runAction(By.res("home_nav_library")) { click() }
+  waitForIdle()
+}
+
+fun UiDevice.navigateToSearch() {
+  runAction(By.res("home_nav_search")) { click() }
   waitForIdle()
 }
 

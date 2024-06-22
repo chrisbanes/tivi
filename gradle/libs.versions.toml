@@ -121,6 +121,7 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
 playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:16.2.0"
 
+screengrab = "tools.fastlane:screengrab:2.1.1"
 store = "org.mobilenativefoundation.store:store5:5.0.0"
 
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
