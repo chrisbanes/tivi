@@ -5,6 +5,6 @@ package app.tivi.data.imagemodels
 
 import app.tivi.data.models.Episode
 
-data class EpisodeImageModel(val id: Long)
+data class EpisodeImageModel(val id: Long) : ImageModel
 
 fun Episode.asImageModel(): EpisodeImageModel = EpisodeImageModel(id = id)

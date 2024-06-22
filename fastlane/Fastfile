@@ -2,6 +2,25 @@ skip_docs
 
 platform :android do
 
+  lane :screenshots do
+    build_android_app(
+      task: ':android-app:app:assemble',
+      flavor: 'Qa',
+      build_type: 'Debug'
+    )
+    build_android_app(
+      task: ':android-app:app:assemble',
+      build_type: 'AndroidTest'
+    )
+    screengrab(
+      app_package_name: 'app.tivi.debug',
+      use_tests_in_packages: 'app.tivi.screenshots',
+      app_apk_path: 'android-app/app/build/outputs/apk/qa/debug/app-qa-debug.apk',
+      tests_apk_path: 'android-app/app/build/outputs/apk/androidTest/qa/debug/app-qa-debug-androidTest.apk',
+      test_instrumentation_runner: 'androidx.test.runner.AndroidJUnitRunner'
+    )
+  end
+
   lane :publish_qa do
     upload_to_play_store(
       package_name: "app.tivi",

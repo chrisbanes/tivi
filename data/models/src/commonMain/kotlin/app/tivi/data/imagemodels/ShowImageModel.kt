@@ -9,7 +9,7 @@ import app.tivi.data.models.TiviShow
 data class ShowImageModel(
   val id: Long,
   val imageType: ImageType = ImageType.BACKDROP,
-)
+) : ImageModel
 
 fun TiviShow.asImageModel(
   imageType: ImageType,

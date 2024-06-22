@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.HazeScaffold
@@ -244,10 +245,12 @@ private fun HomeNavigationBar(
         selected = selectedNavigation == item.screen,
         colors = colors,
         onClick = { onNavigationSelected(item.screen) },
-        modifier = Modifier.graphicsLayer {
-          scaleX = scale
-          scaleY = scale
-        },
+        modifier = Modifier
+          .testTag(item.tag)
+          .graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+          },
       )
     }
   }
@@ -328,6 +331,7 @@ private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) 
 private data class HomeNavigationItem(
   val screen: Screen,
   val label: String,
+  val tag: String,
   val contentDescription: String,
   val iconImageVector: ImageVector,
   val selectedImageVector: ImageVector? = null,
@@ -354,6 +358,7 @@ private fun buildNavigationItems(strings: TiviStrings): List<HomeNavigationItem>
     HomeNavigationItem(
       screen = DiscoverScreen,
       label = strings.discoverTitle,
+      tag = "home_nav_discover",
       contentDescription = strings.cdDiscoverTitle,
       iconImageVector = Icons.Outlined.Weekend,
       selectedImageVector = Icons.Default.Weekend,
@@ -361,12 +366,14 @@ private fun buildNavigationItems(strings: TiviStrings): List<HomeNavigationItem>
     HomeNavigationItem(
       screen = UpNextScreen,
       label = strings.upnextTitle,
+      tag = "home_nav_upnext",
       contentDescription = strings.cdUpnextTitle,
       iconImageVector = Icons.Default.Subscriptions,
     ),
     HomeNavigationItem(
       screen = LibraryScreen,
       label = strings.libraryTitle,
+      tag = "home_nav_library",
       contentDescription = strings.cdLibraryTitle,
       iconImageVector = Icons.Outlined.VideoLibrary,
       selectedImageVector = Icons.Default.VideoLibrary,
@@ -374,6 +381,7 @@ private fun buildNavigationItems(strings: TiviStrings): List<HomeNavigationItem>
     HomeNavigationItem(
       screen = SearchScreen,
       label = strings.searchNavigationTitle,
+      tag = "home_nav_search",
       contentDescription = strings.cdSearchNavigationTitle,
       iconImageVector = Icons.Default.Search,
     ),

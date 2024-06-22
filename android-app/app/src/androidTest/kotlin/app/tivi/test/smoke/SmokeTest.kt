@@ -1,7 +1,7 @@
 // Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package app.tivi
+package app.tivi.test.smoke
 
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
@@ -9,6 +9,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
+import app.tivi.TiviApplication
 import app.tivi.app.test.AppScenarios
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -26,7 +27,7 @@ class SmokeTest {
   }
 }
 
-private fun startAppAndWait(device: UiDevice) {
+internal fun startAppAndWait(device: UiDevice) {
   device.pressHome()
 
   // Wait for launcher

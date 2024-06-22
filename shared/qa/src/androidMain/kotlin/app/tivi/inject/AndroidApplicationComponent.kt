@@ -37,9 +37,7 @@ abstract class AndroidApplicationComponent(
   @Provides
   fun provideChuckerInterceptor(
     context: Application,
-  ): Interceptor = ChuckerInterceptor.Builder(context)
-    .redactHeaders("trakt-api-key", "Authorization")
-    .build()
+  ): Interceptor = ChuckerInterceptor.Builder(context).build()
 
   companion object
 }

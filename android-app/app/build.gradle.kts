@@ -141,6 +141,7 @@ dependencies {
 
   androidTestImplementation(projects.androidApp.commonTest)
   androidTestImplementation(libs.androidx.uiautomator)
+  androidTestImplementation(libs.screengrab)
   androidTestImplementation(libs.junit)
   androidTestImplementation(libs.androidx.test.core)
   androidTestImplementation(libs.androidx.test.rules)
