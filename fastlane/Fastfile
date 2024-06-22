@@ -138,6 +138,17 @@ platform :ios do
     build_prod
   end
 
+  lane :screenshots do
+    capture_screenshots(
+      project: "ios-app/Tivi/Tivi.xcodeproj",
+      devices: "iPhone 15 Pro",
+      scheme: "UITests",
+      override_status_bar: true,
+      headless: false,
+      skip_open_summary: true
+    )
+  end
+
   lane :publish_qa do
     asc
     upload_to_testflight(app_identifier: "app.tivi.qa")

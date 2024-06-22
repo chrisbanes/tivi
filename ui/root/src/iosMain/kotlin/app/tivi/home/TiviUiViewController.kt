@@ -3,10 +3,15 @@
 
 package app.tivi.home
 
+import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.LocalUIViewController
+import androidx.compose.ui.platform.AccessibilityDebugLogger
+import androidx.compose.ui.platform.AccessibilitySyncOptions
 import androidx.compose.ui.window.ComposeUIViewController
+import app.tivi.app.ApplicationInfo
 import app.tivi.screens.DiscoverScreen
+import app.tivi.util.Logger
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import me.tatarka.inject.annotations.Inject
@@ -16,11 +21,27 @@ import platform.UIKit.UIViewController
 
 typealias TiviUiViewController = () -> UIViewController
 
+@OptIn(ExperimentalComposeApi::class)
 @Inject
 @Suppress("ktlint:standard:function-naming")
 fun TiviUiViewController(
   tiviContent: TiviContent,
-): UIViewController = ComposeUIViewController {
+  logger: Logger,
+  applicationInfo: ApplicationInfo,
+): UIViewController = ComposeUIViewController(
+  configure = {
+    val a11yLogger = object : AccessibilityDebugLogger {
+      override fun log(message: Any?) {
+        logger.d { "AccessibilityDebugLogger: $message" }
+      }
+    }
+
+    accessibilitySyncOptions = when {
+      applicationInfo.debugBuild -> AccessibilitySyncOptions.Always(a11yLogger)
+      else -> AccessibilitySyncOptions.WhenRequiredByAccessibilityServices(a11yLogger)
+    }
+  },
+) {
   val backstack = rememberSaveableBackStack(listOf(DiscoverScreen))
   val navigator = rememberCircuitNavigator(backstack, onRootPop = { /* no-op */ })
   val uiViewController = LocalUIViewController.current
