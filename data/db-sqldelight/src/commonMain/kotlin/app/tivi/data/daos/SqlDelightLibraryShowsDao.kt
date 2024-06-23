@@ -4,12 +4,12 @@
 package app.tivi.data.daos
 
 import androidx.paging.PagingSource
-import app.cash.sqldelight.paging3.QueryPagingSource
 import app.tivi.data.Database
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
+import app.tivi.data.paging.QueryPagingSource
 import app.tivi.data.sqlValue
 import app.tivi.data.views.ShowsWatchStats
 import app.tivi.util.AppCoroutineDispatchers

@@ -8,7 +8,6 @@ import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import app.cash.sqldelight.paging3.QueryPagingSource
 import app.tivi.data.Database
 import app.tivi.data.compoundmodels.UpNextEntry
 import app.tivi.data.models.Episode
@@ -16,6 +15,7 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.WatchedShowEntry
+import app.tivi.data.paging.QueryPagingSource
 import app.tivi.data.sqlValue
 import app.tivi.data.views.ShowsWatchStats
 import app.tivi.util.AppCoroutineDispatchers
