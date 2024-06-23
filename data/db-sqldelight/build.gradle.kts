@@ -25,8 +25,8 @@ kotlin {
         implementation(libs.kotlininject.runtime)
 
         implementation(libs.sqldelight.coroutines)
-        implementation(libs.sqldelight.paging)
         implementation(libs.sqldelight.primitive)
+        implementation(libs.paging.common)
       }
     }
 
