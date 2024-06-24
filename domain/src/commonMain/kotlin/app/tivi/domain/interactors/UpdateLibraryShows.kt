@@ -6,6 +6,8 @@ package app.tivi.domain.interactors
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.followedshows.FollowedShowsRepository
+import app.tivi.data.models.FollowedShowEntry
+import app.tivi.data.models.WatchedShowEntry
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.data.watchedshows.WatchedShowsLastRequestStore
@@ -18,7 +20,6 @@ import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -40,42 +41,45 @@ class UpdateLibraryShows(
       // It's a quick way to know whether to cascade the updates below
       watchedShowsStore.fetch(
         key = Unit,
-        forceFresh = params.forceRefresh ||
-          watchedShowsLastRequestStore.isRequestExpired(1.hours),
+        forceFresh = params.forceRefresh || watchedShowsLastRequestStore.isRequestExpired(1.hours),
       )
     }
-    val followedShowsJob = launch {
+    val followedShowsDeferred = async {
       if (params.forceRefresh || followedShowsRepository.needFollowedShowsSync()) {
         followedShowsRepository.syncFollowedShows()
       }
+      followedShowsRepository.getFollowedShows()
     }
 
     // await the watched shows and followed shows update. We need both
-    followedShowsJob.join()
+    val libraryShowIds = buildSet {
+      addAll(followedShowsDeferred.await().map(FollowedShowEntry::showId))
+      addAll(watchedShowsDeferred.await().map(WatchedShowEntry::showId))
+    }
+
     // Finally sync the seasons/episodes and watches
-    watchedShowsDeferred.await().parallelForEach { entry ->
+    libraryShowIds.parallelForEach { entryShowId ->
       ensureActive()
-      showStore.fetch(entry.showId)
+      showStore.fetch(entryShowId)
 
       ensureActive()
       try {
         with(seasonEpisodeRepository) {
-          val watchedEntry = watchedShowDao.entryWithShowId(entry.showId)
-
-          if (needShowSeasonsUpdate(entry.showId, watchedEntry?.lastUpdated)) {
-            updateSeasonsEpisodes(entry.showId)
+          val watchedEntry = watchedShowDao.entryWithShowId(entryShowId)
+          if (needShowSeasonsUpdate(entryShowId, watchedEntry?.lastUpdated)) {
+            updateSeasonsEpisodes(entryShowId)
           }
 
           ensureActive()
 
-          if (needShowEpisodeWatchesSync(entry.showId, watchedEntry?.lastUpdated)) {
-            updateShowEpisodeWatches(entry.showId)
+          if (needShowEpisodeWatchesSync(entryShowId, watchedEntry?.lastUpdated)) {
+            updateShowEpisodeWatches(entryShowId)
           }
         }
       } catch (ce: CancellationException) {
         throw ce
       } catch (t: Throwable) {
-        logger.e(t) { "Error while updating show seasons/episodes: ${entry.showId}" }
+        logger.e(t) { "Error while updating show seasons/episodes: $entryShowId" }
       }
     }
   }
