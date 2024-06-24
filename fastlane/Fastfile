@@ -82,16 +82,15 @@ platform :ios do
   lane :lint do
     swiftlint(
       mode: :lint,
-      path: "ios-app/Tivi",
-      strict: true,
-      raise_if_swiftlint_error: true
+      raise_if_swiftlint_error: true,
+      config_file: ".swiftlint.yml"
     )
   end
 
   lane :lint_fix do
     swiftlint(
       mode: :fix,
-      path: "ios-app/Tivi",
+      config_file: ".swiftlint.yml"
     )
   end
 

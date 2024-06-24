@@ -8,7 +8,7 @@
 import XCTest
 
 @MainActor
-final class ScreenshotsTests: XCTestCase {
+static class ScreenshotsTests: XCTestCase {
 
     override class func setUp() {
         let app = XCUIApplication()
