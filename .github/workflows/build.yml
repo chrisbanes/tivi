@@ -177,9 +177,10 @@ jobs:
       - name: Build iOS application
         run: bundle exec fastlane ios build_qa
         env:
-          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          API_KEY_CONTENTS: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
-          ISSUER_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
+          APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: true
           MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
           TIVI_BUILD_NUMBER: ${{ github.run_number }}
@@ -241,9 +242,10 @@ jobs:
       - name: Build iOS application
         run: bundle exec fastlane ios build_prod
         env:
-          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          API_KEY_CONTENTS: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
-          ISSUER_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
+          APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: true
           MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
           TIVI_BUILD_NUMBER: ${{ github.run_number }}
@@ -319,9 +321,10 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 20
     env:
-      API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-      API_KEY_CONTENTS: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
-      ISSUER_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENTS }}
+      APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: true
       MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
       MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.FASTLANE_MATCH_GH_PAT }}
 
