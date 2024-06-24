@@ -52,7 +52,7 @@ class RelatedShowsStore(
                 showId = showId,
                 otherShowId = showDao.getIdOrSavePlaceholder(show),
               )
-            }
+            }.distinctBy { it.otherShowId }
           }
         }
       }
