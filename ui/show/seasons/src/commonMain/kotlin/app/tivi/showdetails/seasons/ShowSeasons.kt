@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
@@ -76,8 +78,8 @@ import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.data.compoundmodels.EpisodeWithWatches
-import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
@@ -145,7 +147,11 @@ internal fun ShowSeasons(
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+  ExperimentalFoundationApi::class,
+  ExperimentalMaterialApi::class,
+  ExperimentalMaterial3Api::class,
+)
 @Composable
 internal fun ShowSeasons(
   state: ShowSeasonsUiState,
@@ -156,6 +162,8 @@ internal fun ShowSeasons(
   modifier: Modifier = Modifier,
 ) {
   val snackbarHostState = remember { SnackbarHostState() }
+  val coroutineScope = rememberCoroutineScope()
+  val lazyListStates = remember { HashMap<Long, LazyListState>() }
 
   val dismissSnackbarState = rememberDismissState { value ->
     if (value != DismissValue.Default) {
@@ -211,6 +219,14 @@ internal fun ShowSeasons(
             )
           },
           colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+          modifier = Modifier.noIndicationClickable {
+            val currentSeasonId = state.seasons[pagerState.currentPage].season.id
+            lazyListStates[currentSeasonId]?.let { lazyListState ->
+              coroutineScope.launch {
+                lazyListState.animateScrollToItem(0)
+              }
+            }
+          },
         )
 
         SeasonPagerTabs(
@@ -241,15 +257,25 @@ internal fun ShowSeasons(
       .testTag("show_seasons")
       .fillMaxSize(),
   ) { contentPadding ->
-    SeasonsPager(
-      seasons = state.seasons,
-      pagerState = pagerState,
-      openEpisodeDetails = openEpisodeDetails,
-      contentPadding = contentPadding,
+    HorizontalPager(
+      state = pagerState,
+      flingBehavior = PagerDefaults.flingBehavior(state = pagerState),
       modifier = Modifier
         .fillMaxHeight()
         .bodyWidth(),
-    )
+    ) { page ->
+      val seasonWithEps = state.seasons.getOrNull(page) ?: return@HorizontalPager
+      SeasonPage(
+        lazyListState = lazyListStates.getOrPut(seasonWithEps.season.id) {
+          rememberLazyListState()
+        },
+        season = seasonWithEps.season,
+        episodes = seasonWithEps.episodes,
+        onEpisodeClick = openEpisodeDetails,
+        contentPadding = contentPadding,
+        modifier = Modifier.fillMaxSize(),
+      )
+    }
   }
 }
 
@@ -296,40 +322,17 @@ private fun SeasonPagerTabs(
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun SeasonsPager(
-  seasons: List<SeasonWithEpisodesAndWatches>,
-  pagerState: PagerState,
-  openEpisodeDetails: (episodeId: Long) -> Unit,
-  contentPadding: PaddingValues,
-  modifier: Modifier = Modifier,
-) {
-  HorizontalPager(
-    state = pagerState,
-    flingBehavior = PagerDefaults.flingBehavior(state = pagerState),
-    modifier = modifier,
-  ) { page ->
-    val seasonWithEps = seasons.getOrNull(page) ?: return@HorizontalPager
-    SeasonPage(
-      season = seasonWithEps.season,
-      episodes = seasonWithEps.episodes,
-      onEpisodeClick = openEpisodeDetails,
-      contentPadding = contentPadding,
-      modifier = Modifier.fillMaxSize(),
-    )
-  }
-}
-
 @Composable
 private fun SeasonPage(
   season: Season,
   episodes: List<EpisodeWithWatches>,
+  lazyListState: LazyListState,
   onEpisodeClick: (episodeId: Long) -> Unit,
   contentPadding: PaddingValues,
   modifier: Modifier = Modifier,
 ) {
   LazyColumn(
+    state = lazyListState,
     modifier = modifier,
     contentPadding = contentPadding,
   ) {

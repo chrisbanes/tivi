@@ -20,8 +20,10 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
@@ -47,9 +49,11 @@ import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.bodyWidth
+import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
+import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.models.TiviShow
 import app.tivi.screens.SearchScreen
@@ -57,6 +61,7 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -100,6 +105,8 @@ internal fun Search(
   modifier: Modifier = Modifier,
 ) {
   val snackbarHostState = remember { SnackbarHostState() }
+  val coroutineScope = rememberCoroutineScope()
+  val gridState = rememberLazyGridState()
 
   val dismissSnackbarState = rememberDismissState { value ->
     if (value != DismissValue.Default) {
@@ -121,6 +128,9 @@ internal fun Search(
     topBar = {
       Box(
         Modifier
+          .noIndicationClickable {
+            coroutineScope.launch { gridState.animateScrollToItem(0) }
+          }
           .padding(horizontal = Layout.bodyMargin, vertical = 16.dp)
           .windowInsetsPadding(WindowInsets.statusBars),
       ) {
@@ -170,6 +180,7 @@ internal fun Search(
       )
     } else {
       SearchList(
+        gridState = gridState,
         results = state.searchResults,
         contentPadding = padding.plus(PaddingValues(horizontal = Layout.bodyMargin), LocalLayoutDirection.current),
         onShowClicked = { openShowDetails(it.id) },
@@ -182,6 +193,7 @@ internal fun Search(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SearchList(
+  gridState: LazyGridState,
   results: List<TiviShow>,
   onShowClicked: (TiviShow) -> Unit,
   modifier: Modifier = Modifier,
@@ -190,6 +202,7 @@ private fun SearchList(
   val arrangement = Arrangement.spacedBy(Layout.gutter)
 
   LazyVerticalGrid(
+    state = gridState,
     columns = GridCells.Fixed(Layout.columns / 4),
     contentPadding = contentPadding,
     verticalArrangement = arrangement,

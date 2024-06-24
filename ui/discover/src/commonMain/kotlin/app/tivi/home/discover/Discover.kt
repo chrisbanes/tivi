@@ -76,6 +76,7 @@ import app.tivi.common.compose.ui.BackdropCard
 import app.tivi.common.compose.ui.ParallaxAlignment
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.drawForegroundGradientScrim
+import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
@@ -194,6 +195,9 @@ internal fun Discover(
       state.trendingItems.isNotEmpty()
   }
 
+  val coroutineScope = rememberCoroutineScope()
+  val lazyListState = rememberLazyListState()
+
   HazeScaffold(
     topBar = {
       TiviRootScreenAppBar(
@@ -203,7 +207,11 @@ internal fun Discover(
         refreshing = state.refreshing,
         onRefreshActionClick = refresh,
         onUserActionClick = openUser,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+          .noIndicationClickable {
+            coroutineScope.launch { lazyListState.animateScrollToItem(0) }
+          }
+          .fillMaxWidth(),
       )
     },
     blurTopBar = true,
@@ -225,6 +233,7 @@ internal fun Discover(
     Box(modifier = Modifier.pullRefresh(state = refreshState)) {
       LazyColumn(
         contentPadding = paddingValues,
+        state = lazyListState,
         modifier = Modifier.bodyWidth(),
       ) {
         item {
