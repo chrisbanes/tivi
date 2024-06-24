@@ -20,6 +20,7 @@ kotlin {
       dependencies {
         implementation(projects.shared.qa)
         implementation(compose.desktop.currentOs)
+        implementation(libs.kotlin.coroutines.swing)
       }
     }
   }
