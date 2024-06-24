@@ -254,6 +254,7 @@ internal fun Discover(
         item(key = "carousel_trending") {
           CarouselWithHeader(
             items = state.trendingItems,
+            tagPrefix = "trending",
             title = LocalStrings.current.discoverTrendingTitle,
             refreshing = state.trendingRefreshing,
             onItemClick = { openShowDetails(it.id) },
@@ -265,6 +266,7 @@ internal fun Discover(
         item(key = "carousel_popular") {
           CarouselWithHeader(
             items = state.popularItems,
+            tagPrefix = "popular",
             title = LocalStrings.current.discoverPopularTitle,
             refreshing = state.popularRefreshing,
             onItemClick = { openShowDetails(it.id) },
@@ -276,6 +278,7 @@ internal fun Discover(
         item(key = "carousel_recommended") {
           CarouselWithHeader(
             items = state.recommendedItems,
+            tagPrefix = "recommended",
             title = LocalStrings.current.discoverRecommendedTitle,
             refreshing = state.recommendedRefreshing,
             onItemClick = { openShowDetails(it.id) },
@@ -386,6 +389,7 @@ private fun NextEpisodeToWatch(
 private fun <T : EntryWithShow<*>> CarouselWithHeader(
   items: List<T>,
   title: String,
+  tagPrefix: String,
   refreshing: Boolean,
   onItemClick: (TiviShow) -> Unit,
   onMoreClick: () -> Unit,
@@ -416,9 +420,10 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
     if (items.isNotEmpty()) {
       EntryShowCarousel(
         items = items,
+        tagPrefix = tagPrefix,
         onItemClick = onItemClick,
         modifier = Modifier
-          .testTag("discover_carousel")
+          .testTag("${tagPrefix}_carousel")
           .fillMaxWidth(),
       )
     }
@@ -430,6 +435,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
 @Composable
 private fun <T : EntryWithShow<*>> EntryShowCarousel(
   items: List<T>,
+  tagPrefix: String,
   onItemClick: (TiviShow) -> Unit,
   modifier: Modifier = Modifier,
 ) {
@@ -470,7 +476,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
           )
         },
         modifier = Modifier
-          .testTag("discover_carousel_item")
+          .testTag("${tagPrefix}_carousel_item")
           .animateItemPlacement()
           .width(
             when (LocalWindowSizeClass.current.widthSizeClass) {

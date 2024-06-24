@@ -143,7 +143,6 @@ platform :ios do
       project: "ios-app/Tivi/Tivi.xcodeproj",
       devices: "iPhone 15 Pro",
       scheme: "UITests",
-      override_status_bar: true,
       headless: false,
       skip_open_summary: true
     )

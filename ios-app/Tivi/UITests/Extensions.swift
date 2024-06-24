@@ -34,30 +34,11 @@ extension XCUIElement {
         )
         return self
     }
-    
-    func wait<U>(
-        attribute keyPath: KeyPath<XCUIElement, U>,
-        is comparisonOperator: NSComparisonPredicate.Operator,
-        value: U,
-        timeout: TimeInterval = 10
-    ) -> XCUIElement {
-        let predicate = NSPredicate.keyPath(
-            keyPath,
-            is: comparisonOperator,
-            value: value
-        )
-        
-        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: self)
-        let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
-        XCTAssertNotNil(result)
-        return self
-    }
 
     func navigateFromDiscoverToShowDetails() {
-        buttons["discover_carousel_item"]
+        buttons["trending_carousel_item"]
             .firstMatch
             .waitToExistOrThrow()
-            .wait(attribute: \.isHittable, is: .equalTo, value: true)
             .tap()
     }
 
