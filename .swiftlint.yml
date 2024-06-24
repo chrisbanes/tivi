@@ -1,0 +1,7 @@
+included:
+  - ios-app/Tivi
+
+excluded:
+  - ios-app/Tivi/UITests/SnapshotHelper.swift
+
+strict: true

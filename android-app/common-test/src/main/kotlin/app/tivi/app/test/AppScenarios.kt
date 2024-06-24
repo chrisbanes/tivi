@@ -59,7 +59,7 @@ fun UiDevice.testDiscover(): Boolean {
 
 fun UiDevice.navigateFromDiscoverToShowDetails() {
   // Open a show from one of the carousels
-  runAction(By.res("discover_carousel_item")) { click() }
+  runAction(By.res("trending_carousel_item")) { click() }
   waitForIdle()
 }
 

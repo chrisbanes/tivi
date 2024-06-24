@@ -10,6 +10,7 @@
 		38137D702A55BA8A00A687CC /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 38137D6F2A55BA8A00A687CC /* AppAuth */; };
 		38137D722A55D6E200A687CC /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38137D712A55D6E200A687CC /* Auth.swift */; };
 		38137D772A584D1900A687CC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 38137D762A584D1900A687CC /* Settings.bundle */; };
+		385297C12C2974F3004BD20A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385297C02C2974F3004BD20A /* Extensions.swift */; };
 		832E820B2ADF2404006728FE /* dm_sans_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 832E82092ADF20F4006728FE /* dm_sans_bold.ttf */; };
 		832E820C2ADF2404006728FE /* dm_sans_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 832E820A2ADF20F4006728FE /* dm_sans_medium.ttf */; };
 		832E820D2ADF2404006728FE /* dm_sans_regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 832E82082ADF20F4006728FE /* dm_sans_regular.ttf */; };
@@ -17,15 +18,28 @@
 		8333493A2A4CCCEE00F464FE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833349392A4CCCEE00F464FE /* ContentView.swift */; };
 		8333493C2A4CCCEF00F464FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8333493B2A4CCCEF00F464FE /* Assets.xcassets */; };
 		8333493F2A4CCCEF00F464FE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8333493E2A4CCCEF00F464FE /* Preview Assets.xcassets */; };
+		83447DB12C272812000DDA26 /* Screenshots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83447DB02C272812000DDA26 /* Screenshots.swift */; };
+		83447DB92C2728AD000DDA26 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83447DB82C2728AD000DDA26 /* SnapshotHelper.swift */; };
 		83AB5FFE2A51F27B007FC216 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 83AB5FFD2A51F27B007FC216 /* FirebaseCrashlytics */; };
 		83AB60012A51F3FD007FC216 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 83AB60002A51F3FD007FC216 /* FirebaseAnalyticsSwift */; };
 		83AB60062A520078007FC216 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83AB60052A520078007FC216 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		83447DB22C272812000DDA26 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8333492C2A4CCCEE00F464FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 833349332A4CCCEE00F464FE;
+			remoteInfo = Tivi;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		38137D712A55D6E200A687CC /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
 		38137D762A584D1900A687CC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		38282FFD2A4F318E00E7929E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		385297C02C2974F3004BD20A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		832E82082ADF20F4006728FE /* dm_sans_regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = dm_sans_regular.ttf; path = ../../../../common/ui/resources/fonts/src/commonMain/resources/font/dm_sans_regular.ttf; sourceTree = "<group>"; };
 		832E82092ADF20F4006728FE /* dm_sans_bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = dm_sans_bold.ttf; path = ../../../../common/ui/resources/fonts/src/commonMain/resources/font/dm_sans_bold.ttf; sourceTree = "<group>"; };
 		832E820A2ADF20F4006728FE /* dm_sans_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = dm_sans_medium.ttf; path = ../../../../common/ui/resources/fonts/src/commonMain/resources/font/dm_sans_medium.ttf; sourceTree = "<group>"; };
@@ -34,6 +48,9 @@
 		833349392A4CCCEE00F464FE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8333493B2A4CCCEF00F464FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8333493E2A4CCCEF00F464FE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		83447DAC2C272812000DDA26 /* UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		83447DB02C272812000DDA26 /* Screenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screenshots.swift; sourceTree = "<group>"; };
+		83447DB82C2728AD000DDA26 /* SnapshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
 		83AB60052A520078007FC216 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -45,6 +62,13 @@
 				38137D702A55BA8A00A687CC /* AppAuth in Frameworks */,
 				83AB60012A51F3FD007FC216 /* FirebaseAnalyticsSwift in Frameworks */,
 				83AB5FFE2A51F27B007FC216 /* FirebaseCrashlytics in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		83447DA92C272812000DDA26 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +90,7 @@
 			children = (
 				833349362A4CCCEE00F464FE /* Tivi */,
 				38137D762A584D1900A687CC /* Settings.bundle */,
+				83447DAD2C272812000DDA26 /* UITests */,
 				833349352A4CCCEE00F464FE /* Products */,
 				83AB5FFF2A51F3FD007FC216 /* Frameworks */,
 			);
@@ -75,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				833349342A4CCCEE00F464FE /* Tivi dev.app */,
+				83447DAC2C272812000DDA26 /* UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -100,6 +126,16 @@
 				8333493E2A4CCCEF00F464FE /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		83447DAD2C272812000DDA26 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				83447DB02C272812000DDA26 /* Screenshots.swift */,
+				83447DB82C2728AD000DDA26 /* SnapshotHelper.swift */,
+				385297C02C2974F3004BD20A /* Extensions.swift */,
+			);
+			path = UITests;
 			sourceTree = "<group>";
 		};
 		83AB5FFF2A51F3FD007FC216 /* Frameworks */ = {
@@ -137,6 +173,24 @@
 			productReference = 833349342A4CCCEE00F464FE /* Tivi dev.app */;
 			productType = "com.apple.product-type.application";
 		};
+		83447DAB2C272812000DDA26 /* UITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 83447DB72C272812000DDA26 /* Build configuration list for PBXNativeTarget "UITests" */;
+			buildPhases = (
+				83447DA82C272812000DDA26 /* Sources */,
+				83447DA92C272812000DDA26 /* Frameworks */,
+				83447DAA2C272812000DDA26 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				83447DB32C272812000DDA26 /* PBXTargetDependency */,
+			);
+			name = UITests;
+			productName = UITests;
+			productReference = 83447DAC2C272812000DDA26 /* UITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -144,11 +198,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1430;
+				LastSwiftUpdateCheck = 1530;
 				LastUpgradeCheck = 1520;
 				TargetAttributes = {
 					833349332A4CCCEE00F464FE = {
 						CreatedOnToolsVersion = 14.3.1;
+					};
+					83447DAB2C272812000DDA26 = {
+						CreatedOnToolsVersion = 15.3;
+						TestTargetID = 833349332A4CCCEE00F464FE;
 					};
 				};
 			};
@@ -170,6 +228,7 @@
 			projectRoot = "";
 			targets = (
 				833349332A4CCCEE00F464FE /* Tivi */,
+				83447DAB2C272812000DDA26 /* UITests */,
 			);
 		};
 /* End PBXProject section */
@@ -186,6 +245,13 @@
 				8333493F2A4CCCEF00F464FE /* Preview Assets.xcassets in Resources */,
 				8333493C2A4CCCEF00F464FE /* Assets.xcassets in Resources */,
 				83AB60062A520078007FC216 /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		83447DAA2C272812000DDA26 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,7 +328,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		83447DA82C272812000DDA26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83447DB12C272812000DDA26 /* Screenshots.swift in Sources */,
+				385297C12C2974F3004BD20A /* Extensions.swift in Sources */,
+				83447DB92C2728AD000DDA26 /* SnapshotHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		83447DB32C272812000DDA26 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 833349332A4CCCEE00F464FE /* Tivi */;
+			targetProxy = 83447DB22C272812000DDA26 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		833349402A4CCCEF00F464FE /* Debug */ = {
@@ -317,6 +401,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -324,6 +409,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -373,12 +459,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Prod;
@@ -395,8 +483,6 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Tivi/Preview Content\"";
 				DEVELOPMENT_TEAM = GLF74Y6P9T;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/qa/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
-				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tivi/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -421,7 +507,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME) dev";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -439,8 +524,6 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = GLF74Y6P9T;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/prod/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
-				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tivi/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -468,10 +551,42 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore app.tivi.client";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Prod;
+		};
+		83447DB42C272812000DDA26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = GLF74Y6P9T;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				PRODUCT_BUNDLE_IDENTIFIER = app.tivi.UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Tivi;
+			};
+			name = Debug;
+		};
+		83447DB52C272812000DDA26 /* Prod */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = GLF74Y6P9T;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				PRODUCT_BUNDLE_IDENTIFIER = app.tivi.UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Tivi;
+			};
+			name = Prod;
+		};
+		83447DB62C272812000DDA26 /* QA */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = GLF74Y6P9T;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				PRODUCT_BUNDLE_IDENTIFIER = app.tivi.UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Tivi;
+			};
+			name = QA;
 		};
 		8350EE502AA8676800B6F51F /* QA */ = {
 			isa = XCBuildConfiguration;
@@ -519,12 +634,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = QA;
@@ -542,8 +659,6 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = GLF74Y6P9T;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../shared/qa/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
-				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tivi/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -570,7 +685,6 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore app.tivi.qa";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = QA;
@@ -594,6 +708,16 @@
 				833349432A4CCCEF00F464FE /* Debug */,
 				833349442A4CCCEF00F464FE /* Prod */,
 				8350EE512AA8676800B6F51F /* QA */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Prod;
+		};
+		83447DB72C272812000DDA26 /* Build configuration list for PBXNativeTarget "UITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83447DB42C272812000DDA26 /* Debug */,
+				83447DB52C272812000DDA26 /* Prod */,
+				83447DB62C272812000DDA26 /* QA */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Prod;
