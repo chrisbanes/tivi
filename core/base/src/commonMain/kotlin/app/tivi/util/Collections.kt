@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-suspend fun <T> Collection<T>.parallelForEach(
+suspend fun <T> Iterable<T>.parallelForEach(
   concurrency: Int = DEFAULT_CONCURRENCY,
   block: suspend (value: T) -> Unit,
 ) {
