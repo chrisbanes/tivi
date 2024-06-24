@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
@@ -69,6 +70,7 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
+import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
@@ -184,6 +186,8 @@ internal fun UpNext(
   }
 
   val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+  val coroutineScope = rememberCoroutineScope()
+  val lazyGridState = rememberLazyGridState()
 
   HazeScaffold(
     topBar = {
@@ -196,6 +200,9 @@ internal fun UpNext(
         onRefreshActionClick = refresh,
         onUserActionClick = openUser,
         modifier = Modifier
+          .noIndicationClickable {
+            coroutineScope.launch { lazyGridState.animateScrollToItem(0) }
+          }
           .fillMaxWidth(),
       )
     },
@@ -224,6 +231,7 @@ internal fun UpNext(
       val gutter = Layout.gutter
 
       LazyVerticalGrid(
+        state = lazyGridState,
         columns = GridCells.Fixed(columns / 4),
         contentPadding = contentPadding.plus(
           PaddingValues(

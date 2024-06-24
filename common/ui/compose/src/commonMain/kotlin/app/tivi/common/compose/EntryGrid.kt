@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
@@ -65,12 +66,14 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
+import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TrendingShowEntry
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 @OptIn(
   ExperimentalFoundationApi::class,
@@ -87,6 +90,9 @@ fun <E : Entry> EntryGrid(
 ) {
   val snackbarHostState = remember { SnackbarHostState() }
   val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+  val coroutineScope = rememberCoroutineScope()
+  val lazyGridState = rememberLazyStaggeredGridState()
 
   val dismissSnackbarState = rememberDismissState { value ->
     if (value != DismissValue.Default) {
@@ -116,7 +122,13 @@ fun <E : Entry> EntryGrid(
         onNavigateUp = onNavigateUp,
         refreshing = refreshing,
         onRefreshActionClick = lazyPagingItems::refresh,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+          .noIndicationClickable {
+            coroutineScope.launch {
+              lazyGridState.animateScrollToItem(0)
+            }
+          }
+          .fillMaxWidth(),
         scrollBehavior = scrollBehavior,
       )
     },
@@ -145,6 +157,7 @@ fun <E : Entry> EntryGrid(
       val gutter = Layout.gutter
 
       LazyVerticalStaggeredGrid(
+        state = lazyGridState,
         columns = StaggeredGridCells.Fixed((columns / 2f).roundToInt()),
         contentPadding = paddingValues.plus(
           PaddingValues(horizontal = bodyMargin, vertical = gutter),

@@ -103,6 +103,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.copy
+import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.rememberShowImageModel
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
@@ -203,6 +204,7 @@ internal fun ShowDetails(
   modifier: Modifier = Modifier,
 ) {
   val snackbarHostState = remember { SnackbarHostState() }
+  val coroutineScope = rememberCoroutineScope()
   val listState = rememberLazyListState()
 
   val dismissSnackbarState = rememberDismissState { value ->
@@ -232,7 +234,11 @@ internal fun ShowDetails(
         onNavigateUp = navigateUp,
         onRefresh = refresh,
         scrollBehavior = scrollBehavior,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+          .noIndicationClickable {
+            coroutineScope.launch { listState.animateScrollToItem(0) }
+          }
+          .fillMaxWidth(),
       )
     },
     floatingActionButton = {

@@ -22,7 +22,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
@@ -75,6 +77,7 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
+import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
@@ -171,6 +174,8 @@ internal fun Library(
   }
 
   val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+  val coroutineScope = rememberCoroutineScope()
+  val lazyGridState = rememberLazyGridState()
 
   HazeScaffold(
     topBar = {
@@ -183,6 +188,9 @@ internal fun Library(
         onRefreshActionClick = refresh,
         onUserActionClick = openUser,
         modifier = Modifier
+          .noIndicationClickable {
+            coroutineScope.launch { lazyGridState.animateScrollToItem(0) }
+          }
           .fillMaxWidth(),
       )
     },
@@ -208,6 +216,7 @@ internal fun Library(
     Box(modifier = Modifier.pullRefresh(state = refreshState)) {
       LibraryGrid(
         state = state,
+        lazyGridState = lazyGridState,
         lazyPagingItems = state.items,
         paddingValues = paddingValues,
         onFilterChanged = onFilterChanged,
@@ -237,6 +246,7 @@ internal fun Library(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 private fun LibraryGrid(
   state: LibraryUiState,
+  lazyGridState: LazyGridState,
   lazyPagingItems: LazyPagingItems<LibraryShow>,
   paddingValues: PaddingValues,
   onFilterChanged: (String) -> Unit,
@@ -253,6 +263,7 @@ private fun LibraryGrid(
   var filterExpanded by remember { mutableStateOf(false) }
 
   LazyVerticalGrid(
+    state = lazyGridState,
     columns = GridCells.Fixed(columns / 4),
     contentPadding = paddingValues.plus(
       PaddingValues(
