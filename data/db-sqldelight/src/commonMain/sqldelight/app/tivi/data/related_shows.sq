@@ -13,6 +13,8 @@ CREATE INDEX IF NOT EXISTS `index_related_shows_show_id` ON `related_shows` (`sh
 
 CREATE INDEX IF NOT EXISTS `index_related_shows_other_show_id` ON `related_shows` (`other_show_id`);
 
+CREATE UNIQUE INDEX IF NOT EXISTS `index_related_shows_unique` ON `related_shows` (`show_id`, `other_show_id`);
+
 -- queries
 
 entries:

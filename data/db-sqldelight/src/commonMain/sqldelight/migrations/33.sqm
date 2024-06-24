@@ -1,0 +1,10 @@
+
+-- delete duplicate related shows
+DELETE FROM `related_shows` WHERE rowid NOT IN (
+  SELECT MIN(rowid)
+    FROM related_shows
+    GROUP BY show_id, other_show_id
+);
+
+-- finally add an index to make sure this doesn't happen in the future
+CREATE UNIQUE INDEX IF NOT EXISTS `index_related_shows_unique` ON `related_shows` (`show_id`, `other_show_id`);
