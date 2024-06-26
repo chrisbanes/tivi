@@ -46,7 +46,6 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,7 +56,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -173,7 +171,6 @@ internal fun Library(
     }
   }
 
-  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
   val coroutineScope = rememberCoroutineScope()
   val lazyGridState = rememberLazyGridState()
 
@@ -183,7 +180,6 @@ internal fun Library(
         title = LocalStrings.current.libraryTitle,
         loggedIn = state.authState == TraktAuthState.LOGGED_IN,
         user = state.user,
-        scrollBehavior = scrollBehavior,
         refreshing = state.isLoading,
         onRefreshActionClick = refresh,
         onUserActionClick = openUser,
@@ -225,7 +221,6 @@ internal fun Library(
         onSortSelected = onSortSelected,
         openShowDetails = openShowDetails,
         modifier = Modifier
-          .nestedScroll(scrollBehavior.nestedScrollConnection)
           .bodyWidth()
           .fillMaxHeight(),
       )

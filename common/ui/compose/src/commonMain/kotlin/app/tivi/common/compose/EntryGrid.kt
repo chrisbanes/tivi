@@ -45,7 +45,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -56,7 +55,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -89,7 +87,6 @@ fun <E : Entry> EntryGrid(
   modifier: Modifier = Modifier,
 ) {
   val snackbarHostState = remember { SnackbarHostState() }
-  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
   val coroutineScope = rememberCoroutineScope()
   val lazyGridState = rememberLazyStaggeredGridState()
@@ -129,7 +126,6 @@ fun <E : Entry> EntryGrid(
             }
           }
           .fillMaxWidth(),
-        scrollBehavior = scrollBehavior,
       )
     },
     blurTopBar = true,
@@ -166,7 +162,6 @@ fun <E : Entry> EntryGrid(
         horizontalArrangement = Arrangement.spacedBy(gutter),
         verticalItemSpacing = gutter,
         modifier = Modifier
-          .nestedScroll(scrollBehavior.nestedScrollConnection)
           .bodyWidth()
           .fillMaxHeight(),
       ) {
@@ -291,7 +286,6 @@ fun EntryGridAppBar(
   onNavigateUp: () -> Unit,
   onRefreshActionClick: () -> Unit,
   modifier: Modifier = Modifier,
-  scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
   TopAppBar(
     navigationIcon = {
@@ -304,7 +298,6 @@ fun EntryGridAppBar(
     },
     modifier = modifier,
     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-    scrollBehavior = scrollBehavior,
     title = { Text(text = title) },
     actions = {
       // This button refresh allows screen-readers, etc to trigger a refresh.
