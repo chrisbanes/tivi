@@ -11,6 +11,7 @@ import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.TiviShow
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.cancellableRunCatching
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -37,7 +38,7 @@ class SearchRepository(
     }
 
     // We need to hit TMDb
-    val remoteResult = runCatching {
+    val remoteResult = cancellableRunCatching {
       fetchFromTmdb(query)
         .also { results ->
           // We need to save the search results

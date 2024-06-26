@@ -10,6 +10,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        implementation(projects.core.base)
         api(projects.data.models)
         implementation(projects.data.db)
         implementation(projects.data.legacy) // remove this eventually

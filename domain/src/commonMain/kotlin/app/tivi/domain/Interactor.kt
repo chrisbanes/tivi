@@ -5,6 +5,7 @@ package app.tivi.domain
 
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import app.tivi.util.cancellableRunCatching
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.atomicfu.atomic
@@ -22,9 +23,11 @@ abstract class Interactor<in P, R> {
   private val count = atomic(0)
   private val loadingState = MutableStateFlow(count.value)
 
-  val inProgress: Flow<Boolean> = loadingState
-    .map { it > 0 }
-    .distinctUntilChanged()
+  val inProgress: Flow<Boolean> by lazy {
+    loadingState
+      .map { it > 0 }
+      .distinctUntilChanged()
+  }
 
   private fun addLoader() {
     loadingState.value = count.incrementAndGet()
@@ -37,15 +40,15 @@ abstract class Interactor<in P, R> {
   suspend operator fun invoke(
     params: P,
     timeout: Duration = DefaultTimeout,
-  ): Result<R> = try {
-    addLoader()
-    runCatching {
+  ): Result<R> {
+    return cancellableRunCatching {
+      addLoader()
       withTimeout(timeout) {
         doWork(params)
       }
+    }.also {
+      removeLoader()
     }
-  } finally {
-    removeLoader()
   }
 
   protected abstract suspend fun doWork(params: P): R
