@@ -28,7 +28,6 @@ import app.tivi.screens.RecommendedShowsScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.TrendingShowsScreen
 import app.tivi.util.Logger
-import app.tivi.util.onException
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -104,7 +103,7 @@ class DiscoverPresenter(
                 page = UpdatePopularShows.Page.REFRESH,
                 forceRefresh = event.fromUser,
               ),
-            ).onException { e ->
+            ).onFailure { e ->
               logger.i(e)
               uiMessageManager.emitMessage(UiMessage(e))
             }
@@ -115,7 +114,7 @@ class DiscoverPresenter(
                 page = UpdateTrendingShows.Page.REFRESH,
                 forceRefresh = event.fromUser,
               ),
-            ).onException { e ->
+            ).onFailure { e ->
               logger.i(e)
               uiMessageManager.emitMessage(UiMessage(e))
             }
@@ -125,7 +124,7 @@ class DiscoverPresenter(
               updateRecommendedShows.value.invoke(
                 UpdateRecommendedShows.Params(forceRefresh = event.fromUser),
               ).also { result ->
-                result.onException { e ->
+                result.onFailure { e ->
                   logger.i(e)
                   uiMessageManager.emitMessage(UiMessage(e))
                 }

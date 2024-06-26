@@ -23,7 +23,6 @@ import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
-import app.tivi.util.onException
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -78,7 +77,7 @@ class EpisodeDetailsPresenter(
           scope.launch {
             updateEpisodeDetails.value.invoke(
               UpdateEpisodeDetails.Params(screen.id, event.fromUser),
-            ).onException { e ->
+            ).onFailure { e ->
               logger.i(e)
               uiMessageManager.emitMessage(UiMessage(e))
             }
@@ -95,7 +94,7 @@ class EpisodeDetailsPresenter(
           scope.launch {
             removeEpisodeWatches.value.invoke(
               RemoveEpisodeWatches.Params(screen.id),
-            ).onException { e ->
+            ).onFailure { e ->
               logger.i(e)
               uiMessageManager.emitMessage(UiMessage(e))
             }
@@ -106,7 +105,7 @@ class EpisodeDetailsPresenter(
           scope.launch {
             removeEpisodeWatch.value.invoke(
               RemoveEpisodeWatch.Params(event.id),
-            ).onException { e ->
+            ).onFailure { e ->
               logger.i(e)
               uiMessageManager.emitMessage(UiMessage(e))
             }

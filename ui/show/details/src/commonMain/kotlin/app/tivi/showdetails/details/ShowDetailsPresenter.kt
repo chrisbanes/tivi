@@ -31,7 +31,6 @@ import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.Logger
-import app.tivi.util.onException
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -130,17 +129,17 @@ class ShowDetailsPresenter(
           scope.launch {
             updateShowDetails(
               UpdateShowDetails.Params(showId, event.fromUser),
-            ).onException { handleException(it) }
+            ).onFailure { handleException(it) }
           }
           scope.launch {
             updateRelatedShows(
               UpdateRelatedShows.Params(showId, event.fromUser),
-            ).onException { handleException(it) }
+            ).onFailure { handleException(it) }
           }
           scope.launch {
             updateShowSeasons(
               UpdateShowSeasons.Params(showId, event.fromUser),
-            ).onException { handleException(it) }
+            ).onFailure { handleException(it) }
           }
         }
 
@@ -151,7 +150,7 @@ class ShowDetailsPresenter(
                 seasonId = event.seasonId,
                 action = ChangeSeasonFollowStatus.Action.FOLLOW,
               ),
-            ).onException { handleException(it) }
+            ).onFailure { handleException(it) }
           }
         }
 
@@ -159,7 +158,7 @@ class ShowDetailsPresenter(
           scope.launch {
             changeSeasonWatchedStatus(
               Params(event.seasonId, Action.UNWATCH),
-            ).onException { handleException(it) }
+            ).onFailure { handleException(it) }
           }
         }
 
@@ -167,7 +166,7 @@ class ShowDetailsPresenter(
           scope.launch {
             changeSeasonWatchedStatus(
               Params(event.seasonId, Action.WATCHED, event.onlyAired, event.date),
-            ).onException { handleException(it) }
+            ).onFailure { handleException(it) }
           }
         }
 
@@ -175,7 +174,7 @@ class ShowDetailsPresenter(
           scope.launch {
             changeShowFollowStatus(
               ChangeShowFollowStatus.Params(showId, TOGGLE),
-            ).onException { handleException(it) }
+            ).onFailure { handleException(it) }
           }
         }
 
@@ -186,7 +185,7 @@ class ShowDetailsPresenter(
                 seasonId = event.seasonId,
                 action = ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS,
               ),
-            ).onException { e ->
+            ).onFailure { e ->
               logger.i(e)
               uiMessageManager.emitMessage(UiMessage(e))
             }
@@ -200,7 +199,7 @@ class ShowDetailsPresenter(
                 seasonId = event.seasonId,
                 action = ChangeSeasonFollowStatus.Action.IGNORE,
               ),
-            ).onException { handleException(it) }
+            ).onFailure { handleException(it) }
           }
         }
 
