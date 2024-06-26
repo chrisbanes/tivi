@@ -110,7 +110,7 @@ class ShowDetailsPresenter(
     val stats by observeShowViewStats.flow.collectAsRetainedState(null)
     val message by uiMessageManager.message.collectAsState(null)
 
-    suspend fun handleException(t: Throwable) {
+    fun handleException(t: Throwable) {
       logger.i(t)
       if (t !is IllegalArgumentException) {
         uiMessageManager.emitMessage(UiMessage(t))

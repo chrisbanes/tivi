@@ -8,6 +8,7 @@ import app.tivi.data.imagemodels.SeasonImageModel
 import app.tivi.data.util.inPast
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.cancellableRunCatching
 import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import coil3.size.pxOrElse
@@ -34,7 +35,7 @@ class SeasonImageModelInterceptor(
   ): Interceptor.Chain {
     val season = withContext(dispatchers.io) {
       if (repository.value.needSeasonUpdate(model.id, expiry = 180.days.inPast)) {
-        runCatching { repository.value.updateSeason(model.id) }
+        cancellableRunCatching { repository.value.updateSeason(model.id) }
       }
       repository.value.getSeason(model.id)
     }

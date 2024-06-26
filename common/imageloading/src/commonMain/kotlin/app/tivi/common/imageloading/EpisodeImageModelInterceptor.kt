@@ -8,6 +8,7 @@ import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.util.inPast
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.cancellableRunCatching
 import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import coil3.size.pxOrElse
@@ -34,7 +35,7 @@ class EpisodeImageModelInterceptor(
   ): Interceptor.Chain {
     val episode = withContext(dispatchers.io) {
       if (repository.value.needEpisodeUpdate(model.id, expiry = 180.days.inPast)) {
-        runCatching { repository.value.updateEpisode(model.id) }
+        cancellableRunCatching { repository.value.updateEpisode(model.id) }
       }
       repository.value.getEpisode(model.id)
     }

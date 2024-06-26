@@ -6,6 +6,7 @@ package app.tivi.data.traktauth.store
 import android.app.Application
 import app.tivi.data.traktauth.AppAuthAuthStateWrapper
 import app.tivi.data.traktauth.AuthState
+import app.tivi.util.cancellableRunCatching
 import com.google.android.gms.auth.blockstore.Blockstore
 import com.google.android.gms.auth.blockstore.BlockstoreClient
 import com.google.android.gms.auth.blockstore.RetrieveBytesRequest
@@ -22,7 +23,7 @@ class BlockStoreAuthStore(
 ) : AuthStore {
   private val blockStore by lazy { Blockstore.getClient(context) }
 
-  override suspend fun get(): AuthState? = runCatching {
+  override suspend fun get(): AuthState? = cancellableRunCatching {
     // For new clients, we store using our app's key
     // The old version of the BlockStore used an implicit key,
     // so we need to check for that too

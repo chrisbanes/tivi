@@ -11,6 +11,7 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.PowerController
 import app.tivi.util.SaveData
+import app.tivi.util.cancellableRunCatching
 import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import coil3.size.pxOrElse
@@ -37,7 +38,7 @@ class ShowImageModelInterceptor(
     model: ShowImageModel,
   ): Interceptor.Chain {
     val entity = withContext(dispatchers.io) {
-      runCatching {
+      cancellableRunCatching {
         findHighestRatedForType(showImagesStore.value.get(model.id).images, model.imageType)
       }.getOrNull()
     } ?: return chain

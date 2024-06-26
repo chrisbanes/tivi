@@ -7,6 +7,7 @@ import app.moviebase.tmdb.Tmdb3
 import app.moviebase.tmdb.model.TmdbConfiguration
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.cancellableRunCatching
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -23,7 +24,7 @@ class TmdbManager(
 
   suspend fun refreshConfiguration() {
     val response = withContext(dispatchers.io) {
-      runCatching {
+      cancellableRunCatching {
         tmdbClient.value.configuration.getApiConfiguration()
       }
     }
