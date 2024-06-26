@@ -18,7 +18,6 @@ import app.tivi.domain.interactors.SearchShows
 import app.tivi.screens.SearchScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.util.Logger
-import app.tivi.util.onException
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -70,7 +69,7 @@ class SearchPresenter(
       val result = searchShows.value.invoke(SearchShows.Params(query))
       results = result.getOrDefault(emptyList())
 
-      result.onException { e ->
+      result.onFailure { e ->
         logger.i(e)
         uiMessageManager.emitMessage(UiMessage(e))
       }

@@ -20,6 +20,7 @@ import app.tivi.data.util.inPast
 import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.Logger
+import app.tivi.util.cancellableRunCatching
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CancellationException
@@ -49,7 +50,7 @@ class SeasonsEpisodesRepository(
   private val tmdbEpisodeDataSource: TmdbEpisodeDataSource,
   private val traktEpisodeWatchesDataSource: EpisodeWatchesDataSource,
   private val traktAuthRepository: TraktAuthRepository,
-  logger: Logger,
+  private val logger: Logger,
 ) {
   private val seasonSyncer = syncerForEntity(
     entityDao = seasonsDao,
@@ -106,17 +107,27 @@ class SeasonsEpisodesRepository(
     val traktDeferred = async { traktSeasonsDataSource.getSeasonsEpisodes(showId) }
     val tmdbDeferred = async { tmdbSeasonsDataSource.getSeasonsEpisodes(showId) }
 
-    val trakt = traktDeferred.await().distinctBy { it.first.number }
-    val tmdb = tmdbDeferred.await().distinctBy { it.first.number }
+    val traktResult = cancellableRunCatching {
+      traktDeferred.await().distinctBy { it.first.number }
+    }.onFailure {
+      logger.i(it) { "Error whilst fetching seasons from Trakt" }
+    }.getOrDefault(emptyList())
 
-    trakt.associate { (traktSeason, traktEpisodes) ->
+    val tmdbResult = cancellableRunCatching {
+      tmdbDeferred.await().distinctBy { it.first.number }
+    }.onFailure {
+      logger.i(it) { "Error whilst fetching seasons from TMDb" }
+    }.getOrNull()
+
+    traktResult.associate { (traktSeason, traktEpisodes) ->
       val localSeason = seasonsDao.seasonWithTraktId(traktSeason.traktId!!)
         ?: Season(showId = showId)
 
       val mergedSeason = mergeSeason(
         local = localSeason,
         trakt = traktSeason,
-        tmdb = tmdb.firstOrNull { it.first.number == traktSeason.number }?.first
+        tmdb = tmdbResult
+          ?.firstOrNull { it.first.number == traktSeason.number }?.first
           ?: Season.EMPTY,
       )
 
@@ -156,25 +167,14 @@ class SeasonsEpisodesRepository(
       traktEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
     }
     val tmdbDeferred = async {
-      runCatching {
+      cancellableRunCatching {
         tmdbEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
       }.getOrNull()
     }
 
-    val trakt = try {
-      traktDeferred.await()
-    } catch (ce: CancellationException) {
-      throw ce
-    } catch (e: Exception) {
-      null
-    }
-    val tmdb = try {
-      tmdbDeferred.await()
-    } catch (ce: CancellationException) {
-      throw ce
-    } catch (e: Exception) {
-      null
-    }
+    val trakt = cancellableRunCatching { traktDeferred.await() }.getOrNull()
+    val tmdb = cancellableRunCatching { tmdbDeferred.await() }.getOrNull()
+
     check(trakt != null || tmdb != null)
 
     episodesDao.upsert(

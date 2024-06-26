@@ -28,7 +28,6 @@ import app.tivi.screens.AccountScreen
 import app.tivi.screens.UpNextScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.Logger
-import app.tivi.util.onException
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
@@ -106,7 +105,7 @@ class UpNextPresenter(
             if (getTraktAuthState.value.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
               updateUpNextEpisodes.value.invoke(
                 UpdateUpNextEpisodes.Params(event.fromUser),
-              ).onException { e ->
+              ).onFailure { e ->
                 logger.i(e)
                 uiMessageManager.emitMessage(UiMessage(e))
               }
