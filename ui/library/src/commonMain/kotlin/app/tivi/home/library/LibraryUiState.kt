@@ -34,8 +34,8 @@ sealed interface LibraryUiEvent : CircuitUiEvent {
   data class Refresh(val fromUser: Boolean = false) : LibraryUiEvent
   data class ChangeFilter(val filter: String?) : LibraryUiEvent
   data class ChangeSort(val sort: SortOption) : LibraryUiEvent
-  object ToggleFollowedShowsIncluded : LibraryUiEvent
-  object ToggleWatchedShowsIncluded : LibraryUiEvent
-  object OpenAccount : LibraryUiEvent
+  data object ToggleFollowedShowsIncluded : LibraryUiEvent
+  data object ToggleWatchedShowsIncluded : LibraryUiEvent
+  data object OpenAccount : LibraryUiEvent
   data class OpenShowDetails(val showId: Long) : LibraryUiEvent
 }

@@ -17,5 +17,5 @@ data class PopularShowsUiState(
 
 sealed interface PopularShowsUiEvent : CircuitUiEvent {
   data class OpenShowDetails(val showId: Long) : PopularShowsUiEvent
-  object NavigateUp : PopularShowsUiEvent
+  data object NavigateUp : PopularShowsUiEvent
 }

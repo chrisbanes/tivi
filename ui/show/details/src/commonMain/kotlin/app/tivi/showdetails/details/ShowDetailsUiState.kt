@@ -30,7 +30,7 @@ data class ShowDetailsUiState(
 sealed interface ShowDetailsUiEvent : CircuitUiEvent {
   data class ClearMessage(val id: Long) : ShowDetailsUiEvent
   data class Refresh(val fromUser: Boolean = true) : ShowDetailsUiEvent
-  object ToggleShowFollowed : ShowDetailsUiEvent
+  data object ToggleShowFollowed : ShowDetailsUiEvent
   data class MarkSeasonWatched(
     val seasonId: Long,
     val onlyAired: Boolean = false,
@@ -46,5 +46,6 @@ sealed interface ShowDetailsUiEvent : CircuitUiEvent {
 
   data class OpenSeason(val seasonId: Long) : ShowDetailsUiEvent
   data class OpenShowDetails(val showId: Long) : ShowDetailsUiEvent
-  object NavigateBack : ShowDetailsUiEvent
+  data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsUiEvent
+  data object NavigateBack : ShowDetailsUiEvent
 }

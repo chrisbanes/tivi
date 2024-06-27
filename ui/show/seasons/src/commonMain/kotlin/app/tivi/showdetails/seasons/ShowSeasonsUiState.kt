@@ -17,7 +17,6 @@ data class ShowSeasonsUiState(
   val refreshing: Boolean = false,
   val message: UiMessage? = null,
   val initialSeasonId: Long? = null,
-  val openedEpisodeId: Long? = null,
   val eventSink: (ShowSeasonsUiEvent) -> Unit,
 ) : CircuitUiState
 
@@ -25,5 +24,5 @@ sealed interface ShowSeasonsUiEvent : CircuitUiEvent {
   data class ClearMessage(val id: Long) : ShowSeasonsUiEvent
   data class OpenEpisodeDetails(val id: Long) : ShowSeasonsUiEvent
   data class Refresh(val fromUser: Boolean = true) : ShowSeasonsUiEvent
-  object NavigateBack : ShowSeasonsUiEvent
+  data object NavigateBack : ShowSeasonsUiEvent
 }
