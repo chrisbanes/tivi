@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.LocalStrings
+import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.screens.DevLogScreen
 import app.tivi.util.Severity
 import com.slack.circuit.runtime.CircuitContext
@@ -63,7 +63,7 @@ internal fun DevLog(
         navigationIcon = {
           IconButton(onClick = { eventSink(DevLogUiEvent.NavigateUp) }) {
             Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+              imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
               contentDescription = LocalStrings.current.cdNavigateUp,
             )
           }

@@ -30,7 +30,6 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -75,6 +74,7 @@ import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.RefreshButton
@@ -183,7 +183,7 @@ internal fun ShowSeasons(
           navigationIcon = {
             IconButton(onClick = navigateUp) {
               Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
                 contentDescription = LocalStrings.current.cdNavigateUp,
               )
             }
