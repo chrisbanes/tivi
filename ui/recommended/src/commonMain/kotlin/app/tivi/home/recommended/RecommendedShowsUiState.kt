@@ -17,5 +17,5 @@ data class RecommendedShowsUiState(
 
 sealed interface RecommendedShowsUiEvent : CircuitUiEvent {
   data class OpenShowDetails(val showId: Long) : RecommendedShowsUiEvent
-  object NavigateUp : RecommendedShowsUiEvent
+  data object NavigateUp : RecommendedShowsUiEvent
 }

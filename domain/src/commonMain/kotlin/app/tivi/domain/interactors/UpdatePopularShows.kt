@@ -40,7 +40,7 @@ class UpdatePopularShows(
 
   data class Params(val page: Int, val forceRefresh: Boolean = false)
 
-  object Page {
+  data object Page {
     const val NEXT_PAGE = -1
     const val REFRESH = -2
   }

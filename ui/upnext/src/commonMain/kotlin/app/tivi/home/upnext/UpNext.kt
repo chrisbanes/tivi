@@ -82,7 +82,6 @@ import app.tivi.overlays.LocalNavigator
 import app.tivi.overlays.showInBottomSheet
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
-import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.screens.UpNextScreen
 import coil3.compose.AsyncImagePainter
@@ -124,15 +123,7 @@ internal fun UpNext(
 
   UpNext(
     state = state,
-    openEpisodeDetails = { episodeId ->
-      scope.launch {
-        overlayHost.showInBottomSheet(
-          screen = EpisodeDetailsScreen(id = episodeId),
-          dragHandle = null,
-          hostNavigator = navigator,
-        )
-      }
-    },
+    openEpisodeDetails = { eventSink(UpNextUiEvent.OpenEpisodeDetails(it)) },
     openTrackEpisode = {
       scope.launch {
         overlayHost.showInBottomSheet(EpisodeTrackScreen(it))

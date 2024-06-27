@@ -35,9 +35,10 @@ data class DiscoverUiState(
 sealed interface DiscoverUiEvent : CircuitUiEvent {
   data class Refresh(val fromUser: Boolean = false) : DiscoverUiEvent
   data class ClearMessage(val id: Long) : DiscoverUiEvent
-  object OpenAccount : DiscoverUiEvent
-  object OpenPopularShows : DiscoverUiEvent
-  object OpenRecommendedShows : DiscoverUiEvent
-  object OpenTrendingShows : DiscoverUiEvent
+  data object OpenAccount : DiscoverUiEvent
+  data object OpenPopularShows : DiscoverUiEvent
+  data object OpenRecommendedShows : DiscoverUiEvent
+  data object OpenTrendingShows : DiscoverUiEvent
   data class OpenShowDetails(val showId: Long) : DiscoverUiEvent
+  data class OpenEpisodeDetails(val episodeId: Long) : DiscoverUiEvent
 }

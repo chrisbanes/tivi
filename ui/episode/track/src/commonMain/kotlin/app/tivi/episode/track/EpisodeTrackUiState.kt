@@ -32,9 +32,9 @@ data class EpisodeTrackUiState(
 
 sealed interface EpisodeTrackUiEvent : CircuitUiEvent {
   data class Refresh(val fromUser: Boolean = false) : EpisodeTrackUiEvent
-  object Submit : EpisodeTrackUiEvent
-  object SelectNow : EpisodeTrackUiEvent
-  object SelectFirstAired : EpisodeTrackUiEvent
+  data object Submit : EpisodeTrackUiEvent
+  data object SelectNow : EpisodeTrackUiEvent
+  data object SelectFirstAired : EpisodeTrackUiEvent
   data class SelectDate(val date: LocalDate) : EpisodeTrackUiEvent
   data class SelectTime(val time: LocalTime) : EpisodeTrackUiEvent
   data class ClearMessage(val id: Long) : EpisodeTrackUiEvent

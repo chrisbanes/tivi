@@ -17,5 +17,5 @@ data class TrendingShowsUiState(
 
 sealed interface TrendingShowsUiEvent : CircuitUiEvent {
   data class OpenShowDetails(val showId: Long) : TrendingShowsUiEvent
-  object NavigateUp : TrendingShowsUiEvent
+  data object NavigateUp : TrendingShowsUiEvent
 }

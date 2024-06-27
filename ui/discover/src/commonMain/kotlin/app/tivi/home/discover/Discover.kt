@@ -86,11 +86,9 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.overlays.LocalNavigator
-import app.tivi.overlays.showInBottomSheet
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.DiscoverScreen
-import app.tivi.screens.EpisodeDetailsScreen
 import coil3.compose.AsyncImagePainter
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
@@ -135,18 +133,8 @@ internal fun Discover(
         overlayHost.showInDialog(AccountScreen, navigator::goTo)
       }
     },
-    openEpisodeDetails = { episodeId ->
-      scope.launch {
-        overlayHost.showInBottomSheet(
-          screen = EpisodeDetailsScreen(id = episodeId),
-          dragHandle = null,
-          hostNavigator = navigator,
-        )
-      }
-    },
-    openShowDetails = { showId ->
-      eventSink(DiscoverUiEvent.OpenShowDetails(showId))
-    },
+    openEpisodeDetails = { eventSink(DiscoverUiEvent.OpenEpisodeDetails(it)) },
+    openShowDetails = { eventSink(DiscoverUiEvent.OpenShowDetails(it)) },
     openTrendingShows = { eventSink(DiscoverUiEvent.OpenTrendingShows) },
     openRecommendedShows = { eventSink(DiscoverUiEvent.OpenRecommendedShows) },
     openPopularShows = { eventSink(DiscoverUiEvent.OpenPopularShows) },

@@ -17,7 +17,7 @@ data class AccountUiState(
 ) : CircuitUiState
 
 sealed interface AccountUiEvent : CircuitUiEvent {
-  object Login : AccountUiEvent
-  object Logout : AccountUiEvent
-  object NavigateToSettings : AccountUiEvent
+  data object Login : AccountUiEvent
+  data object Logout : AccountUiEvent
+  data object NavigateToSettings : AccountUiEvent
 }

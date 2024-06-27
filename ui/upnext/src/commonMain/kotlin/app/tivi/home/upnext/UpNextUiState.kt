@@ -32,4 +32,5 @@ sealed interface UpNextUiEvent : CircuitUiEvent {
   data class ChangeSort(val sort: SortOption) : UpNextUiEvent
   data object ToggleFollowedShowsOnly : UpNextUiEvent
   data object OpenAccount : UpNextUiEvent
+  data class OpenEpisodeDetails(val episodeId: Long) : UpNextUiEvent
 }

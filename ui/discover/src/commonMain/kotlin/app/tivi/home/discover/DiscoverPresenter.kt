@@ -23,6 +23,7 @@ import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.DiscoverScreen
+import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.PopularShowsScreen
 import app.tivi.screens.RecommendedShowsScreen
 import app.tivi.screens.ShowDetailsScreen
@@ -138,6 +139,9 @@ class DiscoverPresenter(
         DiscoverUiEvent.OpenRecommendedShows -> navigator.goTo(RecommendedShowsScreen)
         is DiscoverUiEvent.OpenShowDetails -> navigator.goTo(ShowDetailsScreen(event.showId))
         DiscoverUiEvent.OpenTrendingShows -> navigator.goTo(TrendingShowsScreen)
+        is DiscoverUiEvent.OpenEpisodeDetails -> {
+          navigator.goTo(EpisodeDetailsScreen(event.episodeId))
+        }
       }
     }
 

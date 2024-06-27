@@ -26,8 +26,8 @@ sealed interface EpisodeDetailsUiEvent : CircuitUiEvent {
   data class Refresh(val fromUser: Boolean = false) : EpisodeDetailsUiEvent
   data class RemoveWatchEntry(val id: Long) : EpisodeDetailsUiEvent
   data class ClearMessage(val id: Long) : EpisodeDetailsUiEvent
-  object RemoveAllWatches : EpisodeDetailsUiEvent
-  object OpenTrackEpisode : EpisodeDetailsUiEvent
-  object ExpandToShowDetails : EpisodeDetailsUiEvent
-  object NavigateUp : EpisodeDetailsUiEvent
+  data object RemoveAllWatches : EpisodeDetailsUiEvent
+  data object OpenTrackEpisode : EpisodeDetailsUiEvent
+  data object ExpandToShowDetails : EpisodeDetailsUiEvent
+  data object NavigateUp : EpisodeDetailsUiEvent
 }
