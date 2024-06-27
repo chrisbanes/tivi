@@ -108,7 +108,7 @@ class EpisodeDetailsPresenter(
         EpisodeDetailsUiEvent.ExpandToShowDetails -> {
           navigator.pop()
 
-          val showId = showDetails?.id ?: continue
+          val showId = showDetails?.id ?: return@LaunchedEventProcessor
           // As we pushing a number of different screens onto the back stack,
           // we run it in a single snapshot to avoid unnecessary work
           Snapshot.withMutableSnapshot {
