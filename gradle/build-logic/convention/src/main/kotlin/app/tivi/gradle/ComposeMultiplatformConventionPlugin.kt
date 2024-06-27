@@ -34,6 +34,10 @@ fun Project.configureCompose() {
       metricsDestination.set(composeReports)
     }
 
+    // https://github.com/chrisbanes/tivi/issues/1867
+    tasks.matching { it.name == "syncComposeResourcesForIos" }
+      .configureEach { enabled = false }
+
     stabilityConfigurationFile.set(rootProject.file("compose-stability.conf"))
   }
 
