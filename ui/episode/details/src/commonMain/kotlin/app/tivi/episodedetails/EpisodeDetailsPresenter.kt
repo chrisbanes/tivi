@@ -9,9 +9,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.Snapshot
+import app.tivi.common.compose.LaunchedEventProcessor
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
-import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.common.compose.rememberEventChannel
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
 import app.tivi.domain.interactors.UpdateEpisodeDetails
@@ -28,7 +29,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -60,7 +60,6 @@ class EpisodeDetailsPresenter(
 ) : Presenter<EpisodeDetailsUiState> {
   @Composable
   override fun present(): EpisodeDetailsUiState {
-    val scope = rememberCoroutineScope()
     val uiMessageManager = remember { UiMessageManager() }
 
     val refreshing by updateEpisodeDetails.value.inProgress.collectAsState(false)
@@ -71,56 +70,45 @@ class EpisodeDetailsPresenter(
     val episodeDetails by observeEpisodeDetails.value.flow.collectAsRetainedState(null)
     val episodeWatches by observeEpisodeWatches.value.flow.collectAsRetainedState(emptyList())
 
-    fun eventSink(event: EpisodeDetailsUiEvent) {
+    val events = rememberEventChannel<EpisodeDetailsUiEvent>()
+
+    LaunchedEventProcessor(events) { event ->
       when (event) {
         is EpisodeDetailsUiEvent.Refresh -> {
-          scope.launch {
-            updateEpisodeDetails.value.invoke(
-              UpdateEpisodeDetails.Params(screen.id, event.fromUser),
-            ).onFailure { e ->
-              logger.i(e)
-              uiMessageManager.emitMessage(UiMessage(e))
-            }
+          updateEpisodeDetails.value.invoke(
+            UpdateEpisodeDetails.Params(screen.id, event.fromUser),
+          ).onFailure { e ->
+            logger.i(e)
+            uiMessageManager.emitMessage(UiMessage(e))
           }
         }
 
-        is EpisodeDetailsUiEvent.ClearMessage -> {
-          scope.launch {
-            uiMessageManager.clearMessage(event.id)
-          }
-        }
+        is EpisodeDetailsUiEvent.ClearMessage -> uiMessageManager.clearMessage(event.id)
 
         EpisodeDetailsUiEvent.RemoveAllWatches -> {
-          scope.launch {
-            removeEpisodeWatches.value.invoke(
-              RemoveEpisodeWatches.Params(screen.id),
-            ).onFailure { e ->
-              logger.i(e)
-              uiMessageManager.emitMessage(UiMessage(e))
-            }
+          removeEpisodeWatches.value.invoke(
+            RemoveEpisodeWatches.Params(screen.id),
+          ).onFailure { e ->
+            logger.i(e)
+            uiMessageManager.emitMessage(UiMessage(e))
           }
         }
 
         is EpisodeDetailsUiEvent.RemoveWatchEntry -> {
-          scope.launch {
-            removeEpisodeWatch.value.invoke(
-              RemoveEpisodeWatch.Params(event.id),
-            ).onFailure { e ->
+          removeEpisodeWatch.value(RemoveEpisodeWatch.Params(event.id))
+            .onFailure { e ->
               logger.i(e)
               uiMessageManager.emitMessage(UiMessage(e))
             }
-          }
         }
 
         EpisodeDetailsUiEvent.NavigateUp -> navigator.pop()
-        EpisodeDetailsUiEvent.OpenTrackEpisode -> {
-          navigator.goTo(EpisodeTrackScreen(screen.id))
-        }
+        EpisodeDetailsUiEvent.OpenTrackEpisode -> navigator.goTo(EpisodeTrackScreen(screen.id))
 
         EpisodeDetailsUiEvent.ExpandToShowDetails -> {
           navigator.pop()
 
-          val showId = showDetails?.id ?: return
+          val showId = showDetails?.id ?: continue
           // As we pushing a number of different screens onto the back stack,
           // we run it in a single snapshot to avoid unnecessary work
           Snapshot.withMutableSnapshot {
@@ -142,7 +130,7 @@ class EpisodeDetailsPresenter(
       observeEpisodeWatches.value.invoke(ObserveEpisodeWatches.Params(screen.id))
       observeShowDetailsForEpisodeId.value.invoke(ObserveShowDetailsForEpisodeId.Params(screen.id))
 
-      eventSink(EpisodeDetailsUiEvent.Refresh(fromUser = false))
+      events.send(EpisodeDetailsUiEvent.Refresh(fromUser = false))
     }
 
     return EpisodeDetailsUiState(
@@ -152,7 +140,7 @@ class EpisodeDetailsPresenter(
       canAddEpisodeWatch = episodeDetails?.episode?.hasAired ?: false,
       refreshing = refreshing,
       message = message,
-      eventSink = ::eventSink,
+      eventSink = events::trySend,
     )
   }
 }
