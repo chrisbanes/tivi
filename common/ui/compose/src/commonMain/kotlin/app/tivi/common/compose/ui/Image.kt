@@ -3,19 +3,12 @@
 
 package app.tivi.common.compose.ui
 
-import androidx.compose.animation.core.ExperimentalTransitionApi
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.rememberTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -34,11 +27,10 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.DefaultModelEqualityDelegate
 import coil3.compose.EqualityDelegate
 import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import kotlin.math.roundToInt
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 
-@OptIn(ExperimentalTransitionApi::class)
 @Composable
 fun AsyncImage(
   model: Any?,
@@ -54,52 +46,21 @@ fun AsyncImage(
   filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
   modelEqualityDelegate: EqualityDelegate = DefaultModelEqualityDelegate,
 ) {
-  var loadStartTime by remember { mutableStateOf(Instant.DISTANT_PAST) }
-
-  val transitionState = remember {
-    MutableTransitionState<Pair<AsyncImagePainter.State, Instant>>(
-      initialState = AsyncImagePainter.State.Empty to loadStartTime,
-    )
-  }
-  val transition = rememberTransition(transitionState, "image fade")
-  val imageTransition = transition.updateImageLoadingTransition()
-
   LogCompositions("AsyncImage", "Main composition: $model")
 
+  val context = LocalPlatformContext.current
+
   coil3.compose.AsyncImage(
-    model = model,
+    model = remember(context, model) {
+      ImageRequest.Builder(context)
+        .data(model)
+        .crossfade(300)
+        .build()
+    },
     contentDescription = contentDescription,
     imageLoader = imageLoader,
     modifier = modifier,
-    transform = { state ->
-      transform(state).let { transformed ->
-        when (transformed) {
-          is AsyncImagePainter.State.Loading -> {
-            loadStartTime = Clock.System.now()
-            transformed
-          }
-
-          is AsyncImagePainter.State.Success -> {
-            val newPainter = transformPainter(transformed.painter) {
-              val cm = ColorMatrix()
-              cm.apply {
-                setAlpha(imageTransition.alpha)
-                setBrightness(imageTransition.brightness)
-                setSaturation(imageTransition.saturation)
-              }
-
-              ColorFilter.colorMatrix(cm)
-            }
-            AsyncImagePainter.State.Success(newPainter, transformed.result)
-          }
-
-          else -> transformed
-        }
-      }.also {
-        // Finally update the transition state
-        transitionState.targetState = it to loadStartTime
-      }
-    },
+    transform = transform,
     onState = onState,
     alignment = alignment,
     contentScale = contentScale,
