@@ -2,7 +2,7 @@
 agp = "8.5.0"
 androidxactivity = "1.9.0"
 baselineprofile = "1.2.4"
-coil = "3.0.0-alpha06"
+coil = "3.0.0-alpha07"
 chucker = "4.0.0"
 circuit = "0.22.2"
 compose-multiplatform = "1.6.11"
