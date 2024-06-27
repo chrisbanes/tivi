@@ -5,9 +5,8 @@ package app.tivi.data.columnadaptors
 
 import app.cash.sqldelight.ColumnAdapter
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toLocalDateTime
 
 internal object LocalDateTimeColumnAdapter : ColumnAdapter<LocalDateTime, String> {
-  override fun decode(databaseValue: String): LocalDateTime = databaseValue.toLocalDateTime()
+  override fun decode(databaseValue: String): LocalDateTime = LocalDateTime.parse(databaseValue)
   override fun encode(value: LocalDateTime): String = value.toString()
 }
