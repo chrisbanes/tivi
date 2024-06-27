@@ -39,7 +39,6 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
@@ -96,6 +95,7 @@ import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
@@ -1001,7 +1001,7 @@ private fun ShowDetailsAppBar(
         onClick = onNavigateUp,
       ) {
         Icon(
-          imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+          imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
           contentDescription = LocalStrings.current.cdNavigateUp,
         )
       }

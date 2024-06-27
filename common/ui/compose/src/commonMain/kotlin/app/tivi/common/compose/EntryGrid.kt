@@ -25,7 +25,6 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -62,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
+import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.noIndicationClickable
@@ -76,7 +76,6 @@ import kotlinx.coroutines.launch
 @OptIn(
   ExperimentalFoundationApi::class,
   ExperimentalMaterialApi::class,
-  ExperimentalMaterial3Api::class,
 )
 @Composable
 fun <E : Entry> EntryGrid(
@@ -291,7 +290,7 @@ fun EntryGridAppBar(
     navigationIcon = {
       IconButton(onClick = onNavigateUp) {
         Icon(
-          imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+          imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
           contentDescription = LocalStrings.current.cdNavigateUp,
         )
       }

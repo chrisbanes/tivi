@@ -29,7 +29,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.Publish
@@ -71,6 +70,7 @@ import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
@@ -542,7 +542,7 @@ private fun EpisodeDetailsAppBar(
     navigationIcon = {
       ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
         Icon(
-          imageVector = Icons.Default.Close,
+          imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
           contentDescription = LocalStrings.current.cdNavigateUp,
         )
       }

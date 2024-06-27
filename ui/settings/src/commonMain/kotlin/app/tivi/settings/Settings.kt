@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoMode
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.common.compose.ui.Preference
 import app.tivi.common.compose.ui.PreferenceDivider
@@ -70,7 +70,7 @@ internal fun Settings(
         navigationIcon = {
           IconButton(onClick = { eventSink(SettingsUiEvent.NavigateUp) }) {
             Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+              imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
               contentDescription = LocalStrings.current.cdNavigateUp,
             )
           }
