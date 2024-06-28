@@ -19,6 +19,8 @@ fun Project.configureLicensee() {
     allow("BSD-3-Clause")
     allowUrl("https://developer.android.com/studio/terms.html")
     allowUrl("https://opensource.org/licenses/MIT") // MIT
+    allowUrl("https://github.com/icerockdev/moko-permissions/blob/master/LICENSE.md") // Apache-2.0
+
     unusedAction(UnusedAction.IGNORE)
   }
 }

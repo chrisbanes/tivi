@@ -17,6 +17,7 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
+        implementation(projects.core.permissions)
         implementation(projects.core.preferences)
         implementation(projects.domain)
         implementation(projects.common.ui.compose)

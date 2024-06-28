@@ -12,6 +12,7 @@ kotlin = "2.0.0"
 kotlininject = "0.7.1"
 ksp = "2.0.0-1.0.22"
 lyricist = "1.7.0"
+moko-permissions = "0.18.0"
 multiplatformsettings = "1.1.1"
 okhttp = "4.12.0"
 kermit = "2.0.4" # Pinned back as Store uses Kermit 1.x
@@ -108,6 +109,9 @@ leakCanary = "com.squareup.leakcanary:leakcanary-android:2.14"
 
 lyricist-core = { module = "cafe.adriel.lyricist:lyricist-core", version.ref = "lyricist" }
 lyricist-library = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" }
+
+moko-permissions-core = { module = "dev.icerock.moko:permissions", version.ref = "moko-permissions" }
+moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", version.ref = "moko-permissions" }
 
 multiplatformsettings-core = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformsettings" }
 multiplatformsettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformsettings" }

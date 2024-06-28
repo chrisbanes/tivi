@@ -22,6 +22,7 @@ import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.repeatOnLifecycle
 import app.tivi.TiviActivity
 import app.tivi.TiviApplication
+import app.tivi.core.permissions.bind
 import app.tivi.inject.AndroidActivityComponent
 import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.create
@@ -50,6 +51,9 @@ class MainActivity : TiviActivity() {
         prefs.collect(::enableEdgeToEdgeForTheme)
       }
     }
+
+    // Bind the PermissionController
+    component.permissionsController.bind(this)
 
     setContent {
       val backstack = rememberSaveableBackStack(listOf(DiscoverScreen))

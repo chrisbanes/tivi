@@ -10,6 +10,10 @@ import androidx.compose.runtime.remember
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.core.permissions.Permission.REMOTE_NOTIFICATION
+import app.tivi.core.permissions.PermissionState
+import app.tivi.core.permissions.PermissionsController
+import app.tivi.core.permissions.performPermissionedAction
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.screens.LicensesScreen
 import app.tivi.screens.SettingsScreen
@@ -40,9 +44,11 @@ class SettingsUiPresenterFactory(
 class SettingsPresenter(
   @Assisted private val navigator: Navigator,
   preferences: Lazy<TiviPreferences>,
+  permissionsController: Lazy<PermissionsController>,
   private val applicationInfo: ApplicationInfo,
 ) : Presenter<SettingsUiState> {
   private val preferences by preferences
+  private val permissionsController by permissionsController
 
   @Composable
   override fun present(): SettingsUiState {
@@ -93,7 +99,21 @@ class SettingsPresenter(
           coroutineScope.launch { preferences.toggleReportAnalytics() }
         }
         SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled -> {
-          coroutineScope.launch { preferences.notificationsEnabled.toggle() }
+          coroutineScope.launch {
+            if (preferences.notificationsEnabled.get()) {
+              // If we're enabled, and being turned off, we don't need to mess with permissions
+              preferences.notificationsEnabled.toggle()
+            } else {
+              // If we're disabled, and being turned on, we need to check our permissions
+              permissionsController.performPermissionedAction(REMOTE_NOTIFICATION) { state ->
+                if (state == PermissionState.Granted) {
+                  preferences.notificationsEnabled.toggle()
+                } else {
+                  permissionsController.openAppSettings()
+                }
+              }
+            }
+          }
         }
         SettingsUiEvent.NavigatePrivacyPolicy -> {
           navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))

@@ -82,6 +82,7 @@ include(
   ":core:logging:api",
   ":core:logging:implementation",
   ":core:performance",
+  ":core:permissions",
   ":core:powercontroller",
   ":core:preferences",
   ":common:ui:circuit-overlay",

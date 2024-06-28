@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Permission not actually used</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Permission not actually used</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Permission not actually used</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Permission not actually used</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>app.tivi.tasks.libraryshows.nightly</string>
