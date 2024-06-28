@@ -48,7 +48,7 @@ class AndroidNotificationManager(
       id = id,
       channelId = channel.toChannelId(),
       title = title,
-      text = message
+      text = message,
     )
 
     val windowStartTime = (date - ALARM_WINDOW_LENGTH).coerceAtLeast(Clock.System.now())
@@ -85,7 +85,7 @@ class AndroidNotificationManager(
       id = id,
       channelId = channel.toChannelId(),
       title = title,
-      text = message
+      text = message,
     )
 
     application.sendBroadcast(intent)

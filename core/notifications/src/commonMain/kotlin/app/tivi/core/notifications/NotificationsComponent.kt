@@ -5,4 +5,4 @@ package app.tivi.core.notifications
 
 expect interface NotificationPlatformComponent
 
-interface NotificationsComponent: NotificationPlatformComponent
+interface NotificationsComponent : NotificationPlatformComponent

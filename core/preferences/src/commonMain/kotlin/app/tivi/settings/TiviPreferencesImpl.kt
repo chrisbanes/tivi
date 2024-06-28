@@ -134,7 +134,7 @@ class TiviPreferencesImpl(
 
   private inner class BooleanPreference(
     private val key: String,
-    private val defaultValue: Boolean = false
+    private val defaultValue: Boolean = false,
   ) : Preference<Boolean> {
     override suspend fun set(value: Boolean) = withContext(dispatchers.io) {
       settings[key] = value

@@ -5,4 +5,4 @@ package app.tivi.core.permissions
 
 expect interface PermissionsPlatformComponent
 
-interface PermissionsComponent: PermissionsPlatformComponent
+interface PermissionsComponent : PermissionsPlatformComponent

@@ -37,7 +37,7 @@ internal class IosNotificationManager : NotificationManager {
       id = id,
       title = title,
       message = message,
-      trigger = trigger
+      trigger = trigger,
     )
   }
 

@@ -63,7 +63,6 @@ suspend fun PermissionsController.performPermissionedAction(
   }
 }
 
-
 enum class Permission {
   CAMERA,
   GALLERY,
@@ -105,7 +104,7 @@ enum class PermissionState {
   /**
    * On Android only applicable to Push Notifications.
    */
-  DeniedAlways
+  DeniedAlways,
 }
 
 fun PermissionState.canRequest(): Boolean = when (this) {

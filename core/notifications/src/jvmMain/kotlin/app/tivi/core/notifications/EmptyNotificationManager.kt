@@ -3,10 +3,20 @@
 
 package app.tivi.core.notifications
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 
-internal object EmptyNotificationManager: NotificationManager {
-  override fun schedule(id: Long, title: String, message: String, date: LocalDateTime) {
+internal object EmptyNotificationManager : NotificationManager {
+  override fun schedule(
+    id: String,
+    title: String,
+    message: String,
+    channel: NotificationChannel,
+    date: Instant,
+  ) {
+    // no-op
+  }
+
+  override fun notify(id: String, title: String, message: String, channel: NotificationChannel) {
     // no-op
   }
 }

@@ -10,8 +10,7 @@ actual interface PermissionsPlatformComponent {
   fun providePermissionController(): PermissionsController = EmptyPermissionController
 }
 
-
-internal object EmptyPermissionController: PermissionsController {
+internal object EmptyPermissionController : PermissionsController {
   override suspend fun providePermission(permission: Permission) = getPermissionState(permission)
 
   override suspend fun isPermissionGranted(permission: Permission): Boolean {

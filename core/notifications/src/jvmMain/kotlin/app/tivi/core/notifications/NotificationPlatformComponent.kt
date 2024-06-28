@@ -11,5 +11,4 @@ actual interface NotificationPlatformComponent {
   @Provides
   @ApplicationScope
   fun provideNotificationManager(): NotificationManager = EmptyNotificationManager
-
 }

@@ -21,11 +21,7 @@ interface NotificationManager {
     message: String,
     channel: NotificationChannel,
   )
-
-  // fun cancel(title: String)
-
 }
-
 
 enum class NotificationChannel {
   DEVELOPER,

@@ -1,4 +1,4 @@
-/// Copyright 2024, Christopher Banes and the Tivi project contributors
+// Copyright 2024, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package app.tivi.core.notifications
@@ -26,7 +26,7 @@ class PostNotificationBroadcastReceiver : BroadcastReceiver() {
     val content = intent.getStringExtra(EXTRA_CONTENT)
 
     val notification = NotificationCompat.Builder(context, channelId)
-      // Replace this with something better
+      // Replace this icon with something better
       .setSmallIcon(R.drawable.outline_tv_gen_24)
       .setContentTitle(title)
       .setContentText(content)

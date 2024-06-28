@@ -3,10 +3,10 @@
 
 package app.tivi.core.permissions
 
+import app.tivi.util.Logger
 import dev.icerock.moko.permissions.Permission as MokoPermission
 import dev.icerock.moko.permissions.PermissionState as MokoPermissionState
 import dev.icerock.moko.permissions.PermissionsController as MokoPermissionsController
-import app.tivi.util.Logger
 
 internal class MokoPermissionControllerWrapper(
   internal val mokoPermissionController: MokoPermissionsController,

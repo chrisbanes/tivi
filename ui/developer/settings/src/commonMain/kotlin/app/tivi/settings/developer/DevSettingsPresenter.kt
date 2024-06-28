@@ -17,6 +17,7 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
@@ -63,7 +64,7 @@ class DevSettingsPresenter(
             title = "Test Notification",
             message = "Sent from developer settings",
             channel = NotificationChannel.DEVELOPER,
-            date = Clock.System.now()
+            date = Clock.System.now() + 5.minutes,
           )
         }
         DevSettingsUiEvent.ShowNotification -> {
