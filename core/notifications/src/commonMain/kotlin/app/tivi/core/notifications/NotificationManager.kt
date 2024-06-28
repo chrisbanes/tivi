@@ -23,7 +23,7 @@ interface NotificationManager {
   )
 }
 
-enum class NotificationChannel {
-  DEVELOPER,
-  EPISODES_AIRING,
+enum class NotificationChannel(val id: String) {
+  DEVELOPER("dev"),
+  EPISODES_AIRING("episodes_airing"),
 }

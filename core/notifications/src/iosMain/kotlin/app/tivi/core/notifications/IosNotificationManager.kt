@@ -3,18 +3,24 @@
 
 package app.tivi.core.notifications
 
+import app.tivi.util.Logger
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.toNSDateComponents
+import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSError
 import platform.UserNotifications.UNCalendarNotificationTrigger
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotificationRequest
-import platform.UserNotifications.UNNotificationTrigger
 import platform.UserNotifications.UNUserNotificationCenter
 
-internal class IosNotificationManager : NotificationManager {
+@Inject
+class IosNotificationManager(
+  private val logger: Logger,
+) : NotificationManager {
 
   private val notificationCenter: UNUserNotificationCenter by lazy {
     UNUserNotificationCenter.currentNotificationCenter()
@@ -28,40 +34,43 @@ internal class IosNotificationManager : NotificationManager {
     date: Instant,
   ) {
     val trigger = UNCalendarNotificationTrigger.triggerWithDateMatchingComponents(
-      dateComponents = date.toLocalDateTime(TimeZone.currentSystemDefault())
-        .toNSDateComponents(),
+      dateComponents = date.toLocalDateTime(TimeZone.currentSystemDefault()).toNSDateComponents(),
       repeats = false,
     )
 
-    request(
-      id = id,
-      title = title,
-      message = message,
-      trigger = trigger,
-    )
-  }
-
-  override fun notify(id: String, title: String, message: String, channel: NotificationChannel) {
-    request(id = id, title = title, message = message)
-  }
-
-  private fun request(
-    id: String,
-    title: String,
-    message: String,
-    trigger: UNNotificationTrigger? = null,
-  ) {
     val content = UNMutableNotificationContent().apply {
       setTitle(title)
       setBody(message)
+      setCategoryIdentifier(channel.id)
     }
 
     val request = UNNotificationRequest.requestWithIdentifier(id, content, trigger)
 
     val withCompletionHandler: (NSError?) -> Unit = { error: NSError? ->
-      println("Notification completed with: $error")
+      logger.d { "Notification completed. Error:[$error]" }
+    }
+
+    logger.d {
+      buildString {
+        append("Scheduling notification. ")
+        append("title:[$title], ")
+        append("message:[$message], ")
+        append("id:[$id], ")
+        append("channel:[$channel], ")
+        append("trigger:[${trigger.nextTriggerDate()}]")
+      }
     }
 
     notificationCenter.addNotificationRequest(request, withCompletionHandler)
+  }
+
+  override fun notify(id: String, title: String, message: String, channel: NotificationChannel) {
+    schedule(
+      id = id,
+      title = title,
+      message = message,
+      channel = channel,
+      date = Clock.System.now() + 10.seconds,
+    )
   }
 }

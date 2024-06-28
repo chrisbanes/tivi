@@ -62,7 +62,7 @@ class DevSettingsPresenter(
           notification.schedule(
             id = "scheduled_test",
             title = "Test Notification",
-            message = "Sent from developer settings",
+            message = "Scheduled from developer settings",
             channel = NotificationChannel.DEVELOPER,
             date = Clock.System.now() + 5.minutes,
           )
@@ -71,7 +71,7 @@ class DevSettingsPresenter(
           notification.notify(
             id = "immediate_test",
             title = "Test Notification",
-            message = "Scheduled from developer settings",
+            message = "Sent from developer settings",
             channel = NotificationChannel.DEVELOPER,
           )
         }

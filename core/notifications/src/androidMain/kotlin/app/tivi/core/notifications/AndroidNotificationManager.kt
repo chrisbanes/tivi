@@ -93,7 +93,7 @@ class AndroidNotificationManager(
 
   private fun NotificationManagerCompat.createChannel(channel: NotificationChannel) {
     val androidChannel =
-      NotificationChannelCompat.Builder(channel.toChannelId(), IMPORTANCE_DEFAULT)
+      NotificationChannelCompat.Builder(channel.id, IMPORTANCE_DEFAULT)
         .apply {
           when (channel) {
             NotificationChannel.EPISODES_AIRING -> {
@@ -120,9 +120,4 @@ class AndroidNotificationManager(
 
     const val PENDING_INTENT_FLAGS = FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT or FLAG_ONE_SHOT
   }
-}
-
-internal fun NotificationChannel.toChannelId(): String = when (this) {
-  NotificationChannel.EPISODES_AIRING -> "episodes_airing"
-  NotificationChannel.DEVELOPER -> "dev"
 }

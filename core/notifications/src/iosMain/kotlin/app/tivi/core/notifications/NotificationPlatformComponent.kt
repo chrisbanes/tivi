@@ -10,5 +10,5 @@ actual interface NotificationPlatformComponent {
 
   @Provides
   @ApplicationScope
-  fun provideNotificationManager(): NotificationManager = IosNotificationManager()
+  fun provideNotificationManager(impl: IosNotificationManager): NotificationManager = impl
 }
