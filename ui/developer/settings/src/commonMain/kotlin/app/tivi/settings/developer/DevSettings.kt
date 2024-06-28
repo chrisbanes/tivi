@@ -77,6 +77,24 @@ internal fun DevSettings(
 
       item {
         Preference(
+          title = "Show notification (immediately)",
+          modifier = Modifier.clickable {
+            state.eventSink(DevSettingsUiEvent.ShowNotification)
+          },
+        )
+      }
+
+      item {
+        Preference(
+          title = "Schedule notification (in 5 mins)",
+          modifier = Modifier.clickable {
+            state.eventSink(DevSettingsUiEvent.ScheduleNotification)
+          },
+        )
+      }
+
+      item {
+        Preference(
           title = "Open log",
           modifier = Modifier.clickable {
             state.eventSink(DevSettingsUiEvent.NavigateLog)

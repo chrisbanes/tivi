@@ -15,6 +15,8 @@ class PostNotificationBroadcastReceiver : BroadcastReceiver() {
 
   @SuppressLint("MissingPermission")
   override fun onReceive(context: Context, intent: Intent) {
+    Log.d(TAG, "Received intent: %s".format(intent))
+
     val notificationManager = NotificationManagerCompat.from(context)
 
     val id = intent.getStringExtra(EXTRA_ID)
@@ -29,14 +31,17 @@ class PostNotificationBroadcastReceiver : BroadcastReceiver() {
       .setContentTitle(title)
       .setContentText(content)
       .build()
+
     try {
       notificationManager.notify(id, 0, notification)
     } catch (se: SecurityException) {
-      Log.d("PostNotificationBroadcastReceiver", "Error whilst posting notification", se)
+      Log.d(TAG, "Error posting notification", se)
     }
   }
 
   companion object {
+    private const val TAG = "PostNotificationBroadcastReceiver"
+
     private const val EXTRA_ID = "notification_id"
     private const val EXTRA_CHANNEL_ID = "notification_channel_id"
     private const val EXTRA_TITLE = "notification_title"

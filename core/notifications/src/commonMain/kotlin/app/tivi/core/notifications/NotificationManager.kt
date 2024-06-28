@@ -3,7 +3,7 @@
 
 package app.tivi.core.notifications
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 
 interface NotificationManager {
 
@@ -11,7 +11,14 @@ interface NotificationManager {
     id: String,
     title: String,
     message: String,
-    date: LocalDateTime,
+    channel: NotificationChannel,
+    date: Instant,
+  )
+
+  fun notify(
+    id: String,
+    title: String,
+    message: String,
     channel: NotificationChannel,
   )
 
@@ -21,5 +28,6 @@ interface NotificationManager {
 
 
 enum class NotificationChannel {
+  DEVELOPER,
   EPISODES_AIRING,
 }

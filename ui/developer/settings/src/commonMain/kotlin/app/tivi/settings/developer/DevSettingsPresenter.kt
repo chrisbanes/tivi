@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.core.notifications.NotificationChannel
+import app.tivi.core.notifications.NotificationManager
 import app.tivi.screens.DevLogScreen
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.settings.TiviPreferences
@@ -16,6 +18,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -37,6 +40,7 @@ class DevSettingsUiPresenterFactory(
 class DevSettingsPresenter(
   @Assisted private val navigator: Navigator,
   private val preferences: Lazy<TiviPreferences>,
+  private val notification: NotificationManager,
 ) : Presenter<DevSettingsUiState> {
 
   @Composable
@@ -52,6 +56,23 @@ class DevSettingsPresenter(
         DevSettingsUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
         DevSettingsUiEvent.ToggleHideArtwork -> {
           coroutineScope.launch { preferences.value.toggleDeveloperHideArtwork() }
+        }
+        DevSettingsUiEvent.ScheduleNotification -> {
+          notification.schedule(
+            id = "scheduled_test",
+            title = "Test Notification",
+            message = "Sent from developer settings",
+            channel = NotificationChannel.DEVELOPER,
+            date = Clock.System.now()
+          )
+        }
+        DevSettingsUiEvent.ShowNotification -> {
+          notification.notify(
+            id = "immediate_test",
+            title = "Test Notification",
+            message = "Scheduled from developer settings",
+            channel = NotificationChannel.DEVELOPER,
+          )
         }
       }
     }

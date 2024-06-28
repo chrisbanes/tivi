@@ -16,9 +16,8 @@ import androidx.core.content.getSystemService
 import app.tivi.common.ui.resources.EnTiviStrings
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -37,8 +36,8 @@ class AndroidNotificationManager(
     id: String,
     title: String,
     message: String,
-    date: LocalDateTime,
     channel: NotificationChannel,
+    date: Instant,
   ) {
     // We create the channel now ahead of time. We want to limit the amount of work
     // in the broadcast receiver
@@ -52,7 +51,7 @@ class AndroidNotificationManager(
       text = message
     )
 
-    val windowStartTime = date.toInstant(TimeZone.currentSystemDefault()) - ALARM_WINDOW_LENGTH
+    val windowStartTime = (date - ALARM_WINDOW_LENGTH).coerceAtLeast(Clock.System.now())
 
     logger.d {
       buildString {
@@ -78,6 +77,20 @@ class AndroidNotificationManager(
     )
   }
 
+  override fun notify(id: String, title: String, message: String, channel: NotificationChannel) {
+    notificationManager.createChannel(channel)
+
+    val intent = PostNotificationBroadcastReceiver.buildIntent(
+      context = application,
+      id = id,
+      channelId = channel.toChannelId(),
+      title = title,
+      text = message
+    )
+
+    application.sendBroadcast(intent)
+  }
+
   private fun NotificationManagerCompat.createChannel(channel: NotificationChannel) {
     val androidChannel =
       NotificationChannelCompat.Builder(channel.toChannelId(), IMPORTANCE_DEFAULT)
@@ -86,6 +99,11 @@ class AndroidNotificationManager(
             NotificationChannel.EPISODES_AIRING -> {
               setName(strings.settingsNotificationsAiringEpisodesTitle)
               setDescription(strings.settingsNotificationsAiringEpisodesSummary)
+              setVibrationEnabled(true)
+            }
+
+            NotificationChannel.DEVELOPER -> {
+              setName("Developer testing")
               setVibrationEnabled(true)
             }
           }
@@ -106,4 +124,5 @@ class AndroidNotificationManager(
 
 internal fun NotificationChannel.toChannelId(): String = when (this) {
   NotificationChannel.EPISODES_AIRING -> "episodes_airing"
+  NotificationChannel.DEVELOPER -> "dev"
 }

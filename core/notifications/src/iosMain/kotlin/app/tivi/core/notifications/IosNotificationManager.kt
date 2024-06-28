@@ -3,12 +3,15 @@
 
 package app.tivi.core.notifications
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.toNSDateComponents
 import platform.Foundation.NSError
 import platform.UserNotifications.UNCalendarNotificationTrigger
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotificationRequest
+import platform.UserNotifications.UNNotificationTrigger
 import platform.UserNotifications.UNUserNotificationCenter
 
 internal class IosNotificationManager : NotificationManager {
@@ -21,18 +24,37 @@ internal class IosNotificationManager : NotificationManager {
     id: String,
     title: String,
     message: String,
-    date: LocalDateTime,
     channel: NotificationChannel,
+    date: Instant,
+  ) {
+    val trigger = UNCalendarNotificationTrigger.triggerWithDateMatchingComponents(
+      dateComponents = date.toLocalDateTime(TimeZone.currentSystemDefault())
+        .toNSDateComponents(),
+      repeats = false,
+    )
+
+    request(
+      id = id,
+      title = title,
+      message = message,
+      trigger = trigger
+    )
+  }
+
+  override fun notify(id: String, title: String, message: String, channel: NotificationChannel) {
+    request(id = id, title = title, message = message)
+  }
+
+  private fun request(
+    id: String,
+    title: String,
+    message: String,
+    trigger: UNNotificationTrigger? = null,
   ) {
     val content = UNMutableNotificationContent().apply {
       setTitle(title)
       setBody(message)
     }
-
-    val trigger = UNCalendarNotificationTrigger.triggerWithDateMatchingComponents(
-      dateComponents = date.toNSDateComponents(),
-      repeats = false,
-    )
 
     val request = UNNotificationRequest.requestWithIdentifier(id, content, trigger)
 
