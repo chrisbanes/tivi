@@ -85,6 +85,7 @@ include(
   ":core:permissions",
   ":core:powercontroller",
   ":core:preferences",
+  ":core:notifications",
   ":common:ui:circuit-overlay",
   ":common:ui:resources:fonts",
   ":common:ui:resources:strings",
