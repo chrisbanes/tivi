@@ -44,6 +44,8 @@ interface TiviPreferences {
   suspend fun getDeveloperHideArtwork(): Boolean
   fun observeDeveloperHideArtwork(): Flow<Boolean>
 
+  val notificationsEnabled: Preference<Boolean>
+
   enum class Theme {
     LIGHT,
     DARK,

@@ -4,6 +4,7 @@
 package app.tivi.settings
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import app.tivi.app.ApplicationInfo
@@ -13,7 +14,6 @@ import app.tivi.screens.DevSettingsScreen
 import app.tivi.screens.LicensesScreen
 import app.tivi.screens.SettingsScreen
 import app.tivi.screens.UrlScreen
-import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -47,22 +47,24 @@ class SettingsPresenter(
   @Composable
   override fun present(): SettingsUiState {
     val theme by remember { preferences.observeTheme() }
-      .collectAsRetainedState(TiviPreferences.Theme.SYSTEM)
+      .collectAsState(TiviPreferences.Theme.SYSTEM)
 
     val useDynamicColors by remember { preferences.observeUseDynamicColors() }
-      .collectAsRetainedState(false)
+      .collectAsState(false)
 
     val useLessData by remember { preferences.observeUseLessData() }
-      .collectAsRetainedState(false)
+      .collectAsState(false)
 
     val ignoreSpecials by remember { preferences.observeIgnoreSpecials() }
-      .collectAsRetainedState(true)
+      .collectAsState(true)
 
     val crashDataReportingEnabled by remember { preferences.observeReportAppCrashes() }
-      .collectAsRetainedState(true)
+      .collectAsState(true)
 
     val analyticsDataReportingEnabled by remember { preferences.observeReportAnalytics() }
-      .collectAsRetainedState(true)
+      .collectAsState(true)
+
+    val notificationsEnabled by preferences.notificationsEnabled.flow.collectAsState(false)
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -90,6 +92,9 @@ class SettingsPresenter(
         SettingsUiEvent.ToggleAnalyticsDataReporting -> {
           coroutineScope.launch { preferences.toggleReportAnalytics() }
         }
+        SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled -> {
+          coroutineScope.launch { preferences.notificationsEnabled.toggle() }
+        }
         SettingsUiEvent.NavigatePrivacyPolicy -> {
           navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))
         }
@@ -108,6 +113,7 @@ class SettingsPresenter(
       ignoreSpecials = ignoreSpecials,
       crashDataReportingEnabled = crashDataReportingEnabled,
       analyticsDataReportingEnabled = analyticsDataReportingEnabled,
+      airingEpisodeNotificationsEnabled = notificationsEnabled,
       applicationInfo = applicationInfo,
       showDeveloperSettings = applicationInfo.flavor == Flavor.Qa,
       eventSink = ::eventSink,

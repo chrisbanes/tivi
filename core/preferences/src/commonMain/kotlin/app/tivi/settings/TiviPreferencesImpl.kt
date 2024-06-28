@@ -10,6 +10,7 @@ import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.getStringFlow
 import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.get
+import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -126,6 +127,25 @@ class TiviPreferencesImpl(
   override fun observeDeveloperHideArtwork(): Flow<Boolean> {
     return flowSettings.getBooleanFlow(KEY_DEV_HIDE_ARTWORK, false)
   }
+
+  override val notificationsEnabled: Preference<Boolean> by lazy {
+    BooleanPreference(KEY_NOTIFICATIONS, false)
+  }
+
+  private inner class BooleanPreference(
+    private val key: String,
+    private val defaultValue: Boolean = false
+  ) : Preference<Boolean> {
+    override suspend fun set(value: Boolean) = withContext(dispatchers.io) {
+      settings[key] = value
+    }
+
+    override suspend fun get(): Boolean = withContext(dispatchers.io) {
+      settings.getBoolean(key, defaultValue)
+    }
+
+    override val flow: Flow<Boolean> by lazy { flowSettings.getBooleanFlow(key, defaultValue) }
+  }
 }
 
 private val Theme.storageKey: String
@@ -148,6 +168,8 @@ internal const val KEY_LIBRARY_FOLLOWED_ACTIVE = "pref_library_followed_active"
 internal const val KEY_LIBRARY_WATCHED_ACTIVE = "pref_library_watched_active"
 internal const val KEY_UPNEXT_FOLLOWED_ONLY = "pref_upnext_followedonly_active"
 internal const val KEY_IGNORE_SPECIALS = "pref_ignore_specials"
+
+internal const val KEY_NOTIFICATIONS = "pref_notifications"
 
 internal const val KEY_OPT_IN_CRASH_REPORTING = "pref_opt_in_crash_reporting"
 internal const val KEY_OPT_IN_ANALYTICS_REPORTING = "pref_opt_in_analytics_reporting"
