@@ -14,6 +14,12 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 
+/**
+ * Marker interface for events which should be processed 'immediately'.
+ *
+ * Primarily, this is meant for events which are driven by user input and trigger UI changes
+ * (click button to go back), etc.
+ */
 interface ImmediateExecutionEvent : CircuitUiEvent
 
 class EventQueue<E : CircuitUiEvent> {
