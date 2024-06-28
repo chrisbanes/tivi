@@ -4,6 +4,7 @@
 package app.tivi.episodedetails
 
 import androidx.compose.runtime.Immutable
+import app.tivi.common.compose.ImmediateExecutionEvent
 import app.tivi.common.compose.UiMessage
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -25,9 +26,9 @@ data class EpisodeDetailsUiState(
 sealed interface EpisodeDetailsUiEvent : CircuitUiEvent {
   data class Refresh(val fromUser: Boolean = false) : EpisodeDetailsUiEvent
   data class RemoveWatchEntry(val id: Long) : EpisodeDetailsUiEvent
-  data class ClearMessage(val id: Long) : EpisodeDetailsUiEvent
+  data class ClearMessage(val id: Long) : EpisodeDetailsUiEvent, ImmediateExecutionEvent
   data object RemoveAllWatches : EpisodeDetailsUiEvent
-  data object OpenTrackEpisode : EpisodeDetailsUiEvent
-  data object ExpandToShowDetails : EpisodeDetailsUiEvent
-  data object NavigateUp : EpisodeDetailsUiEvent
+  data object OpenTrackEpisode : EpisodeDetailsUiEvent, ImmediateExecutionEvent
+  data object ExpandToShowDetails : EpisodeDetailsUiEvent, ImmediateExecutionEvent
+  data object NavigateUp : EpisodeDetailsUiEvent, ImmediateExecutionEvent
 }

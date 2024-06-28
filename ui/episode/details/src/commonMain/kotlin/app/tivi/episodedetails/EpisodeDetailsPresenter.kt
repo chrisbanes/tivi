@@ -9,10 +9,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.Snapshot
-import app.tivi.common.compose.LaunchedEventProcessor
+import app.tivi.common.compose.LaunchedEventQueueProcessor
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
-import app.tivi.common.compose.rememberEventChannel
+import app.tivi.common.compose.rememberEventQueue
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
 import app.tivi.domain.interactors.UpdateEpisodeDetails
@@ -70,9 +70,9 @@ class EpisodeDetailsPresenter(
     val episodeDetails by observeEpisodeDetails.value.flow.collectAsRetainedState(null)
     val episodeWatches by observeEpisodeWatches.value.flow.collectAsRetainedState(emptyList())
 
-    val events = rememberEventChannel<EpisodeDetailsUiEvent>()
+    val events = rememberEventQueue<EpisodeDetailsUiEvent>()
 
-    LaunchedEventProcessor(events) { event ->
+    LaunchedEventQueueProcessor(events) { event ->
       when (event) {
         is EpisodeDetailsUiEvent.Refresh -> {
           updateEpisodeDetails.value.invoke(
@@ -108,7 +108,7 @@ class EpisodeDetailsPresenter(
         EpisodeDetailsUiEvent.ExpandToShowDetails -> {
           navigator.pop()
 
-          val showId = showDetails?.id ?: return@LaunchedEventProcessor
+          val showId = showDetails?.id ?: return@LaunchedEventQueueProcessor
           // As we pushing a number of different screens onto the back stack,
           // we run it in a single snapshot to avoid unnecessary work
           Snapshot.withMutableSnapshot {
@@ -140,7 +140,7 @@ class EpisodeDetailsPresenter(
       canAddEpisodeWatch = episodeDetails?.episode?.hasAired ?: false,
       refreshing = refreshing,
       message = message,
-      eventSink = events::trySend,
+      eventSink = events::send,
     )
   }
 }
