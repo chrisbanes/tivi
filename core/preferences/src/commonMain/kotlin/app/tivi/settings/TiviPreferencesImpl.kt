@@ -51,7 +51,7 @@ class TiviPreferencesImpl(
   override val reportAnalytics: Preference<Boolean> by lazy {
     BooleanPreference(KEY_OPT_IN_ANALYTICS_REPORTING, true)
   }
-  override val reportDeveloperHideArtwork: Preference<Boolean> by lazy {
+  override val developerHideArtwork: Preference<Boolean> by lazy {
     BooleanPreference(KEY_DEV_HIDE_ARTWORK)
   }
   override val notificationsEnabled: Preference<Boolean> by lazy {

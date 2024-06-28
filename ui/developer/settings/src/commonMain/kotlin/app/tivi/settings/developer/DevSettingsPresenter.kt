@@ -46,7 +46,7 @@ class DevSettingsPresenter(
 
   @Composable
   override fun present(): DevSettingsUiState {
-    val hideArtwork by preferences.value.reportDeveloperHideArtwork.collectAsState()
+    val hideArtwork by preferences.value.developerHideArtwork.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -55,7 +55,7 @@ class DevSettingsPresenter(
         DevSettingsUiEvent.NavigateUp -> navigator.pop()
         DevSettingsUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
         DevSettingsUiEvent.ToggleHideArtwork -> {
-          coroutineScope.launch { preferences.value.reportDeveloperHideArtwork.toggle() }
+          coroutineScope.launch { preferences.value.developerHideArtwork.toggle() }
         }
         DevSettingsUiEvent.ScheduleNotification -> {
           notification.schedule(

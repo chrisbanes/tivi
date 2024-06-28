@@ -19,7 +19,7 @@ interface TiviPreferences {
   val reportAppCrashes: Preference<Boolean>
   val reportAnalytics: Preference<Boolean>
 
-  val reportDeveloperHideArtwork: Preference<Boolean>
+  val developerHideArtwork: Preference<Boolean>
 
   val notificationsEnabled: Preference<Boolean>
 
