@@ -46,7 +46,7 @@ class AndroidNotificationManager(
     val intent = PostNotificationBroadcastReceiver.buildIntent(
       context = application,
       id = id,
-      channelId = channel.toChannelId(),
+      channelId = channel.id,
       title = title,
       text = message,
     )
@@ -83,7 +83,7 @@ class AndroidNotificationManager(
     val intent = PostNotificationBroadcastReceiver.buildIntent(
       context = application,
       id = id,
-      channelId = channel.toChannelId(),
+      channelId = channel.id,
       title = title,
       text = message,
     )

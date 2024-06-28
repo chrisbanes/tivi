@@ -4,11 +4,10 @@
 package app.tivi.settings
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
+import app.tivi.common.compose.collectAsState
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.core.permissions.Permission.REMOTE_NOTIFICATION
 import app.tivi.core.permissions.PermissionState
@@ -52,25 +51,13 @@ class SettingsPresenter(
 
   @Composable
   override fun present(): SettingsUiState {
-    val theme by remember { preferences.observeTheme() }
-      .collectAsState(TiviPreferences.Theme.SYSTEM)
-
-    val useDynamicColors by remember { preferences.observeUseDynamicColors() }
-      .collectAsState(false)
-
-    val useLessData by remember { preferences.observeUseLessData() }
-      .collectAsState(false)
-
-    val ignoreSpecials by remember { preferences.observeIgnoreSpecials() }
-      .collectAsState(true)
-
-    val crashDataReportingEnabled by remember { preferences.observeReportAppCrashes() }
-      .collectAsState(true)
-
-    val analyticsDataReportingEnabled by remember { preferences.observeReportAnalytics() }
-      .collectAsState(true)
-
-    val notificationsEnabled by preferences.notificationsEnabled.flow.collectAsState(false)
+    val theme by preferences.theme.collectAsState()
+    val useDynamicColors by preferences.useDynamicColors.collectAsState()
+    val useLessData by preferences.useLessData.collectAsState()
+    val ignoreSpecials by preferences.ignoreSpecials.collectAsState()
+    val crashDataReportingEnabled by preferences.reportAppCrashes.collectAsState()
+    val analyticsDataReportingEnabled by preferences.reportAnalytics.collectAsState()
+    val notificationsEnabled by preferences.notificationsEnabled.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -80,23 +67,23 @@ class SettingsPresenter(
           navigator.pop()
         }
         is SettingsUiEvent.SetTheme -> {
-          coroutineScope.launch { preferences.setTheme(event.theme) }
+          coroutineScope.launch { preferences.theme.set(event.theme) }
         }
 
         SettingsUiEvent.ToggleUseDynamicColors -> {
-          coroutineScope.launch { preferences.toggleUseDynamicColors() }
+          coroutineScope.launch { preferences.useDynamicColors.toggle() }
         }
         SettingsUiEvent.ToggleUseLessData -> {
-          coroutineScope.launch { preferences.toggleUseLessData() }
+          coroutineScope.launch { preferences.useLessData.toggle() }
         }
         SettingsUiEvent.ToggleIgnoreSpecials -> {
-          coroutineScope.launch { preferences.toggleIgnoreSpecials() }
+          coroutineScope.launch { preferences.ignoreSpecials.toggle() }
         }
         SettingsUiEvent.ToggleCrashDataReporting -> {
-          coroutineScope.launch { preferences.toggleReportAppCrashes() }
+          coroutineScope.launch { preferences.reportAppCrashes.toggle() }
         }
         SettingsUiEvent.ToggleAnalyticsDataReporting -> {
-          coroutineScope.launch { preferences.toggleReportAnalytics() }
+          coroutineScope.launch { preferences.reportAnalytics.toggle() }
         }
         SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled -> {
           coroutineScope.launch {

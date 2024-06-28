@@ -7,9 +7,7 @@ import app.tivi.settings.TiviPreferences.Theme
 import app.tivi.util.AppCoroutineDispatchers
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
-import com.russhwolf.settings.coroutines.getStringFlow
 import com.russhwolf.settings.coroutines.toFlowSettings
-import com.russhwolf.settings.get
 import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -25,116 +23,44 @@ class TiviPreferencesImpl(
   private val settings: ObservableSettings by settings
   private val flowSettings by lazy { settings.value.toFlowSettings(dispatchers.io) }
 
-  override suspend fun setTheme(theme: Theme) = withContext(dispatchers.io) {
-    settings.putString(KEY_THEME, theme.storageKey)
+  override val theme: Preference<Theme> by lazy {
+    MappingPreference(KEY_THEME, Theme.SYSTEM, ::getThemeForStorageValue, ::themeToStorageValue)
   }
 
-  override fun observeTheme(): Flow<Theme> {
-    return settings.getStringFlow(KEY_THEME, THEME_SYSTEM_VALUE)
-      .map(::getThemeForStorageValue)
+  override val useDynamicColors: Preference<Boolean> by lazy {
+    BooleanPreference(KEY_USE_DYNAMIC_COLORS, true)
   }
-
-  override suspend fun toggleUseDynamicColors() = withContext(dispatchers.io) {
-    settings.toggleBoolean(KEY_USE_DYNAMIC_COLORS, true)
+  override val useLessData: Preference<Boolean> by lazy {
+    BooleanPreference(KEY_DATA_SAVER)
   }
-
-  override fun observeUseDynamicColors(): Flow<Boolean> {
-    return flowSettings.getBooleanFlow(KEY_USE_DYNAMIC_COLORS, true)
+  override val libraryFollowedActive: Preference<Boolean> by lazy {
+    BooleanPreference(KEY_LIBRARY_FOLLOWED_ACTIVE)
   }
-
-  override suspend fun getUseLessData(): Boolean = withContext(dispatchers.io) {
-    settings[KEY_DATA_SAVER, false]
+  override val libraryWatchedActive: Preference<Boolean> by lazy {
+    BooleanPreference(KEY_LIBRARY_WATCHED_ACTIVE)
   }
-
-  override suspend fun toggleUseLessData() = withContext(dispatchers.io) {
-    settings.toggleBoolean(KEY_DATA_SAVER)
+  override val upNextFollowedOnly: Preference<Boolean> by lazy {
+    BooleanPreference(KEY_UPNEXT_FOLLOWED_ONLY)
   }
-
-  override fun observeUseLessData(): Flow<Boolean> {
-    return flowSettings.getBooleanFlow(KEY_DATA_SAVER, false)
+  override val ignoreSpecials: Preference<Boolean> by lazy {
+    BooleanPreference(KEY_IGNORE_SPECIALS, true)
   }
-
-  override suspend fun toggleLibraryFollowedActive() {
-    withContext(dispatchers.io) {
-      settings.toggleBoolean(KEY_LIBRARY_FOLLOWED_ACTIVE, true)
-    }
+  override val reportAppCrashes: Preference<Boolean> by lazy {
+    BooleanPreference(KEY_OPT_IN_CRASH_REPORTING, true)
   }
-
-  override fun observeLibraryFollowedActive(): Flow<Boolean> {
-    return flowSettings.getBooleanFlow(KEY_LIBRARY_FOLLOWED_ACTIVE, true)
+  override val reportAnalytics: Preference<Boolean> by lazy {
+    BooleanPreference(KEY_OPT_IN_ANALYTICS_REPORTING, true)
   }
-
-  override suspend fun toggleLibraryWatchedActive() {
-    withContext(dispatchers.io) {
-      settings.toggleBoolean(KEY_LIBRARY_WATCHED_ACTIVE, true)
-    }
+  override val reportDeveloperHideArtwork: Preference<Boolean> by lazy {
+    BooleanPreference(KEY_DEV_HIDE_ARTWORK)
   }
-
-  override fun observeLibraryWatchedActive(): Flow<Boolean> {
-    return flowSettings.getBooleanFlow(KEY_LIBRARY_WATCHED_ACTIVE, true)
-  }
-
-  override suspend fun toggleUpNextFollowedOnly() {
-    withContext(dispatchers.io) {
-      settings.toggleBoolean(KEY_UPNEXT_FOLLOWED_ONLY, false)
-    }
-  }
-
-  override fun observeUpNextFollowedOnly(): Flow<Boolean> {
-    return flowSettings.getBooleanFlow(KEY_UPNEXT_FOLLOWED_ONLY, false)
-  }
-
-  override suspend fun toggleIgnoreSpecials() {
-    withContext(dispatchers.io) {
-      settings.toggleBoolean(KEY_IGNORE_SPECIALS, true)
-    }
-  }
-
-  override fun observeIgnoreSpecials(): Flow<Boolean> {
-    return flowSettings.getBooleanFlow(KEY_IGNORE_SPECIALS, true)
-  }
-
-  override suspend fun toggleReportAppCrashes() {
-    withContext(dispatchers.io) {
-      settings.toggleBoolean(KEY_OPT_IN_CRASH_REPORTING, true)
-    }
-  }
-
-  override fun observeReportAppCrashes(): Flow<Boolean> {
-    return flowSettings.getBooleanFlow(KEY_OPT_IN_CRASH_REPORTING, true)
-  }
-
-  override suspend fun toggleReportAnalytics() {
-    withContext(dispatchers.io) {
-      settings.toggleBoolean(KEY_OPT_IN_ANALYTICS_REPORTING, true)
-    }
-  }
-
-  override fun observeReportAnalytics(): Flow<Boolean> {
-    return flowSettings.getBooleanFlow(KEY_OPT_IN_ANALYTICS_REPORTING, true)
-  }
-
-  override suspend fun toggleDeveloperHideArtwork() {
-    withContext(dispatchers.io) {
-      settings.toggleBoolean(KEY_DEV_HIDE_ARTWORK)
-    }
-  }
-
-  override suspend fun getDeveloperHideArtwork(): Boolean = withContext(dispatchers.io) {
-    settings.getBoolean(KEY_DEV_HIDE_ARTWORK, false)
-  }
-
-  override fun observeDeveloperHideArtwork(): Flow<Boolean> {
-    return flowSettings.getBooleanFlow(KEY_DEV_HIDE_ARTWORK, false)
-  }
-
   override val notificationsEnabled: Preference<Boolean> by lazy {
-    BooleanPreference(KEY_NOTIFICATIONS, false)
+    BooleanPreference(KEY_NOTIFICATIONS)
   }
 
   private inner class BooleanPreference(
     private val key: String,
-    private val defaultValue: Boolean = false,
+    override val defaultValue: Boolean = false,
   ) : Preference<Boolean> {
     override suspend fun set(value: Boolean) = withContext(dispatchers.io) {
       settings[key] = value
@@ -146,14 +72,38 @@ class TiviPreferencesImpl(
 
     override val flow: Flow<Boolean> by lazy { flowSettings.getBooleanFlow(key, defaultValue) }
   }
+
+  private inner class MappingPreference<V>(
+    private val key: String,
+    override val defaultValue: V,
+    private val toValue: (String) -> V,
+    private val fromValue: (V) -> String,
+  ) : Preference<V> {
+    override suspend fun set(value: V) = withContext(dispatchers.io) {
+      settings[key] = fromValue(value)
+    }
+
+    override suspend fun get(): V = withContext(dispatchers.io) {
+      settings.getStringOrNull(key)?.let(toValue) ?: defaultValue
+    }
+
+    override val flow: Flow<V> by lazy {
+      flowSettings.getStringOrNullFlow(key).map { string ->
+        if (string != null) {
+          toValue(string)
+        } else {
+          defaultValue
+        }
+      }
+    }
+  }
 }
 
-private val Theme.storageKey: String
-  get() = when (this) {
-    Theme.LIGHT -> THEME_LIGHT_VALUE
-    Theme.DARK -> THEME_DARK_VALUE
-    Theme.SYSTEM -> THEME_SYSTEM_VALUE
-  }
+private fun themeToStorageValue(theme: Theme): String = when (theme) {
+  Theme.LIGHT -> THEME_LIGHT_VALUE
+  Theme.DARK -> THEME_DARK_VALUE
+  Theme.SYSTEM -> THEME_SYSTEM_VALUE
+}
 
 private fun getThemeForStorageValue(value: String) = when (value) {
   THEME_LIGHT_VALUE -> Theme.LIGHT

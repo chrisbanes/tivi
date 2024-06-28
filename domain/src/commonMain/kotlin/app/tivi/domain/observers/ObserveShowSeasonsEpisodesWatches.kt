@@ -22,7 +22,7 @@ class ObserveShowSeasonsEpisodesWatches(
 
   @OptIn(ExperimentalCoroutinesApi::class)
   override fun createObservable(params: Params): Flow<List<SeasonWithEpisodesAndWatches>> {
-    return preferences.observeIgnoreSpecials().flatMapLatest { ignoreSpecials ->
+    return preferences.ignoreSpecials.flow.flatMapLatest { ignoreSpecials ->
       if (ignoreSpecials) {
         seasonsEpisodesRepository
           .observeSeasonsWithEpisodesWatchedForShow(params.showId)

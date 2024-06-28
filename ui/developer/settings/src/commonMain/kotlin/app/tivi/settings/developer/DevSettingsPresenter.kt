@@ -5,14 +5,14 @@ package app.tivi.settings.developer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import app.tivi.common.compose.collectAsState
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.core.notifications.NotificationChannel
 import app.tivi.core.notifications.NotificationManager
 import app.tivi.screens.DevLogScreen
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.settings.TiviPreferences
-import com.slack.circuit.retained.collectAsRetainedState
+import app.tivi.settings.toggle
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -46,8 +46,7 @@ class DevSettingsPresenter(
 
   @Composable
   override fun present(): DevSettingsUiState {
-    val hideArtwork by remember { preferences.value.observeDeveloperHideArtwork() }
-      .collectAsRetainedState(false)
+    val hideArtwork by preferences.value.reportDeveloperHideArtwork.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -56,7 +55,7 @@ class DevSettingsPresenter(
         DevSettingsUiEvent.NavigateUp -> navigator.pop()
         DevSettingsUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
         DevSettingsUiEvent.ToggleHideArtwork -> {
-          coroutineScope.launch { preferences.value.toggleDeveloperHideArtwork() }
+          coroutineScope.launch { preferences.value.reportDeveloperHideArtwork.toggle() }
         }
         DevSettingsUiEvent.ScheduleNotification -> {
           notification.schedule(

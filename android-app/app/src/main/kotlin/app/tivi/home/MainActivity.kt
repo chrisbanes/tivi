@@ -30,8 +30,8 @@ import app.tivi.screens.DiscoverScreen
 import app.tivi.settings.TiviPreferences
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : TiviActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,10 +45,9 @@ class MainActivity : TiviActivity() {
 
     lifecycle.coroutineScope.launch {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
-        val prefs = withContext(applicationComponent.dispatchers.io) {
-          applicationComponent.preferences.observeTheme()
-        }
-        prefs.collect(::enableEdgeToEdgeForTheme)
+        applicationComponent.preferences.theme.flow
+          .flowOn(applicationComponent.dispatchers.io)
+          .collect(::enableEdgeToEdgeForTheme)
       }
     }
 

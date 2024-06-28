@@ -14,6 +14,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
+import app.tivi.common.compose.collectAsState
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.rememberRetainedCachedPagingFlow
 import app.tivi.data.models.SortOption
@@ -28,6 +29,7 @@ import app.tivi.screens.AccountScreen
 import app.tivi.screens.LibraryScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.settings.TiviPreferences
+import app.tivi.settings.toggle
 import app.tivi.util.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
@@ -89,10 +91,8 @@ class LibraryPresenter(
     val user by observeUserDetails.value.flow.collectAsRetainedState(null)
     val authState by observeTraktAuthState.value.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
 
-    val includeWatchedShows by remember { preferences.value.observeLibraryWatchedActive() }
-      .collectAsRetainedState(false)
-    val includeFollowedShows by remember { preferences.value.observeLibraryFollowedActive() }
-      .collectAsRetainedState(false)
+    val includeWatchedShows by preferences.value.libraryWatchedActive.collectAsState()
+    val includeFollowedShows by preferences.value.libraryFollowedActive.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -118,14 +118,10 @@ class LibraryPresenter(
           }
         }
         LibraryUiEvent.ToggleFollowedShowsIncluded -> {
-          coroutineScope.launch {
-            preferences.value.toggleLibraryFollowedActive()
-          }
+          coroutineScope.launch { preferences.value.libraryFollowedActive.toggle() }
         }
         LibraryUiEvent.ToggleWatchedShowsIncluded -> {
-          coroutineScope.launch {
-            preferences.value.toggleLibraryWatchedActive()
-          }
+          coroutineScope.launch { preferences.value.libraryWatchedActive.toggle() }
         }
         LibraryUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
         is LibraryUiEvent.OpenShowDetails -> {

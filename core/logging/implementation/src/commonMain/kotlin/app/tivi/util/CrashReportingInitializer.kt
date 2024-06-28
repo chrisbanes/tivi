@@ -19,7 +19,7 @@ class CrashReportingInitializer(
 ) : AppInitializer {
   override fun initialize() {
     scope.launch {
-      preferences.value.observeReportAppCrashes()
+      preferences.value.reportAppCrashes.flow
         .flowOn(dispatchers.io)
         .collect(action::invoke)
     }

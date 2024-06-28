@@ -22,7 +22,7 @@ class HideArtworkInterceptor(
 ) : Interceptor {
   override suspend fun intercept(chain: Interceptor.Chain): ImageResult = withContext(dispatchers.io) {
     when {
-      preferences.value.getDeveloperHideArtwork() && isArtwork(chain.request.data) -> {
+      preferences.value.reportDeveloperHideArtwork.get() && isArtwork(chain.request.data) -> {
         val size = chain.request.sizeResolver.size()
 
         val placeholder = buildString {

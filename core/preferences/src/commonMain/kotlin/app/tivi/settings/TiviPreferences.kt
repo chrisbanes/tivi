@@ -3,46 +3,23 @@
 
 package app.tivi.settings
 
-import kotlinx.coroutines.flow.Flow
-
 interface TiviPreferences {
-  suspend fun setTheme(theme: Theme)
-  fun observeTheme(): Flow<Theme>
 
-  suspend fun toggleUseDynamicColors()
+  val theme: Preference<Theme>
+  val useDynamicColors: Preference<Boolean>
 
-  fun observeUseDynamicColors(): Flow<Boolean>
+  val useLessData: Preference<Boolean>
 
-  suspend fun getUseLessData(): Boolean
+  val libraryFollowedActive: Preference<Boolean>
+  val libraryWatchedActive: Preference<Boolean>
 
-  suspend fun toggleUseLessData()
+  val upNextFollowedOnly: Preference<Boolean>
 
-  fun observeUseLessData(): Flow<Boolean>
+  val ignoreSpecials: Preference<Boolean>
+  val reportAppCrashes: Preference<Boolean>
+  val reportAnalytics: Preference<Boolean>
 
-  suspend fun toggleLibraryFollowedActive()
-
-  fun observeLibraryFollowedActive(): Flow<Boolean>
-
-  suspend fun toggleLibraryWatchedActive()
-
-  fun observeLibraryWatchedActive(): Flow<Boolean>
-
-  suspend fun toggleUpNextFollowedOnly()
-
-  fun observeUpNextFollowedOnly(): Flow<Boolean>
-
-  suspend fun toggleIgnoreSpecials()
-  fun observeIgnoreSpecials(): Flow<Boolean>
-
-  suspend fun toggleReportAppCrashes()
-  fun observeReportAppCrashes(): Flow<Boolean>
-
-  suspend fun toggleReportAnalytics()
-  fun observeReportAnalytics(): Flow<Boolean>
-
-  suspend fun toggleDeveloperHideArtwork()
-  suspend fun getDeveloperHideArtwork(): Boolean
-  fun observeDeveloperHideArtwork(): Flow<Boolean>
+  val reportDeveloperHideArtwork: Preference<Boolean>
 
   val notificationsEnabled: Preference<Boolean>
 
