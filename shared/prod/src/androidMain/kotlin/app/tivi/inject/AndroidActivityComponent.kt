@@ -4,6 +4,7 @@
 package app.tivi.inject
 
 import android.app.Activity
+import app.tivi.core.permissions.PermissionsController
 import app.tivi.home.TiviContent
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
@@ -16,6 +17,7 @@ abstract class AndroidActivityComponent(
 ) : SharedActivityComponent,
   ProdUiComponent {
   abstract val tiviContent: TiviContent
+  abstract val permissionsController: PermissionsController
 
   companion object
 }
