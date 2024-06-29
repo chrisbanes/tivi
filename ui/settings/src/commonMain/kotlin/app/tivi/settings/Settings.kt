@@ -231,6 +231,8 @@ internal fun Settings(
           )
         }
       }
+
+      itemSpacer(16.dp)
     }
   }
 }
