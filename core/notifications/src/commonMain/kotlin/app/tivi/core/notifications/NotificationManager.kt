@@ -18,7 +18,12 @@ interface NotificationManager {
   suspend fun getPendingNotifications(): List<PendingNotification>
 }
 
-data class PendingNotification(val id: String, val date: Instant?)
+data class PendingNotification(
+  val id: String,
+  val title: String,
+  val message: String,
+  val channelId: String,
+)
 
 enum class NotificationChannel(val id: String) {
   DEVELOPER("dev"),

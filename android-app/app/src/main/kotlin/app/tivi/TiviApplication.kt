@@ -8,20 +8,27 @@ import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
+import androidx.datastore.core.DataStore
 import androidx.work.Configuration
 import androidx.work.WorkerFactory
+import app.tivi.core.notifications.PendingNotificationsStoreProvider
+import app.tivi.core.notifications.proto.PendingNotifications
 import app.tivi.extensions.unsafeLazy
 import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.create
 
 class TiviApplication :
   Application(),
-  Configuration.Provider {
+  Configuration.Provider,
+  PendingNotificationsStoreProvider {
   val component: AndroidApplicationComponent by unsafeLazy {
     AndroidApplicationComponent.create(this)
   }
 
   private lateinit var workerFactory: WorkerFactory
+
+  override val pendingNotificationsStore: DataStore<PendingNotifications>
+    get() = component.pendingNotificationsStore
 
   override fun onCreate() {
     super.onCreate()

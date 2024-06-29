@@ -10,32 +10,52 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class PostNotificationBroadcastReceiver : BroadcastReceiver() {
 
+  @OptIn(DelicateCoroutinesApi::class)
   @SuppressLint("MissingPermission")
   override fun onReceive(context: Context, intent: Intent) {
     Log.d(TAG, "Received intent: %s".format(intent))
 
-    val notificationManager = NotificationManagerCompat.from(context)
-
     val id = intent.getStringExtra(EXTRA_ID)
-    val channelId = intent.getStringExtra(EXTRA_CHANNEL_ID)
-      ?: error("Value for EXTRA_CHANNEL_ID not provided")
-    val title = intent.getStringExtra(EXTRA_TITLE)
-    val content = intent.getStringExtra(EXTRA_CONTENT)
+    if (id == null) {
+      Log.d(TAG, "ID not provided. Exiting.")
+      return
+    }
 
-    val notification = NotificationCompat.Builder(context, channelId)
-      // Replace this icon with something better
-      .setSmallIcon(R.drawable.outline_tv_gen_24)
-      .setContentTitle(title)
-      .setContentText(content)
-      .build()
+    val notificationManager = NotificationManagerCompat.from(context)
+    val store = context.pendingNotificationsStore
+    val result = goAsync()
 
-    try {
-      notificationManager.notify(id, 0, notification)
-    } catch (se: SecurityException) {
-      Log.d(TAG, "Error posting notification", se)
+    GlobalScope.launch {
+      val pending = store.findWithId(id) ?: run {
+        Log.d(TAG, "Pending Notification with ID: $id not found. Exiting.")
+        result.finish()
+        return@launch
+      }
+
+      Log.d(TAG, "Found pending notification with ID: $id: $pending")
+
+      val notification = NotificationCompat.Builder(context, pending.channel_id)
+        // Replace this icon with something better
+        .setSmallIcon(R.drawable.outline_tv_gen_24)
+        .setContentTitle(pending.title)
+        .setContentText(pending.message)
+        .build()
+
+      try {
+        notificationManager.notify(id, 0, notification)
+      } catch (se: SecurityException) {
+        Log.d(TAG, "Error posting notification", se)
+      } finally {
+        store.removeWithId(id)
+      }
+
+      result.finish()
     }
   }
 
@@ -43,20 +63,11 @@ class PostNotificationBroadcastReceiver : BroadcastReceiver() {
     private const val TAG = "PostNotificationBroadcastReceiver"
 
     private const val EXTRA_ID = "notification_id"
-    private const val EXTRA_CHANNEL_ID = "notification_channel_id"
-    private const val EXTRA_TITLE = "notification_title"
-    private const val EXTRA_CONTENT = "notification_content"
 
     fun buildIntent(
       context: Context,
       id: String,
-      channelId: String,
-      title: String,
-      text: String,
     ): Intent = Intent(context, PostNotificationBroadcastReceiver::class.java)
       .putExtra(EXTRA_ID, id)
-      .putExtra(EXTRA_CHANNEL_ID, channelId)
-      .putExtra(EXTRA_TITLE, title)
-      .putExtra(EXTRA_CONTENT, text)
   }
 }

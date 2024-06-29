@@ -4,7 +4,9 @@
 package app.tivi.inject
 
 import android.app.Application
+import androidx.datastore.core.DataStore
 import app.tivi.appinitializers.AppInitializers
+import app.tivi.core.notifications.proto.PendingNotifications
 import app.tivi.tasks.TiviWorkerFactory
 import app.tivi.util.AppCoroutineDispatchers
 import com.chuckerteam.chucker.api.ChuckerInterceptor
@@ -24,6 +26,7 @@ abstract class AndroidApplicationComponent(
   abstract val initializers: AppInitializers
   abstract val workerFactory: TiviWorkerFactory
   abstract val dispatchers: AppCoroutineDispatchers
+  abstract val pendingNotificationsStore: DataStore<PendingNotifications>
 
   @ApplicationScope
   @IntoSet

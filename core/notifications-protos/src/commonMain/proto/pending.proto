@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-import "google/protobuf/timestamp.proto";
-
 package app.tivi.core.notifications.proto;
 
 message PendingNotification {
   string id = 1;
-  google.protobuf.Timestamp date = 2;
+  string title = 2;
+  string message = 3;
+  string channel_id = 4;
 }
 
 message PendingNotifications {
