@@ -19,6 +19,7 @@ kotlin {
         api(projects.shared.common)
 
         api(projects.ui.developer.log)
+        api(projects.ui.developer.notifications)
         api(projects.ui.developer.settings)
       }
     }

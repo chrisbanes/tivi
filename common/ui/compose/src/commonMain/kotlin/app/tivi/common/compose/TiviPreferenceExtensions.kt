@@ -6,13 +6,12 @@ package app.tivi.common.compose
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import app.tivi.settings.Preference
 import app.tivi.settings.TiviPreferences
 
 @Composable
 fun TiviPreferences.shouldUseDarkColors(): Boolean {
-  val themePreference = remember { observeTheme() }
-    .collectAsState(initial = TiviPreferences.Theme.SYSTEM)
+  val themePreference = theme.flow.collectAsState(initial = TiviPreferences.Theme.SYSTEM)
 
   return when (themePreference.value) {
     TiviPreferences.Theme.LIGHT -> false
@@ -23,7 +22,8 @@ fun TiviPreferences.shouldUseDarkColors(): Boolean {
 
 @Composable
 fun TiviPreferences.shouldUseDynamicColors(): Boolean {
-  return remember { observeUseDynamicColors() }
-    .collectAsState(initial = true)
-    .value
+  return useDynamicColors.flow.collectAsState(initial = true).value
 }
+
+@Composable
+inline fun <T> Preference<T>.collectAsState() = flow.collectAsState(defaultValue)

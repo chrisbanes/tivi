@@ -134,6 +134,21 @@ internal fun Settings(
       itemSpacer(24.dp)
 
       stickyHeader {
+        PreferenceHeader(LocalStrings.current.settingsNotificationsCategoryTitle)
+      }
+
+      item {
+        CheckboxPreference(
+          title = strings.settingsNotificationsAiringEpisodesTitle,
+          summaryOff = strings.settingsNotificationsAiringEpisodesSummary,
+          onCheckClicked = { eventSink(SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled) },
+          checked = state.airingEpisodeNotificationsEnabled,
+        )
+      }
+
+      itemSpacer(24.dp)
+
+      stickyHeader {
         PreferenceHeader(LocalStrings.current.settingsPrivacyCategoryTitle)
       }
 
@@ -216,6 +231,8 @@ internal fun Settings(
           )
         }
       }
+
+      itemSpacer(16.dp)
     }
   }
 }

@@ -77,6 +77,15 @@ internal fun DevSettings(
 
       item {
         Preference(
+          title = "Notifications",
+          modifier = Modifier.clickable {
+            state.eventSink(DevSettingsUiEvent.NavigateNotifications)
+          },
+        )
+      }
+
+      item {
+        Preference(
           title = "Open log",
           modifier = Modifier.clickable {
             state.eventSink(DevSettingsUiEvent.NavigateLog)

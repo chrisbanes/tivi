@@ -18,6 +18,7 @@ data class SettingsUiState(
   val ignoreSpecials: Boolean,
   val crashDataReportingEnabled: Boolean,
   val analyticsDataReportingEnabled: Boolean,
+  val airingEpisodeNotificationsEnabled: Boolean,
   val applicationInfo: ApplicationInfo,
   val showDeveloperSettings: Boolean,
   val eventSink: (SettingsUiEvent) -> Unit,
@@ -33,5 +34,6 @@ sealed interface SettingsUiEvent : CircuitUiEvent {
   data object ToggleIgnoreSpecials : SettingsUiEvent
   data object ToggleCrashDataReporting : SettingsUiEvent
   data object ToggleAnalyticsDataReporting : SettingsUiEvent
+  data object ToggleAiringEpisodeNotificationsEnabled : SettingsUiEvent
   data class SetTheme(val theme: TiviPreferences.Theme) : SettingsUiEvent
 }

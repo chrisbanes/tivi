@@ -5,7 +5,9 @@ package app.tivi.inject
 
 import app.tivi.common.imageloading.ImageLoadingComponent
 import app.tivi.core.analytics.AnalyticsComponent
+import app.tivi.core.notifications.NotificationsComponent
 import app.tivi.core.perf.PerformanceComponent
+import app.tivi.core.permissions.PermissionsComponent
 import app.tivi.data.SqlDelightDatabaseComponent
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsBinds
@@ -44,7 +46,9 @@ interface SharedApplicationComponent :
   TraktComponent,
   AnalyticsComponent,
   LoggerComponent,
+  NotificationsComponent,
   PerformanceComponent,
+  PermissionsComponent,
   PowerControllerComponent,
   PreferencesComponent,
   LicenseDataComponent,

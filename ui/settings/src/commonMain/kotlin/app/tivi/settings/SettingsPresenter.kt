@@ -5,15 +5,18 @@ package app.tivi.settings
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
+import app.tivi.common.compose.collectAsState
 import app.tivi.common.compose.rememberCoroutineScope
+import app.tivi.core.permissions.Permission.REMOTE_NOTIFICATION
+import app.tivi.core.permissions.PermissionState
+import app.tivi.core.permissions.PermissionsController
+import app.tivi.core.permissions.performPermissionedAction
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.screens.LicensesScreen
 import app.tivi.screens.SettingsScreen
 import app.tivi.screens.UrlScreen
-import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -40,29 +43,21 @@ class SettingsUiPresenterFactory(
 class SettingsPresenter(
   @Assisted private val navigator: Navigator,
   preferences: Lazy<TiviPreferences>,
+  permissionsController: Lazy<PermissionsController>,
   private val applicationInfo: ApplicationInfo,
 ) : Presenter<SettingsUiState> {
   private val preferences by preferences
+  private val permissionsController by permissionsController
 
   @Composable
   override fun present(): SettingsUiState {
-    val theme by remember { preferences.observeTheme() }
-      .collectAsRetainedState(TiviPreferences.Theme.SYSTEM)
-
-    val useDynamicColors by remember { preferences.observeUseDynamicColors() }
-      .collectAsRetainedState(false)
-
-    val useLessData by remember { preferences.observeUseLessData() }
-      .collectAsRetainedState(false)
-
-    val ignoreSpecials by remember { preferences.observeIgnoreSpecials() }
-      .collectAsRetainedState(true)
-
-    val crashDataReportingEnabled by remember { preferences.observeReportAppCrashes() }
-      .collectAsRetainedState(true)
-
-    val analyticsDataReportingEnabled by remember { preferences.observeReportAnalytics() }
-      .collectAsRetainedState(true)
+    val theme by preferences.theme.collectAsState()
+    val useDynamicColors by preferences.useDynamicColors.collectAsState()
+    val useLessData by preferences.useLessData.collectAsState()
+    val ignoreSpecials by preferences.ignoreSpecials.collectAsState()
+    val crashDataReportingEnabled by preferences.reportAppCrashes.collectAsState()
+    val analyticsDataReportingEnabled by preferences.reportAnalytics.collectAsState()
+    val notificationsEnabled by preferences.notificationsEnabled.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -72,23 +67,40 @@ class SettingsPresenter(
           navigator.pop()
         }
         is SettingsUiEvent.SetTheme -> {
-          coroutineScope.launch { preferences.setTheme(event.theme) }
+          coroutineScope.launch { preferences.theme.set(event.theme) }
         }
 
         SettingsUiEvent.ToggleUseDynamicColors -> {
-          coroutineScope.launch { preferences.toggleUseDynamicColors() }
+          coroutineScope.launch { preferences.useDynamicColors.toggle() }
         }
         SettingsUiEvent.ToggleUseLessData -> {
-          coroutineScope.launch { preferences.toggleUseLessData() }
+          coroutineScope.launch { preferences.useLessData.toggle() }
         }
         SettingsUiEvent.ToggleIgnoreSpecials -> {
-          coroutineScope.launch { preferences.toggleIgnoreSpecials() }
+          coroutineScope.launch { preferences.ignoreSpecials.toggle() }
         }
         SettingsUiEvent.ToggleCrashDataReporting -> {
-          coroutineScope.launch { preferences.toggleReportAppCrashes() }
+          coroutineScope.launch { preferences.reportAppCrashes.toggle() }
         }
         SettingsUiEvent.ToggleAnalyticsDataReporting -> {
-          coroutineScope.launch { preferences.toggleReportAnalytics() }
+          coroutineScope.launch { preferences.reportAnalytics.toggle() }
+        }
+        SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled -> {
+          coroutineScope.launch {
+            if (preferences.notificationsEnabled.get()) {
+              // If we're enabled, and being turned off, we don't need to mess with permissions
+              preferences.notificationsEnabled.toggle()
+            } else {
+              // If we're disabled, and being turned on, we need to check our permissions
+              permissionsController.performPermissionedAction(REMOTE_NOTIFICATION) { state ->
+                if (state == PermissionState.Granted) {
+                  preferences.notificationsEnabled.toggle()
+                } else {
+                  permissionsController.openAppSettings()
+                }
+              }
+            }
+          }
         }
         SettingsUiEvent.NavigatePrivacyPolicy -> {
           navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))
@@ -108,6 +120,7 @@ class SettingsPresenter(
       ignoreSpecials = ignoreSpecials,
       crashDataReportingEnabled = crashDataReportingEnabled,
       analyticsDataReportingEnabled = analyticsDataReportingEnabled,
+      airingEpisodeNotificationsEnabled = notificationsEnabled,
       applicationInfo = applicationInfo,
       showDeveloperSettings = applicationInfo.flavor == Flavor.Qa,
       eventSink = ::eventSink,

@@ -14,6 +14,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
+import app.tivi.common.compose.collectAsState
 import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.rememberRetainedCachedPagingFlow
 import app.tivi.data.models.SortOption
@@ -28,6 +29,7 @@ import app.tivi.screens.AccountScreen
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.UpNextScreen
 import app.tivi.settings.TiviPreferences
+import app.tivi.settings.toggle
 import app.tivi.util.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
@@ -89,8 +91,7 @@ class UpNextPresenter(
     val user by observeUserDetails.value.flow.collectAsRetainedState(null)
     val authState by observeTraktAuthState.value.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
 
-    val followedShowsOnly by remember { preferences.value.observeUpNextFollowedOnly() }
-      .collectAsRetainedState(false)
+    val followedShowsOnly by preferences.value.upNextFollowedOnly.collectAsState()
 
     fun eventSink(event: UpNextUiEvent) {
       when (event) {
@@ -115,7 +116,7 @@ class UpNextPresenter(
         }
 
         UpNextUiEvent.ToggleFollowedShowsOnly -> {
-          scope.launch { preferences.value.toggleUpNextFollowedOnly() }
+          scope.launch { preferences.value.upNextFollowedOnly.toggle() }
         }
 
         UpNextUiEvent.OpenAccount -> navigator.goTo(AccountScreen)

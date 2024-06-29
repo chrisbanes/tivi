@@ -22,6 +22,7 @@ import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.repeatOnLifecycle
 import app.tivi.TiviActivity
 import app.tivi.TiviApplication
+import app.tivi.core.permissions.bind
 import app.tivi.inject.AndroidActivityComponent
 import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.create
@@ -29,8 +30,8 @@ import app.tivi.screens.DiscoverScreen
 import app.tivi.settings.TiviPreferences
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : TiviActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,12 +45,14 @@ class MainActivity : TiviActivity() {
 
     lifecycle.coroutineScope.launch {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
-        val prefs = withContext(applicationComponent.dispatchers.io) {
-          applicationComponent.preferences.observeTheme()
-        }
-        prefs.collect(::enableEdgeToEdgeForTheme)
+        applicationComponent.preferences.theme.flow
+          .flowOn(applicationComponent.dispatchers.io)
+          .collect(::enableEdgeToEdgeForTheme)
       }
     }
+
+    // Bind the PermissionController
+    component.permissionsController.bind(this)
 
     setContent {
       val backstack = rememberSaveableBackStack(listOf(DiscoverScreen))

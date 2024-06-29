@@ -20,8 +20,7 @@ class AnalyticsInitializer(
 ) : AppInitializer {
   override fun initialize() {
     scope.launch {
-      preferences.value
-        .observeReportAnalytics()
+      preferences.value.reportAnalytics.flow
         .flowOn(dispatchers.io)
         .collect { enabled -> analytics.setEnabled(enabled) }
     }
