@@ -21,8 +21,8 @@ kotlin {
     androidMain {
       dependencies {
         implementation(libs.androidx.core)
-        api(libs.androidx.datastore)
-        api(projects.core.notificationsProtos)
+        implementation(libs.androidx.datastore)
+        implementation(projects.core.notificationsProtos)
       }
     }
   }

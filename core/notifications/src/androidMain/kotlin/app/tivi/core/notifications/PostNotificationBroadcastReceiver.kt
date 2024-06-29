@@ -40,7 +40,7 @@ class PostNotificationBroadcastReceiver : BroadcastReceiver() {
 
       Log.d(TAG, "Found pending notification with ID: $id: $pending")
 
-      val notification = NotificationCompat.Builder(context, pending.channel_id)
+      val notification = NotificationCompat.Builder(context, pending.channel.id)
         // Replace this icon with something better
         .setSmallIcon(R.drawable.outline_tv_gen_24)
         .setContentTitle(pending.title)

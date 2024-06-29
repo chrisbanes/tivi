@@ -22,10 +22,14 @@ data class PendingNotification(
   val id: String,
   val title: String,
   val message: String,
-  val channelId: String,
+  val channel: NotificationChannel,
 )
 
 enum class NotificationChannel(val id: String) {
   DEVELOPER("dev"),
   EPISODES_AIRING("episodes_airing"),
+}
+
+internal fun notificationChannelFromId(id: String): NotificationChannel {
+  return NotificationChannel.entries.first { it.id == id }
 }

@@ -13,13 +13,10 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_DEFAULT
 import androidx.core.content.getSystemService
-import androidx.datastore.core.DataStore
 import app.tivi.common.ui.resources.EnTiviStrings
 import app.tivi.core.notifications.proto.PendingNotification as PendingNotificationsProto
-import app.tivi.core.notifications.proto.PendingNotifications
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
@@ -28,7 +25,7 @@ import me.tatarka.inject.annotations.Inject
 class AndroidNotificationManager(
   private val application: Application,
   private val logger: Logger,
-  private val store: DataStore<PendingNotifications>,
+  private val store: PendingNotificationStore,
 ) : NotificationManager {
   private val notificationManager by lazy { NotificationManagerCompat.from(application) }
   private val alarmManager by lazy { application.getSystemService<AlarmManager>()!! }
@@ -117,9 +114,7 @@ class AndroidNotificationManager(
   }
 
   override suspend fun getPendingNotifications(): List<PendingNotification> {
-    return store.data.firstOrNull()?.let { data ->
-      data.pending.map { it.toPendingNotification() }
-    } ?: emptyList()
+    return store.getPendingNotifications()
   }
 
   private companion object {
@@ -129,13 +124,4 @@ class AndroidNotificationManager(
 
     const val PENDING_INTENT_FLAGS = FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT or FLAG_ONE_SHOT
   }
-}
-
-internal fun PendingNotificationsProto.toPendingNotification(): PendingNotification {
-  return PendingNotification(
-    id = id,
-    title = title,
-    message = message,
-    channelId = channel_id,
-  )
 }

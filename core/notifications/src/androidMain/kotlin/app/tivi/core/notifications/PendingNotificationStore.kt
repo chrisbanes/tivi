@@ -3,25 +3,71 @@
 
 package app.tivi.core.notifications
 
+import android.app.Application
 import android.content.Context
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.okio.OkioSerializer
 import androidx.datastore.core.okio.OkioStorage
-import app.tivi.core.notifications.proto.PendingNotification
+import androidx.datastore.dataStoreFile
 import app.tivi.core.notifications.proto.PendingNotification as PendingNotificationProto
 import app.tivi.core.notifications.proto.PendingNotifications as PendingNotificationsProto
+import app.tivi.util.AppCoroutineDispatchers
 import com.squareup.wire.Instant as WireInstant
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.Instant as KotlinInstant
 import kotlinx.datetime.toJavaInstant
+import me.tatarka.inject.annotations.Inject
 import okio.BufferedSink
 import okio.BufferedSource
 import okio.FileSystem
 import okio.IOException
 import okio.Path
+import okio.Path.Companion.toOkioPath
+
+@Inject
+class PendingNotificationStore(
+  application: Application,
+  dispatchers: AppCoroutineDispatchers,
+) {
+  private val scope = CoroutineScope(dispatchers.io + SupervisorJob()) // Inject this
+
+  private val store by lazy {
+    pendingNotificationsStore(scope) {
+      application.dataStoreFile("pending_notifications.pb")
+        .absoluteFile
+        .toOkioPath()
+    }
+  }
+
+  suspend fun findWithId(id: String): PendingNotification? {
+    return store.data.first().pending.firstOrNull { it.id == id }?.toPendingNotification()
+  }
+
+  suspend fun add(pending: PendingNotificationProto) {
+    store.updateData { data ->
+      data.copy(
+        pending = (data.pending + pending).asReversed().distinctBy(PendingNotificationProto::id),
+      )
+    }
+  }
+
+  suspend fun removeWithId(id: String) {
+    store.updateData { data ->
+      data.copy(data.pending.filterNot { it.id == id })
+    }
+  }
+
+  suspend fun getPendingNotifications(): List<PendingNotification> {
+    return store.data.firstOrNull()?.let { data ->
+      data.pending.map { it.toPendingNotification() }
+    } ?: emptyList()
+  }
+}
 
 internal fun pendingNotificationsStore(
   coroutineScope: CoroutineScope,
@@ -52,27 +98,18 @@ internal fun pendingNotificationsStore(
 
 fun KotlinInstant.toWireInstant(): WireInstant = toJavaInstant()
 
-suspend fun DataStore<PendingNotificationsProto>.add(pending: PendingNotificationProto) {
-  updateData { data ->
-    data.copy(pending = (data.pending + pending).asReversed().distinctBy(PendingNotification::id))
-  }
-}
-
-suspend fun DataStore<PendingNotificationsProto>.findWithId(id: String): PendingNotificationProto? {
-  return data.first().pending.firstOrNull { it.id == id }
-}
-
-suspend fun DataStore<PendingNotificationsProto>.removeWithId(id: String) {
-  updateData { data ->
-    data.copy(
-      data.pending.filterNot { it.id == id },
-    )
-  }
-}
-
 interface PendingNotificationsStoreProvider {
-  val pendingNotificationsStore: DataStore<PendingNotificationsProto>
+  val pendingNotificationsStore: PendingNotificationStore
 }
 
-val Context.pendingNotificationsStore: DataStore<PendingNotificationsProto>
+val Context.pendingNotificationsStore: PendingNotificationStore
   get() = (applicationContext as PendingNotificationsStoreProvider).pendingNotificationsStore
+
+internal fun PendingNotificationProto.toPendingNotification(): PendingNotification {
+  return PendingNotification(
+    id = id,
+    title = title,
+    message = message,
+    channel = notificationChannelFromId(channel_id),
+  )
+}

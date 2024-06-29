@@ -9,7 +9,6 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.toNSDateComponents
 import me.tatarka.inject.annotations.Inject
@@ -81,9 +80,9 @@ class IosNotificationManager(
           .map { request ->
             PendingNotification(
               id = request.identifier,
-              date = (request.trigger as? UNCalendarNotificationTrigger)
-                ?.nextTriggerDate()
-                ?.toKotlinInstant(),
+              title = request.content.title,
+              message = request.content.body,
+              channel = notificationChannelFromId(request.content.categoryIdentifier),
             )
           }
           .toList()
