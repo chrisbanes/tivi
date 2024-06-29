@@ -14,13 +14,6 @@ interface NotificationManager {
     channel: NotificationChannel,
     date: Instant,
   )
-
-  fun notify(
-    id: String,
-    title: String,
-    message: String,
-    channel: NotificationChannel,
-  )
 }
 
 enum class NotificationChannel(val id: String) {

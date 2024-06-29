@@ -4,8 +4,6 @@
 package app.tivi.core.notifications
 
 import app.tivi.util.Logger
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -62,15 +60,5 @@ class IosNotificationManager(
     }
 
     notificationCenter.addNotificationRequest(request, withCompletionHandler)
-  }
-
-  override fun notify(id: String, title: String, message: String, channel: NotificationChannel) {
-    schedule(
-      id = id,
-      title = title,
-      message = message,
-      channel = channel,
-      date = Clock.System.now() + 10.seconds,
-    )
   }
 }

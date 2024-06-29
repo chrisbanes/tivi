@@ -77,7 +77,7 @@ internal fun DevSettings(
 
       item {
         Preference(
-          title = "Show notification (immediately)",
+          title = "Show notification (in 5 seconds)",
           modifier = Modifier.clickable {
             state.eventSink(DevSettingsUiEvent.ShowNotification)
           },
@@ -86,7 +86,7 @@ internal fun DevSettings(
 
       item {
         Preference(
-          title = "Schedule notification (in 5 mins)",
+          title = "Schedule notification (in 15 mins)",
           modifier = Modifier.clickable {
             state.eventSink(DevSettingsUiEvent.ScheduleNotification)
           },
