@@ -5,6 +5,7 @@ package app.tivi.inject
 
 import android.app.Application
 import app.tivi.appinitializers.AppInitializers
+import app.tivi.core.notifications.PendingNotificationStore
 import app.tivi.tasks.TiviWorkerFactory
 import app.tivi.util.AppCoroutineDispatchers
 import me.tatarka.inject.annotations.Component
@@ -21,6 +22,7 @@ abstract class AndroidApplicationComponent(
   abstract val initializers: AppInitializers
   abstract val workerFactory: TiviWorkerFactory
   abstract val dispatchers: AppCoroutineDispatchers
+  abstract val pendingNotificationsStore: PendingNotificationStore
 
   /**
    * We have no interceptors in the standard release currently
