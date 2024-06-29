@@ -13,18 +13,39 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_DEFAULT
 import androidx.core.content.getSystemService
+import androidx.datastore.dataStoreFile
 import app.tivi.common.ui.resources.EnTiviStrings
+import app.tivi.core.notifications.proto.PendingNotification as PendingNotificationsProto
+import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.toKotlinInstant
 import me.tatarka.inject.annotations.Inject
+import okio.Path.Companion.toOkioPath
 
 @Inject
 class AndroidNotificationManager(
   private val application: Application,
   private val logger: Logger,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : NotificationManager {
+
+  private val coroutineScope by lazy {
+    CoroutineScope(dispatchers.io + SupervisorJob())
+  }
+
+  private val store by lazy {
+    pendingNotificationsStore(coroutineScope) {
+      application.dataStoreFile("pending_notifications.pb")
+        .absoluteFile
+        .toOkioPath()
+    }
+  }
 
   private val notificationManager by lazy { NotificationManagerCompat.from(application) }
   private val alarmManager by lazy { application.getSystemService<AlarmManager>()!! }
@@ -32,7 +53,7 @@ class AndroidNotificationManager(
   // TODO: this should use the system strings
   private val strings = EnTiviStrings
 
-  override fun schedule(
+  override suspend fun schedule(
     id: String,
     title: String,
     message: String,
@@ -88,6 +109,14 @@ class AndroidNotificationManager(
         // operation
         PendingIntent.getBroadcast(application, id.hashCode(), intent, PENDING_INTENT_FLAGS),
       )
+
+      store.updateData { data ->
+        val new = PendingNotificationsProto(id = id, date = date.toWireInstant())
+
+        data.copy(
+          pending = (data.pending + new).distinctBy { it.id },
+        )
+      }
     }
   }
 
@@ -110,6 +139,14 @@ class AndroidNotificationManager(
       .build()
 
     createNotificationChannel(androidChannel)
+  }
+
+  override suspend fun getPendingNotifications(): List<PendingNotification> {
+    return store.data.firstOrNull()?.let { data ->
+      data.pending.map {
+        PendingNotification(it.id, it.date?.toKotlinInstant())
+      }
+    } ?: emptyList()
   }
 
   private companion object {

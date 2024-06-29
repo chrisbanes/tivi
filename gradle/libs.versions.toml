@@ -21,6 +21,7 @@ paging = "3.3.0"
 spotless = "6.25.0"
 sqldelight = "2.0.2"
 licensee = "1.11.0"
+wire = "5.0.0-alpha04"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -41,6 +42,7 @@ gms-googleServices = "com.google.gms.google-services:4.4.2"
 firebase-crashlytics = "com.google.firebase.crashlytics:3.0.2"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+wire = { id = "com.squareup.wire", version.ref = "wire" }
 
 [libraries]
 androidx-activity-activity = { module = "androidx.activity:activity", version.ref = "androidxactivity" }
@@ -48,6 +50,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-browser = "androidx.browser:browser:1.8.0"
 androidx-collection = "androidx.collection:collection:1.4.0"
 androidx-core = "androidx.core:core-ktx:1.13.1"
+androidx-datastore = "androidx.datastore:datastore:1.1.1"
 androidx-splashscreen = "androidx.core:core-splashscreen:1.0.1"
 
 paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
@@ -148,6 +151,8 @@ assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
 turbine = "app.cash.turbine:turbine:1.1.0"
 
 uuid = "com.benasher44:uuid:0.8.4"
+
+wire-runtime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
 
 ktlint = "com.pinterest.ktlint:ktlint-cli:1.3.0"
 

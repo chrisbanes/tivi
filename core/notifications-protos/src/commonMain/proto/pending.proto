@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package app.tivi.core.notifications.proto;
+
+message PendingNotification {
+  string id = 1;
+  google.protobuf.Timestamp date = 2;
+}
+
+message PendingNotifications {
+  repeated PendingNotification pending = 1;
+}

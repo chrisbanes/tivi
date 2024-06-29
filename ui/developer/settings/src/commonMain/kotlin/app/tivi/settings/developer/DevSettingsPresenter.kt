@@ -58,23 +58,29 @@ class DevSettingsPresenter(
         DevSettingsUiEvent.ToggleHideArtwork -> {
           coroutineScope.launch { preferences.value.developerHideArtwork.toggle() }
         }
+
         DevSettingsUiEvent.ScheduleNotification -> {
-          notification.schedule(
-            id = "scheduled_test",
-            title = "Test Notification",
-            message = "Scheduled from developer settings",
-            channel = NotificationChannel.DEVELOPER,
-            date = Clock.System.now() + 15.minutes,
-          )
+          coroutineScope.launch {
+            notification.schedule(
+              id = "scheduled_test",
+              title = "Test Notification",
+              message = "Scheduled from developer settings",
+              channel = NotificationChannel.DEVELOPER,
+              date = Clock.System.now() + 15.minutes,
+            )
+          }
         }
+
         DevSettingsUiEvent.ShowNotification -> {
-          notification.schedule(
-            id = "immediate_test",
-            title = "Test Notification",
-            message = "Sent from developer settings",
-            channel = NotificationChannel.DEVELOPER,
-            date = Clock.System.now() + 5.seconds,
-          )
+          coroutineScope.launch {
+            notification.schedule(
+              id = "immediate_test",
+              title = "Test Notification",
+              message = "Sent from developer settings",
+              channel = NotificationChannel.DEVELOPER,
+              date = Clock.System.now() + 5.seconds,
+            )
+          }
         }
       }
     }

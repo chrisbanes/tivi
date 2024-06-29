@@ -86,6 +86,7 @@ include(
   ":core:powercontroller",
   ":core:preferences",
   ":core:notifications",
+  ":core:notifications-protos",
   ":common:ui:circuit-overlay",
   ":common:ui:resources:fonts",
   ":common:ui:resources:strings",

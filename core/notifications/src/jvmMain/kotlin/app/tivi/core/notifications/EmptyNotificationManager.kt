@@ -6,7 +6,7 @@ package app.tivi.core.notifications
 import kotlinx.datetime.Instant
 
 internal object EmptyNotificationManager : NotificationManager {
-  override fun schedule(
+  override suspend fun schedule(
     id: String,
     title: String,
     message: String,
@@ -16,7 +16,5 @@ internal object EmptyNotificationManager : NotificationManager {
     // no-op
   }
 
-  override fun notify(id: String, title: String, message: String, channel: NotificationChannel) {
-    // no-op
-  }
+  override suspend fun getPendingNotifications(): List<PendingNotification> = emptyList()
 }
