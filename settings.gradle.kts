@@ -119,6 +119,7 @@ include(
   ":shared:qa",
   ":shared:prod",
   ":ui:developer:log",
+  ":ui:developer:notifications",
   ":ui:developer:settings",
   ":ui:discover",
   ":ui:episode:details",

@@ -19,6 +19,7 @@ import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.toJavaInstant
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -48,7 +49,16 @@ class AndroidNotificationManager(
     val intent = PostNotificationBroadcastReceiver.buildIntent(application, id)
 
     // Save the pending notification
-    store.add(PendingNotificationsProto(id, title, message, channel.id, deeplinkUrl))
+    store.add(
+      PendingNotificationsProto(
+        id = id,
+        title = title,
+        message = message,
+        channel_id = channel.id,
+        deeplink_url = deeplinkUrl,
+        date = date.toJavaInstant(),
+      ),
+    )
 
     // Now decide whether to send the broadcast now, or set an alarm
     val windowStartTime = (date - ALARM_WINDOW_LENGTH)

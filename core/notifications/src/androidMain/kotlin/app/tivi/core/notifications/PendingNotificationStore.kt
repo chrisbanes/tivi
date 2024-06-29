@@ -13,15 +13,13 @@ import androidx.datastore.core.okio.OkioStorage
 import androidx.datastore.dataStoreFile
 import app.tivi.core.notifications.proto.PendingNotification as PendingNotificationProto
 import app.tivi.core.notifications.proto.PendingNotifications as PendingNotificationsProto
+import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
-import com.squareup.wire.Instant as WireInstant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.datetime.Instant as KotlinInstant
-import app.tivi.inject.ApplicationScope
-import kotlinx.datetime.toJavaInstant
+import kotlinx.datetime.toKotlinInstant
 import me.tatarka.inject.annotations.Inject
 import okio.BufferedSink
 import okio.BufferedSource
@@ -98,8 +96,6 @@ internal fun pendingNotificationsStore(
   scope = coroutineScope,
 )
 
-fun KotlinInstant.toWireInstant(): WireInstant = toJavaInstant()
-
 interface PendingNotificationsStoreProvider {
   val pendingNotificationsStore: PendingNotificationStore
 }
@@ -112,6 +108,8 @@ internal fun PendingNotificationProto.toPendingNotification(): PendingNotificati
     id = id,
     title = title,
     message = message,
+    deeplinkUrl = deeplink_url,
+    date = date?.toKotlinInstant(),
     channel = notificationChannelFromId(channel_id),
   )
 }

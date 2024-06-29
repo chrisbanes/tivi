@@ -24,6 +24,7 @@ data class PendingNotification(
   val title: String,
   val message: String,
   val channel: NotificationChannel,
+  val date: Instant?,
   val deeplinkUrl: String? = null,
 )
 

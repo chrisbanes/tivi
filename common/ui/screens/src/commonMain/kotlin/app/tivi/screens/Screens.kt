@@ -43,6 +43,9 @@ object LicensesScreen : TiviScreen(name = "LicensesScreen()")
 object DevSettingsScreen : TiviScreen(name = "DevelopmentSettings()")
 
 @Parcelize
+object DevNotificationsScreen : TiviScreen("DevNotificationsScreen()")
+
+@Parcelize
 object DevLogScreen : TiviScreen(name = "DevelopmentLog()")
 
 @Parcelize

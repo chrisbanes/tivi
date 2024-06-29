@@ -1,4 +1,4 @@
-// Copyright 2023, Google LLC, Christopher Banes and the Tivi project contributors
+// Copyright 2024, Google LLC, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
 
@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-  namespace = "app.tivi.debug.settings"
+  namespace = "app.tivi.developer.notifications"
 }
 
 kotlin {
@@ -17,8 +17,8 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.core.preferences)
-        implementation(projects.domain)
+        api(projects.core.notifications)
+
         implementation(projects.common.ui.compose)
 
         api(projects.common.ui.screens)

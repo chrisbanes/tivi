@@ -7,9 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import app.tivi.common.compose.collectAsState
 import app.tivi.common.compose.rememberCoroutineScope
-import app.tivi.core.notifications.NotificationChannel
-import app.tivi.core.notifications.NotificationManager
 import app.tivi.screens.DevLogScreen
+import app.tivi.screens.DevNotificationsScreen
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.toggle
@@ -17,10 +16,7 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -42,7 +38,6 @@ class DevSettingsUiPresenterFactory(
 class DevSettingsPresenter(
   @Assisted private val navigator: Navigator,
   private val preferences: Lazy<TiviPreferences>,
-  private val notification: NotificationManager,
 ) : Presenter<DevSettingsUiState> {
 
   @Composable
@@ -55,32 +50,9 @@ class DevSettingsPresenter(
       when (event) {
         DevSettingsUiEvent.NavigateUp -> navigator.pop()
         DevSettingsUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
+        DevSettingsUiEvent.NavigateNotifications -> navigator.goTo(DevNotificationsScreen)
         DevSettingsUiEvent.ToggleHideArtwork -> {
           coroutineScope.launch { preferences.value.developerHideArtwork.toggle() }
-        }
-
-        DevSettingsUiEvent.ScheduleNotification -> {
-          coroutineScope.launch {
-            notification.schedule(
-              id = "scheduled_test",
-              title = "Test Notification",
-              message = "Scheduled from developer settings",
-              channel = NotificationChannel.DEVELOPER,
-              date = Clock.System.now() + 15.minutes,
-            )
-          }
-        }
-
-        DevSettingsUiEvent.ShowNotification -> {
-          coroutineScope.launch {
-            notification.schedule(
-              id = "immediate_test",
-              title = "Test Notification",
-              message = "Sent from developer settings",
-              channel = NotificationChannel.DEVELOPER,
-              date = Clock.System.now() + 5.seconds,
-            )
-          }
         }
       }
     }
