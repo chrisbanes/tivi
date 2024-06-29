@@ -20,6 +20,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.Instant as KotlinInstant
+import app.tivi.inject.ApplicationScope
 import kotlinx.datetime.toJavaInstant
 import me.tatarka.inject.annotations.Inject
 import okio.BufferedSink
@@ -29,6 +30,7 @@ import okio.IOException
 import okio.Path
 import okio.Path.Companion.toOkioPath
 
+@ApplicationScope
 @Inject
 class PendingNotificationStore(
   application: Application,
