@@ -13,6 +13,7 @@ interface NotificationManager {
     message: String,
     channel: NotificationChannel,
     date: Instant,
+    deeplinkUrl: String? = null,
   )
 
   suspend fun getPendingNotifications(): List<PendingNotification>
@@ -23,6 +24,7 @@ data class PendingNotification(
   val title: String,
   val message: String,
   val channel: NotificationChannel,
+  val deeplinkUrl: String? = null,
 )
 
 enum class NotificationChannel(val id: String) {

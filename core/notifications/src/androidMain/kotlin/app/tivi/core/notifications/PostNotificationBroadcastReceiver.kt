@@ -4,6 +4,7 @@
 package app.tivi.core.notifications
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -45,6 +46,14 @@ class PostNotificationBroadcastReceiver : BroadcastReceiver() {
         .setSmallIcon(R.drawable.outline_tv_gen_24)
         .setContentTitle(pending.title)
         .setContentText(pending.message)
+        .apply {
+          if (pending.deeplinkUrl != null) {
+            val launchIntent = Intent(pending.deeplinkUrl)
+            setContentIntent(
+              PendingIntent.getActivity(context, 0, launchIntent, PendingIntent.FLAG_IMMUTABLE),
+            )
+          }
+        }
         .build()
 
       try {
@@ -64,10 +73,9 @@ class PostNotificationBroadcastReceiver : BroadcastReceiver() {
 
     private const val EXTRA_ID = "notification_id"
 
-    fun buildIntent(
-      context: Context,
-      id: String,
-    ): Intent = Intent(context, PostNotificationBroadcastReceiver::class.java)
-      .putExtra(EXTRA_ID, id)
+    fun buildIntent(context: Context, id: String): Intent {
+      return Intent(context, PostNotificationBroadcastReceiver::class.java)
+        .putExtra(EXTRA_ID, id)
+    }
   }
 }

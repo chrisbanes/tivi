@@ -39,18 +39,16 @@ class AndroidNotificationManager(
     message: String,
     channel: NotificationChannel,
     date: Instant,
+    deeplinkUrl: String?,
   ) {
     // We create the channel now ahead of time. We want to limit the amount of work
     // in the broadcast receiver
     notificationManager.createChannel(channel)
 
-    val intent = PostNotificationBroadcastReceiver.buildIntent(
-      context = application,
-      id = id,
-    )
+    val intent = PostNotificationBroadcastReceiver.buildIntent(application, id)
 
     // Save the pending notification
-    store.add(PendingNotificationsProto(id, title, message, channel.id))
+    store.add(PendingNotificationsProto(id, title, message, channel.id, deeplinkUrl))
 
     // Now decide whether to send the broadcast now, or set an alarm
     val windowStartTime = (date - ALARM_WINDOW_LENGTH)

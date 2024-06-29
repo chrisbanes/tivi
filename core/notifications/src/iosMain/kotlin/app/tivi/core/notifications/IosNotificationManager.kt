@@ -32,16 +32,24 @@ class IosNotificationManager(
     message: String,
     channel: NotificationChannel,
     date: Instant,
+    deeplinkUrl: String?,
   ) {
     val trigger = UNCalendarNotificationTrigger.triggerWithDateMatchingComponents(
       dateComponents = date.toLocalDateTime(TimeZone.currentSystemDefault()).toNSDateComponents(),
       repeats = false,
     )
 
+    val userInfo = buildMap {
+      if (deeplinkUrl != null) {
+        put(USER_INFO_DEEPLINK, deeplinkUrl)
+      }
+    }
+
     val content = UNMutableNotificationContent().apply {
       setTitle(title)
       setBody(message)
       setCategoryIdentifier(channel.id)
+      setUserInfo(userInfo as Map<Any?, *>)
     }
 
     val request = UNNotificationRequest.requestWithIdentifier(id, content, trigger)
@@ -78,11 +86,13 @@ class IosNotificationManager(
           .asSequence()
           .filterIsInstance<UNNotificationRequest>()
           .map { request ->
+            val content = request.content
             PendingNotification(
               id = request.identifier,
-              title = request.content.title,
-              message = request.content.body,
-              channel = notificationChannelFromId(request.content.categoryIdentifier),
+              title = content.title,
+              message = content.body,
+              channel = notificationChannelFromId(content.categoryIdentifier),
+              deeplinkUrl = content.userInfo[USER_INFO_DEEPLINK]?.toString(),
             )
           }
           .toList()
@@ -90,5 +100,9 @@ class IosNotificationManager(
         cont.resume(pending)
       }
     }
+  }
+
+  private companion object {
+    const val USER_INFO_DEEPLINK = "deeplink_url"
   }
 }

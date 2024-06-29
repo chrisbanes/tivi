@@ -12,6 +12,7 @@ internal object EmptyNotificationManager : NotificationManager {
     message: String,
     channel: NotificationChannel,
     date: Instant,
+    deeplinkUrl: String?,
   ) {
     // no-op
   }
