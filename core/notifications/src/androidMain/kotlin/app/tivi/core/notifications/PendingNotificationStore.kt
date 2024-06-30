@@ -13,6 +13,8 @@ import androidx.datastore.core.okio.OkioStorage
 import androidx.datastore.dataStoreFile
 import app.tivi.core.notifications.proto.PendingNotification as PendingNotificationProto
 import app.tivi.core.notifications.proto.PendingNotifications as PendingNotificationsProto
+import app.tivi.data.models.Notification
+import app.tivi.data.models.NotificationChannel
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
@@ -44,8 +46,8 @@ class PendingNotificationStore(
     }
   }
 
-  suspend fun findWithId(id: String): PendingNotification? {
-    return store.data.first().pending.firstOrNull { it.id == id }?.toPendingNotification()
+  suspend fun findWithId(id: String): Notification? {
+    return store.data.first().pending.firstOrNull { it.id == id }?.toNotification()
   }
 
   suspend fun add(pending: PendingNotificationProto) {
@@ -62,9 +64,9 @@ class PendingNotificationStore(
     }
   }
 
-  suspend fun getPendingNotifications(): List<PendingNotification> {
+  suspend fun getPendingNotifications(): List<Notification> {
     return store.data.firstOrNull()?.let { data ->
-      data.pending.map { it.toPendingNotification() }
+      data.pending.map { it.toNotification() }
     } ?: emptyList()
   }
 }
@@ -103,13 +105,13 @@ interface PendingNotificationsStoreProvider {
 val Context.pendingNotificationsStore: PendingNotificationStore
   get() = (applicationContext as PendingNotificationsStoreProvider).pendingNotificationsStore
 
-internal fun PendingNotificationProto.toPendingNotification(): PendingNotification {
-  return PendingNotification(
+internal fun PendingNotificationProto.toNotification(): Notification {
+  return Notification(
     id = id,
     title = title,
     message = message,
     deeplinkUrl = deeplink_url,
     date = date?.toKotlinInstant(),
-    channel = notificationChannelFromId(channel_id),
+    channel = NotificationChannel.fromId(channel_id),
   )
 }

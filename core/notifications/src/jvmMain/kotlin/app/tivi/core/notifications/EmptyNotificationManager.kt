@@ -3,6 +3,8 @@
 
 package app.tivi.core.notifications
 
+import app.tivi.data.models.Notification
+import app.tivi.data.models.NotificationChannel
 import kotlinx.datetime.Instant
 
 internal object EmptyNotificationManager : NotificationManager {
@@ -17,5 +19,5 @@ internal object EmptyNotificationManager : NotificationManager {
     // no-op
   }
 
-  override suspend fun getPendingNotifications(): List<PendingNotification> = emptyList()
+  override suspend fun getPendingNotifications(): List<Notification> = emptyList()
 }

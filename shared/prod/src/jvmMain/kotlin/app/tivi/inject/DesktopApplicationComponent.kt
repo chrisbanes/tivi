@@ -3,7 +3,6 @@
 
 package app.tivi.inject
 
-import app.tivi.appinitializers.AppInitializers
 import me.tatarka.inject.annotations.Component
 
 @Component
@@ -11,7 +10,6 @@ import me.tatarka.inject.annotations.Component
 abstract class DesktopApplicationComponent :
   SharedApplicationComponent,
   ProdApplicationComponent {
-  abstract val initializers: AppInitializers
 
   companion object
 }

@@ -15,6 +15,8 @@ import androidx.core.app.NotificationManagerCompat.IMPORTANCE_DEFAULT
 import androidx.core.content.getSystemService
 import app.tivi.common.ui.resources.EnTiviStrings
 import app.tivi.core.notifications.proto.PendingNotification as PendingNotificationsProto
+import app.tivi.data.models.Notification
+import app.tivi.data.models.NotificationChannel
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
@@ -121,7 +123,7 @@ class AndroidNotificationManager(
     createNotificationChannel(androidChannel)
   }
 
-  override suspend fun getPendingNotifications(): List<PendingNotification> {
+  override suspend fun getPendingNotifications(): List<Notification> {
     return store.getPendingNotifications()
   }
 

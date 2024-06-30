@@ -4,13 +4,13 @@
 package app.tivi.developer.notifications
 
 import androidx.compose.runtime.Immutable
-import app.tivi.core.notifications.PendingNotification
+import app.tivi.data.models.Notification
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class DevNotificationsUiState(
-  val pendingNotifications: List<PendingNotification>,
+  val pendingNotifications: List<Notification>,
   val eventSink: (DevNotificationsUiEvent) -> Unit,
 ) : CircuitUiState
 

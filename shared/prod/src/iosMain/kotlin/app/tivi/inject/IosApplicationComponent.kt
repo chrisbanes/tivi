@@ -3,7 +3,6 @@
 
 package app.tivi.inject
 
-import app.tivi.appinitializers.AppInitializers
 import app.tivi.core.analytics.Analytics
 import app.tivi.data.traktauth.TraktLoginAction
 import app.tivi.data.traktauth.TraktOAuthInfo
@@ -21,8 +20,6 @@ abstract class IosApplicationComponent(
   override val setCrashReportingEnabledAction: SetCrashReportingEnabledAction,
 ) : SharedApplicationComponent,
   ProdApplicationComponent {
-
-  abstract val initializers: AppInitializers
 
   @Provides
   @ApplicationScope
