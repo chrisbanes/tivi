@@ -5,3 +5,6 @@ excluded:
   - ios-app/Tivi/UITests/SnapshotHelper.swift
 
 strict: true
+
+disabled_rules:
+  - todo
