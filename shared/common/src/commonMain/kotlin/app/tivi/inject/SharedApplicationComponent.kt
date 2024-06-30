@@ -3,6 +3,7 @@
 
 package app.tivi.inject
 
+import app.tivi.appinitializers.AppInitializers
 import app.tivi.common.imageloading.ImageLoadingComponent
 import app.tivi.core.analytics.AnalyticsComponent
 import app.tivi.core.notifications.NotificationsComponent
@@ -65,6 +66,9 @@ interface SharedApplicationComponent :
   TrendingShowsBinds,
   WatchedShowsBinds,
   SqlDelightDatabaseComponent {
+
+  val initializers: AppInitializers
+  val dispatchers: AppCoroutineDispatchers
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @ApplicationScope

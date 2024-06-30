@@ -107,20 +107,20 @@ internal fun DevNotifications(
         PreferenceHeader("Pending Notifications")
       }
 
-      items(state.pendingNotifications) { pendingNotification ->
+      items(state.pendingNotifications) { notification ->
         ListItem(
           overlineContent = {
-            val date = pendingNotification.date
+            val date = notification.date
             if (date != null) {
               Text(LocalTiviDateFormatter.current.formatMediumDateTime(date))
             }
           },
-          headlineContent = { Text(pendingNotification.title) },
+          headlineContent = { Text(notification.title) },
           supportingContent = {
             Column {
-              Text("Message: ${pendingNotification.message}")
-              Text("Deeplink: ${pendingNotification.deeplinkUrl}")
-              Text("Channel: ${pendingNotification.channel}")
+              Text("Message: ${notification.message}")
+              Text("Deeplink: ${notification.deeplinkUrl}")
+              Text("Channel: ${notification.channel}")
             }
           },
         )

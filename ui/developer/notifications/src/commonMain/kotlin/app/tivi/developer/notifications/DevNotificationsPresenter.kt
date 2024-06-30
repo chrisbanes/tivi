@@ -10,9 +10,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import app.tivi.common.compose.rememberCoroutineScope
-import app.tivi.core.notifications.NotificationChannel
 import app.tivi.core.notifications.NotificationManager
-import app.tivi.core.notifications.PendingNotification
+import app.tivi.data.models.Notification
+import app.tivi.data.models.NotificationChannel
 import app.tivi.screens.DevNotificationsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -50,7 +50,7 @@ class DevNotificationsPresenter(
   @Composable
   override fun present(): DevNotificationsUiState {
     val coroutineScope = rememberCoroutineScope()
-    var pending by remember { mutableStateOf(emptyList<PendingNotification>()) }
+    var pending by remember { mutableStateOf(emptyList<Notification>()) }
 
     LaunchedEffect(notificationsManager) {
       while (isActive) {

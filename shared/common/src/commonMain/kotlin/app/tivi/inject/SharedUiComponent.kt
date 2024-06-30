@@ -7,9 +7,11 @@ import app.tivi.account.AccountComponent
 import app.tivi.common.ui.resources.Locales
 import app.tivi.common.ui.resources.Strings
 import app.tivi.common.ui.resources.TiviStrings
+import app.tivi.core.permissions.PermissionsController
 import app.tivi.episode.track.EpisodeTrackComponent
 import app.tivi.episodedetails.EpisodeDetailsComponent
 import app.tivi.home.RootUiComponent
+import app.tivi.home.TiviContent
 import app.tivi.home.discover.DiscoverComponent
 import app.tivi.home.library.LibraryComponent
 import app.tivi.home.popular.PopularShowsComponent
@@ -43,6 +45,9 @@ interface SharedUiComponent :
   RootUiComponent,
   TrendingShowsComponent,
   UpNextComponent {
+
+  val tiviContent: TiviContent
+  val permissionsController: PermissionsController
 
   @Provides
   @ActivityScope

@@ -3,6 +3,8 @@
 
 package app.tivi.core.notifications
 
+import app.tivi.data.models.Notification
+import app.tivi.data.models.NotificationChannel
 import app.tivi.util.Logger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -78,7 +80,7 @@ class IosNotificationManager(
     }
   }
 
-  override suspend fun getPendingNotifications(): List<PendingNotification> {
+  override suspend fun getPendingNotifications(): List<Notification> {
     return suspendCoroutine { cont ->
       UNUserNotificationCenter
         .currentNotificationCenter()
@@ -88,11 +90,11 @@ class IosNotificationManager(
             .filterIsInstance<UNNotificationRequest>()
             .map { request ->
               val content = request.content
-              PendingNotification(
+              Notification(
                 id = request.identifier,
                 title = content.title,
                 message = content.body,
-                channel = notificationChannelFromId(content.categoryIdentifier),
+                channel = NotificationChannel.fromId(content.categoryIdentifier),
                 date = (request.trigger as? UNCalendarNotificationTrigger)
                   ?.nextTriggerDate()
                   ?.toKotlinInstant(),

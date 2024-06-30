@@ -3,7 +3,6 @@
 
 package app.tivi.inject
 
-import app.tivi.home.TiviContent
 import me.tatarka.inject.annotations.Component
 
 @ActivityScope
@@ -11,6 +10,6 @@ import me.tatarka.inject.annotations.Component
 abstract class WindowComponent(
   @Component val applicationComponent: DesktopApplicationComponent,
 ) : QaUiComponent {
-  abstract val tiviContent: TiviContent
+
   companion object
 }
