@@ -12,7 +12,7 @@ import FirebaseCrashlytics
 import SwiftUI
 import TiviKt
 
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     // property of the app's AppDelegate
     var currentAuthorizationFlow: OIDExternalUserAgentSession?
 
@@ -27,7 +27,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if !(FirebaseOptions.defaultOptions()?.apiKey?.isEmpty ?? true) {
             FirebaseApp.configure()
         }
+
+        // Set the UNUserNotificationCenter delegate
+        UNUserNotificationCenter.current().delegate = self
+
+        // Initiailize the AppInitializers
         applicationComponent.initializers.initialize()
+
         return true
     }
 
@@ -43,6 +49,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return false
+    }
+
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        willPresent _: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        // Show notification banners for notifications fired when the app is open
+        completionHandler([.banner])
+    }
+
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        // TODO
+        completionHandler()
     }
 }
 
