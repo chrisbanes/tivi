@@ -9,14 +9,8 @@ import kotlinx.datetime.Instant
 
 interface NotificationManager {
 
-  suspend fun schedule(
-    id: String,
-    title: String,
-    message: String,
-    channel: NotificationChannel,
-    date: Instant,
-    deeplinkUrl: String? = null,
-  )
+  suspend fun schedule(notification: Notification)
 
   suspend fun getPendingNotifications(): List<Notification>
+
 }

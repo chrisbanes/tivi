@@ -25,42 +25,34 @@ class IosNotificationManager(
   private val logger: Logger,
 ) : NotificationManager {
 
-  override suspend fun schedule(
-    id: String,
-    title: String,
-    message: String,
-    channel: NotificationChannel,
-    date: Instant,
-    deeplinkUrl: String?,
-  ) {
+  override suspend fun schedule(notification: Notification) {
     val trigger = UNCalendarNotificationTrigger.triggerWithDateMatchingComponents(
-      dateComponents = date.toLocalDateTime(TimeZone.currentSystemDefault()).toNSDateComponents(),
+      dateComponents = notification.date
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+        .toNSDateComponents(),
       repeats = false,
     )
 
     val userInfo = buildMap {
-      if (deeplinkUrl != null) {
-        put(USER_INFO_DEEPLINK, deeplinkUrl)
+      if (notification.deeplinkUrl != null) {
+        put(USER_INFO_DEEPLINK, notification.deeplinkUrl)
       }
     }
 
     val content = UNMutableNotificationContent().apply {
-      setTitle(title)
-      setBody(message)
-      setCategoryIdentifier(channel.id)
+      setTitle(notification.title)
+      setBody(notification.message)
+      setCategoryIdentifier(notification.channel.id)
       setUserInfo(userInfo as Map<Any?, *>)
     }
 
-    val request = UNNotificationRequest.requestWithIdentifier(id, content, trigger)
+    val request = UNNotificationRequest.requestWithIdentifier(notification.id, content, trigger)
 
     logger.d {
       buildString {
         append("Scheduling notification. ")
-        append("title:[$title], ")
-        append("message:[$message], ")
-        append("id:[$id], ")
-        append("channel:[$channel], ")
-        append("trigger:[${trigger.nextTriggerDate()}]")
+        append(notification)
+        append(", trigger:[${trigger.nextTriggerDate()}]")
       }
     }
 
@@ -97,7 +89,8 @@ class IosNotificationManager(
                 channel = NotificationChannel.fromId(content.categoryIdentifier),
                 date = (request.trigger as? UNCalendarNotificationTrigger)
                   ?.nextTriggerDate()
-                  ?.toKotlinInstant(),
+                  ?.toKotlinInstant()
+                  ?: Instant.DISTANT_PAST,
                 deeplinkUrl = content.userInfo[USER_INFO_DEEPLINK]?.toString(),
               )
             }

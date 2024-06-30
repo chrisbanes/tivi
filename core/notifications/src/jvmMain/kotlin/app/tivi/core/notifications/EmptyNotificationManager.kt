@@ -8,14 +8,7 @@ import app.tivi.data.models.NotificationChannel
 import kotlinx.datetime.Instant
 
 internal object EmptyNotificationManager : NotificationManager {
-  override suspend fun schedule(
-    id: String,
-    title: String,
-    message: String,
-    channel: NotificationChannel,
-    date: Instant,
-    deeplinkUrl: String?,
-  ) {
+  override suspend fun schedule(notification: Notification) {
     // no-op
   }
 

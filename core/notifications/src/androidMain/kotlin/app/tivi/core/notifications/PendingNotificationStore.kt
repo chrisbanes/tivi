@@ -21,6 +21,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.datetime.Instant
+import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import me.tatarka.inject.annotations.Inject
 import okio.BufferedSink
@@ -111,7 +113,18 @@ internal fun PendingNotificationProto.toNotification(): Notification {
     title = title,
     message = message,
     deeplinkUrl = deeplink_url,
-    date = date?.toKotlinInstant(),
+    date = date?.toKotlinInstant() ?: Instant.DISTANT_PAST,
     channel = NotificationChannel.fromId(channel_id),
+  )
+}
+
+internal fun Notification.toPendingNotification(): PendingNotificationProto {
+  return PendingNotificationProto(
+    id = id,
+    title = title,
+    message = message,
+    deeplink_url = deeplinkUrl,
+    date = date.toJavaInstant(),
+    channel_id = channel.id,
   )
 }

@@ -65,11 +65,13 @@ class DevNotificationsPresenter(
         DevNotificationsUiEvent.ScheduleNotification -> {
           coroutineScope.launch {
             notificationsManager.schedule(
-              id = "scheduled_test",
-              title = "Test Notification",
-              message = "Scheduled from developer settings",
-              channel = NotificationChannel.DEVELOPER,
-              date = Clock.System.now() + 15.minutes,
+              Notification(
+                id = "scheduled_test",
+                title = "Test Notification",
+                message = "Scheduled from developer settings",
+                channel = NotificationChannel.DEVELOPER,
+                date = Clock.System.now() + 15.minutes,
+              )
             )
           }
         }
@@ -77,11 +79,13 @@ class DevNotificationsPresenter(
         DevNotificationsUiEvent.ShowNotification -> {
           coroutineScope.launch {
             notificationsManager.schedule(
-              id = "immediate_test",
-              title = "Test Notification",
-              message = "Sent from developer settings",
-              channel = NotificationChannel.DEVELOPER,
-              date = Clock.System.now() + 5.seconds,
+              Notification(
+                id = "immediate_test",
+                title = "Test Notification",
+                message = "Sent from developer settings",
+                channel = NotificationChannel.DEVELOPER,
+                date = Clock.System.now() + 5.seconds,
+              )
             )
           }
         }
