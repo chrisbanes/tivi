@@ -8,9 +8,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
-import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.data.models.TiviShow
 import app.tivi.domain.interactors.UpdateShowSeasons
 import app.tivi.domain.observers.ObserveShowDetails

@@ -10,10 +10,10 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
-import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails

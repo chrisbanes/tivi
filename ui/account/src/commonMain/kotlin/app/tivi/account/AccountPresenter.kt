@@ -6,7 +6,7 @@ package app.tivi.account
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import app.tivi.common.compose.rememberCoroutineScope
+import androidx.compose.runtime.rememberCoroutineScope
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.interactors.LoginTrakt
 import app.tivi.domain.interactors.LogoutTrakt

@@ -9,13 +9,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
 import app.tivi.common.compose.collectAsState
-import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.common.compose.rememberRetainedCachedPagingFlow
 import app.tivi.data.models.SortOption
 import app.tivi.data.traktauth.TraktAuthState

@@ -6,8 +6,8 @@ package app.tivi.overlays
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.Dialog
-import app.tivi.common.compose.rememberCoroutineScope
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.overlay.Overlay

@@ -5,10 +5,10 @@ package app.tivi.settings
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import app.tivi.common.compose.collectAsState
-import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.core.permissions.Permission.REMOTE_NOTIFICATION
 import app.tivi.core.permissions.PermissionState
 import app.tivi.core.permissions.PermissionsController
