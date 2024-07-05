@@ -13,5 +13,5 @@ actual interface TasksPlatformComponent {
 }
 
 object EmptyShowTasks : ShowTasks {
-  override fun register() = Unit
+  override fun registerPeriodicTasks() = Unit
 }

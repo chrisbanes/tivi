@@ -16,7 +16,6 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.models.Season
-import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.data.util.inPast
@@ -87,7 +86,7 @@ class SeasonsEpisodesRepository(
   }
 
   fun getUpcomingEpisodesFromFollowedShows(
-      limit: Instant = Clock.System.now() + 1.days,
+    limit: Instant = Clock.System.now() + 1.days,
   ): List<ShowSeasonEpisode> {
     return episodesDao.upcomingEpisodesFromFollowedShows(limit)
       .mapNotNull { episode ->

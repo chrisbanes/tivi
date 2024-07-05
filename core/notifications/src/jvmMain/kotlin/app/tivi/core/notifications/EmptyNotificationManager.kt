@@ -4,8 +4,6 @@
 package app.tivi.core.notifications
 
 import app.tivi.data.models.Notification
-import app.tivi.data.models.NotificationChannel
-import kotlinx.datetime.Instant
 
 internal object EmptyNotificationManager : NotificationManager {
   override suspend fun schedule(notification: Notification) {

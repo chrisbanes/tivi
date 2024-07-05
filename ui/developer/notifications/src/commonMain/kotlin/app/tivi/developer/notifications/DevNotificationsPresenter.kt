@@ -71,7 +71,7 @@ class DevNotificationsPresenter(
                 message = "Scheduled from developer settings",
                 channel = NotificationChannel.DEVELOPER,
                 date = Clock.System.now() + 15.minutes,
-              )
+              ),
             )
           }
         }
@@ -85,7 +85,7 @@ class DevNotificationsPresenter(
                 message = "Sent from developer settings",
                 channel = NotificationChannel.DEVELOPER,
                 date = Clock.System.now() + 5.seconds,
-              )
+              ),
             )
           }
         }

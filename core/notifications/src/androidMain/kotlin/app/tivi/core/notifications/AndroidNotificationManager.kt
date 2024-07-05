@@ -48,7 +48,7 @@ class AndroidNotificationManager(
       // If the window start time is in the past, just send it now
       logger.d { "Sending notification now: $notification" }
       application.sendBroadcast(
-        PostNotificationBroadcastReceiver.buildIntent(application, notification.id)
+        PostNotificationBroadcastReceiver.buildIntent(application, notification.id),
       )
     } else {
       logger.d { "Scheduling notification for $windowStartTime: $notification" }

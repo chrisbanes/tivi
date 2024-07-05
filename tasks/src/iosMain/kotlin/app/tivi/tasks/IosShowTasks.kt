@@ -30,7 +30,7 @@ class IosShowTasks(
   private val taskScheduler by lazy { BGTaskScheduler.sharedScheduler }
   private val scope by lazy { MainScope() + CoroutineName("app.tivi.tasks.IosShowTasks") }
 
-  override fun register() {
+  override fun registerPeriodicTasks() {
     taskScheduler.registerForTaskWithIdentifier(
       identifier = ID_LIBRARY_SHOWS_NIGHTLY,
       usingQueue = null,
