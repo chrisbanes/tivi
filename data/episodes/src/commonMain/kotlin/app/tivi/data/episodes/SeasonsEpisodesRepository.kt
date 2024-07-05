@@ -5,8 +5,10 @@ package app.tivi.data.episodes
 
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
+import app.tivi.data.compoundmodels.ShowSeasonEpisode
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.episodes.datasource.EpisodeWatchesDataSource
 import app.tivi.data.models.ActionDate
@@ -14,6 +16,7 @@ import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.models.Season
+import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.data.util.inPast
@@ -43,6 +46,7 @@ class SeasonsEpisodesRepository(
   private val transactionRunner: DatabaseTransactionRunner,
   private val seasonsDao: SeasonsDao,
   private val episodesDao: EpisodesDao,
+  private val showDao: TiviShowDao,
   private val showSeasonsLastRequestStore: ShowSeasonsLastRequestStore,
   private val tmdbSeasonsDataSource: TmdbSeasonsEpisodesDataSource,
   private val traktSeasonsDataSource: TraktSeasonsEpisodesDataSource,
@@ -80,6 +84,17 @@ class SeasonsEpisodesRepository(
 
   fun getSeason(seasonId: Long): Season? {
     return seasonsDao.seasonWithId(seasonId)
+  }
+
+  fun getUpcomingEpisodesFromFollowedShows(
+      limit: Instant = Clock.System.now() + 6.hours,
+  ): List<ShowSeasonEpisode> {
+    return episodesDao.upcomingEpisodesFromFollowedShows(limit)
+      .mapNotNull { episode ->
+        val season = seasonsDao.seasonWithId(episode.seasonId) ?: return@mapNotNull null
+        val show = showDao.getShowWithId(season.showId) ?: return@mapNotNull null
+        ShowSeasonEpisode(show, season, episode)
+      }
   }
 
   fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {

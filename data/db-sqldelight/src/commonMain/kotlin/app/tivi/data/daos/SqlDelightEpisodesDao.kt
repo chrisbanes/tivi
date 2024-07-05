@@ -119,6 +119,10 @@ class SqlDelightEpisodesDao(
       .mapToOneOrNull(dispatchers.io)
   }
 
+  override fun upcomingEpisodesFromFollowedShows(limit: Instant): List<Episode> {
+    return db.episodesQueries.upcomingEpisodes(limit.toString(), ::Episode).executeAsList()
+  }
+
   private fun mapperForEpisodeWithSeason(
     id: Long,
     season_id: Long,
