@@ -87,7 +87,7 @@ class SeasonsEpisodesRepository(
   }
 
   fun getUpcomingEpisodesFromFollowedShows(
-      limit: Instant = Clock.System.now() + 6.hours,
+      limit: Instant = Clock.System.now() + 1.days,
   ): List<ShowSeasonEpisode> {
     return episodesDao.upcomingEpisodesFromFollowedShows(limit)
       .mapNotNull { episode ->

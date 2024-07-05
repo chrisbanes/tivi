@@ -61,7 +61,9 @@ SELECT episodes.* FROM episodes
 INNER JOIN seasons ON seasons.id = episodes.season_id
 INNER JOIN shows ON shows.id = seasons.show_id
 INNER JOIN myshows_entries ON myshows_entries.show_id = shows.id
-WHERE datetime(episodes.first_aired) <= datetime(:limit);
+WHERE seasons.number >= 1
+  AND datetime(episodes.first_aired) > date()
+  AND datetime(episodes.first_aired) < datetime(:limit);
 
 deleteAll:
 DELETE FROM episodes;
