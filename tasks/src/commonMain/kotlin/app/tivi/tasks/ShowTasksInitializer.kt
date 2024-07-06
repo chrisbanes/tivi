@@ -8,9 +8,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowTasksInitializer(
-  private val showTasks: Lazy<ShowTasks>,
+  showTasks: Lazy<ShowTasks>,
 ) : AppInitializer {
+  private val showTasks by showTasks
+
   override fun initialize() {
-    showTasks.value.register()
+    showTasks.registerPeriodicTasks()
+    showTasks.enqueueStartupTasks()
   }
 }

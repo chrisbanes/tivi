@@ -78,6 +78,7 @@ class ObjectGraph(
     transactionRunner = TestTransactionRunner,
     seasonsDao = seasonsDao,
     episodesDao = episodesDao,
+    showDao = tiviShowDao,
     showSeasonsLastRequestStore = ShowSeasonsLastRequestStore(lastRequestDao),
     tmdbSeasonsDataSource = tmdbSeasonsEpisodesDataSource,
     traktSeasonsDataSource = traktSeasonsEpisodesDataSource,

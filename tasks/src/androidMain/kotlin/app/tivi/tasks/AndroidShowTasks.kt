@@ -6,27 +6,52 @@ package app.tivi.tasks
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.toJavaDuration
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AndroidShowTasks(
-  private val workManager: Lazy<WorkManager>,
+  workManager: Lazy<WorkManager>,
 ) : ShowTasks {
-  override fun register() {
+  private val workManager by workManager
+
+  override fun registerPeriodicTasks() {
     val nightlyConstraints = Constraints.Builder()
       .setRequiredNetworkType(NetworkType.UNMETERED)
       .setRequiresCharging(true)
       .build()
 
-    workManager.value.enqueueUniquePeriodicWork(
-      SyncLibraryShows.NIGHTLY_SYNC_TAG,
-      ExistingPeriodicWorkPolicy.KEEP,
-      PeriodicWorkRequestBuilder<SyncLibraryShows>(24, TimeUnit.HOURS)
+    workManager.enqueueUniquePeriodicWork(
+      SyncLibraryShowsWorker.TAG,
+      ExistingPeriodicWorkPolicy.UPDATE,
+      PeriodicWorkRequestBuilder<SyncLibraryShowsWorker>(
+        LIBRARY_NIGHTLY_SYNC_INTERVAL.toJavaDuration(),
+      )
         .setConstraints(nightlyConstraints)
         .build(),
     )
+
+    workManager.enqueueUniquePeriodicWork(
+      ScheduleEpisodeNotificationsWorker.TAG,
+      ExistingPeriodicWorkPolicy.UPDATE,
+      PeriodicWorkRequestBuilder<ScheduleEpisodeNotificationsWorker>(
+        SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL.toJavaDuration(),
+      ).build(),
+    )
+  }
+
+  override fun enqueueStartupTasks() {
+    workManager.enqueue(
+      OneTimeWorkRequest.from(ScheduleEpisodeNotificationsWorker::class.java),
+    )
+  }
+
+  internal companion object {
+    val LIBRARY_NIGHTLY_SYNC_INTERVAL = 24.hours
+    val SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL = 6.hours
   }
 }

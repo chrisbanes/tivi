@@ -485,6 +485,10 @@
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Tivi/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Permission not actually used";
+				INFOPLIST_KEY_NSContactsUsageDescription = "Permission not actually used";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Permission not actually used";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Permission not actually used";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -525,7 +529,12 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = GLF74Y6P9T;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Tivi/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Permission not actually used";
+				INFOPLIST_KEY_NSContactsUsageDescription = "Permission not actually used";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Permission not actually used";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Permission not actually used";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -660,7 +669,12 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = GLF74Y6P9T;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Tivi/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Permission not actually used";
+				INFOPLIST_KEY_NSContactsUsageDescription = "Permission not actually used";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Permission not actually used";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Permission not actually used";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

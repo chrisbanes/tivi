@@ -4,5 +4,7 @@
 package app.tivi.tasks
 
 interface ShowTasks {
-  fun register()
+  fun registerPeriodicTasks() = Unit
+
+  fun enqueueStartupTasks() = Unit
 }

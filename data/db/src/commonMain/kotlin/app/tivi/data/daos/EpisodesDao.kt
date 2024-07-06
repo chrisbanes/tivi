@@ -7,6 +7,7 @@ import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.models.Episode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.datetime.Instant
 
 interface EpisodesDao : EntityDao<Episode> {
 
@@ -31,4 +32,6 @@ interface EpisodesDao : EntityDao<Episode> {
   fun observeShowIdForEpisodeId(episodeId: Long): Flow<Long>
 
   fun observeNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> = emptyFlow()
+
+  fun upcomingEpisodesFromFollowedShows(limit: Instant): List<Episode>
 }

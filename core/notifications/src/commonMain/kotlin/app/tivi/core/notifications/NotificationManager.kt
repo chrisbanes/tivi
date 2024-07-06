@@ -4,19 +4,12 @@
 package app.tivi.core.notifications
 
 import app.tivi.data.models.Notification
-import app.tivi.data.models.NotificationChannel
-import kotlinx.datetime.Instant
 
 interface NotificationManager {
 
-  suspend fun schedule(
-    id: String,
-    title: String,
-    message: String,
-    channel: NotificationChannel,
-    date: Instant,
-    deeplinkUrl: String? = null,
-  )
+  suspend fun schedule(notification: Notification) = Unit
 
-  suspend fun getPendingNotifications(): List<Notification>
+  suspend fun cancel(notification: Notification) = Unit
+
+  suspend fun getPendingNotifications(): List<Notification> = emptyList()
 }
