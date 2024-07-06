@@ -3,6 +3,7 @@
 
 package app.tivi.tasks
 
+import app.tivi.domain.interactors.ScheduleEpisodeNotifications
 import app.tivi.domain.interactors.UpdateLibraryShows
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
@@ -15,6 +16,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toNSDate
 import me.tatarka.inject.annotations.Inject
+import platform.BackgroundTasks.BGAppRefreshTaskRequest
 import platform.BackgroundTasks.BGProcessingTaskRequest
 import platform.BackgroundTasks.BGTask
 import platform.BackgroundTasks.BGTaskScheduler
@@ -24,48 +26,96 @@ import platform.Foundation.NSDate
 
 @Inject
 class IosShowTasks(
-  private val updateLibraryShows: Lazy<UpdateLibraryShows>,
+  updateLibraryShows: Lazy<UpdateLibraryShows>,
+  scheduleEpisodeNotifications: Lazy<ScheduleEpisodeNotifications>,
   private val logger: Logger,
 ) : ShowTasks {
   private val taskScheduler by lazy { BGTaskScheduler.sharedScheduler }
   private val scope by lazy { MainScope() + CoroutineName("app.tivi.tasks.IosShowTasks") }
 
-  override fun registerPeriodicTasks() {
-    taskScheduler.registerForTaskWithIdentifier(
-      identifier = ID_LIBRARY_SHOWS_NIGHTLY,
-      usingQueue = null,
-      launchHandler = { task -> handleTask(task!!) },
-    )
-    logger.d { "Registered task [$ID_LIBRARY_SHOWS_NIGHTLY] with BGTaskScheduler" }
+  private val updateLibraryShows by updateLibraryShows
+  private val scheduleEpisodeNotifications by scheduleEpisodeNotifications
 
-    // Now schedule the next nightly sync
-    scheduleTask(id = ID_LIBRARY_SHOWS_NIGHTLY, earliest = nextEarliestNightlySyncDate())
+  override fun registerPeriodicTasks() {
+    registerTaskAndSchedule(
+      id = ID_LIBRARY_SHOWS_NIGHTLY,
+      type = TaskType.Refresh,
+      firstSync = nextEarliestNightlySyncDate(),
+    )
+
+    registerTaskAndSchedule(
+      id = ID_SCHEDULE_EPISODE_NOTIFICATIONS,
+      type = TaskType.Refresh,
+      firstSync = (Clock.System.now() + SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL).toNSDate(),
+    )
   }
 
-  private fun handleTask(task: BGTask) = when (task.identifier) {
+  override fun enqueueStartupTasks() {
+    // iOS has no concept of running tasks while the app is open, so we'll just run them
+    // manually now
+    scope.launch { runScheduleEpisodeNotifications() }
+  }
+
+  private fun registerTaskAndSchedule(id: String, type: TaskType, firstSync: NSDate) {
+    taskScheduler.registerForTaskWithIdentifier(
+      identifier = id,
+      usingQueue = null,
+      launchHandler = ::handleTask,
+    )
+    logger.d { "Registered task [$id] with BGTaskScheduler" }
+
+    scheduleTask(id = id, taskType = type, earliest = firstSync)
+  }
+
+  private fun handleTask(task: BGTask?) = when (task?.identifier) {
     ID_LIBRARY_SHOWS_NIGHTLY -> {
       task.runInteractor {
-        updateLibraryShows.value(UpdateLibraryShows.Params(true))
+        updateLibraryShows(UpdateLibraryShows.Params(true))
       }
       // Now schedule another task
+      scheduleTask(ID_LIBRARY_SHOWS_NIGHTLY, TaskType.Refresh, nextEarliestNightlySyncDate())
+    }
+
+    ID_SCHEDULE_EPISODE_NOTIFICATIONS -> {
+      task.runInteractor(::runScheduleEpisodeNotifications)
       scheduleTask(
-        id = ID_LIBRARY_SHOWS_NIGHTLY,
-        earliest = (Clock.System.now() + 22.hours).toNSDate(),
+        id = ID_SCHEDULE_EPISODE_NOTIFICATIONS,
+        taskType = TaskType.Refresh,
+        earliest = (Clock.System.now() + SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL).toNSDate(),
       )
     }
 
     else -> Unit
   }
 
+  private suspend fun runScheduleEpisodeNotifications() {
+    // We always schedule notifications for longer than the next task schedule, just in case
+    // the task doesn't run on time
+    scheduleEpisodeNotifications(
+      ScheduleEpisodeNotifications.Params(SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL * 1.5),
+    )
+  }
+
   @OptIn(ExperimentalForeignApi::class)
   private fun scheduleTask(
     id: String,
+    taskType: TaskType,
     earliest: NSDate,
     requireNetwork: Boolean = true,
   ) {
-    val request = BGProcessingTaskRequest(identifier = id).apply {
-      earliestBeginDate = earliest
-      requiresNetworkConnectivity = requireNetwork
+    val request = when (taskType) {
+      TaskType.Processing -> {
+        BGProcessingTaskRequest(identifier = id).apply {
+          earliestBeginDate = earliest
+          requiresNetworkConnectivity = requireNetwork
+        }
+      }
+
+      TaskType.Refresh -> {
+        BGAppRefreshTaskRequest(identifier = id).apply {
+          earliestBeginDate = earliest
+        }
+      }
     }
 
     try {
@@ -74,6 +124,11 @@ class IosShowTasks(
     } catch (t: Throwable) {
       logger.e(t) { "Error whilst submitting BGTaskScheduler request: $request" }
     }
+  }
+
+  internal enum class TaskType {
+    Processing,
+    Refresh,
   }
 
   private fun BGTask.runInteractor(block: suspend () -> Unit) {
@@ -99,8 +154,12 @@ class IosShowTasks(
     }
   }
 
-  companion object {
+  private companion object {
+    // Important that these values are kept in sync with the values in the Info.plist
     const val ID_LIBRARY_SHOWS_NIGHTLY = "app.tivi.tasks.libraryshows.nightly"
+    const val ID_SCHEDULE_EPISODE_NOTIFICATIONS = "app.tivi.tasks.episode.notifications"
+
+    val SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL = 6.hours
   }
 }
 

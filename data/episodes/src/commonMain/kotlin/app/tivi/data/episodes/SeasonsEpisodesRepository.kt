@@ -85,9 +85,7 @@ class SeasonsEpisodesRepository(
     return seasonsDao.seasonWithId(seasonId)
   }
 
-  fun getUpcomingEpisodesFromFollowedShows(
-    limit: Instant = Clock.System.now() + 1.days,
-  ): List<ShowSeasonEpisode> {
+  fun getUpcomingEpisodesFromFollowedShows(limit: Instant): List<ShowSeasonEpisode> {
     return episodesDao.upcomingEpisodesFromFollowedShows(limit)
       .mapNotNull { episode ->
         val season = seasonsDao.seasonWithId(episode.seasonId) ?: return@mapNotNull null

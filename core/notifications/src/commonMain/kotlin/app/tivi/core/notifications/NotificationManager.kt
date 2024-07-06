@@ -7,7 +7,9 @@ import app.tivi.data.models.Notification
 
 interface NotificationManager {
 
-  suspend fun schedule(notification: Notification)
+  suspend fun schedule(notification: Notification) = Unit
 
-  suspend fun getPendingNotifications(): List<Notification>
+  suspend fun cancel(notification: Notification) = Unit
+
+  suspend fun getPendingNotifications(): List<Notification> = emptyList()
 }

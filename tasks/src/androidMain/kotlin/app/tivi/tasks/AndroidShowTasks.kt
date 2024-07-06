@@ -28,7 +28,9 @@ class AndroidShowTasks(
     workManager.enqueueUniquePeriodicWork(
       SyncLibraryShowsWorker.TAG,
       ExistingPeriodicWorkPolicy.UPDATE,
-      PeriodicWorkRequestBuilder<SyncLibraryShowsWorker>(24.hours.toJavaDuration())
+      PeriodicWorkRequestBuilder<SyncLibraryShowsWorker>(
+        LIBRARY_NIGHTLY_SYNC_INTERVAL.toJavaDuration(),
+      )
         .setConstraints(nightlyConstraints)
         .build(),
     )
@@ -36,8 +38,9 @@ class AndroidShowTasks(
     workManager.enqueueUniquePeriodicWork(
       ScheduleEpisodeNotificationsWorker.TAG,
       ExistingPeriodicWorkPolicy.UPDATE,
-      PeriodicWorkRequestBuilder<ScheduleEpisodeNotificationsWorker>(12.hours.toJavaDuration())
-        .build(),
+      PeriodicWorkRequestBuilder<ScheduleEpisodeNotificationsWorker>(
+        SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL.toJavaDuration(),
+      ).build(),
     )
   }
 
@@ -45,5 +48,10 @@ class AndroidShowTasks(
     workManager.enqueue(
       OneTimeWorkRequest.from(ScheduleEpisodeNotificationsWorker::class.java),
     )
+  }
+
+  internal companion object {
+    val LIBRARY_NIGHTLY_SYNC_INTERVAL = 24.hours
+    val SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL = 6.hours
   }
 }

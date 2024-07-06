@@ -11,16 +11,19 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.okio.OkioSerializer
 import androidx.datastore.core.okio.OkioStorage
 import androidx.datastore.dataStoreFile
+import app.tivi.core.notifications.proto.PendingNotification
 import app.tivi.core.notifications.proto.PendingNotification as PendingNotificationProto
 import app.tivi.core.notifications.proto.PendingNotifications as PendingNotificationsProto
 import app.tivi.data.models.Notification
 import app.tivi.data.models.NotificationChannel
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
+import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
@@ -67,9 +70,19 @@ class PendingNotificationStore(
   }
 
   suspend fun getPendingNotifications(): List<Notification> {
-    return store.data.firstOrNull()?.let { data ->
-      data.pending.map { it.toNotification() }
-    } ?: emptyList()
+    // First we remove any old (more than 1 day in past) pending notifications
+    store.updateData { data ->
+      val filtered = data.pending.filter {
+        val date = it.date?.toKotlinInstant()
+        date != null && date > (Clock.System.now() - 1.days)
+      }
+      data.copy(filtered)
+    }
+
+    return store.data.firstOrNull()
+      ?.pending
+      ?.map(PendingNotification::toNotification)
+      ?: emptyList()
   }
 }
 

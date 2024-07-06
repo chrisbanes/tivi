@@ -87,6 +87,11 @@ class AndroidNotificationManager(
     createNotificationChannel(androidChannel)
   }
 
+  override suspend fun cancel(notification: Notification) {
+    alarmManager.cancel(notification.buildPendingIntent(application))
+    store.removeWithId(notification.id)
+  }
+
   override suspend fun getPendingNotifications(): List<Notification> {
     return store.getPendingNotifications()
   }

@@ -24,7 +24,13 @@ class ScheduleEpisodeNotificationsWorker(
 
   override suspend fun doWork(): Result {
     logger.d { "$TAG worker running" }
-    val result = scheduleEpisodeNotifications.value.invoke(Unit)
+    val result = scheduleEpisodeNotifications.value.invoke(
+      ScheduleEpisodeNotifications.Params(
+        // We always schedule notifications for longer than the next task schedule, just in case
+        // the task doesn't run on time
+        AndroidShowTasks.SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL * 1.5,
+      ),
+    )
     return when {
       result.isSuccess -> Result.success()
       else -> Result.failure()
