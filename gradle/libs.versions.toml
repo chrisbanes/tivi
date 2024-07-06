@@ -154,7 +154,7 @@ uuid = "com.benasher44:uuid:0.8.4"
 
 wire-runtime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
 
-ktlint = "com.pinterest.ktlint:ktlint-cli:1.3.0"
+ktlint = "com.pinterest.ktlint:ktlint-cli:1.3.1"
 
 # Build logic dependencies
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
