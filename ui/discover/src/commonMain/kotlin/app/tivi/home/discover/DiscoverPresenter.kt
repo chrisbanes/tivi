@@ -15,7 +15,7 @@ import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
-import app.tivi.domain.observers.ObserveNextShowEpisodeToWatch
+import app.tivi.domain.observers.ObserveNextShowEpisodesToWatch
 import app.tivi.domain.observers.ObservePopularShows
 import app.tivi.domain.observers.ObserveRecommendedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
@@ -46,11 +46,9 @@ class DiscoverUiPresenterFactory(
     screen: Screen,
     navigator: Navigator,
     context: CircuitContext,
-  ): Presenter<*>? {
-    return when (screen) {
-      is DiscoverScreen -> presenterFactory(navigator)
-      else -> null
-    }
+  ): Presenter<*>? = when (screen) {
+    is DiscoverScreen -> presenterFactory(navigator)
+    else -> null
   }
 }
 
@@ -63,7 +61,7 @@ class DiscoverPresenter(
   private val observeTrendingShows: Lazy<ObserveTrendingShows>,
   private val updateRecommendedShows: Lazy<UpdateRecommendedShows>,
   private val observeRecommendedShows: Lazy<ObserveRecommendedShows>,
-  private val observeNextShowEpisodeToWatch: Lazy<ObserveNextShowEpisodeToWatch>,
+  private val observeNextShowEpisodesToWatch: Lazy<ObserveNextShowEpisodesToWatch>,
   private val observeTraktAuthState: Lazy<ObserveTraktAuthState>,
   private val observeUserDetails: Lazy<ObserveUserDetails>,
   private val logger: Logger,
@@ -83,7 +81,7 @@ class DiscoverPresenter(
     val recommendedItems by observeRecommendedShows.value.flow.collectAsRetainedState(emptyList())
     val recommendedLoading by updateRecommendedShows.value.inProgress.collectAsState(false)
 
-    val nextShow by observeNextShowEpisodeToWatch.value.flow.collectAsRetainedState(null)
+    val nextEpisodesToWatch by observeNextShowEpisodesToWatch.value.flow.collectAsRetainedState(emptyList())
     val authState by observeTraktAuthState.value.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
     val user by observeUserDetails.value.flow.collectAsRetainedState(null)
 
@@ -147,7 +145,9 @@ class DiscoverPresenter(
       observeTrendingShows.value.invoke(ObserveTrendingShows.Params(10))
       observePopularShows.value.invoke(ObservePopularShows.Params(10))
       observeRecommendedShows.value.invoke(ObserveRecommendedShows.Params(10))
-      observeNextShowEpisodeToWatch.value.invoke(Unit)
+      observeNextShowEpisodesToWatch.value.invoke(
+        ObserveNextShowEpisodesToWatch.Params(followedOnly = true, limit = 6),
+      )
       observeTraktAuthState.value.invoke(Unit)
       observeUserDetails.value.invoke(ObserveUserDetails.Params("me"))
     }
@@ -165,7 +165,7 @@ class DiscoverPresenter(
       popularRefreshing = popularLoading,
       recommendedItems = recommendedItems,
       recommendedRefreshing = recommendedLoading,
-      nextEpisodeWithShowToWatch = nextShow,
+      nextEpisodesToWatch = nextEpisodesToWatch,
       message = message,
       eventSink = ::eventSink,
     )

@@ -132,4 +132,10 @@ interface CommonTiviTextCreator {
     ShowStatus.IN_PRODUCTION -> strings.statusInProduction
     ShowStatus.PLANNED -> strings.statusPlanned
   }
+
+  fun seasonEpisodeLabel(seasonNumber: Int, episodeNumber: Int): String {
+    return "S${seasonNumber.toSeasonEpisodeString()}E${episodeNumber.toSeasonEpisodeString()}"
+  }
 }
+
+private fun Int.toSeasonEpisodeString(): String = toString().padStart(2, '0')

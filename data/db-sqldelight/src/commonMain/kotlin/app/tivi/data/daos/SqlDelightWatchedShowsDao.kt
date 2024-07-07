@@ -65,22 +65,22 @@ class SqlDelightWatchedShowsDao(
     },
   )
 
-  override fun getUpNextShows(): List<UpNextEntry> {
+  override fun getUpNextShows(followedOnly: Boolean, limit: Long): List<UpNextEntry> {
     return provideUpNextShowsQuery(
-      followedOnly = false,
+      followedOnly = followedOnly,
       sort = SortOption.LAST_WATCHED,
-      limit = Long.MAX_VALUE,
+      limit = limit,
       offset = 0,
     ).executeAsList()
   }
 
-  override fun observeUpNextShow(): Flow<UpNextEntry?> {
+  override fun observeUpNextShows(followedOnly: Boolean, limit: Long): Flow<List<UpNextEntry>> {
     return provideUpNextShowsQuery(
-      followedOnly = false,
+      followedOnly = followedOnly,
       sort = SortOption.LAST_WATCHED,
-      limit = 1,
+      limit = limit,
       offset = 0,
-    ).asFlow().mapToOneOrNull(dispatchers.io)
+    ).asFlow().mapToList(dispatchers.io)
   }
 
   override fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats?> {

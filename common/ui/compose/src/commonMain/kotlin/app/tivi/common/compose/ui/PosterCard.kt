@@ -22,9 +22,10 @@ import app.tivi.data.models.TiviShow
 fun PosterCard(
   show: TiviShow,
   modifier: Modifier = Modifier,
+  showTitle: Boolean = true,
 ) {
   Card(modifier = modifier) {
-    PosterCardContent(show = show)
+    PosterCardContent(show, showTitle)
   }
 }
 
@@ -33,22 +34,28 @@ fun PosterCard(
   show: TiviShow,
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
+  showTitle: Boolean = true,
 ) {
   Card(onClick = onClick, modifier = modifier) {
-    PosterCardContent(show = show)
+    PosterCardContent(show, showTitle)
   }
 }
 
 @Composable
-private fun PosterCardContent(show: TiviShow) {
+private fun PosterCardContent(
+  show: TiviShow,
+  showTitle: Boolean,
+) {
   Box(modifier = Modifier.fillMaxSize()) {
-    Text(
-      text = show.title ?: "No title",
-      style = MaterialTheme.typography.bodySmall,
-      modifier = Modifier
-        .padding(4.dp)
-        .align(Alignment.CenterStart),
-    )
+    if (showTitle) {
+      Text(
+        text = show.title ?: "No title",
+        style = MaterialTheme.typography.bodySmall,
+        modifier = Modifier
+          .padding(4.dp)
+          .align(Alignment.CenterStart),
+      )
+    }
     AsyncImage(
       model = rememberShowImageModel(show, ImageType.POSTER),
       contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: "show"),

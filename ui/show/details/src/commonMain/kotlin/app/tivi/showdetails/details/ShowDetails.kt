@@ -362,7 +362,7 @@ private fun ShowDetailsScrollingContent(
       gutterSpacer()
 
       item(key = "header_next_episode_watch") {
-        Header(LocalStrings.current.detailsNextEpisodeToWatch)
+        Header(LocalStrings.current.detailsNextEpisode)
       }
       item(key = "next_episode_watch") {
         NextEpisodeToWatch(
