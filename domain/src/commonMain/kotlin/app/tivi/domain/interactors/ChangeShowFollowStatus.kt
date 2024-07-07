@@ -5,6 +5,7 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.shows.ShowStore
+import app.tivi.data.util.dataSetChanged
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
@@ -16,10 +17,12 @@ import me.tatarka.inject.annotations.Inject
 class ChangeShowFollowStatus(
   followedShowsRepository: Lazy<FollowedShowsRepository>,
   showStore: Lazy<ShowStore>,
+  scheduleEpisodeNotifications: Lazy<ScheduleEpisodeNotifications>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ChangeShowFollowStatus.Params, Unit>() {
   private val followedShowsRepository by followedShowsRepository
   private val showStore by showStore
+  private val scheduleEpisodeNotifications by scheduleEpisodeNotifications
 
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
@@ -42,6 +45,10 @@ class ChangeShowFollowStatus(
 
       result.added.parallelForEach {
         showStore.fetch(it.showId)
+      }
+
+      if (result.dataSetChanged()) {
+        scheduleEpisodeNotifications(ScheduleEpisodeNotifications.Params())
       }
     }
   }

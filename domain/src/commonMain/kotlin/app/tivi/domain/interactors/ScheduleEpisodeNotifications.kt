@@ -3,6 +3,7 @@
 
 package app.tivi.domain.interactors
 
+import app.tivi.common.ui.resources.EnTiviStrings
 import app.tivi.core.notifications.NotificationManager
 import app.tivi.data.compoundmodels.ShowSeasonEpisode
 import app.tivi.data.episodes.SeasonsEpisodesRepository
@@ -10,8 +11,9 @@ import app.tivi.data.models.Notification
 import app.tivi.data.models.NotificationChannel
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
+import app.tivi.util.TiviDateFormatter
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -23,11 +25,12 @@ import me.tatarka.inject.annotations.Inject
 class ScheduleEpisodeNotifications(
   seasonsEpisodesRepository: Lazy<SeasonsEpisodesRepository>,
   notificationManager: Lazy<NotificationManager>,
-  private val logger: Logger,
+  dateTimeFormatter: Lazy<TiviDateFormatter>,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<ScheduleEpisodeNotifications.Params, Unit>() {
   private val seasonsEpisodesRepository by seasonsEpisodesRepository
   private val notificationManager by notificationManager
+  private val dateTimeFormatter by dateTimeFormatter
 
   override suspend fun doWork(params: Params) {
     // We can do better here, but this is fine for now
@@ -53,22 +56,21 @@ class ScheduleEpisodeNotifications(
 
     return Notification(
       id = "episode_${item.episode.id}",
-      title = "Episode airing at ${airDateLocal.time}",
-      message = buildString {
-        append(item.show.title)
-        append(" - ")
-        append(item.episode.title)
-        append(" [")
-        append(item.season.number)
-        append('x')
-        append(item.episode.number)
-        append(']')
-      },
+      title = EnTiviStrings.notificationEpisodeAiringTitle(
+        item.show.title!!,
+        dateTimeFormatter.formatShortTime(airDateLocal.time),
+      ),
+      message = EnTiviStrings.notificationEpisodeAiringMessage(
+        item.episode.title!!,
+        item.show.network ?: "?",
+        item.season.number ?: 99,
+        item.episode.number ?: 99,
+      ),
       channel = NotificationChannel.EPISODES_AIRING,
       date = requireNotNull(item.episode.firstAired) - bufferTime,
       deeplinkUrl = "app.tivi//foo/${item.episode.id}",
     )
   }
 
-  data class Params(val limit: Duration, val bufferTime: Duration = 10.minutes)
+  data class Params(val limit: Duration = 12.hours, val bufferTime: Duration = 10.minutes)
 }

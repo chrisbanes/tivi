@@ -89,6 +89,10 @@ data class ItemSyncerResult<ET : TiviEntity>(
   val updated: List<ET> = emptyList(),
 )
 
+fun ItemSyncerResult<*>.dataSetChanged(): Boolean {
+  return added.isNotEmpty() || deleted.isNotEmpty()
+}
+
 fun <LocalType : TiviEntity, NetworkType, Key> syncerForEntity(
   entityDao: EntityDao<LocalType>,
   localEntityToKey: (LocalType) -> Key?,
