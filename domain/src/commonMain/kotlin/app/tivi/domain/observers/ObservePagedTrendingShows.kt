@@ -31,7 +31,7 @@ class ObservePagedTrendingShows(
       remoteMediator = PaginatedEntryRemoteMediator { page ->
         try {
           updateTrendingShows(
-            UpdateTrendingShows.Params(page = page, forceRefresh = true),
+            UpdateTrendingShows.Params(page = page, isUserInitiated = true),
           )
         } catch (ce: CancellationException) {
           throw ce

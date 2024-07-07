@@ -135,7 +135,7 @@ internal fun UpNext(
         overlayHost.showInDialog(AccountScreen, navigator::goTo)
       }
     },
-    refresh = { eventSink(UpNextUiEvent.Refresh()) },
+    refresh = { eventSink(UpNextUiEvent.Refresh(fromUser = true)) },
     onSortSelected = { eventSink(UpNextUiEvent.ChangeSort(it)) },
     onToggleFollowedShowsOnly = { eventSink(UpNextUiEvent.ToggleFollowedShowsOnly) },
     modifier = modifier,

@@ -6,6 +6,7 @@ package app.tivi.domain.interactors
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
+import app.tivi.domain.UserInitiatedParams
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.parallelForEach
 import kotlinx.coroutines.withContext
@@ -20,7 +21,7 @@ class UpdateUpNextEpisodes(
 ) : Interactor<UpdateUpNextEpisodes.Params, Unit>() {
 
   override suspend fun doWork(params: Params) {
-    updateLibraryShows.value.invoke(UpdateLibraryShows.Params(params.forceRefresh))
+    updateLibraryShows.value.invoke(UpdateLibraryShows.Params(params.isUserInitiated))
 
     // Now update the next episodes, to fetch images, etc
     withContext(dispatchers.io) {
@@ -32,5 +33,5 @@ class UpdateUpNextEpisodes(
     }
   }
 
-  data class Params(val forceRefresh: Boolean)
+  data class Params(override val isUserInitiated: Boolean) : UserInitiatedParams
 }

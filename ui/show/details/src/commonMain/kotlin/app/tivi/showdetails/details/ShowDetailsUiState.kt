@@ -29,7 +29,7 @@ data class ShowDetailsUiState(
 
 sealed interface ShowDetailsUiEvent : CircuitUiEvent {
   data class ClearMessage(val id: Long) : ShowDetailsUiEvent
-  data class Refresh(val fromUser: Boolean = true) : ShowDetailsUiEvent
+  data class Refresh(val fromUser: Boolean) : ShowDetailsUiEvent
   data object ToggleShowFollowed : ShowDetailsUiEvent
   data class MarkSeasonWatched(
     val seasonId: Long,

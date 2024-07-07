@@ -7,6 +7,7 @@ import app.tivi.data.relatedshows.RelatedShowsStore
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
+import app.tivi.domain.UserInitiatedParams
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
@@ -23,7 +24,7 @@ class UpdateRelatedShows(
   private val logger: Logger,
 ) : Interactor<Params, Unit>() {
   override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
-    relatedShowsStore.value.fetch(params.showId, params.forceLoad).related.parallelForEach {
+    relatedShowsStore.value.fetch(params.showId, params.isUserInitiated).related.parallelForEach {
       try {
         showsStore.value.fetch(it.otherShowId)
       } catch (ce: CancellationException) {
@@ -34,5 +35,5 @@ class UpdateRelatedShows(
     }
   }
 
-  data class Params(val showId: Long, val forceLoad: Boolean)
+  data class Params(val showId: Long, override val isUserInitiated: Boolean) : UserInitiatedParams
 }

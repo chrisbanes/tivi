@@ -31,7 +31,7 @@ data class LibraryUiState(
 
 sealed interface LibraryUiEvent : CircuitUiEvent {
   data class ClearMessage(val id: Long) : LibraryUiEvent
-  data class Refresh(val fromUser: Boolean = false) : LibraryUiEvent
+  data class Refresh(val fromUser: Boolean) : LibraryUiEvent
   data class ChangeFilter(val filter: String?) : LibraryUiEvent
   data class ChangeSort(val sort: SortOption) : LibraryUiEvent
   data object ToggleFollowedShowsIncluded : LibraryUiEvent

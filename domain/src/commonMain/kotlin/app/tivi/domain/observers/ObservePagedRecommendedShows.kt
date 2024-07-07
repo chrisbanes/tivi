@@ -30,7 +30,7 @@ class ObservePagedRecommendedShows(
       config = params.pagingConfig,
       remoteMediator = RefreshOnlyRemoteMediator {
         try {
-          updateRecommendedShows(UpdateRecommendedShows.Params(forceRefresh = true))
+          updateRecommendedShows(UpdateRecommendedShows.Params(isUserInitiated = true))
         } catch (ce: CancellationException) {
           throw ce
         } catch (t: Throwable) {
