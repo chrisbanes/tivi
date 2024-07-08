@@ -4,11 +4,14 @@
 package app.tivi.data.daos
 
 import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.tivi.data.Database
 import app.tivi.data.models.TraktUser
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -50,7 +53,8 @@ class SqlDelightUserDao(
   override fun observeMe(): Flow<TraktUser?> {
     return db.usersQueries.getEntryForMe(::TraktUser)
       .asFlow()
-      .mapToOneOrNull(dispatchers.io)
+      .mapToList(dispatchers.io)
+      .map { it.firstOrNull() }
   }
 
   override fun observeTraktUser(username: String): Flow<TraktUser?> {
@@ -60,7 +64,11 @@ class SqlDelightUserDao(
   }
 
   override fun getUser(username: String): TraktUser? = when (username) {
-    "me" -> db.usersQueries.getEntryForMe(::TraktUser).executeAsOneOrNull()
+    "me" -> {
+      db.usersQueries.getEntryForMe(::TraktUser)
+        .executeAsList()
+        .firstOrNull()
+    }
     else -> {
       db.usersQueries.getEntryForUsername(username, ::TraktUser)
         .executeAsOneOrNull()
