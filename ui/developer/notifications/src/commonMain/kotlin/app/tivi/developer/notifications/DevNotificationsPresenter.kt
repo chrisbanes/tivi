@@ -8,8 +8,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.core.notifications.NotificationManager
 import app.tivi.data.models.Notification
 import app.tivi.data.models.NotificationChannel

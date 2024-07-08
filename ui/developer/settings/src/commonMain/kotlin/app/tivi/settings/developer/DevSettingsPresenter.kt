@@ -5,8 +5,8 @@ package app.tivi.settings.developer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import app.tivi.common.compose.collectAsState
-import app.tivi.common.compose.rememberCoroutineScope
 import app.tivi.screens.DevLogScreen
 import app.tivi.screens.DevNotificationsScreen
 import app.tivi.screens.DevSettingsScreen
