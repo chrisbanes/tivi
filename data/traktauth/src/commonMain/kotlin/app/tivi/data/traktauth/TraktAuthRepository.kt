@@ -9,7 +9,6 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +18,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 
-@OptIn(DelicateCoroutinesApi::class)
 @ApplicationScope
 @Inject
 class TraktAuthRepository(

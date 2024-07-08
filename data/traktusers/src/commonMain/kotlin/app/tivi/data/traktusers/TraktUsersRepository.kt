@@ -37,6 +37,10 @@ class TraktUsersRepository(
     // Make sure we use the current DB id (if present)
     transactionRunner {
       val localUser = userDao.getUser(user.username)
+      if (user.isMe && localUser != null && localUser.isMe) {
+        // If we have a new `isMe` user, delete the current one
+        userDao.deleteMe()
+      }
       if (localUser != null) {
         user = user.copy(id = localUser.id)
       }
