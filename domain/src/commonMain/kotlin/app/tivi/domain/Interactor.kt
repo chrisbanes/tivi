@@ -8,54 +8,84 @@ import androidx.paging.PagingData
 import app.tivi.util.cancellableRunCatching
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.atomicfu.atomic
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withTimeout
 
-abstract class Interactor<in P, R> {
-  private val count = atomic(0)
-  private val loadingState = MutableStateFlow(count.value)
+interface UserInitiatedParams {
+  val isUserInitiated: Boolean
+}
 
+abstract class Interactor<in P, R> {
+  private val loadingState = MutableStateFlow(State())
+
+  @OptIn(FlowPreview::class)
   val inProgress: Flow<Boolean> by lazy {
     loadingState
-      .map { it > 0 }
+      .debounce {
+        if (it.ambientCount > 0) {
+          5.seconds
+        } else {
+          0.seconds
+        }
+      }
+      .map { (it.userCount + it.ambientCount) > 0 }
       .distinctUntilChanged()
   }
 
-  private fun addLoader() {
-    loadingState.value = count.incrementAndGet()
+  private fun addLoader(fromUser: Boolean) {
+    loadingState.update {
+      if (fromUser) {
+        it.copy(userCount = it.userCount + 1)
+      } else {
+        it.copy(ambientCount = it.ambientCount + 1)
+      }
+    }
   }
 
-  private fun removeLoader() {
-    loadingState.value = count.decrementAndGet()
+  private fun removeLoader(fromUser: Boolean) {
+    loadingState.update {
+      if (fromUser) {
+        it.copy(userCount = it.userCount - 1)
+      } else {
+        it.copy(ambientCount = it.ambientCount - 1)
+      }
+    }
   }
 
   suspend operator fun invoke(
     params: P,
     timeout: Duration = DefaultTimeout,
-  ): Result<R> {
-    return cancellableRunCatching {
-      addLoader()
-      withTimeout(timeout) {
-        doWork(params)
-      }
-    }.also {
-      removeLoader()
+    userInitiated: Boolean = params.isUserInitiated,
+  ): Result<R> = cancellableRunCatching {
+    addLoader(userInitiated)
+    withTimeout(timeout) {
+      doWork(params)
     }
+  }.also {
+    removeLoader(userInitiated)
   }
+
+  private val P.isUserInitiated: Boolean
+    get() = (this as? UserInitiatedParams)?.isUserInitiated ?: true
 
   protected abstract suspend fun doWork(params: P): R
 
   companion object {
     internal val DefaultTimeout = 5.minutes
   }
+
+  private data class State(val userCount: Int = 0, val ambientCount: Int = 0)
 }
 
 suspend operator fun <R> Interactor<Unit, R>.invoke(

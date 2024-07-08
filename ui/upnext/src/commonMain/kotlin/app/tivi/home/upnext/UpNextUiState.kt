@@ -28,7 +28,7 @@ data class UpNextUiState(
 
 sealed interface UpNextUiEvent : CircuitUiEvent {
   data class ClearMessage(val id: Long) : UpNextUiEvent
-  data class Refresh(val fromUser: Boolean = false) : UpNextUiEvent
+  data class Refresh(val fromUser: Boolean) : UpNextUiEvent
   data class ChangeSort(val sort: SortOption) : UpNextUiEvent
   data object ToggleFollowedShowsOnly : UpNextUiEvent
   data object OpenAccount : UpNextUiEvent

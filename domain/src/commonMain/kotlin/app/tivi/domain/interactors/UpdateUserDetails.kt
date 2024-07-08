@@ -5,6 +5,7 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.traktusers.TraktUsersRepository
 import app.tivi.domain.Interactor
+import app.tivi.domain.UserInitiatedParams
 import app.tivi.domain.interactors.UpdateUserDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
@@ -17,11 +18,11 @@ class UpdateUserDetails(
 ) : Interactor<Params, Unit>() {
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
-      if (params.forceLoad || repository.value.needUpdate(params.username)) {
+      if (params.isUserInitiated || repository.value.needUpdate(params.username)) {
         repository.value.updateUser(params.username)
       }
     }
   }
 
-  data class Params(val username: String, val forceLoad: Boolean)
+  data class Params(val username: String, override val isUserInitiated: Boolean) : UserInitiatedParams
 }

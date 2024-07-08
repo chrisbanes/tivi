@@ -5,6 +5,7 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
+import app.tivi.domain.UserInitiatedParams
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -17,11 +18,11 @@ class UpdateEpisodeDetails(
 
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
-      if (params.forceLoad || seasonsEpisodesRepository.needEpisodeUpdate(params.episodeId)) {
+      if (params.isUserInitiated || seasonsEpisodesRepository.needEpisodeUpdate(params.episodeId)) {
         seasonsEpisodesRepository.updateEpisode(params.episodeId)
       }
     }
   }
 
-  data class Params(val episodeId: Long, val forceLoad: Boolean)
+  data class Params(val episodeId: Long, override val isUserInitiated: Boolean) : UserInitiatedParams
 }

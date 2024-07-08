@@ -5,6 +5,7 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
+import app.tivi.domain.UserInitiatedParams
 import app.tivi.domain.interactors.UpdateShowSeasons.Params
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.ensureActive
@@ -21,17 +22,17 @@ class UpdateShowSeasons(
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
       // Then update the seasons/episodes
-      if (params.forceRefresh || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
+      if (params.isUserInitiated || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
         seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
       }
 
       ensureActive()
       // Finally update any watched progress
-      if (params.forceRefresh || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
+      if (params.isUserInitiated || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
         seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)
       }
     }
   }
 
-  data class Params(val showId: Long, val forceRefresh: Boolean)
+  data class Params(val showId: Long, override val isUserInitiated: Boolean) : UserInitiatedParams
 }

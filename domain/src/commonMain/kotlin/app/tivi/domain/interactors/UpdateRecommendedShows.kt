@@ -9,6 +9,7 @@ import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
+import app.tivi.domain.UserInitiatedParams
 import app.tivi.domain.interactors.UpdateRecommendedShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
@@ -30,7 +31,7 @@ class UpdateRecommendedShows(
     if (traktAuthRepository.value.state.value != TraktAuthState.LOGGED_IN) return
 
     withContext(dispatchers.io) {
-      recommendedShowsStore.value.fetch(0, forceFresh = params.forceRefresh).parallelForEach {
+      recommendedShowsStore.value.fetch(0, forceFresh = params.isUserInitiated).parallelForEach {
         try {
           showStore.value.fetch(it.showId)
         } catch (ce: CancellationException) {
@@ -42,5 +43,5 @@ class UpdateRecommendedShows(
     }
   }
 
-  data class Params(val forceRefresh: Boolean = false)
+  data class Params(override val isUserInitiated: Boolean = false) : UserInitiatedParams
 }

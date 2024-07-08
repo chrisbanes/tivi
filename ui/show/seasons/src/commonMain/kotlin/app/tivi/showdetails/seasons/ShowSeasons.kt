@@ -117,7 +117,7 @@ internal fun ShowSeasons(
     state = state,
     navigateUp = { eventSink(ShowSeasonsUiEvent.NavigateBack) },
     openEpisodeDetails = { eventSink(ShowSeasonsUiEvent.OpenEpisodeDetails(it)) },
-    refresh = { eventSink(ShowSeasonsUiEvent.Refresh()) },
+    refresh = { eventSink(ShowSeasonsUiEvent.Refresh(fromUser = true)) },
     onMessageShown = { eventSink(ShowSeasonsUiEvent.ClearMessage(it)) },
     modifier = modifier,
   )

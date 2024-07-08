@@ -30,7 +30,7 @@ class ObservePagedPopularShows(
       config = params.pagingConfig,
       remoteMediator = PaginatedEntryRemoteMediator { page ->
         try {
-          updatePopularShows(UpdatePopularShows.Params(page = page, forceRefresh = true))
+          updatePopularShows(UpdatePopularShows.Params(page = page, isUserInitiated = true))
         } catch (ce: CancellationException) {
           throw ce
         } catch (t: Throwable) {

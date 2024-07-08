@@ -8,6 +8,7 @@ import app.tivi.data.shows.ShowStore
 import app.tivi.data.trendingshows.TrendingShowsStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
+import app.tivi.domain.UserInitiatedParams
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.parallelForEach
@@ -33,13 +34,13 @@ class UpdateTrendingShows(
         else -> 0
       }
 
-      trendingShowsStore.value.fetch(page, params.forceRefresh).parallelForEach {
+      trendingShowsStore.value.fetch(page, params.isUserInitiated).parallelForEach {
         showStore.value.fetch(it.showId)
       }
     }
   }
 
-  data class Params(val page: Int, val forceRefresh: Boolean = false)
+  data class Params(val page: Int, override val isUserInitiated: Boolean = false) : UserInitiatedParams
 
   data object Page {
     const val NEXT_PAGE = -1

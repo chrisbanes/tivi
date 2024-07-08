@@ -102,7 +102,7 @@ class DiscoverPresenter(
             updatePopularShows.value.invoke(
               UpdatePopularShows.Params(
                 page = UpdatePopularShows.Page.REFRESH,
-                forceRefresh = event.fromUser,
+                isUserInitiated = event.fromUser,
               ),
             ).onFailure { e ->
               logger.i(e)
@@ -113,7 +113,7 @@ class DiscoverPresenter(
             updateTrendingShows.value.invoke(
               UpdateTrendingShows.Params(
                 page = UpdateTrendingShows.Page.REFRESH,
-                forceRefresh = event.fromUser,
+                isUserInitiated = event.fromUser,
               ),
             ).onFailure { e ->
               logger.i(e)
@@ -123,12 +123,10 @@ class DiscoverPresenter(
           if (authState == TraktAuthState.LOGGED_IN) {
             scope.launch {
               updateRecommendedShows.value.invoke(
-                UpdateRecommendedShows.Params(forceRefresh = event.fromUser),
-              ).also { result ->
-                result.onFailure { e ->
-                  logger.i(e)
-                  uiMessageManager.emitMessage(UiMessage(e))
-                }
+                UpdateRecommendedShows.Params(isUserInitiated = event.fromUser),
+              ).onFailure { e ->
+                logger.i(e)
+                uiMessageManager.emitMessage(UiMessage(e))
               }
             }
           }

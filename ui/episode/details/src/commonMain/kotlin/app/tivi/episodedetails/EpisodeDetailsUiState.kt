@@ -23,7 +23,7 @@ data class EpisodeDetailsUiState(
 ) : CircuitUiState
 
 sealed interface EpisodeDetailsUiEvent : CircuitUiEvent {
-  data class Refresh(val fromUser: Boolean = false) : EpisodeDetailsUiEvent
+  data class Refresh(val fromUser: Boolean) : EpisodeDetailsUiEvent
   data class RemoveWatchEntry(val id: Long) : EpisodeDetailsUiEvent
   data class ClearMessage(val id: Long) : EpisodeDetailsUiEvent
   data object RemoveAllWatches : EpisodeDetailsUiEvent

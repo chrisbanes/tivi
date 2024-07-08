@@ -217,7 +217,7 @@ internal fun Discover(
     },
     modifier = modifier,
   ) { paddingValues ->
-    val refreshState = rememberPullRefreshState(refreshing = false, onRefresh = refresh)
+    val refreshState = rememberPullRefreshState(refreshing = state.refreshing, onRefresh = refresh)
     Box(modifier = Modifier.pullRefresh(state = refreshState)) {
       LazyColumn(
         contentPadding = paddingValues,

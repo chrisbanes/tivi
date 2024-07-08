@@ -7,6 +7,7 @@ import app.tivi.data.shows.ShowLastRequestStore
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
+import app.tivi.domain.UserInitiatedParams
 import app.tivi.domain.interactors.UpdateShowDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.days
@@ -23,11 +24,11 @@ class UpdateShowDetails(
     withContext(dispatchers.io) {
       showStore.value.fetch(
         key = params.showId,
-        forceFresh = params.forceLoad ||
+        forceFresh = params.isUserInitiated ||
           lastRequestStore.value.isRequestExpired(params.showId, 28.days),
       )
     }
   }
 
-  data class Params(val showId: Long, val forceLoad: Boolean)
+  data class Params(val showId: Long, override val isUserInitiated: Boolean) : UserInitiatedParams
 }

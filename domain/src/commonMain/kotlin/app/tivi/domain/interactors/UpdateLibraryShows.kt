@@ -13,6 +13,7 @@ import app.tivi.data.util.fetch
 import app.tivi.data.watchedshows.WatchedShowsLastRequestStore
 import app.tivi.data.watchedshows.WatchedShowsStore
 import app.tivi.domain.Interactor
+import app.tivi.domain.UserInitiatedParams
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import app.tivi.util.parallelForEach
@@ -41,11 +42,11 @@ class UpdateLibraryShows(
       // It's a quick way to know whether to cascade the updates below
       watchedShowsStore.fetch(
         key = Unit,
-        forceFresh = params.forceRefresh || watchedShowsLastRequestStore.isRequestExpired(1.hours),
+        forceFresh = params.isUserInitiated || watchedShowsLastRequestStore.isRequestExpired(1.hours),
       )
     }
     val followedShowsDeferred = async {
-      if (params.forceRefresh || followedShowsRepository.needFollowedShowsSync()) {
+      if (params.isUserInitiated || followedShowsRepository.needFollowedShowsSync()) {
         followedShowsRepository.syncFollowedShows()
       }
       followedShowsRepository.getFollowedShows()
@@ -84,5 +85,5 @@ class UpdateLibraryShows(
     }
   }
 
-  data class Params(val forceRefresh: Boolean)
+  data class Params(override val isUserInitiated: Boolean) : UserInitiatedParams
 }

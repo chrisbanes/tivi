@@ -6,6 +6,7 @@ package app.tivi.domain.interactors
 import app.tivi.data.showimages.ShowImagesStore
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
+import app.tivi.domain.UserInitiatedParams
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -17,9 +18,9 @@ class UpdateShowImages(
 ) : Interactor<UpdateShowImages.Params, Unit>() {
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
-      showImagesStore.value.fetch(params.showId, params.forceLoad)
+      showImagesStore.value.fetch(params.showId, params.isUserInitiated)
     }
   }
 
-  data class Params(val showId: Long, val forceLoad: Boolean)
+  data class Params(val showId: Long, override val isUserInitiated: Boolean) : UserInitiatedParams
 }
