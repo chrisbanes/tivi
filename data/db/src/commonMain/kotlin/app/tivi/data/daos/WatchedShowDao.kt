@@ -22,11 +22,14 @@ interface WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> 
 
   override fun deleteAll()
 
-  fun pagedUpNextShows(followedOnly: Boolean = false, sort: SortOption): PagingSource<Int, UpNextEntry>
+  fun pagedUpNextShows(
+    followedOnly: Boolean = false,
+    sort: SortOption,
+  ): PagingSource<Int, UpNextEntry>
 
-  fun getUpNextShows(): List<UpNextEntry>
+  fun getUpNextShows(followedOnly: Boolean = false, limit: Long = Long.MAX_VALUE): List<UpNextEntry>
 
-  fun observeUpNextShow(): Flow<UpNextEntry?>
+  fun observeUpNextShows(followedOnly: Boolean = false, limit: Long = Long.MAX_VALUE): Flow<List<UpNextEntry>>
 
   fun entryShowViewStats(showId: Long): Flow<ShowsWatchStats?>
 

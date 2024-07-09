@@ -46,7 +46,7 @@ data class TiviStrings(
   val certificateTitle: String,
   val dateLabel: String,
   val detailsAbout: String,
-  val detailsNextEpisodeToWatch: String,
+  val detailsNextEpisode: String,
   val detailsRelated: String,
   val detailsViewStats: String,
   val dialogDismiss: String,

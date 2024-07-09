@@ -6,7 +6,6 @@
 package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.SnapPositionInLayout
@@ -14,11 +13,11 @@ import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,8 +37,8 @@ import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -60,6 +59,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
@@ -74,6 +75,7 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.BackdropCard
 import app.tivi.common.compose.ui.ParallaxAlignment
+import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.drawForegroundGradientScrim
 import app.tivi.common.compose.ui.noIndicationClickable
@@ -228,23 +230,27 @@ internal fun Discover(
           Spacer(Modifier.height(Layout.gutter))
         }
 
-        state.nextEpisodeWithShowToWatch?.let { nextEpisodeToWatch ->
-          item(key = "next_episode_to_watch") {
-            NextEpisodeToWatch(
-              show = nextEpisodeToWatch.show,
-              season = nextEpisodeToWatch.season,
-              episode = nextEpisodeToWatch.episode,
-              onClick = { openEpisodeDetails(nextEpisodeToWatch.episode.id) },
-              modifier = Modifier
-                .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
-                .animateItemPlacement()
-                .fillMaxWidth()
-                .aspectRatio(16 / 9f),
-            )
-          }
-
-          item {
-            Spacer(Modifier.height(Layout.gutter))
+        item(key = "carousel_next_to_watch") {
+          val carouselState = rememberLazyListState()
+          LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(
+              horizontal = Layout.bodyMargin,
+              vertical = Layout.gutter,
+            ),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+          ) {
+            items(state.nextEpisodesToWatch) { item ->
+              NextEpisodeToWatchCard(
+                show = item.show,
+                season = item.season,
+                episode = item.episode,
+                onClick = { openEpisodeDetails(item.episode.id) },
+                modifier = Modifier
+                  .animateItemPlacement()
+                  .width(260.dp),
+              )
+            }
           }
         }
 
@@ -302,7 +308,7 @@ internal fun Discover(
 }
 
 @Composable
-private fun NextEpisodeToWatch(
+private fun NextEpisodeToWatchCard(
   show: TiviShow,
   season: Season,
   episode: Episode,
@@ -310,11 +316,7 @@ private fun NextEpisodeToWatch(
   onClick: () -> Unit,
 ) {
   TiviTheme(useDarkColors = true) {
-    OutlinedCard(
-      onClick = onClick,
-      modifier = modifier,
-      border = BorderStroke(3.dp, MaterialTheme.colorScheme.outline),
-    ) {
+    Card(onClick = onClick, modifier = modifier) {
       Box {
         var model: Any by remember(episode.id) { mutableStateOf(episode.asImageModel()) }
 
@@ -327,55 +329,55 @@ private fun NextEpisodeToWatch(
             }
           },
           contentDescription = null,
-          modifier = Modifier.fillMaxSize(),
+          modifier = Modifier
+            .drawForegroundGradientScrim(MaterialTheme.colorScheme.surfaceVariant, decay = 2f)
+            .fillMaxWidth()
+            .aspectRatio(16 / 11f),
           contentScale = ContentScale.Crop,
         )
 
-        Spacer(
-          Modifier.matchParentSize()
-            .drawForegroundGradientScrim(
-              color = MaterialTheme.colorScheme.surface,
-              decay = 1.5f,
-            ),
+        PosterCard(
+          show = show,
+          showTitle = false,
+          modifier = Modifier
+            .align(Alignment.BottomStart)
+            .padding(horizontal = 16.dp)
+            .width(40.dp),
+        )
+      }
+
+      val textCreator = LocalTiviTextCreator.current
+
+      Column(
+        Modifier
+          .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+      ) {
+        Spacer(Modifier.height(6.dp))
+
+        Text(
+          text = "${LocalStrings.current.detailsNextEpisode} - ${
+            textCreator.seasonEpisodeLabel(
+              season.number!!,
+              episode.number!!,
+            )
+          }",
+          style = MaterialTheme.typography.labelMedium,
+          color = LocalContentColor.current.copy(alpha = 0.7f),
         )
 
-        Column(
-          Modifier
-            .padding(Layout.gutter),
-        ) {
-          Card {
-            Text(
-              text = LocalStrings.current.discoverKeepWatchingTitle,
-              style = MaterialTheme.typography.titleMedium,
-              modifier = Modifier
-                .padding(horizontal = Layout.gutter, vertical = 4.dp),
-            )
-          }
+        Text(
+          text = episode.title ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
+          style = MaterialTheme.typography.bodyLarge,
+          fontWeight = FontWeight.Bold,
+        )
 
-          Spacer(Modifier.weight(1f))
-
-          Column(
-            Modifier
-              .padding(Layout.gutter),
-          ) {
-            Text(
-              text = show.title.orEmpty(),
-              style = MaterialTheme.typography.labelLarge,
-              modifier = Modifier.padding(1.dp),
-            )
-
-            val textCreator = LocalTiviTextCreator.current
-            Text(
-              text = textCreator.seasonEpisodeTitleText(season, episode),
-              style = MaterialTheme.typography.labelMedium,
-            )
-
-            Text(
-              text = episode.title
-                ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
-              style = MaterialTheme.typography.titleLarge,
-            )
-          }
+        if (episode.summary != null) {
+          Text(
+            text = episode.summary!!,
+            style = MaterialTheme.typography.bodySmall,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2,
+          )
         }
       }
     }
@@ -464,8 +466,9 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
           ParallaxAlignment(
             horizontalBias = {
               val layoutInfo = lazyListState.layoutInfo
-              val itemInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.key == item.show.id }
-                ?: return@ParallaxAlignment 0f
+              val itemInfo =
+                layoutInfo.visibleItemsInfo.firstOrNull { it.key == item.show.id }
+                  ?: return@ParallaxAlignment 0f
 
               val adjustedOffset = itemInfo.offset - layoutInfo.viewportStartOffset
               (adjustedOffset / itemInfo.size.toFloat()).coerceIn(-1f, 1f)

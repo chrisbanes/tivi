@@ -24,7 +24,7 @@ data class DiscoverUiState(
   val popularRefreshing: Boolean = false,
   val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
   val recommendedRefreshing: Boolean = false,
-  val nextEpisodeWithShowToWatch: UpNextEntry? = null,
+  val nextEpisodesToWatch: List<UpNextEntry> = emptyList(),
   val message: UiMessage? = null,
   val eventSink: (DiscoverUiEvent) -> Unit,
 ) : CircuitUiState {

@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ObserveNextShowEpisodeToWatch(
+class ObserveNextShowEpisodesToWatch(
   private val watchedShowDao: WatchedShowDao,
-) : SubjectInteractor<Unit, UpNextEntry?>() {
-  override fun createObservable(params: Unit): Flow<UpNextEntry?> {
-    return watchedShowDao.observeUpNextShow()
+) : SubjectInteractor<ObserveNextShowEpisodesToWatch.Params, List<UpNextEntry>>() {
+  override fun createObservable(params: Params): Flow<List<UpNextEntry>> {
+    return watchedShowDao.observeUpNextShows(params.followedOnly, params.limit)
   }
+
+  data class Params(val followedOnly: Boolean = false, val limit: Long = Long.MAX_VALUE)
 }
