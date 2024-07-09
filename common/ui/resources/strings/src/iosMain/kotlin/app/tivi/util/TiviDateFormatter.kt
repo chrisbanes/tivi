@@ -3,7 +3,6 @@
 
 package app.tivi.util
 
-import app.tivi.inject.ActivityScope
 import kotlin.time.Duration.Companion.days
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
@@ -32,7 +31,6 @@ import platform.Foundation.NSRelativeDateTimeFormatter
 import platform.Foundation.NSRelativeDateTimeFormatterStyleNamed
 
 @OptIn(ExperimentalForeignApi::class)
-@ActivityScope
 @Inject
 actual class TiviDateFormatter(
   private val overrideLocale: NSLocale? = null,

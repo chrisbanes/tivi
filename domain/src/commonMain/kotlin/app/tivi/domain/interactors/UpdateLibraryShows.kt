@@ -9,6 +9,7 @@ import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.WatchedShowEntry
 import app.tivi.data.shows.ShowStore
+import app.tivi.data.util.dataSetChanged
 import app.tivi.data.util.fetch
 import app.tivi.data.watchedshows.WatchedShowsLastRequestStore
 import app.tivi.data.watchedshows.WatchedShowsStore
@@ -34,7 +35,9 @@ class UpdateLibraryShows(
   private val watchedShowDao: WatchedShowDao,
   private val logger: Logger,
   private val dispatchers: AppCoroutineDispatchers,
+  scheduleEpisodeNotifications: Lazy<ScheduleEpisodeNotifications>,
 ) : Interactor<UpdateLibraryShows.Params, Unit>() {
+  private val scheduleEpisodeNotifications by scheduleEpisodeNotifications
 
   override suspend fun doWork(params: Params): Unit = withContext(dispatchers.io) {
     val watchedShowsDeferred = async {
@@ -47,7 +50,10 @@ class UpdateLibraryShows(
     }
     val followedShowsDeferred = async {
       if (params.isUserInitiated || followedShowsRepository.needFollowedShowsSync()) {
-        followedShowsRepository.syncFollowedShows()
+        val result = followedShowsRepository.syncFollowedShows()
+        if (result.dataSetChanged()) {
+          scheduleEpisodeNotifications(ScheduleEpisodeNotifications.Params())
+        }
       }
       followedShowsRepository.getFollowedShows()
     }

@@ -105,6 +105,8 @@ data class TiviStrings(
   val networkContentDescriptionFormat: (String) -> String,
   val networkTitle: String,
   val nextPrefix: (String) -> String,
+  val notificationEpisodeAiringTitle: (String, String) -> String,
+  val notificationEpisodeAiringMessage: (String, String?, Int, Int) -> String,
   val notKnownTitle: String,
   val percentageFormat: (Int) -> String,
   val popupSeasonFollow: String,

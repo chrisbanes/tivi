@@ -12,6 +12,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.notifications)
+        api(projects.common.ui.resources.strings)
 
         api(projects.data.models)
         implementation(projects.data.db) // remove this eventually

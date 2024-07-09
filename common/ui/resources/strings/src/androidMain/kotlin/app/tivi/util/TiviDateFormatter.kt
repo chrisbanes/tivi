@@ -4,7 +4,6 @@
 package app.tivi.util
 
 import android.text.format.DateUtils
-import app.tivi.inject.ActivityScope
 import java.time.LocalDateTime as JavaLocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -26,7 +25,6 @@ import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
 
-@ActivityScope
 @Inject
 actual class TiviDateFormatter(
   private val locale: Locale = Locale.getDefault(),
