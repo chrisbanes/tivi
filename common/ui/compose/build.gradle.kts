@@ -15,6 +15,7 @@ kotlin {
         api(projects.data.models)
         api(projects.core.preferences)
         api(projects.common.imageloading)
+        api(libs.material.kolor)
 
         api(projects.common.ui.screens)
         api(libs.circuit.foundation)
@@ -26,6 +27,8 @@ kotlin {
         api(libs.haze.haze)
         implementation(libs.haze.materials)
         api(libs.coil.compose)
+
+        implementation(libs.androidx.collection)
 
         implementation(compose.foundation)
         implementation(compose.material)

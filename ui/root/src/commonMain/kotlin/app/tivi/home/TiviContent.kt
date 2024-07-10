@@ -11,6 +11,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import app.tivi.common.compose.ColorExtractor
+import app.tivi.common.compose.LocalColorExtractor
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
@@ -60,6 +62,7 @@ class DefaultTiviContent(
   private val tiviTextCreator: TiviTextCreator,
   private val preferences: TiviPreferences,
   private val imageLoader: ImageLoader,
+  private val colorExtractor: ColorExtractor,
   private val logger: Logger,
 ) : TiviContent {
 
@@ -95,6 +98,7 @@ class DefaultTiviContent(
         LocalNavigator provides tiviNavigator,
         LocalTiviDateFormatter provides tiviDateFormatter,
         LocalTiviTextCreator provides tiviTextCreator,
+        LocalColorExtractor provides colorExtractor,
         LocalWindowSizeClass provides calculateWindowSizeClass(),
         LocalRetainedStateRegistry provides continuityRetainedStateRegistry(),
       ) {

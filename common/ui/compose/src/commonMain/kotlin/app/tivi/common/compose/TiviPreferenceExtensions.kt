@@ -26,4 +26,4 @@ fun TiviPreferences.shouldUseDynamicColors(): Boolean {
 }
 
 @Composable
-inline fun <T> Preference<T>.collectAsState() = flow.collectAsState(defaultValue)
+fun <T> Preference<T>.collectAsState() = flow.collectAsState(defaultValue)

@@ -14,3 +14,7 @@ val LocalTiviDateFormatter = staticCompositionLocalOf<TiviDateFormatter> {
 val LocalTiviTextCreator = staticCompositionLocalOf<TiviTextCreator> {
   error("TiviTextCreator not provided")
 }
+
+val LocalColorExtractor = staticCompositionLocalOf<ColorExtractor> {
+  error("LocalColorExtractor not provided")
+}

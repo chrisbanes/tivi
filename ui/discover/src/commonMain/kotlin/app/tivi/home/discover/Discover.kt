@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -62,6 +63,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.DynamicTheme
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalStrings
@@ -70,15 +72,14 @@ import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.compose.ReportDrawnWhen
 import app.tivi.common.compose.StartToStart
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.BackdropCard
 import app.tivi.common.compose.ui.ParallaxAlignment
-import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.drawForegroundGradientScrim
 import app.tivi.common.compose.ui.noIndicationClickable
+import app.tivi.common.compose.ui.rememberShowImageModel
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
@@ -92,6 +93,7 @@ import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.DiscoverScreen
 import coil3.compose.AsyncImagePainter
+import com.materialkolor.PaletteStyle
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
@@ -315,7 +317,11 @@ private fun NextEpisodeToWatchCard(
   modifier: Modifier = Modifier,
   onClick: () -> Unit,
 ) {
-  TiviTheme(useDarkColors = true) {
+  DynamicTheme(
+    model = rememberShowImageModel(show, ImageType.POSTER),
+    useDarkTheme = true,
+    style = PaletteStyle.Vibrant,
+  ) {
     Card(onClick = onClick, modifier = modifier) {
       Box {
         var model: Any by remember(episode.id) { mutableStateOf(episode.asImageModel()) }
@@ -336,14 +342,20 @@ private fun NextEpisodeToWatchCard(
           contentScale = ContentScale.Crop,
         )
 
-        PosterCard(
-          show = show,
-          showTitle = false,
+        Card(
           modifier = Modifier
-            .align(Alignment.BottomStart)
             .padding(horizontal = 16.dp)
-            .width(40.dp),
-        )
+            .align(Alignment.BottomStart)
+            .width(40.dp)
+            .aspectRatio(10 / 16f),
+        ) {
+          AsyncImage(
+            model = rememberShowImageModel(show, ImageType.POSTER),
+            contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: "show"),
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+          )
+        }
       }
 
       val textCreator = LocalTiviTextCreator.current
