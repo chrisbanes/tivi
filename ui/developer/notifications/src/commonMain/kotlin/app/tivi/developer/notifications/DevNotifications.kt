@@ -83,6 +83,15 @@ internal fun DevNotifications(
 
       item {
         Preference(
+          title = "Show episode airing notification",
+          modifier = Modifier.clickable {
+            state.eventSink(DevNotificationsUiEvent.ShowEpisodeAiringNotification)
+          },
+        )
+      }
+
+      item {
+        Preference(
           title = "Show notification (in 5 seconds)",
           modifier = Modifier.clickable {
             state.eventSink(DevNotificationsUiEvent.ShowNotification)

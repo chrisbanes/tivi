@@ -60,12 +60,12 @@ data class ShowDetailsScreen(val id: Long) : TiviScreen(name = "ShowDetails()") 
 
 @Parcelize
 data class ShowSeasonsScreen(
-  val id: Long,
+  val showId: Long,
   val selectedSeasonId: Long? = null,
   val openEpisodeId: Long? = null,
 ) : TiviScreen(name = "ShowSeasons()") {
   override val arguments get() = mapOf(
-    "id" to id,
+    "showId" to showId,
     "selectedSeasonId" to selectedSeasonId,
   )
 }

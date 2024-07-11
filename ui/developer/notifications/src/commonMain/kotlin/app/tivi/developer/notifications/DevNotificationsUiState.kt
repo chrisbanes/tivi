@@ -16,6 +16,7 @@ data class DevNotificationsUiState(
 
 sealed interface DevNotificationsUiEvent : CircuitUiEvent {
   data object NavigateUp : DevNotificationsUiEvent
+  data object ShowEpisodeAiringNotification : DevNotificationsUiEvent
   data object ShowNotification : DevNotificationsUiEvent
   data object ScheduleNotification : DevNotificationsUiEvent
 }

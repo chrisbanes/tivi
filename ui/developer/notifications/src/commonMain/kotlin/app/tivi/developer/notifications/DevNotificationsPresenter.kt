@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import app.tivi.core.notifications.NotificationManager
 import app.tivi.data.models.Notification
 import app.tivi.data.models.NotificationChannel
+import app.tivi.domain.interactors.ScheduleDebugEpisodeNotification
 import app.tivi.screens.DevNotificationsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -45,6 +46,7 @@ class DevNotificationsPresenterFactory(
 class DevNotificationsPresenter(
   @Assisted private val navigator: Navigator,
   private val notificationsManager: NotificationManager,
+  private val scheduleDebugEpisodeNotification: ScheduleDebugEpisodeNotification,
 ) : Presenter<DevNotificationsUiState> {
 
   @Composable
@@ -62,6 +64,13 @@ class DevNotificationsPresenter(
     fun eventSink(event: DevNotificationsUiEvent) {
       when (event) {
         DevNotificationsUiEvent.NavigateUp -> navigator.pop()
+        DevNotificationsUiEvent.ShowEpisodeAiringNotification -> {
+          coroutineScope.launch {
+            scheduleDebugEpisodeNotification(
+              ScheduleDebugEpisodeNotification.Params(3.seconds),
+            )
+          }
+        }
         DevNotificationsUiEvent.ScheduleNotification -> {
           coroutineScope.launch {
             notificationsManager.schedule(

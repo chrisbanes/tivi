@@ -78,7 +78,7 @@ import app.tivi.data.models.Season
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
-import app.tivi.overlays.LocalNavigator
+import app.tivi.navigation.LocalNavigator
 import app.tivi.overlays.showInBottomSheet
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen

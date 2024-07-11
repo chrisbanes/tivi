@@ -30,7 +30,7 @@ kotlin {
         implementation(libs.circuit.retained)
         implementation(libs.circuitx.gestureNavigation)
         implementation(libs.circuit.overlay)
-        implementation(projects.common.ui.circuitOverlay)
+        implementation(projects.common.ui.circuit)
 
         implementation(compose.foundation)
         implementation(compose.materialIconsExtended)

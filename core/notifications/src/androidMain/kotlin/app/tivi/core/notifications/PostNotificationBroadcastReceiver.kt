@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -48,9 +49,15 @@ class PostNotificationBroadcastReceiver : BroadcastReceiver() {
         .setContentText(pending.message)
         .apply {
           if (pending.deeplinkUrl != null) {
-            val launchIntent = Intent(pending.deeplinkUrl)
             setContentIntent(
-              PendingIntent.getActivity(context, 0, launchIntent, PendingIntent.FLAG_IMMUTABLE),
+              PendingIntent.getActivity(
+                context,
+                0,
+                Intent(Intent.ACTION_VIEW, Uri.parse(pending.deeplinkUrl)).apply {
+                  flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                },
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+              ),
             )
           }
         }

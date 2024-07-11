@@ -21,7 +21,9 @@ import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.shouldUseDynamicColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.core.analytics.Analytics
-import app.tivi.overlays.LocalNavigator
+import app.tivi.navigation.DeepLinker
+import app.tivi.navigation.LaunchDeepLinker
+import app.tivi.navigation.LocalNavigator
 import app.tivi.screens.TiviScreen
 import app.tivi.screens.UrlScreen
 import app.tivi.settings.TiviPreferences
@@ -63,6 +65,7 @@ class DefaultTiviContent(
   private val preferences: TiviPreferences,
   private val imageLoader: ImageLoader,
   private val colorExtractor: ColorExtractor,
+  private val deepLinker: DeepLinker,
   private val logger: Logger,
 ) : TiviContent {
 
@@ -80,6 +83,8 @@ class DefaultTiviContent(
     val tiviNavigator: Navigator = remember(navigator) {
       TiviNavigator(navigator, backstack, onOpenUrl, logger)
     }
+
+    LaunchDeepLinker(deepLinker = deepLinker, navigator = navigator)
 
     // Launch an effect to track changes to the current back stack entry, and push them
     // as a screen views to analytics
