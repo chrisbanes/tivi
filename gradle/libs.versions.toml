@@ -129,7 +129,7 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
-playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:16.3.0"
+playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:16.3.1"
 
 screengrab = "tools.fastlane:screengrab:2.1.1"
 store = "org.mobilenativefoundation.store:store5:5.0.0"
