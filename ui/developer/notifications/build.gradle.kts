@@ -18,6 +18,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         api(projects.core.notifications)
+        api(projects.domain)
 
         implementation(projects.common.ui.compose)
 

@@ -3,6 +3,7 @@
 
 package app.tivi.domain.interactors
 
+import app.tivi.app.ApplicationInfo
 import app.tivi.common.ui.resources.EnTiviStrings
 import app.tivi.core.notifications.NotificationManager
 import app.tivi.data.compoundmodels.ShowSeasonEpisode
@@ -15,6 +16,7 @@ import app.tivi.util.TiviDateFormatter
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -27,6 +29,7 @@ class ScheduleEpisodeNotifications(
   notificationManager: Lazy<NotificationManager>,
   dateTimeFormatter: Lazy<TiviDateFormatter>,
   private val dispatchers: AppCoroutineDispatchers,
+  private val applicationInfo: ApplicationInfo,
 ) : Interactor<ScheduleEpisodeNotifications.Params, Unit>() {
   private val seasonsEpisodesRepository by seasonsEpisodesRepository
   private val notificationManager by notificationManager
@@ -45,32 +48,42 @@ class ScheduleEpisodeNotifications(
       )
     }
 
-    episodes
-      .map { createNotification(it, params.bufferTime) }
+    episodes.asSequence()
+      .map { item ->
+        createEpisodeAiringNotification(
+          item = item,
+          applicationInfo = applicationInfo,
+          dateTimeFormatter = dateTimeFormatter,
+          bufferTime = params.bufferTime,
+        )
+      }
       .forEach { notificationManager.schedule(it) }
   }
 
-  private fun createNotification(item: ShowSeasonEpisode, bufferTime: Duration): Notification {
-    val airDate = requireNotNull(item.episode.firstAired)
-    val airDateLocal = airDate.toLocalDateTime(TimeZone.currentSystemDefault())
-
-    return Notification(
-      id = "episode_${item.episode.id}",
-      title = EnTiviStrings.notificationEpisodeAiringTitle(
-        item.show.title!!,
-        dateTimeFormatter.formatShortTime(airDateLocal.time),
-      ),
-      message = EnTiviStrings.notificationEpisodeAiringMessage(
-        item.episode.title!!,
-        item.show.network ?: "?",
-        item.season.number ?: 99,
-        item.episode.number ?: 99,
-      ),
-      channel = NotificationChannel.EPISODES_AIRING,
-      date = requireNotNull(item.episode.firstAired) - bufferTime,
-      deeplinkUrl = "app.tivi//foo/${item.episode.id}",
-    )
-  }
-
   data class Params(val limit: Duration = 12.hours, val bufferTime: Duration = 10.minutes)
+}
+
+internal fun createEpisodeAiringNotification(
+  item: ShowSeasonEpisode,
+  applicationInfo: ApplicationInfo,
+  dateTimeFormatter: TiviDateFormatter,
+  bufferTime: Duration = 0.seconds,
+): Notification {
+  val airDate = requireNotNull(item.episode.firstAired)
+  val airDateLocal = airDate.toLocalDateTime(TimeZone.currentSystemDefault())
+
+  return Notification(
+    id = "episode_${item.episode.id}",
+    title = EnTiviStrings.notificationEpisodeAiringTitle(item.show.title!!),
+    message = EnTiviStrings.notificationEpisodeAiringMessage(
+      item.episode.title!!,
+      dateTimeFormatter.formatShortTime(airDateLocal.time),
+      item.show.network ?: "?",
+      item.season.number ?: 99,
+      item.episode.number ?: 99,
+    ),
+    channel = NotificationChannel.EPISODES_AIRING,
+    date = requireNotNull(item.episode.firstAired) - bufferTime,
+    deeplinkUrl = "${applicationInfo.packageName}://tivi/show/${item.show.id}/season/${item.season.id}/episode/${item.episode.id}",
+  )
 }

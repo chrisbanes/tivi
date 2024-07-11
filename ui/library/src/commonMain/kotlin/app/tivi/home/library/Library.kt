@@ -81,7 +81,7 @@ import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
-import app.tivi.overlays.LocalNavigator
+import app.tivi.navigation.LocalNavigator
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.LibraryScreen

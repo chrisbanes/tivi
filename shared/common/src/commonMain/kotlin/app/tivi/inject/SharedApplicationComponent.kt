@@ -23,6 +23,7 @@ import app.tivi.data.traktauth.TraktAuthComponent
 import app.tivi.data.traktusers.TraktUsersBinds
 import app.tivi.data.trendingshows.TrendingShowsBinds
 import app.tivi.data.watchedshows.WatchedShowsBinds
+import app.tivi.navigation.DeepLinker
 import app.tivi.settings.PreferencesComponent
 import app.tivi.tasks.TasksComponent
 import app.tivi.tmdb.TmdbComponent
@@ -69,6 +70,7 @@ interface SharedApplicationComponent :
 
   val initializers: AppInitializers
   val dispatchers: AppCoroutineDispatchers
+  val deepLinker: DeepLinker
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @ApplicationScope

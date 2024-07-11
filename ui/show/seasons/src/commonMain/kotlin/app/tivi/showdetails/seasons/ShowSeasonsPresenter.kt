@@ -74,7 +74,7 @@ class ShowSeasonsPresenter(
         is ShowSeasonsUiEvent.Refresh -> {
           scope.launch {
             updateShowSeasons.value.invoke(
-              UpdateShowSeasons.Params(screen.id, event.fromUser),
+              UpdateShowSeasons.Params(screen.showId, event.fromUser),
             ).onFailure { e ->
               logger.i(e)
               uiMessageManager.emitMessage(UiMessage(e))
@@ -87,8 +87,8 @@ class ShowSeasonsPresenter(
     }
 
     LaunchedEffect(Unit) {
-      observeShowDetails.value.invoke(ObserveShowDetails.Params(screen.id))
-      observeShowSeasons.value.invoke(ObserveShowSeasonsEpisodesWatches.Params(screen.id))
+      observeShowDetails.value.invoke(ObserveShowDetails.Params(screen.showId))
+      observeShowSeasons.value.invoke(ObserveShowSeasonsEpisodesWatches.Params(screen.showId))
 
       eventSink(ShowSeasonsUiEvent.Refresh(false))
     }

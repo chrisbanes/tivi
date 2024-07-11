@@ -87,7 +87,7 @@ include(
   ":core:preferences",
   ":core:notifications",
   ":core:notifications-protos",
-  ":common:ui:circuit-overlay",
+  ":common:ui:circuit",
   ":common:ui:resources:fonts",
   ":common:ui:resources:strings",
   ":common:ui:compose",

@@ -4,6 +4,7 @@
 package app.tivi.home
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -26,14 +27,19 @@ import app.tivi.core.permissions.bind
 import app.tivi.inject.AndroidActivityComponent
 import app.tivi.inject.AndroidApplicationComponent
 import app.tivi.inject.create
+import app.tivi.navigation.DeepLinker
 import app.tivi.screens.DiscoverScreen
 import app.tivi.settings.TiviPreferences
+import com.eygraber.uri.toUri
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class MainActivity : TiviActivity() {
+
+  private lateinit var deepLinker: DeepLinker
+
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
     enableEdgeToEdgeForTheme(TiviPreferences.Theme.SYSTEM)
@@ -42,6 +48,8 @@ class MainActivity : TiviActivity() {
 
     val applicationComponent = AndroidApplicationComponent.from(this)
     val component = AndroidActivityComponent.create(this, applicationComponent)
+
+    deepLinker = applicationComponent.deepLinker
 
     lifecycle.coroutineScope.launch {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -72,6 +80,13 @@ class MainActivity : TiviActivity() {
           testTagsAsResourceId = true
         },
       )
+    }
+  }
+
+  override fun handleIntent(intent: Intent) {
+    val uri = intent.data?.toUri()
+    if (uri != null) {
+      deepLinker.addDeeplink(uri)
     }
   }
 }

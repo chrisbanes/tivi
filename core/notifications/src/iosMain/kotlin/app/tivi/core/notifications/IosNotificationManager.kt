@@ -102,6 +102,6 @@ class IosNotificationManager(
   }
 
   private companion object {
-    const val USER_INFO_DEEPLINK = "deeplink_url"
+    const val USER_INFO_DEEPLINK = "deeplink_uri"
   }
 }

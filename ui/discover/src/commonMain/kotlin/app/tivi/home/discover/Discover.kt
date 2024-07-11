@@ -88,7 +88,7 @@ import app.tivi.data.models.ImageType
 import app.tivi.data.models.Season
 import app.tivi.data.models.TiviShow
 import app.tivi.data.traktauth.TraktAuthState
-import app.tivi.overlays.LocalNavigator
+import app.tivi.navigation.LocalNavigator
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.DiscoverScreen

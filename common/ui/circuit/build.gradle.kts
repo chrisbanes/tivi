@@ -22,6 +22,8 @@ kotlin {
         implementation(compose.material3)
         implementation(compose.animation)
 
+        api(libs.uri)
+
         api(libs.circuit.foundation)
         api(libs.circuit.overlay)
       }

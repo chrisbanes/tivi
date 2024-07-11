@@ -116,11 +116,9 @@ val EnTiviStrings = TiviStrings(
   networkContentDescriptionFormat = { "Network: %s".fmt(it) },
   networkTitle = "Network",
   nextPrefix = { "Next: %s".fmt(it) },
-  notificationEpisodeAiringTitle = { showTitle, time ->
-    "New %s episode at %s".fmt(showTitle, time)
-  },
-  notificationEpisodeAiringMessage = { episodeTitle, network, seasonNumber, episodeNumber ->
-    "%s on %s (%02dx%02d)".fmt(episodeTitle, network, seasonNumber, episodeNumber)
+  notificationEpisodeAiringTitle = { showTitle -> "New %s episode".fmt(showTitle) },
+  notificationEpisodeAiringMessage = { episodeTitle, time, network, seasonNumber, episodeNumber ->
+    "%s at %s on %s (%02dx%02d)".fmt(episodeTitle, time, network, seasonNumber, episodeNumber)
   },
   notKnownTitle = "TBD",
   percentageFormat = { "%d%%".fmt(it) },

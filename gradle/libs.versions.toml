@@ -156,6 +156,8 @@ uuid = "com.benasher44:uuid:0.8.4"
 
 wire-runtime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
 
+uri = "com.eygraber:uri-kmp:0.0.18"
+
 ktlint = "com.pinterest.ktlint:ktlint-cli:1.3.1"
 
 # Build logic dependencies

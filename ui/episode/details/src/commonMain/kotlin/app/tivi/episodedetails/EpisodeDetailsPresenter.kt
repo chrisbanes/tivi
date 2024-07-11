@@ -127,7 +127,7 @@ class EpisodeDetailsPresenter(
             navigator.goTo(ShowDetailsScreen(showId))
             navigator.goTo(
               ShowSeasonsScreen(
-                id = showId,
+                showId = showId,
                 selectedSeasonId = episodeDetails?.season?.id,
                 openEpisodeId = episodeDetails?.episode?.id,
               ),

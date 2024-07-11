@@ -52,21 +52,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
 
     func userNotificationCenter(
-        _: UNUserNotificationCenter,
-        willPresent _: UNNotification,
-        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
-        // Show notification banners for notifications fired when the app is open
-        completionHandler([.banner])
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        return [.banner]
     }
 
     func userNotificationCenter(
-        _: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
-        // TODO
-        completionHandler()
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse
+    ) async {
+        let notification = response.notification
+        let deepLink = notification.request.content.userInfo["deeplink_uri"]
+
+        if deepLink != nil && deepLink is String {
+            // swiftlint:disable:next force_cast
+            applicationComponent.deepLinker.addDeeplink(string: deepLink as! String)
+        }
     }
 }
 
