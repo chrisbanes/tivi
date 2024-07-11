@@ -84,8 +84,6 @@ fun DynamicTheme(
   val color by produceState<Color?>(initialValue = null, model, colorExtractor) {
     val result = cancellableRunCatching {
       colorExtractor.calculatePrimaryColor(model)
-    }.onFailure {
-      it.printStackTrace()
     }
     value = result.getOrNull()
   }
