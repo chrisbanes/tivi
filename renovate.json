@@ -32,5 +32,8 @@
       "matchDatasources": ["maven"],
       "allowedVersions": "!/SNAPSHOT$/"
     }
-  ]
+  ],
+  "ruby-version": {
+    "enabled": false
+  }
 }
