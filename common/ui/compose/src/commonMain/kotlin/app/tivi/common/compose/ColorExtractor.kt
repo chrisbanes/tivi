@@ -4,7 +4,6 @@
 package app.tivi.common.compose
 
 import androidx.collection.lruCache
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -37,10 +36,10 @@ class ColorExtractor(
   suspend fun calculatePrimaryColor(
     model: Any,
     sizeResolver: SizeResolver = DEFAULT_REQUEST_SIZE,
-  ): Color {
+  ): Result {
     val cached = cache[model]
     if (cached != null) {
-      return cached
+      return Result(cached, true)
     }
 
     val bitmap = suspendCancellableCoroutine<ImageBitmap> { cont ->
@@ -64,7 +63,10 @@ class ColorExtractor(
     val suitableColors = bitmap.themeColors()
     return suitableColors.first()
       .also { cache.put(model, it) }
+      .let { Result(it, false) }
   }
+
+  data class Result(val color: Color, val cached: Boolean)
 
   private companion object {
     val DEFAULT_REQUEST_SIZE = SizeResolver(Size(96, 96))
@@ -74,14 +76,14 @@ class ColorExtractor(
 @Composable
 fun DynamicTheme(
   model: Any,
-  fallback: Color = MaterialTheme.colorScheme.primary,
+  fallback: Color,
   useDarkTheme: Boolean = false,
   style: PaletteStyle = PaletteStyle.TonalSpot,
   content: @Composable () -> Unit,
 ) {
   val colorExtractor = LocalColorExtractor.current
 
-  val color by produceState<Color?>(initialValue = null, model, colorExtractor) {
+  val result by produceState<ColorExtractor.Result?>(initialValue = null, model, colorExtractor) {
     val result = cancellableRunCatching {
       colorExtractor.calculatePrimaryColor(model)
     }
@@ -89,9 +91,9 @@ fun DynamicTheme(
   }
 
   DynamicMaterialTheme(
-    seedColor = color ?: fallback,
+    seedColor = result?.color ?: fallback,
     useDarkTheme = useDarkTheme,
-    animate = true,
+    animate = result.let { it != null && !it.cached },
     style = style,
     content = content,
   )
