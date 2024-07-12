@@ -6,11 +6,15 @@
 package app.tivi.common.compose
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.snapping.SnapFlingBehavior
+import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.SnapPositionInLayout
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -18,6 +22,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridItemScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 
@@ -88,5 +93,22 @@ inline fun LazyStaggeredGridScope.fullSpanItem(
 }
 
 @ExperimentalFoundationApi
+private val startToStart = SnapPositionInLayout { _, _, _, _, _ -> 0 }
+
+@ExperimentalFoundationApi
 val SnapPositionInLayout.Companion.StartToStart: SnapPositionInLayout
-  get() = SnapPositionInLayout { _, _, _, _, _ -> 0 }
+  get() = startToStart
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun rememberSnapFlingBehavior(
+  lazyListState: LazyListState,
+  position: SnapPositionInLayout,
+): SnapFlingBehavior = rememberSnapFlingBehavior(
+  snapLayoutInfoProvider = remember(lazyListState) {
+    SnapLayoutInfoProvider(
+      lazyListState = lazyListState,
+      positionInLayout = position,
+    )
+  },
+)

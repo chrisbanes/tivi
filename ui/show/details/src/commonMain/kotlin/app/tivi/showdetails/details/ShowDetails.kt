@@ -9,9 +9,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.SnapPositionInLayout
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -95,6 +93,7 @@ import app.tivi.common.compose.StartToStart
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
+import app.tivi.common.compose.rememberSnapFlingBehavior
 import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.Backdrop
@@ -669,14 +668,7 @@ private fun RelatedShows(
   LazyRow(
     state = lazyListState,
     modifier = modifier,
-    flingBehavior = rememberSnapFlingBehavior(
-      snapLayoutInfoProvider = remember(lazyListState) {
-        SnapLayoutInfoProvider(
-          lazyListState = lazyListState,
-          positionInLayout = SnapPositionInLayout.StartToStart,
-        )
-      },
-    ),
+    flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPositionInLayout.StartToStart),
     contentPadding = contentPadding,
     horizontalArrangement = Arrangement.spacedBy(4.dp),
   ) {
