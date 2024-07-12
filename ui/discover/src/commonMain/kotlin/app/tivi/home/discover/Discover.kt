@@ -325,6 +325,7 @@ private fun NextEpisodeToWatchCard(
   DynamicTheme(
     model = rememberShowImageModel(show, ImageType.POSTER),
     useDarkTheme = shouldUseDarkColors(),
+    fallback = MaterialTheme.colorScheme.surfaceVariant,
     style = PaletteStyle.TonalSpot,
   ) {
     Card(onClick = onClick, modifier = modifier) {
