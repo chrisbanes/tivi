@@ -4,6 +4,7 @@
 package app.tivi.common.compose
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviTextCreator
 
@@ -17,4 +18,8 @@ val LocalTiviTextCreator = staticCompositionLocalOf<TiviTextCreator> {
 
 val LocalColorExtractor = staticCompositionLocalOf<ColorExtractor> {
   error("LocalColorExtractor not provided")
+}
+
+val LocalPreferences = staticCompositionLocalOf<TiviPreferences> {
+  error("LocalPreferences not provided")
 }

@@ -7,9 +7,7 @@ package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.SnapPositionInLayout
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,6 +70,8 @@ import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.compose.ReportDrawnWhen
 import app.tivi.common.compose.StartToStart
 import app.tivi.common.compose.bodyWidth
+import app.tivi.common.compose.rememberSnapFlingBehavior
+import app.tivi.common.compose.theme.shouldUseDarkColors
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ui.BackdropCard
@@ -235,14 +235,19 @@ internal fun Discover(
         item(key = "carousel_next_to_watch") {
           val carouselState = rememberLazyListState()
           LazyRow(
+            state = carouselState,
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(
               horizontal = Layout.bodyMargin,
               vertical = Layout.gutter,
             ),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            flingBehavior = rememberSnapFlingBehavior(carouselState, SnapPositionInLayout.StartToStart),
           ) {
-            items(state.nextEpisodesToWatch) { item ->
+            items(
+              items = state.nextEpisodesToWatch,
+              key = { it.episode.id },
+            ) { item ->
               NextEpisodeToWatchCard(
                 show = item.show,
                 season = item.season,
@@ -319,8 +324,8 @@ private fun NextEpisodeToWatchCard(
 ) {
   DynamicTheme(
     model = rememberShowImageModel(show, ImageType.POSTER),
-    useDarkTheme = true,
-    style = PaletteStyle.Vibrant,
+    useDarkTheme = shouldUseDarkColors(),
+    style = PaletteStyle.TonalSpot,
   ) {
     Card(onClick = onClick, modifier = modifier) {
       Box {
@@ -388,6 +393,7 @@ private fun NextEpisodeToWatchCard(
             text = episode.summary!!,
             style = MaterialTheme.typography.bodySmall,
             overflow = TextOverflow.Ellipsis,
+            minLines = 2,
             maxLines = 2,
           )
         }
@@ -457,14 +463,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
     modifier = modifier
       .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
       .clip(MaterialTheme.shapes.extraLarge),
-    flingBehavior = rememberSnapFlingBehavior(
-      snapLayoutInfoProvider = remember(lazyListState) {
-        SnapLayoutInfoProvider(
-          lazyListState = lazyListState,
-          positionInLayout = SnapPositionInLayout.StartToStart,
-        )
-      },
-    ),
+    flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPositionInLayout.StartToStart),
     horizontalArrangement = Arrangement.spacedBy(8.dp),
   ) {
     items(
