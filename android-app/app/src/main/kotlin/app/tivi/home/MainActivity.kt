@@ -33,7 +33,6 @@ import app.tivi.settings.TiviPreferences
 import com.eygraber.uri.toUri
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class MainActivity : TiviActivity() {
@@ -54,7 +53,6 @@ class MainActivity : TiviActivity() {
     lifecycle.coroutineScope.launch {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
         applicationComponent.preferences.theme.flow
-          .flowOn(applicationComponent.dispatchers.io)
           .collect(::enableEdgeToEdgeForTheme)
       }
     }

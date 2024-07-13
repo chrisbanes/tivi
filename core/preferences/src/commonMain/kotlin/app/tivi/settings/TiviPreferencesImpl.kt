@@ -3,14 +3,19 @@
 
 package app.tivi.settings
 
+import app.tivi.inject.ApplicationCoroutineScope
 import app.tivi.settings.TiviPreferences.Theme
 import app.tivi.util.AppCoroutineDispatchers
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.set
-import kotlinx.coroutines.flow.Flow
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -18,6 +23,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TiviPreferencesImpl(
   settings: Lazy<ObservableSettings>,
+  private val coroutineScope: ApplicationCoroutineScope,
   private val dispatchers: AppCoroutineDispatchers,
 ) : TiviPreferences {
   private val settings: ObservableSettings by settings
@@ -70,7 +76,15 @@ class TiviPreferencesImpl(
       settings.getBoolean(key, defaultValue)
     }
 
-    override val flow: Flow<Boolean> by lazy { flowSettings.getBooleanFlow(key, defaultValue) }
+    override val flow: StateFlow<Boolean> by lazy {
+      flowSettings
+        .getBooleanFlow(key, defaultValue)
+        .stateIn(
+          scope = coroutineScope,
+          started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
+          initialValue = defaultValue,
+        )
+    }
   }
 
   private inner class MappingPreference<V>(
@@ -87,15 +101,19 @@ class TiviPreferencesImpl(
       settings.getStringOrNull(key)?.let(toValue) ?: defaultValue
     }
 
-    override val flow: Flow<V> by lazy {
-      flowSettings.getStringOrNullFlow(key).map { string ->
-        if (string != null) {
-          toValue(string)
-        } else {
-          defaultValue
-        }
-      }
+    override val flow: StateFlow<V> by lazy {
+      flowSettings.getStringOrNullFlow(key)
+        .map { it?.let(toValue) ?: defaultValue }
+        .stateIn(
+          scope = coroutineScope,
+          started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
+          initialValue = defaultValue,
+        )
     }
+  }
+
+  private companion object {
+    val SUBSCRIBED_TIMEOUT = 20.seconds
   }
 }
 
