@@ -12,7 +12,7 @@ interface TasksComponent : TasksPlatformComponent {
   @ApplicationScope
   @Provides
   @IntoSet
-  fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer = bind
+  fun provideShowTasksInitializer(bind: TasksInitializer): AppInitializer = bind
 }
 
 expect interface TasksPlatformComponent

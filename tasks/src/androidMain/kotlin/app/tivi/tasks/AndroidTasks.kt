@@ -14,9 +14,9 @@ import kotlin.time.toJavaDuration
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class AndroidShowTasks(
+class AndroidTasks(
   workManager: Lazy<WorkManager>,
-) : ShowTasks {
+) : Tasks {
   private val workManager by workManager
 
   override fun registerPeriodicTasks() {

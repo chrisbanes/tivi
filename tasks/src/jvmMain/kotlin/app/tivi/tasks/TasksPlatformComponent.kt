@@ -9,9 +9,9 @@ import me.tatarka.inject.annotations.Provides
 actual interface TasksPlatformComponent {
   @ApplicationScope
   @Provides
-  fun provideShowTasks(): ShowTasks = EmptyShowTasks
+  fun provideShowTasks(): Tasks = EmptyShowTasks
 }
 
-object EmptyShowTasks : ShowTasks {
+object EmptyShowTasks : Tasks {
   override fun registerPeriodicTasks() = Unit
 }

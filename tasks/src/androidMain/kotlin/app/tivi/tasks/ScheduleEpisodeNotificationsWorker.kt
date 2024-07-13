@@ -28,7 +28,7 @@ class ScheduleEpisodeNotificationsWorker(
       ScheduleEpisodeNotifications.Params(
         // We always schedule notifications for longer than the next task schedule, just in case
         // the task doesn't run on time
-        AndroidShowTasks.SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL * 1.5,
+        AndroidTasks.SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL * 1.5,
       ),
     )
     return when {
