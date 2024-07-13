@@ -19,11 +19,11 @@ class ScheduleEpisodeNotificationsWorker(
   private val logger: Logger,
 ) : CoroutineWorker(context, params) {
   companion object {
-    internal const val TAG = "set-episode-notifications"
+    internal const val NAME = "set-episode-notifications"
   }
 
   override suspend fun doWork(): Result {
-    logger.d { "$TAG worker running" }
+    logger.d { "$NAME worker running" }
     val result = scheduleEpisodeNotifications.value.invoke(
       ScheduleEpisodeNotifications.Params(
         // We always schedule notifications for longer than the next task schedule, just in case

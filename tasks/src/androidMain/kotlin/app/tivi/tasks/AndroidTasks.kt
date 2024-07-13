@@ -5,6 +5,7 @@ package app.tivi.tasks
 
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
@@ -26,17 +27,15 @@ class AndroidTasks(
       .build()
 
     workManager.enqueueUniquePeriodicWork(
-      SyncLibraryShowsWorker.TAG,
+      SyncLibraryShowsWorker.NAME,
       ExistingPeriodicWorkPolicy.UPDATE,
-      PeriodicWorkRequestBuilder<SyncLibraryShowsWorker>(
-        LIBRARY_NIGHTLY_SYNC_INTERVAL.toJavaDuration(),
-      )
+      PeriodicWorkRequestBuilder<SyncLibraryShowsWorker>(LIBRARY_SYNC_INTERVAL.toJavaDuration())
         .setConstraints(nightlyConstraints)
         .build(),
     )
 
     workManager.enqueueUniquePeriodicWork(
-      ScheduleEpisodeNotificationsWorker.TAG,
+      ScheduleEpisodeNotificationsWorker.NAME,
       ExistingPeriodicWorkPolicy.UPDATE,
       PeriodicWorkRequestBuilder<ScheduleEpisodeNotificationsWorker>(
         SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL.toJavaDuration(),
@@ -45,13 +44,15 @@ class AndroidTasks(
   }
 
   override fun enqueueStartupTasks() {
-    workManager.enqueue(
+    workManager.enqueueUniqueWork(
+      "tasks_startup",
+      ExistingWorkPolicy.KEEP,
       OneTimeWorkRequest.from(ScheduleEpisodeNotificationsWorker::class.java),
     )
   }
 
   internal companion object {
-    val LIBRARY_NIGHTLY_SYNC_INTERVAL = 24.hours
+    val LIBRARY_SYNC_INTERVAL = 12.hours
     val SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL = 6.hours
   }
 }

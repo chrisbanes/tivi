@@ -9,8 +9,6 @@ import app.tivi.inject.ApplicationCoroutineScope
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
