@@ -22,7 +22,7 @@ kotlin {
       dependencies {
         implementation(libs.androidx.core)
         implementation(libs.androidx.datastore)
-        implementation(projects.core.notificationsProtos)
+        implementation(projects.core.notifications.protos)
       }
     }
   }

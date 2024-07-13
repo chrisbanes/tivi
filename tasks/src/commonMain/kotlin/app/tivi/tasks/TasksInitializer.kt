@@ -7,13 +7,13 @@ import app.tivi.appinitializers.AppInitializer
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ShowTasksInitializer(
-  showTasks: Lazy<ShowTasks>,
+class TasksInitializer(
+  tasks: Lazy<Tasks>,
 ) : AppInitializer {
-  private val showTasks by showTasks
+  private val tasks by tasks
 
   override fun initialize() {
-    showTasks.registerPeriodicTasks()
-    showTasks.enqueueStartupTasks()
+    tasks.registerPeriodicTasks()
+    tasks.enqueueStartupTasks()
   }
 }

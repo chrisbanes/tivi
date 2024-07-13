@@ -13,7 +13,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.logging.api)
-        implementation(projects.core.notifications)
+        implementation(projects.core.notifications.core)
         implementation(projects.domain)
         implementation(libs.kotlininject.runtime)
       }

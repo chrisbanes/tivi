@@ -5,11 +5,10 @@ package app.tivi.tasks
 
 import app.tivi.domain.interactors.ScheduleEpisodeNotifications
 import app.tivi.domain.interactors.UpdateLibraryShows
+import app.tivi.inject.ApplicationCoroutineScope
 import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
@@ -25,13 +24,13 @@ import platform.Foundation.NSCalendarMatchStrictly
 import platform.Foundation.NSDate
 
 @Inject
-class IosShowTasks(
+class IosTasks(
   updateLibraryShows: Lazy<UpdateLibraryShows>,
   scheduleEpisodeNotifications: Lazy<ScheduleEpisodeNotifications>,
   private val logger: Logger,
-) : ShowTasks {
+  private val scope: ApplicationCoroutineScope,
+) : Tasks {
   private val taskScheduler by lazy { BGTaskScheduler.sharedScheduler }
-  private val scope by lazy { MainScope() + CoroutineName("app.tivi.tasks.IosShowTasks") }
 
   private val updateLibraryShows by updateLibraryShows
   private val scheduleEpisodeNotifications by scheduleEpisodeNotifications

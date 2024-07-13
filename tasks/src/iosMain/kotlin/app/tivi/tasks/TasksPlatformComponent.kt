@@ -9,5 +9,5 @@ import me.tatarka.inject.annotations.Provides
 actual interface TasksPlatformComponent {
   @ApplicationScope
   @Provides
-  fun provideShowTasks(bind: IosShowTasks): ShowTasks = bind
+  fun provideShowTasks(bind: IosTasks): Tasks = bind
 }

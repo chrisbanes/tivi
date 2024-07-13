@@ -19,11 +19,11 @@ class SyncLibraryShowsWorker(
   private val logger: Logger,
 ) : CoroutineWorker(context, params) {
   companion object {
-    internal const val TAG = "night-sync-all-followed-shows"
+    internal const val NAME = "night-sync-all-followed-shows"
   }
 
   override suspend fun doWork(): Result {
-    logger.d { "$TAG worker running" }
+    logger.d { "$NAME worker running" }
     val result = updateLibraryShows.value(UpdateLibraryShows.Params(true))
     return when {
       result.isSuccess -> Result.success()
