@@ -8,10 +8,7 @@ LEFT JOIN episodes AS eps ON eps.season_id = s.id
 LEFT JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
 WHERE
     (s.number IS NULL OR s.number != 0)
-    AND (
-        (:includeWatched = 1 AND watched_entries.id IS NOT NULL) OR
-        (:includeFollowed = 1 AND myshows_entries.id IS NOT NULL)
-    )
+    AND (:onlyFollowed = 0 OR myshows_entries.id IS NOT NULL)
     AND (:filter IS NULL OR shows.title LIKE :filter)
 GROUP BY shows.id
 ORDER BY CASE
@@ -28,8 +25,6 @@ count:
 SELECT COUNT(DISTINCT shows.id) FROM shows
 LEFT JOIN myshows_entries ON shows.id = myshows_entries.show_id
 LEFT JOIN watched_entries ON shows.id = watched_entries.show_id
-WHERE (
-    (:includeWatched = 1 AND watched_entries.id IS NOT NULL) OR
-    (:includeFollowed = 1 AND myshows_entries.id IS NOT NULL)
-)
-AND (:filter IS NULL OR shows.title LIKE :filter);
+WHERE
+  (:onlyFollowed = 0 OR myshows_entries.id IS NOT NULL)
+  AND (:filter IS NULL OR shows.title LIKE :filter);

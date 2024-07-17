@@ -91,8 +91,7 @@ class LibraryPresenter(
     val user by observeUserDetails.value.flow.collectAsRetainedState(null)
     val authState by observeTraktAuthState.value.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
 
-    val includeWatchedShows by preferences.value.libraryWatchedActive.collectAsState()
-    val includeFollowedShows by preferences.value.libraryFollowedActive.collectAsState()
+    val onlyFollowed by preferences.value.libraryFollowedActive.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -120,9 +119,6 @@ class LibraryPresenter(
         LibraryUiEvent.ToggleFollowedShowsIncluded -> {
           coroutineScope.launch { preferences.value.libraryFollowedActive.toggle() }
         }
-        LibraryUiEvent.ToggleWatchedShowsIncluded -> {
-          coroutineScope.launch { preferences.value.libraryWatchedActive.toggle() }
-        }
         LibraryUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
         is LibraryUiEvent.OpenShowDetails -> {
           navigator.goTo(ShowDetailsScreen(event.showId))
@@ -143,14 +139,13 @@ class LibraryPresenter(
         }
     }
 
-    LaunchedEffect(filter, sort, includeFollowedShows, includeWatchedShows) {
+    LaunchedEffect(filter, sort, onlyFollowed) {
       // When the filter and sort options change, update the data source
       retainedObservePagedLibraryShows(
         ObservePagedLibraryShows.Parameters(
           sort = sort,
           filter = filter,
-          includeFollowed = includeFollowedShows,
-          includeWatched = includeWatchedShows,
+          onlyFollowed = onlyFollowed,
           pagingConfig = PAGING_CONFIG,
         ),
       )
@@ -166,8 +161,7 @@ class LibraryPresenter(
       availableSorts = AVAILABLE_SORT_OPTIONS,
       sort = sort,
       message = message,
-      watchedShowsIncluded = includeWatchedShows,
-      followedShowsIncluded = includeFollowedShows,
+      onlyFollowedShows = onlyFollowed,
       eventSink = ::eventSink,
     )
   }

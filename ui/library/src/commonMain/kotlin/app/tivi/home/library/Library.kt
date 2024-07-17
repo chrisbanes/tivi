@@ -125,7 +125,6 @@ internal fun Library(
     openShowDetails = { eventSink(LibraryUiEvent.OpenShowDetails(it)) },
     onMessageShown = { eventSink(LibraryUiEvent.ClearMessage(it)) },
     onToggleIncludeFollowedShows = { eventSink(LibraryUiEvent.ToggleFollowedShowsIncluded) },
-    onToggleIncludeWatchedShows = { eventSink(LibraryUiEvent.ToggleWatchedShowsIncluded) },
     openUser = {
       scope.launch {
         overlayHost.showInDialog(AccountScreen, navigator::goTo)
@@ -145,7 +144,6 @@ internal fun Library(
   openShowDetails: (showId: Long) -> Unit,
   onMessageShown: (id: Long) -> Unit,
   onToggleIncludeFollowedShows: () -> Unit,
-  onToggleIncludeWatchedShows: () -> Unit,
   refresh: () -> Unit,
   openUser: () -> Unit,
   onFilterChanged: (String) -> Unit,
@@ -217,7 +215,6 @@ internal fun Library(
         paddingValues = paddingValues,
         onFilterChanged = onFilterChanged,
         onToggleIncludeFollowedShows = onToggleIncludeFollowedShows,
-        onToggleIncludeWatchedShows = onToggleIncludeWatchedShows,
         onSortSelected = onSortSelected,
         openShowDetails = openShowDetails,
         modifier = Modifier
@@ -246,7 +243,6 @@ private fun LibraryGrid(
   paddingValues: PaddingValues,
   onFilterChanged: (String) -> Unit,
   onToggleIncludeFollowedShows: () -> Unit,
-  onToggleIncludeWatchedShows: () -> Unit,
   onSortSelected: (SortOption) -> Unit,
   openShowDetails: (showId: Long) -> Unit,
   modifier: Modifier = Modifier,
@@ -306,9 +302,9 @@ private fun LibraryGrid(
         modifier = Modifier.padding(vertical = 8.dp),
       ) {
         FilterChip(
-          selected = state.followedShowsIncluded,
+          selected = state.onlyFollowedShows,
           leadingIcon = {
-            AnimatedVisibility(visible = state.followedShowsIncluded) {
+            AnimatedVisibility(visible = state.onlyFollowedShows) {
               Icon(
                 imageVector = Icons.Default.Done,
                 contentDescription = null,
@@ -317,23 +313,7 @@ private fun LibraryGrid(
           },
           onClick = onToggleIncludeFollowedShows,
           label = {
-            Text(text = LocalStrings.current.followingShowsTitle)
-          },
-        )
-
-        FilterChip(
-          selected = state.watchedShowsIncluded,
-          leadingIcon = {
-            AnimatedVisibility(visible = state.watchedShowsIncluded) {
-              Icon(
-                imageVector = Icons.Default.Done,
-                contentDescription = null,
-              )
-            }
-          },
-          onClick = onToggleIncludeWatchedShows,
-          label = {
-            Text(text = LocalStrings.current.watchedShowsTitle)
+            Text(text = LocalStrings.current.upnextFilterFollowedShowsOnlyTitle)
           },
         )
 

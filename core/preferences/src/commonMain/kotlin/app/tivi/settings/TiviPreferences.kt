@@ -11,7 +11,6 @@ interface TiviPreferences {
   val useLessData: Preference<Boolean>
 
   val libraryFollowedActive: Preference<Boolean>
-  val libraryWatchedActive: Preference<Boolean>
 
   val upNextFollowedOnly: Preference<Boolean>
 
