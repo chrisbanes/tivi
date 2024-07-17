@@ -23,8 +23,7 @@ class SqlDelightLibraryShowsDao(
   override fun pagedListLastWatched(
     sort: SortOption,
     filter: String?,
-    includeWatched: Boolean,
-    includeFollowed: Boolean,
+    onlyFollowed: Boolean,
   ): PagingSource<Int, LibraryShow> {
     val searchQuery = when {
       filter.isNullOrEmpty() -> null
@@ -32,16 +31,14 @@ class SqlDelightLibraryShowsDao(
     }
     return QueryPagingSource(
       countQuery = db.library_showsQueries.count(
-        includeWatched = includeWatched.sqlValue,
-        includeFollowed = includeFollowed.sqlValue,
+        onlyFollowed = onlyFollowed.sqlValue,
         filter = searchQuery,
       ),
       transacter = db.library_showsQueries,
       context = dispatchers.io,
       queryProvider = { limit: Long, offset: Long ->
         db.library_showsQueries.entries(
-          includeWatched = includeWatched.sqlValue,
-          includeFollowed = includeFollowed.sqlValue,
+          onlyFollowed = onlyFollowed.sqlValue,
           filter = searchQuery,
           sort = sort.sqlValue,
           limit = limit,
@@ -85,10 +82,10 @@ class SqlDelightLibraryShowsDao(
               network_logo_path, runtime, genres, status, airs_day, airs_time, airs_tz,
             ),
             stats = show_id_?.let {
-              ShowsWatchStats(show_id_, episode_count!!, watched_episode_count!!)
+              ShowsWatchStats(it, episode_count!!, watched_episode_count!!)
             },
             watchedEntry = id_?.let {
-              WatchedShowEntry(id_, show_id!!, last_watched!!, last_updated!!)
+              WatchedShowEntry(it, show_id!!, last_watched!!, last_updated!!)
             },
           )
         }

@@ -42,9 +42,6 @@ class TiviPreferencesImpl(
   override val libraryFollowedActive: Preference<Boolean> by lazy {
     BooleanPreference(KEY_LIBRARY_FOLLOWED_ACTIVE)
   }
-  override val libraryWatchedActive: Preference<Boolean> by lazy {
-    BooleanPreference(KEY_LIBRARY_WATCHED_ACTIVE)
-  }
   override val upNextFollowedOnly: Preference<Boolean> by lazy {
     BooleanPreference(KEY_UPNEXT_FOLLOWED_ONLY)
   }

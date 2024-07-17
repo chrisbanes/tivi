@@ -24,8 +24,7 @@ data class LibraryUiState(
   val availableSorts: List<SortOption> = emptyList(),
   val sort: SortOption = SortOption.LAST_WATCHED,
   val message: UiMessage? = null,
-  val followedShowsIncluded: Boolean = false,
-  val watchedShowsIncluded: Boolean = false,
+  val onlyFollowedShows: Boolean = false,
   val eventSink: (LibraryUiEvent) -> Unit,
 ) : CircuitUiState
 
@@ -35,7 +34,6 @@ sealed interface LibraryUiEvent : CircuitUiEvent {
   data class ChangeFilter(val filter: String?) : LibraryUiEvent
   data class ChangeSort(val sort: SortOption) : LibraryUiEvent
   data object ToggleFollowedShowsIncluded : LibraryUiEvent
-  data object ToggleWatchedShowsIncluded : LibraryUiEvent
   data object OpenAccount : LibraryUiEvent
   data class OpenShowDetails(val showId: Long) : LibraryUiEvent
 }

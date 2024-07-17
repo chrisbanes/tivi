@@ -24,16 +24,14 @@ class ObservePagedLibraryShows(
     libraryShowsDao.pagedListLastWatched(
       sort = params.sort,
       filter = if (params.filter.isNullOrEmpty()) null else params.filter,
-      includeWatched = params.includeWatched,
-      includeFollowed = params.includeFollowed,
+      onlyFollowed = params.onlyFollowed,
     )
   }.flow
 
   data class Parameters(
     val sort: SortOption,
     val filter: String? = null,
-    val includeWatched: Boolean = true,
-    val includeFollowed: Boolean = true,
+    val onlyFollowed: Boolean = true,
     override val pagingConfig: PagingConfig,
   ) : PagingInteractor.Parameters<LibraryShow>
 }

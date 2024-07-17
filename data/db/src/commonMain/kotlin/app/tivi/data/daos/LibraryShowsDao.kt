@@ -11,7 +11,6 @@ interface LibraryShowsDao {
   fun pagedListLastWatched(
     sort: SortOption,
     filter: String?,
-    includeWatched: Boolean,
-    includeFollowed: Boolean,
+    onlyFollowed: Boolean,
   ): PagingSource<Int, LibraryShow>
 }
