@@ -17,7 +17,8 @@ class RevenueCatEntitlementManager : EntitlementManager {
 
   override fun setup() {
     Purchases.configure(
-      PurchasesConfiguration(apiKey = BuildConfig.REVENUECAT_API_KEY) {
+      // TODO change the API key for different platforms
+      PurchasesConfiguration(apiKey = BuildConfig.TIVI_REVENUECAT_ANDROID_API_KEY) {
         verificationMode(EntitlementVerificationMode.INFORMATIONAL)
       },
     )

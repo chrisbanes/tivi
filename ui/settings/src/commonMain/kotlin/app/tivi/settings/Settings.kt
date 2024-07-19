@@ -31,6 +31,7 @@ import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.common.compose.ui.Preference
 import app.tivi.common.compose.ui.PreferenceDivider
 import app.tivi.common.compose.ui.PreferenceHeader
+import app.tivi.entitlements.ui.Paywall
 import app.tivi.screens.SettingsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
@@ -62,6 +63,12 @@ internal fun Settings(
   val eventSink = state.eventSink
 
   val strings = LocalStrings.current
+
+  if (state.proUpsellVisible) {
+    Paywall {
+      eventSink(SettingsUiEvent.DismissProUpsell)
+    }
+  }
 
   HazeScaffold(
     topBar = {

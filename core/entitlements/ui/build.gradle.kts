@@ -7,14 +7,18 @@ plugins {
 
 kotlin {
   sourceSets {
+    commonMain {
+      dependencies {
+        api(projects.core.entitlements.core)
+        api(projects.common.ui.compose)
+      }
+    }
+
     val mobileMain by creating {
       dependsOn(commonMain.get())
 
       dependencies {
-        api(projects.core.entitlements.core)
         implementation(libs.revenuecat.ui)
-
-        api(projects.common.ui.compose)
       }
     }
 

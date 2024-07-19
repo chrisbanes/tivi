@@ -40,8 +40,14 @@ buildConfig {
 
   buildConfigField(
     type = String::class.java,
-    name = "REVENUECAT_API_KEY",
-    value = provider { properties["TIVI_REVENUECAT_API_KEY"]?.toString() ?: "" },
+    name = "TIVI_REVENUECAT_ANDROID_API_KEY",
+    value = provider { properties["TIVI_REVENUECAT_ANDROID_API_KEY"]?.toString() ?: "" },
+  )
+
+  buildConfigField(
+    type = String::class.java,
+    name = "TIVI_REVENUECAT_IOS_API_KEY",
+    value = provider { properties["TIVI_REVENUECAT_IOS_API_KEY"]?.toString() ?: "" },
   )
 }
 
