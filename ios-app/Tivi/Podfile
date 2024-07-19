@@ -1,0 +1,6 @@
+platform :ios, '15.2'
+
+target 'Tivi' do
+    pod 'PurchasesHybridCommon', '10.10.0'
+    pod 'PurchasesHybridCommonUI', '10.10.0'
+end

@@ -53,6 +53,8 @@ platform :ios do
   before_all do |lane|
     cleanup_ci_keychain if is_ci
     xcodes(select_for_current_build_only: true)
+
+    cocoapods(podfile: "ios-app/Tivi")
   end
 
   after_all do |lane|
@@ -107,7 +109,7 @@ platform :ios do
     ) unless env_nil_or_blank('TIVI_BUILD_NUMBER')
 
     build_app(
-      project: "ios-app/Tivi/Tivi.xcodeproj",
+      workspace: "ios-app/Tivi/Tivi.xcworkspace",
       scheme: options[:scheme],
       buildlog_path: "build/fastlane-buildlog",
       skip_package_ipa: skip_certs,
@@ -130,7 +132,7 @@ platform :ios do
 
   lane :screenshots do
     capture_screenshots(
-      project: "ios-app/Tivi/Tivi.xcodeproj",
+      workspace: "ios-app/Tivi/Tivi.xcworkspace",
       scheme: "UITests",
       headless: false,
       skip_open_summary: true
