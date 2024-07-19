@@ -21,6 +21,9 @@
 
   <uses-permission android:name="android.permission.INTERNET" />
 
+  <!-- Playing around with Google Play billing -->
+  <uses-permission android:name="com.android.vending.BILLING" />
+
   <application
     android:name=".TiviApplication"
     android:allowBackup="true"
