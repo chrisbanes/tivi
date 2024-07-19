@@ -19,6 +19,8 @@ class TasksInitializer(
   private val preferences by preferences
 
   override fun initialize() {
+    tasks.setup()
+
     tasks.scheduleLibrarySync()
 
     coroutineScope.launch {

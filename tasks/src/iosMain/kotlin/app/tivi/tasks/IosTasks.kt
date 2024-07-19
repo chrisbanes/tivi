@@ -10,7 +10,6 @@ import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toNSDate
@@ -35,11 +34,16 @@ class IosTasks(
   private val updateLibraryShows by updateLibraryShows
   private val scheduleEpisodeNotifications by scheduleEpisodeNotifications
 
+  override fun setup() {
+    registerTask(ID_LIBRARY_SHOWS_NIGHTLY)
+    registerTask(ID_SCHEDULE_EPISODE_NOTIFICATIONS)
+  }
+
   override fun scheduleLibrarySync() {
-    registerTaskAndSchedule(
+    scheduleTask(
       id = ID_LIBRARY_SHOWS_NIGHTLY,
       type = TaskType.Refresh,
-      firstSync = nextEarliestNightlySyncDate(),
+      earliest = nextEarliestNightlySyncDate(),
     )
   }
 
@@ -48,10 +52,10 @@ class IosTasks(
   }
 
   override fun scheduleEpisodeNotifications() {
-    registerTaskAndSchedule(
-      id = ID_LIBRARY_SHOWS_NIGHTLY,
+    scheduleTask(
+      id = ID_SCHEDULE_EPISODE_NOTIFICATIONS,
       type = TaskType.Refresh,
-      firstSync = nextEarliestNightlySyncDate(),
+      earliest = (Clock.System.now() + SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL).toNSDate(),
     )
 
     // iOS has no concept of running tasks while the app is open, so we'll just run them
@@ -63,15 +67,13 @@ class IosTasks(
     taskScheduler.cancelTaskRequestWithIdentifier(ID_SCHEDULE_EPISODE_NOTIFICATIONS)
   }
 
-  private fun registerTaskAndSchedule(id: String, type: TaskType, firstSync: NSDate) {
+  private fun registerTask(id: String) {
     taskScheduler.registerForTaskWithIdentifier(
       identifier = id,
       usingQueue = null,
       launchHandler = ::handleTask,
     )
     logger.d { "Registered task [$id] with BGTaskScheduler" }
-
-    scheduleTask(id = id, taskType = type, earliest = firstSync)
   }
 
   private fun handleTask(task: BGTask?) = when (task?.identifier) {
@@ -87,7 +89,7 @@ class IosTasks(
       task.runInteractor(::runScheduleEpisodeNotifications)
       scheduleTask(
         id = ID_SCHEDULE_EPISODE_NOTIFICATIONS,
-        taskType = TaskType.Refresh,
+        type = TaskType.Refresh,
         earliest = (Clock.System.now() + SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL).toNSDate(),
       )
     }
@@ -106,11 +108,11 @@ class IosTasks(
   @OptIn(ExperimentalForeignApi::class)
   private fun scheduleTask(
     id: String,
-    taskType: TaskType,
+    type: TaskType,
     earliest: NSDate,
     requireNetwork: Boolean = true,
   ) {
-    val request = when (taskType) {
+    val request = when (type) {
       TaskType.Processing -> {
         BGProcessingTaskRequest(identifier = id).apply {
           earliestBeginDate = earliest
