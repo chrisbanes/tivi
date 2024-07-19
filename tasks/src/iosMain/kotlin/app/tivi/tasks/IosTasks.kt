@@ -35,24 +35,32 @@ class IosTasks(
   private val updateLibraryShows by updateLibraryShows
   private val scheduleEpisodeNotifications by scheduleEpisodeNotifications
 
-  override fun registerPeriodicTasks() {
+  override fun scheduleLibrarySync() {
+    registerTaskAndSchedule(
+      id = ID_LIBRARY_SHOWS_NIGHTLY,
+      type = TaskType.Refresh,
+      firstSync = nextEarliestNightlySyncDate(),
+    )
+  }
+
+  override fun cancelLibrarySync() {
+    taskScheduler.cancelTaskRequestWithIdentifier(ID_LIBRARY_SHOWS_NIGHTLY)
+  }
+
+  override fun scheduleEpisodeNotifications() {
     registerTaskAndSchedule(
       id = ID_LIBRARY_SHOWS_NIGHTLY,
       type = TaskType.Refresh,
       firstSync = nextEarliestNightlySyncDate(),
     )
 
-    registerTaskAndSchedule(
-      id = ID_SCHEDULE_EPISODE_NOTIFICATIONS,
-      type = TaskType.Refresh,
-      firstSync = (Clock.System.now() + SCHEDULE_EPISODE_NOTIFICATIONS_INTERVAL).toNSDate(),
-    )
-  }
-
-  override fun enqueueStartupTasks() {
     // iOS has no concept of running tasks while the app is open, so we'll just run them
     // manually now
     scope.launch { runScheduleEpisodeNotifications() }
+  }
+
+  override fun cancelEpisodeNotifications() {
+    taskScheduler.cancelTaskRequestWithIdentifier(ID_SCHEDULE_EPISODE_NOTIFICATIONS)
   }
 
   private fun registerTaskAndSchedule(id: String, type: TaskType, firstSync: NSDate) {

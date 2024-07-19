@@ -20,7 +20,7 @@ interface TiviPreferences {
 
   val developerHideArtwork: Preference<Boolean>
 
-  val notificationsEnabled: Preference<Boolean>
+  val episodeAiringNotificationsEnabled: Preference<Boolean>
 
   enum class Theme {
     LIGHT,

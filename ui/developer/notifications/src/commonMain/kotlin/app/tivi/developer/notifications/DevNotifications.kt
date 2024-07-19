@@ -119,10 +119,7 @@ internal fun DevNotifications(
       items(state.pendingNotifications) { notification ->
         ListItem(
           overlineContent = {
-            val date = notification.date
-            if (date != null) {
-              Text(LocalTiviDateFormatter.current.formatMediumDateTime(date))
-            }
+            Text(LocalTiviDateFormatter.current.formatMediumDateTime(notification.date))
           },
           headlineContent = { Text(notification.title) },
           supportingContent = {

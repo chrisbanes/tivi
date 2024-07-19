@@ -13,5 +13,8 @@ actual interface TasksPlatformComponent {
 }
 
 object EmptyShowTasks : Tasks {
-  override fun registerPeriodicTasks() = Unit
+  override fun scheduleEpisodeNotifications() = Unit
+  override fun cancelEpisodeNotifications() = Unit
+  override fun scheduleLibrarySync() = Unit
+  override fun cancelLibrarySync() = Unit
 }

@@ -101,6 +101,20 @@ class IosNotificationManager(
     }
   }
 
+  override suspend fun cancelAll(notifications: List<Notification>) {
+    val ids = notifications.map { it.id }
+
+    UNUserNotificationCenter
+      .currentNotificationCenter()
+      .removePendingNotificationRequestsWithIdentifiers(ids)
+  }
+
+  override suspend fun cancel(notification: Notification) {
+    UNUserNotificationCenter
+      .currentNotificationCenter()
+      .removePendingNotificationRequestsWithIdentifiers(listOf(notification.id))
+  }
+
   private companion object {
     const val USER_INFO_DEEPLINK = "deeplink_uri"
   }
