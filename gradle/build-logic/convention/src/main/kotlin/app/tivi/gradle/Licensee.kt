@@ -21,6 +21,7 @@ fun Project.configureLicensee() {
     allowUrl("https://opensource.org/licenses/MIT") // MIT
     allowUrl("https://github.com/icerockdev/moko-permissions/blob/master/LICENSE.md") // Apache-2.0
     allowUrl("https://github.com/jordond/materialkolor/blob/master/LICENSE") // MIT
+    allowUrl("https://developer.amazon.com/support/legal/pml")
 
     unusedAction(UnusedAction.IGNORE)
   }
