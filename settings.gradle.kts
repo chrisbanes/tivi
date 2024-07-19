@@ -79,6 +79,8 @@ rootProject.name = "tivi"
 include(
   ":core:analytics",
   ":core:base",
+  ":core:entitlements:core",
+  ":core:entitlements:ui",
   ":core:logging:api",
   ":core:logging:implementation",
   ":core:performance",

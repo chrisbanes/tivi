@@ -131,9 +131,6 @@ dependencies {
   implementation(libs.androidx.profileinstaller)
   implementation(libs.androidx.splashscreen)
 
-  // Temporary just to make Google Play Developer Console happy
-  implementation("com.android.billingclient:billing-ktx:7.0.0")
-
   qaImplementation(libs.leakCanary)
 
   implementation(libs.kotlin.coroutines.android)
