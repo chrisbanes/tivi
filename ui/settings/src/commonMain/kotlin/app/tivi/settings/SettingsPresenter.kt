@@ -57,7 +57,7 @@ class SettingsPresenter(
     val ignoreSpecials by preferences.ignoreSpecials.collectAsState()
     val crashDataReportingEnabled by preferences.reportAppCrashes.collectAsState()
     val analyticsDataReportingEnabled by preferences.reportAnalytics.collectAsState()
-    val notificationsEnabled by preferences.notificationsEnabled.collectAsState()
+    val notificationsEnabled by preferences.episodeAiringNotificationsEnabled.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -87,14 +87,14 @@ class SettingsPresenter(
         }
         SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled -> {
           coroutineScope.launch {
-            if (preferences.notificationsEnabled.get()) {
+            if (preferences.episodeAiringNotificationsEnabled.get()) {
               // If we're enabled, and being turned off, we don't need to mess with permissions
-              preferences.notificationsEnabled.toggle()
+              preferences.episodeAiringNotificationsEnabled.toggle()
             } else {
               // If we're disabled, and being turned on, we need to check our permissions
               permissionsController.performPermissionedAction(REMOTE_NOTIFICATION) { state ->
                 if (state == PermissionState.Granted) {
-                  preferences.notificationsEnabled.toggle()
+                  preferences.episodeAiringNotificationsEnabled.toggle()
                 } else {
                   permissionsController.openAppSettings()
                 }

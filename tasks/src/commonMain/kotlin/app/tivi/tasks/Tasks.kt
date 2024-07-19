@@ -4,7 +4,9 @@
 package app.tivi.tasks
 
 interface Tasks {
-  fun registerPeriodicTasks() = Unit
+  fun scheduleEpisodeNotifications()
+  fun cancelEpisodeNotifications()
 
-  fun enqueueStartupTasks() = Unit
+  fun scheduleLibrarySync()
+  fun cancelLibrarySync()
 }

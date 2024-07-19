@@ -10,6 +10,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.toJavaDuration
 import me.tatarka.inject.annotations.Inject
@@ -17,10 +18,13 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class AndroidTasks(
   workManager: Lazy<WorkManager>,
+  private val logger: Logger,
 ) : Tasks {
   private val workManager by workManager
 
-  override fun registerPeriodicTasks() {
+  override fun scheduleLibrarySync() {
+    logger.d { "Tasks.scheduleLibrarySync()" }
+
     val nightlyConstraints = Constraints.Builder()
       .setRequiredNetworkType(NetworkType.UNMETERED)
       .setRequiresCharging(true)
@@ -33,6 +37,21 @@ class AndroidTasks(
         .setConstraints(nightlyConstraints)
         .build(),
     )
+  }
+
+  override fun cancelLibrarySync() {
+    logger.d { "Tasks.cancelLibrarySync()" }
+    workManager.cancelUniqueWork(SyncLibraryShowsWorker.NAME)
+  }
+
+  override fun scheduleEpisodeNotifications() {
+    logger.d { "Tasks.scheduleEpisodeNotifications()" }
+
+    workManager.enqueueUniqueWork(
+      "tasks_startup",
+      ExistingWorkPolicy.KEEP,
+      OneTimeWorkRequest.from(ScheduleEpisodeNotificationsWorker::class.java),
+    )
 
     workManager.enqueueUniquePeriodicWork(
       ScheduleEpisodeNotificationsWorker.NAME,
@@ -43,12 +62,9 @@ class AndroidTasks(
     )
   }
 
-  override fun enqueueStartupTasks() {
-    workManager.enqueueUniqueWork(
-      "tasks_startup",
-      ExistingWorkPolicy.KEEP,
-      OneTimeWorkRequest.from(ScheduleEpisodeNotificationsWorker::class.java),
-    )
+  override fun cancelEpisodeNotifications() {
+    logger.d { "Tasks.cancelEpisodeNotifications()" }
+    workManager.cancelUniqueWork(ScheduleEpisodeNotificationsWorker.NAME)
   }
 
   internal companion object {

@@ -11,10 +11,12 @@ import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.set
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -57,7 +59,7 @@ class TiviPreferencesImpl(
   override val developerHideArtwork: Preference<Boolean> by lazy {
     BooleanPreference(KEY_DEV_HIDE_ARTWORK)
   }
-  override val notificationsEnabled: Preference<Boolean> by lazy {
+  override val episodeAiringNotificationsEnabled: Preference<Boolean> by lazy {
     BooleanPreference(KEY_NOTIFICATIONS)
   }
 
@@ -98,13 +100,12 @@ class TiviPreferencesImpl(
       settings.getStringOrNull(key)?.let(toValue) ?: defaultValue
     }
 
-    override val flow: StateFlow<V> by lazy {
+    override val flow: Flow<V> by lazy {
       flowSettings.getStringOrNullFlow(key)
         .map { it?.let(toValue) ?: defaultValue }
-        .stateIn(
+        .shareIn(
           scope = coroutineScope,
           started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
-          initialValue = defaultValue,
         )
     }
   }
