@@ -4,6 +4,8 @@
 package app.tivi.tasks
 
 interface Tasks {
+  fun setup() = Unit
+
   fun scheduleEpisodeNotifications()
   fun cancelEpisodeNotifications()
 
