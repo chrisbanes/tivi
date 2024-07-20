@@ -1,0 +1,4 @@
+#include "common/Prod.xcconfig"
+#include "common/Debug.xcconfig"
+
+PRODUCT_NAME = $(TARGET_NAME) Dev
