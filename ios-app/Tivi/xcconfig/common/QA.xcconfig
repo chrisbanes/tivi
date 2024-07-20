@@ -1,0 +1,7 @@
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon-QA
+CODE_SIGN_IDENTITY = Apple Development
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Distribution
+CODE_SIGN_STYLE = Manual
+DEVELOPMENT_TEAM[sdk=iphoneos*] = GLF74Y6P9T
+PRODUCT_BUNDLE_IDENTIFIER = app.tivi.qa
+PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*] = match AppStore app.tivi.qa

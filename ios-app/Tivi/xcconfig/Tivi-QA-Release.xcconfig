@@ -1,0 +1,4 @@
+#include "common/QA.xcconfig"
+#include "common/Release.xcconfig"
+
+PRODUCT_NAME = $(TARGET_NAME) QA
