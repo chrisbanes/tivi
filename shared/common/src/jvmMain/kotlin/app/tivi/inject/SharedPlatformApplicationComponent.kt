@@ -5,6 +5,7 @@ package app.tivi.inject
 
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
+import app.tivi.app.Platform
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.prefs.Preferences
@@ -25,6 +26,7 @@ actual interface SharedPlatformApplicationComponent {
     versionName = "1.0.0",
     versionCode = 1,
     cachePath = { getCacheDir().absolutePath },
+    platform = Platform.DESKTOP,
   )
 
   @ApplicationScope

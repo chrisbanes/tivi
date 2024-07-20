@@ -3,6 +3,8 @@
 
 package app.tivi.entitlements
 
+import app.tivi.app.ApplicationInfo
+import app.tivi.app.Platform
 import com.revenuecat.purchases.kmp.EntitlementVerificationMode
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.PurchasesConfiguration
@@ -13,12 +15,19 @@ import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class RevenueCatEntitlementManager : EntitlementManager {
+class RevenueCatEntitlementManager(
+  private val applicationInfo: ApplicationInfo,
+) : EntitlementManager {
 
   override fun setup() {
+    val apiKey = when (applicationInfo.platform) {
+      Platform.IOS -> BuildConfig.TIVI_REVENUECAT_IOS_API_KEY
+      Platform.ANDROID -> BuildConfig.TIVI_REVENUECAT_ANDROID_API_KEY
+      else -> ""
+    }
+
     Purchases.configure(
-      // TODO change the API key for different platforms
-      PurchasesConfiguration(apiKey = BuildConfig.TIVI_REVENUECAT_ANDROID_API_KEY) {
+      PurchasesConfiguration(apiKey = apiKey) {
         verificationMode(EntitlementVerificationMode.INFORMATIONAL)
       },
     )
