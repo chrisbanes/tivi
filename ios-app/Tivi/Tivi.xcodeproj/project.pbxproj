@@ -11,6 +11,7 @@
 		38137D722A55D6E200A687CC /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38137D712A55D6E200A687CC /* Auth.swift */; };
 		38137D772A584D1900A687CC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 38137D762A584D1900A687CC /* Settings.bundle */; };
 		385297C12C2974F3004BD20A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385297C02C2974F3004BD20A /* Extensions.swift */; };
+		51B3098E07F9590B9295A346 /* libPods-Tivi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7321D374FA17DE7ADABB975E /* libPods-Tivi.a */; };
 		832E820B2ADF2404006728FE /* dm_sans_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 832E82092ADF20F4006728FE /* dm_sans_bold.ttf */; };
 		832E820C2ADF2404006728FE /* dm_sans_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 832E820A2ADF20F4006728FE /* dm_sans_medium.ttf */; };
 		832E820D2ADF2404006728FE /* dm_sans_regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 832E82082ADF20F4006728FE /* dm_sans_regular.ttf */; };
@@ -20,16 +21,6 @@
 		8333493F2A4CCCEF00F464FE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8333493E2A4CCCEF00F464FE /* Preview Assets.xcassets */; };
 		83447DB12C272812000DDA26 /* Screenshots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83447DB02C272812000DDA26 /* Screenshots.swift */; };
 		83447DB92C2728AD000DDA26 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83447DB82C2728AD000DDA26 /* SnapshotHelper.swift */; };
-		838A699A2C4BB4F700D10870 /* Tivi-Prod-Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 838A698E2C4BB4F700D10870 /* Tivi-Prod-Debug.xcconfig */; };
-		838A699B2C4BB4F700D10870 /* UITests.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 838A698F2C4BB4F700D10870 /* UITests.xcconfig */; };
-		838A699D2C4BB4F700D10870 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 838A69912C4BB4F700D10870 /* Debug.xcconfig */; };
-		838A699E2C4BB4F700D10870 /* Prod.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 838A69922C4BB4F700D10870 /* Prod.xcconfig */; };
-		838A699F2C4BB4F700D10870 /* QA.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 838A69932C4BB4F700D10870 /* QA.xcconfig */; };
-		838A69A02C4BB4F700D10870 /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 838A69942C4BB4F700D10870 /* Release.xcconfig */; };
-		838A69A12C4BB4F700D10870 /* Project.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 838A69962C4BB4F700D10870 /* Project.xcconfig */; };
-		838A69A22C4BB4F700D10870 /* Tivi-Prod-Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 838A69972C4BB4F700D10870 /* Tivi-Prod-Release.xcconfig */; };
-		838A69A32C4BB4F700D10870 /* Tivi-QA-Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 838A69982C4BB4F700D10870 /* Tivi-QA-Release.xcconfig */; };
-		838A69A42C4BB4F700D10870 /* Tivi-QA-Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 838A69992C4BB4F700D10870 /* Tivi-QA-Debug.xcconfig */; };
 		83AB5FFE2A51F27B007FC216 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 83AB5FFD2A51F27B007FC216 /* FirebaseCrashlytics */; };
 		83AB60012A51F3FD007FC216 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 83AB60002A51F3FD007FC216 /* FirebaseAnalyticsSwift */; };
 		83AB60062A520078007FC216 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83AB60052A520078007FC216 /* GoogleService-Info.plist */; };
@@ -46,10 +37,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		35E7DC5F16FC23B7F19CC813 /* Pods-Tivi.prod debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tivi.prod debug.xcconfig"; path = "Target Support Files/Pods-Tivi/Pods-Tivi.prod debug.xcconfig"; sourceTree = "<group>"; };
 		38137D712A55D6E200A687CC /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
 		38137D762A584D1900A687CC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		38282FFD2A4F318E00E7929E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		385297C02C2974F3004BD20A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		5D263D863B021AC431BCD3BC /* Pods-Tivi.prod release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tivi.prod release.xcconfig"; path = "Target Support Files/Pods-Tivi/Pods-Tivi.prod release.xcconfig"; sourceTree = "<group>"; };
+		7321D374FA17DE7ADABB975E /* libPods-Tivi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tivi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		832E82082ADF20F4006728FE /* dm_sans_regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = dm_sans_regular.ttf; path = ../../../../common/ui/resources/fonts/src/commonMain/resources/font/dm_sans_regular.ttf; sourceTree = "<group>"; };
 		832E82092ADF20F4006728FE /* dm_sans_bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = dm_sans_bold.ttf; path = ../../../../common/ui/resources/fonts/src/commonMain/resources/font/dm_sans_bold.ttf; sourceTree = "<group>"; };
 		832E820A2ADF20F4006728FE /* dm_sans_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = dm_sans_medium.ttf; path = ../../../../common/ui/resources/fonts/src/commonMain/resources/font/dm_sans_medium.ttf; sourceTree = "<group>"; };
@@ -72,6 +66,8 @@
 		838A69982C4BB4F700D10870 /* Tivi-QA-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Tivi-QA-Release.xcconfig"; sourceTree = "<group>"; };
 		838A69992C4BB4F700D10870 /* Tivi-QA-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Tivi-QA-Debug.xcconfig"; sourceTree = "<group>"; };
 		83AB60052A520078007FC216 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		ADF4E282378DC5454AB65554 /* Pods-Tivi.qa release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tivi.qa release.xcconfig"; path = "Target Support Files/Pods-Tivi/Pods-Tivi.qa release.xcconfig"; sourceTree = "<group>"; };
+		DC81C9EBAAD116665871E782 /* Pods-Tivi.qa debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tivi.qa debug.xcconfig"; path = "Target Support Files/Pods-Tivi/Pods-Tivi.qa debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +78,7 @@
 				38137D702A55BA8A00A687CC /* AppAuth in Frameworks */,
 				83AB60012A51F3FD007FC216 /* FirebaseAnalyticsSwift in Frameworks */,
 				83AB5FFE2A51F27B007FC216 /* FirebaseCrashlytics in Frameworks */,
+				51B3098E07F9590B9295A346 /* libPods-Tivi.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,6 +111,7 @@
 				83447DAD2C272812000DDA26 /* UITests */,
 				833349352A4CCCEE00F464FE /* Products */,
 				83AB5FFF2A51F3FD007FC216 /* Frameworks */,
+				AB036312E327DCF84387F43B /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -164,10 +162,10 @@
 			children = (
 				838A69952C4BB4F700D10870 /* common */,
 				838A69962C4BB4F700D10870 /* Project.xcconfig */,
-				838A698E2C4BB4F700D10870 /* Tivi-Prod-Debug.xcconfig */,
-				838A69972C4BB4F700D10870 /* Tivi-Prod-Release.xcconfig */,
 				838A69992C4BB4F700D10870 /* Tivi-QA-Debug.xcconfig */,
 				838A69982C4BB4F700D10870 /* Tivi-QA-Release.xcconfig */,
+				838A698E2C4BB4F700D10870 /* Tivi-Prod-Debug.xcconfig */,
+				838A69972C4BB4F700D10870 /* Tivi-Prod-Release.xcconfig */,
 				838A698F2C4BB4F700D10870 /* UITests.xcconfig */,
 			);
 			path = xcconfig;
@@ -187,8 +185,20 @@
 		83AB5FFF2A51F3FD007FC216 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7321D374FA17DE7ADABB975E /* libPods-Tivi.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AB036312E327DCF84387F43B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				ADF4E282378DC5454AB65554 /* Pods-Tivi.qa release.xcconfig */,
+				DC81C9EBAAD116665871E782 /* Pods-Tivi.qa debug.xcconfig */,
+				35E7DC5F16FC23B7F19CC813 /* Pods-Tivi.prod debug.xcconfig */,
+				5D263D863B021AC431BCD3BC /* Pods-Tivi.prod release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -198,12 +208,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 833349422A4CCCEF00F464FE /* Build configuration list for PBXNativeTarget "Tivi" */;
 			buildPhases = (
+				B903AADBCCA69E4B1CC19BAB /* [CP] Check Pods Manifest.lock */,
 				833349452A4CCD9F00F464FE /* Build :shared KMP library */,
 				833349302A4CCCEE00F464FE /* Sources */,
 				833349312A4CCCEE00F464FE /* Frameworks */,
 				833349322A4CCCEE00F464FE /* Resources */,
 				38137D782A584D5300A687CC /* Update Settings version */,
 				83AB60022A51F473007FC216 /* Upload Crashlytics symbols */,
+				A8261BBBF000EE68D2B1AFD2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -285,17 +297,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				832E820B2ADF2404006728FE /* dm_sans_bold.ttf in Resources */,
-				838A699B2C4BB4F700D10870 /* UITests.xcconfig in Resources */,
-				838A69A42C4BB4F700D10870 /* Tivi-QA-Debug.xcconfig in Resources */,
-				838A699E2C4BB4F700D10870 /* Prod.xcconfig in Resources */,
-				838A699A2C4BB4F700D10870 /* Tivi-Prod-Debug.xcconfig in Resources */,
-				838A69A12C4BB4F700D10870 /* Project.xcconfig in Resources */,
-				838A69A22C4BB4F700D10870 /* Tivi-Prod-Release.xcconfig in Resources */,
-				838A699D2C4BB4F700D10870 /* Debug.xcconfig in Resources */,
 				832E820C2ADF2404006728FE /* dm_sans_medium.ttf in Resources */,
-				838A69A32C4BB4F700D10870 /* Tivi-QA-Release.xcconfig in Resources */,
-				838A699F2C4BB4F700D10870 /* QA.xcconfig in Resources */,
-				838A69A02C4BB4F700D10870 /* Release.xcconfig in Resources */,
 				832E820D2ADF2404006728FE /* dm_sans_regular.ttf in Resources */,
 				38137D772A584D1900A687CC /* Settings.bundle in Resources */,
 				8333493F2A4CCCEF00F464FE /* Preview Assets.xcassets in Resources */,
@@ -370,6 +372,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\" || true\n";
+		};
+		A8261BBBF000EE68D2B1AFD2 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Tivi/Pods-Tivi-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Tivi/Pods-Tivi-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tivi/Pods-Tivi-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B903AADBCCA69E4B1CC19BAB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Tivi-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
