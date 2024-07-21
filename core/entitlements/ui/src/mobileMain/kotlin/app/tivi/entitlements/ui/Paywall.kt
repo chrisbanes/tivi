@@ -17,10 +17,10 @@ import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 actual fun Paywall(onDismissRequest: () -> Unit) {
   val lastOnDismissRequest by rememberUpdatedState(onDismissRequest)
 
-  val options: PaywallOptions? by produceState(initialValue = null) {
+  val options by produceState<PaywallOptions?>(initialValue = null) {
     val offerings = Purchases.sharedInstance.awaitOfferings()
 
-    PaywallOptions(dismissRequest = lastOnDismissRequest) {
+    value = PaywallOptions(dismissRequest = lastOnDismissRequest) {
       offering = offerings["pro"]
     }
   }
