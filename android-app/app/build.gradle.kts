@@ -58,7 +58,6 @@ android {
     debug {
       signingConfig = signingConfigs["debug"]
       versionNameSuffix = "-dev"
-      applicationIdSuffix = ".debug"
     }
 
     release {
