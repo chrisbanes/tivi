@@ -23,20 +23,22 @@ class RevenueCatEntitlementManager(
     val apiKey = when (applicationInfo.platform) {
       Platform.IOS -> BuildConfig.TIVI_REVENUECAT_IOS_API_KEY
       Platform.ANDROID -> BuildConfig.TIVI_REVENUECAT_ANDROID_API_KEY
-      else -> ""
+      else -> null
     }
 
-    Purchases.configure(
-      PurchasesConfiguration(apiKey = apiKey) {
-        verificationMode(EntitlementVerificationMode.INFORMATIONAL)
-      },
-    )
+    if (!apiKey.isNullOrEmpty()) {
+      Purchases.configure(
+        PurchasesConfiguration(apiKey = apiKey) {
+          verificationMode(EntitlementVerificationMode.INFORMATIONAL)
+        },
+      )
+    }
   }
 
-  override suspend fun hasProEntitlement(): Boolean {
-    return Purchases.sharedInstance.awaitCustomerInfo()
+  override suspend fun hasProEntitlement(): Boolean = runCatching {
+    Purchases.sharedInstance.awaitCustomerInfo()
       .entitlements[ENTITLEMENT_PRO_ID]?.isActive == true
-  }
+  }.getOrDefault(false)
 
   private companion object {
     const val ENTITLEMENT_PRO_ID = "pro"
