@@ -7,5 +7,5 @@ target 'Tivi' do
   pod 'FirebaseAnalytics', '10.29.0'
   pod 'FirebaseCrashlytics', '10.29.0'
   pod 'PurchasesHybridCommon', '10.10.0'
-  pod 'PurchasesHybridCommonUI', '10.10.0'
+  pod 'PurchasesHybridCommonUI', '11.1.1'
 end
