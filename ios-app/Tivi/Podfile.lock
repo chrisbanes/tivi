@@ -125,7 +125,7 @@ PODS:
     - RevenueCat (= 4.43.0)
 
 DEPENDENCIES:
-  - AppAuth
+  - AppAuth (= 1.6.2)
   - FirebaseAnalytics (= 10.29.0)
   - FirebaseCrashlytics (= 10.29.0)
   - PurchasesHybridCommon (= 10.10.0)
@@ -174,6 +174,6 @@ SPEC CHECKSUMS:
   RevenueCat: f7b90c52f4b7e322bc9e7adaf734030523534b06
   RevenueCatUI: 1d945ac4cd70052c092e467588f545281b1ca8c3
 
-PODFILE CHECKSUM: f293b3f561cd964ad1b021de9d05cd676e61845b
+PODFILE CHECKSUM: 4db397ad006717460e6735bd69a6b6a13f0ee4cd
 
 COCOAPODS: 1.15.2
