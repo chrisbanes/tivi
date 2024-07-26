@@ -43,6 +43,7 @@ class IosNotificationManager(
       setTitle(notification.title)
       setBody(notification.message)
       setCategoryIdentifier(notification.channel.id)
+      @Suppress("UNCHECKED_CAST")
       setUserInfo(userInfo as Map<Any?, *>)
     }
 

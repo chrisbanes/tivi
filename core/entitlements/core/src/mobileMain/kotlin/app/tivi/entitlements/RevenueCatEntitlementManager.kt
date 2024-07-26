@@ -13,6 +13,11 @@ import com.revenuecat.purchases.kmp.entitlements
 import com.revenuecat.purchases.kmp.get
 import com.revenuecat.purchases.kmp.isActive
 import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
+import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -40,10 +45,21 @@ class RevenueCatEntitlementManager(
     }
   }
 
-  override suspend fun hasProEntitlement(): Boolean = runCatching {
-    Purchases.sharedInstance.awaitCustomerInfo()
-      .entitlements[ENTITLEMENT_PRO_ID]?.isActive == true
-  }.getOrDefault(false)
+  override suspend fun hasProEntitlement(): Boolean {
+    return runCatching {
+      Purchases.sharedInstance.awaitCustomerInfo()
+        .entitlements[ENTITLEMENT_PRO_ID]?.isActive == true
+    }.getOrDefault(false)
+  }
+
+  override fun observeProEntitlement(): Flow<Boolean> {
+    return flow {
+      while (true) {
+        emit(hasProEntitlement())
+        delay(500.milliseconds)
+      }
+    }.distinctUntilChanged()
+  }
 
   private companion object {
     const val ENTITLEMENT_PRO_ID = "pro"

@@ -4,7 +4,6 @@
 package app.tivi.settings
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,10 +12,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoMode
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Loyalty
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -150,6 +151,15 @@ internal fun Settings(
           summaryOff = strings.settingsNotificationsAiringEpisodesSummary,
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled) },
           checked = state.airingEpisodeNotificationsEnabled,
+          beforeControl = {
+            if (!state.isPro) {
+              Icon(
+                imageVector = Icons.Default.Loyalty,
+                tint = MaterialTheme.colorScheme.primary,
+                contentDescription = null,
+              )
+            }
+          },
         )
       }
 
@@ -162,9 +172,7 @@ internal fun Settings(
       item {
         Preference(
           title = LocalStrings.current.viewPrivacyPolicy,
-          modifier = Modifier.clickable {
-            eventSink(SettingsUiEvent.NavigatePrivacyPolicy)
-          },
+          onClick = { eventSink(SettingsUiEvent.NavigatePrivacyPolicy) },
         )
       }
 
@@ -219,9 +227,7 @@ internal fun Settings(
             summary = {
               Text(LocalStrings.current.settingsOpenSourceSummary)
             },
-            modifier = Modifier.clickable {
-              eventSink(SettingsUiEvent.NavigateOpenSource)
-            },
+            onClick = { eventSink(SettingsUiEvent.NavigateOpenSource) },
           )
         }
       }
@@ -232,9 +238,7 @@ internal fun Settings(
         item {
           Preference(
             title = LocalStrings.current.developerSettingsTitle,
-            modifier = Modifier.clickable {
-              eventSink(SettingsUiEvent.NavigateDeveloperSettings)
-            },
+            onClick = { eventSink(SettingsUiEvent.NavigateDeveloperSettings) },
           )
         }
       }

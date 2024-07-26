@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +27,8 @@ fun CheckboxPreference(
   onCheckClicked: () -> Unit,
   title: String,
   modifier: Modifier = Modifier,
+  onClick: (() -> Unit)? = onCheckClicked,
+  beforeControl: (@Composable () -> Unit)? = null,
   summaryOff: String? = null,
   summaryOn: String? = null,
 ) {
@@ -40,7 +43,10 @@ fun CheckboxPreference(
         Text(text = summaryOff)
       }
     },
+    onClick = onClick,
     control = {
+      beforeControl?.invoke()
+
       Switch(
         checked = checked,
         onCheckedChange = { onCheckClicked() },
@@ -54,12 +60,14 @@ fun CheckboxPreference(
 fun Preference(
   title: String,
   modifier: Modifier = Modifier,
+  onClick: (() -> Unit)? = null,
   summary: (@Composable () -> Unit)? = null,
-  control: (@Composable () -> Unit)? = null,
+  control: (@Composable RowScope.() -> Unit)? = null,
 ) {
-  Surface(modifier = modifier) {
+  Surface(modifier = modifier, onClick = onClick) {
     Row(
       modifier = Modifier.padding(16.dp),
+      horizontalArrangement = Arrangement.spacedBy(8.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
       Column(
@@ -82,7 +90,7 @@ fun Preference(
         }
       }
 
-      control?.invoke()
+      control?.invoke(this)
     }
   }
 }

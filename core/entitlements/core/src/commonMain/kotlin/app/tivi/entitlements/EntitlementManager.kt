@@ -3,9 +3,13 @@
 
 package app.tivi.entitlements
 
+import kotlinx.coroutines.flow.Flow
+
 interface EntitlementManager {
 
   fun setup()
 
   suspend fun hasProEntitlement(): Boolean
+
+  fun observeProEntitlement(): Flow<Boolean>
 }

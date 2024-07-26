@@ -66,7 +66,7 @@ class SettingsPresenter(
     val analyticsDataReportingEnabled by preferences.reportAnalytics.collectAsState()
 
     val isPro by produceState(initialValue = false, entitlements) {
-      entitlements.hasProEntitlement()
+      entitlements.observeProEntitlement().collect { value = it }
     }
     val notificationsEnabled by preferences.episodeAiringNotificationsEnabled.collectAsState()
     var proUpsellVisible by remember { mutableStateOf(false) }
@@ -78,6 +78,7 @@ class SettingsPresenter(
         SettingsUiEvent.NavigateUp -> {
           navigator.pop()
         }
+
         is SettingsUiEvent.SetTheme -> {
           coroutineScope.launch { preferences.theme.set(event.theme) }
         }
@@ -85,29 +86,34 @@ class SettingsPresenter(
         SettingsUiEvent.ToggleUseDynamicColors -> {
           coroutineScope.launch { preferences.useDynamicColors.toggle() }
         }
+
         SettingsUiEvent.ToggleUseLessData -> {
           coroutineScope.launch { preferences.useLessData.toggle() }
         }
+
         SettingsUiEvent.ToggleIgnoreSpecials -> {
           coroutineScope.launch { preferences.ignoreSpecials.toggle() }
         }
+
         SettingsUiEvent.ToggleCrashDataReporting -> {
           coroutineScope.launch { preferences.reportAppCrashes.toggle() }
         }
+
         SettingsUiEvent.ToggleAnalyticsDataReporting -> {
           coroutineScope.launch { preferences.reportAnalytics.toggle() }
         }
+
         SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled -> {
           if (isPro) {
             coroutineScope.launch {
               if (preferences.episodeAiringNotificationsEnabled.get()) {
                 // If we're enabled, and being turned off, we don't need to mess with permissions
-                preferences.episodeAiringNotificationsEnabled.toggle()
+                preferences.episodeAiringNotificationsEnabled.set(false)
               } else {
                 // If we're disabled, and being turned on, we need to check our permissions
                 permissionsController.performPermissionedAction(REMOTE_NOTIFICATION) { state ->
                   if (state == PermissionState.Granted) {
-                    preferences.episodeAiringNotificationsEnabled.toggle()
+                    preferences.episodeAiringNotificationsEnabled.set(true)
                   } else {
                     permissionsController.openAppSettings()
                   }
@@ -118,6 +124,7 @@ class SettingsPresenter(
             proUpsellVisible = true
           }
         }
+
         SettingsUiEvent.NavigatePrivacyPolicy -> {
           navigator.goTo(UrlScreen("https://chrisbanes.github.io/tivi/privacypolicy"))
         }
@@ -142,6 +149,7 @@ class SettingsPresenter(
       applicationInfo = applicationInfo,
       showDeveloperSettings = applicationInfo.flavor == Flavor.Qa,
       proUpsellVisible = proUpsellVisible,
+      isPro = isPro,
       eventSink = ::eventSink,
     )
   }

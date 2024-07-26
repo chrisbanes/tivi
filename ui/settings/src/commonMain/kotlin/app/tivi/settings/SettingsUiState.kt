@@ -22,6 +22,7 @@ data class SettingsUiState(
   val applicationInfo: ApplicationInfo,
   val showDeveloperSettings: Boolean,
   val proUpsellVisible: Boolean,
+  val isPro: Boolean,
   val eventSink: (SettingsUiEvent) -> Unit,
 ) : CircuitUiState
 
