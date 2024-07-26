@@ -38,7 +38,9 @@ fun TiviUiViewController(
           logger.d { "AccessibilityDebugLogger: $message" }
         }
       }
-    } else null
+    } else {
+      null
+    }
 
     accessibilitySyncOptions = when {
       applicationInfo.debugBuild -> AccessibilitySyncOptions.Always(a11yLogger)

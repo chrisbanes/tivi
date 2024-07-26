@@ -3,17 +3,20 @@
 
 package app.tivi.entitlements.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.ComposeUIViewController
+import app.tivi.common.compose.ui.PresentSheetViewController
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.get
 import com.revenuecat.purchases.kmp.ktx.awaitOfferings
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall as RevenueCatPaywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
+import platform.UIKit.UISheetPresentationControllerDetent
 
 @Composable
 actual fun Paywall(
@@ -30,9 +33,15 @@ actual fun Paywall(
     }
   }
 
-  options?.let {
-    Box(modifier = modifier) {
-      RevenueCatPaywall(it)
+  val controller = remember {
+    ComposeUIViewController {
+      options?.let { RevenueCatPaywall(it) }
     }
   }
+
+  PresentSheetViewController(
+    viewController = controller,
+    onDismissRequest = { onDismissRequest() },
+    detents = listOf(UISheetPresentationControllerDetent.largeDetent()),
+  )
 }
