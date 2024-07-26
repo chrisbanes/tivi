@@ -14,20 +14,16 @@ kotlin {
       }
     }
 
-    val mobileMain by creating {
-      dependsOn(commonMain.get())
-
+    androidMain {
       dependencies {
         implementation(libs.revenuecat.ui)
       }
     }
 
-    androidMain {
-      dependsOn(mobileMain)
-    }
-
     iosMain {
-      dependsOn(mobileMain)
+      dependencies {
+        implementation(libs.revenuecat.ui)
+      }
     }
   }
 }

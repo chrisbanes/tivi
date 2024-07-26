@@ -4,8 +4,12 @@
 package app.tivi.entitlements.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 @Composable
-actual fun Paywall(onDismissRequest: () -> Unit) {
+actual fun Paywall(
+  onDismissRequest: () -> Unit,
+  modifier: Modifier,
+) {
   // no-op
 }

@@ -3,10 +3,12 @@
 
 package app.tivi.entitlements.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.get
 import com.revenuecat.purchases.kmp.ktx.awaitOfferings
@@ -14,7 +16,10 @@ import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall as RevenueCatPaywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 
 @Composable
-actual fun Paywall(onDismissRequest: () -> Unit) {
+actual fun Paywall(
+  onDismissRequest: () -> Unit,
+  modifier: Modifier,
+) {
   val lastOnDismissRequest by rememberUpdatedState(onDismissRequest)
 
   val options by produceState<PaywallOptions?>(initialValue = null) {
@@ -26,6 +31,8 @@ actual fun Paywall(onDismissRequest: () -> Unit) {
   }
 
   options?.let {
-    RevenueCatPaywall(it)
+    Box(modifier = modifier) {
+      RevenueCatPaywall(it)
+    }
   }
 }

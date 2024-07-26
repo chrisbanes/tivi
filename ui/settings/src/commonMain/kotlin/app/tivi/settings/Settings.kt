@@ -65,9 +65,9 @@ internal fun Settings(
   val strings = LocalStrings.current
 
   if (state.proUpsellVisible) {
-    Paywall {
-      eventSink(SettingsUiEvent.DismissProUpsell)
-    }
+    Paywall(
+      onDismissRequest = { eventSink(SettingsUiEvent.DismissProUpsell) },
+    )
   }
 
   HazeScaffold(
