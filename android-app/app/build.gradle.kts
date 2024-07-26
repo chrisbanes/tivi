@@ -16,7 +16,7 @@ android {
 
   defaultConfig {
     applicationId = "app.tivi"
-    versionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 1000
+    versionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 19000
     versionName = "1.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
