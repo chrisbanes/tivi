@@ -3,4 +3,11 @@
 
 package app.tivi.entitlements
 
-actual interface EntitlementsPlatformComponent
+import app.tivi.inject.ApplicationScope
+import me.tatarka.inject.annotations.Provides
+
+actual interface EntitlementsPlatformComponent {
+  @ApplicationScope
+  @Provides
+  fun bindEntitlementManager(): EntitlementManager = object : EntitlementManager {}
+}

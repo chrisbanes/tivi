@@ -3,7 +3,6 @@
 
 package app.tivi.entitlements.ui
 
-import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall as RevenueCatPaywall
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
@@ -19,6 +18,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ktx.awaitOfferings
+import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall as RevenueCatPaywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 
 @OptIn(ExperimentalMaterial3Api::class)

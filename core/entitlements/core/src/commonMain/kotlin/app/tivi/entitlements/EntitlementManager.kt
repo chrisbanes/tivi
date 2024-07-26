@@ -4,12 +4,10 @@
 package app.tivi.entitlements
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 interface EntitlementManager {
-
-  fun setup()
-
-  suspend fun hasProEntitlement(): Boolean
-
-  fun observeProEntitlement(): Flow<Boolean>
+  fun setup() = Unit
+  suspend fun hasProEntitlement(): Boolean = false
+  fun observeProEntitlement(): Flow<Boolean> = emptyFlow()
 }
