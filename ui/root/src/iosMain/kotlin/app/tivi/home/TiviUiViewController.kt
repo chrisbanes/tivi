@@ -21,6 +21,8 @@ import platform.UIKit.UIViewController
 
 typealias TiviUiViewController = () -> UIViewController
 
+private const val ENABLE_A11Y_LOGGING = false
+
 @OptIn(ExperimentalComposeApi::class)
 @Inject
 @Suppress("ktlint:standard:function-naming")
@@ -30,11 +32,13 @@ fun TiviUiViewController(
   applicationInfo: ApplicationInfo,
 ): UIViewController = ComposeUIViewController(
   configure = {
-    val a11yLogger = object : AccessibilityDebugLogger {
-      override fun log(message: Any?) {
-        logger.d { "AccessibilityDebugLogger: $message" }
+    val a11yLogger = if (ENABLE_A11Y_LOGGING) {
+      object : AccessibilityDebugLogger {
+        override fun log(message: Any?) {
+          logger.d { "AccessibilityDebugLogger: $message" }
+        }
       }
-    }
+    } else null
 
     accessibilitySyncOptions = when {
       applicationInfo.debugBuild -> AccessibilitySyncOptions.Always(a11yLogger)
