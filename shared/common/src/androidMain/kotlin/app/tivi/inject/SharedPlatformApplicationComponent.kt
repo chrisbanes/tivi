@@ -7,6 +7,7 @@ import android.app.Application
 import android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
+import app.tivi.app.Platform
 import app.tivi.core.notifications.PendingNotificationStore
 import app.tivi.tasks.TiviWorkerFactory
 import java.io.File
@@ -40,6 +41,7 @@ actual interface SharedPlatformApplicationComponent {
       versionName = packageInfo.versionName,
       versionCode = @Suppress("DEPRECATION") packageInfo.versionCode,
       cachePath = { application.cacheDir.absolutePath },
+      platform = Platform.ANDROID,
     )
   }
 

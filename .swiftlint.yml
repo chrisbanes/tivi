@@ -3,6 +3,7 @@ included:
 
 excluded:
   - ios-app/Tivi/UITests/SnapshotHelper.swift
+  - ios-app/Tivi/Pods
 
 strict: true
 

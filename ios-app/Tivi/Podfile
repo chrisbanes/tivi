@@ -1,0 +1,11 @@
+platform :ios, '15.2'
+
+target 'Tivi' do
+  use_frameworks!
+  
+  pod 'AppAuth', '1.6.2'
+  pod 'FirebaseAnalytics', '10.29.0'
+  pod 'FirebaseCrashlytics', '10.29.0'
+  pod 'PurchasesHybridCommon', '10.10.0'
+  pod 'PurchasesHybridCommonUI', '10.10.0'
+end

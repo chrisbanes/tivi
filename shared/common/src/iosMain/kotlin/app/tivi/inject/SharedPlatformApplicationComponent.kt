@@ -34,6 +34,7 @@ actual interface SharedPlatformApplicationComponent {
       ?.toIntOrNull()
       ?: 0,
     cachePath = { NSFileManager.defaultManager.cacheDir },
+    platform = app.tivi.app.Platform.IOS,
   )
 }
 

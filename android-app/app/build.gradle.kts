@@ -16,7 +16,7 @@ android {
 
   defaultConfig {
     applicationId = "app.tivi"
-    versionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 1000
+    versionCode = properties["TIVI_VERSIONCODE"]?.toString()?.toInt() ?: 19000
     versionName = "1.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -58,7 +58,6 @@ android {
     debug {
       signingConfig = signingConfigs["debug"]
       versionNameSuffix = "-dev"
-      applicationIdSuffix = ".debug"
     }
 
     release {
@@ -130,9 +129,6 @@ dependencies {
   implementation(libs.androidx.browser)
   implementation(libs.androidx.profileinstaller)
   implementation(libs.androidx.splashscreen)
-
-  // Temporary just to make Google Play Developer Console happy
-  implementation("com.android.billingclient:billing-ktx:7.0.0")
 
   qaImplementation(libs.leakCanary)
 

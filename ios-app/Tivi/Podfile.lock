@@ -1,0 +1,179 @@
+PODS:
+  - AppAuth (1.6.2):
+    - AppAuth/Core (= 1.6.2)
+    - AppAuth/ExternalUserAgent (= 1.6.2)
+  - AppAuth/Core (1.6.2)
+  - AppAuth/ExternalUserAgent (1.6.2):
+    - AppAuth/Core
+  - FirebaseAnalytics (10.29.0):
+    - FirebaseAnalytics/AdIdSupport (= 10.29.0)
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - FirebaseAnalytics/AdIdSupport (10.29.0):
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleAppMeasurement (= 10.29.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - FirebaseCore (10.29.0):
+    - FirebaseCoreInternal (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.12)
+    - GoogleUtilities/Logger (~> 7.12)
+  - FirebaseCoreExtension (10.29.0):
+    - FirebaseCore (~> 10.0)
+  - FirebaseCoreInternal (10.29.0):
+    - "GoogleUtilities/NSData+zlib (~> 7.8)"
+  - FirebaseCrashlytics (10.29.0):
+    - FirebaseCore (~> 10.5)
+    - FirebaseInstallations (~> 10.0)
+    - FirebaseRemoteConfigInterop (~> 10.23)
+    - FirebaseSessions (~> 10.5)
+    - GoogleDataTransport (~> 9.2)
+    - GoogleUtilities/Environment (~> 7.8)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+    - PromisesObjC (~> 2.1)
+  - FirebaseInstallations (10.29.0):
+    - FirebaseCore (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GoogleUtilities/UserDefaults (~> 7.8)
+    - PromisesObjC (~> 2.1)
+  - FirebaseRemoteConfigInterop (10.29.0)
+  - FirebaseSessions (10.29.0):
+    - FirebaseCore (~> 10.5)
+    - FirebaseCoreExtension (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleDataTransport (~> 9.2)
+    - GoogleUtilities/Environment (~> 7.13)
+    - GoogleUtilities/UserDefaults (~> 7.13)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+    - PromisesSwift (~> 2.1)
+  - GoogleAppMeasurement (10.29.0):
+    - GoogleAppMeasurement/AdIdSupport (= 10.29.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - GoogleAppMeasurement/AdIdSupport (10.29.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 10.29.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - GoogleAppMeasurement/WithoutAdIdSupport (10.29.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - GoogleDataTransport (9.4.1):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/AppDelegateSwizzler (7.13.3):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Environment (7.13.3):
+    - GoogleUtilities/Privacy
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/Logger (7.13.3):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/MethodSwizzler (7.13.3):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Network (7.13.3):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Privacy
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (7.13.3)":
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Privacy (7.13.3)
+  - GoogleUtilities/Reachability (7.13.3):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/UserDefaults (7.13.3):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - nanopb (2.30910.0):
+    - nanopb/decode (= 2.30910.0)
+    - nanopb/encode (= 2.30910.0)
+  - nanopb/decode (2.30910.0)
+  - nanopb/encode (2.30910.0)
+  - PromisesObjC (2.4.0)
+  - PromisesSwift (2.4.0):
+    - PromisesObjC (= 2.4.0)
+  - PurchasesHybridCommon (10.10.0):
+    - RevenueCat (= 4.43.0)
+  - PurchasesHybridCommonUI (10.10.0):
+    - PurchasesHybridCommon (= 10.10.0)
+    - RevenueCatUI (= 4.43.0)
+  - RevenueCat (4.43.0)
+  - RevenueCatUI (4.43.0):
+    - RevenueCat (= 4.43.0)
+
+DEPENDENCIES:
+  - AppAuth (= 1.6.2)
+  - FirebaseAnalytics (= 10.29.0)
+  - FirebaseCrashlytics (= 10.29.0)
+  - PurchasesHybridCommon (= 10.10.0)
+  - PurchasesHybridCommonUI (= 10.10.0)
+
+SPEC REPOS:
+  trunk:
+    - AppAuth
+    - FirebaseAnalytics
+    - FirebaseCore
+    - FirebaseCoreExtension
+    - FirebaseCoreInternal
+    - FirebaseCrashlytics
+    - FirebaseInstallations
+    - FirebaseRemoteConfigInterop
+    - FirebaseSessions
+    - GoogleAppMeasurement
+    - GoogleDataTransport
+    - GoogleUtilities
+    - nanopb
+    - PromisesObjC
+    - PromisesSwift
+    - PurchasesHybridCommon
+    - PurchasesHybridCommonUI
+    - RevenueCat
+    - RevenueCatUI
+
+SPEC CHECKSUMS:
+  AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
+  FirebaseAnalytics: 23717de130b779aa506e757edb9713d24b6ffeda
+  FirebaseCore: 30e9c1cbe3d38f5f5e75f48bfcea87d7c358ec16
+  FirebaseCoreExtension: 705ca5b14bf71d2564a0ddc677df1fc86ffa600f
+  FirebaseCoreInternal: df84dd300b561c27d5571684f389bf60b0a5c934
+  FirebaseCrashlytics: 34647b41e18de773717fdd348a22206f2f9bc774
+  FirebaseInstallations: 913cf60d0400ebd5d6b63a28b290372ab44590dd
+  FirebaseRemoteConfigInterop: 6efda51fb5e2f15b16585197e26eaa09574e8a4d
+  FirebaseSessions: dbd14adac65ce996228652c1fc3a3f576bdf3ecc
+  GoogleAppMeasurement: f9de05ee17401e3355f68e8fc8b5064d429f5918
+  GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
+  GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
+  nanopb: 438bc412db1928dac798aa6fd75726007be04262
+  PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
+  PurchasesHybridCommon: dcc722da673612ae05e9cec1e4d8d45847ab0f40
+  PurchasesHybridCommonUI: bfa7c7f1d8ed8f96fdc1e2a53746c75cd69ffad9
+  RevenueCat: f7b90c52f4b7e322bc9e7adaf734030523534b06
+  RevenueCatUI: 1d945ac4cd70052c092e467588f545281b1ca8c3
+
+PODFILE CHECKSUM: 4db397ad006717460e6735bd69a6b6a13f0ee4cd
+
+COCOAPODS: 1.15.2

@@ -1,4 +1,5 @@
 source "https://rubygems.org"
 
-gem "fastlane"
-gem "screengrab"
+gem 'cocoapods', '~> 1.15'
+gem 'fastlane'
+gem 'screengrab'

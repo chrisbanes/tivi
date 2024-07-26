@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.interop.LocalUIViewController
 import androidx.compose.ui.unit.dp
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -44,10 +43,8 @@ import platform.UIKit.UIDatePickerMode
 import platform.UIKit.UIDatePickerStyle
 import platform.UIKit.UIEdgeInsetsMake
 import platform.UIKit.UILayoutConstraintAxisVertical
-import platform.UIKit.UISheetPresentationControllerDetent
 import platform.UIKit.UIStackView
 import platform.UIKit.UIViewController
-import platform.UIKit.sheetPresentationController
 import platform.darwin.NSObject
 import platform.objc.OBJC_ASSOCIATION_RETAIN
 import platform.objc.objc_removeAssociatedObjects
@@ -133,8 +130,6 @@ internal fun DatePickerViewController(
   datePickerCustomizer: UIDatePicker.() -> Unit = {},
   backgroundColor: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp),
 ) {
-  val viewController = LocalUIViewController.current
-
   val lastOnDateChanged by rememberUpdatedState(onDateChanged)
   val lastOnDismissRequest by rememberUpdatedState(onDismissRequest)
 
@@ -170,21 +165,10 @@ internal fun DatePickerViewController(
     datePickerViewController.datePicker.setDate(selectedDate)
   }
 
-  DisposableEffect(viewController, datePickerViewController) {
-    datePickerViewController.sheetPresentationController?.apply {
-      detents = listOf(UISheetPresentationControllerDetent.mediumDetent())
-    }
-
-    viewController.presentViewController(datePickerViewController, true, null)
-
-    datePickerViewController.onViewDisappeared = { lastOnDismissRequest() }
-
-    onDispose {
-      datePickerViewController.dismissViewControllerAnimated(true) {
-        lastOnDismissRequest()
-      }
-    }
-  }
+  PresentSheetViewController(
+    viewController = datePickerViewController,
+    onDismissRequest = { lastOnDismissRequest() },
+  )
 }
 
 @OptIn(ExperimentalForeignApi::class)
@@ -206,8 +190,6 @@ private class DatePickerViewController(
     layoutMargins = UIEdgeInsetsMake(24.0, 24.0, 24.0, 24.0)
     translatesAutoresizingMaskIntoConstraints = false
   }
-
-  var onViewDisappeared: () -> Unit = {}
 
   override fun viewDidLoad() {
     super.viewDidLoad()
@@ -231,11 +213,6 @@ private class DatePickerViewController(
 
     stack.insertArrangedSubview(datePicker, 0u)
     stack.insertArrangedSubview(confirmButton, 1u)
-  }
-
-  override fun viewDidDisappear(animated: Boolean) {
-    super.viewDidDisappear(animated)
-    onViewDisappeared()
   }
 }
 

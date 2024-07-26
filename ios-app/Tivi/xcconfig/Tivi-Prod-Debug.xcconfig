@@ -1,4 +1,5 @@
 #include "common/Prod.xcconfig"
 #include "common/Debug.xcconfig"
+#include "Pods/Target Support Files/Pods-Tivi/Pods-Tivi.prod debug.xcconfig"
 
 PRODUCT_NAME = $(TARGET_NAME) Dev

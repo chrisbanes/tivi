@@ -1,0 +1,133 @@
+{
+  "identifier" : "70F9D390",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6450872484",
+    "_developerTeamID" : "GLF74Y6P9T",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 743672780.358706,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21513339",
+      "localizations" : [
+
+      ],
+      "name" : "Tivi Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6557075690",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Pro Access",
+              "displayName" : "Pro Access",
+              "locale" : "en_GB"
+            }
+          ],
+          "productID" : "tivi_9.99_1year",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Annual $9.99",
+          "subscriptionGroupID" : "21513339",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "0.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6557075846",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Pro Access",
+              "displayName" : "Pro Access",
+              "locale" : "en_GB"
+            }
+          ],
+          "productID" : "tivi_0.99_1month",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly $0.99",
+          "subscriptionGroupID" : "21513339",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "subscriptionOffersKeyPair" : {
+    "id" : "2EA2B889",
+    "privateKey" : "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgXLWHaLKlyzebG8yvslxLunqxxAO/KqHjZwJrbot3psWgCgYIKoZIzj0DAQehRANCAAQXiplnw2/KD9Xs56acHCObwKMtvvrzIt1YsompLiEIAxE6J8+MHDKhmO7+rLVV/xtqdtSyGa27WMxayRh9+W4G"
+  },
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
