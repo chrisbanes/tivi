@@ -12,6 +12,7 @@
 		38137D772A584D1900A687CC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 38137D762A584D1900A687CC /* Settings.bundle */; };
 		385297C12C2974F3004BD20A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385297C02C2974F3004BD20A /* Extensions.swift */; };
 		388B425E2C538BC9006ADC84 /* Tivi StoreKit.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 388B425D2C538BC9006ADC84 /* Tivi StoreKit.storekit */; };
+		388B42632C53ADC9006ADC84 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 388B42622C53ADC9006ADC84 /* StoreKit.framework */; };
 		832E820B2ADF2404006728FE /* dm_sans_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 832E82092ADF20F4006728FE /* dm_sans_bold.ttf */; };
 		832E820C2ADF2404006728FE /* dm_sans_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 832E820A2ADF20F4006728FE /* dm_sans_medium.ttf */; };
 		832E820D2ADF2404006728FE /* dm_sans_regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 832E82082ADF20F4006728FE /* dm_sans_regular.ttf */; };
@@ -41,6 +42,7 @@
 		38282FFD2A4F318E00E7929E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		385297C02C2974F3004BD20A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		388B425D2C538BC9006ADC84 /* Tivi StoreKit.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Tivi StoreKit.storekit"; sourceTree = "<group>"; };
+		388B42622C53ADC9006ADC84 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		5D263D863B021AC431BCD3BC /* Pods-Tivi.prod release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tivi.prod release.xcconfig"; path = "Target Support Files/Pods-Tivi/Pods-Tivi.prod release.xcconfig"; sourceTree = "<group>"; };
 		7D46A0EC97E7FFD72A98929D /* Pods_Tivi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tivi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		832E82082ADF20F4006728FE /* dm_sans_regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = dm_sans_regular.ttf; path = ../../../../common/ui/resources/fonts/src/commonMain/resources/font/dm_sans_regular.ttf; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				042DF22224841D8E4354F8A2 /* Pods_Tivi.framework in Frameworks */,
+				388B42632C53ADC9006ADC84 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,6 +185,7 @@
 		83AB5FFF2A51F3FD007FC216 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				388B42622C53ADC9006ADC84 /* StoreKit.framework */,
 				7D46A0EC97E7FFD72A98929D /* Pods_Tivi.framework */,
 			);
 			name = Frameworks;
@@ -299,7 +303,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				388B425F2C538BC9006ADC84 /* Tivi StoreKit.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
