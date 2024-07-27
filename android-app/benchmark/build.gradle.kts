@@ -52,7 +52,5 @@ dependencies {
 baselineProfile {
   managedDevices += "api34"
   useConnectedDevices = false
-
-  // Set this to true for debugging
-  enableEmulatorDisplay = false
+  enableEmulatorDisplay = true
 }
