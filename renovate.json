@@ -21,6 +21,13 @@
       ]
     },
     {
+      "groupName": "RevenueCat Cocoapods",
+      "groupSlug": "revenuecat",
+      "matchPackagePrefixes": [
+        "PurchasesHybrid"
+      ]
+    },
+    {
       "description": "Automatically merge minor and patch-level updates",
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true,
