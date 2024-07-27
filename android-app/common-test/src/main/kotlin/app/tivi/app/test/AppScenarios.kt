@@ -40,15 +40,15 @@ object AppScenarios {
 
 fun UiDevice.testDiscover(): Boolean {
   // Scroll one of the Discover Carousels. Might need to wait a while for the app to load
-  waitForObject(By.res("discover_carousel"), 30.seconds)
+  waitForObject(By.res("trending_carousel"), 30.seconds)
 
-  runAction(By.res("discover_carousel")) {
+  runAction(By.res("trending_carousel")) {
     setGestureMargins(this)
     scroll(Direction.RIGHT, 1f)
   }
   waitForIdle()
 
-  runAction(By.res("discover_carousel")) {
+  runAction(By.res("trending_carousel")) {
     setGestureMargins(this)
     scroll(Direction.LEFT, 1f)
   }
