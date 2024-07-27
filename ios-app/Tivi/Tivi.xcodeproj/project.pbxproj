@@ -441,6 +441,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 838A69962C4BB4F700D10870 /* Project.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1000;
 			};
 			name = "QA Debug";
 		};
@@ -448,6 +449,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 838A69962C4BB4F700D10870 /* Project.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1000;
 			};
 			name = "Prod Release";
 		};
@@ -502,6 +504,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 838A69962C4BB4F700D10870 /* Project.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1000;
 			};
 			name = "QA Release";
 		};
@@ -516,6 +519,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 838A69962C4BB4F700D10870 /* Project.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1000;
 			};
 			name = "Prod Debug";
 		};
