@@ -115,21 +115,21 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - PurchasesHybridCommon (11.1.1):
-    - RevenueCat (= 4.43.2)
-  - PurchasesHybridCommonUI (11.1.1):
-    - PurchasesHybridCommon (= 11.1.1)
-    - RevenueCatUI (= 4.43.2)
-  - RevenueCat (4.43.2)
-  - RevenueCatUI (4.43.2):
-    - RevenueCat (= 4.43.2)
+  - PurchasesHybridCommon (13.0.0):
+    - RevenueCat (= 5.2.2)
+  - PurchasesHybridCommonUI (13.0.0):
+    - PurchasesHybridCommon (= 13.0.0)
+    - RevenueCatUI (= 5.2.2)
+  - RevenueCat (5.2.2)
+  - RevenueCatUI (5.2.2):
+    - RevenueCat (= 5.2.2)
 
 DEPENDENCIES:
   - AppAuth (= 1.7.5)
   - FirebaseAnalytics (= 10.29.0)
   - FirebaseCrashlytics (= 10.29.0)
-  - PurchasesHybridCommon (= 11.1.1)
-  - PurchasesHybridCommonUI (= 11.1.1)
+  - PurchasesHybridCommon (= 13.0.0)
+  - PurchasesHybridCommonUI (= 13.0.0)
 
 SPEC REPOS:
   trunk:
@@ -169,11 +169,11 @@ SPEC CHECKSUMS:
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  PurchasesHybridCommon: 73f4f2c6e4ec3487b4219bf60e1661100fb85da3
-  PurchasesHybridCommonUI: 4c8b38f7cdb12d4d29813d9e2f90ca519ed04bec
-  RevenueCat: 3d934653b7e8b09af88fd47e9e84cfaf5d0a89ba
-  RevenueCatUI: 1417f375baf005eaf3afa8bc99724f567abfd6da
+  PurchasesHybridCommon: ebf821766759155e09b710baa73264a37a4e62f0
+  PurchasesHybridCommonUI: 127904ef659eee1cf4cd05874bdef16eb7cc103f
+  RevenueCat: ba985d80069c1c4b9c9e0763f1852f2a0bdcc2d6
+  RevenueCatUI: a5eec63e40eed0a5096af44c1259337b01959a13
 
-PODFILE CHECKSUM: c94684c4862e179b7880fd9e3806d2e161d721c4
+PODFILE CHECKSUM: 58641723dbd2a90d87daed3dad6195334f83d4a1
 
 COCOAPODS: 1.15.2
