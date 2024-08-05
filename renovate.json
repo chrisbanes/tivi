@@ -17,7 +17,8 @@
       "groupName": "Firebase",
       "groupSlug": "firebase",
       "matchPackagePrefixes": [
-        "com.google.firebase"
+        "com.google.firebase",
+        "Firebase"
       ]
     },
     {
