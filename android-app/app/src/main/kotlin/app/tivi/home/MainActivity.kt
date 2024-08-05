@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.view.WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -96,6 +97,9 @@ private fun ComponentActivity.enableEdgeToEdgeForTheme(theme: TiviPreferences.Th
     TiviPreferences.Theme.SYSTEM -> SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
   }
   enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
+  // Fix for three-button nav not properly going edge-to-edge.
+  // TODO: https://issuetracker.google.com/issues/298296168
+  window.setFlags(FLAG_LAYOUT_NO_LIMITS, FLAG_LAYOUT_NO_LIMITS)
 }
 
 private fun AndroidApplicationComponent.Companion.from(context: Context): AndroidApplicationComponent {
