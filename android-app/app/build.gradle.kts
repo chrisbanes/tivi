@@ -40,16 +40,6 @@ android {
     }
   }
 
-  lint {
-    baseline = file("lint-baseline.xml")
-    // Disable lintVital. Not needed since lint is run on CI
-    checkReleaseBuilds = false
-    // Ignore any tests
-    ignoreTestSources = true
-    // Make the build fail on any lint errors
-    abortOnError = true
-  }
-
   buildFeatures {
     buildConfig = true
   }

@@ -64,8 +64,4 @@ kotlin {
 
 android {
   namespace = "app.tivi.common.compose"
-
-  lint {
-    baseline = file("lint-baseline.xml")
-  }
 }
