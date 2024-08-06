@@ -162,6 +162,13 @@ jobs:
         with:
           cache-disabled: true
 
+      - uses: actions/cache@v4
+        with:
+          path: ios-app/Tivi/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
         env:
@@ -213,6 +220,13 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-disabled: true
+
+      - uses: actions/cache@v4
+        with:
+          path: ios-app/Tivi/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
 
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
