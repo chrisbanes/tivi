@@ -52,8 +52,7 @@ platform :ios do
 
   before_all do |lane|
     cleanup_ci_keychain if is_ci
-    xcodes(select_for_current_build_only: true)
-
+    xcodes(select_for_current_build_only: true) if is_ci
     cocoapods(podfile: "ios-app/Tivi")
   end
 

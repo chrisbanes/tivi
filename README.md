@@ -1,12 +1,9 @@
 ![Tivi](art/banner.png)
 
-# Tivi 📺 (work-in-progress 👷🔧️👷‍♀️⛏)
+# Tivi 📺
 
-**This is not an official Google product**
 
-Tivi is a **work-in-progress** TV show tracking Android app, which connects to
-[Trakt.tv](https://www.trakt.tv).
-
+Tivi is a TV show tracking application which connects to [Trakt.tv](https://www.trakt.tv). It has been updated over the years to target a number of platforms, built upon Kotlin Multiplatform and Compose Multiplatform.
 
 ## Download
 
@@ -14,26 +11,84 @@ Tivi is a **work-in-progress** TV show tracking Android app, which connects to
 <img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
 </a>
 
-## Android development
+## Platforms
 
-Tivi is an app that attempts to use the latest libraries and tools. As a summary:
+### Android
 
- * Entirely written in [Kotlin](https://kotlinlang.org/).
- * UI completely written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (see below).
- * Uses [Kotlin Coroutines](https://kotlinlang.org/docs/reference/coroutines/coroutines-guide.html) throughout.
- * Uses many of the [Architecture Components](https://developer.android.com/topic/libraries/architecture/), including: Room, Lifecycle, Navigation.
+Tivi started out as an open source Android app, showcasing cutting technologies through its development. The codebase was transformed in late-2022 to be built upon [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html), allowing us to re-use a large proportion of the code across different platforms.
 
-## Development setup
+### iOS
 
-First off, you require the latest [Android Studio Flamingo](https://developer.android.com/studio/preview) (or newer) to be able to build the app.
+The iOS app is well maintained (the main developers uses it daily). To aid development time, most of the UIs are shared with the Android app, enabled through [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/).
+
+### Desktop JVM
+
+Tivi is built for Desktop running as a Java app. Unfortunately we don’t have feature parity on the desktop target due to either missing APIs, or lack of priority by the maintainer to implement them. However the basics of the app do work.
+
+## Development Setup
+
+### Android and Desktop
+
+Tivi is a standard Gradle project which can be opened in recent versions of Android Studio or IntelliJ.
+
+- The Android application module is located at [android-app/app/](android-app/app) (`:android-app:app`).
+- The Desktop application module is located at [desktop-app/](desktop-app) (`:desktop-app`).
+
+### iOS
+
+The iOS project is setup as a typical Xcode project. It currently uses [CocoaPods](https://cocoapods.org/) to manage dependencies, and therefore you’ll need to install this before opening the Xcode project.
+
+Let's step through it:
+
+#### Setup Ruby
+
+We need Ruby for various dependencies, therefore we need a Ruby environment. I recommend using [rbenv](https://github.com/rbenv/rbenv), but that's just a suggestion:
+
+```shell
+brew install rbenv
+
+rbenv init
+
+# Download Ruby 3.3.4 and set it as the global version
+rbenv install 3.3.4
+rbenv global 3.3.4
+
+# Install bundler
+gem install bundler
+```
+
+#### Xcode
+
+We use the latest version of Xcode supported by Kotlin Multiplatform, which is defined in the [.xcode-version](.xcode-version) file.
+
+We enforce the Xcode version on CI, but locally you can use whatever version you want. The [Xcodes.app](https://www.xcodes.app/) application is a great way to install different versions.
+
+#### Nearly there
+
+After you have installed the dependencies, you can now pull down the dependencies:
+
+``` shell
+cd /path/to/tivi/checkout
+
+# Install all of the Ruby dependencies
+bundle install
+
+# Install pods
+pod install --project-directory=ios-app/Tivi
+```
+
+#### Open the project in Xcode
+
+Finally, we can open the project in Xcode. Open Xcode and then point it to the workspace file at: [`ios-app/Tivi/Tivi.xcworkspace`](ios-app/Tivi/Tivi.xcworkspace).
+
+Press Run and it should build!
 
 ### Code style
 
 This project uses [ktlint](https://github.com/pinterest/ktlint), provided via
 the [spotless](https://github.com/diffplug/spotless) gradle plugin, and the bundled project IntelliJ codestyle.
 
-If you find that one of your pull reviews does not pass the CI server check due to a code style conflict, you can
-easily fix it by running: `./gradlew spotlessApply`.
+If you find that one of your pull reviews does not pass the CI server check due to a code style conflict, you can fix it by running: `./gradlew spotlessApply`.
 
 ### API keys
 
@@ -57,24 +112,6 @@ TIVI_TRAKT_CLIENT_SECRET=<insert>
 # Get this from TMDb
 TIVI_TMDB_API_KEY=<insert>
 ```
-
-## Jetpack Compose
-As mentioned above, this app's UI is completely written in [Jetpack Compose](https://developer.android.com/jetpack/compose). Some screens highlighted are:
-
-### Show details
-[[source](/ui-showdetails)]
-
-![Show Details demo](art/show-details.gif)
-
-### Episode details
-[[source](/ui-episodedetails)]
-
-![Show Details demo](art/episode-details.gif)
-
-### Account
-[[source](/ui-account)]
-
-![Show Details demo](art/account.png)
 
 ## Contributions
 
