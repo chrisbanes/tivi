@@ -3,6 +3,7 @@
 
 package app.tivi.gradle
 
+import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.HasUnitTestBuilder
 import com.android.build.gradle.BaseExtension
@@ -22,6 +23,17 @@ fun Project.configureAndroid() {
       testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
       manifestPlaceholders += mapOf("appAuthRedirectScheme" to "empty")
+    }
+
+    if (this is CommonExtension<*, *, *, *, *, *>) {
+      lint {
+        // Disable lintVital. Not needed since lint is run on CI
+        checkReleaseBuilds = false
+        // Ignore any tests
+        ignoreTestSources = true
+        // Make the build fail on any lint errors
+        abortOnError = true
+      }
     }
 
     compileOptions {
