@@ -64,7 +64,7 @@ androidx-test-rules = "androidx.test:rules:1.6.1"
 androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "baselineprofile" }
 androidx-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 
-androidx-work-runtime = "androidx.work:work-runtime-ktx:2.9.0"
+androidx-work-runtime = "androidx.work:work-runtime-ktx:2.9.1"
 
 appauth = "net.openid:appauth:0.11.1"
 
