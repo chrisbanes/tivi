@@ -10,13 +10,15 @@ interface AuthState {
   fun serializeToJson(): String
 
   companion object {
-    val Empty: AuthState = object : AuthState {
-      override val accessToken: String = ""
-      override val refreshToken: String = ""
-      override val isAuthorized: Boolean = false
-      override fun serializeToJson(): String = "{}"
-    }
+    val Empty: AuthState get() = EmptyAuthState
   }
+}
+
+private data object EmptyAuthState : AuthState {
+  override val accessToken: String = ""
+  override val refreshToken: String = ""
+  override val isAuthorized: Boolean = false
+  override fun serializeToJson(): String = "{}"
 }
 
 data class SimpleAuthState(

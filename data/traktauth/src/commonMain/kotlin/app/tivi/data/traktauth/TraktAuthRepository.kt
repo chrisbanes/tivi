@@ -38,13 +38,13 @@ class TraktAuthRepository(
     // Read the auth state from the AuthStore
     scope.launch {
       val state = getAuthState() ?: AuthState.Empty
-      updateAuthState(authState = state, skipPersist = true)
+      updateAuthState(authState = state, persist = false)
     }
   }
 
   suspend fun getAuthState(): AuthState? {
     val state = lastAuthState
-    if (state != null && lastAuthStateExpiry >= Clock.System.now()) {
+    if (state != null && Clock.System.now() < lastAuthStateExpiry) {
       logger.d { "[TraktAuthRepository] getAuthState. Using cached tokens: $state" }
       return state
     }
@@ -56,16 +56,24 @@ class TraktAuthRepository(
 
   suspend fun login(): AuthState? {
     logger.d { "[TraktAuthRepository] login()" }
-    return loginAction.value().also {
-      updateAuthState(authState = it ?: AuthState.Empty)
-    }
+    return loginAction.value()
+      .also { updateAuthState(authState = it ?: AuthState.Empty) }
+      .also {
+        logger.d { "[TraktAuthRepository] login finished. Result: $it" }
+      }
   }
 
   suspend fun refreshTokens(): AuthState? {
     logger.d { "[TraktAuthRepository] refreshTokens" }
-    return authStore.get()
-      ?.let { currentState -> refreshTokenAction.value.invoke(currentState) }
+    return getAuthState()
+      ?.let { currentState ->
+        logger.d { "[TraktAuthRepository] Calling refreshTokenAction with $currentState" }
+        refreshTokenAction.value.invoke(currentState)
+      }
       .also { updateAuthState(authState = it ?: AuthState.Empty) }
+      .also {
+        logger.d { "[TraktAuthRepository] refreshTokens finished. Result: $it" }
+      }
   }
 
   suspend fun logout() {
@@ -82,8 +90,8 @@ class TraktAuthRepository(
     }
   }
 
-  private suspend fun updateAuthState(authState: AuthState, skipPersist: Boolean = false) {
-    logger.d { "[TraktAuthRepository] updateAuthState: $authState. Persist: ${!skipPersist}" }
+  private suspend fun updateAuthState(authState: AuthState, persist: Boolean = true) {
+    logger.d { "[TraktAuthRepository] updateAuthState: $authState. Persist: $persist" }
     _state.value = when {
       authState.isAuthorized -> TraktAuthState.LOGGED_IN
       else -> TraktAuthState.LOGGED_OUT
@@ -91,15 +99,15 @@ class TraktAuthRepository(
     cacheAuthState(authState)
     logger.d { "[TraktAuthRepository] Updated AuthState: ${_state.value}" }
 
-    if (!skipPersist) {
+    if (persist) {
       // Persist auth state
       withContext(dispatchers.io) {
         if (authState.isAuthorized) {
-          logger.d { "[TraktAuthRepository] Saving state to AuthStore: $authState" }
           authStore.save(authState)
+          logger.d { "[TraktAuthRepository] Saved state to AuthStore: $authState" }
         } else {
-          logger.d { "[TraktAuthRepository] Clearing AuthStore" }
           authStore.clear()
+          logger.d { "[TraktAuthRepository] Cleared AuthStore" }
         }
       }
     }
