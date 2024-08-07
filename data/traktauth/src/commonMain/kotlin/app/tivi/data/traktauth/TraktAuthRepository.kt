@@ -7,7 +7,7 @@ import app.tivi.data.traktauth.store.AuthStore
 import app.tivi.inject.ApplicationCoroutineScope
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,13 +26,14 @@ class TraktAuthRepository(
   private val authStore: AuthStore,
   private val loginAction: Lazy<TraktLoginAction>,
   private val refreshTokenAction: Lazy<TraktRefreshTokenAction>,
-  private val logger: Logger,
 ) {
   private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
   val state: StateFlow<TraktAuthState> get() = _state.asStateFlow()
 
   private var lastAuthState: AuthState? = null
   private var lastAuthStateExpiry: Instant = Instant.DISTANT_PAST
+
+  private val logger by lazy { Logger.withTag("TraktAuthRepository") }
 
   init {
     // Read the auth state from the AuthStore
@@ -45,34 +46,34 @@ class TraktAuthRepository(
   suspend fun getAuthState(): AuthState? {
     val state = lastAuthState
     if (state != null && Clock.System.now() < lastAuthStateExpiry) {
-      logger.d { "[TraktAuthRepository] getAuthState. Using cached tokens: $state" }
+      logger.d { "getAuthState. Using cached tokens: $state" }
       return state
     }
 
-    logger.d { "[TraktAuthRepository] getAuthState. Retrieving tokens from AuthStore" }
+    logger.d { "getAuthState. Retrieving tokens from AuthStore" }
     return withContext(dispatchers.io) { authStore.get() }
       ?.also { cacheAuthState(it) }
   }
 
   suspend fun login(): AuthState? {
-    logger.d { "[TraktAuthRepository] login()" }
+    logger.d { "login()" }
     return loginAction.value()
       .also { updateAuthState(authState = it ?: AuthState.Empty) }
       .also {
-        logger.d { "[TraktAuthRepository] login finished. Result: $it" }
+        logger.d { "Login finished. Result: $it" }
       }
   }
 
   suspend fun refreshTokens(): AuthState? {
-    logger.d { "[TraktAuthRepository] refreshTokens" }
+    logger.d { "refreshTokens()" }
     return getAuthState()
       ?.let { currentState ->
-        logger.d { "[TraktAuthRepository] Calling refreshTokenAction with $currentState" }
+        logger.d { "Calling refreshTokenAction with $currentState" }
         refreshTokenAction.value.invoke(currentState)
       }
       .also { updateAuthState(authState = it ?: AuthState.Empty) }
       .also {
-        logger.d { "[TraktAuthRepository] refreshTokens finished. Result: $it" }
+        logger.d { "refreshTokens finished. Result: $it" }
       }
   }
 
@@ -91,23 +92,23 @@ class TraktAuthRepository(
   }
 
   private suspend fun updateAuthState(authState: AuthState, persist: Boolean = true) {
-    logger.d { "[TraktAuthRepository] updateAuthState: $authState. Persist: $persist" }
+    logger.d { " updateAuthState: $authState. Persist: $persist" }
     _state.value = when {
       authState.isAuthorized -> TraktAuthState.LOGGED_IN
       else -> TraktAuthState.LOGGED_OUT
     }
     cacheAuthState(authState)
-    logger.d { "[TraktAuthRepository] Updated AuthState: ${_state.value}" }
+    logger.d { " Updated AuthState: ${_state.value}" }
 
     if (persist) {
       // Persist auth state
       withContext(dispatchers.io) {
         if (authState.isAuthorized) {
           authStore.save(authState)
-          logger.d { "[TraktAuthRepository] Saved state to AuthStore: $authState" }
+          logger.d { " Saved state to AuthStore: $authState" }
         } else {
           authStore.clear()
-          logger.d { "[TraktAuthRepository] Cleared AuthStore" }
+          logger.d { " Cleared AuthStore" }
         }
       }
     }

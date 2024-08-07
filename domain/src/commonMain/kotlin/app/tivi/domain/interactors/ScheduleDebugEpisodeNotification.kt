@@ -10,8 +10,8 @@ import app.tivi.data.models.NotificationChannel
 import app.tivi.domain.Interactor
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
 import app.tivi.util.TiviDateFormatter
+import co.touchlab.kermit.Logger
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.withContext
@@ -26,7 +26,6 @@ class ScheduleDebugEpisodeNotification(
   private val dispatchers: AppCoroutineDispatchers,
   private val applicationInfo: ApplicationInfo,
   private val preferences: Lazy<TiviPreferences>,
-  private val logger: Logger,
 ) : Interactor<ScheduleDebugEpisodeNotification.Params, Unit>() {
   private val seasonsEpisodesRepository by seasonsEpisodesRepository
   private val notificationManager by notificationManager
@@ -38,7 +37,7 @@ class ScheduleDebugEpisodeNotification(
     }
 
     if (!notificationsEnabled) {
-      logger.d {
+      Logger.d {
         "ScheduleDebugEpisodeNotification. " +
           "Notifications not enabled. " +
           "Cancelling all EPISODES_AIRING notifications"

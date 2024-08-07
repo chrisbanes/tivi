@@ -15,7 +15,7 @@ import app.tivi.data.util.ItemSyncerResult
 import app.tivi.data.util.inPast
 import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.ApplicationScope
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
@@ -31,17 +31,18 @@ class FollowedShowsRepository(
   private val followedShowsLastRequestStore: FollowedShowsLastRequestStore,
   private val dataSource: FollowedShowsDataSource,
   private val traktAuthRepository: TraktAuthRepository,
-  private val logger: Logger,
   private val showDao: TiviShowDao,
   private val transactionRunner: DatabaseTransactionRunner,
 ) {
+  private val logger by lazy { Logger.withTag("FollowedShowsRepository") }
+
   private var traktListId: Int? = null
 
   private val syncer = syncerForEntity(
     entityDao = followedShowsDao,
     entityToKey = { it.traktId },
     mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
-    logger = logger,
+
   )
 
   fun observeIsShowFollowed(showId: Long): Flow<Boolean> {

@@ -17,7 +17,7 @@ import androidx.core.content.getSystemService
 import app.tivi.common.ui.resources.EnTiviStrings
 import app.tivi.data.models.Notification
 import app.tivi.data.models.NotificationChannel
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
@@ -25,11 +25,11 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class AndroidNotificationManager(
   private val application: Application,
-  private val logger: Logger,
   private val store: PendingNotificationStore,
 ) : NotificationManager {
   private val notificationManager by lazy { NotificationManagerCompat.from(application) }
   private val alarmManager by lazy { application.getSystemService<AlarmManager>()!! }
+  private val logger by lazy { Logger.withTag("NotificationManager") }
 
   // TODO: this should use the system strings
   private val strings = EnTiviStrings

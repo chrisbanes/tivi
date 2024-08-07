@@ -13,7 +13,6 @@ kotlin {
     commonMain {
       dependencies {
         api(projects.core.base)
-        api(projects.core.logging.api)
         implementation(libs.kotlinx.serialization)
       }
     }

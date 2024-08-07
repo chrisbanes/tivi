@@ -13,7 +13,6 @@ kotlin {
         api(projects.core.base)
         api(projects.api.trakt)
         api(projects.api.tmdb)
-        api(projects.core.logging.api)
         api(projects.data.models)
         implementation(projects.data.db)
 

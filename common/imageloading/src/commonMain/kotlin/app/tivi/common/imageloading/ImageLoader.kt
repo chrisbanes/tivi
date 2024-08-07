@@ -4,7 +4,7 @@
 package app.tivi.common.imageloading
 
 import app.tivi.app.ApplicationInfo
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.disk.DiskCache
@@ -17,7 +17,6 @@ internal fun newImageLoader(
   context: PlatformContext,
   interceptors: Set<Interceptor>,
   applicationInfo: ApplicationInfo,
-  logger: Logger,
   debug: Boolean = false,
 ): ImageLoader {
   return ImageLoader.Builder(context)
@@ -36,7 +35,7 @@ internal fun newImageLoader(
     }
     .apply {
       if (debug) {
-        logger(logger.asCoilLogger())
+        logger(Logger.asCoilLogger())
       }
     }
     .build()

@@ -5,7 +5,6 @@ package app.tivi.common.imageloading
 
 import app.tivi.app.ApplicationInfo
 import app.tivi.appinitializers.AppInitializer
-import app.tivi.util.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.intercept.Interceptor
@@ -23,11 +22,10 @@ interface ImageLoadingComponent : ImageLoadingPlatformComponent {
     context: PlatformContext,
     interceptors: Set<Interceptor>,
     info: ApplicationInfo,
-    logger: Logger,
   ): ImageLoader = newImageLoader(
     context = context,
     interceptors = interceptors,
-    logger = logger,
+
     debug = info.debugBuild,
     applicationInfo = info,
   )

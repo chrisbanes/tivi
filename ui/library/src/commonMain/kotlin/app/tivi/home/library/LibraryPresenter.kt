@@ -30,7 +30,7 @@ import app.tivi.screens.LibraryScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.toggle
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
@@ -65,7 +65,6 @@ class LibraryPresenter(
   private val observeUserDetails: Lazy<ObserveUserDetails>,
   private val getTraktAuthState: Lazy<GetTraktAuthState>,
   private val preferences: Lazy<TiviPreferences>,
-  private val logger: Logger,
 ) : Presenter<LibraryUiState> {
 
   @Composable
@@ -110,7 +109,7 @@ class LibraryPresenter(
               updateLibraryShows.value.invoke(
                 UpdateLibraryShows.Params(event.fromUser),
               ).onFailure { e ->
-                logger.i(e)
+                Logger.i(e) { "Error whilst calling UpdateLibraryShows" }
                 uiMessageManager.emitMessage(UiMessage(e))
               }
             }

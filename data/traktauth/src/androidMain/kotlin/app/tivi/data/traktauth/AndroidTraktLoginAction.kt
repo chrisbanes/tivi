@@ -10,7 +10,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import app.tivi.inject.ApplicationScope
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -26,7 +26,6 @@ class AndroidTraktLoginAction(
   private val loginTraktActivityResultContract: Lazy<LoginTraktActivityResultContract>,
   private val clientAuth: Lazy<ClientAuthentication>,
   private val authService: Lazy<AuthorizationService>,
-  private val logger: Logger,
 ) : TraktLoginAction {
   private lateinit var launcher: ActivityResultLauncher<Unit>
 
@@ -71,7 +70,7 @@ class AndroidTraktLoginAction(
         }
 
         error != null -> {
-          logger.d(error) { "AuthException" }
+          Logger.d(error) { "AuthException" }
           resultChannel.trySend(null)
         }
       }

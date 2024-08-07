@@ -54,21 +54,18 @@ class ObjectGraph(
     authStore = AuthorizedAuthStore,
     loginAction = lazy { SuccessTraktLoginAction },
     refreshTokenAction = lazy { SuccessRefreshTokenAction },
-    logger = FakeLogger,
   ),
   val followedShowsRepository: FollowedShowsRepository = FollowedShowsRepository(
     followedShowsDao = followedShowsDao,
     followedShowsLastRequestStore = FollowedShowsLastRequestStore(lastRequestDao),
     dataSource = followedShowsDataSource,
     traktAuthRepository = traktAuthRepository,
-    logger = FakeLogger,
     showDao = tiviShowDao,
     transactionRunner = TestTransactionRunner,
   ),
   val episodeWatchStore: EpisodeWatchStore = EpisodeWatchStore(
     transactionRunner = TestTransactionRunner,
     episodeWatchEntryDao = episodeWatchEntryDao,
-    logger = FakeLogger,
   ),
   val seasonsEpisodesRepository: SeasonsEpisodesRepository = SeasonsEpisodesRepository(
     episodeWatchStore = episodeWatchStore,
@@ -86,6 +83,5 @@ class ObjectGraph(
     tmdbEpisodeDataSource = tmdbEpisodeDataSource,
     traktEpisodeWatchesDataSource = episodeWatchesDataSource,
     traktAuthRepository = traktAuthRepository,
-    logger = FakeLogger,
   ),
 )

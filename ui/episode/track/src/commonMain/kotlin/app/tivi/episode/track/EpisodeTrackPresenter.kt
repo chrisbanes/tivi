@@ -18,7 +18,7 @@ import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.screens.EpisodeTrackScreen
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -54,7 +54,6 @@ class EpisodeTrackPresenter(
   private val updateEpisodeDetails: Lazy<UpdateEpisodeDetails>,
   private val observeEpisodeDetails: Lazy<ObserveEpisodeDetails>,
   private val addEpisodeWatch: Lazy<AddEpisodeWatch>,
-  private val logger: Logger,
 ) : Presenter<EpisodeTrackUiState> {
   @Composable
   override fun present(): EpisodeTrackUiState {
@@ -90,7 +89,7 @@ class EpisodeTrackPresenter(
             updateEpisodeDetails.value.invoke(
               UpdateEpisodeDetails.Params(screen.id, event.fromUser),
             ).onFailure { e ->
-              logger.i(e)
+              Logger.i(e) { "Error whilst calling UpdateEpisodeDetails" }
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }
@@ -133,7 +132,7 @@ class EpisodeTrackPresenter(
                 navigator.pop()
               }
               result.onFailure { e ->
-                logger.i(e)
+                Logger.i(e) { "Error whilst calling AddEpisodeWatch" }
                 uiMessageManager.emitMessage(UiMessage(e))
               }
             }

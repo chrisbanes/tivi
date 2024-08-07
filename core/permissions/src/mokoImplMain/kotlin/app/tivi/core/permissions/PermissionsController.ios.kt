@@ -3,20 +3,19 @@
 
 package app.tivi.core.permissions
 
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import dev.icerock.moko.permissions.Permission as MokoPermission
 import dev.icerock.moko.permissions.PermissionState as MokoPermissionState
 import dev.icerock.moko.permissions.PermissionsController as MokoPermissionsController
 
 internal class MokoPermissionControllerWrapper(
   internal val mokoPermissionController: MokoPermissionsController,
-  private val logger: Logger,
 ) : PermissionsController {
   override suspend fun providePermission(permission: Permission): PermissionState {
     try {
       mokoPermissionController.providePermission(permission.toMokoPermission())
     } catch (e: Exception) {
-      logger.i(e) { "Exception thrown during providePermission for $permission" }
+      Logger.i(e, TAG) { "Exception thrown during providePermission for $permission" }
     }
     return getPermissionState(permission)
   }
@@ -32,6 +31,10 @@ internal class MokoPermissionControllerWrapper(
 
   override fun openAppSettings() {
     mokoPermissionController.openAppSettings()
+  }
+
+  companion object {
+    const val TAG = "MokoPermissionController"
   }
 }
 

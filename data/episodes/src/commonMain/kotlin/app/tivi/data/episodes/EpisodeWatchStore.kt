@@ -8,7 +8,6 @@ import app.tivi.data.db.DatabaseTransactionRunner
 import app.tivi.data.models.EpisodeWatchEntry
 import app.tivi.data.models.PendingAction
 import app.tivi.data.util.syncerForEntity
-import app.tivi.util.Logger
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -16,13 +15,11 @@ import me.tatarka.inject.annotations.Inject
 class EpisodeWatchStore(
   private val transactionRunner: DatabaseTransactionRunner,
   private val episodeWatchEntryDao: EpisodeWatchEntryDao,
-  logger: Logger,
 ) {
   private val episodeWatchSyncer = syncerForEntity(
     entityDao = episodeWatchEntryDao,
     entityToKey = { it.traktId },
     mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
-    logger = logger,
   )
 
   fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {

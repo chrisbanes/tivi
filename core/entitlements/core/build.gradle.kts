@@ -20,8 +20,6 @@ kotlin {
         api(libs.revenuecat.core)
         implementation(libs.revenuecat.datetime)
         implementation(libs.revenuecat.result)
-
-        api(projects.core.logging.api)
       }
     }
 

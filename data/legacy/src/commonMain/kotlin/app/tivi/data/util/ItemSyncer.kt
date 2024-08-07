@@ -5,7 +5,7 @@ package app.tivi.data.util
 
 import app.tivi.data.daos.EntityDao
 import app.tivi.data.models.TiviEntity
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 
 /**
  * @param NetworkType Network type
@@ -18,8 +18,9 @@ class ItemSyncer<LocalType : TiviEntity, NetworkType, Key>(
   private val localEntityToKey: (LocalType) -> Key?,
   private val networkEntityToKey: (NetworkType) -> Key,
   private val networkEntityToLocalEntity: (networkEntity: NetworkType, currentEntity: LocalType?) -> LocalType,
-  private val logger: Logger,
 ) {
+  private val logger by lazy { Logger.withTag("ItemSyncer") }
+
   fun sync(
     currentValues: Collection<LocalType>,
     networkValues: Collection<NetworkType>,
@@ -98,26 +99,22 @@ fun <LocalType : TiviEntity, NetworkType, Key> syncerForEntity(
   localEntityToKey: (LocalType) -> Key?,
   networkEntityToKey: (NetworkType) -> Key,
   networkEntityToLocalEntity: (networkEntity: NetworkType, currentEntity: LocalType?) -> LocalType,
-  logger: Logger,
 ) = ItemSyncer(
-  entityDao::upsert,
-  entityDao::deleteEntity,
-  localEntityToKey,
-  networkEntityToKey,
-  networkEntityToLocalEntity,
-  logger,
+  upsertEntity = entityDao::upsert,
+  deleteEntity = entityDao::deleteEntity,
+  localEntityToKey = localEntityToKey,
+  networkEntityToKey = networkEntityToKey,
+  networkEntityToLocalEntity = networkEntityToLocalEntity,
 )
 
 fun <Type : TiviEntity, Key> syncerForEntity(
   entityDao: EntityDao<Type>,
   entityToKey: (Type) -> Key?,
   mapper: (Type, Type?) -> Type,
-  logger: Logger,
 ) = ItemSyncer(
-  entityDao::upsert,
-  entityDao::deleteEntity,
-  entityToKey,
-  entityToKey,
-  mapper,
-  logger,
+  upsertEntity = entityDao::upsert,
+  deleteEntity = entityDao::deleteEntity,
+  localEntityToKey = entityToKey,
+  networkEntityToKey = entityToKey,
+  networkEntityToLocalEntity = mapper,
 )

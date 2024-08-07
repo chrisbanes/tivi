@@ -8,7 +8,7 @@ import app.tivi.app.ApplicationInfo
 import app.tivi.data.traktauth.TraktAuthRepository
 import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.inject.ApplicationScope
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import io.ktor.client.engine.darwin.Darwin
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.auth.Auth
@@ -24,7 +24,6 @@ actual interface TraktPlatformComponent {
   fun provideTrakt(
     oauthInfo: TraktOAuthInfo,
     applicationInfo: ApplicationInfo,
-    tiviLogger: Logger,
     traktAuthRepository: Lazy<TraktAuthRepository>,
   ): Trakt = Trakt {
     traktApiKey = oauthInfo.clientId
@@ -33,7 +32,7 @@ actual interface TraktPlatformComponent {
     logging {
       logger = object : io.ktor.client.plugins.logging.Logger {
         override fun log(message: String) {
-          tiviLogger.d { message }
+          Logger.d("trakt-ktor") { message }
         }
       }
       level = when {

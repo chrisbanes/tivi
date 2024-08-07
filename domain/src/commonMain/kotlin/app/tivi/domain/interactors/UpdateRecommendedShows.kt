@@ -12,8 +12,8 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.UserInitiatedParams
 import app.tivi.domain.interactors.UpdateRecommendedShows.Params
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
 import app.tivi.util.parallelForEach
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -24,7 +24,6 @@ class UpdateRecommendedShows(
   private val showStore: Lazy<ShowStore>,
   private val traktAuthRepository: Lazy<TraktAuthRepository>,
   private val dispatchers: AppCoroutineDispatchers,
-  private val logger: Logger,
 ) : Interactor<Params, Unit>() {
   override suspend fun doWork(params: Params) {
     // If we're not logged in, we can't load the recommended shows
@@ -37,7 +36,7 @@ class UpdateRecommendedShows(
         } catch (ce: CancellationException) {
           throw ce
         } catch (t: Throwable) {
-          logger.e(t) { "Error while show info: ${it.showId}" }
+          Logger.e(t) { "Error while show info: ${it.showId}" }
         }
       }
     }

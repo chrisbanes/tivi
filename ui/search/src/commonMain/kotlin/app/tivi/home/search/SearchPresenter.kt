@@ -17,7 +17,7 @@ import app.tivi.data.models.TiviShow
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.screens.SearchScreen
 import app.tivi.screens.ShowDetailsScreen
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -47,7 +47,6 @@ class SearchUiPresenterFactory(
 class SearchPresenter(
   @Assisted private val navigator: Navigator,
   private val searchShows: Lazy<SearchShows>,
-  private val logger: Logger,
 ) : Presenter<SearchUiState> {
 
   @Composable
@@ -70,7 +69,7 @@ class SearchPresenter(
       results = result.getOrDefault(emptyList())
 
       result.onFailure { e ->
-        logger.i(e)
+        Logger.i(e) { "Error whilst calling SearchShows" }
         uiMessageManager.emitMessage(UiMessage(e))
       }
     }

@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import app.tivi.screens.DevLogScreen
-import app.tivi.util.RecordingLogger
+import app.tivi.util.RecordingLoggerWriter
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -34,13 +34,13 @@ class DevLogUiPresenterFactory(
 @Inject
 class DevLogPresenter(
   @Assisted private val navigator: Navigator,
-  private val recordingLogger: RecordingLogger,
 ) : Presenter<DevLogUiState> {
 
   @Composable
   override fun present(): DevLogUiState {
-    val logs by remember { recordingLogger.buffer.map { it.asReversed() } }
-      .collectAsState(emptyList())
+    val logs by remember {
+      RecordingLoggerWriter.buffer.map { it.asReversed() }
+    }.collectAsState(emptyList())
 
     fun eventSink(event: DevLogUiEvent) {
       when (event) {

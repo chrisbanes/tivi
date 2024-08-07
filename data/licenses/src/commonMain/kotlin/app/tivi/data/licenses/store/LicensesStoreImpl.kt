@@ -5,21 +5,20 @@ package app.tivi.data.licenses.store
 
 import app.tivi.data.licenses.LicenseItem
 import app.tivi.data.licenses.fetcher.LicensesFetcher
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LicensesStoreImpl(
-  private val fetcher: LicensesFetcher,
-  private val logger: Logger,
+  private val fetcher: Lazy<LicensesFetcher>,
 ) : LicensesStore {
   private var licenses: List<LicenseItem>? = null
 
   override suspend fun getLicenses(): List<LicenseItem> {
     return licenses ?: try {
-      fetcher().also { licenses = it }
+      fetcher.value.invoke().also { licenses = it }
     } catch (e: Exception) {
-      logger.e(e) { "Exception whilst fetching licenses" }
+      Logger.e(e) { "Exception whilst fetching licenses" }
       emptyList()
     }
   }
