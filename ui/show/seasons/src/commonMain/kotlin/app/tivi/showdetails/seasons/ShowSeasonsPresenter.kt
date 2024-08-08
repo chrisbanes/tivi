@@ -17,7 +17,7 @@ import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -48,7 +48,6 @@ class ShowSeasonsPresenter(
   private val observeShowDetails: Lazy<ObserveShowDetails>,
   private val observeShowSeasons: Lazy<ObserveShowSeasonsEpisodesWatches>,
   private val updateShowSeasons: Lazy<UpdateShowSeasons>,
-  private val logger: Logger,
 ) : Presenter<ShowSeasonsUiState> {
   @Composable
   override fun present(): ShowSeasonsUiState {
@@ -76,7 +75,7 @@ class ShowSeasonsPresenter(
             updateShowSeasons.value.invoke(
               UpdateShowSeasons.Params(screen.showId, event.fromUser),
             ).onFailure { e ->
-              logger.i(e)
+              Logger.i(e) { "Error whilst calling UpdateShowSeasons" }
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }

@@ -11,7 +11,7 @@ import app.tivi.data.daos.TrendingDao
 import app.tivi.domain.PaginatedEntryRemoteMediator
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.interactors.UpdateTrendingShows
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -20,7 +20,6 @@ import me.tatarka.inject.annotations.Inject
 class ObservePagedTrendingShows(
   private val trendingShowsDao: TrendingDao,
   private val updateTrendingShows: UpdateTrendingShows,
-  private val logger: Logger,
 ) : PagingInteractor<ObservePagedTrendingShows.Params, TrendingEntryWithShow>() {
   @OptIn(androidx.paging.ExperimentalPagingApi::class)
   override fun createObservable(
@@ -36,7 +35,7 @@ class ObservePagedTrendingShows(
         } catch (ce: CancellationException) {
           throw ce
         } catch (t: Throwable) {
-          logger.e(t) { "Error while fetching from RemoteMediator" }
+          Logger.e(t) { "Error while fetching from RemoteMediator" }
           throw t
         }
       },

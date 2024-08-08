@@ -21,11 +21,10 @@ import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.data.util.inPast
 import app.tivi.data.util.syncerForEntity
 import app.tivi.inject.ApplicationScope
-import app.tivi.util.Logger
 import app.tivi.util.cancellableRunCatching
+import co.touchlab.kermit.Logger
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -53,21 +52,24 @@ class SeasonsEpisodesRepository(
   private val tmdbEpisodeDataSource: TmdbEpisodeDataSource,
   private val traktEpisodeWatchesDataSource: EpisodeWatchesDataSource,
   private val traktAuthRepository: TraktAuthRepository,
-  private val logger: Logger,
 ) {
-  private val seasonSyncer = syncerForEntity(
-    entityDao = seasonsDao,
-    entityToKey = { it.traktId },
-    mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
-    logger = logger,
-  )
+  private val logger by lazy { Logger.withTag("SeasonsEpisodesRepository") }
 
-  private val episodeSyncer = syncerForEntity(
-    entityDao = episodesDao,
-    entityToKey = { it.traktId },
-    mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
-    logger = logger,
-  )
+  private val seasonSyncer by lazy {
+    syncerForEntity(
+      entityDao = seasonsDao,
+      entityToKey = { it.traktId },
+      mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
+    )
+  }
+
+  private val episodeSyncer by lazy {
+    syncerForEntity(
+      entityDao = episodesDao,
+      entityToKey = { it.traktId },
+      mapper = { newEntity, currentEntity -> newEntity.copy(id = currentEntity?.id ?: 0) },
+    )
+  }
 
   fun observeSeasonsWithEpisodesWatchedForShow(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
     return seasonsDao.seasonsWithEpisodesForShowId(showId)
@@ -212,23 +214,18 @@ class SeasonsEpisodesRepository(
       tmdbSeasonsDataSource.getSeason(local.showId, local.number!!)
     }
 
-    val trakt = try {
-      traktDeferred.await()
-    } catch (ce: CancellationException) {
-      throw ce
-    } catch (e: Exception) {
-      null
-    }
-    val tmdb = try {
-      tmdbDeferred.await()
-    } catch (ce: CancellationException) {
-      throw ce
-    } catch (e: Exception) {
-      null
-    }
-    check(trakt != null || tmdb != null)
+    val trakt = cancellableRunCatching { traktDeferred.await() }
+    val tmdb = cancellableRunCatching { tmdbDeferred.await() }
 
-    seasonsDao.upsert(mergeSeason(local, trakt ?: Season.EMPTY, tmdb ?: Season.EMPTY))
+    check(trakt.isSuccess || tmdb.isSuccess)
+
+    seasonsDao.upsert(
+      mergeSeason(
+        local = local,
+        trakt = trakt.getOrNull() ?: Season.EMPTY,
+        tmdb = tmdb.getOrNull() ?: Season.EMPTY,
+      ),
+    )
 
     seasonLastRequestStore.updateLastRequest(seasonId)
   }

@@ -10,7 +10,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.toJavaDuration
 import me.tatarka.inject.annotations.Inject
@@ -18,9 +18,9 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class AndroidTasks(
   workManager: Lazy<WorkManager>,
-  private val logger: Logger,
 ) : Tasks {
   private val workManager by workManager
+  private val logger by lazy { Logger.withTag("AndroidTasks") }
 
   override fun scheduleLibrarySync() {
     logger.d { "Tasks.scheduleLibrarySync()" }

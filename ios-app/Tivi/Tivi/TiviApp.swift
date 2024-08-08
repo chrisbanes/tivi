@@ -107,7 +107,7 @@ private func createApplicationComponent(
     )
 }
 
-private class IosSetCrashReportingEnabledAction: ImplementationSetCrashReportingEnabledAction {
+private class IosSetCrashReportingEnabledAction: LoggingSetCrashReportingEnabledAction {
     func invoke(enabled: Bool) {
         Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(enabled)
     }

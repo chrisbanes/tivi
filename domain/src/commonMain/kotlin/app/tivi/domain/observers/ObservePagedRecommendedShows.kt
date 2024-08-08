@@ -11,7 +11,7 @@ import app.tivi.data.daos.RecommendedDao
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.RefreshOnlyRemoteMediator
 import app.tivi.domain.interactors.UpdateRecommendedShows
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -20,7 +20,6 @@ import me.tatarka.inject.annotations.Inject
 class ObservePagedRecommendedShows(
   private val recommendedShowsDao: RecommendedDao,
   private val updateRecommendedShows: UpdateRecommendedShows,
-  private val logger: Logger,
 ) : PagingInteractor<ObservePagedRecommendedShows.Params, RecommendedEntryWithShow>() {
   @OptIn(androidx.paging.ExperimentalPagingApi::class)
   override fun createObservable(
@@ -34,7 +33,7 @@ class ObservePagedRecommendedShows(
         } catch (ce: CancellationException) {
           throw ce
         } catch (t: Throwable) {
-          logger.e(t) { "Error while fetching from RemoteMediator" }
+          Logger.e(t) { "Error while fetching from RemoteMediator" }
           throw t
         }
       },

@@ -28,7 +28,7 @@ import app.tivi.screens.PopularShowsScreen
 import app.tivi.screens.RecommendedShowsScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.TrendingShowsScreen
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -64,8 +64,8 @@ class DiscoverPresenter(
   private val observeNextShowEpisodesToWatch: Lazy<ObserveNextShowEpisodesToWatch>,
   private val observeTraktAuthState: Lazy<ObserveTraktAuthState>,
   private val observeUserDetails: Lazy<ObserveUserDetails>,
-  private val logger: Logger,
 ) : Presenter<DiscoverUiState> {
+  private val logger by lazy { Logger.withTag("DiscoverPresenter") }
 
   @Composable
   override fun present(): DiscoverUiState {
@@ -103,7 +103,7 @@ class DiscoverPresenter(
                 isUserInitiated = event.fromUser,
               ),
             ).onFailure { e ->
-              logger.i(e)
+              logger.i(e) { "Error whilst calling UpdatePopularShows" }
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }
@@ -114,7 +114,7 @@ class DiscoverPresenter(
                 isUserInitiated = event.fromUser,
               ),
             ).onFailure { e ->
-              logger.i(e)
+              logger.i(e) { "Error whilst calling UpdateTrendingShows" }
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }
@@ -123,7 +123,7 @@ class DiscoverPresenter(
               updateRecommendedShows.value.invoke(
                 UpdateRecommendedShows.Params(isUserInitiated = event.fromUser),
               ).onFailure { e ->
-                logger.i(e)
+                logger.i(e) { "Error whilst calling UpdateRecommendedShows" }
                 uiMessageManager.emitMessage(UiMessage(e))
               }
             }

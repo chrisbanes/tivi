@@ -6,7 +6,7 @@ package app.tivi.tasks
 import app.tivi.domain.interactors.ScheduleEpisodeNotifications
 import app.tivi.domain.interactors.UpdateLibraryShows
 import app.tivi.inject.ApplicationCoroutineScope
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.launch
@@ -26,10 +26,10 @@ import platform.Foundation.NSDate
 class IosTasks(
   updateLibraryShows: Lazy<UpdateLibraryShows>,
   scheduleEpisodeNotifications: Lazy<ScheduleEpisodeNotifications>,
-  private val logger: Logger,
   private val scope: ApplicationCoroutineScope,
 ) : Tasks {
   private val taskScheduler by lazy { BGTaskScheduler.sharedScheduler }
+  private val logger by lazy { Logger.withTag("IosTasks") }
 
   private val updateLibraryShows by updateLibraryShows
   private val scheduleEpisodeNotifications by scheduleEpisodeNotifications

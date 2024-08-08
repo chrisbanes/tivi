@@ -20,7 +20,6 @@ kotlin {
 
       dependencies {
         implementation(libs.moko.permissions.core)
-        api(projects.core.logging.api)
       }
     }
 

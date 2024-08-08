@@ -12,9 +12,8 @@ kotlin {
       dependencies {
         api(libs.kotlin.coroutines.core)
         api(libs.kotlininject.runtime)
+        api(libs.kermit.kermit)
       }
     }
-
-    jvmMain
   }
 }

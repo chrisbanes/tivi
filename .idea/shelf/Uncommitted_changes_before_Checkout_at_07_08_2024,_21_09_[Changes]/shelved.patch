@@ -1,0 +1,55 @@
+Index: data/test/src/commonTest/kotlin/app/tivi/utils/ObjectGraph.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Copyright 2024, Christopher Banes and the Tivi project contributors\n// SPDX-License-Identifier: Apache-2.0\n\npackage app.tivi.utils\n\nimport app.tivi.data.Database\nimport app.tivi.data.daos.EpisodeWatchEntryDao\nimport app.tivi.data.daos.EpisodesDao\nimport app.tivi.data.daos.FollowedShowsDao\nimport app.tivi.data.daos.LastRequestDao\nimport app.tivi.data.daos.SeasonsDao\nimport app.tivi.data.daos.SqlDelightEpisodeWatchEntryDao\nimport app.tivi.data.daos.SqlDelightEpisodesDao\nimport app.tivi.data.daos.SqlDelightFollowedShowsDao\nimport app.tivi.data.daos.SqlDelightLastRequestDao\nimport app.tivi.data.daos.SqlDelightSeasonsDao\nimport app.tivi.data.daos.SqlDelightTiviShowDao\nimport app.tivi.data.daos.TiviShowDao\nimport app.tivi.data.episodes.EpisodeLastRequestStore\nimport app.tivi.data.episodes.EpisodeWatchLastRequestStore\nimport app.tivi.data.episodes.EpisodeWatchStore\nimport app.tivi.data.episodes.SeasonLastRequestStore\nimport app.tivi.data.episodes.SeasonsEpisodesRepository\nimport app.tivi.data.episodes.ShowSeasonsLastRequestStore\nimport app.tivi.data.followedshows.FollowedShowsLastRequestStore\nimport app.tivi.data.followedshows.FollowedShowsRepository\nimport app.tivi.data.traktauth.TraktAuthRepository\nimport app.tivi.util.AppCoroutineDispatchers\nimport kotlinx.coroutines.CoroutineScope\nimport kotlinx.coroutines.DelicateCoroutinesApi\nimport kotlinx.coroutines.GlobalScope\n\n@OptIn(DelicateCoroutinesApi::class)\nclass ObjectGraph(\n  val database: Database,\n  val backgroundScope: CoroutineScope = GlobalScope,\n  val appCoroutineDispatchers: AppCoroutineDispatchers = createSingleAppCoroutineDispatchers(),\n  val tiviShowDao: TiviShowDao = SqlDelightTiviShowDao(database, appCoroutineDispatchers),\n  val episodesDao: EpisodesDao = SqlDelightEpisodesDao(database, appCoroutineDispatchers),\n  val seasonsDao: SeasonsDao = SqlDelightSeasonsDao(database, appCoroutineDispatchers),\n  val episodeWatchEntryDao: EpisodeWatchEntryDao = SqlDelightEpisodeWatchEntryDao(database, appCoroutineDispatchers),\n  val followedShowsDao: FollowedShowsDao = SqlDelightFollowedShowsDao(database, appCoroutineDispatchers),\n  val followedShowsDataSource: FakeFollowedShowsDataSource = FakeFollowedShowsDataSource(),\n  val lastRequestDao: LastRequestDao = SqlDelightLastRequestDao(database),\n  val tmdbSeasonsEpisodesDataSource: FakeSeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource(),\n  val traktSeasonsEpisodesDataSource: FakeSeasonsEpisodesDataSource = FakeSeasonsEpisodesDataSource(),\n  val tmdbEpisodeDataSource: FakeEpisodeDataSource = FakeEpisodeDataSource(),\n  val traktEpisodeDataSource: FakeEpisodeDataSource = FakeEpisodeDataSource(),\n  val episodeWatchesDataSource: FakeEpisodeWatchesDataSource = FakeEpisodeWatchesDataSource(),\n\n  val traktAuthRepository: TraktAuthRepository = TraktAuthRepository(\n    scope = backgroundScope,\n    dispatchers = appCoroutineDispatchers,\n    authStore = AuthorizedAuthStore,\n    loginAction = lazy { SuccessTraktLoginAction },\n    refreshTokenAction = lazy { SuccessRefreshTokenAction },\n    logger = FakeLogger,\n  ),\n  val followedShowsRepository: FollowedShowsRepository = FollowedShowsRepository(\n    followedShowsDao = followedShowsDao,\n    followedShowsLastRequestStore = FollowedShowsLastRequestStore(lastRequestDao),\n    dataSource = followedShowsDataSource,\n    traktAuthRepository = traktAuthRepository,\n    logger = FakeLogger,\n    showDao = tiviShowDao,\n    transactionRunner = TestTransactionRunner,\n  ),\n  val episodeWatchStore: EpisodeWatchStore = EpisodeWatchStore(\n    transactionRunner = TestTransactionRunner,\n    episodeWatchEntryDao = episodeWatchEntryDao,\n    logger = FakeLogger,\n  ),\n  val seasonsEpisodesRepository: SeasonsEpisodesRepository = SeasonsEpisodesRepository(\n    episodeWatchStore = episodeWatchStore,\n    episodeWatchLastLastRequestStore = EpisodeWatchLastRequestStore(lastRequestDao),\n    episodeLastRequestStore = EpisodeLastRequestStore(lastRequestDao),\n    seasonLastRequestStore = SeasonLastRequestStore(lastRequestDao),\n    transactionRunner = TestTransactionRunner,\n    seasonsDao = seasonsDao,\n    episodesDao = episodesDao,\n    showDao = tiviShowDao,\n    showSeasonsLastRequestStore = ShowSeasonsLastRequestStore(lastRequestDao),\n    tmdbSeasonsDataSource = tmdbSeasonsEpisodesDataSource,\n    traktSeasonsDataSource = traktSeasonsEpisodesDataSource,\n    traktEpisodeDataSource = traktEpisodeDataSource,\n    tmdbEpisodeDataSource = tmdbEpisodeDataSource,\n    traktEpisodeWatchesDataSource = episodeWatchesDataSource,\n    traktAuthRepository = traktAuthRepository,\n    logger = FakeLogger,\n  ),\n)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/data/test/src/commonTest/kotlin/app/tivi/utils/ObjectGraph.kt b/data/test/src/commonTest/kotlin/app/tivi/utils/ObjectGraph.kt
+--- a/data/test/src/commonTest/kotlin/app/tivi/utils/ObjectGraph.kt	(revision aa5797ef0e8945ddf3088e5f5e37b3cdc1fe46c8)
++++ b/data/test/src/commonTest/kotlin/app/tivi/utils/ObjectGraph.kt	(date 1723061352853)
+@@ -54,21 +54,18 @@
+     authStore = AuthorizedAuthStore,
+     loginAction = lazy { SuccessTraktLoginAction },
+     refreshTokenAction = lazy { SuccessRefreshTokenAction },
+-    logger = FakeLogger,
+   ),
+   val followedShowsRepository: FollowedShowsRepository = FollowedShowsRepository(
+     followedShowsDao = followedShowsDao,
+     followedShowsLastRequestStore = FollowedShowsLastRequestStore(lastRequestDao),
+     dataSource = followedShowsDataSource,
+     traktAuthRepository = traktAuthRepository,
+-    logger = FakeLogger,
+     showDao = tiviShowDao,
+     transactionRunner = TestTransactionRunner,
+   ),
+   val episodeWatchStore: EpisodeWatchStore = EpisodeWatchStore(
+     transactionRunner = TestTransactionRunner,
+     episodeWatchEntryDao = episodeWatchEntryDao,
+-    logger = FakeLogger,
+   ),
+   val seasonsEpisodesRepository: SeasonsEpisodesRepository = SeasonsEpisodesRepository(
+     episodeWatchStore = episodeWatchStore,
+@@ -86,6 +83,5 @@
+     tmdbEpisodeDataSource = tmdbEpisodeDataSource,
+     traktEpisodeWatchesDataSource = episodeWatchesDataSource,
+     traktAuthRepository = traktAuthRepository,
+-    logger = FakeLogger,
+   ),
+ )
+Index: data/test/src/commonTest/kotlin/app/tivi/utils/Fakes.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Copyright 2023, Christopher Banes and the Tivi project contributors\n// SPDX-License-Identifier: Apache-2.0\n\npackage app.tivi.utils\n\nimport app.tivi.data.traktauth.AuthState\nimport app.tivi.data.traktauth.TraktLoginAction\nimport app.tivi.data.traktauth.TraktRefreshTokenAction\nimport app.tivi.util.Logger\n\nobject SuccessTraktLoginAction : TraktLoginAction {\n  override suspend fun invoke(): AuthState = AuthorizedAuthState\n}\n\nobject SuccessRefreshTokenAction : TraktRefreshTokenAction {\n  override suspend fun invoke(state: AuthState): AuthState = AuthorizedAuthState\n}\n\nobject FakeLogger : Logger\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/data/test/src/commonTest/kotlin/app/tivi/utils/Fakes.kt b/data/test/src/commonTest/kotlin/app/tivi/utils/Fakes.kt
+--- a/data/test/src/commonTest/kotlin/app/tivi/utils/Fakes.kt	(revision aa5797ef0e8945ddf3088e5f5e37b3cdc1fe46c8)
++++ b/data/test/src/commonTest/kotlin/app/tivi/utils/Fakes.kt	(date 1723061352855)
+@@ -15,5 +15,3 @@
+ object SuccessRefreshTokenAction : TraktRefreshTokenAction {
+   override suspend fun invoke(state: AuthState): AuthState = AuthorizedAuthState
+ }
+-
+-object FakeLogger : Logger

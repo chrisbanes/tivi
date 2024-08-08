@@ -5,7 +5,7 @@ package app.tivi.core.notifications
 
 import app.tivi.data.models.Notification
 import app.tivi.data.models.NotificationChannel
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -21,9 +21,9 @@ import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNUserNotificationCenter
 
 @Inject
-class IosNotificationManager(
-  private val logger: Logger,
-) : NotificationManager {
+class IosNotificationManager : NotificationManager {
+
+  private val logger by lazy { Logger.withTag("NotificationManager") }
 
   override suspend fun schedule(notification: Notification) {
     val trigger = UNCalendarNotificationTrigger.triggerWithDateMatchingComponents(

@@ -31,7 +31,7 @@ import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -72,9 +72,10 @@ class ShowDetailsPresenter(
   observeShowViewStats: Lazy<ObserveShowViewStats>,
   changeShowFollowStatus: Lazy<ChangeShowFollowStatus>,
   changeSeasonFollowStatus: Lazy<ChangeSeasonFollowStatus>,
-  private val logger: Logger,
 ) : Presenter<ShowDetailsUiState> {
   private val showId: Long get() = screen.id
+
+  private val logger by lazy { Logger.withTag("ShowDetailsPresenter") }
 
   private val updateShowDetails by updateShowDetails
   private val observeShowDetails by observeShowDetails
@@ -112,7 +113,7 @@ class ShowDetailsPresenter(
     val message by uiMessageManager.message.collectAsState(null)
 
     fun handleException(t: Throwable) {
-      logger.i(t)
+      logger.i(t) { "Error" }
       if (t !is IllegalArgumentException) {
         uiMessageManager.emitMessage(UiMessage(t))
       }
@@ -187,7 +188,7 @@ class ShowDetailsPresenter(
                 action = ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS,
               ),
             ).onFailure { e ->
-              logger.i(e)
+              logger.i(e) { "Error whilst calling ChangeSeasonFollowStatus" }
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }

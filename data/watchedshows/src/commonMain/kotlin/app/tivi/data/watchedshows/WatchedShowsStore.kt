@@ -13,7 +13,6 @@ import app.tivi.data.util.syncerForEntity
 import app.tivi.data.util.usingDispatchers
 import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.withContext
@@ -30,7 +29,7 @@ class WatchedShowsStore(
   watchedShowsDao: WatchedShowDao,
   showDao: TiviShowDao,
   lastRequestStore: WatchedShowsLastRequestStore,
-  logger: Logger,
+
   transactionRunner: DatabaseTransactionRunner,
   dispatchers: AppCoroutineDispatchers,
 ) : Store<Unit, List<WatchedShowEntry>> by storeBuilder(
@@ -54,7 +53,7 @@ class WatchedShowsStore(
         mapper = { newEntity, currentEntity ->
           newEntity.copy(id = currentEntity?.id ?: 0)
         },
-        logger = logger,
+
       )
       transactionRunner {
         syncer.sync(

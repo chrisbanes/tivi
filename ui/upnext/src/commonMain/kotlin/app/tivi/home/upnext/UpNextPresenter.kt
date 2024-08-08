@@ -30,7 +30,7 @@ import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.UpNextScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.toggle
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
@@ -65,8 +65,9 @@ class UpNextPresenter(
   private val observeUserDetails: Lazy<ObserveUserDetails>,
   private val getTraktAuthState: Lazy<GetTraktAuthState>,
   private val preferences: Lazy<TiviPreferences>,
-  private val logger: Logger,
 ) : Presenter<UpNextUiState> {
+
+  private val logger by lazy { Logger.withTag("UpNextPresenter") }
 
   @Composable
   override fun present(): UpNextUiState {
@@ -108,7 +109,7 @@ class UpNextPresenter(
               updateUpNextEpisodes.value.invoke(
                 UpdateUpNextEpisodes.Params(event.fromUser),
               ).onFailure { e ->
-                logger.i(e)
+                logger.i(e) { "Error whilst calling UpdateUpNextEpisodes" }
                 uiMessageManager.emitMessage(UiMessage(e))
               }
             }

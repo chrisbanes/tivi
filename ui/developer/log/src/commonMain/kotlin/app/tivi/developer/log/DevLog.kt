@@ -28,7 +28,7 @@ import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.screens.DevLogScreen
-import app.tivi.util.Severity
+import co.touchlab.kermit.Severity
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui

@@ -8,8 +8,6 @@ import app.tivi.domain.interactors.LogoutTrakt
 import app.tivi.domain.interactors.UpdateUserDetails
 import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
-import app.tivi.domain.observers.ObserveUserDetails
-import app.tivi.util.Logger
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CancellationException
@@ -24,19 +22,10 @@ class RootViewModel(
   @Assisted private val coroutineScope: CoroutineScope,
   observeTraktAuthState: Lazy<ObserveTraktAuthState>,
   private val updateUserDetails: Lazy<UpdateUserDetails>,
-  observeUserDetails: Lazy<ObserveUserDetails>,
   private val logoutTrakt: Lazy<LogoutTrakt>,
-  private val logger: Logger,
 ) {
 
   init {
-    coroutineScope.launch {
-      observeUserDetails.value.flow.collect { user ->
-        logger.setUserId(user?.username ?: "")
-      }
-    }
-    observeUserDetails.value.invoke(ObserveUserDetails.Params("me"))
-
     coroutineScope.launch {
       observeTraktAuthState.value.flow.collect { state ->
         if (state == TraktAuthState.LOGGED_IN) refreshMe()

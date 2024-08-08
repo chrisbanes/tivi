@@ -37,7 +37,6 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.core.logging.api)
 
         api(libs.trakt.api)
         api(projects.data.traktauth)

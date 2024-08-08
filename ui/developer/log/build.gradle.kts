@@ -17,8 +17,8 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.core.logging.api)
         implementation(projects.common.ui.compose)
+        implementation(projects.core.logging)
 
         api(projects.common.ui.screens)
         api(libs.circuit.foundation)

@@ -16,8 +16,8 @@ import app.tivi.data.watchedshows.WatchedShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.UserInitiatedParams
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
 import app.tivi.util.parallelForEach
+import co.touchlab.kermit.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
@@ -33,7 +33,6 @@ class UpdateLibraryShows(
   private val watchedShowsLastRequestStore: WatchedShowsLastRequestStore,
   private val watchedShowsStore: WatchedShowsStore,
   private val watchedShowDao: WatchedShowDao,
-  private val logger: Logger,
   private val dispatchers: AppCoroutineDispatchers,
   scheduleEpisodeNotifications: Lazy<ScheduleEpisodeNotifications>,
 ) : Interactor<UpdateLibraryShows.Params, Unit>() {
@@ -86,7 +85,7 @@ class UpdateLibraryShows(
       } catch (ce: CancellationException) {
         throw ce
       } catch (t: Throwable) {
-        logger.e(t) { "Error while updating show seasons/episodes: $entryShowId" }
+        Logger.e(t) { "Error while updating show seasons/episodes: $entryShowId" }
       }
     }
   }

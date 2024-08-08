@@ -7,7 +7,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import app.tivi.domain.interactors.ScheduleEpisodeNotifications
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -16,14 +16,13 @@ class ScheduleEpisodeNotificationsWorker(
   @Assisted context: Context,
   @Assisted params: WorkerParameters,
   private val scheduleEpisodeNotifications: Lazy<ScheduleEpisodeNotifications>,
-  private val logger: Logger,
 ) : CoroutineWorker(context, params) {
   companion object {
     internal const val NAME = "set-episode-notifications"
   }
 
   override suspend fun doWork(): Result {
-    logger.d { "$NAME worker running" }
+    Logger.d { "$NAME worker running" }
     val result = scheduleEpisodeNotifications.value.invoke(
       ScheduleEpisodeNotifications.Params(
         // We always schedule notifications for longer than the next task schedule, just in case

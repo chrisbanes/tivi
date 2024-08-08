@@ -22,7 +22,7 @@ import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -56,8 +56,9 @@ class EpisodeDetailsPresenter(
   private val observeEpisodeWatches: Lazy<ObserveEpisodeWatches>,
   private val removeEpisodeWatches: Lazy<RemoveEpisodeWatches>,
   private val removeEpisodeWatch: Lazy<RemoveEpisodeWatch>,
-  private val logger: Logger,
 ) : Presenter<EpisodeDetailsUiState> {
+  private val logger by lazy { Logger.withTag("EpisodeDetailsPresenter") }
+
   @Composable
   override fun present(): EpisodeDetailsUiState {
     val scope = rememberCoroutineScope()
@@ -78,7 +79,7 @@ class EpisodeDetailsPresenter(
             updateEpisodeDetails.value.invoke(
               UpdateEpisodeDetails.Params(screen.id, event.fromUser),
             ).onFailure { e ->
-              logger.i(e)
+              logger.i(e) { "Error whilst calling UpdateEpisodeDetails" }
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }
@@ -95,7 +96,7 @@ class EpisodeDetailsPresenter(
             removeEpisodeWatches.value.invoke(
               RemoveEpisodeWatches.Params(screen.id),
             ).onFailure { e ->
-              logger.i(e)
+              logger.i(e) { "Error whilst calling RemoveEpisodeWatches" }
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }
@@ -106,7 +107,7 @@ class EpisodeDetailsPresenter(
             removeEpisodeWatch.value.invoke(
               RemoveEpisodeWatch.Params(event.id),
             ).onFailure { e ->
-              logger.i(e)
+              logger.i(e) { "Error whilst calling RemoveEpisodeWatch" }
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }

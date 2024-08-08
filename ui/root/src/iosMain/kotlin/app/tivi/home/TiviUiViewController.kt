@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.AccessibilitySyncOptions
 import androidx.compose.ui.window.ComposeUIViewController
 import app.tivi.app.ApplicationInfo
 import app.tivi.screens.DiscoverScreen
-import app.tivi.util.Logger
+import co.touchlab.kermit.Logger
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import me.tatarka.inject.annotations.Inject
@@ -28,14 +28,13 @@ private const val ENABLE_A11Y_LOGGING = false
 @Suppress("ktlint:standard:function-naming")
 fun TiviUiViewController(
   tiviContent: TiviContent,
-  logger: Logger,
   applicationInfo: ApplicationInfo,
 ): UIViewController = ComposeUIViewController(
   configure = {
     val a11yLogger = if (ENABLE_A11Y_LOGGING) {
       object : AccessibilityDebugLogger {
         override fun log(message: Any?) {
-          logger.d { "AccessibilityDebugLogger: $message" }
+          Logger.d { "AccessibilityDebugLogger: $message" }
         }
       }
     } else {
