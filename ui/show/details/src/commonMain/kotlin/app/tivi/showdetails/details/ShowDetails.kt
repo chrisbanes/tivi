@@ -87,7 +87,6 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.StartToStart
 import app.tivi.common.compose.bodyWidth
@@ -104,6 +103,37 @@ import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.copy
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.rememberShowImageModel
+import app.tivi.common.ui.resources.fmt
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.airsTitle
+import app.tivi.common.ui.resources.strings.cdFollowShowAdd
+import app.tivi.common.ui.resources.strings.cdFollowShowRemove
+import app.tivi.common.ui.resources.strings.cdNavigateUp
+import app.tivi.common.ui.resources.strings.cdOpenOverflow
+import app.tivi.common.ui.resources.strings.cdShowPosterImage
+import app.tivi.common.ui.resources.strings.certificateTitle
+import app.tivi.common.ui.resources.strings.detailsAbout
+import app.tivi.common.ui.resources.strings.detailsNextEpisode
+import app.tivi.common.ui.resources.strings.detailsRelated
+import app.tivi.common.ui.resources.strings.detailsViewStats
+import app.tivi.common.ui.resources.strings.episodeTitleFallback
+import app.tivi.common.ui.resources.strings.followShowAdd
+import app.tivi.common.ui.resources.strings.followShowRemove
+import app.tivi.common.ui.resources.strings.minutesFormat
+import app.tivi.common.ui.resources.strings.networkTitle
+import app.tivi.common.ui.resources.strings.popupSeasonFollow
+import app.tivi.common.ui.resources.strings.popupSeasonIgnore
+import app.tivi.common.ui.resources.strings.popupSeasonIgnorePrevious
+import app.tivi.common.ui.resources.strings.popupSeasonMarkAllUnwatched
+import app.tivi.common.ui.resources.strings.popupSeasonMarkWatchedAired
+import app.tivi.common.ui.resources.strings.popupSeasonMarkWatchedAll
+import app.tivi.common.ui.resources.strings.runtimeTitle
+import app.tivi.common.ui.resources.strings.seasonTitleFallback
+import app.tivi.common.ui.resources.strings.showDetailsSeasons
+import app.tivi.common.ui.resources.strings.statusTitle
+import app.tivi.common.ui.resources.strings.traktRatingText
+import app.tivi.common.ui.resources.strings.traktRatingTitle
+import app.tivi.common.ui.resources.strings.traktRatingVotes
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
@@ -122,6 +152,7 @@ import com.slack.circuit.runtime.ui.ui
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class ShowDetailsUiFactory : Ui.Factory {
@@ -337,7 +368,7 @@ private fun ShowDetailsScrollingContent(
     gutterSpacer()
 
     item(key = "header_summary") {
-      Header(LocalStrings.current.detailsAbout)
+      Header(stringResource(Res.string.detailsAbout))
     }
 
     if (show.summary != null) {
@@ -361,7 +392,7 @@ private fun ShowDetailsScrollingContent(
       gutterSpacer()
 
       item(key = "header_next_episode_watch") {
-        Header(LocalStrings.current.detailsNextEpisode)
+        Header(stringResource(Res.string.detailsNextEpisode))
       }
       item(key = "next_episode_watch") {
         NextEpisodeToWatch(
@@ -376,7 +407,7 @@ private fun ShowDetailsScrollingContent(
       gutterSpacer()
 
       item(key = "header_related_shows") {
-        Header(LocalStrings.current.detailsRelated)
+        Header(stringResource(Res.string.detailsRelated))
       }
       item(key = "related_shows") {
         RelatedShows(
@@ -391,7 +422,7 @@ private fun ShowDetailsScrollingContent(
       gutterSpacer()
 
       item(key = "header_watch_stats") {
-        Header(LocalStrings.current.detailsViewStats)
+        Header(stringResource(Res.string.detailsViewStats))
       }
       item(key = "watch_stats") {
         WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
@@ -402,7 +433,7 @@ private fun ShowDetailsScrollingContent(
       gutterSpacer()
 
       item(key = "header_seasons") {
-        Header(LocalStrings.current.showDetailsSeasons)
+        Header(stringResource(Res.string.showDetailsSeasons))
       }
 
       items(
@@ -443,7 +474,7 @@ private fun PosterInfoRow(
   Row(modifier.padding(horizontal = Layout.bodyMargin)) {
     AsyncImage(
       model = rememberShowImageModel(show, ImageType.POSTER),
-      contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: ""),
+      contentDescription = stringResource(Res.string.cdShowPosterImage, show.title ?: ""),
       modifier = Modifier
         .weight(1f)
         .aspectRatio(2 / 3f)
@@ -467,7 +498,7 @@ private fun NetworkInfoPanel(
 ) {
   Column(modifier) {
     Text(
-      text = LocalStrings.current.networkTitle,
+      text = stringResource(Res.string.networkTitle),
       style = MaterialTheme.typography.titleSmall,
     )
 
@@ -487,14 +518,14 @@ private fun RuntimeInfoPanel(
 ) {
   Column(modifier) {
     Text(
-      text = LocalStrings.current.runtimeTitle,
+      text = stringResource(Res.string.runtimeTitle),
       style = MaterialTheme.typography.titleSmall,
     )
 
     Spacer(Modifier.height(4.dp))
 
     Text(
-      text = LocalStrings.current.minutesFormat(runtime),
+      text = stringResource(Res.string.minutesFormat, runtime),
       style = MaterialTheme.typography.bodyMedium,
     )
   }
@@ -507,7 +538,7 @@ private fun ShowStatusPanel(
 ) {
   Column(modifier) {
     Text(
-      text = LocalStrings.current.statusTitle,
+      text = stringResource(Res.string.statusTitle),
       style = MaterialTheme.typography.titleSmall,
     )
 
@@ -528,7 +559,7 @@ private fun AirsInfoPanel(
 ) {
   Column(modifier) {
     Text(
-      text = LocalStrings.current.airsTitle,
+      text = stringResource(Res.string.airsTitle),
       style = MaterialTheme.typography.titleSmall,
     )
 
@@ -549,7 +580,7 @@ private fun CertificateInfoPanel(
 ) {
   Column(modifier) {
     Text(
-      text = LocalStrings.current.certificateTitle,
+      text = stringResource(Res.string.certificateTitle),
       style = MaterialTheme.typography.titleSmall,
     )
 
@@ -577,7 +608,7 @@ private fun TraktRatingInfoPanel(
 ) {
   Column(modifier) {
     Text(
-      text = LocalStrings.current.traktRatingTitle,
+      text = stringResource(Res.string.traktRatingTitle),
       style = MaterialTheme.typography.titleSmall,
     )
 
@@ -596,12 +627,12 @@ private fun TraktRatingInfoPanel(
 
       Column {
         Text(
-          text = LocalStrings.current.traktRatingText(rating * 10f),
+          text = stringResource(Res.string.traktRatingText, "%.1f".fmt(rating * 10f)),
           style = MaterialTheme.typography.bodyMedium,
         )
 
         Text(
-          text = LocalStrings.current.traktRatingVotes(votes / 1000f),
+          text = stringResource(Res.string.traktRatingVotes, "%.0f".fmt(votes / 1000f)),
           style = MaterialTheme.typography.bodySmall,
         )
       }
@@ -712,7 +743,7 @@ private fun NextEpisodeToWatch(
     Spacer(Modifier.height(4.dp))
 
     Text(
-      text = episode.title ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
+      text = episode.title ?: stringResource(Res.string.episodeTitleFallback, episode.number!!),
       style = MaterialTheme.typography.bodyLarge,
     )
   }
@@ -836,7 +867,7 @@ private fun SeasonRow(
 
         Text(
           text = season.title
-            ?: LocalStrings.current.seasonTitleFallback(season.number!!),
+            ?: stringResource(Res.string.seasonTitleFallback, season.number!!),
           style = MaterialTheme.typography.bodyLarge,
         )
 
@@ -868,7 +899,7 @@ private fun SeasonRow(
         IconButton(onClick = { showMenu = true }) {
           Icon(
             imageVector = Icons.Default.MoreVert,
-            contentDescription = LocalStrings.current.cdOpenOverflow,
+            contentDescription = stringResource(Res.string.cdOpenOverflow),
           )
         }
 
@@ -910,7 +941,7 @@ private fun SeasonDropdownMenu(
   ) {
     if (season.ignored) {
       DropdownMenuItem(
-        text = { Text(text = LocalStrings.current.popupSeasonFollow) },
+        text = { Text(text = stringResource(Res.string.popupSeasonFollow)) },
         onClick = {
           onSeasonFollowed(season.id)
           onDismissRequest()
@@ -918,7 +949,7 @@ private fun SeasonDropdownMenu(
       )
     } else {
       DropdownMenuItem(
-        text = { Text(text = LocalStrings.current.popupSeasonIgnore) },
+        text = { Text(text = stringResource(Res.string.popupSeasonIgnore)) },
         onClick = {
           onSeasonUnfollowed(season.id)
           onDismissRequest()
@@ -929,7 +960,7 @@ private fun SeasonDropdownMenu(
     // Season number starts from 1, rather than 0
     if ((season.number ?: -100) >= 2) {
       DropdownMenuItem(
-        text = { Text(text = LocalStrings.current.popupSeasonIgnorePrevious) },
+        text = { Text(text = stringResource(Res.string.popupSeasonIgnorePrevious)) },
         onClick = {
           unfollowPreviousSeasons(season.id)
           onDismissRequest()
@@ -939,7 +970,7 @@ private fun SeasonDropdownMenu(
 
     if (episodesWatched > 0) {
       DropdownMenuItem(
-        text = { Text(text = LocalStrings.current.popupSeasonMarkAllUnwatched) },
+        text = { Text(text = stringResource(Res.string.popupSeasonMarkAllUnwatched)) },
         onClick = {
           onMarkSeasonUnwatched(season.id)
           onDismissRequest()
@@ -949,7 +980,7 @@ private fun SeasonDropdownMenu(
 
     if (episodesToAir > 0 && episodesWatched < episodesAired) {
       DropdownMenuItem(
-        text = { Text(LocalStrings.current.popupSeasonMarkWatchedAired) },
+        text = { Text(stringResource(Res.string.popupSeasonMarkWatchedAired)) },
         onClick = {
           onMarkSeasonWatched(season.id, true)
           onDismissRequest()
@@ -961,7 +992,7 @@ private fun SeasonDropdownMenu(
 
     if (episodesWatched < episodeCount) {
       DropdownMenuItem(
-        text = { Text(text = LocalStrings.current.popupSeasonMarkWatchedAll) },
+        text = { Text(text = stringResource(Res.string.popupSeasonMarkWatchedAll)) },
         onClick = {
           onMarkSeasonWatched(season.id, false)
           onDismissRequest()
@@ -994,7 +1025,7 @@ private fun ShowDetailsAppBar(
       ) {
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-          contentDescription = LocalStrings.current.cdNavigateUp,
+          contentDescription = stringResource(Res.string.cdNavigateUp),
         )
       }
     },
@@ -1030,16 +1061,16 @@ private fun ToggleShowFollowFloatingActionButton(
           else -> Icons.Default.FavoriteBorder
         },
         contentDescription = when {
-          isFollowed -> LocalStrings.current.cdFollowShowRemove
-          else -> LocalStrings.current.cdFollowShowAdd
+          isFollowed -> stringResource(Res.string.cdFollowShowRemove)
+          else -> stringResource(Res.string.cdFollowShowAdd)
         },
       )
     },
     text = {
       Text(
         when {
-          isFollowed -> LocalStrings.current.followShowRemove
-          else -> LocalStrings.current.followShowAdd
+          isFollowed -> stringResource(Res.string.followShowRemove)
+          else -> stringResource(Res.string.followShowAdd)
         },
       )
     },

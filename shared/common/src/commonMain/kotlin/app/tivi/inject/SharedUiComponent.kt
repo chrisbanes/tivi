@@ -4,9 +4,6 @@
 package app.tivi.inject
 
 import app.tivi.account.AccountComponent
-import app.tivi.common.ui.resources.Locales
-import app.tivi.common.ui.resources.Strings
-import app.tivi.common.ui.resources.TiviStrings
 import app.tivi.core.permissions.PermissionsController
 import app.tivi.episode.track.EpisodeTrackComponent
 import app.tivi.episodedetails.EpisodeDetailsComponent
@@ -23,7 +20,6 @@ import app.tivi.settings.SettingsComponent
 import app.tivi.settings.licenses.LicensesComponent
 import app.tivi.showdetails.details.ShowDetailsComponent
 import app.tivi.showdetails.seasons.ShowSeasonsComponent
-import cafe.adriel.lyricist.Lyricist
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
@@ -48,13 +44,6 @@ interface SharedUiComponent :
 
   val tiviContent: TiviContent
   val permissionsController: PermissionsController
-
-  @Provides
-  @ActivityScope
-  fun provideLyricist(): TiviStrings = Lyricist(
-    defaultLanguageTag = Locales.EN,
-    translations = Strings,
-  ).strings
 
   @Provides
   @ActivityScope

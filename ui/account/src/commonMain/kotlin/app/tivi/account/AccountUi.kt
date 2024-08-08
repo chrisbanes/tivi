@@ -32,8 +32,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.ui.AsyncImage
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.accountNameUnknown
+import app.tivi.common.ui.resources.strings.cdProfilePic
+import app.tivi.common.ui.resources.strings.login
+import app.tivi.common.ui.resources.strings.logout
+import app.tivi.common.ui.resources.strings.refreshCredentials
+import app.tivi.common.ui.resources.strings.settingsTitle
 import app.tivi.data.models.TraktUser
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.screens.AccountScreen
@@ -45,6 +51,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class AccountUiFactory : Ui.Factory {
@@ -86,8 +93,6 @@ internal fun AccountUi(
   logout: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  val strings = LocalStrings.current
-
   Column(modifier = modifier) {
     Spacer(modifier = Modifier.height(16.dp))
 
@@ -108,16 +113,16 @@ internal fun AccountUi(
     ) {
       if (viewState.authState == TraktAuthState.LOGGED_OUT) {
         OutlinedButton(onClick = login) {
-          Text(text = strings.login)
+          Text(text = stringResource(Res.string.login))
         }
       } else {
         TextButton(onClick = login) {
-          Text(text = strings.refreshCredentials)
+          Text(text = stringResource(Res.string.refreshCredentials))
         }
       }
 
       OutlinedButton(onClick = logout) {
-        Text(text = strings.logout)
+        Text(text = stringResource(Res.string.logout))
       }
     }
 
@@ -130,9 +135,9 @@ internal fun AccountUi(
     HorizontalDivider()
 
     AppAction(
-      label = strings.settingsTitle,
+      label = stringResource(Res.string.settingsTitle),
       icon = Icons.Default.Settings,
-      contentDescription = strings.settingsTitle,
+      contentDescription = stringResource(Res.string.settingsTitle),
       onClick = openSettings,
     )
 
@@ -149,8 +154,6 @@ private fun UserRow(
   user: TraktUser,
   modifier: Modifier = Modifier,
 ) {
-  val strings = LocalStrings.current
-
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier.fillMaxWidth(),
@@ -159,7 +162,7 @@ private fun UserRow(
     if (avatarUrl != null) {
       AsyncImage(
         model = avatarUrl,
-        contentDescription = strings.cdProfilePic(user.name ?: user.username),
+        contentDescription = stringResource(Res.string.cdProfilePic, user.name ?: user.username),
         modifier = Modifier
           .size(40.dp)
           .clip(RoundedCornerShape(50)),
@@ -170,7 +173,7 @@ private fun UserRow(
 
     Column {
       Text(
-        text = user.name ?: strings.accountNameUnknown,
+        text = user.name ?: stringResource(Res.string.accountNameUnknown),
         style = MaterialTheme.typography.titleSmall,
       )
 

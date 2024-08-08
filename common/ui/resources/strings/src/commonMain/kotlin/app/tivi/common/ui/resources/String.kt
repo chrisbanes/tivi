@@ -3,4 +3,4 @@
 
 package app.tivi.common.ui.resources
 
-actual fun String.fmt(vararg args: Any?): String = format(*args)
+expect fun String.fmt(vararg args: Any?): String

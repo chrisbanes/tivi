@@ -3,7 +3,8 @@
 
 package app.tivi.util
 
-import app.tivi.common.ui.resources.TiviStrings
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.airsText
 import app.tivi.data.models.TiviShow
 import app.tivi.inject.ActivityScope
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -23,7 +24,6 @@ import platform.Foundation.NSDateComponents
 @Inject
 actual class TiviTextCreator(
   override val dateFormatter: TiviDateFormatter,
-  override val strings: TiviStrings,
 ) : CommonTiviTextCreator {
   override fun airsText(show: TiviShow): CharSequence? {
     val airTime = show.airsTime ?: return null
@@ -49,7 +49,8 @@ actual class TiviTextCreator(
       ?.toLocalDateTime(dateFormatter.overrideTimeZone ?: TimeZone.currentSystemDefault())
       ?: return null
 
-    return strings.airsText(
+    return getStringBlocking(
+      Res.string.airsText,
       dateFormatter.formatDayOfWeek(localDateTime.dayOfWeek),
       dateFormatter.formatShortTime(localDateTime.time),
     )

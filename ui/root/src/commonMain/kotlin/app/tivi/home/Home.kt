@@ -62,9 +62,16 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.HazeScaffold
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalWindowSizeClass
-import app.tivi.common.ui.resources.TiviStrings
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdDiscoverTitle
+import app.tivi.common.ui.resources.strings.cdLibraryTitle
+import app.tivi.common.ui.resources.strings.cdSearchNavigationTitle
+import app.tivi.common.ui.resources.strings.cdUpnextTitle
+import app.tivi.common.ui.resources.strings.discoverTitle
+import app.tivi.common.ui.resources.strings.libraryTitle
+import app.tivi.common.ui.resources.strings.searchNavigationTitle
+import app.tivi.common.ui.resources.strings.upnextTitle
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
 import app.tivi.screens.SearchScreen
@@ -74,13 +81,14 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.popUntil
-import com.slack.circuit.runtime.resetRoot
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuitx.gesturenavigation.GestureNavigationDecoration
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
@@ -98,8 +106,7 @@ internal fun Home(
     derivedStateOf { backStack.last().screen }
   }
 
-  val strings = LocalStrings.current
-  val navigationItems = remember(strings) { buildNavigationItems(strings) }
+  val navigationItems = remember { buildNavigationItems() }
 
   val hazeState = remember { HazeState() }
 
@@ -241,7 +248,7 @@ private fun HomeNavigationBar(
             selected = selectedNavigation == item.screen,
           )
         },
-        label = { Text(text = item.label) },
+        label = { Text(text = stringResource(item.label)) },
         selected = selectedNavigation == item.screen,
         colors = colors,
         onClick = { onNavigationSelected(item.screen) },
@@ -273,7 +280,7 @@ private fun HomeNavigationRail(
           )
         },
         alwaysShowLabel = false,
-        label = { Text(text = item.label) },
+        label = { Text(text = stringResource(item.label)) },
         selected = selectedNavigation == item.screen,
         onClick = { onNavigationSelected(item.screen) },
       )
@@ -299,10 +306,10 @@ private fun HomeNavigationDrawer(
         icon = {
           Icon(
             imageVector = item.iconImageVector,
-            contentDescription = item.contentDescription,
+            contentDescription = stringResource(item.contentDescription),
           )
         },
-        label = { Text(text = item.label) },
+        label = { Text(text = stringResource(item.label)) },
         selected = selectedNavigation == item.screen,
         onClick = { onNavigationSelected(item.screen) },
       )
@@ -316,13 +323,13 @@ private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) 
     Crossfade(targetState = selected) { s ->
       Icon(
         imageVector = if (s) item.selectedImageVector else item.iconImageVector,
-        contentDescription = item.contentDescription,
+        contentDescription = stringResource(item.contentDescription),
       )
     }
   } else {
     Icon(
       imageVector = item.iconImageVector,
-      contentDescription = item.contentDescription,
+      contentDescription = stringResource(item.contentDescription),
     )
   }
 }
@@ -330,9 +337,9 @@ private fun HomeNavigationItemIcon(item: HomeNavigationItem, selected: Boolean) 
 @Immutable
 private data class HomeNavigationItem(
   val screen: Screen,
-  val label: String,
+  val label: StringResource,
   val tag: String,
-  val contentDescription: String,
+  val contentDescription: StringResource,
   val iconImageVector: ImageVector,
   val selectedImageVector: ImageVector? = null,
 )
@@ -353,36 +360,36 @@ internal enum class NavigationType {
   }
 }
 
-private fun buildNavigationItems(strings: TiviStrings): List<HomeNavigationItem> {
+private fun buildNavigationItems(): List<HomeNavigationItem> {
   return listOf(
     HomeNavigationItem(
       screen = DiscoverScreen,
-      label = strings.discoverTitle,
+      label = Res.string.discoverTitle,
       tag = "home_nav_discover",
-      contentDescription = strings.cdDiscoverTitle,
+      contentDescription = Res.string.cdDiscoverTitle,
       iconImageVector = Icons.Outlined.Weekend,
       selectedImageVector = Icons.Default.Weekend,
     ),
     HomeNavigationItem(
       screen = UpNextScreen,
-      label = strings.upnextTitle,
+      label = Res.string.upnextTitle,
       tag = "home_nav_upnext",
-      contentDescription = strings.cdUpnextTitle,
+      contentDescription = Res.string.cdUpnextTitle,
       iconImageVector = Icons.Default.Subscriptions,
     ),
     HomeNavigationItem(
       screen = LibraryScreen,
-      label = strings.libraryTitle,
+      label = Res.string.libraryTitle,
       tag = "home_nav_library",
-      contentDescription = strings.cdLibraryTitle,
+      contentDescription = Res.string.cdLibraryTitle,
       iconImageVector = Icons.Outlined.VideoLibrary,
       selectedImageVector = Icons.Default.VideoLibrary,
     ),
     HomeNavigationItem(
       screen = SearchScreen,
-      label = strings.searchNavigationTitle,
+      label = Res.string.searchNavigationTitle,
       tag = "home_nav_search",
-      contentDescription = strings.cdSearchNavigationTitle,
+      contentDescription = Res.string.cdSearchNavigationTitle,
       iconImageVector = Icons.Default.Search,
     ),
   )

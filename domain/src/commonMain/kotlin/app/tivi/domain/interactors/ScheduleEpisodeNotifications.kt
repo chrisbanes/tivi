@@ -4,7 +4,10 @@
 package app.tivi.domain.interactors
 
 import app.tivi.app.ApplicationInfo
-import app.tivi.common.ui.resources.EnTiviStrings
+import app.tivi.common.ui.resources.fmt
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.notificationEpisodeAiringMessage
+import app.tivi.common.ui.resources.strings.notificationEpisodeAiringTitle
 import app.tivi.core.notifications.NotificationManager
 import app.tivi.data.compoundmodels.ShowSeasonEpisode
 import app.tivi.data.episodes.SeasonsEpisodesRepository
@@ -23,6 +26,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.getString
 
 @Inject
 class ScheduleEpisodeNotifications(
@@ -54,22 +58,22 @@ class ScheduleEpisodeNotifications(
       )
     }
 
-    episodes.asSequence()
-      .map { item ->
+    for (episode in episodes) {
+      notificationManager.schedule(
         createEpisodeAiringNotification(
-          item = item,
+          item = episode,
           applicationInfo = applicationInfo,
           dateTimeFormatter = dateTimeFormatter,
           bufferTime = params.bufferTime,
-        )
-      }
-      .forEach { notificationManager.schedule(it) }
+        ),
+      )
+    }
   }
 
   data class Params(val limit: Duration = 12.hours, val bufferTime: Duration = 10.minutes)
 }
 
-internal fun createEpisodeAiringNotification(
+internal suspend fun createEpisodeAiringNotification(
   item: ShowSeasonEpisode,
   applicationInfo: ApplicationInfo,
   dateTimeFormatter: TiviDateFormatter,
@@ -80,13 +84,14 @@ internal fun createEpisodeAiringNotification(
 
   return Notification(
     id = "episode_${item.episode.id}",
-    title = EnTiviStrings.notificationEpisodeAiringTitle(item.show.title!!),
-    message = EnTiviStrings.notificationEpisodeAiringMessage(
+    title = getString(Res.string.notificationEpisodeAiringTitle, item.show.title!!),
+    message = getString(
+      Res.string.notificationEpisodeAiringMessage,
       item.episode.title!!,
       dateTimeFormatter.formatShortTime(airDateLocal.time),
       item.show.network ?: "?",
-      item.season.number ?: 99,
-      item.episode.number ?: 99,
+      "%02d".fmt(item.season.number ?: 99),
+      "%02d".fmt(item.episode.number ?: 99),
     ),
     channel = NotificationChannel.EPISODES_AIRING,
     date = requireNotNull(item.episode.firstAired) - bufferTime,

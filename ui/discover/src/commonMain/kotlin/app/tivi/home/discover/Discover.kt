@@ -64,7 +64,6 @@ import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.DynamicTheme
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.compose.ReportDrawnWhen
@@ -80,6 +79,15 @@ import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.drawForegroundGradientScrim
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.rememberShowImageModel
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdShowPosterImage
+import app.tivi.common.ui.resources.strings.detailsNextEpisode
+import app.tivi.common.ui.resources.strings.discoverPopularTitle
+import app.tivi.common.ui.resources.strings.discoverRecommendedTitle
+import app.tivi.common.ui.resources.strings.discoverTitle
+import app.tivi.common.ui.resources.strings.discoverTrendingTitle
+import app.tivi.common.ui.resources.strings.episodeTitleFallback
+import app.tivi.common.ui.resources.strings.headerMore
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
@@ -101,6 +109,7 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class DiscoverUiFactory : Ui.Factory {
@@ -193,7 +202,7 @@ internal fun Discover(
   HazeScaffold(
     topBar = {
       TiviRootScreenAppBar(
-        title = LocalStrings.current.discoverTitle,
+        title = stringResource(Res.string.discoverTitle),
         loggedIn = state.authState == TraktAuthState.LOGGED_IN,
         user = state.user,
         refreshing = state.refreshing,
@@ -242,7 +251,10 @@ internal fun Discover(
               vertical = Layout.gutter,
             ),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            flingBehavior = rememberSnapFlingBehavior(carouselState, SnapPositionInLayout.StartToStart),
+            flingBehavior = rememberSnapFlingBehavior(
+              carouselState,
+              SnapPositionInLayout.StartToStart,
+            ),
           ) {
             items(
               items = state.nextEpisodesToWatch,
@@ -265,7 +277,7 @@ internal fun Discover(
           CarouselWithHeader(
             items = state.trendingItems,
             tagPrefix = "trending",
-            title = LocalStrings.current.discoverTrendingTitle,
+            title = stringResource(Res.string.discoverTrendingTitle),
             refreshing = state.trendingRefreshing,
             onItemClick = { openShowDetails(it.id) },
             onMoreClick = openTrendingShows,
@@ -277,7 +289,7 @@ internal fun Discover(
           CarouselWithHeader(
             items = state.popularItems,
             tagPrefix = "popular",
-            title = LocalStrings.current.discoverPopularTitle,
+            title = stringResource(Res.string.discoverPopularTitle),
             refreshing = state.popularRefreshing,
             onItemClick = { openShowDetails(it.id) },
             onMoreClick = openPopularShows,
@@ -289,7 +301,7 @@ internal fun Discover(
           CarouselWithHeader(
             items = state.recommendedItems,
             tagPrefix = "recommended",
-            title = LocalStrings.current.discoverRecommendedTitle,
+            title = stringResource(Res.string.discoverRecommendedTitle),
             refreshing = state.recommendedRefreshing,
             onItemClick = { openShowDetails(it.id) },
             onMoreClick = openRecommendedShows,
@@ -357,7 +369,7 @@ private fun NextEpisodeToWatchCard(
         ) {
           AsyncImage(
             model = rememberShowImageModel(show, ImageType.POSTER),
-            contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: "show"),
+            contentDescription = stringResource(Res.string.cdShowPosterImage, show.title ?: "show"),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
           )
@@ -373,18 +385,15 @@ private fun NextEpisodeToWatchCard(
         Spacer(Modifier.height(6.dp))
 
         Text(
-          text = "${LocalStrings.current.detailsNextEpisode} - ${
-            textCreator.seasonEpisodeLabel(
-              season.number!!,
-              episode.number!!,
-            )
-          }",
+          text = stringResource(Res.string.detailsNextEpisode) +
+            " - " +
+            textCreator.seasonEpisodeLabel(season.number!!, episode.number!!),
           style = MaterialTheme.typography.labelMedium,
           color = LocalContentColor.current.copy(alpha = 0.7f),
         )
 
         Text(
-          text = episode.title ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
+          text = episode.title ?: stringResource(Res.string.episodeTitleFallback, episode.number!!),
           style = MaterialTheme.typography.bodyLarge,
           fontWeight = FontWeight.Bold,
         )
@@ -431,7 +440,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
           ),
           modifier = Modifier.alignBy(FirstBaseline),
         ) {
-          Text(text = LocalStrings.current.headerMore)
+          Text(text = stringResource(Res.string.headerMore))
         }
       }
     }

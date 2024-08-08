@@ -3,7 +3,6 @@
 
 package app.tivi.util
 
-import app.tivi.common.ui.resources.EnTiviStrings
 import app.tivi.data.models.TiviShow
 import assertk.assertThat
 import assertk.assertions.isEqualTo
@@ -18,8 +17,7 @@ class TiviTextCreatorTest {
     locale = Locale.UK,
     timeZone = TimeZone.UTC,
   )
-  private val strings = EnTiviStrings
-  private val textCreator = TiviTextCreator(tiviDateFormatter, strings)
+  private val textCreator = TiviTextCreator(tiviDateFormatter)
 
   private val tiviShow = TiviShow(
     title = "My Show",

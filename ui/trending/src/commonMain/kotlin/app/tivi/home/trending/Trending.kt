@@ -6,13 +6,15 @@ package app.tivi.home.trending
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.EntryGrid
-import app.tivi.common.compose.LocalStrings
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.discoverTrendingTitle
 import app.tivi.screens.TrendingShowsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class TrendingShowsUiFactory : Ui.Factory {
@@ -38,7 +40,7 @@ internal fun TrendingShows(
 
   EntryGrid(
     lazyPagingItems = state.items,
-    title = LocalStrings.current.discoverTrendingTitle,
+    title = stringResource(Res.string.discoverTrendingTitle),
     onOpenShowDetails = { eventSink(TrendingShowsUiEvent.OpenShowDetails(it)) },
     onNavigateUp = { eventSink(TrendingShowsUiEvent.NavigateUp) },
     modifier = modifier,

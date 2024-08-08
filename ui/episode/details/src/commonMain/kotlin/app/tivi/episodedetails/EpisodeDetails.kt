@@ -67,7 +67,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.Layout
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.common.compose.ui.ArrowBackForPlatform
@@ -76,6 +75,24 @@ import app.tivi.common.compose.ui.Backdrop
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.none
+import app.tivi.common.ui.resources.fmt
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdDelete
+import app.tivi.common.ui.resources.strings.cdEpisodeDeleted
+import app.tivi.common.ui.resources.strings.cdEpisodeFirstAired
+import app.tivi.common.ui.resources.strings.cdEpisodeSyncing
+import app.tivi.common.ui.resources.strings.cdNavigateUp
+import app.tivi.common.ui.resources.strings.cdRefresh
+import app.tivi.common.ui.resources.strings.cdTraktRating
+import app.tivi.common.ui.resources.strings.dialogDismiss
+import app.tivi.common.ui.resources.strings.episodeAddWatch
+import app.tivi.common.ui.resources.strings.episodeMarkWatched
+import app.tivi.common.ui.resources.strings.episodeRemoveWatchesDialogConfirm
+import app.tivi.common.ui.resources.strings.episodeRemoveWatchesDialogMessage
+import app.tivi.common.ui.resources.strings.episodeRemoveWatchesDialogTitle
+import app.tivi.common.ui.resources.strings.episodeWatches
+import app.tivi.common.ui.resources.strings.seasonEpisodeNumber
+import app.tivi.common.ui.resources.strings.traktRatingText
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -93,6 +110,7 @@ import com.slack.circuit.runtime.ui.ui
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class EpisodeDetailsUiFactory : Ui.Factory {
@@ -311,7 +329,7 @@ private fun EpisodeDetailsBackdrop(
         val seasonNumber = season.number
         if (seasonNumber != null && epNumber != null) {
           Text(
-            text = LocalStrings.current.seasonEpisodeNumber(seasonNumber, epNumber),
+            text = stringResource(Res.string.seasonEpisodeNumber, seasonNumber, epNumber),
           )
         }
       },
@@ -324,13 +342,12 @@ private fun EpisodeDetailsBackdrop(
 @Composable
 private fun InfoPanes(episode: Episode) {
   Row {
-    val strings = LocalStrings.current
-
     episode.traktRating?.let { rating ->
+      val ratingString = "%.1f".fmt(rating * 10f)
       InfoPane(
         imageVector = Icons.Default.Star,
-        label = strings.traktRatingText(rating * 10f),
-        contentDescription = strings.cdTraktRating(rating * 10f),
+        label = stringResource(Res.string.traktRatingText, ratingString),
+        contentDescription = stringResource(Res.string.cdTraktRating, ratingString),
         modifier = Modifier.weight(1f),
       )
     }
@@ -341,7 +358,7 @@ private fun InfoPanes(episode: Episode) {
       InfoPane(
         imageVector = Icons.Default.CalendarToday,
         label = formattedDate,
-        contentDescription = strings.cdEpisodeFirstAired(formattedDate),
+        contentDescription = stringResource(Res.string.cdEpisodeFirstAired, formattedDate),
         modifier = Modifier.weight(1f),
       )
     }
@@ -375,13 +392,11 @@ private fun InfoPane(
 @Composable
 private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
   Row {
-    val strings = LocalStrings.current
-
     Text(
       modifier = Modifier
         .padding(horizontal = 16.dp, vertical = 8.dp)
         .align(Alignment.CenterVertically),
-      text = strings.episodeWatches,
+      text = stringResource(Res.string.episodeWatches),
       style = MaterialTheme.typography.titleMedium,
     )
 
@@ -392,7 +407,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     ) {
       Icon(
         imageVector = Icons.Default.DeleteSweep,
-        contentDescription = strings.cdDelete,
+        contentDescription = stringResource(Res.string.cdDelete),
       )
     }
   }
@@ -419,7 +434,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
       AnimatedVisibility(episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
         Icon(
           imageVector = Icons.Default.Publish,
-          contentDescription = LocalStrings.current.cdEpisodeSyncing,
+          contentDescription = stringResource(Res.string.cdEpisodeSyncing),
           modifier = Modifier.padding(start = 8.dp),
         )
       }
@@ -427,7 +442,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
       AnimatedVisibility(episodeWatchEntry.pendingAction == PendingAction.DELETE) {
         Icon(
           imageVector = Icons.Default.VisibilityOff,
-          contentDescription = LocalStrings.current.cdEpisodeDeleted,
+          contentDescription = stringResource(Res.string.cdEpisodeDeleted),
           modifier = Modifier.padding(start = 8.dp),
         )
       }
@@ -461,7 +476,7 @@ private fun EpisodeWatchSwipeBackground(
 
       Icon(
         imageVector = Icons.Outlined.Delete,
-        contentDescription = LocalStrings.current.cdDelete,
+        contentDescription = stringResource(Res.string.cdDelete),
         modifier = Modifier
           .padding(12.dp)
           .padding(end = 8.dp)
@@ -480,7 +495,7 @@ private fun MarkWatchedButton(
     onClick = onClick,
     modifier = modifier,
   ) {
-    Text(text = LocalStrings.current.episodeMarkWatched)
+    Text(text = stringResource(Res.string.episodeMarkWatched))
   }
 }
 
@@ -493,7 +508,7 @@ private fun AddWatchButton(
     onClick = onClick,
     modifier = modifier,
   ) {
-    Text(text = LocalStrings.current.episodeAddWatch)
+    Text(text = stringResource(Res.string.episodeAddWatch))
   }
 }
 
@@ -502,23 +517,22 @@ private fun RemoveAllWatchesDialog(
   onConfirm: () -> Unit,
   onDismissRequest: () -> Unit,
 ) {
-  val strings = LocalStrings.current
   AlertDialog(
     onDismissRequest = onDismissRequest,
     title = {
-      Text(text = strings.episodeRemoveWatchesDialogTitle)
+      Text(text = stringResource(Res.string.episodeRemoveWatchesDialogTitle))
     },
     text = {
-      Text(text = strings.episodeRemoveWatchesDialogMessage)
+      Text(text = stringResource(Res.string.episodeRemoveWatchesDialogMessage))
     },
     dismissButton = {
       Button(onClick = onDismissRequest) {
-        Text(text = strings.dialogDismiss)
+        Text(text = stringResource(Res.string.dialogDismiss))
       }
     },
     confirmButton = {
       Button(onClick = onConfirm) {
-        Text(text = strings.episodeRemoveWatchesDialogConfirm)
+        Text(text = stringResource(Res.string.episodeRemoveWatchesDialogConfirm))
       }
     },
   )
@@ -543,7 +557,7 @@ private fun EpisodeDetailsAppBar(
       ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-          contentDescription = LocalStrings.current.cdNavigateUp,
+          contentDescription = stringResource(Res.string.cdNavigateUp),
         )
       }
     },
@@ -566,7 +580,7 @@ private fun EpisodeDetailsAppBar(
         ScrimmedIconButton(showScrim = true, onClick = refresh) {
           Icon(
             imageVector = Icons.Default.Refresh,
-            contentDescription = LocalStrings.current.cdRefresh,
+            contentDescription = stringResource(Res.string.cdRefresh),
           )
         }
       }

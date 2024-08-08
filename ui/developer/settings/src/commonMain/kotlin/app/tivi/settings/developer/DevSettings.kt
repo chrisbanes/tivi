@@ -15,16 +15,19 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.HazeScaffold
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.common.compose.ui.Preference
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdNavigateUp
+import app.tivi.common.ui.resources.strings.developerSettingsTitle
 import app.tivi.screens.DevSettingsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class DevSettingsUiFactory : Ui.Factory {
@@ -50,12 +53,12 @@ internal fun DevSettings(
   HazeScaffold(
     topBar = {
       TopAppBar(
-        title = { Text(LocalStrings.current.developerSettingsTitle) },
+        title = { Text(stringResource(Res.string.developerSettingsTitle)) },
         navigationIcon = {
           IconButton(onClick = { eventSink(DevSettingsUiEvent.NavigateUp) }) {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-              contentDescription = LocalStrings.current.cdNavigateUp,
+              contentDescription = stringResource(Res.string.cdNavigateUp),
             )
           }
         },

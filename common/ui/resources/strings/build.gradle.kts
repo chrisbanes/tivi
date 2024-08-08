@@ -5,6 +5,7 @@
 plugins {
   id("app.tivi.android.library")
   id("app.tivi.kotlin.multiplatform")
+  id("app.tivi.compose")
 }
 
 kotlin {
@@ -12,7 +13,8 @@ kotlin {
     commonMain {
       dependencies {
         api(projects.data.models)
-        api(libs.lyricist.core)
+        api(compose.components.resources)
+        implementation(compose.runtime)
       }
     }
 
@@ -22,9 +24,20 @@ kotlin {
         implementation(libs.assertk)
       }
     }
+
+    jvmTest {
+      dependencies {
+        implementation(compose.desktop.currentOs)
+      }
+    }
   }
 }
 
 android {
   namespace = "app.tivi.common.ui.resources.strings"
+}
+
+compose.resources {
+  publicResClass = true
+  packageOfResClass = "app.tivi.common.ui.resources.strings"
 }
