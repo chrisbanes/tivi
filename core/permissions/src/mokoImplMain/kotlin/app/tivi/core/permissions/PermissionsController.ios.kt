@@ -11,11 +11,13 @@ import dev.icerock.moko.permissions.PermissionsController as MokoPermissionsCont
 internal class MokoPermissionControllerWrapper(
   internal val mokoPermissionController: MokoPermissionsController,
 ) : PermissionsController {
+  private val logger by lazy { Logger.withTag(TAG) }
+
   override suspend fun providePermission(permission: Permission): PermissionState {
     try {
       mokoPermissionController.providePermission(permission.toMokoPermission())
     } catch (e: Exception) {
-      Logger.i(e, TAG) { "Exception thrown during providePermission for $permission" }
+      logger.i(e) { "Exception thrown during providePermission for $permission" }
     }
     return getPermissionState(permission)
   }

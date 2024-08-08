@@ -5,6 +5,7 @@ package app.tivi.common.imageloading
 
 import app.tivi.app.ApplicationInfo
 import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.disk.DiskCache
@@ -45,18 +46,15 @@ private fun Logger.asCoilLogger(): coil3.util.Logger = object : coil3.util.Logge
 
   override var minLevel: Level = Level.Debug
 
-  override fun log(
-    tag: String,
-    level: Level,
-    message: String?,
-    throwable: Throwable?,
-  ) {
-    when (level) {
-      Level.Verbose -> v(throwable) { message.orEmpty() }
-      Level.Debug -> d(throwable) { message.orEmpty() }
-      Level.Info -> i(throwable) { message.orEmpty() }
-      Level.Warn -> i(throwable) { message.orEmpty() }
-      Level.Error -> e(throwable) { message.orEmpty() }
-    }
+  override fun log(tag: String, level: Level, message: String?, throwable: Throwable?) {
+    this@asCoilLogger.log(level.toSeverity(), "Coil", throwable, message.orEmpty())
   }
+}
+
+private fun Level.toSeverity(): Severity = when (this) {
+  Level.Verbose -> Severity.Verbose
+  Level.Debug -> Severity.Debug
+  Level.Info -> Severity.Info
+  Level.Warn -> Severity.Warn
+  Level.Error -> Severity.Error
 }
