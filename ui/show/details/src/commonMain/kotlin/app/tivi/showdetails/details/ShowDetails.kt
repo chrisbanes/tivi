@@ -103,37 +103,36 @@ import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.copy
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.rememberShowImageModel
-import app.tivi.common.ui.resources.fmt
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.airsTitle
-import app.tivi.common.ui.resources.strings.cdFollowShowAdd
-import app.tivi.common.ui.resources.strings.cdFollowShowRemove
-import app.tivi.common.ui.resources.strings.cdNavigateUp
-import app.tivi.common.ui.resources.strings.cdOpenOverflow
-import app.tivi.common.ui.resources.strings.cdShowPosterImage
-import app.tivi.common.ui.resources.strings.certificateTitle
-import app.tivi.common.ui.resources.strings.detailsAbout
-import app.tivi.common.ui.resources.strings.detailsNextEpisode
-import app.tivi.common.ui.resources.strings.detailsRelated
-import app.tivi.common.ui.resources.strings.detailsViewStats
-import app.tivi.common.ui.resources.strings.episodeTitleFallback
-import app.tivi.common.ui.resources.strings.followShowAdd
-import app.tivi.common.ui.resources.strings.followShowRemove
-import app.tivi.common.ui.resources.strings.minutesFormat
-import app.tivi.common.ui.resources.strings.networkTitle
-import app.tivi.common.ui.resources.strings.popupSeasonFollow
-import app.tivi.common.ui.resources.strings.popupSeasonIgnore
-import app.tivi.common.ui.resources.strings.popupSeasonIgnorePrevious
-import app.tivi.common.ui.resources.strings.popupSeasonMarkAllUnwatched
-import app.tivi.common.ui.resources.strings.popupSeasonMarkWatchedAired
-import app.tivi.common.ui.resources.strings.popupSeasonMarkWatchedAll
-import app.tivi.common.ui.resources.strings.runtimeTitle
-import app.tivi.common.ui.resources.strings.seasonTitleFallback
-import app.tivi.common.ui.resources.strings.showDetailsSeasons
-import app.tivi.common.ui.resources.strings.statusTitle
-import app.tivi.common.ui.resources.strings.traktRatingText
-import app.tivi.common.ui.resources.strings.traktRatingTitle
-import app.tivi.common.ui.resources.strings.traktRatingVotes
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.airs_title
+import app.tivi.common.ui.resources.cd_follow_show_add
+import app.tivi.common.ui.resources.cd_follow_show_remove
+import app.tivi.common.ui.resources.cd_navigate_up
+import app.tivi.common.ui.resources.cd_open_overflow
+import app.tivi.common.ui.resources.cd_show_poster_image
+import app.tivi.common.ui.resources.certificate_title
+import app.tivi.common.ui.resources.details_about
+import app.tivi.common.ui.resources.details_next_episode
+import app.tivi.common.ui.resources.details_related
+import app.tivi.common.ui.resources.details_view_stats
+import app.tivi.common.ui.resources.episode_title_fallback
+import app.tivi.common.ui.resources.follow_show_add
+import app.tivi.common.ui.resources.follow_show_remove
+import app.tivi.common.ui.resources.minutes_format
+import app.tivi.common.ui.resources.network_title
+import app.tivi.common.ui.resources.popup_season_follow
+import app.tivi.common.ui.resources.popup_season_ignore
+import app.tivi.common.ui.resources.popup_season_ignore_previous
+import app.tivi.common.ui.resources.popup_season_mark_all_unwatched
+import app.tivi.common.ui.resources.popup_season_mark_watched_aired
+import app.tivi.common.ui.resources.popup_season_mark_watched_all
+import app.tivi.common.ui.resources.runtime_title
+import app.tivi.common.ui.resources.season_title_fallback
+import app.tivi.common.ui.resources.show_details_seasons
+import app.tivi.common.ui.resources.status_title
+import app.tivi.common.ui.resources.trakt_rating_text
+import app.tivi.common.ui.resources.trakt_rating_title
+import app.tivi.common.ui.resources.trakt_rating_votes
 import app.tivi.data.compoundmodels.EpisodeWithSeason
 import app.tivi.data.compoundmodels.RelatedShowEntryWithShow
 import app.tivi.data.compoundmodels.SeasonWithEpisodesAndWatches
@@ -145,6 +144,7 @@ import app.tivi.data.models.ShowStatus
 import app.tivi.data.models.TiviShow
 import app.tivi.data.views.ShowsWatchStats
 import app.tivi.screens.ShowDetailsScreen
+import app.tivi.util.fmt
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -368,7 +368,7 @@ private fun ShowDetailsScrollingContent(
     gutterSpacer()
 
     item(key = "header_summary") {
-      Header(stringResource(Res.string.detailsAbout))
+      Header(stringResource(Res.string.details_about))
     }
 
     if (show.summary != null) {
@@ -392,7 +392,7 @@ private fun ShowDetailsScrollingContent(
       gutterSpacer()
 
       item(key = "header_next_episode_watch") {
-        Header(stringResource(Res.string.detailsNextEpisode))
+        Header(stringResource(Res.string.details_next_episode))
       }
       item(key = "next_episode_watch") {
         NextEpisodeToWatch(
@@ -407,7 +407,7 @@ private fun ShowDetailsScrollingContent(
       gutterSpacer()
 
       item(key = "header_related_shows") {
-        Header(stringResource(Res.string.detailsRelated))
+        Header(stringResource(Res.string.details_related))
       }
       item(key = "related_shows") {
         RelatedShows(
@@ -422,7 +422,7 @@ private fun ShowDetailsScrollingContent(
       gutterSpacer()
 
       item(key = "header_watch_stats") {
-        Header(stringResource(Res.string.detailsViewStats))
+        Header(stringResource(Res.string.details_view_stats))
       }
       item(key = "watch_stats") {
         WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
@@ -433,7 +433,7 @@ private fun ShowDetailsScrollingContent(
       gutterSpacer()
 
       item(key = "header_seasons") {
-        Header(stringResource(Res.string.showDetailsSeasons))
+        Header(stringResource(Res.string.show_details_seasons))
       }
 
       items(
@@ -474,7 +474,7 @@ private fun PosterInfoRow(
   Row(modifier.padding(horizontal = Layout.bodyMargin)) {
     AsyncImage(
       model = rememberShowImageModel(show, ImageType.POSTER),
-      contentDescription = stringResource(Res.string.cdShowPosterImage, show.title ?: ""),
+      contentDescription = stringResource(Res.string.cd_show_poster_image, show.title ?: ""),
       modifier = Modifier
         .weight(1f)
         .aspectRatio(2 / 3f)
@@ -498,7 +498,7 @@ private fun NetworkInfoPanel(
 ) {
   Column(modifier) {
     Text(
-      text = stringResource(Res.string.networkTitle),
+      text = stringResource(Res.string.network_title),
       style = MaterialTheme.typography.titleSmall,
     )
 
@@ -518,14 +518,14 @@ private fun RuntimeInfoPanel(
 ) {
   Column(modifier) {
     Text(
-      text = stringResource(Res.string.runtimeTitle),
+      text = stringResource(Res.string.runtime_title),
       style = MaterialTheme.typography.titleSmall,
     )
 
     Spacer(Modifier.height(4.dp))
 
     Text(
-      text = stringResource(Res.string.minutesFormat, runtime),
+      text = stringResource(Res.string.minutes_format, runtime),
       style = MaterialTheme.typography.bodyMedium,
     )
   }
@@ -538,7 +538,7 @@ private fun ShowStatusPanel(
 ) {
   Column(modifier) {
     Text(
-      text = stringResource(Res.string.statusTitle),
+      text = stringResource(Res.string.status_title),
       style = MaterialTheme.typography.titleSmall,
     )
 
@@ -559,7 +559,7 @@ private fun AirsInfoPanel(
 ) {
   Column(modifier) {
     Text(
-      text = stringResource(Res.string.airsTitle),
+      text = stringResource(Res.string.airs_title),
       style = MaterialTheme.typography.titleSmall,
     )
 
@@ -580,7 +580,7 @@ private fun CertificateInfoPanel(
 ) {
   Column(modifier) {
     Text(
-      text = stringResource(Res.string.certificateTitle),
+      text = stringResource(Res.string.certificate_title),
       style = MaterialTheme.typography.titleSmall,
     )
 
@@ -608,7 +608,7 @@ private fun TraktRatingInfoPanel(
 ) {
   Column(modifier) {
     Text(
-      text = stringResource(Res.string.traktRatingTitle),
+      text = stringResource(Res.string.trakt_rating_title),
       style = MaterialTheme.typography.titleSmall,
     )
 
@@ -627,12 +627,12 @@ private fun TraktRatingInfoPanel(
 
       Column {
         Text(
-          text = stringResource(Res.string.traktRatingText, "%.1f".fmt(rating * 10f)),
+          text = stringResource(Res.string.trakt_rating_text, "%.1f".fmt(rating * 10f)),
           style = MaterialTheme.typography.bodyMedium,
         )
 
         Text(
-          text = stringResource(Res.string.traktRatingVotes, "%.0f".fmt(votes / 1000f)),
+          text = stringResource(Res.string.trakt_rating_votes, "%.0f".fmt(votes / 1000f)),
           style = MaterialTheme.typography.bodySmall,
         )
       }
@@ -743,7 +743,7 @@ private fun NextEpisodeToWatch(
     Spacer(Modifier.height(4.dp))
 
     Text(
-      text = episode.title ?: stringResource(Res.string.episodeTitleFallback, episode.number!!),
+      text = episode.title ?: stringResource(Res.string.episode_title_fallback, episode.number!!),
       style = MaterialTheme.typography.bodyLarge,
     )
   }
@@ -867,7 +867,7 @@ private fun SeasonRow(
 
         Text(
           text = season.title
-            ?: stringResource(Res.string.seasonTitleFallback, season.number!!),
+            ?: stringResource(Res.string.season_title_fallback, season.number!!),
           style = MaterialTheme.typography.bodyLarge,
         )
 
@@ -899,7 +899,7 @@ private fun SeasonRow(
         IconButton(onClick = { showMenu = true }) {
           Icon(
             imageVector = Icons.Default.MoreVert,
-            contentDescription = stringResource(Res.string.cdOpenOverflow),
+            contentDescription = stringResource(Res.string.cd_open_overflow),
           )
         }
 
@@ -941,7 +941,7 @@ private fun SeasonDropdownMenu(
   ) {
     if (season.ignored) {
       DropdownMenuItem(
-        text = { Text(text = stringResource(Res.string.popupSeasonFollow)) },
+        text = { Text(text = stringResource(Res.string.popup_season_follow)) },
         onClick = {
           onSeasonFollowed(season.id)
           onDismissRequest()
@@ -949,7 +949,7 @@ private fun SeasonDropdownMenu(
       )
     } else {
       DropdownMenuItem(
-        text = { Text(text = stringResource(Res.string.popupSeasonIgnore)) },
+        text = { Text(text = stringResource(Res.string.popup_season_ignore)) },
         onClick = {
           onSeasonUnfollowed(season.id)
           onDismissRequest()
@@ -960,7 +960,7 @@ private fun SeasonDropdownMenu(
     // Season number starts from 1, rather than 0
     if ((season.number ?: -100) >= 2) {
       DropdownMenuItem(
-        text = { Text(text = stringResource(Res.string.popupSeasonIgnorePrevious)) },
+        text = { Text(text = stringResource(Res.string.popup_season_ignore_previous)) },
         onClick = {
           unfollowPreviousSeasons(season.id)
           onDismissRequest()
@@ -970,7 +970,7 @@ private fun SeasonDropdownMenu(
 
     if (episodesWatched > 0) {
       DropdownMenuItem(
-        text = { Text(text = stringResource(Res.string.popupSeasonMarkAllUnwatched)) },
+        text = { Text(text = stringResource(Res.string.popup_season_mark_all_unwatched)) },
         onClick = {
           onMarkSeasonUnwatched(season.id)
           onDismissRequest()
@@ -980,7 +980,7 @@ private fun SeasonDropdownMenu(
 
     if (episodesToAir > 0 && episodesWatched < episodesAired) {
       DropdownMenuItem(
-        text = { Text(stringResource(Res.string.popupSeasonMarkWatchedAired)) },
+        text = { Text(stringResource(Res.string.popup_season_mark_watched_aired)) },
         onClick = {
           onMarkSeasonWatched(season.id, true)
           onDismissRequest()
@@ -992,7 +992,7 @@ private fun SeasonDropdownMenu(
 
     if (episodesWatched < episodeCount) {
       DropdownMenuItem(
-        text = { Text(text = stringResource(Res.string.popupSeasonMarkWatchedAll)) },
+        text = { Text(text = stringResource(Res.string.popup_season_mark_watched_all)) },
         onClick = {
           onMarkSeasonWatched(season.id, false)
           onDismissRequest()
@@ -1025,7 +1025,7 @@ private fun ShowDetailsAppBar(
       ) {
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-          contentDescription = stringResource(Res.string.cdNavigateUp),
+          contentDescription = stringResource(Res.string.cd_navigate_up),
         )
       }
     },
@@ -1061,16 +1061,16 @@ private fun ToggleShowFollowFloatingActionButton(
           else -> Icons.Default.FavoriteBorder
         },
         contentDescription = when {
-          isFollowed -> stringResource(Res.string.cdFollowShowRemove)
-          else -> stringResource(Res.string.cdFollowShowAdd)
+          isFollowed -> stringResource(Res.string.cd_follow_show_remove)
+          else -> stringResource(Res.string.cd_follow_show_add)
         },
       )
     },
     text = {
       Text(
         when {
-          isFollowed -> stringResource(Res.string.followShowRemove)
-          else -> stringResource(Res.string.followShowAdd)
+          isFollowed -> stringResource(Res.string.follow_show_remove)
+          else -> stringResource(Res.string.follow_show_add)
         },
       )
     },

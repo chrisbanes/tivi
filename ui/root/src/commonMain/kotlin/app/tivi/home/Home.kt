@@ -63,15 +63,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.LocalWindowSizeClass
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cdDiscoverTitle
-import app.tivi.common.ui.resources.strings.cdLibraryTitle
-import app.tivi.common.ui.resources.strings.cdSearchNavigationTitle
-import app.tivi.common.ui.resources.strings.cdUpnextTitle
-import app.tivi.common.ui.resources.strings.discoverTitle
-import app.tivi.common.ui.resources.strings.libraryTitle
-import app.tivi.common.ui.resources.strings.searchNavigationTitle
-import app.tivi.common.ui.resources.strings.upnextTitle
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.cd_discover_title
+import app.tivi.common.ui.resources.cd_library_title
+import app.tivi.common.ui.resources.cd_search_navigation_title
+import app.tivi.common.ui.resources.cd_upnext_title
+import app.tivi.common.ui.resources.discover_title
+import app.tivi.common.ui.resources.library_title
+import app.tivi.common.ui.resources.search_navigation_title
+import app.tivi.common.ui.resources.upnext_title
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.LibraryScreen
 import app.tivi.screens.SearchScreen
@@ -364,32 +364,32 @@ private fun buildNavigationItems(): List<HomeNavigationItem> {
   return listOf(
     HomeNavigationItem(
       screen = DiscoverScreen,
-      label = Res.string.discoverTitle,
+      label = Res.string.discover_title,
       tag = "home_nav_discover",
-      contentDescription = Res.string.cdDiscoverTitle,
+      contentDescription = Res.string.cd_discover_title,
       iconImageVector = Icons.Outlined.Weekend,
       selectedImageVector = Icons.Default.Weekend,
     ),
     HomeNavigationItem(
       screen = UpNextScreen,
-      label = Res.string.upnextTitle,
+      label = Res.string.upnext_title,
       tag = "home_nav_upnext",
-      contentDescription = Res.string.cdUpnextTitle,
+      contentDescription = Res.string.cd_upnext_title,
       iconImageVector = Icons.Default.Subscriptions,
     ),
     HomeNavigationItem(
       screen = LibraryScreen,
-      label = Res.string.libraryTitle,
+      label = Res.string.library_title,
       tag = "home_nav_library",
-      contentDescription = Res.string.cdLibraryTitle,
+      contentDescription = Res.string.cd_library_title,
       iconImageVector = Icons.Outlined.VideoLibrary,
       selectedImageVector = Icons.Default.VideoLibrary,
     ),
     HomeNavigationItem(
       screen = SearchScreen,
-      label = Res.string.searchNavigationTitle,
+      label = Res.string.search_navigation_title,
       tag = "home_nav_search",
-      contentDescription = Res.string.cdSearchNavigationTitle,
+      contentDescription = Res.string.cd_search_navigation_title,
       iconImageVector = Icons.Default.Search,
     ),
   )
