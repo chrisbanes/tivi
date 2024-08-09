@@ -9,11 +9,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.popup_sort_air_date
-import app.tivi.common.ui.resources.strings.popup_sort_alpha
-import app.tivi.common.ui.resources.strings.popup_sort_date_followed
-import app.tivi.common.ui.resources.strings.popup_sort_last_watched
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.popup_sort_air_date
+import app.tivi.common.ui.resources.popup_sort_alpha
+import app.tivi.common.ui.resources.popup_sort_date_followed
+import app.tivi.common.ui.resources.popup_sort_last_watched
 import app.tivi.data.models.SortOption
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource

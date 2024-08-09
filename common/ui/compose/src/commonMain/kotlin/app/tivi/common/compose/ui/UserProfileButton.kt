@@ -14,9 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cd_profile_pic
-import app.tivi.common.ui.resources.strings.cd_user_profile
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.cd_profile_pic
+import app.tivi.common.ui.resources.cd_user_profile
 import app.tivi.data.models.TraktUser
 import org.jetbrains.compose.resources.stringResource
 

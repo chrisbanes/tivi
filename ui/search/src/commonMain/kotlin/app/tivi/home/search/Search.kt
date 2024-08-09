@@ -54,10 +54,10 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.search_empty_title
-import app.tivi.common.ui.resources.strings.search_hint
-import app.tivi.common.ui.resources.strings.search_noresults_prompt
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.search_empty_title
+import app.tivi.common.ui.resources.search_hint
+import app.tivi.common.ui.resources.search_noresults_prompt
 import app.tivi.data.models.TiviShow
 import app.tivi.screens.SearchScreen
 import com.slack.circuit.runtime.CircuitContext

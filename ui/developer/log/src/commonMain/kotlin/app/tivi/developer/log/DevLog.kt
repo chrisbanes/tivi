@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.ui.ArrowBackForPlatform
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cd_navigate_up
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.cd_navigate_up
 import app.tivi.screens.DevLogScreen
 import co.touchlab.kermit.Severity
 import com.slack.circuit.runtime.CircuitContext

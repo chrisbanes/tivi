@@ -27,8 +27,8 @@ import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.Preference
 import app.tivi.common.compose.ui.PreferenceDivider
 import app.tivi.common.compose.ui.PreferenceHeader
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cd_navigate_up
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.cd_navigate_up
 import app.tivi.screens.DevNotificationsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen

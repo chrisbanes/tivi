@@ -18,8 +18,8 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import app.tivi.common.compose.Layout
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cd_show_poster
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.cd_show_poster
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

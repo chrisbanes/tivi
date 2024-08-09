@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.theme.TiviTheme
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cd_show_poster_image
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.cd_show_poster_image
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.TiviShow
 import org.jetbrains.compose.resources.stringResource

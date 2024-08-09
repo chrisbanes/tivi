@@ -6,8 +6,8 @@ package app.tivi.home.trending
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.EntryGrid
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.discover_trending_title
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.discover_trending_title
 import app.tivi.screens.TrendingShowsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen

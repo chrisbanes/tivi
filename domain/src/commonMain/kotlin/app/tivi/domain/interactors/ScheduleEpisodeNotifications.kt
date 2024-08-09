@@ -4,10 +4,9 @@
 package app.tivi.domain.interactors
 
 import app.tivi.app.ApplicationInfo
-import app.tivi.common.ui.resources.fmt
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.notification_episode_airing_message
-import app.tivi.common.ui.resources.strings.notification_episode_airing_title
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.notification_episode_airing_message
+import app.tivi.common.ui.resources.notification_episode_airing_title
 import app.tivi.core.notifications.NotificationManager
 import app.tivi.data.compoundmodels.ShowSeasonEpisode
 import app.tivi.data.episodes.SeasonsEpisodesRepository
@@ -17,6 +16,7 @@ import app.tivi.domain.Interactor
 import app.tivi.entitlements.EntitlementManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.TiviDateFormatter
+import app.tivi.util.fmt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes

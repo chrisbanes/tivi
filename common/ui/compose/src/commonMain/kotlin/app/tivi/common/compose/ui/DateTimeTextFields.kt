@@ -24,9 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.LocalTiviDateFormatter
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.date_label
-import app.tivi.common.ui.resources.strings.time_label
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.date_label
+import app.tivi.common.ui.resources.time_label
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime

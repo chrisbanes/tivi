@@ -16,8 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cd_clear_text
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.cd_clear_text
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

@@ -13,7 +13,7 @@ kotlin {
       dependencies {
         api(projects.core.base)
         api(projects.core.permissions)
-        implementation(projects.common.ui.resources.strings)
+        implementation(projects.common.ui.resources)
         api(libs.kotlinx.datetime)
       }
     }

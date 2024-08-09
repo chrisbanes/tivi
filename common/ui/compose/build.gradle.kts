@@ -20,8 +20,8 @@ kotlin {
         api(projects.common.ui.screens)
         api(libs.circuit.foundation)
 
-        implementation(projects.common.ui.resources.fonts)
-        api(projects.common.ui.resources.strings)
+        implementation(projects.common.ui.resources)
+        api(projects.common.ui.resources)
         api(libs.lyricist.library)
 
         api(libs.haze.haze)

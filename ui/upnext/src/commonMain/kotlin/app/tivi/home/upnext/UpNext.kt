@@ -69,11 +69,11 @@ import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.upnext_empty_prompt
-import app.tivi.common.ui.resources.strings.upnext_empty_title
-import app.tivi.common.ui.resources.strings.upnext_filter_followed_shows_only_title
-import app.tivi.common.ui.resources.strings.upnext_title
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.upnext_empty_prompt
+import app.tivi.common.ui.resources.upnext_empty_title
+import app.tivi.common.ui.resources.upnext_filter_followed_shows_only_title
+import app.tivi.common.ui.resources.upnext_title
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode

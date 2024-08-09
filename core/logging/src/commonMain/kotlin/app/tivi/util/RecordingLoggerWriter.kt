@@ -26,7 +26,7 @@ object RecordingLoggerWriter : LogWriter() {
   private fun addLog(logMessage: LogMessage) {
     _buffer.update { logs ->
       logs.toMutableList().apply {
-        while (logs.size > BUFFER_SIZE - 1) {
+        while (logs.isNotEmpty() && logs.size > BUFFER_SIZE - 1) {
           removeFirst()
         }
         add(logMessage)

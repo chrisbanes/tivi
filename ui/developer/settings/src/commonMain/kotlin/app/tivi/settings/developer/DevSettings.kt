@@ -18,9 +18,9 @@ import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.common.compose.ui.Preference
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cd_navigate_up
-import app.tivi.common.ui.resources.strings.developer_settings_title
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.cd_navigate_up
+import app.tivi.common.ui.resources.developer_settings_title
 import app.tivi.screens.DevSettingsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen

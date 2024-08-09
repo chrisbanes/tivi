@@ -5,8 +5,8 @@ package app.tivi.common.compose.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.button_confirm
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.button_confirm
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
