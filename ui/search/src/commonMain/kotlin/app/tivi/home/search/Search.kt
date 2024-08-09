@@ -55,9 +55,9 @@ import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.searchEmptyTitle
-import app.tivi.common.ui.resources.strings.searchHint
-import app.tivi.common.ui.resources.strings.searchNoresultsPrompt
+import app.tivi.common.ui.resources.strings.search_empty_title
+import app.tivi.common.ui.resources.strings.search_hint
+import app.tivi.common.ui.resources.strings.search_noresults_prompt
 import app.tivi.data.models.TiviShow
 import app.tivi.screens.SearchScreen
 import com.slack.circuit.runtime.CircuitContext
@@ -145,7 +145,7 @@ internal fun Search(
             searchQuery = value
             onSearchQueryChanged(value.text)
           },
-          hint = stringResource(Res.string.searchHint),
+          hint = stringResource(Res.string.search_hint),
           modifier = Modifier.bodyWidth(),
         )
       }
@@ -169,14 +169,14 @@ internal fun Search(
       EmptyContent(
         title = {
           if (state.query.isEmpty()) {
-            Text(text = stringResource(Res.string.searchEmptyTitle))
+            Text(text = stringResource(Res.string.search_empty_title))
           } else {
-            Text(text = stringResource(Res.string.searchNoresultsPrompt))
+            Text(text = stringResource(Res.string.search_noresults_prompt))
           }
         },
         prompt = {
           if (state.query.isNotEmpty()) {
-            Text(text = stringResource(Res.string.searchNoresultsPrompt))
+            Text(text = stringResource(Res.string.search_noresults_prompt))
           }
         },
         graphic = { Text(text = "\uD83D\uDD75️\u200D♂️") },

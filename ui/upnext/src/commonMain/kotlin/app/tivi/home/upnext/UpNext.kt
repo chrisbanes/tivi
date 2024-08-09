@@ -70,10 +70,10 @@ import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.upnextEmptyPrompt
-import app.tivi.common.ui.resources.strings.upnextEmptyTitle
-import app.tivi.common.ui.resources.strings.upnextFilterFollowedShowsOnlyTitle
-import app.tivi.common.ui.resources.strings.upnextTitle
+import app.tivi.common.ui.resources.strings.upnext_empty_prompt
+import app.tivi.common.ui.resources.strings.upnext_empty_title
+import app.tivi.common.ui.resources.strings.upnext_filter_followed_shows_only_title
+import app.tivi.common.ui.resources.strings.upnext_title
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
@@ -185,7 +185,7 @@ internal fun UpNext(
   HazeScaffold(
     topBar = {
       TiviRootScreenAppBar(
-        title = stringResource(Res.string.upnextTitle),
+        title = stringResource(Res.string.upnext_title),
         loggedIn = state.authState == TraktAuthState.LOGGED_IN,
         user = state.user,
         refreshing = state.isLoading,
@@ -252,8 +252,8 @@ internal fun UpNext(
         if (state.items.itemCount == 0 && state.items.loadState.refresh != LoadState.Loading) {
           fullSpanItem {
             EmptyContent(
-              title = { Text(text = stringResource(Res.string.upnextEmptyTitle)) },
-              prompt = { Text(text = stringResource(Res.string.upnextEmptyPrompt)) },
+              title = { Text(text = stringResource(Res.string.upnext_empty_title)) },
+              prompt = { Text(text = stringResource(Res.string.upnext_empty_prompt)) },
               graphic = { Text(text = "\uD83D\uDC7B") },
               modifier = Modifier
                 .fillMaxSize()
@@ -326,7 +326,7 @@ private fun UpNextFilterRow(
       },
       onClick = onToggleFollowedShowsOnly,
       label = {
-        Text(text = stringResource(Res.string.upnextFilterFollowedShowsOnlyTitle))
+        Text(text = stringResource(Res.string.upnext_filter_followed_shows_only_title))
       },
     )
 

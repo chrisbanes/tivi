@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cdShowPosterImage
+import app.tivi.common.ui.resources.strings.cd_show_poster_image
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.TiviShow
 import org.jetbrains.compose.resources.stringResource
@@ -60,7 +60,7 @@ private fun PosterCardContent(
     }
     AsyncImage(
       model = rememberShowImageModel(show, ImageType.POSTER),
-      contentDescription = stringResource(Res.string.cdShowPosterImage, show.title ?: "show"),
+      contentDescription = stringResource(Res.string.cd_show_poster_image, show.title ?: "show"),
       modifier = Modifier.fillMaxSize(),
       contentScale = ContentScale.Crop,
     )

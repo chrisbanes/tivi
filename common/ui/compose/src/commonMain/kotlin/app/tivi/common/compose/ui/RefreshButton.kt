@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cdRefresh
+import app.tivi.common.ui.resources.strings.cd_refresh
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -40,7 +40,7 @@ fun RefreshButton(
       } else {
         Icon(
           imageVector = Icons.Default.Refresh,
-          contentDescription = stringResource(Res.string.cdRefresh),
+          contentDescription = stringResource(Res.string.cd_refresh),
         )
       }
     }
@@ -58,7 +58,7 @@ fun RefreshButton(
   ) {
     Icon(
       imageVector = Icons.Default.Refresh,
-      contentDescription = stringResource(Res.string.cdRefresh),
+      contentDescription = stringResource(Res.string.cd_refresh),
     )
   }
 }

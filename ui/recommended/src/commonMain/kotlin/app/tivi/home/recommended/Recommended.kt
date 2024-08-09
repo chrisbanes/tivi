@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.discoverRecommendedTitle
+import app.tivi.common.ui.resources.strings.discover_recommended_title
 import app.tivi.screens.RecommendedShowsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
@@ -40,7 +40,7 @@ internal fun RecommendedShows(
 
   EntryGrid(
     lazyPagingItems = state.items,
-    title = stringResource(Res.string.discoverRecommendedTitle),
+    title = stringResource(Res.string.discover_recommended_title),
     onOpenShowDetails = { eventSink(RecommendedShowsUiEvent.OpenShowDetails(it)) },
     onNavigateUp = { eventSink(RecommendedShowsUiEvent.NavigateUp) },
     modifier = modifier,

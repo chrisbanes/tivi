@@ -34,12 +34,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.accountNameUnknown
-import app.tivi.common.ui.resources.strings.cdProfilePic
+import app.tivi.common.ui.resources.strings.account_name_unknown
+import app.tivi.common.ui.resources.strings.cd_profile_pic
 import app.tivi.common.ui.resources.strings.login
 import app.tivi.common.ui.resources.strings.logout
-import app.tivi.common.ui.resources.strings.refreshCredentials
-import app.tivi.common.ui.resources.strings.settingsTitle
+import app.tivi.common.ui.resources.strings.refresh_credentials
+import app.tivi.common.ui.resources.strings.settings_title
 import app.tivi.data.models.TraktUser
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.screens.AccountScreen
@@ -117,7 +117,7 @@ internal fun AccountUi(
         }
       } else {
         TextButton(onClick = login) {
-          Text(text = stringResource(Res.string.refreshCredentials))
+          Text(text = stringResource(Res.string.refresh_credentials))
         }
       }
 
@@ -135,9 +135,9 @@ internal fun AccountUi(
     HorizontalDivider()
 
     AppAction(
-      label = stringResource(Res.string.settingsTitle),
+      label = stringResource(Res.string.settings_title),
       icon = Icons.Default.Settings,
-      contentDescription = stringResource(Res.string.settingsTitle),
+      contentDescription = stringResource(Res.string.settings_title),
       onClick = openSettings,
     )
 
@@ -162,7 +162,7 @@ private fun UserRow(
     if (avatarUrl != null) {
       AsyncImage(
         model = avatarUrl,
-        contentDescription = stringResource(Res.string.cdProfilePic, user.name ?: user.username),
+        contentDescription = stringResource(Res.string.cd_profile_pic, user.name ?: user.username),
         modifier = Modifier
           .size(40.dp)
           .clip(RoundedCornerShape(50)),
@@ -173,7 +173,7 @@ private fun UserRow(
 
     Column {
       Text(
-        text = user.name ?: stringResource(Res.string.accountNameUnknown),
+        text = user.name ?: stringResource(Res.string.account_name_unknown),
         style = MaterialTheme.typography.titleSmall,
       )
 

@@ -40,12 +40,12 @@ import app.tivi.common.compose.ui.DateTextField
 import app.tivi.common.compose.ui.LoadingButton
 import app.tivi.common.compose.ui.TimeTextField
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.episodeMarkWatched
-import app.tivi.common.ui.resources.strings.episodeTrackPrompt
-import app.tivi.common.ui.resources.strings.episodeTrackSetFirstAired
-import app.tivi.common.ui.resources.strings.episodeTrackSetNow
-import app.tivi.common.ui.resources.strings.episodeWatchDateTitle
-import app.tivi.common.ui.resources.strings.episodeWatchTimeTitle
+import app.tivi.common.ui.resources.strings.episode_mark_watched
+import app.tivi.common.ui.resources.strings.episode_track_prompt
+import app.tivi.common.ui.resources.strings.episode_track_set_first_aired
+import app.tivi.common.ui.resources.strings.episode_track_set_now
+import app.tivi.common.ui.resources.strings.episode_watch_date_title
+import app.tivi.common.ui.resources.strings.episode_watch_time_title
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
@@ -226,7 +226,7 @@ private fun EpisodeTrack(
   Column(Modifier.padding(top = 16.dp)) {
     Row(verticalAlignment = Alignment.CenterVertically) {
       Text(
-        text = stringResource(Res.string.episodeTrackPrompt),
+        text = stringResource(Res.string.episode_track_prompt),
         style = MaterialTheme.typography.titleMedium,
         modifier = Modifier.weight(1f),
       )
@@ -236,7 +236,7 @@ private fun EpisodeTrack(
       DateTextField(
         selectedDate = selectedDate,
         onDateSelected = onDateSelected,
-        dialogTitle = stringResource(Res.string.episodeWatchDateTitle),
+        dialogTitle = stringResource(Res.string.episode_watch_date_title),
         modifier = Modifier.fillMaxWidth(3 / 5f),
       )
 
@@ -245,7 +245,7 @@ private fun EpisodeTrack(
       TimeTextField(
         selectedTime = selectedTime,
         onTimeSelected = onTimeSelected,
-        dialogTitle = stringResource(Res.string.episodeWatchTimeTitle),
+        dialogTitle = stringResource(Res.string.episode_watch_time_title),
         modifier = Modifier.weight(1f),
       )
     }
@@ -253,12 +253,12 @@ private fun EpisodeTrack(
     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
       if (showSetFirstAired) {
         TextButton(onClick = onFirstAiredSelected) {
-          Text(text = stringResource(Res.string.episodeTrackSetFirstAired))
+          Text(text = stringResource(Res.string.episode_track_set_first_aired))
         }
       }
 
       TextButton(onClick = onNowSelected) {
-        Text(text = stringResource(Res.string.episodeTrackSetNow))
+        Text(text = stringResource(Res.string.episode_track_set_now))
       }
     }
 
@@ -270,7 +270,7 @@ private fun EpisodeTrack(
       onClick = submitWatch,
       modifier = Modifier.fillMaxWidth(),
     ) {
-      Text(text = stringResource(Res.string.episodeMarkWatched))
+      Text(text = stringResource(Res.string.episode_mark_watched))
     }
   }
 }

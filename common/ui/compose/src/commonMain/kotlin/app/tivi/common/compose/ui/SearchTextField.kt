@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cdClearText
+import app.tivi.common.ui.resources.strings.cd_clear_text
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -52,7 +52,7 @@ fun SearchTextField(
       ) {
         Icon(
           imageVector = Icons.Default.Clear,
-          contentDescription = stringResource(Res.string.cdClearText),
+          contentDescription = stringResource(Res.string.cd_clear_text),
         )
       }
     },

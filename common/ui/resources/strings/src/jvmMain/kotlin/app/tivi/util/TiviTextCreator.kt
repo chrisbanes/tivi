@@ -4,7 +4,7 @@
 package app.tivi.util
 
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.airsText
+import app.tivi.common.ui.resources.strings.airs_text
 import app.tivi.data.models.TiviShow
 import app.tivi.inject.ActivityScope
 import java.util.Locale
@@ -30,7 +30,7 @@ actual class TiviTextCreator(
       .withZoneSameInstant(dateFormatter.timeZone.toJavaZoneId())
 
     return getStringBlocking(
-      Res.string.airsText,
+      Res.string.airs_text,
       localDateTime.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault()),
       dateFormatter.formatShortTime(localDateTime.toLocalTime().toKotlinLocalTime()),
     )

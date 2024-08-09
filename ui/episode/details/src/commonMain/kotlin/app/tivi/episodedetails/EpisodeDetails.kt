@@ -77,22 +77,22 @@ import app.tivi.common.compose.ui.ScrimmedIconButton
 import app.tivi.common.compose.ui.none
 import app.tivi.common.ui.resources.fmt
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cdDelete
-import app.tivi.common.ui.resources.strings.cdEpisodeDeleted
-import app.tivi.common.ui.resources.strings.cdEpisodeFirstAired
-import app.tivi.common.ui.resources.strings.cdEpisodeSyncing
-import app.tivi.common.ui.resources.strings.cdNavigateUp
-import app.tivi.common.ui.resources.strings.cdRefresh
-import app.tivi.common.ui.resources.strings.cdTraktRating
-import app.tivi.common.ui.resources.strings.dialogDismiss
-import app.tivi.common.ui.resources.strings.episodeAddWatch
-import app.tivi.common.ui.resources.strings.episodeMarkWatched
-import app.tivi.common.ui.resources.strings.episodeRemoveWatchesDialogConfirm
-import app.tivi.common.ui.resources.strings.episodeRemoveWatchesDialogMessage
-import app.tivi.common.ui.resources.strings.episodeRemoveWatchesDialogTitle
-import app.tivi.common.ui.resources.strings.episodeWatches
-import app.tivi.common.ui.resources.strings.seasonEpisodeNumber
-import app.tivi.common.ui.resources.strings.traktRatingText
+import app.tivi.common.ui.resources.strings.cd_delete
+import app.tivi.common.ui.resources.strings.cd_episode_deleted
+import app.tivi.common.ui.resources.strings.cd_episode_first_aired
+import app.tivi.common.ui.resources.strings.cd_episode_syncing
+import app.tivi.common.ui.resources.strings.cd_navigate_up
+import app.tivi.common.ui.resources.strings.cd_refresh
+import app.tivi.common.ui.resources.strings.cd_trakt_rating
+import app.tivi.common.ui.resources.strings.dialog_dismiss
+import app.tivi.common.ui.resources.strings.episode_add_watch
+import app.tivi.common.ui.resources.strings.episode_mark_watched
+import app.tivi.common.ui.resources.strings.episode_remove_watches_dialog_confirm
+import app.tivi.common.ui.resources.strings.episode_remove_watches_dialog_message
+import app.tivi.common.ui.resources.strings.episode_remove_watches_dialog_title
+import app.tivi.common.ui.resources.strings.episode_watches
+import app.tivi.common.ui.resources.strings.season_episode_number
+import app.tivi.common.ui.resources.strings.trakt_rating_text
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.EpisodeWatchEntry
@@ -329,7 +329,7 @@ private fun EpisodeDetailsBackdrop(
         val seasonNumber = season.number
         if (seasonNumber != null && epNumber != null) {
           Text(
-            text = stringResource(Res.string.seasonEpisodeNumber, seasonNumber, epNumber),
+            text = stringResource(Res.string.season_episode_number, seasonNumber, epNumber),
           )
         }
       },
@@ -346,8 +346,8 @@ private fun InfoPanes(episode: Episode) {
       val ratingString = "%.1f".fmt(rating * 10f)
       InfoPane(
         imageVector = Icons.Default.Star,
-        label = stringResource(Res.string.traktRatingText, ratingString),
-        contentDescription = stringResource(Res.string.cdTraktRating, ratingString),
+        label = stringResource(Res.string.trakt_rating_text, ratingString),
+        contentDescription = stringResource(Res.string.cd_trakt_rating, ratingString),
         modifier = Modifier.weight(1f),
       )
     }
@@ -358,7 +358,7 @@ private fun InfoPanes(episode: Episode) {
       InfoPane(
         imageVector = Icons.Default.CalendarToday,
         label = formattedDate,
-        contentDescription = stringResource(Res.string.cdEpisodeFirstAired, formattedDate),
+        contentDescription = stringResource(Res.string.cd_episode_first_aired, formattedDate),
         modifier = Modifier.weight(1f),
       )
     }
@@ -396,7 +396,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
       modifier = Modifier
         .padding(horizontal = 16.dp, vertical = 8.dp)
         .align(Alignment.CenterVertically),
-      text = stringResource(Res.string.episodeWatches),
+      text = stringResource(Res.string.episode_watches),
       style = MaterialTheme.typography.titleMedium,
     )
 
@@ -407,7 +407,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     ) {
       Icon(
         imageVector = Icons.Default.DeleteSweep,
-        contentDescription = stringResource(Res.string.cdDelete),
+        contentDescription = stringResource(Res.string.cd_delete),
       )
     }
   }
@@ -434,7 +434,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
       AnimatedVisibility(episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
         Icon(
           imageVector = Icons.Default.Publish,
-          contentDescription = stringResource(Res.string.cdEpisodeSyncing),
+          contentDescription = stringResource(Res.string.cd_episode_syncing),
           modifier = Modifier.padding(start = 8.dp),
         )
       }
@@ -442,7 +442,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
       AnimatedVisibility(episodeWatchEntry.pendingAction == PendingAction.DELETE) {
         Icon(
           imageVector = Icons.Default.VisibilityOff,
-          contentDescription = stringResource(Res.string.cdEpisodeDeleted),
+          contentDescription = stringResource(Res.string.cd_episode_deleted),
           modifier = Modifier.padding(start = 8.dp),
         )
       }
@@ -476,7 +476,7 @@ private fun EpisodeWatchSwipeBackground(
 
       Icon(
         imageVector = Icons.Outlined.Delete,
-        contentDescription = stringResource(Res.string.cdDelete),
+        contentDescription = stringResource(Res.string.cd_delete),
         modifier = Modifier
           .padding(12.dp)
           .padding(end = 8.dp)
@@ -495,7 +495,7 @@ private fun MarkWatchedButton(
     onClick = onClick,
     modifier = modifier,
   ) {
-    Text(text = stringResource(Res.string.episodeMarkWatched))
+    Text(text = stringResource(Res.string.episode_mark_watched))
   }
 }
 
@@ -508,7 +508,7 @@ private fun AddWatchButton(
     onClick = onClick,
     modifier = modifier,
   ) {
-    Text(text = stringResource(Res.string.episodeAddWatch))
+    Text(text = stringResource(Res.string.episode_add_watch))
   }
 }
 
@@ -520,19 +520,19 @@ private fun RemoveAllWatchesDialog(
   AlertDialog(
     onDismissRequest = onDismissRequest,
     title = {
-      Text(text = stringResource(Res.string.episodeRemoveWatchesDialogTitle))
+      Text(text = stringResource(Res.string.episode_remove_watches_dialog_title))
     },
     text = {
-      Text(text = stringResource(Res.string.episodeRemoveWatchesDialogMessage))
+      Text(text = stringResource(Res.string.episode_remove_watches_dialog_message))
     },
     dismissButton = {
       Button(onClick = onDismissRequest) {
-        Text(text = stringResource(Res.string.dialogDismiss))
+        Text(text = stringResource(Res.string.dialog_dismiss))
       }
     },
     confirmButton = {
       Button(onClick = onConfirm) {
-        Text(text = stringResource(Res.string.episodeRemoveWatchesDialogConfirm))
+        Text(text = stringResource(Res.string.episode_remove_watches_dialog_confirm))
       }
     },
   )
@@ -557,7 +557,7 @@ private fun EpisodeDetailsAppBar(
       ScrimmedIconButton(showScrim = true, onClick = navigateUp) {
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-          contentDescription = stringResource(Res.string.cdNavigateUp),
+          contentDescription = stringResource(Res.string.cd_navigate_up),
         )
       }
     },
@@ -580,7 +580,7 @@ private fun EpisodeDetailsAppBar(
         ScrimmedIconButton(showScrim = true, onClick = refresh) {
           Icon(
             imageVector = Icons.Default.Refresh,
-            contentDescription = stringResource(Res.string.cdRefresh),
+            contentDescription = stringResource(Res.string.cd_refresh),
           )
         }
       }

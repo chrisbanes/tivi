@@ -4,19 +4,18 @@
 package app.tivi.util
 
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.episodeNumber
-import app.tivi.common.ui.resources.strings.followedWatchStatsComplete
-import app.tivi.common.ui.resources.strings.followedWatchStatsToWatch
-import app.tivi.common.ui.resources.strings.nextPrefix
-import app.tivi.common.ui.resources.strings.seasonEpisodeNumber
-import app.tivi.common.ui.resources.strings.seasonSummaryToAir
-import app.tivi.common.ui.resources.strings.seasonSummaryToWatch
-import app.tivi.common.ui.resources.strings.seasonSummaryWatched
-import app.tivi.common.ui.resources.strings.seasonTitleFallback
-import app.tivi.common.ui.resources.strings.statusActive
-import app.tivi.common.ui.resources.strings.statusEnded
-import app.tivi.common.ui.resources.strings.statusInProduction
-import app.tivi.common.ui.resources.strings.statusPlanned
+import app.tivi.common.ui.resources.strings.episode_number
+import app.tivi.common.ui.resources.strings.followed_watch_stats_complete
+import app.tivi.common.ui.resources.strings.next_prefix
+import app.tivi.common.ui.resources.strings.season_episode_number
+import app.tivi.common.ui.resources.strings.season_summary_to_air
+import app.tivi.common.ui.resources.strings.season_summary_to_watch
+import app.tivi.common.ui.resources.strings.season_summary_watched
+import app.tivi.common.ui.resources.strings.season_title_fallback
+import app.tivi.common.ui.resources.strings.status_active
+import app.tivi.common.ui.resources.strings.status_ended
+import app.tivi.common.ui.resources.strings.status_in_production
+import app.tivi.common.ui.resources.strings.status_planned
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Genre
 import app.tivi.data.models.Season
@@ -59,13 +58,13 @@ interface CommonTiviTextCreator {
       )
     }
 
-    watchedEpisodeCount > 0 -> getStringBlocking(Res.string.followedWatchStatsComplete)
+    watchedEpisodeCount > 0 -> getStringBlocking(Res.string.followed_watch_stats_complete)
     else -> ""
   }
 
   fun seasonEpisodeTitleText(season: Season?, episode: Episode?): String = when {
     season != null && episode != null -> {
-      getStringBlocking(Res.string.seasonEpisodeNumber, season.number!!, episode.number!!)
+      getStringBlocking(Res.string.season_episode_number, season.number!!, episode.number!!)
     }
 
     else -> ""
@@ -75,7 +74,7 @@ interface CommonTiviTextCreator {
     season: Season,
   ): String = when {
     season.title != null -> season.title!!
-    season.number != null -> getStringBlocking(Res.string.seasonTitleFallback, season.number!!)
+    season.number != null -> getStringBlocking(Res.string.season_title_fallback, season.number!!)
     else -> ""
   }
 
@@ -87,21 +86,21 @@ interface CommonTiviTextCreator {
   ): CharSequence {
     val text = StringBuilder()
     if (watched > 0) {
-      text.append(getStringBlocking(Res.string.seasonSummaryWatched, watched))
+      text.append(getStringBlocking(Res.string.season_summary_watched, watched))
     }
     if (toWatch > 0) {
       if (text.isNotEmpty()) text.append(" \u2022 ")
-      text.append(getStringBlocking(Res.string.seasonSummaryToWatch, toWatch))
+      text.append(getStringBlocking(Res.string.season_summary_to_watch, toWatch))
     }
     if (toAir > 0) {
       if (text.isNotEmpty()) text.append(" \u2022 ")
-      text.append(getStringBlocking(Res.string.seasonSummaryToAir, toAir))
+      text.append(getStringBlocking(Res.string.season_summary_to_air, toAir))
 
       if (nextToAirDate != null) {
         text.append(". ")
         text.append(
           getStringBlocking(
-            Res.string.nextPrefix,
+            Res.string.next_prefix,
             dateFormatter.formatShortRelativeTime(nextToAirDate),
           ),
         )
@@ -112,7 +111,7 @@ interface CommonTiviTextCreator {
 
   fun episodeNumberText(episode: Episode): CharSequence {
     val text = StringBuilder()
-    text.append(getStringBlocking(Res.string.episodeNumber, episode.number!!))
+    text.append(getStringBlocking(Res.string.episode_number, episode.number!!))
     episode.firstAired?.also {
       text.append(" \u2022 ")
       text.append(dateFormatter.formatShortRelativeTime(date = it))
@@ -136,10 +135,10 @@ interface CommonTiviTextCreator {
 
   // TODO: change the string here, check if planned is still in Trakt
   fun showStatusText(status: ShowStatus): CharSequence = when (status) {
-    ShowStatus.CANCELED, ShowStatus.ENDED -> Res.string.statusEnded
-    ShowStatus.RETURNING -> Res.string.statusActive
-    ShowStatus.IN_PRODUCTION -> Res.string.statusInProduction
-    ShowStatus.PLANNED -> Res.string.statusPlanned
+    ShowStatus.CANCELED, ShowStatus.ENDED -> Res.string.status_ended
+    ShowStatus.RETURNING -> Res.string.status_active
+    ShowStatus.IN_PRODUCTION -> Res.string.status_in_production
+    ShowStatus.PLANNED -> Res.string.status_planned
   }.let(::getStringBlocking)
 
   fun seasonEpisodeLabel(seasonNumber: Int, episodeNumber: Int): String {

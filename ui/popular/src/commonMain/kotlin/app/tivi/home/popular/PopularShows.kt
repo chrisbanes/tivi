@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import app.tivi.common.compose.EntryGrid
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.discoverPopularTitle
+import app.tivi.common.ui.resources.strings.discover_popular_title
 import app.tivi.screens.PopularShowsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
@@ -40,7 +40,7 @@ internal fun PopularShows(
 
   EntryGrid(
     lazyPagingItems = state.items,
-    title = stringResource(Res.string.discoverPopularTitle),
+    title = stringResource(Res.string.discover_popular_title),
     onOpenShowDetails = { eventSink(PopularShowsUiEvent.OpenShowDetails(it)) },
     onNavigateUp = { eventSink(PopularShowsUiEvent.NavigateUp) },
     modifier = modifier,

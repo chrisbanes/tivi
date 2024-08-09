@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cdProfilePic
-import app.tivi.common.ui.resources.strings.cdUserProfile
+import app.tivi.common.ui.resources.strings.cd_profile_pic
+import app.tivi.common.ui.resources.strings.cd_user_profile
 import app.tivi.data.models.TraktUser
 import org.jetbrains.compose.resources.stringResource
 
@@ -35,7 +35,7 @@ fun UserProfileButton(
       loggedIn && user?.avatarUrl != null -> {
         AsyncImage(
           model = user.avatarUrl!!,
-          contentDescription = stringResource(Res.string.cdProfilePic, user.name ?: user.username),
+          contentDescription = stringResource(Res.string.cd_profile_pic, user.name ?: user.username),
           modifier = Modifier
             .size(32.dp)
             .clip(MaterialTheme.shapes.small),
@@ -47,7 +47,7 @@ fun UserProfileButton(
             loggedIn -> Icons.Default.Person
             else -> Icons.Outlined.Person
           },
-          contentDescription = stringResource(Res.string.cdUserProfile),
+          contentDescription = stringResource(Res.string.cd_user_profile),
         )
       }
     }

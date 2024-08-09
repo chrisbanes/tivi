@@ -28,7 +28,7 @@ import app.tivi.common.compose.ui.Preference
 import app.tivi.common.compose.ui.PreferenceDivider
 import app.tivi.common.compose.ui.PreferenceHeader
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cdNavigateUp
+import app.tivi.common.ui.resources.strings.cd_navigate_up
 import app.tivi.screens.DevNotificationsScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
@@ -66,7 +66,7 @@ internal fun DevNotifications(
           IconButton(onClick = { eventSink(DevNotificationsUiEvent.NavigateUp) }) {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-              contentDescription = stringResource(Res.string.cdNavigateUp),
+              contentDescription = stringResource(Res.string.cd_navigate_up),
             )
           }
         },

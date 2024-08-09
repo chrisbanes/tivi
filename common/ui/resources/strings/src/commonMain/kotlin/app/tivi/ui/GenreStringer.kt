@@ -4,16 +4,16 @@
 package app.tivi.ui
 
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.genreLabelAction
-import app.tivi.common.ui.resources.strings.genreLabelAdventure
-import app.tivi.common.ui.resources.strings.genreLabelComedy
-import app.tivi.common.ui.resources.strings.genreLabelCrime
-import app.tivi.common.ui.resources.strings.genreLabelDrama
-import app.tivi.common.ui.resources.strings.genreLabelFantasy
-import app.tivi.common.ui.resources.strings.genreLabelHorror
-import app.tivi.common.ui.resources.strings.genreLabelMystery
-import app.tivi.common.ui.resources.strings.genreLabelScienceFiction
-import app.tivi.common.ui.resources.strings.genreLabelThriller
+import app.tivi.common.ui.resources.strings.genre_label_action
+import app.tivi.common.ui.resources.strings.genre_label_adventure
+import app.tivi.common.ui.resources.strings.genre_label_comedy
+import app.tivi.common.ui.resources.strings.genre_label_crime
+import app.tivi.common.ui.resources.strings.genre_label_drama
+import app.tivi.common.ui.resources.strings.genre_label_fantasy
+import app.tivi.common.ui.resources.strings.genre_label_horror
+import app.tivi.common.ui.resources.strings.genre_label_mystery
+import app.tivi.common.ui.resources.strings.genre_label_science_fiction
+import app.tivi.common.ui.resources.strings.genre_label_thriller
 import app.tivi.data.models.Genre
 import org.jetbrains.compose.resources.StringResource
 
@@ -33,14 +33,14 @@ object GenreStringer {
 }
 
 internal fun getGenreLabel(genre: Genre): StringResource = when (genre) {
-  Genre.DRAMA -> Res.string.genreLabelDrama
-  Genre.FANTASY -> Res.string.genreLabelFantasy
-  Genre.SCIENCE_FICTION -> Res.string.genreLabelScienceFiction
-  Genre.ACTION -> Res.string.genreLabelAction
-  Genre.ADVENTURE -> Res.string.genreLabelAdventure
-  Genre.CRIME -> Res.string.genreLabelCrime
-  Genre.THRILLER -> Res.string.genreLabelThriller
-  Genre.COMEDY -> Res.string.genreLabelComedy
-  Genre.HORROR -> Res.string.genreLabelHorror
-  Genre.MYSTERY -> Res.string.genreLabelMystery
+  Genre.DRAMA -> Res.string.genre_label_drama
+  Genre.FANTASY -> Res.string.genre_label_fantasy
+  Genre.SCIENCE_FICTION -> Res.string.genre_label_science_fiction
+  Genre.ACTION -> Res.string.genre_label_action
+  Genre.ADVENTURE -> Res.string.genre_label_adventure
+  Genre.CRIME -> Res.string.genre_label_crime
+  Genre.THRILLER -> Res.string.genre_label_thriller
+  Genre.COMEDY -> Res.string.genre_label_comedy
+  Genre.HORROR -> Res.string.genre_label_horror
+  Genre.MYSTERY -> Res.string.genre_label_mystery
 }

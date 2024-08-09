@@ -69,8 +69,8 @@ import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
 import app.tivi.common.ui.resources.fmt
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cdNavigateUp
-import app.tivi.common.ui.resources.strings.traktRatingText
+import app.tivi.common.ui.resources.strings.cd_navigate_up
+import app.tivi.common.ui.resources.strings.trakt_rating_text
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
 import app.tivi.data.models.TiviShow
@@ -266,7 +266,7 @@ fun <ET : Entry> GridItem(
 
           show.traktRating?.let { rating ->
             TextWithIcon(
-              text = stringResource(Res.string.traktRatingText, "%.1f".fmt(rating * 10f)),
+              text = stringResource(Res.string.trakt_rating_text, "%.1f".fmt(rating * 10f)),
               icon = Icons.Default.Star,
             )
           }
@@ -297,7 +297,7 @@ fun EntryGridAppBar(
       IconButton(onClick = onNavigateUp) {
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-          contentDescription = stringResource(Res.string.cdNavigateUp),
+          contentDescription = stringResource(Res.string.cd_navigate_up),
         )
       }
     },

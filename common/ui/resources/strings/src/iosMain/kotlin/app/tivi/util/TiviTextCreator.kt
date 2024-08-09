@@ -4,7 +4,7 @@
 package app.tivi.util
 
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.airsText
+import app.tivi.common.ui.resources.strings.airs_text
 import app.tivi.data.models.TiviShow
 import app.tivi.inject.ActivityScope
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -50,7 +50,7 @@ actual class TiviTextCreator(
       ?: return null
 
     return getStringBlocking(
-      Res.string.airsText,
+      Res.string.airs_text,
       dateFormatter.formatDayOfWeek(localDateTime.dayOfWeek),
       dateFormatter.formatShortTime(localDateTime.time),
     )

@@ -32,32 +32,32 @@ import app.tivi.common.compose.ui.Preference
 import app.tivi.common.compose.ui.PreferenceDivider
 import app.tivi.common.compose.ui.PreferenceHeader
 import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.cdNavigateUp
-import app.tivi.common.ui.resources.strings.developerSettingsTitle
-import app.tivi.common.ui.resources.strings.settingsAboutCategoryTitle
-import app.tivi.common.ui.resources.strings.settingsAnalyticsDataCollectionSummary
-import app.tivi.common.ui.resources.strings.settingsAnalyticsDataCollectionTitle
-import app.tivi.common.ui.resources.strings.settingsAppVersion
-import app.tivi.common.ui.resources.strings.settingsAppVersionSummary
-import app.tivi.common.ui.resources.strings.settingsCrashDataCollectionSummary
-import app.tivi.common.ui.resources.strings.settingsCrashDataCollectionTitle
-import app.tivi.common.ui.resources.strings.settingsDataSaverSummaryOff
-import app.tivi.common.ui.resources.strings.settingsDataSaverSummaryOn
-import app.tivi.common.ui.resources.strings.settingsDataSaverTitle
-import app.tivi.common.ui.resources.strings.settingsDynamicColorSummary
-import app.tivi.common.ui.resources.strings.settingsDynamicColorTitle
-import app.tivi.common.ui.resources.strings.settingsIgnoreSpecialsSummary
-import app.tivi.common.ui.resources.strings.settingsIgnoreSpecialsTitle
-import app.tivi.common.ui.resources.strings.settingsNotificationsAiringEpisodesSummary
-import app.tivi.common.ui.resources.strings.settingsNotificationsAiringEpisodesTitle
-import app.tivi.common.ui.resources.strings.settingsNotificationsCategoryTitle
-import app.tivi.common.ui.resources.strings.settingsOpenSource
-import app.tivi.common.ui.resources.strings.settingsOpenSourceSummary
-import app.tivi.common.ui.resources.strings.settingsPrivacyCategoryTitle
-import app.tivi.common.ui.resources.strings.settingsThemeTitle
-import app.tivi.common.ui.resources.strings.settingsTitle
-import app.tivi.common.ui.resources.strings.settingsUiCategoryTitle
-import app.tivi.common.ui.resources.strings.viewPrivacyPolicy
+import app.tivi.common.ui.resources.strings.cd_navigate_up
+import app.tivi.common.ui.resources.strings.developer_settings_title
+import app.tivi.common.ui.resources.strings.settings_about_category_title
+import app.tivi.common.ui.resources.strings.settings_analytics_data_collection_summary
+import app.tivi.common.ui.resources.strings.settings_analytics_data_collection_title
+import app.tivi.common.ui.resources.strings.settings_app_version
+import app.tivi.common.ui.resources.strings.settings_app_version_summary
+import app.tivi.common.ui.resources.strings.settings_crash_data_collection_summary
+import app.tivi.common.ui.resources.strings.settings_crash_data_collection_title
+import app.tivi.common.ui.resources.strings.settings_data_saver_summary_off
+import app.tivi.common.ui.resources.strings.settings_data_saver_summary_on
+import app.tivi.common.ui.resources.strings.settings_data_saver_title
+import app.tivi.common.ui.resources.strings.settings_dynamic_color_summary
+import app.tivi.common.ui.resources.strings.settings_dynamic_color_title
+import app.tivi.common.ui.resources.strings.settings_ignore_specials_summary
+import app.tivi.common.ui.resources.strings.settings_ignore_specials_title
+import app.tivi.common.ui.resources.strings.settings_notifications_airing_episodes_summary
+import app.tivi.common.ui.resources.strings.settings_notifications_airing_episodes_title
+import app.tivi.common.ui.resources.strings.settings_notifications_category_title
+import app.tivi.common.ui.resources.strings.settings_open_source
+import app.tivi.common.ui.resources.strings.settings_open_source_summary
+import app.tivi.common.ui.resources.strings.settings_privacy_category_title
+import app.tivi.common.ui.resources.strings.settings_theme_title
+import app.tivi.common.ui.resources.strings.settings_title
+import app.tivi.common.ui.resources.strings.settings_ui_category_title
+import app.tivi.common.ui.resources.strings.view_privacy_policy
 import app.tivi.entitlements.ui.Paywall
 import app.tivi.screens.SettingsScreen
 import com.slack.circuit.runtime.CircuitContext
@@ -99,12 +99,12 @@ internal fun Settings(
   HazeScaffold(
     topBar = {
       TopAppBar(
-        title = { Text(stringResource(Res.string.settingsTitle)) },
+        title = { Text(stringResource(Res.string.settings_title)) },
         navigationIcon = {
           IconButton(onClick = { eventSink(SettingsUiEvent.NavigateUp) }) {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-              contentDescription = stringResource(Res.string.cdNavigateUp),
+              contentDescription = stringResource(Res.string.cd_navigate_up),
             )
           }
         },
@@ -117,12 +117,12 @@ internal fun Settings(
       modifier = Modifier.fillMaxWidth(),
     ) {
       stickyHeader {
-        PreferenceHeader(stringResource(Res.string.settingsUiCategoryTitle))
+        PreferenceHeader(stringResource(Res.string.settings_ui_category_title))
       }
 
       item {
         ThemePreference(
-          title = stringResource(Res.string.settingsThemeTitle),
+          title = stringResource(Res.string.settings_theme_title),
           selected = state.theme,
           onThemeSelected = { eventSink(SettingsUiEvent.SetTheme(it)) },
         )
@@ -133,8 +133,8 @@ internal fun Settings(
       if (state.dynamicColorsAvailable) {
         item {
           CheckboxPreference(
-            title = stringResource(Res.string.settingsDynamicColorTitle),
-            summaryOff = stringResource(Res.string.settingsDynamicColorSummary),
+            title = stringResource(Res.string.settings_dynamic_color_title),
+            summaryOff = stringResource(Res.string.settings_dynamic_color_summary),
             onCheckClicked = { eventSink(SettingsUiEvent.ToggleUseDynamicColors) },
             checked = state.useDynamicColors,
           )
@@ -145,9 +145,9 @@ internal fun Settings(
 
       item {
         CheckboxPreference(
-          title = stringResource(Res.string.settingsDataSaverTitle),
-          summaryOff = stringResource(Res.string.settingsDataSaverSummaryOff),
-          summaryOn = stringResource(Res.string.settingsDataSaverSummaryOn),
+          title = stringResource(Res.string.settings_data_saver_title),
+          summaryOff = stringResource(Res.string.settings_data_saver_summary_off),
+          summaryOn = stringResource(Res.string.settings_data_saver_summary_on),
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleUseLessData) },
           checked = state.useLessData,
         )
@@ -157,8 +157,8 @@ internal fun Settings(
 
       item {
         CheckboxPreference(
-          title = stringResource(Res.string.settingsIgnoreSpecialsTitle),
-          summaryOff = stringResource(Res.string.settingsIgnoreSpecialsSummary),
+          title = stringResource(Res.string.settings_ignore_specials_title),
+          summaryOff = stringResource(Res.string.settings_ignore_specials_summary),
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleIgnoreSpecials) },
           checked = state.ignoreSpecials,
         )
@@ -167,13 +167,13 @@ internal fun Settings(
       itemSpacer(24.dp)
 
       stickyHeader {
-        PreferenceHeader(stringResource(Res.string.settingsNotificationsCategoryTitle))
+        PreferenceHeader(stringResource(Res.string.settings_notifications_category_title))
       }
 
       item {
         CheckboxPreference(
-          title = stringResource(Res.string.settingsNotificationsAiringEpisodesTitle),
-          summaryOff = stringResource(Res.string.settingsNotificationsAiringEpisodesSummary),
+          title = stringResource(Res.string.settings_notifications_airing_episodes_title),
+          summaryOff = stringResource(Res.string.settings_notifications_airing_episodes_summary),
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled) },
           checked = state.airingEpisodeNotificationsEnabled,
           beforeControl = {
@@ -191,12 +191,12 @@ internal fun Settings(
       itemSpacer(24.dp)
 
       stickyHeader {
-        PreferenceHeader(stringResource(Res.string.settingsPrivacyCategoryTitle))
+        PreferenceHeader(stringResource(Res.string.settings_privacy_category_title))
       }
 
       item {
         Preference(
-          title = stringResource(Res.string.viewPrivacyPolicy),
+          title = stringResource(Res.string.view_privacy_policy),
           onClick = { eventSink(SettingsUiEvent.NavigatePrivacyPolicy) },
         )
       }
@@ -205,8 +205,8 @@ internal fun Settings(
 
       item {
         CheckboxPreference(
-          title = stringResource(Res.string.settingsCrashDataCollectionTitle),
-          summaryOff = stringResource(Res.string.settingsCrashDataCollectionSummary),
+          title = stringResource(Res.string.settings_crash_data_collection_title),
+          summaryOff = stringResource(Res.string.settings_crash_data_collection_summary),
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleCrashDataReporting) },
           checked = state.crashDataReportingEnabled,
         )
@@ -216,8 +216,8 @@ internal fun Settings(
 
       item {
         CheckboxPreference(
-          title = stringResource(Res.string.settingsAnalyticsDataCollectionTitle),
-          summaryOff = stringResource(Res.string.settingsAnalyticsDataCollectionSummary),
+          title = stringResource(Res.string.settings_analytics_data_collection_title),
+          summaryOff = stringResource(Res.string.settings_analytics_data_collection_summary),
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleAnalyticsDataReporting) },
           checked = state.analyticsDataReportingEnabled,
         )
@@ -226,16 +226,16 @@ internal fun Settings(
       itemSpacer(24.dp)
 
       stickyHeader {
-        PreferenceHeader(stringResource(Res.string.settingsAboutCategoryTitle))
+        PreferenceHeader(stringResource(Res.string.settings_about_category_title))
       }
 
       item {
         Preference(
-          title = stringResource(Res.string.settingsAppVersion),
+          title = stringResource(Res.string.settings_app_version),
           summary = {
             Text(
               text = stringResource(
-                Res.string.settingsAppVersionSummary,
+                Res.string.settings_app_version_summary,
                 state.applicationInfo.versionName,
                 state.applicationInfo.versionCode,
               ),
@@ -249,9 +249,9 @@ internal fun Settings(
 
         item {
           Preference(
-            title = stringResource(Res.string.settingsOpenSource),
+            title = stringResource(Res.string.settings_open_source),
             summary = {
-              Text(stringResource(Res.string.settingsOpenSourceSummary))
+              Text(stringResource(Res.string.settings_open_source_summary))
             },
             onClick = { eventSink(SettingsUiEvent.NavigateOpenSource) },
           )
@@ -263,7 +263,7 @@ internal fun Settings(
 
         item {
           Preference(
-            title = stringResource(Res.string.developerSettingsTitle),
+            title = stringResource(Res.string.developer_settings_title),
             onClick = { eventSink(SettingsUiEvent.NavigateDeveloperSettings) },
           )
         }
