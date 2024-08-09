@@ -14,9 +14,9 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_DEFAULT
 import androidx.core.content.getSystemService
-import app.tivi.common.ui.resources.strings.Res
-import app.tivi.common.ui.resources.strings.settingsNotificationsAiringEpisodesSummary
-import app.tivi.common.ui.resources.strings.settingsNotificationsAiringEpisodesTitle
+import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.settings_notifications_airing_episodes_summary
+import app.tivi.common.ui.resources.settings_notifications_airing_episodes_title
 import app.tivi.data.models.Notification
 import app.tivi.data.models.NotificationChannel
 import co.touchlab.kermit.Logger
@@ -71,8 +71,8 @@ class AndroidNotificationManager(
       .apply {
         when (channel) {
           NotificationChannel.EPISODES_AIRING -> {
-            setName(getString(Res.string.settingsNotificationsAiringEpisodesTitle))
-            setDescription(getString(Res.string.settingsNotificationsAiringEpisodesSummary))
+            setName(getString(Res.string.settings_notifications_airing_episodes_title))
+            setDescription(getString(Res.string.settings_notifications_airing_episodes_summary))
             setVibrationEnabled(true)
           }
 

@@ -13,7 +13,7 @@ kotlin {
         implementation(projects.core.base)
         implementation(projects.core.notifications.core)
         api(projects.core.entitlements.core)
-        api(projects.common.ui.resources.strings)
+        api(projects.common.ui.resources)
 
         api(projects.data.models)
         implementation(projects.data.db) // remove this eventually
