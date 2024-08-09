@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdShowPosterImage
 import app.tivi.data.models.ImageType
 import app.tivi.data.models.TiviShow
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BackdropCard(
@@ -40,7 +41,6 @@ fun BackdropCard(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackdropCard(
   show: TiviShow,
@@ -70,7 +70,7 @@ private fun BackdropCardContent(
   Box(modifier = Modifier.fillMaxSize()) {
     AsyncImage(
       model = rememberShowImageModel(show, ImageType.BACKDROP),
-      contentDescription = LocalStrings.current.cdShowPosterImage(show.title ?: "show"),
+      contentDescription = stringResource(Res.string.cdShowPosterImage, show.title ?: "show"),
       modifier = Modifier.matchParentSize(),
       contentScale = ContentScale.Crop,
       alignment = alignment,

@@ -67,12 +67,17 @@ import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
+import app.tivi.common.ui.resources.fmt
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdNavigateUp
+import app.tivi.common.ui.resources.strings.traktRatingText
 import app.tivi.data.compoundmodels.EntryWithShow
 import app.tivi.data.models.Entry
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TrendingShowEntry
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(
   ExperimentalFoundationApi::class,
@@ -261,7 +266,7 @@ fun <ET : Entry> GridItem(
 
           show.traktRating?.let { rating ->
             TextWithIcon(
-              text = LocalStrings.current.traktRatingText(rating * 10),
+              text = stringResource(Res.string.traktRatingText, "%.1f".fmt(rating * 10f)),
               icon = Icons.Default.Star,
             )
           }
@@ -292,7 +297,7 @@ fun EntryGridAppBar(
       IconButton(onClick = onNavigateUp) {
         Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-          contentDescription = LocalStrings.current.cdNavigateUp,
+          contentDescription = stringResource(Res.string.cdNavigateUp),
         )
       }
     },

@@ -8,19 +8,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
-import app.tivi.common.compose.LocalStrings
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdClearText
+import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchTextField(
   value: TextFieldValue,
@@ -53,7 +52,7 @@ fun SearchTextField(
       ) {
         Icon(
           imageVector = Icons.Default.Clear,
-          contentDescription = LocalStrings.current.cdClearText,
+          contentDescription = stringResource(Res.string.cdClearText),
         )
       }
     },

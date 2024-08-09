@@ -71,7 +71,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.ui.ArrowBackForPlatform
@@ -79,6 +78,12 @@ import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.ExpandingText
 import app.tivi.common.compose.ui.RefreshButton
 import app.tivi.common.compose.ui.noIndicationClickable
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdEpisodeDeleted
+import app.tivi.common.ui.resources.strings.cdEpisodeSyncing
+import app.tivi.common.ui.resources.strings.cdEpisodeWatched
+import app.tivi.common.ui.resources.strings.cdNavigateUp
+import app.tivi.common.ui.resources.strings.episodeTitleFallback
 import app.tivi.data.compoundmodels.EpisodeWithWatches
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
@@ -90,6 +95,7 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class ShowSeasonsUiFactory : Ui.Factory {
@@ -184,7 +190,7 @@ internal fun ShowSeasons(
             IconButton(onClick = navigateUp) {
               Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-                contentDescription = LocalStrings.current.cdNavigateUp,
+                contentDescription = stringResource(Res.string.cdNavigateUp),
               )
             }
           },
@@ -403,7 +409,7 @@ private fun EpisodeWithWatchesRow(
 
       Text(
         text = episode.title
-          ?: LocalStrings.current.episodeTitleFallback(episode.number!!),
+          ?: stringResource(Res.string.episodeTitleFallback, episode.number!!),
         style = MaterialTheme.typography.bodyMedium,
       )
     }
@@ -412,7 +418,7 @@ private fun EpisodeWithWatchesRow(
     if (hasPending) {
       Icon(
         imageVector = Icons.Default.CloudUpload,
-        contentDescription = LocalStrings.current.cdEpisodeSyncing,
+        contentDescription = stringResource(Res.string.cdEpisodeSyncing),
         modifier = Modifier.align(Alignment.CenterVertically),
       )
       needSpacer = true
@@ -426,8 +432,8 @@ private fun EpisodeWithWatchesRow(
           else -> Icons.Default.Visibility
         },
         contentDescription = when {
-          onlyPendingDeletes -> LocalStrings.current.cdEpisodeDeleted
-          else -> LocalStrings.current.cdEpisodeWatched
+          onlyPendingDeletes -> stringResource(Res.string.cdEpisodeDeleted)
+          else -> stringResource(Res.string.cdEpisodeWatched)
         },
         modifier = Modifier.align(Alignment.CenterVertically),
       )

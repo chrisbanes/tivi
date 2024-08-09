@@ -65,7 +65,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
@@ -77,6 +76,13 @@ import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.filterShows
+import app.tivi.common.ui.resources.strings.libraryEmptyPrompt
+import app.tivi.common.ui.resources.strings.libraryEmptyTitle
+import app.tivi.common.ui.resources.strings.libraryLastWatched
+import app.tivi.common.ui.resources.strings.libraryTitle
+import app.tivi.common.ui.resources.strings.upnextFilterFollowedShowsOnlyTitle
 import app.tivi.data.compoundmodels.LibraryShow
 import app.tivi.data.models.SortOption
 import app.tivi.data.models.TiviShow
@@ -93,6 +99,7 @@ import com.slack.circuit.runtime.ui.ui
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class LibraryUiFactory : Ui.Factory {
@@ -175,7 +182,7 @@ internal fun Library(
   HazeScaffold(
     topBar = {
       TiviRootScreenAppBar(
-        title = LocalStrings.current.libraryTitle,
+        title = stringResource(Res.string.libraryTitle),
         loggedIn = state.authState == TraktAuthState.LOGGED_IN,
         user = state.user,
         refreshing = state.isLoading,
@@ -289,7 +296,7 @@ private fun LibraryGrid(
               filter = value
               onFilterChanged(value.text)
             },
-            hint = LocalStrings.current.filterShows(lazyPagingItems.itemCount),
+            hint = stringResource(Res.string.filterShows, lazyPagingItems.itemCount),
             modifier = Modifier.fillMaxWidth(),
             onCleared = {
               filter = TextFieldValue()
@@ -313,7 +320,7 @@ private fun LibraryGrid(
           },
           onClick = onToggleIncludeFollowedShows,
           label = {
-            Text(text = LocalStrings.current.upnextFilterFollowedShowsOnlyTitle)
+            Text(text = stringResource(Res.string.upnextFilterFollowedShowsOnlyTitle))
           },
         )
 
@@ -328,8 +335,8 @@ private fun LibraryGrid(
     fullSpanItem {
       if (lazyPagingItems.itemCount == 0 && lazyPagingItems.loadState.refresh != LoadState.Loading) {
         EmptyContent(
-          title = { Text(text = LocalStrings.current.libraryEmptyTitle) },
-          prompt = { Text(text = LocalStrings.current.libraryEmptyPrompt) },
+          title = { Text(text = stringResource(Res.string.libraryEmptyTitle)) },
+          prompt = { Text(text = stringResource(Res.string.libraryEmptyPrompt)) },
           graphic = { Text(text = "\uD83D\uDCFC") },
           modifier = Modifier
             .fillMaxSize()
@@ -444,7 +451,8 @@ private fun LibraryItem(
         )
       } else if (lastWatchedDate != null) {
         Text(
-          text = LocalStrings.current.libraryLastWatched(
+          text = stringResource(
+            Res.string.libraryLastWatched,
             LocalTiviDateFormatter.current.formatShortRelativeTime(lastWatchedDate),
           ),
           style = MaterialTheme.typography.bodySmall,

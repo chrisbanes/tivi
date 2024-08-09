@@ -23,13 +23,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviDateFormatter
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.dateLabel
+import app.tivi.common.ui.resources.strings.timeLabel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +54,7 @@ fun DateTextField(
 
     ClickableReadOnlyOutlinedTextField(
       value = formattedDate.orEmpty(),
-      label = { Text(text = LocalStrings.current.dateLabel) },
+      label = { Text(text = stringResource(Res.string.dateLabel)) },
       onClick = { showDialog = true },
       modifier = Modifier.fillMaxWidth(),
     )
@@ -98,7 +101,7 @@ fun TimeTextField(
 
     ClickableReadOnlyOutlinedTextField(
       value = formattedTime.orEmpty(),
-      label = { Text(text = LocalStrings.current.timeLabel) },
+      label = { Text(text = stringResource(Res.string.timeLabel)) },
       onClick = { showDialog = true },
       modifier = Modifier.fillMaxWidth(),
     )

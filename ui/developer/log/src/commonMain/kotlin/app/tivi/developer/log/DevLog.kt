@@ -25,8 +25,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.tivi.common.compose.HazeScaffold
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.ui.ArrowBackForPlatform
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdNavigateUp
 import app.tivi.screens.DevLogScreen
 import co.touchlab.kermit.Severity
 import com.slack.circuit.runtime.CircuitContext
@@ -34,6 +35,7 @@ import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class DevLogUiFactory : Ui.Factory {
@@ -64,7 +66,7 @@ internal fun DevLog(
           IconButton(onClick = { eventSink(DevLogUiEvent.NavigateUp) }) {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-              contentDescription = LocalStrings.current.cdNavigateUp,
+              contentDescription = stringResource(Res.string.cdNavigateUp),
             )
           }
         },

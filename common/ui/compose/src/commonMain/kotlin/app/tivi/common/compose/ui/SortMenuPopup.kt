@@ -9,9 +9,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import app.tivi.common.compose.LocalStrings
-import app.tivi.common.ui.resources.TiviStrings
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.popupSortAirDate
+import app.tivi.common.ui.resources.strings.popupSortAlpha
+import app.tivi.common.ui.resources.strings.popupSortDateFollowed
+import app.tivi.common.ui.resources.strings.popupSortLastWatched
 import app.tivi.data.models.SortOption
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun ColumnScope.SortDropdownMenuContent(
@@ -21,11 +26,10 @@ internal fun ColumnScope.SortDropdownMenuContent(
   currentSortOption: SortOption? = null,
 ) {
   for (sort in sortOptions) {
-    val strings = LocalStrings.current
     DropdownMenuItem(
       text = {
         Text(
-          text = sort.label(strings),
+          text = stringResource(sort.label),
           fontWeight = if (sort == currentSortOption) FontWeight.Bold else null,
         )
       },
@@ -35,9 +39,9 @@ internal fun ColumnScope.SortDropdownMenuContent(
   }
 }
 
-internal fun SortOption.label(strings: TiviStrings): String = when (this) {
-  SortOption.ALPHABETICAL -> strings.popupSortAlpha
-  SortOption.LAST_WATCHED -> strings.popupSortLastWatched
-  SortOption.DATE_ADDED -> strings.popupSortDateFollowed
-  SortOption.AIR_DATE -> strings.popupSortAirDate
+internal val SortOption.label: StringResource get() = when (this) {
+  SortOption.ALPHABETICAL -> Res.string.popupSortAlpha
+  SortOption.LAST_WATCHED -> Res.string.popupSortLastWatched
+  SortOption.DATE_ADDED -> Res.string.popupSortDateFollowed
+  SortOption.AIR_DATE -> Res.string.popupSortAirDate
 }

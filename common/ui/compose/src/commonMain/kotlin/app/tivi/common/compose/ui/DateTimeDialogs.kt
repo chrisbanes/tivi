@@ -5,12 +5,14 @@ package app.tivi.common.compose.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import app.tivi.common.compose.LocalStrings
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.buttonConfirm
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 expect fun DatePickerDialog(
@@ -19,7 +21,7 @@ expect fun DatePickerDialog(
   selectedDate: LocalDate = remember {
     Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
   },
-  confirmLabel: String = LocalStrings.current.buttonConfirm,
+  confirmLabel: String = stringResource(Res.string.buttonConfirm),
   minimumDate: LocalDate? = null,
   maximumDate: LocalDate? = null,
   title: String = "",
@@ -32,6 +34,6 @@ expect fun TimePickerDialog(
   selectedTime: LocalTime = remember {
     Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
   },
-  confirmLabel: String = LocalStrings.current.buttonConfirm,
+  confirmLabel: String = stringResource(Res.string.buttonConfirm),
   title: String = "",
 )

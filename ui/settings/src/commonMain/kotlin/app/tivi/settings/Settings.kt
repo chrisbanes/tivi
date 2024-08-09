@@ -25,13 +25,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.HazeScaffold
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.itemSpacer
 import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.CheckboxPreference
 import app.tivi.common.compose.ui.Preference
 import app.tivi.common.compose.ui.PreferenceDivider
 import app.tivi.common.compose.ui.PreferenceHeader
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdNavigateUp
+import app.tivi.common.ui.resources.strings.developerSettingsTitle
+import app.tivi.common.ui.resources.strings.settingsAboutCategoryTitle
+import app.tivi.common.ui.resources.strings.settingsAnalyticsDataCollectionSummary
+import app.tivi.common.ui.resources.strings.settingsAnalyticsDataCollectionTitle
+import app.tivi.common.ui.resources.strings.settingsAppVersion
+import app.tivi.common.ui.resources.strings.settingsAppVersionSummary
+import app.tivi.common.ui.resources.strings.settingsCrashDataCollectionSummary
+import app.tivi.common.ui.resources.strings.settingsCrashDataCollectionTitle
+import app.tivi.common.ui.resources.strings.settingsDataSaverSummaryOff
+import app.tivi.common.ui.resources.strings.settingsDataSaverSummaryOn
+import app.tivi.common.ui.resources.strings.settingsDataSaverTitle
+import app.tivi.common.ui.resources.strings.settingsDynamicColorSummary
+import app.tivi.common.ui.resources.strings.settingsDynamicColorTitle
+import app.tivi.common.ui.resources.strings.settingsIgnoreSpecialsSummary
+import app.tivi.common.ui.resources.strings.settingsIgnoreSpecialsTitle
+import app.tivi.common.ui.resources.strings.settingsNotificationsAiringEpisodesSummary
+import app.tivi.common.ui.resources.strings.settingsNotificationsAiringEpisodesTitle
+import app.tivi.common.ui.resources.strings.settingsNotificationsCategoryTitle
+import app.tivi.common.ui.resources.strings.settingsOpenSource
+import app.tivi.common.ui.resources.strings.settingsOpenSourceSummary
+import app.tivi.common.ui.resources.strings.settingsPrivacyCategoryTitle
+import app.tivi.common.ui.resources.strings.settingsThemeTitle
+import app.tivi.common.ui.resources.strings.settingsTitle
+import app.tivi.common.ui.resources.strings.settingsUiCategoryTitle
+import app.tivi.common.ui.resources.strings.viewPrivacyPolicy
 import app.tivi.entitlements.ui.Paywall
 import app.tivi.screens.SettingsScreen
 import com.slack.circuit.runtime.CircuitContext
@@ -39,6 +65,7 @@ import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class SettingsUiFactory : Ui.Factory {
@@ -63,8 +90,6 @@ internal fun Settings(
   // treats it as stable. See: https://issuetracker.google.com/issues/256100927
   val eventSink = state.eventSink
 
-  val strings = LocalStrings.current
-
   if (state.proUpsellVisible) {
     Paywall(
       onDismissRequest = { eventSink(SettingsUiEvent.DismissProUpsell) },
@@ -74,12 +99,12 @@ internal fun Settings(
   HazeScaffold(
     topBar = {
       TopAppBar(
-        title = { Text(strings.settingsTitle) },
+        title = { Text(stringResource(Res.string.settingsTitle)) },
         navigationIcon = {
           IconButton(onClick = { eventSink(SettingsUiEvent.NavigateUp) }) {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-              contentDescription = LocalStrings.current.cdNavigateUp,
+              contentDescription = stringResource(Res.string.cdNavigateUp),
             )
           }
         },
@@ -92,12 +117,12 @@ internal fun Settings(
       modifier = Modifier.fillMaxWidth(),
     ) {
       stickyHeader {
-        PreferenceHeader(LocalStrings.current.settingsUiCategoryTitle)
+        PreferenceHeader(stringResource(Res.string.settingsUiCategoryTitle))
       }
 
       item {
         ThemePreference(
-          title = strings.settingsThemeTitle,
+          title = stringResource(Res.string.settingsThemeTitle),
           selected = state.theme,
           onThemeSelected = { eventSink(SettingsUiEvent.SetTheme(it)) },
         )
@@ -108,8 +133,8 @@ internal fun Settings(
       if (state.dynamicColorsAvailable) {
         item {
           CheckboxPreference(
-            title = strings.settingsDynamicColorTitle,
-            summaryOff = strings.settingsDynamicColorSummary,
+            title = stringResource(Res.string.settingsDynamicColorTitle),
+            summaryOff = stringResource(Res.string.settingsDynamicColorSummary),
             onCheckClicked = { eventSink(SettingsUiEvent.ToggleUseDynamicColors) },
             checked = state.useDynamicColors,
           )
@@ -120,9 +145,9 @@ internal fun Settings(
 
       item {
         CheckboxPreference(
-          title = strings.settingsDataSaverTitle,
-          summaryOff = strings.settingsDataSaverSummaryOff,
-          summaryOn = strings.settingsDataSaverSummaryOn,
+          title = stringResource(Res.string.settingsDataSaverTitle),
+          summaryOff = stringResource(Res.string.settingsDataSaverSummaryOff),
+          summaryOn = stringResource(Res.string.settingsDataSaverSummaryOn),
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleUseLessData) },
           checked = state.useLessData,
         )
@@ -132,8 +157,8 @@ internal fun Settings(
 
       item {
         CheckboxPreference(
-          title = strings.settingsIgnoreSpecialsTitle,
-          summaryOff = strings.settingsIgnoreSpecialsSummary,
+          title = stringResource(Res.string.settingsIgnoreSpecialsTitle),
+          summaryOff = stringResource(Res.string.settingsIgnoreSpecialsSummary),
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleIgnoreSpecials) },
           checked = state.ignoreSpecials,
         )
@@ -142,13 +167,13 @@ internal fun Settings(
       itemSpacer(24.dp)
 
       stickyHeader {
-        PreferenceHeader(LocalStrings.current.settingsNotificationsCategoryTitle)
+        PreferenceHeader(stringResource(Res.string.settingsNotificationsCategoryTitle))
       }
 
       item {
         CheckboxPreference(
-          title = strings.settingsNotificationsAiringEpisodesTitle,
-          summaryOff = strings.settingsNotificationsAiringEpisodesSummary,
+          title = stringResource(Res.string.settingsNotificationsAiringEpisodesTitle),
+          summaryOff = stringResource(Res.string.settingsNotificationsAiringEpisodesSummary),
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled) },
           checked = state.airingEpisodeNotificationsEnabled,
           beforeControl = {
@@ -166,12 +191,12 @@ internal fun Settings(
       itemSpacer(24.dp)
 
       stickyHeader {
-        PreferenceHeader(LocalStrings.current.settingsPrivacyCategoryTitle)
+        PreferenceHeader(stringResource(Res.string.settingsPrivacyCategoryTitle))
       }
 
       item {
         Preference(
-          title = LocalStrings.current.viewPrivacyPolicy,
+          title = stringResource(Res.string.viewPrivacyPolicy),
           onClick = { eventSink(SettingsUiEvent.NavigatePrivacyPolicy) },
         )
       }
@@ -180,8 +205,8 @@ internal fun Settings(
 
       item {
         CheckboxPreference(
-          title = strings.settingsCrashDataCollectionTitle,
-          summaryOff = strings.settingsCrashDataCollectionSummary,
+          title = stringResource(Res.string.settingsCrashDataCollectionTitle),
+          summaryOff = stringResource(Res.string.settingsCrashDataCollectionSummary),
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleCrashDataReporting) },
           checked = state.crashDataReportingEnabled,
         )
@@ -191,8 +216,8 @@ internal fun Settings(
 
       item {
         CheckboxPreference(
-          title = strings.settingsAnalyticsDataCollectionTitle,
-          summaryOff = strings.settingsAnalyticsDataCollectionSummary,
+          title = stringResource(Res.string.settingsAnalyticsDataCollectionTitle),
+          summaryOff = stringResource(Res.string.settingsAnalyticsDataCollectionSummary),
           onCheckClicked = { eventSink(SettingsUiEvent.ToggleAnalyticsDataReporting) },
           checked = state.analyticsDataReportingEnabled,
         )
@@ -201,15 +226,16 @@ internal fun Settings(
       itemSpacer(24.dp)
 
       stickyHeader {
-        PreferenceHeader(LocalStrings.current.settingsAboutCategoryTitle)
+        PreferenceHeader(stringResource(Res.string.settingsAboutCategoryTitle))
       }
 
       item {
         Preference(
-          title = LocalStrings.current.settingsAppVersion,
+          title = stringResource(Res.string.settingsAppVersion),
           summary = {
             Text(
-              text = LocalStrings.current.settingsAppVersionSummary(
+              text = stringResource(
+                Res.string.settingsAppVersionSummary,
                 state.applicationInfo.versionName,
                 state.applicationInfo.versionCode,
               ),
@@ -223,9 +249,9 @@ internal fun Settings(
 
         item {
           Preference(
-            title = LocalStrings.current.settingsOpenSource,
+            title = stringResource(Res.string.settingsOpenSource),
             summary = {
-              Text(LocalStrings.current.settingsOpenSourceSummary)
+              Text(stringResource(Res.string.settingsOpenSourceSummary))
             },
             onClick = { eventSink(SettingsUiEvent.NavigateOpenSource) },
           )
@@ -237,7 +263,7 @@ internal fun Settings(
 
         item {
           Preference(
-            title = LocalStrings.current.developerSettingsTitle,
+            title = stringResource(Res.string.developerSettingsTitle),
             onClick = { eventSink(SettingsUiEvent.NavigateDeveloperSettings) },
           )
         }

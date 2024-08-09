@@ -14,13 +14,16 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_DEFAULT
 import androidx.core.content.getSystemService
-import app.tivi.common.ui.resources.EnTiviStrings
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.settingsNotificationsAiringEpisodesSummary
+import app.tivi.common.ui.resources.strings.settingsNotificationsAiringEpisodesTitle
 import app.tivi.data.models.Notification
 import app.tivi.data.models.NotificationChannel
 import co.touchlab.kermit.Logger
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.getString
 
 @Inject
 class AndroidNotificationManager(
@@ -30,9 +33,6 @@ class AndroidNotificationManager(
   private val notificationManager by lazy { NotificationManagerCompat.from(application) }
   private val alarmManager by lazy { application.getSystemService<AlarmManager>()!! }
   private val logger by lazy { Logger.withTag("NotificationManager") }
-
-  // TODO: this should use the system strings
-  private val strings = EnTiviStrings
 
   override suspend fun schedule(notification: Notification) {
     // We create the channel now ahead of time. We want to limit the amount of work
@@ -66,13 +66,13 @@ class AndroidNotificationManager(
     }
   }
 
-  private fun NotificationManagerCompat.createChannel(channel: NotificationChannel) {
+  private suspend fun NotificationManagerCompat.createChannel(channel: NotificationChannel) {
     val androidChannel = NotificationChannelCompat.Builder(channel.id, IMPORTANCE_DEFAULT)
       .apply {
         when (channel) {
           NotificationChannel.EPISODES_AIRING -> {
-            setName(strings.settingsNotificationsAiringEpisodesTitle)
-            setDescription(strings.settingsNotificationsAiringEpisodesSummary)
+            setName(getString(Res.string.settingsNotificationsAiringEpisodesTitle))
+            setDescription(getString(Res.string.settingsNotificationsAiringEpisodesSummary))
             setVibrationEnabled(true)
           }
 

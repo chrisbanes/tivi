@@ -17,7 +17,6 @@ import app.tivi.common.compose.LocalPreferences
 import app.tivi.common.compose.LocalTiviDateFormatter
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
-import app.tivi.common.compose.ProvideStrings
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.core.analytics.Analytics
 import app.tivi.navigation.DeepLinker
@@ -96,24 +95,22 @@ class DefaultTiviContent(
 
     setSingletonImageLoaderFactory { imageLoader }
 
-    ProvideStrings {
-      CompositionLocalProvider(
-        LocalNavigator provides tiviNavigator,
-        LocalTiviDateFormatter provides tiviDateFormatter,
-        LocalTiviTextCreator provides tiviTextCreator,
-        LocalColorExtractor provides colorExtractor,
-        LocalPreferences provides preferences,
-        LocalWindowSizeClass provides calculateWindowSizeClass(),
-        LocalRetainedStateRegistry provides continuityRetainedStateRegistry(),
-      ) {
-        CircuitCompositionLocals(circuit) {
-          TiviTheme {
-            Home(
-              backStack = backstack,
-              navigator = tiviNavigator,
-              modifier = modifier,
-            )
-          }
+    CompositionLocalProvider(
+      LocalNavigator provides tiviNavigator,
+      LocalTiviDateFormatter provides tiviDateFormatter,
+      LocalTiviTextCreator provides tiviTextCreator,
+      LocalColorExtractor provides colorExtractor,
+      LocalPreferences provides preferences,
+      LocalWindowSizeClass provides calculateWindowSizeClass(),
+      LocalRetainedStateRegistry provides continuityRetainedStateRegistry(),
+    ) {
+      CircuitCompositionLocals(circuit) {
+        TiviTheme {
+          Home(
+            backStack = backstack,
+            navigator = tiviNavigator,
+            modifier = modifier,
+          )
         }
       }
     }

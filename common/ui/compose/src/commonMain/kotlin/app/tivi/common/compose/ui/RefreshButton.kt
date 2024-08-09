@@ -13,7 +13,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.LocalStrings
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdRefresh
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RefreshButton(
@@ -38,7 +40,7 @@ fun RefreshButton(
       } else {
         Icon(
           imageVector = Icons.Default.Refresh,
-          contentDescription = LocalStrings.current.cdRefresh,
+          contentDescription = stringResource(Res.string.cdRefresh),
         )
       }
     }
@@ -56,7 +58,7 @@ fun RefreshButton(
   ) {
     Icon(
       imageVector = Icons.Default.Refresh,
-      contentDescription = LocalStrings.current.cdRefresh,
+      contentDescription = stringResource(Res.string.cdRefresh),
     )
   }
 }

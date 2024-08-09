@@ -48,13 +48,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.ui.EmptyContent
 import app.tivi.common.compose.ui.PosterCard
 import app.tivi.common.compose.ui.SearchTextField
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.searchEmptyTitle
+import app.tivi.common.ui.resources.strings.searchHint
+import app.tivi.common.ui.resources.strings.searchNoresultsPrompt
 import app.tivi.data.models.TiviShow
 import app.tivi.screens.SearchScreen
 import com.slack.circuit.runtime.CircuitContext
@@ -63,6 +66,7 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class SearchUiFactory : Ui.Factory {
@@ -141,7 +145,7 @@ internal fun Search(
             searchQuery = value
             onSearchQueryChanged(value.text)
           },
-          hint = LocalStrings.current.searchHint,
+          hint = stringResource(Res.string.searchHint),
           modifier = Modifier.bodyWidth(),
         )
       }
@@ -165,14 +169,14 @@ internal fun Search(
       EmptyContent(
         title = {
           if (state.query.isEmpty()) {
-            Text(text = LocalStrings.current.searchEmptyTitle)
+            Text(text = stringResource(Res.string.searchEmptyTitle))
           } else {
-            Text(text = LocalStrings.current.searchNoresultsPrompt)
+            Text(text = stringResource(Res.string.searchNoresultsPrompt))
           }
         },
         prompt = {
           if (state.query.isNotEmpty()) {
-            Text(text = LocalStrings.current.searchNoresultsPrompt)
+            Text(text = stringResource(Res.string.searchNoresultsPrompt))
           }
         },
         graphic = { Text(text = "\uD83D\uDD75️\u200D♂️") },

@@ -18,7 +18,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import app.tivi.common.compose.Layout
-import app.tivi.common.compose.LocalStrings
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdShowPoster
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun Backdrop(
@@ -38,11 +40,9 @@ fun Backdrop(
   ) {
     Box {
       if (imageModel != null) {
-        val strings = LocalStrings.current
-
         AsyncImage(
           model = imageModel,
-          contentDescription = strings.cdShowPoster,
+          contentDescription = stringResource(Res.string.cdShowPoster),
           contentScale = ContentScale.Crop,
           modifier = Modifier
             .fillMaxSize()

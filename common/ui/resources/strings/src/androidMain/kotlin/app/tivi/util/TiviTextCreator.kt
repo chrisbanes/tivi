@@ -3,7 +3,8 @@
 
 package app.tivi.util
 
-import app.tivi.common.ui.resources.TiviStrings
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.airsText
 import app.tivi.data.models.TiviShow
 import app.tivi.inject.ActivityScope
 import java.util.Locale
@@ -16,7 +17,6 @@ import me.tatarka.inject.annotations.Inject
 @ActivityScope
 actual class TiviTextCreator(
   override val dateFormatter: TiviDateFormatter,
-  override val strings: TiviStrings,
 ) : CommonTiviTextCreator {
 
   override fun airsText(show: TiviShow): CharSequence? {
@@ -29,7 +29,8 @@ actual class TiviTextCreator(
       .with(airTime.toJavaLocalTime())
       .withZoneSameInstant(dateFormatter.timeZone.toJavaZoneId())
 
-    return strings.airsText(
+    return getStringBlocking(
+      Res.string.airsText,
       localDateTime.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault()),
       dateFormatter.formatShortTime(localDateTime.toLocalTime().toKotlinLocalTime()),
     )

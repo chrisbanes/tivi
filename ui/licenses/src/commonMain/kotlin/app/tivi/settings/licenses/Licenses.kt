@@ -21,16 +21,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.HazeScaffold
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.Preference
 import app.tivi.common.compose.ui.PreferenceHeader
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.cdNavigateUp
+import app.tivi.common.ui.resources.strings.settingsOpenSource
 import app.tivi.screens.LicensesScreen
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class LicensesUiFactory : Ui.Factory {
@@ -56,12 +59,12 @@ internal fun Licenses(
   HazeScaffold(
     topBar = {
       TopAppBar(
-        title = { Text(LocalStrings.current.settingsOpenSource) },
+        title = { Text(stringResource(Res.string.settingsOpenSource)) },
         navigationIcon = {
           IconButton(onClick = { eventSink(LicensesUiEvent.NavigateUp) }) {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-              contentDescription = LocalStrings.current.cdNavigateUp,
+              contentDescription = stringResource(Res.string.cdNavigateUp),
             )
           }
         },

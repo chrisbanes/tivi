@@ -60,7 +60,6 @@ import androidx.paging.LoadState
 import androidx.paging.compose.itemKey
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
-import app.tivi.common.compose.LocalStrings
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.fullSpanItem
@@ -70,6 +69,11 @@ import app.tivi.common.compose.ui.SortChip
 import app.tivi.common.compose.ui.TiviRootScreenAppBar
 import app.tivi.common.compose.ui.noIndicationClickable
 import app.tivi.common.compose.ui.plus
+import app.tivi.common.ui.resources.strings.Res
+import app.tivi.common.ui.resources.strings.upnextEmptyPrompt
+import app.tivi.common.ui.resources.strings.upnextEmptyTitle
+import app.tivi.common.ui.resources.strings.upnextFilterFollowedShowsOnlyTitle
+import app.tivi.common.ui.resources.strings.upnextTitle
 import app.tivi.data.imagemodels.EpisodeImageModel
 import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
@@ -94,6 +98,7 @@ import kotlinx.coroutines.launch
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.stringResource
 
 @Inject
 class UpNextUiFactory : Ui.Factory {
@@ -180,7 +185,7 @@ internal fun UpNext(
   HazeScaffold(
     topBar = {
       TiviRootScreenAppBar(
-        title = LocalStrings.current.upnextTitle,
+        title = stringResource(Res.string.upnextTitle),
         loggedIn = state.authState == TraktAuthState.LOGGED_IN,
         user = state.user,
         refreshing = state.isLoading,
@@ -247,8 +252,8 @@ internal fun UpNext(
         if (state.items.itemCount == 0 && state.items.loadState.refresh != LoadState.Loading) {
           fullSpanItem {
             EmptyContent(
-              title = { Text(text = LocalStrings.current.upnextEmptyTitle) },
-              prompt = { Text(text = LocalStrings.current.upnextEmptyPrompt) },
+              title = { Text(text = stringResource(Res.string.upnextEmptyTitle)) },
+              prompt = { Text(text = stringResource(Res.string.upnextEmptyPrompt)) },
               graphic = { Text(text = "\uD83D\uDC7B") },
               modifier = Modifier
                 .fillMaxSize()
@@ -321,7 +326,7 @@ private fun UpNextFilterRow(
       },
       onClick = onToggleFollowedShowsOnly,
       label = {
-        Text(text = LocalStrings.current.upnextFilterFollowedShowsOnlyTitle)
+        Text(text = stringResource(Res.string.upnextFilterFollowedShowsOnlyTitle))
       },
     )
 
