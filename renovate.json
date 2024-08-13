@@ -26,7 +26,8 @@
       "groupSlug": "revenuecat",
       "matchPackagePrefixes": [
         "PurchasesHybrid"
-      ]
+      ],
+      "enabled": false
     },
     {
       "description": "Automatically merge minor and patch-level updates",
