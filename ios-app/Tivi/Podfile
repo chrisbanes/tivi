@@ -4,8 +4,8 @@ target 'Tivi' do
   use_frameworks!
 
   pod 'AppAuth', '1.7.5'
-  pod 'FirebaseAnalytics', '11.0.0'
-  pod 'FirebaseCrashlytics', '11.0.0'
+  pod 'FirebaseAnalytics', '11.1.0'
+  pod 'FirebaseCrashlytics', '11.1.0'
   pod 'PurchasesHybridCommon', '13.0.1'
   pod 'PurchasesHybridCommonUI', '13.0.1'
 end
