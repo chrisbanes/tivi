@@ -63,8 +63,7 @@ jobs:
             :android-app:app:bundle \
             -x assembleNonMinifiedRelease \
             -x bundleNonMinifiedRelease \
-            -Pandroidx.baselineprofile.skipgeneration=true \
-            --no-configuration-cache
+            -Pandroidx.baselineprofile.skipgeneration=true
 
       - name: Clean secrets
         if: always()
