@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-private const val BUFFER_SIZE: Int = 100
+private const val BUFFER_SIZE: Int = 300
 
 object RecordingLoggerWriter : LogWriter() {
-  private val _buffer = MutableStateFlow<List<LogMessage>>(ArrayList(BUFFER_SIZE))
+  private val _buffer = MutableStateFlow<List<LogMessage>>(emptyList())
 
   val buffer: Flow<List<LogMessage>> = _buffer.asStateFlow()
 
@@ -25,12 +25,12 @@ object RecordingLoggerWriter : LogWriter() {
 
   private fun addLog(logMessage: LogMessage) {
     _buffer.update { logs ->
-      logs.toMutableList().apply {
-        while (isNotEmpty() && logs.size > BUFFER_SIZE - 1) {
-          removeFirst()
-        }
-        add(logMessage)
+      val newLogs = ArrayDeque(logs)
+      while (newLogs.size >= BUFFER_SIZE) {
+        newLogs.removeFirst()
       }
+      newLogs.addLast(logMessage)
+      newLogs.toList()
     }
   }
 }
