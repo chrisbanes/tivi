@@ -21,7 +21,7 @@ actual class TiviTextCreator(
   override val dateFormatter: TiviDateFormatter,
 ) : CommonTiviTextCreator {
 
-  override fun airsText(show: TiviShow): CharSequence? {
+  override fun airsText(show: TiviShow): String? {
     val airTime = show.airsTime ?: return null
     val airTz = show.airsTimeZone ?: return null
     val airDay = show.airsDay ?: return null

@@ -446,7 +446,7 @@ private fun LibraryItem(
           text = textCreator.followedShowEpisodeWatchStatus(
             episodeCount = totalEpisodeCount,
             watchedEpisodeCount = watchedEpisodeCount,
-          ).toString(),
+          ),
           style = MaterialTheme.typography.bodySmall,
         )
       } else if (lastWatchedDate != null) {
