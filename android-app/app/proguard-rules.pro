@@ -15,11 +15,6 @@
     native <methods>;
 }
 
-# We only need to keep ComposeView
--keep public class androidx.compose.ui.platform.ComposeView {
-    public <init>(android.content.Context, android.util.AttributeSet);
-}
-
 # For enumeration classes
 -keepclassmembers enum * {
     public static **[] values();
