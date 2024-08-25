@@ -10,7 +10,8 @@ import co.touchlab.kermit.Logger
 internal object CrashlyticsAndroidInitializer : AppInitializer {
   override fun initialize() {
     enableCrashlytics()
+
     // Add Crashlytics log writer
-    Logger.addLogWriter(CrashlyticsIosLoggerWriter)
+    Logger.addLogWriter(CrashlyticsLoggerWriter())
   }
 }

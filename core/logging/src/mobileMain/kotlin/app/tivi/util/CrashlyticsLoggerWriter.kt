@@ -7,11 +7,13 @@ import co.touchlab.crashkios.crashlytics.CrashlyticsKotlin
 import co.touchlab.kermit.LogWriter
 import co.touchlab.kermit.Severity
 
-internal object CrashlyticsIosLoggerWriter : LogWriter() {
+internal class CrashlyticsLoggerWriter(
+  private val minSeverity: Severity = Severity.Warn,
+) : LogWriter() {
 
-//  override fun setUserId(id: String) {
-//    CrashlyticsKotlin.setCustomValue("username", id)
-//  }
+  override fun isLoggable(severity: Severity): Boolean {
+    return severity >= minSeverity
+  }
 
   override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
     CrashlyticsKotlin.logMessage(message)
