@@ -15,6 +15,6 @@ internal object CrashlyticsIosInitializer : AppInitializer {
     setCrashlyticsUnhandledExceptionHook()
 
     // Add Crashlytics log writer
-    Logger.addLogWriter(CrashlyticsIosLoggerWriter)
+    Logger.addLogWriter(CrashlyticsLoggerWriter())
   }
 }
