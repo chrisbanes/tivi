@@ -16,10 +16,27 @@ class LicensesStoreImpl(
 
   override suspend fun getLicenses(): List<LicenseItem> {
     return licenses ?: try {
-      fetcher.value.invoke().also { licenses = it }
+      fetcher.value.invoke()
+        .filterNot(::isKmpTargetDependency)
+        .also { licenses = it }
     } catch (e: Exception) {
       Logger.e(e) { "Exception whilst fetching licenses" }
       emptyList()
+    }
+  }
+
+  private companion object {
+    val TARGET_SUFFIXES = setOf(
+      "iosarm64",
+      "iossimulatorarm64",
+      "android",
+      "jvm",
+    )
+
+    fun isKmpTargetDependency(item: LicenseItem): Boolean {
+      return TARGET_SUFFIXES.any { suffix ->
+        item.artifactId.endsWith(suffix)
+      }
     }
   }
 }
