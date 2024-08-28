@@ -83,7 +83,7 @@ circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = 
 
 compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.5.0"
 
-crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.6"
+crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.9.0"
 
 haze-haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
