@@ -12,4 +12,29 @@ internal class AppAuthAuthStateWrapper(
   override val refreshToken: String get() = authState.refreshToken.orEmpty()
   override val isAuthorized: Boolean get() = authState.isAuthorized
   override fun serializeToJson(): String = authState.jsonSerializeString()
+
+  override fun toString(): String {
+    return buildString {
+      append("AppAuthAuthStateWrapper(authState=")
+      append(authState)
+      append(", accessToken='")
+      append(accessToken)
+      append("', refreshToken='")
+      append(refreshToken)
+      append("', isAuthorized=")
+      append(isAuthorized)
+      append(")")
+    }
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+    other as AppAuthAuthStateWrapper
+    return authState == other.authState
+  }
+
+  override fun hashCode(): Int {
+    return authState.hashCode()
+  }
 }
