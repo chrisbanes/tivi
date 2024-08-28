@@ -25,6 +25,8 @@ kotlin {
 
         api(projects.common.ui.screens)
         api(libs.circuit.foundation)
+        implementation(libs.circuit.overlay)
+        implementation(libs.circuitx.overlays)
         implementation(libs.circuit.retained)
 
         implementation(compose.materialIconsExtended)

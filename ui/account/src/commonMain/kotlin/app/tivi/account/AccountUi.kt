@@ -119,10 +119,10 @@ internal fun AccountUi(
         TextButton(onClick = login) {
           Text(text = stringResource(Res.string.refresh_credentials))
         }
-      }
 
-      OutlinedButton(onClick = logout) {
-        Text(text = stringResource(Res.string.logout))
+        OutlinedButton(onClick = logout) {
+          Text(text = stringResource(Res.string.logout))
+        }
       }
     }
 
