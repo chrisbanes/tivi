@@ -12,8 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import app.tivi.inject.ApplicationScope
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.channels.trySendBlocking
 import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState as AppAuthAuthState
 import net.openid.appauth.AuthorizationService
@@ -29,18 +28,20 @@ class AndroidTraktLoginAction(
 ) : TraktLoginAction {
   private lateinit var launcher: ActivityResultLauncher<Unit>
 
-  private val resultChannel = Channel<AuthState?>()
+  private val resultChannel = Channel<Result<AuthState>>()
 
   internal fun registerActivityWatcher() {
     val callback = object : ActivityLifecycleCallbacksAdapter() {
-      val launcherIntent = Intent(Intent.ACTION_MAIN, null).apply {
-        addCategory(Intent.CATEGORY_LAUNCHER)
+      val launcherActivities by lazy {
+        val launcherIntent = Intent(Intent.ACTION_MAIN, null).apply {
+          addCategory(Intent.CATEGORY_LAUNCHER)
+        }
+        application.packageManager.queryIntentActivities(launcherIntent, 0)
       }
-      val appList = application.packageManager.queryIntentActivities(launcherIntent, 0)
 
       override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
         if (activity is ComponentActivity &&
-          appList.any { it.activityInfo.name == activity::class.qualifiedName }
+          launcherActivities.any { it.activityInfo.name == activity::class.qualifiedName }
         ) {
           register(activity)
         }
@@ -65,13 +66,14 @@ class AndroidTraktLoginAction(
             val state = AppAuthAuthState()
               .apply { update(tokenResponse, ex) }
               .let(::AppAuthAuthStateWrapper)
-            resultChannel.trySend(state)
+
+            resultChannel.trySendBlocking(Result.success(state))
           }
         }
 
         error != null -> {
           Logger.d(error) { "AuthException" }
-          resultChannel.trySend(null)
+          resultChannel.trySendBlocking(Result.failure(error))
         }
       }
     }
@@ -79,7 +81,7 @@ class AndroidTraktLoginAction(
 
   override suspend operator fun invoke(): AuthState? {
     launcher.launch(Unit)
-    return resultChannel.receiveAsFlow().first()
+    return resultChannel.receive().getOrNull()
   }
 }
 

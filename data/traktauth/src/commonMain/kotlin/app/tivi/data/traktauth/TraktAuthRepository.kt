@@ -57,11 +57,10 @@ class TraktAuthRepository(
 
   suspend fun login(): AuthState? {
     logger.d { "login()" }
-    return loginAction.value()
-      .also { updateAuthState(authState = it ?: AuthState.Empty) }
-      .also {
-        logger.d { "Login finished. Result: $it" }
-      }
+    return loginAction.value().also {
+      logger.d { "Login finished. Result: $it" }
+      updateAuthState(authState = it ?: AuthState.Empty)
+    }
   }
 
   suspend fun refreshTokens(): AuthState? {
@@ -71,9 +70,9 @@ class TraktAuthRepository(
         logger.d { "Calling refreshTokenAction with $currentState" }
         refreshTokenAction.value.invoke(currentState)
       }
-      .also { updateAuthState(authState = it ?: AuthState.Empty) }
       .also {
         logger.d { "refreshTokens finished. Result: $it" }
+        updateAuthState(authState = it ?: AuthState.Empty)
       }
   }
 
