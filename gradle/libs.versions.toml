@@ -88,7 +88,7 @@ crashkios-crashlytics = "co.touchlab.crashkios:crashlytics:0.8.6"
 haze-haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
 
-tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.1.0"
+tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.1.1"
 
 google-firebase-analytics = "com.google.firebase:firebase-analytics:22.1.0"
 google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:19.0.3"
