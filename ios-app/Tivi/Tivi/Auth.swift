@@ -86,7 +86,8 @@ class IosTraktLoginAction: TraktLoginAction {
         return await withCheckedContinuation { continuation in
             self.appDelegate.currentAuthorizationFlow = OIDAuthState.authState(
                 byPresenting: request,
-                presenting: self.uiViewController()
+                presenting: self.uiViewController(),
+                prefersEphemeralSession: true
             ) { authState, _ in
                 if let authState = authState {
                     let tiviAuthState = SimpleAuthState(
