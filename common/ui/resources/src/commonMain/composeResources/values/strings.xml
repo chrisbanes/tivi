@@ -93,6 +93,9 @@
   <string name="popup_sort_date_followed">Date followed</string>
   <string name="popup_sort_last_watched">Last watched</string>
   <string name="refresh_credentials">Refresh credentials</string>
+  <string name="account_delete_account_cta">Delete Account</string>
+  <string name="account_delete_confirmation_title">Delete Trakt.tv Account</string>
+  <string name="account_delete_confirmation_message">We will now open the the Trakt.tv website, where you can continue to delete your account. Do you wish to continue?</string>
   <string name="runtime_title">Length</string>
   <string name="search_empty_title">Enter a query above</string>
   <string name="search_hint">Search for shows</string>
@@ -100,6 +103,7 @@
   <string name="search_noresults_prompt">Made a typo?</string>
   <string name="search_noresults_title">No results found</string>
   <string name="settings_about_category_title">About Tivi</string>
+  <string name="settings_account_category_title">Account</string>
   <string name="settings_app_version">Version</string>
   <string name="settings_analytics_data_collection_title">Report app usage</string>
   <string name="settings_analytics_data_collection_summary">Send anonymous details about how you use the application.</string>
@@ -163,6 +167,8 @@
   <string name="settings_app_version_summary">v%1$s (%2$d)</string>
   <string name="trakt_rating_text">%1$s%</string>
   <string name="trakt_rating_votes">%1$sk votes</string>
+  <string name="dialog_yes">Yes</string>
+  <string name="dialog_no">No</string>
   <plurals name="followed_watch_stats_to_watch">
     <item quantity="one">%1$d episode to watch</item>
     <item quantity="other">%1$d episodes to watch</item>

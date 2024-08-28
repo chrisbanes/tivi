@@ -76,6 +76,7 @@ chucker-library = { module = "com.github.chuckerteam.chucker:library", version.r
 
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
 circuitx-gestureNavigation = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
+circuitx-overlays = { module = "com.slack.circuit:circuitx-overlays", version.ref = "circuit" }
 circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
 circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
 circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }

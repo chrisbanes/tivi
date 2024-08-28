@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.AutoMode
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Loyalty
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -32,9 +34,15 @@ import app.tivi.common.compose.ui.Preference
 import app.tivi.common.compose.ui.PreferenceDivider
 import app.tivi.common.compose.ui.PreferenceHeader
 import app.tivi.common.ui.resources.Res
+import app.tivi.common.ui.resources.account_delete_account_cta
+import app.tivi.common.ui.resources.account_delete_confirmation_message
+import app.tivi.common.ui.resources.account_delete_confirmation_title
 import app.tivi.common.ui.resources.cd_navigate_up
 import app.tivi.common.ui.resources.developer_settings_title
+import app.tivi.common.ui.resources.dialog_no
+import app.tivi.common.ui.resources.dialog_yes
 import app.tivi.common.ui.resources.settings_about_category_title
+import app.tivi.common.ui.resources.settings_account_category_title
 import app.tivi.common.ui.resources.settings_analytics_data_collection_summary
 import app.tivi.common.ui.resources.settings_analytics_data_collection_title
 import app.tivi.common.ui.resources.settings_app_version
@@ -60,10 +68,16 @@ import app.tivi.common.ui.resources.settings_ui_category_title
 import app.tivi.common.ui.resources.view_privacy_policy
 import app.tivi.entitlements.ui.Paywall
 import app.tivi.screens.SettingsScreen
+import com.slack.circuit.overlay.ContentWithOverlays
+import com.slack.circuit.overlay.LocalOverlayHost
+import com.slack.circuit.overlay.OverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
+import com.slack.circuitx.overlays.DialogResult
+import com.slack.circuitx.overlays.alertDialogOverlay
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
 
@@ -96,182 +110,233 @@ internal fun Settings(
     )
   }
 
-  HazeScaffold(
-    topBar = {
-      TopAppBar(
-        title = { Text(stringResource(Res.string.settings_title)) },
-        navigationIcon = {
-          IconButton(onClick = { eventSink(SettingsUiEvent.NavigateUp) }) {
-            Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
-              contentDescription = stringResource(Res.string.cd_navigate_up),
-            )
-          }
-        },
-      )
-    },
-    modifier = modifier,
-  ) { contentPadding ->
-    LazyColumn(
-      contentPadding = contentPadding,
-      modifier = Modifier.fillMaxWidth(),
-    ) {
-      stickyHeader {
-        PreferenceHeader(stringResource(Res.string.settings_ui_category_title))
-      }
-
-      item {
-        ThemePreference(
-          title = stringResource(Res.string.settings_theme_title),
-          selected = state.theme,
-          onThemeSelected = { eventSink(SettingsUiEvent.SetTheme(it)) },
-        )
-      }
-
-      item { PreferenceDivider() }
-
-      if (state.dynamicColorsAvailable) {
-        item {
-          CheckboxPreference(
-            title = stringResource(Res.string.settings_dynamic_color_title),
-            summaryOff = stringResource(Res.string.settings_dynamic_color_summary),
-            onCheckClicked = { eventSink(SettingsUiEvent.ToggleUseDynamicColors) },
-            checked = state.useDynamicColors,
-          )
-        }
-
-        item { PreferenceDivider() }
-      }
-
-      item {
-        CheckboxPreference(
-          title = stringResource(Res.string.settings_data_saver_title),
-          summaryOff = stringResource(Res.string.settings_data_saver_summary_off),
-          summaryOn = stringResource(Res.string.settings_data_saver_summary_on),
-          onCheckClicked = { eventSink(SettingsUiEvent.ToggleUseLessData) },
-          checked = state.useLessData,
-        )
-      }
-
-      item { PreferenceDivider() }
-
-      item {
-        CheckboxPreference(
-          title = stringResource(Res.string.settings_ignore_specials_title),
-          summaryOff = stringResource(Res.string.settings_ignore_specials_summary),
-          onCheckClicked = { eventSink(SettingsUiEvent.ToggleIgnoreSpecials) },
-          checked = state.ignoreSpecials,
-        )
-      }
-
-      itemSpacer(24.dp)
-
-      stickyHeader {
-        PreferenceHeader(stringResource(Res.string.settings_notifications_category_title))
-      }
-
-      item {
-        CheckboxPreference(
-          title = stringResource(Res.string.settings_notifications_airing_episodes_title),
-          summaryOff = stringResource(Res.string.settings_notifications_airing_episodes_summary),
-          onCheckClicked = { eventSink(SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled) },
-          checked = state.airingEpisodeNotificationsEnabled,
-          beforeControl = {
-            if (!state.isPro) {
+  ContentWithOverlays {
+    HazeScaffold(
+      topBar = {
+        TopAppBar(
+          title = { Text(stringResource(Res.string.settings_title)) },
+          navigationIcon = {
+            IconButton(onClick = { eventSink(SettingsUiEvent.NavigateUp) }) {
               Icon(
-                imageVector = Icons.Default.Loyalty,
-                tint = MaterialTheme.colorScheme.primary,
-                contentDescription = null,
+                imageVector = Icons.AutoMirrored.Filled.ArrowBackForPlatform,
+                contentDescription = stringResource(Res.string.cd_navigate_up),
               )
             }
           },
         )
-      }
+      },
+      modifier = modifier,
+    ) { contentPadding ->
+      val overlayHost = LocalOverlayHost.current
+      val scope = rememberCoroutineScope()
 
-      itemSpacer(24.dp)
+      LazyColumn(
+        contentPadding = contentPadding,
+        modifier = Modifier.fillMaxWidth(),
+      ) {
+        stickyHeader {
+          PreferenceHeader(stringResource(Res.string.settings_ui_category_title))
+        }
 
-      stickyHeader {
-        PreferenceHeader(stringResource(Res.string.settings_privacy_category_title))
-      }
+        item {
+          ThemePreference(
+            title = stringResource(Res.string.settings_theme_title),
+            selected = state.theme,
+            onThemeSelected = { eventSink(SettingsUiEvent.SetTheme(it)) },
+          )
+        }
 
-      item {
-        Preference(
-          title = stringResource(Res.string.view_privacy_policy),
-          onClick = { eventSink(SettingsUiEvent.NavigatePrivacyPolicy) },
-        )
-      }
+        item { PreferenceDivider() }
 
-      item { PreferenceDivider() }
-
-      item {
-        CheckboxPreference(
-          title = stringResource(Res.string.settings_crash_data_collection_title),
-          summaryOff = stringResource(Res.string.settings_crash_data_collection_summary),
-          onCheckClicked = { eventSink(SettingsUiEvent.ToggleCrashDataReporting) },
-          checked = state.crashDataReportingEnabled,
-        )
-      }
-
-      item { PreferenceDivider() }
-
-      item {
-        CheckboxPreference(
-          title = stringResource(Res.string.settings_analytics_data_collection_title),
-          summaryOff = stringResource(Res.string.settings_analytics_data_collection_summary),
-          onCheckClicked = { eventSink(SettingsUiEvent.ToggleAnalyticsDataReporting) },
-          checked = state.analyticsDataReportingEnabled,
-        )
-      }
-
-      itemSpacer(24.dp)
-
-      stickyHeader {
-        PreferenceHeader(stringResource(Res.string.settings_about_category_title))
-      }
-
-      item {
-        Preference(
-          title = stringResource(Res.string.settings_app_version),
-          summary = {
-            Text(
-              text = stringResource(
-                Res.string.settings_app_version_summary,
-                state.applicationInfo.versionName,
-                state.applicationInfo.versionCode,
-              ),
+        if (state.dynamicColorsAvailable) {
+          item {
+            CheckboxPreference(
+              title = stringResource(Res.string.settings_dynamic_color_title),
+              summaryOff = stringResource(Res.string.settings_dynamic_color_summary),
+              onCheckClicked = { eventSink(SettingsUiEvent.ToggleUseDynamicColors) },
+              checked = state.useDynamicColors,
             )
-          },
-        )
-      }
+          }
 
-      if (state.openSourceLicenseAvailable) {
+          item { PreferenceDivider() }
+        }
+
+        item {
+          CheckboxPreference(
+            title = stringResource(Res.string.settings_data_saver_title),
+            summaryOff = stringResource(Res.string.settings_data_saver_summary_off),
+            summaryOn = stringResource(Res.string.settings_data_saver_summary_on),
+            onCheckClicked = { eventSink(SettingsUiEvent.ToggleUseLessData) },
+            checked = state.useLessData,
+          )
+        }
+
         item { PreferenceDivider() }
 
         item {
-          Preference(
-            title = stringResource(Res.string.settings_open_source),
-            summary = {
-              Text(stringResource(Res.string.settings_open_source_summary))
+          CheckboxPreference(
+            title = stringResource(Res.string.settings_ignore_specials_title),
+            summaryOff = stringResource(Res.string.settings_ignore_specials_summary),
+            onCheckClicked = { eventSink(SettingsUiEvent.ToggleIgnoreSpecials) },
+            checked = state.ignoreSpecials,
+          )
+        }
+
+        itemSpacer(24.dp)
+
+        stickyHeader {
+          PreferenceHeader(stringResource(Res.string.settings_notifications_category_title))
+        }
+
+        item {
+          CheckboxPreference(
+            title = stringResource(Res.string.settings_notifications_airing_episodes_title),
+            summaryOff = stringResource(Res.string.settings_notifications_airing_episodes_summary),
+            onCheckClicked = { eventSink(SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled) },
+            checked = state.airingEpisodeNotificationsEnabled,
+            beforeControl = {
+              if (!state.isPro) {
+                Icon(
+                  imageVector = Icons.Default.Loyalty,
+                  tint = MaterialTheme.colorScheme.primary,
+                  contentDescription = null,
+                )
+              }
             },
-            onClick = { eventSink(SettingsUiEvent.NavigateOpenSource) },
           )
         }
-      }
 
-      if (state.showDeveloperSettings) {
-        item { PreferenceDivider() }
+        itemSpacer(24.dp)
+
+        if (state.isLoggedIn) {
+          stickyHeader {
+            PreferenceHeader(stringResource(Res.string.settings_account_category_title))
+          }
+
+          if (state.showDeleteAccount) {
+            item {
+              Preference(
+                title = stringResource(Res.string.account_delete_account_cta),
+                onClick = {
+                  scope.launch {
+                    val result = overlayHost.showDeleteAccountConfirmationDialog()
+                    if (result == DialogResult.Confirm) {
+                      eventSink(SettingsUiEvent.DeleteAccount)
+                    }
+                  }
+                },
+              )
+            }
+          }
+
+          itemSpacer(24.dp)
+        }
+
+        stickyHeader {
+          PreferenceHeader(stringResource(Res.string.settings_privacy_category_title))
+        }
 
         item {
           Preference(
-            title = stringResource(Res.string.developer_settings_title),
-            onClick = { eventSink(SettingsUiEvent.NavigateDeveloperSettings) },
+            title = stringResource(Res.string.view_privacy_policy),
+            onClick = { eventSink(SettingsUiEvent.NavigatePrivacyPolicy) },
           )
         }
-      }
 
-      itemSpacer(16.dp)
+        item { PreferenceDivider() }
+
+        item {
+          CheckboxPreference(
+            title = stringResource(Res.string.settings_crash_data_collection_title),
+            summaryOff = stringResource(Res.string.settings_crash_data_collection_summary),
+            onCheckClicked = { eventSink(SettingsUiEvent.ToggleCrashDataReporting) },
+            checked = state.crashDataReportingEnabled,
+          )
+        }
+
+        item { PreferenceDivider() }
+
+        item {
+          CheckboxPreference(
+            title = stringResource(Res.string.settings_analytics_data_collection_title),
+            summaryOff = stringResource(Res.string.settings_analytics_data_collection_summary),
+            onCheckClicked = { eventSink(SettingsUiEvent.ToggleAnalyticsDataReporting) },
+            checked = state.analyticsDataReportingEnabled,
+          )
+        }
+
+        itemSpacer(24.dp)
+
+        stickyHeader {
+          PreferenceHeader(stringResource(Res.string.settings_about_category_title))
+        }
+
+        item {
+          Preference(
+            title = stringResource(Res.string.settings_app_version),
+            summary = {
+              Text(
+                text = stringResource(
+                  Res.string.settings_app_version_summary,
+                  state.applicationInfo.versionName,
+                  state.applicationInfo.versionCode,
+                ),
+              )
+            },
+          )
+        }
+
+        if (state.openSourceLicenseAvailable) {
+          item { PreferenceDivider() }
+
+          item {
+            Preference(
+              title = stringResource(Res.string.settings_open_source),
+              summary = {
+                Text(stringResource(Res.string.settings_open_source_summary))
+              },
+              onClick = { eventSink(SettingsUiEvent.NavigateOpenSource) },
+            )
+          }
+        }
+
+        if (state.showDeveloperSettings) {
+          item { PreferenceDivider() }
+
+          item {
+            Preference(
+              title = stringResource(Res.string.developer_settings_title),
+              onClick = { eventSink(SettingsUiEvent.NavigateDeveloperSettings) },
+            )
+          }
+        }
+
+        itemSpacer(16.dp)
+      }
     }
   }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+private suspend fun OverlayHost.showDeleteAccountConfirmationDialog(): DialogResult {
+  return show(
+    alertDialogOverlay(
+      title = { Text(stringResource(Res.string.account_delete_confirmation_title)) },
+      text = { Text(stringResource(Res.string.account_delete_confirmation_message)) },
+      confirmButton = { onClick ->
+        Button(
+          onClick = onClick,
+          content = { Text(stringResource(Res.string.dialog_yes)) },
+        )
+      },
+      dismissButton = { onClick ->
+        Button(
+          onClick = onClick,
+          content = { Text(stringResource(Res.string.dialog_no)) },
+        )
+      },
+    ),
+  )
 }
 
 @Composable

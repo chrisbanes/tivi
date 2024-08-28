@@ -4,6 +4,8 @@
 package app.tivi.settings
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -17,6 +19,8 @@ import app.tivi.core.permissions.Permission.REMOTE_NOTIFICATION
 import app.tivi.core.permissions.PermissionState
 import app.tivi.core.permissions.PermissionsController
 import app.tivi.core.permissions.performPermissionedAction
+import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.entitlements.EntitlementManager
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.screens.LicensesScreen
@@ -50,11 +54,13 @@ class SettingsPresenter(
   preferences: Lazy<TiviPreferences>,
   permissionsController: Lazy<PermissionsController>,
   entitlements: Lazy<EntitlementManager>,
+  observeTraktAuthState: Lazy<ObserveTraktAuthState>,
   private val applicationInfo: ApplicationInfo,
 ) : Presenter<SettingsUiState> {
   private val preferences by preferences
   private val permissionsController by permissionsController
   private val entitlements by entitlements
+  private val observeTraktAuthState by observeTraktAuthState
 
   @Composable
   override fun present(): SettingsUiState {
@@ -65,6 +71,8 @@ class SettingsPresenter(
     val crashDataReportingEnabled by preferences.reportAppCrashes.collectAsState()
     val analyticsDataReportingEnabled by preferences.reportAnalytics.collectAsState()
 
+    val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
+
     val isPro by produceState(initialValue = false, entitlements) {
       entitlements.observeProEntitlement().collect { value = it }
     }
@@ -72,6 +80,10 @@ class SettingsPresenter(
     var proUpsellVisible by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(observeTraktAuthState) {
+      observeTraktAuthState(Unit)
+    }
 
     fun eventSink(event: SettingsUiEvent) {
       when (event) {
@@ -133,6 +145,10 @@ class SettingsPresenter(
         SettingsUiEvent.NavigateDeveloperSettings -> navigator.goTo(DevSettingsScreen)
 
         SettingsUiEvent.DismissProUpsell -> proUpsellVisible = false
+
+        SettingsUiEvent.DeleteAccount -> {
+          navigator.goTo(UrlScreen("https://trakt.tv/settings"))
+        }
       }
     }
 
@@ -150,6 +166,8 @@ class SettingsPresenter(
       showDeveloperSettings = applicationInfo.flavor == Flavor.Qa,
       proUpsellVisible = proUpsellVisible,
       isPro = isPro,
+      isLoggedIn = authState == TraktAuthState.LOGGED_IN,
+      showDeleteAccount = authState == TraktAuthState.LOGGED_IN,
       eventSink = ::eventSink,
     )
   }

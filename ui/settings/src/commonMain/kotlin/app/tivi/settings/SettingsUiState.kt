@@ -23,6 +23,8 @@ data class SettingsUiState(
   val showDeveloperSettings: Boolean,
   val proUpsellVisible: Boolean,
   val isPro: Boolean,
+  val isLoggedIn: Boolean,
+  val showDeleteAccount: Boolean,
   val eventSink: (SettingsUiEvent) -> Unit,
 ) : CircuitUiState
 
@@ -38,5 +40,6 @@ sealed interface SettingsUiEvent : CircuitUiEvent {
   data object ToggleAnalyticsDataReporting : SettingsUiEvent
   data object ToggleAiringEpisodeNotificationsEnabled : SettingsUiEvent
   data object DismissProUpsell : SettingsUiEvent
+  data object DeleteAccount : SettingsUiEvent
   data class SetTheme(val theme: TiviPreferences.Theme) : SettingsUiEvent
 }
