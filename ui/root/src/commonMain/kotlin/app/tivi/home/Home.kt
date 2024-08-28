@@ -283,6 +283,7 @@ private fun HomeNavigationRail(
         label = { Text(text = stringResource(item.label)) },
         selected = selectedNavigation == item.screen,
         onClick = { onNavigationSelected(item.screen) },
+        modifier = Modifier.testTag(item.tag),
       )
     }
   }
@@ -312,6 +313,7 @@ private fun HomeNavigationDrawer(
         label = { Text(text = stringResource(item.label)) },
         selected = selectedNavigation == item.screen,
         onClick = { onNavigationSelected(item.screen) },
+        modifier = Modifier.testTag(item.tag),
       )
     }
   }
