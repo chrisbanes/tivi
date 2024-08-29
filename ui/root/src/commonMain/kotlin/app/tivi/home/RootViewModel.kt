@@ -8,15 +8,20 @@ import app.tivi.domain.interactors.LogoutTrakt
 import app.tivi.domain.interactors.UpdateUserDetails
 import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
+import app.tivi.util.cancellableRunCatching
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
-import kotlinx.coroutines.CancellationException
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
+@OptIn(FlowPreview::class)
 @Inject
 class RootViewModel(
   @Assisted private val coroutineScope: CoroutineScope,
@@ -27,26 +32,23 @@ class RootViewModel(
 
   init {
     coroutineScope.launch {
-      observeTraktAuthState.value.flow.collect { state ->
-        if (state == TraktAuthState.LOGGED_IN) refreshMe()
-      }
+      observeTraktAuthState.value.flow
+        .debounce(200.milliseconds)
+        .filter { it == TraktAuthState.LOGGED_IN }
+        .collect { refreshMe() }
     }
     observeTraktAuthState.value.invoke(Unit)
   }
 
   private fun refreshMe() {
     coroutineScope.launch {
-      try {
+      cancellableRunCatching {
         updateUserDetails.value.invoke(UpdateUserDetails.Params("me", false))
-      } catch (e: ResponseException) {
-        if (e.response.status == HttpStatusCode.Unauthorized) {
+      }.onFailure { e ->
+        if (e is ResponseException && e.response.status == HttpStatusCode.Unauthorized) {
           // If we got a 401 back from Trakt, we should clear out the auth state
           logoutTrakt.value.invoke()
         }
-      } catch (ce: CancellationException) {
-        throw ce
-      } catch (t: Throwable) {
-        // no-op
       }
     }
   }

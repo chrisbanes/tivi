@@ -3,7 +3,6 @@
 
 package app.tivi.trakt
 
-import app.moviebase.trakt.Trakt
 import app.moviebase.trakt.api.TraktEpisodesApi
 import app.moviebase.trakt.api.TraktRecommendationsApi
 import app.moviebase.trakt.api.TraktSearchApi
@@ -12,18 +11,14 @@ import app.moviebase.trakt.api.TraktShowsApi
 import app.moviebase.trakt.api.TraktSyncApi
 import app.moviebase.trakt.api.TraktUsersApi
 import app.tivi.app.ApplicationInfo
+import app.tivi.data.traktauth.TraktClient
 import app.tivi.data.traktauth.TraktOAuthInfo
 import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface TraktComponent :
-  TraktCommonComponent,
-  TraktPlatformComponent
-
 expect interface TraktPlatformComponent
 
-interface TraktCommonComponent {
-
+interface TraktComponent : TraktPlatformComponent {
   @ApplicationScope
   @Provides
   fun provideTraktOAuthInfo(
@@ -48,23 +43,30 @@ interface TraktCommonComponent {
   )
 
   @Provides
-  fun provideTraktUsersService(trakt: Trakt): TraktUsersApi = trakt.users
+  fun provideTraktUsersService(trakt: TiviTrakt): TraktUsersApi = trakt.users
 
   @Provides
-  fun provideTraktShowsService(trakt: Trakt): TraktShowsApi = trakt.shows
+  fun provideTraktShowsService(trakt: TiviTrakt): TraktShowsApi = trakt.shows
 
   @Provides
-  fun provideTraktEpisodesService(trakt: Trakt): TraktEpisodesApi = trakt.episodes
+  fun provideTraktEpisodesService(trakt: TiviTrakt): TraktEpisodesApi = trakt.episodes
 
   @Provides
-  fun provideTraktSeasonsService(trakt: Trakt): TraktSeasonsApi = trakt.seasons
+  fun provideTraktSeasonsService(trakt: TiviTrakt): TraktSeasonsApi = trakt.seasons
 
   @Provides
-  fun provideTraktSyncService(trakt: Trakt): TraktSyncApi = trakt.sync
+  fun provideTraktSyncService(trakt: TiviTrakt): TraktSyncApi = trakt.sync
 
   @Provides
-  fun provideTraktSearchService(trakt: Trakt): TraktSearchApi = trakt.search
+  fun provideTraktSearchService(trakt: TiviTrakt): TraktSearchApi = trakt.search
 
   @Provides
-  fun provideTraktRecommendationsService(trakt: Trakt): TraktRecommendationsApi = trakt.recommendations
+  fun provideTraktRecommendationsService(trakt: TiviTrakt): TraktRecommendationsApi = trakt.recommendations
+
+  @Provides
+  fun provideTraktClient(trakt: Lazy<TiviTrakt>): TraktClient = object : TraktClient {
+    override fun invalidateAuthTokens() {
+      trakt.value.invalidateAuth()
+    }
+  }
 }

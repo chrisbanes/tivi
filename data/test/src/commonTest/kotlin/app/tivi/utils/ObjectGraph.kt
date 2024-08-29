@@ -25,6 +25,7 @@ import app.tivi.data.episodes.ShowSeasonsLastRequestStore
 import app.tivi.data.followedshows.FollowedShowsLastRequestStore
 import app.tivi.data.followedshows.FollowedShowsRepository
 import app.tivi.data.traktauth.TraktAuthRepository
+import app.tivi.data.traktauth.TraktClient
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -47,13 +48,16 @@ class ObjectGraph(
   val tmdbEpisodeDataSource: FakeEpisodeDataSource = FakeEpisodeDataSource(),
   val traktEpisodeDataSource: FakeEpisodeDataSource = FakeEpisodeDataSource(),
   val episodeWatchesDataSource: FakeEpisodeWatchesDataSource = FakeEpisodeWatchesDataSource(),
-
+  val traktClient: TraktClient = object : TraktClient {
+    override fun invalidateAuthTokens() {}
+  },
   val traktAuthRepository: TraktAuthRepository = TraktAuthRepository(
     scope = backgroundScope,
     dispatchers = appCoroutineDispatchers,
     authStore = AuthorizedAuthStore,
     loginAction = lazy { SuccessTraktLoginAction },
     refreshTokenAction = lazy { SuccessRefreshTokenAction },
+    traktClient = lazy { traktClient },
   ),
   val followedShowsRepository: FollowedShowsRepository = FollowedShowsRepository(
     followedShowsDao = followedShowsDao,
