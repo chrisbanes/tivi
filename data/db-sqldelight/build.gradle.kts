@@ -49,7 +49,7 @@ kotlin {
         // Need to explicitly depend on these, otherwise the build fails.
         implementation("co.touchlab:stately-common:2.1.0")
         implementation("co.touchlab:stately-isolate:2.0.7")
-        implementation("co.touchlab:stately-iso-collections:2.0.7")
+        implementation("co.touchlab:stately-iso-collections:2.1.0")
       }
     }
   }
