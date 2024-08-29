@@ -9,9 +9,10 @@ import app.tivi.inject.ApplicationScope
 import app.tivi.util.AppCoroutineDispatchers
 import co.touchlab.kermit.Logger
 import kotlin.time.Duration.Companion.hours
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -26,12 +27,21 @@ class TraktAuthRepository(
   private val authStore: AuthStore,
   private val loginAction: Lazy<TraktLoginAction>,
   private val refreshTokenAction: Lazy<TraktRefreshTokenAction>,
+  private val traktClient: Lazy<TraktClient>,
 ) {
-  private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
-  val state: StateFlow<TraktAuthState> get() = _state.asStateFlow()
+  private val authState = MutableStateFlow<AuthState?>(null)
+  private var authStateExpiry: Instant = Instant.DISTANT_PAST
 
-  private var lastAuthState: AuthState? = null
-  private var lastAuthStateExpiry: Instant = Instant.DISTANT_PAST
+  val state: Flow<TraktAuthState> = authState.map {
+    when (it?.isAuthorized) {
+      true -> TraktAuthState.LOGGED_IN
+      else -> TraktAuthState.LOGGED_OUT
+    }
+  }
+
+  fun isLoggedIn(): Boolean {
+    return authState.value?.isAuthorized == true
+  }
 
   private val logger by lazy { Logger.withTag("TraktAuthRepository") }
 
@@ -44,8 +54,8 @@ class TraktAuthRepository(
   }
 
   suspend fun getAuthState(): AuthState? {
-    val state = lastAuthState
-    if (state != null && Clock.System.now() < lastAuthStateExpiry) {
+    val state = authState.value
+    if (state != null && state.isAuthorized && Clock.System.now() < authStateExpiry) {
       logger.d { "getAuthState. Using cached tokens: $state" }
       return state
     }
@@ -81,35 +91,35 @@ class TraktAuthRepository(
   }
 
   private fun cacheAuthState(authState: AuthState) {
-    if (authState.isAuthorized) {
-      lastAuthState = authState
-      lastAuthStateExpiry = Clock.System.now() + 1.hours
-    } else {
-      lastAuthState = null
-      lastAuthStateExpiry = Instant.DISTANT_PAST
+    this.authState.update { authState }
+    authStateExpiry = when {
+      authState.isAuthorized -> Clock.System.now() + 1.hours
+      else -> Instant.DISTANT_PAST
     }
   }
 
   private suspend fun updateAuthState(authState: AuthState, persist: Boolean = true) {
-    logger.d { " updateAuthState: $authState. Persist: $persist" }
-    _state.value = when {
-      authState.isAuthorized -> TraktAuthState.LOGGED_IN
-      else -> TraktAuthState.LOGGED_OUT
-    }
-    cacheAuthState(authState)
-    logger.d { " Updated AuthState: ${_state.value}" }
-
     if (persist) {
       // Persist auth state
       withContext(dispatchers.io) {
         if (authState.isAuthorized) {
           authStore.save(authState)
-          logger.d { " Saved state to AuthStore: $authState" }
+          logger.d { "Saved state to AuthStore: $authState" }
         } else {
           authStore.clear()
-          logger.d { " Cleared AuthStore" }
+          logger.d { "Cleared AuthStore" }
         }
       }
     }
+
+    logger.d { "updateAuthState: $authState. Persist: $persist" }
+    cacheAuthState(authState)
+
+    logger.d { "updateAuthState: Clearing TraktClient auth tokens" }
+    traktClient.value.invalidateAuthTokens()
   }
+}
+
+interface TraktClient {
+  fun invalidateAuthTokens()
 }

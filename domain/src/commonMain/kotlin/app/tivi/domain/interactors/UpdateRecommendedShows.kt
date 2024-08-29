@@ -6,7 +6,6 @@ package app.tivi.domain.interactors
 import app.tivi.data.recommendedshows.RecommendedShowsStore
 import app.tivi.data.shows.ShowStore
 import app.tivi.data.traktauth.TraktAuthRepository
-import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.data.util.fetch
 import app.tivi.domain.Interactor
 import app.tivi.domain.UserInitiatedParams
@@ -27,7 +26,7 @@ class UpdateRecommendedShows(
 ) : Interactor<Params, Unit>() {
   override suspend fun doWork(params: Params) {
     // If we're not logged in, we can't load the recommended shows
-    if (traktAuthRepository.value.state.value != TraktAuthState.LOGGED_IN) return
+    if (!traktAuthRepository.value.isLoggedIn()) return
 
     withContext(dispatchers.io) {
       recommendedShowsStore.value.fetch(0, forceFresh = params.isUserInitiated).parallelForEach {

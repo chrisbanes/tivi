@@ -30,6 +30,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
@@ -241,7 +242,7 @@ class SeasonsEpisodesRepository(
       it.isNotEmpty() && processPendingAdditions(it)
     }
 
-    if (traktAuthRepository.state.value == TraktAuthState.LOGGED_IN) {
+    if (traktAuthRepository.state.first() == TraktAuthState.LOGGED_IN) {
       updateShowEpisodeWatches(showId)
     }
   }
@@ -359,13 +360,13 @@ class SeasonsEpisodesRepository(
       needUpdate = true
     }
 
-    if (needUpdate && traktAuthRepository.state.value == TraktAuthState.LOGGED_IN) {
+    if (needUpdate && traktAuthRepository.isLoggedIn()) {
       fetchEpisodeWatchesFromRemote(episodeId)
     }
   }
 
   suspend fun updateShowEpisodeWatches(showId: Long) {
-    if (traktAuthRepository.state.value != TraktAuthState.LOGGED_IN) return
+    if (!traktAuthRepository.isLoggedIn()) return
 
     val response = traktEpisodeWatchesDataSource.getShowEpisodeWatches(showId)
 
@@ -390,7 +391,7 @@ class SeasonsEpisodesRepository(
    * @return true if a network service was updated
    */
   private suspend fun processPendingDeletes(entries: List<EpisodeWatchEntry>): Boolean {
-    if (traktAuthRepository.state.value == TraktAuthState.LOGGED_IN) {
+    if (traktAuthRepository.isLoggedIn()) {
       val localOnlyDeletes = entries.filter { it.traktId == null }
       // If we've got deletes which are local only, just remove them from the DB
       if (localOnlyDeletes.isNotEmpty()) {
@@ -417,7 +418,7 @@ class SeasonsEpisodesRepository(
    * @return true if a network service was updated
    */
   private suspend fun processPendingAdditions(entries: List<EpisodeWatchEntry>): Boolean {
-    if (traktAuthRepository.state.value == TraktAuthState.LOGGED_IN) {
+    if (traktAuthRepository.isLoggedIn()) {
       traktEpisodeWatchesDataSource.addEpisodeWatches(entries)
       // Now update the database
       episodeWatchStore.updateEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
