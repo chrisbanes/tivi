@@ -3,6 +3,7 @@
 
 package app.tivi.data
 
+import app.tivi.data.daos.AnticipatedShowsDao
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.FollowedShowsDao
@@ -13,6 +14,7 @@ import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.ShowTmdbImagesDao
+import app.tivi.data.daos.SqlDelightAnticipatedShowsDao
 import app.tivi.data.daos.SqlDelightEpisodeWatchEntryDao
 import app.tivi.data.daos.SqlDelightEpisodesDao
 import app.tivi.data.daos.SqlDelightFollowedShowsDao
@@ -47,6 +49,10 @@ interface SqlDelightDatabaseComponent : SqlDelightDatabasePlatformComponent {
   @ApplicationScope
   @Provides
   fun bindTiviShowDao(dao: SqlDelightTiviShowDao): TiviShowDao = dao
+
+  @ApplicationScope
+  @Provides
+  fun bindAnticipatedShowsDao(dao: SqlDelightAnticipatedShowsDao): AnticipatedShowsDao = dao
 
   @ApplicationScope
   @Provides

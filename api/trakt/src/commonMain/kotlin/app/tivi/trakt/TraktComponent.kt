@@ -49,6 +49,9 @@ interface TraktComponent : TraktPlatformComponent {
   fun provideTraktShowsService(trakt: TiviTrakt): TraktShowsApi = trakt.shows
 
   @Provides
+  fun provideTraktShowsExtraService(trakt: TiviTrakt): TraktShowsApiExtra = trakt.showsExtra
+
+  @Provides
   fun provideTraktEpisodesService(trakt: TiviTrakt): TraktEpisodesApi = trakt.episodes
 
   @Provides

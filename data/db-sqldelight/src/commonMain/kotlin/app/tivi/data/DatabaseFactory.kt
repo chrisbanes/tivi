@@ -1,4 +1,4 @@
-// Copyright 2023, Christopher Banes and the Tivi project contributors
+// Copyright 2024, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package app.tivi.data
@@ -23,6 +23,10 @@ class DatabaseFactory(
 ) {
   fun build(): Database = Database(
     driver = driver,
+    anticipated_showsAdapter = Anticipated_shows.Adapter(
+      pageAdapter = IntColumnAdapter,
+      page_orderAdapter = IntColumnAdapter,
+    ),
     episodesAdapter = Episodes.Adapter(
       trakt_idAdapter = IntColumnAdapter,
       tmdb_idAdapter = IntColumnAdapter,

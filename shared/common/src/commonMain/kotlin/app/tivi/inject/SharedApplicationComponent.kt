@@ -10,6 +10,7 @@ import app.tivi.core.notifications.NotificationsComponent
 import app.tivi.core.perf.PerformanceComponent
 import app.tivi.core.permissions.PermissionsComponent
 import app.tivi.data.SqlDelightDatabaseComponent
+import app.tivi.data.anticipatedshows.AnticipatedShowsBinds
 import app.tivi.data.episodes.EpisodeBinds
 import app.tivi.data.followedshows.FollowedShowsBinds
 import app.tivi.data.licenses.LicenseDataComponent
@@ -44,6 +45,7 @@ expect interface SharedPlatformApplicationComponent
 interface SharedApplicationComponent :
   SharedPlatformApplicationComponent,
   TasksComponent,
+  AnticipatedShowsBinds,
   ImageLoadingComponent,
   TmdbComponent,
   TraktComponent,

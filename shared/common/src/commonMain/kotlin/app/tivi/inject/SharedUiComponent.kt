@@ -1,4 +1,4 @@
-// Copyright 2023, Christopher Banes and the Tivi project contributors
+// Copyright 2024, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package app.tivi.inject
@@ -9,6 +9,7 @@ import app.tivi.episode.track.EpisodeTrackComponent
 import app.tivi.episodedetails.EpisodeDetailsComponent
 import app.tivi.home.RootUiComponent
 import app.tivi.home.TiviContent
+import app.tivi.home.anticipated.AnticipatedShowsComponent
 import app.tivi.home.discover.DiscoverComponent
 import app.tivi.home.library.LibraryComponent
 import app.tivi.home.popular.PopularShowsComponent
@@ -27,6 +28,7 @@ import me.tatarka.inject.annotations.Provides
 
 interface SharedUiComponent :
   AccountComponent,
+  AnticipatedShowsComponent,
   DiscoverComponent,
   EpisodeDetailsComponent,
   EpisodeTrackComponent,

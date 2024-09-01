@@ -75,7 +75,7 @@ class ColorExtractor(
 
 @Composable
 fun DynamicTheme(
-  model: Any,
+  model: Any?,
   fallback: Color,
   useDarkTheme: Boolean = false,
   style: PaletteStyle = PaletteStyle.TonalSpot,
@@ -85,7 +85,7 @@ fun DynamicTheme(
 
   val result by produceState<ColorExtractor.Result?>(initialValue = null, model, colorExtractor) {
     val result = cancellableRunCatching {
-      colorExtractor.calculatePrimaryColor(model)
+      model?.let { colorExtractor.calculatePrimaryColor(it) }
     }
     value = result.getOrNull()
   }

@@ -3,6 +3,7 @@
 
 package app.tivi.data.compoundmodels
 
+import app.tivi.data.models.AnticipatedShowEntry
 import app.tivi.data.models.Entry
 import app.tivi.data.models.FollowedShowEntry
 import app.tivi.data.models.PopularShowEntry
@@ -17,6 +18,7 @@ data class EntryWithShow<ET : Entry>(
   val show: TiviShow,
 )
 
+typealias AnticipatedShowEntryWithShow = EntryWithShow<AnticipatedShowEntry>
 typealias FollowedShowEntryWithShow = EntryWithShow<FollowedShowEntry>
 typealias PopularEntryWithShow = EntryWithShow<PopularShowEntry>
 typealias RecommendedEntryWithShow = EntryWithShow<RecommendedShowEntry>

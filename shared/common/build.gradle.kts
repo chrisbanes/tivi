@@ -35,6 +35,7 @@ kotlin {
         api(projects.common.ui.compose)
 
         api(projects.ui.account)
+        api(projects.ui.anticipated)
         api(projects.ui.discover)
         api(projects.ui.episode.details)
         api(projects.ui.episode.track)
