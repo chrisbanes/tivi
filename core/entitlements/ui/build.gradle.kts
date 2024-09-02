@@ -31,3 +31,7 @@ kotlin {
 android {
   namespace = "app.tivi.core.entitlements.ui"
 }
+
+configurations.configureEach {
+  exclude(group = "com.revenuecat.purchases", module = "purchases-store-amazon")
+}

@@ -30,12 +30,12 @@ android {
       keyPassword = "android"
     }
 
-    create("release") {
-      if (rootProject.file("release/app-release.jks").exists()) {
+    if (rootProject.file("release/app-release.jks").exists()) {
+      create("release") {
         storeFile = rootProject.file("release/app-release.jks")
-        storePassword = properties["TIVI_RELEASE_KEYSTORE_PWD"]?.toString() ?: ""
+        storePassword = properties["TIVI_RELEASE_KEYSTORE_PWD"]?.toString().orEmpty()
         keyAlias = "tivi"
-        keyPassword = properties["TIVI_RELEASE_KEY_PWD"]?.toString() ?: ""
+        keyPassword = properties["TIVI_RELEASE_KEY_PWD"]?.toString().orEmpty()
       }
     }
   }

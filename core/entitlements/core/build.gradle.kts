@@ -52,3 +52,7 @@ buildConfig {
 android {
   namespace = "app.tivi.core.entitlements.core"
 }
+
+configurations.configureEach {
+  exclude(group = "com.revenuecat.purchases", module = "purchases-store-amazon")
+}
