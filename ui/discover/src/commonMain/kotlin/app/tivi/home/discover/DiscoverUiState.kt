@@ -5,6 +5,7 @@ package app.tivi.home.discover
 
 import androidx.compose.runtime.Immutable
 import app.tivi.common.compose.UiMessage
+import app.tivi.data.compoundmodels.AnticipatedShowEntryWithShow
 import app.tivi.data.compoundmodels.PopularEntryWithShow
 import app.tivi.data.compoundmodels.RecommendedEntryWithShow
 import app.tivi.data.compoundmodels.TrendingEntryWithShow
@@ -24,12 +25,14 @@ data class DiscoverUiState(
   val popularRefreshing: Boolean = false,
   val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
   val recommendedRefreshing: Boolean = false,
+  val anticipatedItems: List<AnticipatedShowEntryWithShow> = emptyList(),
+  val anticipatedRefreshing: Boolean = false,
   val nextEpisodesToWatch: List<UpNextEntry> = emptyList(),
   val message: UiMessage? = null,
   val eventSink: (DiscoverUiEvent) -> Unit,
 ) : CircuitUiState {
   val refreshing: Boolean
-    get() = trendingRefreshing || popularRefreshing || recommendedRefreshing
+    get() = trendingRefreshing || popularRefreshing || recommendedRefreshing || anticipatedRefreshing
 }
 
 sealed interface DiscoverUiEvent : CircuitUiEvent {
@@ -39,6 +42,7 @@ sealed interface DiscoverUiEvent : CircuitUiEvent {
   data object OpenPopularShows : DiscoverUiEvent
   data object OpenRecommendedShows : DiscoverUiEvent
   data object OpenTrendingShows : DiscoverUiEvent
+  data object OpenAnticipatedShows : DiscoverUiEvent
   data class OpenShowDetails(val showId: Long) : DiscoverUiEvent
   data class OpenEpisodeDetails(val episodeId: Long) : DiscoverUiEvent
 }

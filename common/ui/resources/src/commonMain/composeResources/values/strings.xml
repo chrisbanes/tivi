@@ -36,10 +36,11 @@
   <string name="developer_settings_title">Developer settings</string>
   <string name="dialog_dismiss">Dismiss</string>
   <string name="discover_keep_watching_title">Up next</string>
-  <string name="discover_popular_title">Popular</string>
+  <string name="discover_popular_title">All time favorites</string>
   <string name="discover_recommended_title">Recommended for you</string>
   <string name="discover_title">Discover</string>
   <string name="discover_trending_title">Being watched now</string>
+  <string name="discover_anticipated_title">Coming soon</string>
   <string name="empty_emoji">😏</string>
   <string name="empty_prompt">Y u no watch some TV?</string>
   <string name="episode_add_watch">Add episode watch</string>

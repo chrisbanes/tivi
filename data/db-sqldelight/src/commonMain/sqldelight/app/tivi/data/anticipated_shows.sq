@@ -1,0 +1,67 @@
+CREATE TABLE IF NOT EXISTS `anticipated_shows` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `show_id` INTEGER NOT NULL,
+    `page` INTEGER AS kotlin.Int NOT NULL,
+    `page_order` INTEGER AS kotlin.Int NOT NULL,
+    FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_anticipated_shows_show_id` ON `anticipated_shows` (`show_id`);
+
+-- queries
+
+entries:
+SELECT * FROM anticipated_shows
+ORDER BY page ASC, page_order ASC
+LIMIT :limit OFFSET :offset;
+
+entriesWithShow:
+SELECT * FROM anticipated_shows
+INNER JOIN shows ON shows.id = anticipated_shows.show_id
+ORDER BY page ASC, page_order ASC, anticipated_shows.id ASC
+LIMIT :limit OFFSET :offset;
+
+entriesInPage:
+SELECT * FROM anticipated_shows
+WHERE page = :page
+ORDER BY page ASC, page_order ASC, anticipated_shows.id ASC;
+
+count:
+SELECT count(*) FROM anticipated_shows;
+
+deletePage:
+DELETE FROM anticipated_shows WHERE page = :page;
+
+deleteAll:
+DELETE FROM anticipated_shows;
+
+delete:
+DELETE FROM anticipated_shows WHERE id = :id;
+
+getLastPage:
+SELECT MAX(page) FROM anticipated_shows;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE anticipated_shows SET
+    `show_id` = :show_id,
+    `page` = :page,
+    `page_order` = :page_order
+WHERE id = :id;
+
+insert:
+INSERT OR IGNORE INTO anticipated_shows (
+    `id`,
+    `show_id`,
+    `page`,
+    `page_order`
+) VALUES (
+    nullif(:id, 0),
+    :show_id,
+    :page,
+    :page_order
+);

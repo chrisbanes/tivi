@@ -68,6 +68,8 @@ class TiviTrakt internal constructor(private val config: TraktClientConfig) {
   val recommendations by buildApi(::TraktRecommendationsApi)
   val comments by buildApi(::TraktCommentsApi)
 
+  val showsExtra by buildApi(::TraktShowsApiExtra)
+
   fun invalidateAuth() {
     // Force Ktor to re-fetch bearer tokens
     // https://youtrack.jetbrains.com/issue/KTOR-4759

@@ -1032,7 +1032,7 @@ private fun ShowDetailsAppBar(
     actions = {
       RefreshButton(
         showScrim = scrollBehavior.state.contentOffset > -4,
-        refreshing = !isRefreshing,
+        refreshing = isRefreshing,
         onClick = onRefresh,
       )
     },

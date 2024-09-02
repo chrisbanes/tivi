@@ -98,6 +98,8 @@ class ParallaxAlignment(
 }
 
 @Composable
-fun rememberShowImageModel(show: TiviShow, imageType: ImageType): ShowImageModel {
-  return remember(show.id, imageType) { show.asImageModel(imageType) }
+fun rememberShowImageModel(show: TiviShow, imageType: ImageType): ShowImageModel? {
+  return remember(show.id, imageType) {
+    show.asImageModel(imageType).takeIf { show.id > 0 }
+  }
 }

@@ -17,4 +17,5 @@ enum class Request(val tag: String) {
   POPULAR_SHOWS("popular_shows"),
   RECOMMENDED_SHOWS("recommended_shows"),
   SEASON_DETAILS("season_details"),
+  ANTICIPATED_SHOWS("anticipated_shows"),
 }

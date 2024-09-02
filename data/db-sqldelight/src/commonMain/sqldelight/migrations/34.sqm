@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS `anticipated_shows` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    `show_id` INTEGER NOT NULL,
+    `page` INTEGER AS kotlin.Int NOT NULL,
+    `page_order` INTEGER AS kotlin.Int NOT NULL,
+    FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);

@@ -1,4 +1,4 @@
-// Copyright 2023, Christopher Banes and the Tivi project contributors
+// Copyright 2024, Christopher Banes and the Tivi project contributors
 // SPDX-License-Identifier: Apache-2.0
 
 
@@ -98,6 +98,7 @@ include(
   ":data:legacy",
   ":data:models",
   ":data:test",
+  ":data:anticipatedshows",
   ":data:episodes",
   ":data:followedshows",
   ":data:popularshows",
@@ -118,6 +119,7 @@ include(
   ":shared:common",
   ":shared:qa",
   ":shared:prod",
+  ":ui:anticipated",
   ":ui:developer:log",
   ":ui:developer:notifications",
   ":ui:developer:settings",

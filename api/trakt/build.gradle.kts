@@ -5,6 +5,7 @@
 plugins {
   id("app.tivi.kotlin.multiplatform")
   alias(libs.plugins.buildConfig)
+  alias(libs.plugins.kotlin.serialization)
 }
 
 buildConfig {

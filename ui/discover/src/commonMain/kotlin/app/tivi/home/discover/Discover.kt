@@ -82,6 +82,7 @@ import app.tivi.common.compose.ui.rememberShowImageModel
 import app.tivi.common.ui.resources.Res
 import app.tivi.common.ui.resources.cd_show_poster_image
 import app.tivi.common.ui.resources.details_next_episode
+import app.tivi.common.ui.resources.discover_anticipated_title
 import app.tivi.common.ui.resources.discover_popular_title
 import app.tivi.common.ui.resources.discover_recommended_title
 import app.tivi.common.ui.resources.discover_title
@@ -151,12 +152,17 @@ internal fun Discover(
     openTrendingShows = { eventSink(DiscoverUiEvent.OpenTrendingShows) },
     openRecommendedShows = { eventSink(DiscoverUiEvent.OpenRecommendedShows) },
     openPopularShows = { eventSink(DiscoverUiEvent.OpenPopularShows) },
+    openAnticipatedShows = { eventSink(DiscoverUiEvent.OpenAnticipatedShows) },
     onMessageShown = { eventSink(DiscoverUiEvent.ClearMessage(it)) },
     modifier = modifier,
   )
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(
+  ExperimentalMaterialApi::class,
+  ExperimentalFoundationApi::class,
+  ExperimentalMaterial3Api::class,
+)
 @Composable
 internal fun Discover(
   state: DiscoverUiState,
@@ -167,6 +173,7 @@ internal fun Discover(
   openTrendingShows: () -> Unit,
   openRecommendedShows: () -> Unit,
   openPopularShows: () -> Unit,
+  openAnticipatedShows: () -> Unit,
   onMessageShown: (id: Long) -> Unit,
   modifier: Modifier = Modifier,
 ) {
@@ -293,6 +300,18 @@ internal fun Discover(
             refreshing = state.popularRefreshing,
             onItemClick = { openShowDetails(it.id) },
             onMoreClick = openPopularShows,
+            modifier = Modifier.animateItemPlacement(),
+          )
+        }
+
+        item(key = "carousel_anticipated") {
+          CarouselWithHeader(
+            items = state.anticipatedItems,
+            tagPrefix = "anticipated",
+            title = stringResource(Res.string.discover_anticipated_title),
+            refreshing = state.anticipatedRefreshing,
+            onItemClick = { openShowDetails(it.id) },
+            onMoreClick = openAnticipatedShows,
             modifier = Modifier.animateItemPlacement(),
           )
         }

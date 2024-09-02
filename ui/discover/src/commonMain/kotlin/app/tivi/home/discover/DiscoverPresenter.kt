@@ -12,9 +12,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
 import app.tivi.data.traktauth.TraktAuthState
+import app.tivi.domain.interactors.UpdateAnticipatedShows
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
+import app.tivi.domain.observers.ObserveAnticipatedShows
 import app.tivi.domain.observers.ObserveNextShowEpisodesToWatch
 import app.tivi.domain.observers.ObservePopularShows
 import app.tivi.domain.observers.ObserveRecommendedShows
@@ -22,6 +24,7 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.screens.AccountScreen
+import app.tivi.screens.AnticipatedShowsScreen
 import app.tivi.screens.DiscoverScreen
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.PopularShowsScreen
@@ -61,6 +64,8 @@ class DiscoverPresenter(
   private val observeTrendingShows: Lazy<ObserveTrendingShows>,
   private val updateRecommendedShows: Lazy<UpdateRecommendedShows>,
   private val observeRecommendedShows: Lazy<ObserveRecommendedShows>,
+  private val updateAntipicatedShows: Lazy<UpdateAnticipatedShows>,
+  private val observeAntipicatedShows: Lazy<ObserveAnticipatedShows>,
   private val observeNextShowEpisodesToWatch: Lazy<ObserveNextShowEpisodesToWatch>,
   private val observeTraktAuthState: Lazy<ObserveTraktAuthState>,
   private val observeUserDetails: Lazy<ObserveUserDetails>,
@@ -80,6 +85,9 @@ class DiscoverPresenter(
 
     val recommendedItems by observeRecommendedShows.value.flow.collectAsRetainedState(emptyList())
     val recommendedLoading by updateRecommendedShows.value.inProgress.collectAsState(false)
+
+    val anticipatedItems by observeAntipicatedShows.value.flow.collectAsRetainedState(emptyList())
+    val anticipatedLoading by updateAntipicatedShows.value.inProgress.collectAsState(false)
 
     val nextEpisodesToWatch by observeNextShowEpisodesToWatch.value.flow.collectAsRetainedState(emptyList())
     val authState by observeTraktAuthState.value.flow.collectAsRetainedState(TraktAuthState.LOGGED_OUT)
@@ -118,6 +126,17 @@ class DiscoverPresenter(
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }
+          scope.launch {
+            updateAntipicatedShows.value.invoke(
+              UpdateAnticipatedShows.Params(
+                page = UpdateAnticipatedShows.Page.REFRESH,
+                isUserInitiated = event.fromUser,
+              ),
+            ).onFailure { e ->
+              logger.i(e) { "Error whilst calling UpdateAnticipatedShows" }
+              uiMessageManager.emitMessage(UiMessage(e))
+            }
+          }
           if (authState == TraktAuthState.LOGGED_IN) {
             scope.launch {
               updateRecommendedShows.value.invoke(
@@ -135,6 +154,7 @@ class DiscoverPresenter(
         DiscoverUiEvent.OpenRecommendedShows -> navigator.goTo(RecommendedShowsScreen)
         is DiscoverUiEvent.OpenShowDetails -> navigator.goTo(ShowDetailsScreen(event.showId))
         DiscoverUiEvent.OpenTrendingShows -> navigator.goTo(TrendingShowsScreen)
+        DiscoverUiEvent.OpenAnticipatedShows -> navigator.goTo(AnticipatedShowsScreen)
         is DiscoverUiEvent.OpenEpisodeDetails -> {
           navigator.goTo(EpisodeDetailsScreen(event.episodeId))
         }
@@ -145,6 +165,7 @@ class DiscoverPresenter(
       observeTrendingShows.value.invoke(ObserveTrendingShows.Params(10))
       observePopularShows.value.invoke(ObservePopularShows.Params(10))
       observeRecommendedShows.value.invoke(ObserveRecommendedShows.Params(10))
+      observeAntipicatedShows.value.invoke(ObserveAnticipatedShows.Params(10))
       observeNextShowEpisodesToWatch.value.invoke(
         ObserveNextShowEpisodesToWatch.Params(followedOnly = true, limit = 6),
       )
@@ -165,6 +186,8 @@ class DiscoverPresenter(
       popularRefreshing = popularLoading,
       recommendedItems = recommendedItems,
       recommendedRefreshing = recommendedLoading,
+      anticipatedItems = anticipatedItems,
+      anticipatedRefreshing = anticipatedLoading,
       nextEpisodesToWatch = nextEpisodesToWatch,
       message = message,
       eventSink = ::eventSink,
