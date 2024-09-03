@@ -26,11 +26,11 @@ import app.tivi.screens.DevSettingsScreen
 import app.tivi.screens.LicensesScreen
 import app.tivi.screens.SettingsScreen
 import app.tivi.screens.UrlScreen
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -85,39 +85,39 @@ class SettingsPresenter(
       observeTraktAuthState(Unit)
     }
 
-    fun eventSink(event: SettingsUiEvent) {
+    val eventSink: (SettingsUiEvent) -> Unit = { event ->
       when (event) {
         SettingsUiEvent.NavigateUp -> {
           navigator.pop()
         }
 
         is SettingsUiEvent.SetTheme -> {
-          coroutineScope.launch { preferences.theme.set(event.theme) }
+          coroutineScope.launchOrThrow { preferences.theme.set(event.theme) }
         }
 
         SettingsUiEvent.ToggleUseDynamicColors -> {
-          coroutineScope.launch { preferences.useDynamicColors.toggle() }
+          coroutineScope.launchOrThrow { preferences.useDynamicColors.toggle() }
         }
 
         SettingsUiEvent.ToggleUseLessData -> {
-          coroutineScope.launch { preferences.useLessData.toggle() }
+          coroutineScope.launchOrThrow { preferences.useLessData.toggle() }
         }
 
         SettingsUiEvent.ToggleIgnoreSpecials -> {
-          coroutineScope.launch { preferences.ignoreSpecials.toggle() }
+          coroutineScope.launchOrThrow { preferences.ignoreSpecials.toggle() }
         }
 
         SettingsUiEvent.ToggleCrashDataReporting -> {
-          coroutineScope.launch { preferences.reportAppCrashes.toggle() }
+          coroutineScope.launchOrThrow { preferences.reportAppCrashes.toggle() }
         }
 
         SettingsUiEvent.ToggleAnalyticsDataReporting -> {
-          coroutineScope.launch { preferences.reportAnalytics.toggle() }
+          coroutineScope.launchOrThrow { preferences.reportAnalytics.toggle() }
         }
 
         SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled -> {
           if (isPro) {
-            coroutineScope.launch {
+            coroutineScope.launchOrThrow {
               if (preferences.episodeAiringNotificationsEnabled.get()) {
                 // If we're enabled, and being turned off, we don't need to mess with permissions
                 preferences.episodeAiringNotificationsEnabled.set(false)
@@ -168,7 +168,7 @@ class SettingsPresenter(
       isPro = isPro,
       isLoggedIn = authState == TraktAuthState.LOGGED_IN,
       showDeleteAccount = authState == TraktAuthState.LOGGED_IN,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 }

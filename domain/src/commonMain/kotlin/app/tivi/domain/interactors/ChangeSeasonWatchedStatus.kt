@@ -20,16 +20,16 @@ class ChangeSeasonWatchedStatus(
   override suspend fun doWork(params: Params) {
     withContext(dispatchers.io) {
       when (params.action) {
-        Action.WATCHED -> {
+        Action.WATCH -> {
           seasonsEpisodesRepository.markSeasonWatched(
-            params.seasonId,
-            params.onlyAired,
-            params.actionDate,
+            seasonId = params.seasonId,
+            onlyAired = params.onlyAired,
+            date = params.actionDate,
           )
         }
 
         Action.UNWATCH -> {
-          seasonsEpisodesRepository.markSeasonUnwatched(params.seasonId)
+          seasonsEpisodesRepository.markSeasonUnwatched(seasonId = params.seasonId)
         }
       }
     }
@@ -42,5 +42,5 @@ class ChangeSeasonWatchedStatus(
     val actionDate: ActionDate = ActionDate.NOW,
   )
 
-  enum class Action { WATCHED, UNWATCH }
+  enum class Action { WATCH, UNWATCH }
 }

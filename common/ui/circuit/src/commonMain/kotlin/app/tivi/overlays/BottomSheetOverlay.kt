@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.unit.Dp
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.foundation.internal.BackHandler
@@ -24,7 +25,6 @@ import com.slack.circuit.overlay.OverlayHost
 import com.slack.circuit.overlay.OverlayNavigator
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.screen.Screen
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 class BottomSheetOverlay<Model : Any, Result : Any>(
@@ -43,7 +43,7 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
     val coroutineScope = rememberCoroutineScope()
     BackHandler(enabled = sheetState.isVisible) {
       coroutineScope
-        .launch { sheetState.hide() }
+        .launchOrThrow { sheetState.hide() }
         .invokeOnCompletion {
           if (!sheetState.isVisible) {
             navigator.finish(onDismiss())
@@ -57,7 +57,7 @@ class BottomSheetOverlay<Model : Any, Result : Any>(
         // Delay setting the result until we've finished dismissing
         content(model) { result ->
           // This is the OverlayNavigator.finish() callback
-          coroutineScope.launch {
+          coroutineScope.launchOrThrow {
             try {
               sheetState.hide()
             } finally {

@@ -7,7 +7,7 @@ import app.tivi.app.ApplicationInfo
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.inject.ApplicationCoroutineScope
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.launch
+import app.tivi.util.launchOrThrow
 import me.tatarka.inject.annotations.Inject
 import okio.FileSystem
 import okio.Path.Companion.toPath
@@ -21,7 +21,7 @@ class ImageLoaderCleanupInitializer(
 ) : AppInitializer {
 
   override fun initialize() {
-    scope.launch(dispatchers.io) {
+    scope.launchOrThrow(dispatchers.io) {
       // We delete ImageLoader's disk cache folder to claim back space for the user
       val cachePath = applicationInfo.cachePath().toPath()
       val fs = fileSystem.value

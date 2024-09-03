@@ -6,10 +6,10 @@ package app.tivi.tasks
 import app.tivi.domain.interactors.ScheduleEpisodeNotifications
 import app.tivi.domain.interactors.UpdateLibraryShows
 import app.tivi.inject.ApplicationCoroutineScope
+import app.tivi.util.launchOrThrow
 import co.touchlab.kermit.Logger
 import kotlin.time.Duration.Companion.hours
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toNSDate
@@ -60,7 +60,7 @@ class IosTasks(
 
     // iOS has no concept of running tasks while the app is open, so we'll just run them
     // manually now
-    scope.launch { runScheduleEpisodeNotifications() }
+    scope.launchOrThrow { runScheduleEpisodeNotifications() }
   }
 
   override fun cancelEpisodeNotifications() {
@@ -143,7 +143,7 @@ class IosTasks(
   private fun BGTask.runInteractor(block: suspend () -> Unit) {
     logger.d { "Starting to run task [$identifier]" }
 
-    val job = scope.launch { block() }
+    val job = scope.launchOrThrow { block() }
 
     expirationHandler = {
       logger.d { "Expiration handler called for task [$identifier]" }

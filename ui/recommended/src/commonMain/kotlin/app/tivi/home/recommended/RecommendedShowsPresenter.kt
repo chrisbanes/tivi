@@ -54,7 +54,7 @@ class RecommendedShowsPresenter(
       retainedPagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
     }
 
-    fun eventSink(event: RecommendedShowsUiEvent) {
+    val eventSink: (RecommendedShowsUiEvent) -> Unit = { event ->
       when (event) {
         RecommendedShowsUiEvent.NavigateUp -> navigator.pop()
         is RecommendedShowsUiEvent.OpenShowDetails -> {
@@ -65,7 +65,7 @@ class RecommendedShowsPresenter(
 
     return RecommendedShowsUiState(
       items = items,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 

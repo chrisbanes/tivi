@@ -75,8 +75,8 @@ import app.tivi.data.models.Entry
 import app.tivi.data.models.TiviShow
 import app.tivi.data.models.TrendingShowEntry
 import app.tivi.util.fmt
+import app.tivi.util.launchOrThrow
 import kotlin.math.roundToInt
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(
@@ -126,7 +126,7 @@ fun <E : Entry> EntryGrid(
         onRefreshActionClick = lazyPagingItems::refresh,
         modifier = Modifier
           .noIndicationClickable {
-            coroutineScope.launch {
+            coroutineScope.launchOrThrow {
               lazyGridState.animateScrollToItem(0)
             }
           }
