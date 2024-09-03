@@ -91,12 +91,12 @@ import app.tivi.navigation.LocalNavigator
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.LibraryScreen
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
@@ -133,7 +133,7 @@ internal fun Library(
     onMessageShown = { eventSink(LibraryUiEvent.ClearMessage(it)) },
     onToggleIncludeFollowedShows = { eventSink(LibraryUiEvent.ToggleFollowedShowsIncluded) },
     openUser = {
-      scope.launch {
+      scope.launchOrThrow {
         overlayHost.showInDialog(AccountScreen, navigator::goTo)
       }
     },
@@ -190,7 +190,7 @@ internal fun Library(
         onUserActionClick = openUser,
         modifier = Modifier
           .noIndicationClickable {
-            coroutineScope.launch { lazyGridState.animateScrollToItem(0) }
+            coroutineScope.launchOrThrow { lazyGridState.animateScrollToItem(0) }
           }
           .fillMaxWidth(),
       )

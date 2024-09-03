@@ -7,7 +7,7 @@ import app.tivi.appinitializers.AppInitializer
 import app.tivi.entitlements.EntitlementManager
 import app.tivi.inject.ApplicationCoroutineScope
 import app.tivi.settings.TiviPreferences
-import kotlinx.coroutines.launch
+import app.tivi.util.launchOrThrow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -26,7 +26,7 @@ class TasksInitializer(
 
     tasks.scheduleLibrarySync()
 
-    coroutineScope.launch {
+    coroutineScope.launchOrThrow {
       preferences.episodeAiringNotificationsEnabled.flow
         .collect { enabled ->
           val isPro = entitlementManager.hasProEntitlement()

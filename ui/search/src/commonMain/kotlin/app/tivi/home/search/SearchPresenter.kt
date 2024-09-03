@@ -17,6 +17,7 @@ import app.tivi.data.models.TiviShow
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.screens.SearchScreen
 import app.tivi.screens.ShowDetailsScreen
+import app.tivi.util.launchOrThrow
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
@@ -25,7 +26,6 @@ import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -74,10 +74,10 @@ class SearchPresenter(
       }
     }
 
-    fun eventSink(event: SearchUiEvent) {
+    val eventSink: (SearchUiEvent) -> Unit = { event ->
       when (event) {
         is SearchUiEvent.ClearMessage -> {
-          scope.launch {
+          scope.launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
@@ -94,7 +94,7 @@ class SearchPresenter(
       searchResults = results,
       refreshing = loading,
       message = message,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 }

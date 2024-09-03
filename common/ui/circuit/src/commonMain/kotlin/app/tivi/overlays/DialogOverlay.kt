@@ -8,13 +8,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.Dialog
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.overlay.Overlay
 import com.slack.circuit.overlay.OverlayHost
 import com.slack.circuit.overlay.OverlayNavigator
 import com.slack.circuit.runtime.screen.Screen
-import kotlinx.coroutines.launch
 
 class DialogOverlay<Model : Any, Result : Any>(
   private val model: Model,
@@ -35,7 +35,7 @@ class DialogOverlay<Model : Any, Result : Any>(
         // Delay setting the result until we've finished dismissing
         content(model) { result ->
           // This is the OverlayNavigator.finish() callback
-          coroutineScope.launch {
+          coroutineScope.launchOrThrow {
             navigator.finish(result)
           }
         }

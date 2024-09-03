@@ -15,12 +15,12 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.SettingsScreen
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -66,8 +66,8 @@ class AccountPresenter(
           navigator.pop() // dismiss ourselves
           navigator.goTo(SettingsScreen)
         }
-        AccountUiEvent.Login -> scope.launch { loginTrakt.value.invoke() }
-        AccountUiEvent.Logout -> scope.launch { logoutTrakt.value.invoke() }
+        AccountUiEvent.Login -> scope.launchOrThrow { loginTrakt.value.invoke() }
+        AccountUiEvent.Logout -> scope.launchOrThrow { logoutTrakt.value.invoke() }
       }
     }
   }

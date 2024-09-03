@@ -101,13 +101,13 @@ import app.tivi.overlays.showInBottomSheet
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.util.fmt
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
@@ -142,7 +142,7 @@ internal fun EpisodeDetails(
       onRemoveAllWatches = { viewState.eventSink(EpisodeDetailsUiEvent.RemoveAllWatches) },
       onRemoveWatch = { id -> viewState.eventSink(EpisodeDetailsUiEvent.RemoveWatchEntry(id)) },
       onAddWatch = {
-        scope.launch {
+        scope.launchOrThrow {
           overlayHost.showInBottomSheet(EpisodeTrackScreen(viewState.episode!!.id))
         }
       },

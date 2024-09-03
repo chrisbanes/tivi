@@ -31,10 +31,10 @@ import app.tivi.inject.create
 import app.tivi.navigation.DeepLinker
 import app.tivi.screens.DiscoverScreen
 import app.tivi.settings.TiviPreferences
+import app.tivi.util.launchOrThrow
 import com.eygraber.uri.toUri
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
-import kotlinx.coroutines.launch
 
 class MainActivity : TiviActivity() {
 
@@ -51,7 +51,7 @@ class MainActivity : TiviActivity() {
 
     deepLinker = applicationComponent.deepLinker
 
-    lifecycle.coroutineScope.launch {
+    lifecycle.coroutineScope.launchOrThrow {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
         applicationComponent.preferences.theme.flow
           .collect(::enableEdgeToEdgeForTheme)

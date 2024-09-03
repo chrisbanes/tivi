@@ -54,7 +54,7 @@ class TrendingShowsPresenter(
       retainedPagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
     }
 
-    fun eventSink(event: TrendingShowsUiEvent) {
+    val eventSink: (TrendingShowsUiEvent) -> Unit = { event ->
       when (event) {
         TrendingShowsUiEvent.NavigateUp -> navigator.pop()
         is TrendingShowsUiEvent.OpenShowDetails -> {
@@ -65,7 +65,7 @@ class TrendingShowsPresenter(
 
     return TrendingShowsUiState(
       items = items,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 

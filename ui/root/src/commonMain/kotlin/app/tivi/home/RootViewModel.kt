@@ -9,6 +9,7 @@ import app.tivi.domain.interactors.UpdateUserDetails
 import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.util.cancellableRunCatching
+import app.tivi.util.launchOrThrow
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
 import kotlin.time.Duration.Companion.milliseconds
@@ -17,7 +18,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -31,7 +31,7 @@ class RootViewModel(
 ) {
 
   init {
-    coroutineScope.launch {
+    coroutineScope.launchOrThrow {
       observeTraktAuthState.value.flow
         .debounce(200.milliseconds)
         .filter { it == TraktAuthState.LOGGED_IN }
@@ -41,7 +41,7 @@ class RootViewModel(
   }
 
   private fun refreshMe() {
-    coroutineScope.launch {
+    coroutineScope.launchOrThrow {
       cancellableRunCatching {
         updateUserDetails.value.invoke(UpdateUserDetails.Params("me", false))
       }.onFailure { e ->

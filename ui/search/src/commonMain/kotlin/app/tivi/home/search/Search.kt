@@ -60,11 +60,11 @@ import app.tivi.common.ui.resources.search_hint
 import app.tivi.common.ui.resources.search_noresults_prompt
 import app.tivi.data.models.TiviShow
 import app.tivi.screens.SearchScreen
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
 
@@ -133,7 +133,7 @@ internal fun Search(
       Box(
         Modifier
           .noIndicationClickable {
-            coroutineScope.launch { gridState.animateScrollToItem(0) }
+            coroutineScope.launchOrThrow { gridState.animateScrollToItem(0) }
           }
           .padding(horizontal = Layout.bodyMargin, vertical = 16.dp)
           .windowInsetsPadding(WindowInsets.statusBars),

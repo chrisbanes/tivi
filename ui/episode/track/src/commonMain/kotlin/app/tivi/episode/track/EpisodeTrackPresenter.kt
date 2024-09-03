@@ -18,13 +18,13 @@ import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.screens.EpisodeTrackScreen
+import app.tivi.util.launchOrThrow
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -76,16 +76,16 @@ class EpisodeTrackPresenter(
       }
     }
 
-    fun eventSink(event: EpisodeTrackUiEvent) {
+    val eventSink: (EpisodeTrackUiEvent) -> Unit = { event ->
       when (event) {
         is EpisodeTrackUiEvent.ClearMessage -> {
-          scope.launch {
+          scope.launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
 
         is EpisodeTrackUiEvent.Refresh -> {
-          scope.launch {
+          scope.launchOrThrow {
             updateEpisodeDetails.value.invoke(
               UpdateEpisodeDetails.Params(screen.id, event.fromUser),
             ).onFailure { e ->
@@ -121,7 +121,7 @@ class EpisodeTrackPresenter(
         }
 
         EpisodeTrackUiEvent.Submit -> {
-          scope.launch {
+          scope.launchOrThrow {
             addEpisodeWatch.value.invoke(
               AddEpisodeWatch.Params(
                 episodeId = screen.id,
@@ -156,7 +156,7 @@ class EpisodeTrackPresenter(
       message = message,
       submitInProgress = submitting,
       canSubmit = !submitting,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 }

@@ -17,13 +17,13 @@ import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
+import app.tivi.util.launchOrThrow
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -60,10 +60,10 @@ class ShowSeasonsPresenter(
     val refreshing by updateShowSeasons.value.inProgress.collectAsState(false)
     val message by uiMessageManager.message.collectAsState(null)
 
-    fun eventSink(event: ShowSeasonsUiEvent) {
+    val eventSink: (ShowSeasonsUiEvent) -> Unit = { event ->
       when (event) {
         is ShowSeasonsUiEvent.ClearMessage -> {
-          scope.launch {
+          scope.launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
@@ -71,7 +71,7 @@ class ShowSeasonsPresenter(
         is ShowSeasonsUiEvent.OpenEpisodeDetails -> navigator.goTo(EpisodeDetailsScreen(event.id))
 
         is ShowSeasonsUiEvent.Refresh -> {
-          scope.launch {
+          scope.launchOrThrow {
             updateShowSeasons.value.invoke(
               UpdateShowSeasons.Params(screen.showId, event.fromUser),
             ).onFailure { e ->
@@ -98,7 +98,7 @@ class ShowSeasonsPresenter(
       refreshing = refreshing,
       message = message,
       initialSeasonId = screen.selectedSeasonId,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 }

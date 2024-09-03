@@ -31,6 +31,7 @@ import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
+import app.tivi.util.launchOrThrow
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
@@ -38,7 +39,6 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -119,69 +119,69 @@ class ShowDetailsPresenter(
       }
     }
 
-    fun eventSink(event: ShowDetailsUiEvent) {
+    val eventSink: (ShowDetailsUiEvent) -> Unit = { event ->
       when (event) {
         is ShowDetailsUiEvent.ClearMessage -> {
-          scope.launch {
+          scope.launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
 
         is ShowDetailsUiEvent.Refresh -> {
-          scope.launch {
+          scope.launchOrThrow {
             updateShowDetails(
               UpdateShowDetails.Params(showId, event.fromUser),
-            ).onFailure { handleException(it) }
+            ).onFailure(::handleException)
           }
-          scope.launch {
+          scope.launchOrThrow {
             updateRelatedShows(
               UpdateRelatedShows.Params(showId, event.fromUser),
-            ).onFailure { handleException(it) }
+            ).onFailure(::handleException)
           }
-          scope.launch {
+          scope.launchOrThrow {
             updateShowSeasons(
               UpdateShowSeasons.Params(showId, event.fromUser),
-            ).onFailure { handleException(it) }
+            ).onFailure(::handleException)
           }
         }
 
         is ShowDetailsUiEvent.FollowSeason -> {
-          scope.launch {
+          scope.launchOrThrow {
             changeSeasonFollowStatus(
               ChangeSeasonFollowStatus.Params(
                 seasonId = event.seasonId,
                 action = ChangeSeasonFollowStatus.Action.FOLLOW,
               ),
-            ).onFailure { handleException(it) }
+            ).onFailure(::handleException)
           }
         }
 
         is ShowDetailsUiEvent.MarkSeasonUnwatched -> {
-          scope.launch {
+          scope.launchOrThrow {
             changeSeasonWatchedStatus(
               Params(event.seasonId, Action.UNWATCH),
-            ).onFailure { handleException(it) }
+            ).onFailure(::handleException)
           }
         }
 
         is ShowDetailsUiEvent.MarkSeasonWatched -> {
-          scope.launch {
+          scope.launchOrThrow {
             changeSeasonWatchedStatus(
-              Params(event.seasonId, Action.WATCHED, event.onlyAired, event.date),
-            ).onFailure { handleException(it) }
+              Params(event.seasonId, Action.WATCH, event.onlyAired, event.date),
+            ).onFailure(::handleException)
           }
         }
 
         ShowDetailsUiEvent.ToggleShowFollowed -> {
-          scope.launch {
+          scope.launchOrThrow {
             changeShowFollowStatus(
               ChangeShowFollowStatus.Params(showId, TOGGLE),
-            ).onFailure { handleException(it) }
+            ).onFailure(::handleException)
           }
         }
 
         is ShowDetailsUiEvent.UnfollowPreviousSeasons -> {
-          scope.launch {
+          scope.launchOrThrow {
             changeSeasonFollowStatus(
               ChangeSeasonFollowStatus.Params(
                 seasonId = event.seasonId,
@@ -195,7 +195,7 @@ class ShowDetailsPresenter(
         }
 
         is ShowDetailsUiEvent.UnfollowSeason -> {
-          scope.launch {
+          scope.launchOrThrow {
             changeSeasonFollowStatus(
               ChangeSeasonFollowStatus.Params(
                 seasonId = event.seasonId,
@@ -241,7 +241,7 @@ class ShowDetailsPresenter(
       watchStats = stats,
       refreshing = refreshing,
       message = message,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 }

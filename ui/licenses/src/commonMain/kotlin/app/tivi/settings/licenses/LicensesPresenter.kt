@@ -56,7 +56,7 @@ class LicensesPresenter(
       }
     }
 
-    fun eventSink(event: LicensesUiEvent) {
+    val eventSink: (LicensesUiEvent) -> Unit = { event ->
       when (event) {
         LicensesUiEvent.NavigateUp -> navigator.pop()
         is LicensesUiEvent.NavigateRepository -> {
@@ -70,7 +70,7 @@ class LicensesPresenter(
 
     return LicensesUiState(
       licenses = licenseItemList,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 }

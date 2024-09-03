@@ -42,7 +42,7 @@ class DevLogPresenter(
       RecordingLoggerWriter.buffer.map { it.asReversed() }
     }.collectAsState(emptyList())
 
-    fun eventSink(event: DevLogUiEvent) {
+    val eventSink: (DevLogUiEvent) -> Unit = { event ->
       when (event) {
         DevLogUiEvent.NavigateUp -> navigator.pop()
       }
@@ -50,7 +50,7 @@ class DevLogPresenter(
 
     return DevLogUiState(
       logs = logs,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 }

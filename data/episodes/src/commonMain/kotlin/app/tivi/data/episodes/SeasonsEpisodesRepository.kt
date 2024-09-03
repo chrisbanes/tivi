@@ -256,21 +256,27 @@ class SeasonsEpisodesRepository(
   )
 
   suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean, date: ActionDate) {
-    val watchesToSave = episodesDao.episodesWithSeasonId(seasonId).mapNotNull { episode ->
-      if (!onlyAired || episode.hasAired) {
-        if (!episodeWatchStore.hasEpisodeBeenWatched(episode.id)) {
-          val timestamp = when (date) {
+    val watchesToSave = episodesDao.episodesWithSeasonId(seasonId)
+      .asSequence()
+      .filter { !onlyAired || it.hasAired }
+      .filterNot { episodeWatchStore.hasEpisodeBeenWatched(it.id) }
+      .map { episode ->
+        EpisodeWatchEntry(
+          episodeId = episode.id,
+          watchedAt = when (date) {
             ActionDate.NOW -> Clock.System.now()
             ActionDate.AIR_DATE -> episode.firstAired ?: Clock.System.now()
-          }
-          return@mapNotNull EpisodeWatchEntry(
-            episodeId = episode.id,
-            watchedAt = timestamp,
-            pendingAction = PendingAction.UPLOAD,
-          )
-        }
+          },
+          pendingAction = PendingAction.UPLOAD,
+        )
       }
-      null
+      .toList()
+
+    logger.d {
+      "markSeasonWatched: seasonId=$seasonId, " +
+        "onlyAired=$onlyAired, " +
+        "date=$date. " +
+        "Saving: $watchesToSave"
     }
 
     if (watchesToSave.isNotEmpty()) {
@@ -278,8 +284,9 @@ class SeasonsEpisodesRepository(
     }
 
     // Should probably make this more granular
-    val season = seasonsDao.seasonWithId(seasonId)!!
-    syncEpisodeWatchesForShow(season.showId)
+    seasonsDao.seasonWithId(seasonId)?.let {
+      syncEpisodeWatchesForShow(it.id)
+    }
   }
 
   suspend fun markSeasonUnwatched(seasonId: Long) {
@@ -465,4 +472,8 @@ class SeasonsEpisodesRepository(
     tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
     tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath,
   )
+
+  private companion object {
+    const val TAG = "SeasonsEpisodeRepository"
+  }
 }

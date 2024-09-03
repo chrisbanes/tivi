@@ -101,6 +101,7 @@ import app.tivi.navigation.LocalNavigator
 import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.DiscoverScreen
+import app.tivi.util.launchOrThrow
 import coil3.compose.AsyncImagePainter
 import com.materialkolor.PaletteStyle
 import com.slack.circuit.overlay.LocalOverlayHost
@@ -108,7 +109,6 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
 
@@ -143,7 +143,7 @@ internal fun Discover(
     state = state,
     refresh = { eventSink(DiscoverUiEvent.Refresh(true)) },
     openUser = {
-      scope.launch {
+      scope.launchOrThrow {
         overlayHost.showInDialog(AccountScreen, navigator::goTo)
       }
     },
@@ -217,7 +217,7 @@ internal fun Discover(
         onUserActionClick = openUser,
         modifier = Modifier
           .noIndicationClickable {
-            coroutineScope.launch { lazyListState.animateScrollToItem(0) }
+            coroutineScope.launchOrThrow { lazyListState.animateScrollToItem(0) }
           }
           .fillMaxWidth(),
       )

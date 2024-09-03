@@ -145,11 +145,11 @@ import app.tivi.data.models.TiviShow
 import app.tivi.data.views.ShowsWatchStats
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.util.fmt
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
@@ -247,7 +247,7 @@ internal fun ShowDetails(
         scrollBehavior = scrollBehavior,
         modifier = Modifier
           .noIndicationClickable {
-            coroutineScope.launch { listState.animateScrollToItem(0) }
+            coroutineScope.launchOrThrow { listState.animateScrollToItem(0) }
           }
           .fillMaxWidth(),
       )
@@ -819,7 +819,7 @@ private fun WatchStats(
 
     // TODO: Do something better with CharSequences containing markup/spans
     Text(
-      text = "${textCreator.followedShowEpisodeWatchStatus(watchedEpisodeCount, episodeCount)}",
+      text = textCreator.followedShowEpisodeWatchStatus(watchedEpisodeCount, episodeCount),
       style = MaterialTheme.typography.bodyMedium,
     )
   }

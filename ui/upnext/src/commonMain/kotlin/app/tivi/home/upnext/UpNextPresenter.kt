@@ -30,6 +30,7 @@ import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.UpNextScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.toggle
+import app.tivi.util.launchOrThrow
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
@@ -38,7 +39,6 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -94,17 +94,17 @@ class UpNextPresenter(
 
     val followedShowsOnly by preferences.value.upNextFollowedOnly.collectAsState()
 
-    fun eventSink(event: UpNextUiEvent) {
+    val eventSink: (UpNextUiEvent) -> Unit = { event ->
       when (event) {
         is UpNextUiEvent.ChangeSort -> sort = event.sort
         is UpNextUiEvent.ClearMessage -> {
-          scope.launch {
+          scope.launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
 
         is UpNextUiEvent.Refresh -> {
-          scope.launch {
+          scope.launchOrThrow {
             if (getTraktAuthState.value.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
               updateUpNextEpisodes.value.invoke(
                 UpdateUpNextEpisodes.Params(event.fromUser),
@@ -117,7 +117,7 @@ class UpNextPresenter(
         }
 
         UpNextUiEvent.ToggleFollowedShowsOnly -> {
-          scope.launch { preferences.value.upNextFollowedOnly.toggle() }
+          scope.launchOrThrow { preferences.value.upNextFollowedOnly.toggle() }
         }
 
         UpNextUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
@@ -159,7 +159,7 @@ class UpNextPresenter(
       sort = sort,
       message = message,
       followedShowsOnly = followedShowsOnly,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 

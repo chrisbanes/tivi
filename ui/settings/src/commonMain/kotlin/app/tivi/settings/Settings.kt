@@ -68,6 +68,7 @@ import app.tivi.common.ui.resources.settings_ui_category_title
 import app.tivi.common.ui.resources.view_privacy_policy
 import app.tivi.entitlements.ui.Paywall
 import app.tivi.screens.SettingsScreen
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.overlay.OverlayHost
@@ -77,7 +78,6 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import com.slack.circuitx.overlays.DialogResult
 import com.slack.circuitx.overlays.alertDialogOverlay
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
 
@@ -218,7 +218,7 @@ internal fun Settings(
               Preference(
                 title = stringResource(Res.string.account_delete_account_cta),
                 onClick = {
-                  scope.launch {
+                  scope.launchOrThrow {
                     val result = overlayHost.showDeleteAccountConfirmationDialog()
                     if (result == DialogResult.Confirm) {
                       eventSink(SettingsUiEvent.DeleteAccount)

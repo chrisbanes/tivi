@@ -12,11 +12,11 @@ import app.tivi.screens.DevNotificationsScreen
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.toggle
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -46,20 +46,20 @@ class DevSettingsPresenter(
 
     val coroutineScope = rememberCoroutineScope()
 
-    fun eventSink(event: DevSettingsUiEvent) {
+    val eventSink: (DevSettingsUiEvent) -> Unit = { event ->
       when (event) {
         DevSettingsUiEvent.NavigateUp -> navigator.pop()
         DevSettingsUiEvent.NavigateLog -> navigator.goTo(DevLogScreen)
         DevSettingsUiEvent.NavigateNotifications -> navigator.goTo(DevNotificationsScreen)
         DevSettingsUiEvent.ToggleHideArtwork -> {
-          coroutineScope.launch { preferences.value.developerHideArtwork.toggle() }
+          coroutineScope.launchOrThrow { preferences.value.developerHideArtwork.toggle() }
         }
       }
     }
 
     return DevSettingsUiState(
       hideArtwork = hideArtwork,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 }

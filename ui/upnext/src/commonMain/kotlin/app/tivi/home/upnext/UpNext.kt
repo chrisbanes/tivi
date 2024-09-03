@@ -88,13 +88,13 @@ import app.tivi.overlays.showInDialog
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.screens.UpNextScreen
+import app.tivi.util.launchOrThrow
 import coil3.compose.AsyncImagePainter
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import kotlinx.coroutines.launch
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 import me.tatarka.inject.annotations.Inject
@@ -130,13 +130,13 @@ internal fun UpNext(
     state = state,
     openEpisodeDetails = { eventSink(UpNextUiEvent.OpenEpisodeDetails(it)) },
     openTrackEpisode = {
-      scope.launch {
+      scope.launchOrThrow {
         overlayHost.showInBottomSheet(EpisodeTrackScreen(it))
       }
     },
     onMessageShown = { eventSink(UpNextUiEvent.ClearMessage(it)) },
     openUser = {
-      scope.launch {
+      scope.launchOrThrow {
         overlayHost.showInDialog(AccountScreen, navigator::goTo)
       }
     },
@@ -193,7 +193,7 @@ internal fun UpNext(
         onUserActionClick = openUser,
         modifier = Modifier
           .noIndicationClickable {
-            coroutineScope.launch { lazyGridState.animateScrollToItem(0) }
+            coroutineScope.launchOrThrow { lazyGridState.animateScrollToItem(0) }
           }
           .fillMaxWidth(),
       )

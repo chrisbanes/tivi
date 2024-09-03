@@ -22,13 +22,13 @@ import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
+import app.tivi.util.launchOrThrow
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -72,10 +72,10 @@ class EpisodeDetailsPresenter(
     val episodeDetails by observeEpisodeDetails.value.flow.collectAsRetainedState(null)
     val episodeWatches by observeEpisodeWatches.value.flow.collectAsRetainedState(emptyList())
 
-    fun eventSink(event: EpisodeDetailsUiEvent) {
+    val eventSink: (EpisodeDetailsUiEvent) -> Unit = { event ->
       when (event) {
         is EpisodeDetailsUiEvent.Refresh -> {
-          scope.launch {
+          scope.launchOrThrow {
             updateEpisodeDetails.value.invoke(
               UpdateEpisodeDetails.Params(screen.id, event.fromUser),
             ).onFailure { e ->
@@ -86,13 +86,13 @@ class EpisodeDetailsPresenter(
         }
 
         is EpisodeDetailsUiEvent.ClearMessage -> {
-          scope.launch {
+          scope.launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
 
         EpisodeDetailsUiEvent.RemoveAllWatches -> {
-          scope.launch {
+          scope.launchOrThrow {
             removeEpisodeWatches.value.invoke(
               RemoveEpisodeWatches.Params(screen.id),
             ).onFailure { e ->
@@ -103,7 +103,7 @@ class EpisodeDetailsPresenter(
         }
 
         is EpisodeDetailsUiEvent.RemoveWatchEntry -> {
-          scope.launch {
+          scope.launchOrThrow {
             removeEpisodeWatch.value.invoke(
               RemoveEpisodeWatch.Params(event.id),
             ).onFailure { e ->
@@ -121,18 +121,20 @@ class EpisodeDetailsPresenter(
         EpisodeDetailsUiEvent.ExpandToShowDetails -> {
           navigator.pop()
 
-          val showId = showDetails?.id ?: return
+          val showId = showDetails?.id
           // As we pushing a number of different screens onto the back stack,
           // we run it in a single snapshot to avoid unnecessary work
-          Snapshot.withMutableSnapshot {
-            navigator.goTo(ShowDetailsScreen(showId))
-            navigator.goTo(
-              ShowSeasonsScreen(
-                showId = showId,
-                selectedSeasonId = episodeDetails?.season?.id,
-                openEpisodeId = episodeDetails?.episode?.id,
-              ),
-            )
+          if (showId != null) {
+            Snapshot.withMutableSnapshot {
+              navigator.goTo(ShowDetailsScreen(showId))
+              navigator.goTo(
+                ShowSeasonsScreen(
+                  showId = showId,
+                  selectedSeasonId = episodeDetails?.season?.id,
+                  openEpisodeId = episodeDetails?.episode?.id,
+                ),
+              )
+            }
           }
         }
       }
@@ -153,7 +155,7 @@ class EpisodeDetailsPresenter(
       canAddEpisodeWatch = episodeDetails?.episode?.hasAired ?: false,
       refreshing = refreshing,
       message = message,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 }

@@ -12,9 +12,9 @@ import android.net.Uri
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import app.tivi.util.launchOrThrow
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class PostNotificationBroadcastReceiver : BroadcastReceiver() {
 
@@ -33,11 +33,11 @@ class PostNotificationBroadcastReceiver : BroadcastReceiver() {
     val store = context.pendingNotificationsStore
     val result = goAsync()
 
-    GlobalScope.launch {
+    GlobalScope.launchOrThrow {
       val pending = store.findWithId(id) ?: run {
         Log.d(TAG, "Pending Notification with ID: $id not found. Exiting.")
         result.finish()
-        return@launch
+        return@launchOrThrow
       }
 
       Log.d(TAG, "Found pending notification with ID: $id: $pending")

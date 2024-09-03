@@ -15,6 +15,7 @@ import app.tivi.data.models.Notification
 import app.tivi.data.models.NotificationChannel
 import app.tivi.domain.interactors.ScheduleDebugEpisodeNotification
 import app.tivi.screens.DevNotificationsScreen
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -23,7 +24,6 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -61,18 +61,18 @@ class DevNotificationsPresenter(
       }
     }
 
-    fun eventSink(event: DevNotificationsUiEvent) {
+    val eventSink: (DevNotificationsUiEvent) -> Unit = { event ->
       when (event) {
         DevNotificationsUiEvent.NavigateUp -> navigator.pop()
         DevNotificationsUiEvent.ShowEpisodeAiringNotification -> {
-          coroutineScope.launch {
+          coroutineScope.launchOrThrow {
             scheduleDebugEpisodeNotification(
               ScheduleDebugEpisodeNotification.Params(3.seconds),
             )
           }
         }
         DevNotificationsUiEvent.ScheduleNotification -> {
-          coroutineScope.launch {
+          coroutineScope.launchOrThrow {
             notificationsManager.schedule(
               Notification(
                 id = "scheduled_test",
@@ -86,7 +86,7 @@ class DevNotificationsPresenter(
         }
 
         DevNotificationsUiEvent.ShowNotification -> {
-          coroutineScope.launch {
+          coroutineScope.launchOrThrow {
             notificationsManager.schedule(
               Notification(
                 id = "immediate_test",
@@ -103,7 +103,7 @@ class DevNotificationsPresenter(
 
     return DevNotificationsUiState(
       pendingNotifications = pending,
-      eventSink = ::eventSink,
+      eventSink = eventSink,
     )
   }
 }

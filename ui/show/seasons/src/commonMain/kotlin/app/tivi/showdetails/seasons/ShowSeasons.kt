@@ -89,11 +89,11 @@ import app.tivi.data.imagemodels.asImageModel
 import app.tivi.data.models.Episode
 import app.tivi.data.models.Season
 import app.tivi.screens.ShowSeasonsScreen
+import app.tivi.util.launchOrThrow
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.stringResource
 
@@ -204,7 +204,7 @@ internal fun ShowSeasons(
           modifier = Modifier.noIndicationClickable {
             val currentSeasonId = state.seasons[pagerState.currentPage].season.id
             lazyListStates[currentSeasonId]?.let { lazyListState ->
-              coroutineScope.launch {
+              coroutineScope.launchOrThrow {
                 lazyListState.animateScrollToItem(0)
               }
             }
@@ -295,7 +295,7 @@ private fun SeasonPagerTabs(
         selected = pagerState.currentPage == index,
         onClick = {
           // Animate to the selected page when clicked
-          coroutineScope.launch {
+          coroutineScope.launchOrThrow {
             pagerState.animateScrollToPage(index)
           }
         },
