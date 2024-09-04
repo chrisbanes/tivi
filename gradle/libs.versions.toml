@@ -1,6 +1,6 @@
 [versions]
 agp = "8.6.0"
-androidxactivity = "1.9.1"
+androidxactivity = "1.9.2"
 baselineprofile = "1.3.0"
 coil = "3.0.0-alpha10"
 chucker = "4.0.0"
