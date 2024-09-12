@@ -19,13 +19,6 @@ kotlin {
       }
     }
 
-    iosMain {
-      dependencies {
-        @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-        implementation(compose.components.resources)
-      }
-    }
-
     commonTest {
       dependencies {
         implementation(kotlin("test"))
@@ -43,10 +36,6 @@ kotlin {
 
 android {
   namespace = "app.tivi.common.ui.resources"
-
-  sourceSets["main"].apply {
-    res.srcDirs("src/androidMain/res")
-  }
 }
 
 compose.resources {

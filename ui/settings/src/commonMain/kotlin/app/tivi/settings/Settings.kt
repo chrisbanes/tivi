@@ -4,8 +4,18 @@
 package app.tivi.settings
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
@@ -14,6 +24,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Loyalty
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
@@ -47,6 +58,10 @@ import app.tivi.common.ui.resources.settings_analytics_data_collection_summary
 import app.tivi.common.ui.resources.settings_analytics_data_collection_title
 import app.tivi.common.ui.resources.settings_app_version
 import app.tivi.common.ui.resources.settings_app_version_summary
+import app.tivi.common.ui.resources.settings_attribution
+import app.tivi.common.ui.resources.settings_attribution_summary
+import app.tivi.common.ui.resources.settings_attribution_tmdb_cd
+import app.tivi.common.ui.resources.settings_attribution_trakt_cd
 import app.tivi.common.ui.resources.settings_crash_data_collection_summary
 import app.tivi.common.ui.resources.settings_crash_data_collection_title
 import app.tivi.common.ui.resources.settings_data_saver_summary_off
@@ -65,6 +80,8 @@ import app.tivi.common.ui.resources.settings_privacy_category_title
 import app.tivi.common.ui.resources.settings_theme_title
 import app.tivi.common.ui.resources.settings_title
 import app.tivi.common.ui.resources.settings_ui_category_title
+import app.tivi.common.ui.resources.tmdb
+import app.tivi.common.ui.resources.trakt
 import app.tivi.common.ui.resources.view_privacy_policy
 import app.tivi.entitlements.ui.Paywall
 import app.tivi.screens.SettingsScreen
@@ -79,6 +96,8 @@ import com.slack.circuit.runtime.ui.ui
 import com.slack.circuitx.overlays.DialogResult
 import com.slack.circuitx.overlays.alertDialogOverlay
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Inject
@@ -94,7 +113,11 @@ class SettingsUiFactory : Ui.Factory {
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(
+  ExperimentalMaterial3Api::class,
+  ExperimentalFoundationApi::class,
+  ExperimentalLayoutApi::class,
+)
 @Composable
 internal fun Settings(
   state: SettingsUiState,
@@ -300,6 +323,39 @@ internal fun Settings(
           }
         }
 
+        item { PreferenceDivider() }
+
+        item {
+          Preference(
+            title = stringResource(Res.string.settings_attribution),
+            summary = {
+              Column(Modifier.fillMaxWidth()) {
+                Text(stringResource(Res.string.settings_attribution_summary))
+
+                Spacer(Modifier.height(16.dp))
+
+                FlowRow(
+                  verticalArrangement = Arrangement.Center,
+                ) {
+                  AttributionLogoButton(
+                    logo = Res.drawable.trakt,
+                    contentDescription = stringResource(Res.string.settings_attribution_trakt_cd),
+                    modifier = Modifier.height(52.dp),
+                  )
+
+                  Spacer(Modifier.width(16.dp))
+
+                  AttributionLogoButton(
+                    logo = Res.drawable.tmdb,
+                    contentDescription = stringResource(Res.string.settings_attribution_tmdb_cd),
+                    modifier = Modifier.height(52.dp),
+                  )
+                }
+              }
+            },
+          )
+        }
+
         if (state.showDeveloperSettings) {
           item { PreferenceDivider() }
 
@@ -386,6 +442,23 @@ private fun ThemeButton(
     Icon(
       imageVector = icon,
       contentDescription = null,
+    )
+  }
+}
+
+@Composable
+private fun AttributionLogoButton(
+  logo: DrawableResource,
+  contentDescription: String?,
+  modifier: Modifier = Modifier,
+) {
+  Card(modifier = modifier.defaultMinSize(minHeight = 56.dp)) {
+    Icon(
+      painter = painterResource(logo),
+      contentDescription = contentDescription,
+      modifier = Modifier
+        .padding(12.dp)
+        .fillMaxHeight(),
     )
   }
 }

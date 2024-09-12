@@ -126,10 +126,15 @@ import app.tivi.common.ui.resources.popup_season_ignore_previous
 import app.tivi.common.ui.resources.popup_season_mark_all_unwatched
 import app.tivi.common.ui.resources.popup_season_mark_watched_aired
 import app.tivi.common.ui.resources.popup_season_mark_watched_all
+import app.tivi.common.ui.resources.powered_by
 import app.tivi.common.ui.resources.runtime_title
 import app.tivi.common.ui.resources.season_title_fallback
+import app.tivi.common.ui.resources.settings_attribution_tmdb_cd
+import app.tivi.common.ui.resources.settings_attribution_trakt_cd
 import app.tivi.common.ui.resources.show_details_seasons
 import app.tivi.common.ui.resources.status_title
+import app.tivi.common.ui.resources.tmdb
+import app.tivi.common.ui.resources.trakt
 import app.tivi.common.ui.resources.trakt_rating_text
 import app.tivi.common.ui.resources.trakt_rating_title
 import app.tivi.common.ui.resources.trakt_rating_votes
@@ -152,6 +157,7 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Inject
@@ -640,6 +646,41 @@ private fun TraktRatingInfoPanel(
   }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun AttributionPanel(
+  modifier: Modifier = Modifier,
+) {
+  Column(
+    modifier = modifier,
+    verticalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    Text(
+      text = stringResource(Res.string.powered_by),
+      style = MaterialTheme.typography.titleSmall,
+    )
+
+    FlowRow(
+      horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+      Icon(
+        painter = painterResource(Res.drawable.trakt),
+        contentDescription = stringResource(Res.string.settings_attribution_trakt_cd),
+        modifier = Modifier
+          .align(Alignment.CenterVertically)
+          .width(40.dp),
+      )
+      Icon(
+        painter = painterResource(Res.drawable.tmdb),
+        contentDescription = stringResource(Res.string.settings_attribution_tmdb_cd),
+        modifier = Modifier
+          .align(Alignment.CenterVertically)
+          .width(32.dp),
+      )
+    }
+  }
+}
+
 @Composable
 private fun Header(title: String) {
   Box(
@@ -790,6 +831,7 @@ private fun InfoPanels(
     ) {
       AirsInfoPanel(show = show, modifier = itemMod)
     }
+    AttributionPanel(modifier = itemMod)
   }
 }
 

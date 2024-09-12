@@ -122,6 +122,10 @@
   <string name="settings_notifications_airing_episodes_summary">Notify when episodes for followed shows are airing</string>
   <string name="settings_open_source">Open source licenses</string>
   <string name="settings_open_source_summary">Tivi 💞 open source</string>
+  <string name="settings_attribution">Attribution</string>
+  <string name="settings_attribution_summary">Tivi uses data from a number of different sources, including:</string>
+  <string name="settings_attribution_trakt_cd">Trakt.tv</string>
+  <string name="settings_attribution_tmdb_cd">The Movie Database</string>
   <string name="settings_privacy_category_title">Privacy</string>
   <string name="settings_theme_title">Theme</string>
   <string name="settings_title">Settings</string>
@@ -174,4 +178,5 @@
     <item quantity="one">%1$d episode to watch</item>
     <item quantity="other">%1$d episodes to watch</item>
   </plurals>
+  <string name="powered_by">Data providers</string>
 </resources>
