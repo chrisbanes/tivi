@@ -18,6 +18,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.common.ui.compose)
+        implementation(projects.common.ui.circuit)
         implementation(projects.core.logging)
 
         api(projects.common.ui.screens)

@@ -9,10 +9,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import app.tivi.screens.DevLogScreen
 import app.tivi.util.RecordingLoggerWriter
+import app.tivi.wrapEventSink
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -42,7 +44,7 @@ class DevLogPresenter(
       RecordingLoggerWriter.buffer.map { it.asReversed() }
     }.collectAsState(emptyList())
 
-    val eventSink: (DevLogUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(DevLogUiEvent) -> Unit = { event ->
       when (event) {
         DevLogUiEvent.NavigateUp -> navigator.pop()
       }
@@ -50,7 +52,7 @@ class DevLogPresenter(
 
     return DevLogUiState(
       logs = logs,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 }

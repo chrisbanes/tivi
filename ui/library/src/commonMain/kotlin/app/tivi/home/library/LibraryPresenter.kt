@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -31,6 +30,7 @@ import app.tivi.screens.ShowDetailsScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.toggle
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
@@ -38,6 +38,7 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filter
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -69,7 +70,6 @@ class LibraryPresenter(
 
   @Composable
   override fun present(): LibraryUiState {
-    val scope = rememberCoroutineScope()
     val uiMessageManager = remember { UiMessageManager() }
 
     // Yes, this is gross. We need the same flow instance across Presenter instances. We could
@@ -92,19 +92,17 @@ class LibraryPresenter(
 
     val onlyFollowed by preferences.value.libraryFollowedActive.collectAsState()
 
-    val coroutineScope = rememberCoroutineScope()
-
-    val eventSink: (LibraryUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(LibraryUiEvent) -> Unit = { event ->
       when (event) {
         is LibraryUiEvent.ChangeFilter -> filter = event.filter
         is LibraryUiEvent.ChangeSort -> sort = event.sort
         is LibraryUiEvent.ClearMessage -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
         is LibraryUiEvent.Refresh -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             if (getTraktAuthState.value.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
               updateLibraryShows.value.invoke(
                 UpdateLibraryShows.Params(event.fromUser),
@@ -116,7 +114,7 @@ class LibraryPresenter(
           }
         }
         LibraryUiEvent.ToggleFollowedShowsIncluded -> {
-          coroutineScope.launchOrThrow { preferences.value.libraryFollowedActive.toggle() }
+          launchOrThrow { preferences.value.libraryFollowedActive.toggle() }
         }
         LibraryUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
         is LibraryUiEvent.OpenShowDetails -> {
@@ -161,7 +159,7 @@ class LibraryPresenter(
       sort = sort,
       message = message,
       onlyFollowedShows = onlyFollowed,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 

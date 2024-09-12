@@ -11,11 +11,13 @@ import app.tivi.common.compose.rememberRetainedCachedPagingFlow
 import app.tivi.domain.observers.ObservePagedRecommendedShows
 import app.tivi.screens.RecommendedShowsScreen
 import app.tivi.screens.ShowDetailsScreen
+import app.tivi.wrapEventSink
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -54,7 +56,7 @@ class RecommendedShowsPresenter(
       retainedPagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
     }
 
-    val eventSink: (RecommendedShowsUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(RecommendedShowsUiEvent) -> Unit = { event ->
       when (event) {
         RecommendedShowsUiEvent.NavigateUp -> navigator.pop()
         is RecommendedShowsUiEvent.OpenShowDetails -> {
@@ -65,7 +67,7 @@ class RecommendedShowsPresenter(
 
     return RecommendedShowsUiState(
       items = items,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 

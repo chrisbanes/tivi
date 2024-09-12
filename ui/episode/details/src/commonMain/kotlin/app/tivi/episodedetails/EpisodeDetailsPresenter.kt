@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.Snapshot
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
@@ -23,12 +22,14 @@ import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -61,7 +62,6 @@ class EpisodeDetailsPresenter(
 
   @Composable
   override fun present(): EpisodeDetailsUiState {
-    val scope = rememberCoroutineScope()
     val uiMessageManager = remember { UiMessageManager() }
 
     val refreshing by updateEpisodeDetails.value.inProgress.collectAsState(false)
@@ -72,10 +72,10 @@ class EpisodeDetailsPresenter(
     val episodeDetails by observeEpisodeDetails.value.flow.collectAsRetainedState(null)
     val episodeWatches by observeEpisodeWatches.value.flow.collectAsRetainedState(emptyList())
 
-    val eventSink: (EpisodeDetailsUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(EpisodeDetailsUiEvent) -> Unit = { event ->
       when (event) {
         is EpisodeDetailsUiEvent.Refresh -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             updateEpisodeDetails.value.invoke(
               UpdateEpisodeDetails.Params(screen.id, event.fromUser),
             ).onFailure { e ->
@@ -86,13 +86,13 @@ class EpisodeDetailsPresenter(
         }
 
         is EpisodeDetailsUiEvent.ClearMessage -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
 
         EpisodeDetailsUiEvent.RemoveAllWatches -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             removeEpisodeWatches.value.invoke(
               RemoveEpisodeWatches.Params(screen.id),
             ).onFailure { e ->
@@ -103,7 +103,7 @@ class EpisodeDetailsPresenter(
         }
 
         is EpisodeDetailsUiEvent.RemoveWatchEntry -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             removeEpisodeWatch.value.invoke(
               RemoveEpisodeWatch.Params(event.id),
             ).onFailure { e ->
@@ -155,7 +155,7 @@ class EpisodeDetailsPresenter(
       canAddEpisodeWatch = episodeDetails?.episode?.hasAired ?: false,
       refreshing = refreshing,
       message = message,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 }

@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
@@ -18,6 +17,7 @@ import app.tivi.domain.interactors.SearchShows
 import app.tivi.screens.SearchScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitContext
@@ -25,6 +25,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -51,8 +52,6 @@ class SearchPresenter(
 
   @Composable
   override fun present(): SearchUiState {
-    val scope = rememberCoroutineScope()
-
     var query by rememberRetained { mutableStateOf("") }
     var results by rememberRetained { mutableStateOf(emptyList<TiviShow>()) }
 
@@ -74,10 +73,10 @@ class SearchPresenter(
       }
     }
 
-    val eventSink: (SearchUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(SearchUiEvent) -> Unit = { event ->
       when (event) {
         is SearchUiEvent.ClearMessage -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
@@ -94,7 +93,7 @@ class SearchPresenter(
       searchResults = results,
       refreshing = loading,
       message = message,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 }
