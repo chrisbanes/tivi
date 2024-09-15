@@ -22,7 +22,7 @@ spotless = "6.25.0"
 sqldelight = "2.0.2"
 revenuecat = "1.0.0-beta.3"
 licensee = "1.11.0"
-wire = "5.0.0"
+wire = "5.1.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
