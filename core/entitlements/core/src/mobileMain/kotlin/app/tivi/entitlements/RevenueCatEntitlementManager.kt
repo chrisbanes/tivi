@@ -9,9 +9,6 @@ import com.revenuecat.purchases.kmp.EntitlementVerificationMode
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.PurchasesConfiguration
-import com.revenuecat.purchases.kmp.entitlements
-import com.revenuecat.purchases.kmp.get
-import com.revenuecat.purchases.kmp.isActive
 import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
