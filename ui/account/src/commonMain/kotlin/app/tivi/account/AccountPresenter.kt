@@ -6,7 +6,6 @@ package app.tivi.account
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.interactors.LoginTrakt
 import app.tivi.domain.interactors.LogoutTrakt
@@ -16,11 +15,13 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.screens.AccountScreen
 import app.tivi.screens.SettingsScreen
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -50,25 +51,27 @@ class AccountPresenter(
     val user by observeUserDetails.value.flow.collectAsRetainedState(null)
     val authState by observeTraktAuthState.value.flow
       .collectAsRetainedState(TraktAuthState.LOGGED_OUT)
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
       observeTraktAuthState.value.invoke(Unit)
       observeUserDetails.value.invoke(ObserveUserDetails.Params("me"))
     }
 
-    return AccountUiState(
-      user = user,
-      authState = authState,
-    ) { event ->
+    val eventSink: CoroutineScope.(AccountUiEvent) -> Unit = { event ->
       when (event) {
         AccountUiEvent.NavigateToSettings -> {
           navigator.pop() // dismiss ourselves
           navigator.goTo(SettingsScreen)
         }
-        AccountUiEvent.Login -> scope.launchOrThrow { loginTrakt.value.invoke() }
-        AccountUiEvent.Logout -> scope.launchOrThrow { logoutTrakt.value.invoke() }
+        AccountUiEvent.Login -> launchOrThrow { loginTrakt.value.invoke() }
+        AccountUiEvent.Logout -> launchOrThrow { logoutTrakt.value.invoke() }
       }
     }
+
+    return AccountUiState(
+      user = user,
+      authState = authState,
+      eventSink = wrapEventSink(eventSink),
+    )
   }
 }

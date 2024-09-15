@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
 import app.tivi.data.models.TiviShow
@@ -18,12 +17,14 @@ import app.tivi.domain.observers.ObserveShowSeasonsEpisodesWatches
 import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -51,8 +52,6 @@ class ShowSeasonsPresenter(
 ) : Presenter<ShowSeasonsUiState> {
   @Composable
   override fun present(): ShowSeasonsUiState {
-    val scope = rememberCoroutineScope()
-
     val uiMessageManager = remember { UiMessageManager() }
 
     val seasons by observeShowSeasons.value.flow.collectAsRetainedState(emptyList())
@@ -60,10 +59,10 @@ class ShowSeasonsPresenter(
     val refreshing by updateShowSeasons.value.inProgress.collectAsState(false)
     val message by uiMessageManager.message.collectAsState(null)
 
-    val eventSink: (ShowSeasonsUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(ShowSeasonsUiEvent) -> Unit = { event ->
       when (event) {
         is ShowSeasonsUiEvent.ClearMessage -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
@@ -71,7 +70,7 @@ class ShowSeasonsPresenter(
         is ShowSeasonsUiEvent.OpenEpisodeDetails -> navigator.goTo(EpisodeDetailsScreen(event.id))
 
         is ShowSeasonsUiEvent.Refresh -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             updateShowSeasons.value.invoke(
               UpdateShowSeasons.Params(screen.showId, event.fromUser),
             ).onFailure { e ->
@@ -98,7 +97,7 @@ class ShowSeasonsPresenter(
       refreshing = refreshing,
       message = message,
       initialSeasonId = screen.selectedSeasonId,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 }

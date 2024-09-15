@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
 import app.tivi.data.traktauth.TraktAuthState
@@ -32,12 +31,14 @@ import app.tivi.screens.RecommendedShowsScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.TrendingShowsScreen
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -74,7 +75,6 @@ class DiscoverPresenter(
 
   @Composable
   override fun present(): DiscoverUiState {
-    val scope = rememberCoroutineScope()
     val uiMessageManager = remember { UiMessageManager() }
 
     val trendingItems by observeTrendingShows.value.flow.collectAsRetainedState(emptyList())
@@ -95,16 +95,16 @@ class DiscoverPresenter(
 
     val message by uiMessageManager.message.collectAsState(null)
 
-    val eventSink: (DiscoverUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(DiscoverUiEvent) -> Unit = { event ->
       when (event) {
         is DiscoverUiEvent.ClearMessage -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
 
         is DiscoverUiEvent.Refresh -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             updatePopularShows.value.invoke(
               UpdatePopularShows.Params(
                 page = UpdatePopularShows.Page.REFRESH,
@@ -115,7 +115,7 @@ class DiscoverPresenter(
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }
-          scope.launchOrThrow {
+          launchOrThrow {
             updateTrendingShows.value.invoke(
               UpdateTrendingShows.Params(
                 page = UpdateTrendingShows.Page.REFRESH,
@@ -126,7 +126,7 @@ class DiscoverPresenter(
               uiMessageManager.emitMessage(UiMessage(e))
             }
           }
-          scope.launchOrThrow {
+          launchOrThrow {
             updateAntipicatedShows.value.invoke(
               UpdateAnticipatedShows.Params(
                 page = UpdateAnticipatedShows.Page.REFRESH,
@@ -138,7 +138,7 @@ class DiscoverPresenter(
             }
           }
           if (authState == TraktAuthState.LOGGED_IN) {
-            scope.launchOrThrow {
+            launchOrThrow {
               updateRecommendedShows.value.invoke(
                 UpdateRecommendedShows.Params(isUserInitiated = event.fromUser),
               ).onFailure { e ->
@@ -190,7 +190,7 @@ class DiscoverPresenter(
       anticipatedRefreshing = anticipatedLoading,
       nextEpisodesToWatch = nextEpisodesToWatch,
       message = message,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 }

@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
 import app.tivi.data.models.TiviShow
@@ -32,12 +31,14 @@ import app.tivi.screens.EpisodeDetailsScreen
 import app.tivi.screens.ShowDetailsScreen
 import app.tivi.screens.ShowSeasonsScreen
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -92,8 +93,6 @@ class ShowDetailsPresenter(
 
   @Composable
   override fun present(): ShowDetailsUiState {
-    val scope = rememberCoroutineScope()
-
     val uiMessageManager = remember { UiMessageManager() }
 
     val isFollowed by observeShowFollowStatus.flow.collectAsRetainedState(false)
@@ -119,26 +118,26 @@ class ShowDetailsPresenter(
       }
     }
 
-    val eventSink: (ShowDetailsUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(ShowDetailsUiEvent) -> Unit = { event ->
       when (event) {
         is ShowDetailsUiEvent.ClearMessage -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
 
         is ShowDetailsUiEvent.Refresh -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             updateShowDetails(
               UpdateShowDetails.Params(showId, event.fromUser),
             ).onFailure(::handleException)
           }
-          scope.launchOrThrow {
+          launchOrThrow {
             updateRelatedShows(
               UpdateRelatedShows.Params(showId, event.fromUser),
             ).onFailure(::handleException)
           }
-          scope.launchOrThrow {
+          launchOrThrow {
             updateShowSeasons(
               UpdateShowSeasons.Params(showId, event.fromUser),
             ).onFailure(::handleException)
@@ -146,7 +145,7 @@ class ShowDetailsPresenter(
         }
 
         is ShowDetailsUiEvent.FollowSeason -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             changeSeasonFollowStatus(
               ChangeSeasonFollowStatus.Params(
                 seasonId = event.seasonId,
@@ -157,7 +156,7 @@ class ShowDetailsPresenter(
         }
 
         is ShowDetailsUiEvent.MarkSeasonUnwatched -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             changeSeasonWatchedStatus(
               Params(event.seasonId, Action.UNWATCH),
             ).onFailure(::handleException)
@@ -165,7 +164,7 @@ class ShowDetailsPresenter(
         }
 
         is ShowDetailsUiEvent.MarkSeasonWatched -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             changeSeasonWatchedStatus(
               Params(event.seasonId, Action.WATCH, event.onlyAired, event.date),
             ).onFailure(::handleException)
@@ -173,7 +172,7 @@ class ShowDetailsPresenter(
         }
 
         ShowDetailsUiEvent.ToggleShowFollowed -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             changeShowFollowStatus(
               ChangeShowFollowStatus.Params(showId, TOGGLE),
             ).onFailure(::handleException)
@@ -181,7 +180,7 @@ class ShowDetailsPresenter(
         }
 
         is ShowDetailsUiEvent.UnfollowPreviousSeasons -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             changeSeasonFollowStatus(
               ChangeSeasonFollowStatus.Params(
                 seasonId = event.seasonId,
@@ -195,7 +194,7 @@ class ShowDetailsPresenter(
         }
 
         is ShowDetailsUiEvent.UnfollowSeason -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             changeSeasonFollowStatus(
               ChangeSeasonFollowStatus.Params(
                 seasonId = event.seasonId,
@@ -241,7 +240,7 @@ class ShowDetailsPresenter(
       watchStats = stats,
       refreshing = refreshing,
       message = message,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 }

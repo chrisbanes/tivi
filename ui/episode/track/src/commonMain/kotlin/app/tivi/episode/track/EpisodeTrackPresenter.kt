@@ -10,7 +10,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import app.tivi.common.compose.UiMessage
 import app.tivi.common.compose.UiMessageManager
@@ -19,12 +18,14 @@ import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.screens.EpisodeTrackScreen
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -57,7 +58,6 @@ class EpisodeTrackPresenter(
 ) : Presenter<EpisodeTrackUiState> {
   @Composable
   override fun present(): EpisodeTrackUiState {
-    val scope = rememberCoroutineScope()
     val uiMessageManager = remember { UiMessageManager() }
 
     val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
@@ -76,16 +76,16 @@ class EpisodeTrackPresenter(
       }
     }
 
-    val eventSink: (EpisodeTrackUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(EpisodeTrackUiEvent) -> Unit = { event ->
       when (event) {
         is EpisodeTrackUiEvent.ClearMessage -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
 
         is EpisodeTrackUiEvent.Refresh -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             updateEpisodeDetails.value.invoke(
               UpdateEpisodeDetails.Params(screen.id, event.fromUser),
             ).onFailure { e ->
@@ -121,7 +121,7 @@ class EpisodeTrackPresenter(
         }
 
         EpisodeTrackUiEvent.Submit -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             addEpisodeWatch.value.invoke(
               AddEpisodeWatch.Params(
                 episodeId = screen.id,
@@ -156,7 +156,7 @@ class EpisodeTrackPresenter(
       message = message,
       submitInProgress = submitting,
       canSubmit = !submitting,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 }

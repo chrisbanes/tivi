@@ -10,10 +10,12 @@ import app.tivi.domain.interactors.FetchLicensesList
 import app.tivi.screens.LicensesScreen
 import app.tivi.screens.UrlScreen
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.wrapEventSink
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -56,7 +58,7 @@ class LicensesPresenter(
       }
     }
 
-    val eventSink: (LicensesUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(LicensesUiEvent) -> Unit = { event ->
       when (event) {
         LicensesUiEvent.NavigateUp -> navigator.pop()
         is LicensesUiEvent.NavigateRepository -> {
@@ -70,7 +72,7 @@ class LicensesPresenter(
 
     return LicensesUiState(
       licenses = licenseItemList,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 }

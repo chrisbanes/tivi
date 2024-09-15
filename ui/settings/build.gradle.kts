@@ -22,6 +22,7 @@ kotlin {
         implementation(projects.core.preferences)
         implementation(projects.domain)
         implementation(projects.common.ui.compose)
+        implementation(projects.common.ui.circuit)
 
         api(projects.common.ui.screens)
         api(libs.circuit.foundation)

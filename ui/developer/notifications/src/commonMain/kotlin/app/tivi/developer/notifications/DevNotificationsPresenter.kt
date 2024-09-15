@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import app.tivi.core.notifications.NotificationManager
 import app.tivi.data.models.Notification
@@ -16,12 +15,14 @@ import app.tivi.data.models.NotificationChannel
 import app.tivi.domain.interactors.ScheduleDebugEpisodeNotification
 import app.tivi.screens.DevNotificationsScreen
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.datetime.Clock
@@ -51,7 +52,6 @@ class DevNotificationsPresenter(
 
   @Composable
   override fun present(): DevNotificationsUiState {
-    val coroutineScope = rememberCoroutineScope()
     var pending by remember { mutableStateOf(emptyList<Notification>()) }
 
     LaunchedEffect(notificationsManager) {
@@ -61,18 +61,18 @@ class DevNotificationsPresenter(
       }
     }
 
-    val eventSink: (DevNotificationsUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(DevNotificationsUiEvent) -> Unit = { event ->
       when (event) {
         DevNotificationsUiEvent.NavigateUp -> navigator.pop()
         DevNotificationsUiEvent.ShowEpisodeAiringNotification -> {
-          coroutineScope.launchOrThrow {
+          launchOrThrow {
             scheduleDebugEpisodeNotification(
               ScheduleDebugEpisodeNotification.Params(3.seconds),
             )
           }
         }
         DevNotificationsUiEvent.ScheduleNotification -> {
-          coroutineScope.launchOrThrow {
+          launchOrThrow {
             notificationsManager.schedule(
               Notification(
                 id = "scheduled_test",
@@ -86,7 +86,7 @@ class DevNotificationsPresenter(
         }
 
         DevNotificationsUiEvent.ShowNotification -> {
-          coroutineScope.launchOrThrow {
+          launchOrThrow {
             notificationsManager.schedule(
               Notification(
                 id = "immediate_test",
@@ -103,7 +103,7 @@ class DevNotificationsPresenter(
 
     return DevNotificationsUiState(
       pendingNotifications = pending,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 }

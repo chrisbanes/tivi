@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -31,6 +30,7 @@ import app.tivi.screens.UpNextScreen
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.toggle
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import co.touchlab.kermit.Logger
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
@@ -38,6 +38,7 @@ import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filter
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -71,8 +72,6 @@ class UpNextPresenter(
 
   @Composable
   override fun present(): UpNextUiState {
-    val scope = rememberCoroutineScope()
-
     val uiMessageManager = remember { UiMessageManager() }
 
     // Yes, this is gross. We need the same flow instance across Presenter instances. We could
@@ -94,17 +93,17 @@ class UpNextPresenter(
 
     val followedShowsOnly by preferences.value.upNextFollowedOnly.collectAsState()
 
-    val eventSink: (UpNextUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(UpNextUiEvent) -> Unit = { event ->
       when (event) {
         is UpNextUiEvent.ChangeSort -> sort = event.sort
         is UpNextUiEvent.ClearMessage -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             uiMessageManager.clearMessage(event.id)
           }
         }
 
         is UpNextUiEvent.Refresh -> {
-          scope.launchOrThrow {
+          launchOrThrow {
             if (getTraktAuthState.value.invoke().getOrThrow() == TraktAuthState.LOGGED_IN) {
               updateUpNextEpisodes.value.invoke(
                 UpdateUpNextEpisodes.Params(event.fromUser),
@@ -117,7 +116,7 @@ class UpNextPresenter(
         }
 
         UpNextUiEvent.ToggleFollowedShowsOnly -> {
-          scope.launchOrThrow { preferences.value.upNextFollowedOnly.toggle() }
+          launchOrThrow { preferences.value.upNextFollowedOnly.toggle() }
         }
 
         UpNextUiEvent.OpenAccount -> navigator.goTo(AccountScreen)
@@ -159,7 +158,7 @@ class UpNextPresenter(
       sort = sort,
       message = message,
       followedShowsOnly = followedShowsOnly,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 

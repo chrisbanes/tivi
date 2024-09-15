@@ -19,6 +19,7 @@ kotlin {
         implementation(projects.core.base)
         implementation(projects.domain)
         implementation(projects.common.ui.compose)
+        implementation(projects.common.ui.circuit)
         implementation(projects.common.imageloading)
 
         api(projects.common.ui.screens)

@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
@@ -27,10 +26,12 @@ import app.tivi.screens.LicensesScreen
 import app.tivi.screens.SettingsScreen
 import app.tivi.screens.UrlScreen
 import app.tivi.util.launchOrThrow
+import app.tivi.wrapEventSink
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -79,45 +80,43 @@ class SettingsPresenter(
     val notificationsEnabled by preferences.episodeAiringNotificationsEnabled.collectAsState()
     var proUpsellVisible by remember { mutableStateOf(false) }
 
-    val coroutineScope = rememberCoroutineScope()
-
     LaunchedEffect(observeTraktAuthState) {
       observeTraktAuthState(Unit)
     }
 
-    val eventSink: (SettingsUiEvent) -> Unit = { event ->
+    val eventSink: CoroutineScope.(SettingsUiEvent) -> Unit = { event ->
       when (event) {
         SettingsUiEvent.NavigateUp -> {
           navigator.pop()
         }
 
         is SettingsUiEvent.SetTheme -> {
-          coroutineScope.launchOrThrow { preferences.theme.set(event.theme) }
+          launchOrThrow { preferences.theme.set(event.theme) }
         }
 
         SettingsUiEvent.ToggleUseDynamicColors -> {
-          coroutineScope.launchOrThrow { preferences.useDynamicColors.toggle() }
+          launchOrThrow { preferences.useDynamicColors.toggle() }
         }
 
         SettingsUiEvent.ToggleUseLessData -> {
-          coroutineScope.launchOrThrow { preferences.useLessData.toggle() }
+          launchOrThrow { preferences.useLessData.toggle() }
         }
 
         SettingsUiEvent.ToggleIgnoreSpecials -> {
-          coroutineScope.launchOrThrow { preferences.ignoreSpecials.toggle() }
+          launchOrThrow { preferences.ignoreSpecials.toggle() }
         }
 
         SettingsUiEvent.ToggleCrashDataReporting -> {
-          coroutineScope.launchOrThrow { preferences.reportAppCrashes.toggle() }
+          launchOrThrow { preferences.reportAppCrashes.toggle() }
         }
 
         SettingsUiEvent.ToggleAnalyticsDataReporting -> {
-          coroutineScope.launchOrThrow { preferences.reportAnalytics.toggle() }
+          launchOrThrow { preferences.reportAnalytics.toggle() }
         }
 
         SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled -> {
           if (isPro) {
-            coroutineScope.launchOrThrow {
+            launchOrThrow {
               if (preferences.episodeAiringNotificationsEnabled.get()) {
                 // If we're enabled, and being turned off, we don't need to mess with permissions
                 preferences.episodeAiringNotificationsEnabled.set(false)
@@ -168,7 +167,7 @@ class SettingsPresenter(
       isPro = isPro,
       isLoggedIn = authState == TraktAuthState.LOGGED_IN,
       showDeleteAccount = authState == TraktAuthState.LOGGED_IN,
-      eventSink = eventSink,
+      eventSink = wrapEventSink(eventSink),
     )
   }
 }
