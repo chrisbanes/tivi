@@ -91,7 +91,7 @@ haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = 
 tools-desugarjdklibs = "com.android.tools:desugar_jdk_libs:2.1.2"
 
 google-firebase-analytics = "com.google.firebase:firebase-analytics:22.1.0"
-google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:19.0.3"
+google-firebase-crashlytics = "com.google.firebase:firebase-crashlytics-ktx:19.1.0"
 google-firebase-perf = "com.google.firebase:firebase-perf:21.0.1"
 
 junit = "junit:junit:4.13.2"
