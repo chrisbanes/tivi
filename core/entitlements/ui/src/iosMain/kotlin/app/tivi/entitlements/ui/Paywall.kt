@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeUIViewController
 import app.tivi.common.compose.ui.PresentSheetViewController
 import com.revenuecat.purchases.kmp.Purchases
-import com.revenuecat.purchases.kmp.get
 import com.revenuecat.purchases.kmp.ktx.awaitOfferings
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall as RevenueCatPaywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
