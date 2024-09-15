@@ -145,6 +145,9 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
+      - name: Cleanup Disk space in runner
+        run: .github/scripts/mac-disk-cleanup.sh
+
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
@@ -204,6 +207,9 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
+      - name: Cleanup Disk space in runner
+        run: .github/scripts/mac-disk-cleanup.sh
+
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
@@ -260,6 +266,9 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
+      - name: Cleanup Disk space in runner
+        run: .github/scripts/mac-disk-cleanup.sh
+
       - name: set up JDK
         uses: actions/setup-java@v4
         with:
@@ -301,6 +310,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+
+      - name: Cleanup Disk space in runner
+        run: .github/scripts/mac-disk-cleanup.sh
 
       - uses: ruby/setup-ruby@v1
         with:
