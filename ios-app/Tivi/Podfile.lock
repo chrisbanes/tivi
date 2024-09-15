@@ -5,8 +5,8 @@ PODS:
   - AppAuth/Core (1.7.5)
   - AppAuth/ExternalUserAgent (1.7.5):
     - AppAuth/Core
-  - FirebaseAnalytics (11.1.0):
-    - FirebaseAnalytics/AdIdSupport (= 11.1.0)
+  - FirebaseAnalytics (11.2.0):
+    - FirebaseAnalytics/AdIdSupport (= 11.2.0)
     - FirebaseCore (~> 11.0)
     - FirebaseInstallations (~> 11.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
@@ -14,24 +14,24 @@ PODS:
     - GoogleUtilities/Network (~> 8.0)
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
     - nanopb (~> 3.30910.0)
-  - FirebaseAnalytics/AdIdSupport (11.1.0):
+  - FirebaseAnalytics/AdIdSupport (11.2.0):
     - FirebaseCore (~> 11.0)
     - FirebaseInstallations (~> 11.0)
-    - GoogleAppMeasurement (= 11.1.0)
+    - GoogleAppMeasurement (= 11.2.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
     - GoogleUtilities/MethodSwizzler (~> 8.0)
     - GoogleUtilities/Network (~> 8.0)
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
     - nanopb (~> 3.30910.0)
-  - FirebaseCore (11.1.0):
+  - FirebaseCore (11.2.0):
     - FirebaseCoreInternal (~> 11.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/Logger (~> 8.0)
-  - FirebaseCoreExtension (11.1.0):
+  - FirebaseCoreExtension (11.2.0):
     - FirebaseCore (~> 11.0)
-  - FirebaseCoreInternal (11.1.0):
+  - FirebaseCoreInternal (11.2.0):
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
-  - FirebaseCrashlytics (11.1.0):
+  - FirebaseCrashlytics (11.2.0):
     - FirebaseCore (~> 11.0)
     - FirebaseInstallations (~> 11.0)
     - FirebaseRemoteConfigInterop (~> 11.0)
@@ -40,13 +40,13 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - nanopb (~> 3.30910.0)
     - PromisesObjC (~> 2.4)
-  - FirebaseInstallations (11.1.0):
+  - FirebaseInstallations (11.2.0):
     - FirebaseCore (~> 11.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
-  - FirebaseRemoteConfigInterop (11.1.0)
-  - FirebaseSessions (11.1.0):
+  - FirebaseRemoteConfigInterop (11.2.0)
+  - FirebaseSessions (11.2.0):
     - FirebaseCore (~> 11.0)
     - FirebaseCoreExtension (~> 11.0)
     - FirebaseInstallations (~> 11.0)
@@ -55,21 +55,21 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 8.0)
     - nanopb (~> 3.30910.0)
     - PromisesSwift (~> 2.1)
-  - GoogleAppMeasurement (11.1.0):
-    - GoogleAppMeasurement/AdIdSupport (= 11.1.0)
+  - GoogleAppMeasurement (11.2.0):
+    - GoogleAppMeasurement/AdIdSupport (= 11.2.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
     - GoogleUtilities/MethodSwizzler (~> 8.0)
     - GoogleUtilities/Network (~> 8.0)
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
     - nanopb (~> 3.30910.0)
-  - GoogleAppMeasurement/AdIdSupport (11.1.0):
-    - GoogleAppMeasurement/WithoutAdIdSupport (= 11.1.0)
+  - GoogleAppMeasurement/AdIdSupport (11.2.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 11.2.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
     - GoogleUtilities/MethodSwizzler (~> 8.0)
     - GoogleUtilities/Network (~> 8.0)
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
     - nanopb (~> 3.30910.0)
-  - GoogleAppMeasurement/WithoutAdIdSupport (11.1.0):
+  - GoogleAppMeasurement/WithoutAdIdSupport (11.2.0):
     - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
     - GoogleUtilities/MethodSwizzler (~> 8.0)
     - GoogleUtilities/Network (~> 8.0)
@@ -124,8 +124,8 @@ PODS:
 
 DEPENDENCIES:
   - AppAuth (= 1.7.5)
-  - FirebaseAnalytics (= 11.1.0)
-  - FirebaseCrashlytics (= 11.1.0)
+  - FirebaseAnalytics (= 11.2.0)
+  - FirebaseCrashlytics (= 11.2.0)
   - PurchasesHybridCommon (= 13.0.1)
   - PurchasesHybridCommonUI (= 13.0.1)
 
@@ -153,15 +153,15 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
-  FirebaseAnalytics: 9fcdb2e9844174bb405b34cc47092c9b91993d83
-  FirebaseCore: 6e2a2782e234b14d48e880ed369ac55cda87fed7
-  FirebaseCoreExtension: aa5c9779c2d0d39d83f1ceb3fdbafe80c4feecfa
-  FirebaseCoreInternal: adefedc9a88dbe393c4884640a73ec9e8e790f8c
-  FirebaseCrashlytics: 95cfe27373ff2edab39c28583d93cbf2dfff401d
-  FirebaseInstallations: d0a8fea5a6fa91abc661591cf57c0f0d70863e57
-  FirebaseRemoteConfigInterop: abf8b1bbc0bf1b84abd22b66746926410bf91a87
-  FirebaseSessions: 78f137e68dc01ca71606169ba4ac73b98c13752a
-  GoogleAppMeasurement: 8bb20efc67c8fc1cff9c42a06c256caf55289bbf
+  FirebaseAnalytics: c36efd5710c60c17558650fa58c2066eca7e9265
+  FirebaseCore: a282032ae9295c795714ded2ec9c522fc237f8da
+  FirebaseCoreExtension: cda74ddfb001224bd8fd1d6e74698b4ed07803de
+  FirebaseCoreInternal: 0c569513412da9f3b31bd0b340013bbee8f295c5
+  FirebaseCrashlytics: cfc69af5b53565dc6a5e563788809b5778ac4eac
+  FirebaseInstallations: 771177d89d6c451dc6e50085ec82e2fc77ed0a4a
+  FirebaseRemoteConfigInterop: 477b26fdeb8fb5fbaf22fa9db5343b42289dc7db
+  FirebaseSessions: adcec8b72d0066a385e3affcd1bcb1ebb3908ce6
+  GoogleAppMeasurement: 76d4f8b36b03bd8381fa9a7fe2cc7f99c0a2e93a
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
@@ -172,6 +172,6 @@ SPEC CHECKSUMS:
   RevenueCat: 86e4486345a6f7740fecb1eeff91eeff8708eee1
   RevenueCatUI: c19388c5f35ef5beea1b9b7a2593479f12303dc6
 
-PODFILE CHECKSUM: 3f3441b626e91bf2d81121c676cc26318485a1c2
+PODFILE CHECKSUM: b3da77533536f2baff53aadb58d42eb8528d7339
 
 COCOAPODS: 1.15.2
