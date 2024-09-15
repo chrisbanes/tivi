@@ -20,7 +20,7 @@ ktor = "2.3.12"
 paging = "3.3.2"
 spotless = "6.25.0"
 sqldelight = "2.0.2"
-revenuecat = "1.0.0-beta.3"
+revenuecat = "1.0.0+13.2.0"
 licensee = "1.11.0"
 wire = "5.1.0"
 
