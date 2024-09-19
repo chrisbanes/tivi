@@ -100,7 +100,7 @@ kermit-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 kotlinx-atomicfu = "org.jetbrains.kotlinx:atomicfu:0.25.0"
 kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.6.1"
-kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2"
+kotlinx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
