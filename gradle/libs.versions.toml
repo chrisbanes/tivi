@@ -115,7 +115,7 @@ leakCanary = "com.squareup.leakcanary:leakcanary-android:2.14"
 lyricist-core = { module = "cafe.adriel.lyricist:lyricist-core", version.ref = "lyricist" }
 lyricist-library = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" }
 
-material-kolor = "com.materialkolor:material-kolor:1.7.0"
+material-kolor = "com.materialkolor:material-kolor:1.7.1"
 
 moko-permissions-core = { module = "dev.icerock.moko:permissions", version.ref = "moko-permissions" }
 moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", version.ref = "moko-permissions" }
