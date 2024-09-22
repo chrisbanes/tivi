@@ -5,6 +5,18 @@
   ],
   "packageRules": [
     {
+      "description": "Automatically merge minor and patch-level updates",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Disable updates to SNAPSHOTS",
+      "matchDatasources": ["maven"],
+      "allowedVersions": "!/SNAPSHOT$/"
+    },
+    {
       "groupName": "Kotlin, KSP and Compose Multiplatform",
       "groupSlug": "kotlin",
       "matchPackageNames": [
@@ -30,16 +42,10 @@
       "enabled": false
     },
     {
-      "description": "Automatically merge minor and patch-level updates",
-      "matchUpdateTypes": ["minor", "patch", "digest"],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
-    },
-    {
-      "description": "Disable updates to SNAPSHOTS",
-      "matchDatasources": ["maven"],
-      "allowedVersions": "!/SNAPSHOT$/"
+      "groupName": "Gradle",
+      "groupSlug": "gradle",
+      "matchPackageNames": [ "gradle" ],
+      "platformAutomerge": false
     }
   ],
   "ruby-version": {
