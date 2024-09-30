@@ -5,7 +5,7 @@ target 'Tivi' do
 
   pod 'AppAuth', '1.7.5'
   pod 'FirebaseAnalytics', '11.3.0'
-  pod 'FirebaseCrashlytics', '11.2.0'
+  pod 'FirebaseCrashlytics', '11.3.0'
   pod 'PurchasesHybridCommon', '13.2.0'
   pod 'PurchasesHybridCommonUI', '13.2.0'
 end

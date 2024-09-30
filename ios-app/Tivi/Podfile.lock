@@ -27,11 +27,11 @@ PODS:
     - FirebaseCoreInternal (~> 11.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/Logger (~> 8.0)
-  - FirebaseCoreExtension (11.2.0):
+  - FirebaseCoreExtension (11.3.0):
     - FirebaseCore (~> 11.0)
   - FirebaseCoreInternal (11.3.0):
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
-  - FirebaseCrashlytics (11.2.0):
+  - FirebaseCrashlytics (11.3.0):
     - FirebaseCore (~> 11.0)
     - FirebaseInstallations (~> 11.0)
     - FirebaseRemoteConfigInterop (~> 11.0)
@@ -45,8 +45,8 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
-  - FirebaseRemoteConfigInterop (11.2.0)
-  - FirebaseSessions (11.2.0):
+  - FirebaseRemoteConfigInterop (11.3.0)
+  - FirebaseSessions (11.3.0):
     - FirebaseCore (~> 11.0)
     - FirebaseCoreExtension (~> 11.0)
     - FirebaseInstallations (~> 11.0)
@@ -125,7 +125,7 @@ PODS:
 DEPENDENCIES:
   - AppAuth (= 1.7.5)
   - FirebaseAnalytics (= 11.3.0)
-  - FirebaseCrashlytics (= 11.2.0)
+  - FirebaseCrashlytics (= 11.3.0)
   - PurchasesHybridCommon (= 13.2.0)
   - PurchasesHybridCommonUI (= 13.2.0)
 
@@ -155,12 +155,12 @@ SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
   FirebaseAnalytics: ce1593872635a5ebd715d0d3937fab195991ecc9
   FirebaseCore: a282032ae9295c795714ded2ec9c522fc237f8da
-  FirebaseCoreExtension: cda74ddfb001224bd8fd1d6e74698b4ed07803de
+  FirebaseCoreExtension: 30bb063476ef66cd46925243d64ad8b2c8ac3264
   FirebaseCoreInternal: ac26d09a70c730e497936430af4e60fb0c68ec4e
-  FirebaseCrashlytics: cfc69af5b53565dc6a5e563788809b5778ac4eac
+  FirebaseCrashlytics: ba7b6a55dc10393f6583d87d8600d0d3ab2671d8
   FirebaseInstallations: 58cf94dabf1e2bb2fa87725a9be5c2249171cda0
-  FirebaseRemoteConfigInterop: 477b26fdeb8fb5fbaf22fa9db5343b42289dc7db
-  FirebaseSessions: adcec8b72d0066a385e3affcd1bcb1ebb3908ce6
+  FirebaseRemoteConfigInterop: c3a5c31b3c22079f41ba1dc645df889d9ce38cb9
+  FirebaseSessions: 655ff17f3cc1a635cbdc2d69b953878001f9e25b
   GoogleAppMeasurement: c8bac5f6ad85d3a0bdf2b9aee7fd484d6615d486
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
@@ -172,6 +172,6 @@ SPEC CHECKSUMS:
   RevenueCat: b2d2555cbb1f4116d341af4c5f82269c8e4e499a
   RevenueCatUI: 59b63f64505eac217af31f596e1ce3583734bba6
 
-PODFILE CHECKSUM: 9483244057ce5a93cc853948e5b45a5dfe9c39fd
+PODFILE CHECKSUM: 6b3cb02b993171409783520d1f0bb403a22df800
 
 COCOAPODS: 1.15.2
