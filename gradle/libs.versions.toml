@@ -56,7 +56,7 @@ androidx-splashscreen = "androidx.core:core-splashscreen:1.0.1"
 
 paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
 
-androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0"
+androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
 
 androidx-test-core = "androidx.test:core-ktx:1.6.1"
 androidx-test-junit = "androidx.test.ext:junit-ktx:1.2.1"
