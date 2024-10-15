@@ -21,7 +21,7 @@ paging = "3.3.2"
 spotless = "6.25.0"
 sqldelight = "2.0.2"
 revenuecat = "1.1.2+13.5.0"
-licensee = "1.11.0"
+licensee = "1.12.0"
 wire = "5.1.0"
 
 [plugins]
