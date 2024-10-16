@@ -13,7 +13,6 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.notifications.core)
-        implementation(projects.core.entitlements.core)
         implementation(projects.domain)
         implementation(libs.kotlininject.runtime)
       }

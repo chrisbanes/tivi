@@ -20,7 +20,6 @@ ktor = "2.3.12"
 paging = "3.3.2"
 spotless = "6.25.0"
 sqldelight = "2.0.2"
-revenuecat = "1.1.2+13.5.0"
 licensee = "1.12.0"
 wire = "5.1.0"
 
@@ -133,11 +132,6 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-client-contentnegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 
 playservices-blockstore = "com.google.android.gms:play-services-auth-blockstore:16.4.0"
-
-revenuecat-core = { module = "com.revenuecat.purchases:purchases-kmp-core", version.ref = "revenuecat" }
-revenuecat-datetime = { module = "com.revenuecat.purchases:purchases-kmp-datetime", version.ref = "revenuecat" }
-revenuecat-result = { module = "com.revenuecat.purchases:purchases-kmp-result", version.ref = "revenuecat" }
-revenuecat-ui = { module = "com.revenuecat.purchases:purchases-kmp-ui", version.ref = "revenuecat" }
 
 screengrab = "tools.fastlane:screengrab:2.1.1"
 store = "org.mobilenativefoundation.store:store5:5.0.0"
