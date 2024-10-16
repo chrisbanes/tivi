@@ -4,7 +4,6 @@
 package app.tivi.common.compose
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -80,7 +79,6 @@ import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(
-  ExperimentalFoundationApi::class,
   ExperimentalMaterialApi::class,
 )
 @Composable
@@ -190,7 +188,7 @@ fun <E : Entry> EntryGrid(
               entry = entry.entry,
               onClick = onClick,
               modifier = Modifier
-                .animateItemPlacement()
+                .animateItem()
                 .fillMaxWidth(),
             )
           }

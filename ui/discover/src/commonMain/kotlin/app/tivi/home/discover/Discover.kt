@@ -7,7 +7,8 @@ package app.tivi.home.discover
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.snapping.SnapPositionInLayout
+import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,9 +68,7 @@ import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
 import app.tivi.common.compose.LocalWindowSizeClass
 import app.tivi.common.compose.ReportDrawnWhen
-import app.tivi.common.compose.StartToStart
 import app.tivi.common.compose.bodyWidth
-import app.tivi.common.compose.rememberSnapFlingBehavior
 import app.tivi.common.compose.theme.shouldUseDarkColors
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.AutoSizedCircularProgressIndicator
@@ -258,10 +257,7 @@ internal fun Discover(
               vertical = Layout.gutter,
             ),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            flingBehavior = rememberSnapFlingBehavior(
-              carouselState,
-              SnapPositionInLayout.StartToStart,
-            ),
+            flingBehavior = rememberSnapFlingBehavior(carouselState, SnapPosition.Start),
           ) {
             items(
               items = state.nextEpisodesToWatch,
@@ -273,7 +269,7 @@ internal fun Discover(
                 episode = item.episode,
                 onClick = { openEpisodeDetails(item.episode.id) },
                 modifier = Modifier
-                  .animateItemPlacement()
+                  .animateItem()
                   .width(260.dp),
               )
             }
@@ -288,7 +284,7 @@ internal fun Discover(
             refreshing = state.trendingRefreshing,
             onItemClick = { openShowDetails(it.id) },
             onMoreClick = openTrendingShows,
-            modifier = Modifier.animateItemPlacement(),
+            modifier = Modifier.animateItem(),
           )
         }
 
@@ -300,7 +296,7 @@ internal fun Discover(
             refreshing = state.popularRefreshing,
             onItemClick = { openShowDetails(it.id) },
             onMoreClick = openPopularShows,
-            modifier = Modifier.animateItemPlacement(),
+            modifier = Modifier.animateItem(),
           )
         }
 
@@ -312,7 +308,7 @@ internal fun Discover(
             refreshing = state.anticipatedRefreshing,
             onItemClick = { openShowDetails(it.id) },
             onMoreClick = openAnticipatedShows,
-            modifier = Modifier.animateItemPlacement(),
+            modifier = Modifier.animateItem(),
           )
         }
 
@@ -324,7 +320,7 @@ internal fun Discover(
             refreshing = state.recommendedRefreshing,
             onItemClick = { openShowDetails(it.id) },
             onMoreClick = openRecommendedShows,
-            modifier = Modifier.animateItemPlacement(),
+            modifier = Modifier.animateItem(),
           )
         }
 
@@ -492,7 +488,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
     modifier = modifier
       .padding(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
       .clip(MaterialTheme.shapes.extraLarge),
-    flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPositionInLayout.StartToStart),
+    flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
     horizontalArrangement = Arrangement.spacedBy(8.dp),
   ) {
     items(
@@ -517,7 +513,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
         },
         modifier = Modifier
           .testTag("${tagPrefix}_carousel_item")
-          .animateItemPlacement()
+          .animateItem()
           .width(
             when (LocalWindowSizeClass.current.widthSizeClass) {
               WindowWidthSizeClass.Expanded -> 320.dp
