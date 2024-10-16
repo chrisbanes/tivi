@@ -7,10 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import app.tivi.app.ApplicationInfo
 import app.tivi.app.Flavor
 import app.tivi.common.compose.collectAsState
@@ -20,7 +16,6 @@ import app.tivi.core.permissions.PermissionsController
 import app.tivi.core.permissions.performPermissionedAction
 import app.tivi.data.traktauth.TraktAuthState
 import app.tivi.domain.observers.ObserveTraktAuthState
-import app.tivi.entitlements.EntitlementManager
 import app.tivi.screens.DevSettingsScreen
 import app.tivi.screens.LicensesScreen
 import app.tivi.screens.SettingsScreen
@@ -54,13 +49,11 @@ class SettingsPresenter(
   @Assisted private val navigator: Navigator,
   preferences: Lazy<TiviPreferences>,
   permissionsController: Lazy<PermissionsController>,
-  entitlements: Lazy<EntitlementManager>,
   observeTraktAuthState: Lazy<ObserveTraktAuthState>,
   private val applicationInfo: ApplicationInfo,
 ) : Presenter<SettingsUiState> {
   private val preferences by preferences
   private val permissionsController by permissionsController
-  private val entitlements by entitlements
   private val observeTraktAuthState by observeTraktAuthState
 
   @Composable
@@ -74,11 +67,7 @@ class SettingsPresenter(
 
     val authState by observeTraktAuthState.flow.collectAsState(TraktAuthState.LOGGED_OUT)
 
-    val isPro by produceState(initialValue = false, entitlements) {
-      entitlements.observeProEntitlement().collect { value = it }
-    }
     val notificationsEnabled by preferences.episodeAiringNotificationsEnabled.collectAsState()
-    var proUpsellVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(observeTraktAuthState) {
       observeTraktAuthState(Unit)
@@ -115,24 +104,20 @@ class SettingsPresenter(
         }
 
         SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled -> {
-          if (isPro) {
-            launchOrThrow {
-              if (preferences.episodeAiringNotificationsEnabled.get()) {
-                // If we're enabled, and being turned off, we don't need to mess with permissions
-                preferences.episodeAiringNotificationsEnabled.set(false)
-              } else {
-                // If we're disabled, and being turned on, we need to check our permissions
-                permissionsController.performPermissionedAction(REMOTE_NOTIFICATION) { state ->
-                  if (state == PermissionState.Granted) {
-                    preferences.episodeAiringNotificationsEnabled.set(true)
-                  } else {
-                    permissionsController.openAppSettings()
-                  }
+          launchOrThrow {
+            if (preferences.episodeAiringNotificationsEnabled.get()) {
+              // If we're enabled, and being turned off, we don't need to mess with permissions
+              preferences.episodeAiringNotificationsEnabled.set(false)
+            } else {
+              // If we're disabled, and being turned on, we need to check our permissions
+              permissionsController.performPermissionedAction(REMOTE_NOTIFICATION) { state ->
+                if (state == PermissionState.Granted) {
+                  preferences.episodeAiringNotificationsEnabled.set(true)
+                } else {
+                  permissionsController.openAppSettings()
                 }
               }
             }
-          } else {
-            proUpsellVisible = true
           }
         }
 
@@ -142,8 +127,6 @@ class SettingsPresenter(
 
         SettingsUiEvent.NavigateOpenSource -> navigator.goTo(LicensesScreen)
         SettingsUiEvent.NavigateDeveloperSettings -> navigator.goTo(DevSettingsScreen)
-
-        SettingsUiEvent.DismissProUpsell -> proUpsellVisible = false
 
         SettingsUiEvent.DeleteAccount -> {
           navigator.goTo(UrlScreen("https://trakt.tv/settings"))
@@ -160,11 +143,9 @@ class SettingsPresenter(
       ignoreSpecials = ignoreSpecials,
       crashDataReportingEnabled = crashDataReportingEnabled,
       analyticsDataReportingEnabled = analyticsDataReportingEnabled,
-      airingEpisodeNotificationsEnabled = notificationsEnabled && isPro,
+      airingEpisodeNotificationsEnabled = notificationsEnabled,
       applicationInfo = applicationInfo,
       showDeveloperSettings = applicationInfo.flavor == Flavor.Qa,
-      proUpsellVisible = proUpsellVisible,
-      isPro = isPro,
       isLoggedIn = authState == TraktAuthState.LOGGED_IN,
       showDeleteAccount = authState == TraktAuthState.LOGGED_IN,
       eventSink = wrapEventSink(eventSink),

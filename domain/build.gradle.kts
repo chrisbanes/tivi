@@ -12,7 +12,6 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.notifications.core)
-        api(projects.core.entitlements.core)
         api(projects.common.ui.resources)
 
         api(projects.data.models)

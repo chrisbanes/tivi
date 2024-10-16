@@ -12,13 +12,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoMode
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.Loyalty
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -66,7 +64,6 @@ import app.tivi.common.ui.resources.settings_theme_title
 import app.tivi.common.ui.resources.settings_title
 import app.tivi.common.ui.resources.settings_ui_category_title
 import app.tivi.common.ui.resources.view_privacy_policy
-import app.tivi.entitlements.ui.Paywall
 import app.tivi.screens.SettingsScreen
 import app.tivi.util.launchOrThrow
 import com.slack.circuit.overlay.ContentWithOverlays
@@ -103,12 +100,6 @@ internal fun Settings(
   // Need to extract the eventSink out to a local val, so that the Compose Compiler
   // treats it as stable. See: https://issuetracker.google.com/issues/256100927
   val eventSink = state.eventSink
-
-  if (state.proUpsellVisible) {
-    Paywall(
-      onDismissRequest = { eventSink(SettingsUiEvent.DismissProUpsell) },
-    )
-  }
 
   ContentWithOverlays {
     HazeScaffold(
@@ -194,15 +185,6 @@ internal fun Settings(
             summaryOff = stringResource(Res.string.settings_notifications_airing_episodes_summary),
             onCheckClicked = { eventSink(SettingsUiEvent.ToggleAiringEpisodeNotificationsEnabled) },
             checked = state.airingEpisodeNotificationsEnabled,
-            beforeControl = {
-              if (!state.isPro) {
-                Icon(
-                  imageVector = Icons.Default.Loyalty,
-                  tint = MaterialTheme.colorScheme.primary,
-                  contentDescription = null,
-                )
-              }
-            },
           )
         }
 

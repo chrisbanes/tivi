@@ -4,7 +4,6 @@
 package app.tivi.tasks
 
 import app.tivi.appinitializers.AppInitializer
-import app.tivi.entitlements.EntitlementManager
 import app.tivi.inject.ApplicationCoroutineScope
 import app.tivi.settings.TiviPreferences
 import app.tivi.util.launchOrThrow
@@ -14,12 +13,10 @@ import me.tatarka.inject.annotations.Inject
 class TasksInitializer(
   tasks: Lazy<Tasks>,
   preferences: Lazy<TiviPreferences>,
-  entitlementManager: Lazy<EntitlementManager>,
   private val coroutineScope: ApplicationCoroutineScope,
 ) : AppInitializer {
   private val tasks by tasks
   private val preferences by preferences
-  private val entitlementManager by entitlementManager
 
   override fun initialize() {
     tasks.setup()
@@ -29,9 +26,8 @@ class TasksInitializer(
     coroutineScope.launchOrThrow {
       preferences.episodeAiringNotificationsEnabled.flow
         .collect { enabled ->
-          val isPro = entitlementManager.hasProEntitlement()
           when {
-            enabled && isPro -> tasks.scheduleEpisodeNotifications()
+            enabled -> tasks.scheduleEpisodeNotifications()
             else -> tasks.cancelEpisodeNotifications()
           }
         }

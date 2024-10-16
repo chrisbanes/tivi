@@ -13,7 +13,6 @@ import app.tivi.data.episodes.SeasonsEpisodesRepository
 import app.tivi.data.models.Notification
 import app.tivi.data.models.NotificationChannel
 import app.tivi.domain.Interactor
-import app.tivi.entitlements.EntitlementManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.TiviDateFormatter
 import app.tivi.util.fmt
@@ -33,19 +32,14 @@ class ScheduleEpisodeNotifications(
   seasonsEpisodesRepository: Lazy<SeasonsEpisodesRepository>,
   notificationManager: Lazy<NotificationManager>,
   dateTimeFormatter: Lazy<TiviDateFormatter>,
-  entitlementManager: Lazy<EntitlementManager>,
   private val dispatchers: AppCoroutineDispatchers,
   private val applicationInfo: ApplicationInfo,
 ) : Interactor<ScheduleEpisodeNotifications.Params, Unit>() {
   private val seasonsEpisodesRepository by seasonsEpisodesRepository
   private val notificationManager by notificationManager
   private val dateTimeFormatter by dateTimeFormatter
-  private val entitlementManager by entitlementManager
 
   override suspend fun doWork(params: Params) {
-    // TODO: we should do something better here
-    if (!entitlementManager.hasProEntitlement()) return
-
     // We can do better here, but this is fine for now
     notificationManager.getPendingNotifications()
       .asSequence()
