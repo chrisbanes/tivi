@@ -158,7 +158,7 @@ trakt-api = "app.moviebase:trakt-api:0.6.0"
 
 assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
 
-turbine = "app.cash.turbine:turbine:1.1.0"
+turbine = "app.cash.turbine:turbine:1.2.0"
 
 uuid = "com.benasher44:uuid:0.8.4"
 
