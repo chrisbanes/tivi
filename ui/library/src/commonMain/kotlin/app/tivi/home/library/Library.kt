@@ -359,7 +359,7 @@ private fun LibraryGrid(
           onClick = { openShowDetails(entry.show.id) },
           contentPadding = PaddingValues(8.dp),
           modifier = Modifier
-            .animateItemPlacement()
+            .animateItem()
             .fillMaxWidth(),
         )
       }

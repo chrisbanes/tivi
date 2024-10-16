@@ -44,7 +44,7 @@ actual fun Paywall(
       sheetState = sheetState,
       onDismissRequest = onDismissRequest,
       dragHandle = null,
-      windowInsets = BottomSheetDefaults.windowInsets.only(WindowInsetsSides.Top),
+      contentWindowInsets = { BottomSheetDefaults.windowInsets.only(WindowInsetsSides.Top) },
       modifier = modifier,
     ) {
       Box(

@@ -271,7 +271,7 @@ internal fun UpNext(
             SwipeUpNextItem(
               onSwipe = { openTrackEpisode(entry.episode.id) },
               modifier = Modifier
-                .animateItemPlacement()
+                .animateItem()
                 .fillMaxWidth(),
             ) {
               UpNextItem(

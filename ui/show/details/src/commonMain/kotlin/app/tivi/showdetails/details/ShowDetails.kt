@@ -9,7 +9,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.SnapPositionInLayout
+import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -88,11 +89,9 @@ import androidx.compose.ui.unit.sp
 import app.tivi.common.compose.HazeScaffold
 import app.tivi.common.compose.Layout
 import app.tivi.common.compose.LocalTiviTextCreator
-import app.tivi.common.compose.StartToStart
 import app.tivi.common.compose.bodyWidth
 import app.tivi.common.compose.gutterSpacer
 import app.tivi.common.compose.itemSpacer
-import app.tivi.common.compose.rememberSnapFlingBehavior
 import app.tivi.common.compose.ui.ArrowBackForPlatform
 import app.tivi.common.compose.ui.AsyncImage
 import app.tivi.common.compose.ui.Backdrop
@@ -699,7 +698,7 @@ private fun RelatedShows(
   LazyRow(
     state = lazyListState,
     modifier = modifier,
-    flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPositionInLayout.StartToStart),
+    flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
     contentPadding = contentPadding,
     horizontalArrangement = Arrangement.spacedBy(4.dp),
   ) {
@@ -711,7 +710,7 @@ private fun RelatedShows(
         show = item.show,
         onClick = { openShowDetails(item.show.id) },
         modifier = Modifier
-          .animateItemPlacement()
+          .animateItem()
           .fillParentMaxWidth(0.21f) // 21% of the available width
           .aspectRatio(2 / 3f),
       )

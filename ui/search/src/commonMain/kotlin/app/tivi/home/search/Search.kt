@@ -220,7 +220,7 @@ private fun SearchList(
       SearchRow(
         show = show,
         modifier = Modifier
-          .animateItemPlacement()
+          .animateItem()
           .fillMaxWidth()
           .clickable { onShowClicked(show) },
       )
