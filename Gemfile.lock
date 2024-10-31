@@ -5,8 +5,9 @@ GEM
       base64
       nkf
       rexml
-    activesupport (7.2.1.2)
+    activesupport (7.2.2)
       base64
+      benchmark (>= 0.3)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.3.1)
       connection_pool (>= 2.2.5)
@@ -41,6 +42,7 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     babosa (1.0.4)
     base64 (0.2.0)
+    benchmark (0.3.0)
     bigdecimal (3.1.8)
     claide (1.1.0)
     cocoapods (1.16.1)
@@ -219,7 +221,7 @@ GEM
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     jmespath (1.6.2)
-    json (2.7.4)
+    json (2.7.5)
     jwt (2.9.3)
       base64
     logger (1.6.1)
