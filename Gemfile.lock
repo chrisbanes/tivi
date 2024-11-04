@@ -221,7 +221,7 @@ GEM
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     jmespath (1.6.2)
-    json (2.7.5)
+    json (2.7.6)
     jwt (2.9.3)
       base64
     logger (1.6.1)
