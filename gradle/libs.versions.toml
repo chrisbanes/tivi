@@ -160,7 +160,7 @@ wire-runtime = { group = "com.squareup.wire", name = "wire-runtime", version.ref
 
 uri = "com.eygraber:uri-kmp:0.0.18"
 
-ktlint = "com.pinterest.ktlint:ktlint-cli:1.3.1"
+ktlint = "com.pinterest.ktlint:ktlint-cli:1.4.1"
 
 # Build logic dependencies
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
