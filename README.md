@@ -1,6 +1,18 @@
-![Tivi](art/banner.png)
+# Tivi has now deprecated
 
-# Tivi 📺
+After roughly 9 years of development, I've decided that now (12th November 2024) is the time for Tivi to be 'complete'. After releasing 1.0.0 recently, I unfortunately just don't have the time or inclination to keep developing the app.
+
+Another reason which has prompted this change is that I have no intention of allowing Google Play to publish my home address (through it's '[verification](https://support.google.com/googleplay/android-developer/answer/14177239?hl=en)' process), therefore my developer account has been restricted and locked. C'est la vie. 
+
+I've also delisted the app on the iOS App Store.
+
+Thanks to everyone who has used and tested the app. I hope that it's been useful to learn from.
+
+🫡
+
+---
+
+![Tivi](art/banner.png)
 
 
 Tivi is a TV show tracking application which connects to [Trakt.tv](https://www.trakt.tv). It has been updated over the years to target a number of platforms, built upon Kotlin Multiplatform and Compose Multiplatform.
